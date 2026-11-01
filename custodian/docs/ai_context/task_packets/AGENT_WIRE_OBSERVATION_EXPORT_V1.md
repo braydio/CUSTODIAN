@@ -1,0 +1,61 @@
+# CUSTODIAN WIRE OBSERVATION EXPORT V1
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `agent-wire-observation-export-v1`
+- Category: `agent-ops`
+- Status: `draft`
+- Dispatch: `manual`
+- Authoring handoff: `auto`
+- Priority: `P2`
+- Depends on: `none`
+- Locks: `none`
+- Kind: `implementation`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, architecture, workflow`
+- Paired review workstream: `review-agent-wire-observation-export-v1`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Review rationale: `The exporter summarizes authority-bearing workflow evidence and crosses a privacy boundary; independent verification of evidence fidelity, redaction, and read-only behavior is required.`
+- Reviewed main: `f070b4ee7f46c16890469889886bc13126705387`
+- Authoring chat: `not-recorded`
+- Visual review: `none`
+- Goal: Provide a safe local JSON observation of CUSTODIAN task and workstream state for downstream WIRE editorial use.
+- Completion boundary: Add the versioned `custodian.wire.observation.v1` exporter, its strict JSON schema, focused synthetic-fixture tests, and any exact validation-manifest registration needed to run those tests. The exporter consumes an already-collected `custodian.task_admin.snapshot.v1`; it does not recollect sources. Done means incomplete, failed, stale, conflicting, and unavailable source evidence fails closed, while complete current fixtures produce deterministic, sanitized output and pass focused plus changed-file validation.
+- Current measured state: `custodian/tools/agent/task_administrator.py::collect` builds `custodian.task_admin.snapshot.v1` and invokes both `dispatch.py audit --json` and `workstream_recovery.py audit --json`. The dispatcher audit path calls `_fetch`, which runs `git fetch --prune origin`; it is therefore a network/ref-refreshing full audit, not a cached snapshot read. A live attempt in the authoring session did not return within the initial 10-second tool window and was stopped; do not treat that incomplete attempt as source evidence or launch overlapping audits. The task-administrator snapshot includes private checkout/recovery evidence and is not suitable for direct WIRE publication.
+- Evidence: `custodian/tools/agent/task_administrator.py`; `custodian/tools/agent/test_task_administrator.py`; `custodian/tools/agent/dispatch.py` (`_fetch` and `audit`); `custodian/tools/agent/workstream_recovery.py`; `custodian/tools/agent/queue_frontier.py`; `custodian/docs/ai_context/task_packets/README.md` (dispatcher classification and review lifecycle); `.github/workflows/packet-authoring-handoff.yml` and `custodian/tools/agent/packet_authoring_handoff.py` (packet promotion only).
+- Task-specific authority: `AGENTS.md`; `custodian/AGENTS.md`; the existing task-administrator snapshot contract and dispatcher/recovery ownership above. This packet authorizes only a local exporter; WIRE feed/publisher authority remains unchanged.
+- Work surface: New `custodian/tools/agent/wire_observation_export.py`, new `custodian/tools/agent/schemas/wire_observation.v1.schema.json`, new `custodian/tools/agent/test_wire_observation_export.py`, and a narrowly scoped validation manifest update only if required for canonical test discovery. Read existing task-administrator and dispatcher sources as inputs; do not edit them absent a separately proven requirement and packet refresh.
+- Publication inputs: `custodian/tools/agent/task_administrator.py`; `custodian/tools/agent/test_task_administrator.py`; `custodian/tools/agent/dispatch.py`; `custodian/tools/agent/workstream_recovery.py`; `custodian/tools/agent/queue_frontier.py`; `custodian/docs/ai_context/task_packets/README.md`; `custodian/tools/validation/validation_manifest.json`.
+- Change: Implement a pure exporter/API and bounded CLI that accept an already-collected task-administrator snapshot (JSON input via stdin or a named input file) and never call the dispatcher, recovery audit, Git, Dropbox, or the task-administrator collector. Emit only a versioned `custodian.wire.observation.v1` document validated by the new strict schema. Preserve the input observation time, exact source revision, source health/freshness/completeness evidence, dispatcher classifications and claim-eligibility evidence, and a complete sanitized active-packet inventory sufficient to reconcile aggregates. Provide packet-record counts and distinct workstream counts as separate fields, computed only from complete inventory evidence; use null when evidence cannot support a count, and emit zero only for a proven complete empty scope. Require an explicit maximum source age for freshness evaluation; reject missing, future, conflicting, or over-age source timestamps and mismatched/stale `origin/main` evidence. Enforce a strict field allowlist and reject unsafe identity values; exclude checkout/private filesystem paths, credentials, prompts, logs, command lines, private Dropbox paths, and sensitive host identifiers. Preserve missing host/process evidence as `unknown`; never infer running, accepted-review, cleanup, or recovery status. Compute a deterministic SHA-256 evidence digest over canonical evidence fields, excluding observation-clock-only fields so identical evidence yields the same digest. Do not run or cache an audit as a side effect.
+- Preserve: Dispatcher assignment, workstream ownership/recovery, task-administrator collection/service behavior, review decisions, task-packet lifecycle, public WIRE feed and publisher, hourly automation, Render configuration, Quickshell configuration, and Dropbox credentials/destinations.
+- Non-goals: Private Dropbox upload or any other telemetry delivery; changes to `ops/mission-wire/feed.json` or its branch; hourly WIRE/ChatGPT integration; service installation or scheduling; dispatcher/recovery/task-administrator behavior changes; consecutive-observation change records, bottleneck prioritization, or downstream-impact scoring.
+- Acceptance:
+  - A caller can export an already-collected snapshot without invoking `task_administrator.collect`, a subprocess, a dispatcher audit, a recovery audit, or Git/network operations.
+  - Valid complete evidence produces schema-valid JSON with its exact source revision and original source timestamps/health, a complete sanitized inventory, dispatcher class/eligibility facts, separately named packet and distinct-workstream counts, explicit coverage limitations, and a deterministic evidence digest.
+  - An explicit maximum age controls freshness; missing/invalid/future/over-age timestamps, origin mismatch, failed or incomplete dispatcher/recovery evidence, missing source evidence, unavailable inventory, or conflicting/duplicate workstream identity fails closed and cannot manufacture counts or acceptance state.
+  - Count reconciliation is tested against synthetic complete inventories, including a complete empty inventory; unknown scope produces null rather than zero.
+  - Synthetic fixtures prove strict redaction: private paths, credentials, prompts, logs, process command lines, private Dropbox paths, and host identifiers cannot appear in output. Unknown host-process evidence remains unknown.
+  - The schema rejects additional fields and invalid telemetry payloads. Identical source evidence at different export times produces the same evidence digest.
+  - The test suite is included in canonical changed-file validation; implementation changes remain observational and cannot mutate canonical repository state.
+- Validation:
+  - `python3 -m unittest custodian.tools.agent.test_wire_observation_export -v`
+  - Focused adversarial synthetic fixtures for failed/incomplete audit, stale/mismatched origin, missing source evidence, absent process data, duplicate IDs, aggregate reconciliation, forbidden data leakage, digest stability, and invalid schema payloads.
+  - `python3 custodian/tools/agent/check_packet_categories.py <changed packet paths>` and `python3 custodian/tools/agent/validate_task_packet_authoring.py <implementation packet> <review packet>` during packet authoring/promotion.
+  - `python3 custodian/tools/agent/validate_review_pairing.py`
+  - `python3 custodian/tools/validation/run_validation.py --changed --base origin/main --json` with complete applicable changed-file coverage.
+  - `git diff --check`
+  - Do not launch broad validation sweeps or a live dispatcher audit from exporter tests.
+- Task overrides: `none`
+- Deferred: Separately authorized private telemetry handoff; WIRE/publication or hourly consumer integration; consecutive-observation comparison and bottleneck analysis.
+
+## Handoff
+
+- Next workstream: `review-agent-wire-observation-export-v1`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `not-recorded`
+- Refresh reason: `none`
+- Next action: After implementation lands and archives complete, perform the paired fresh-context independent review.
+- Blockers or open questions: `none`
