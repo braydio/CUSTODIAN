@@ -940,25 +940,55 @@ def _changed_paths(repo: Path, *args: str) -> list[str]:
 
 def _verified_reviewer_pass(repo: Path, archived_text: str, metadata: dict, worktree: Path,
                             workstream: str, target_workstream: str, reviewed_main: str,
-                            implementation_commit: str) -> dict[str, str]:
+                            implementation_commit: str, *,
+                            expected_session: dict[str, str] | None = None) -> dict[str, str]:
     """Authenticate a canonical archived PASS against its fresh reviewer session and pinned run."""
     run_id = metadata.get("run_id")
     session_dir = Path(str(metadata.get("run_dir", ""))).resolve()
     if metadata.get("schema") == CONTINUATION_SCHEMA:
         session_dir = Path(str(metadata.get("last_message", ""))).resolve().parent
+    continuation_session = metadata.get("schema") == CONTINUATION_SCHEMA
     if (not isinstance(run_id, str) or not _RUN_ID_RE.fullmatch(run_id)
             or metadata.get("workstream") != workstream
-            or metadata.get("fresh") is not True or metadata.get("exit_code") != 0
+            or (not continuation_session and metadata.get("fresh") is not True)
+            or metadata.get("exit_code") != 0
             or metadata.get("reviewed_main") != reviewed_main
             or metadata.get("implementation_commit") != implementation_commit
             or not session_dir.is_dir()):
         raise RunnerError("reviewer session metadata does not authenticate the pinned PASS")
-    try:
-        final = (session_dir / "last-message.txt").read_text(encoding="utf-8")
-        events = (session_dir / "codex.jsonl").read_text(encoding="utf-8").splitlines()
-        outcome, outcome_error = review_outcome.parse_review_outcome(archived_text)
-    except OSError as exc:
-        raise RunnerError("fresh reviewer session evidence is missing") from exc
+    if continuation_session:
+        runner_source = read_git_text(repo, reviewed_main, "custodian/tools/agent/paired_review_runner.py")
+        control_source = read_git_text(repo, reviewed_main, "custodian/tools/agent/workflow_control.py")
+        final, session = _parse_redacted_final_session(session_dir, metadata, runner_source, control_source)
+        capture_pin = ({key: session.get(key) for key in expected_session}
+                       if expected_session is not None else None)
+        if expected_session is not None and capture_pin != expected_session:
+            raise RunnerError("reviewer session does not match the recovery plan's original capture digests")
+    else:
+        if expected_session is not None:
+            raise RunnerError("ordinary reviewer runs cannot use continuation capture digests")
+        try:
+            final = (session_dir / "last-message.txt").read_text(encoding="utf-8")
+            events = (session_dir / "codex.jsonl").read_text(encoding="utf-8").splitlines()
+        except OSError as exc:
+            raise RunnerError("fresh reviewer session evidence is missing") from exc
+        agent_messages: list[str] = []
+        completed_turns = 0
+        for line in events:
+            try:
+                event = json.loads(line)
+            except json.JSONDecodeError as exc:
+                raise RunnerError("reviewer session contains malformed JSON") from exc
+            item = event.get("item") if isinstance(event, dict) else None
+            if isinstance(item, dict) and item.get("type") == "agent_message":
+                if not isinstance(item.get("text"), str):
+                    raise RunnerError("reviewer session contains a malformed agent message")
+                agent_messages.append(item["text"])
+            if isinstance(event, dict) and event.get("type") == "turn.completed":
+                completed_turns += 1
+        if completed_turns != 1 or len(agent_messages) != 1 or agent_messages[0].strip() != final.strip():
+            raise RunnerError("reviewer final output does not uniquely match its raw fresh session")
+    outcome, outcome_error = review_outcome.parse_review_outcome(archived_text)
     if outcome_error or outcome is None or outcome.get("Outcome") != "passed":
         raise RunnerError("archived packet does not contain one canonical PASS outcome")
     identity_error = review_outcome.outcome_identity_error(
@@ -972,24 +1002,11 @@ def _verified_reviewer_pass(repo: Path, archived_text: str, metadata: dict, work
     expected_receipt = render_review_receipt(outcome)
     if receipt is None or archived_text.count(expected_receipt) != 1:
         raise RunnerError("archived independent-review receipt differs from its canonical PASS outcome")
-    agent_messages: list[str] = []
-    completed_turns = 0
-    for line in events:
-        try:
-            event = json.loads(line)
-        except json.JSONDecodeError as exc:
-            raise RunnerError("reviewer session contains malformed JSON") from exc
-        item = event.get("item") if isinstance(event, dict) else None
-        if isinstance(item, dict) and item.get("type") == "agent_message":
-            if not isinstance(item.get("text"), str):
-                raise RunnerError("reviewer session contains a malformed agent message")
-            agent_messages.append(item["text"])
-        if isinstance(event, dict) and event.get("type") == "turn.completed":
-            completed_turns += 1
-    if completed_turns != 1 or len(agent_messages) != 1 or agent_messages[0].strip() != final.strip():
-        raise RunnerError("reviewer final output does not uniquely match its raw fresh session")
-    if (not re.search(r"(?i)(?:verdict|review outcome):?\s*`?passed\b", final)
-            or workstream not in final):
+    verdicts = re.findall(
+        r"(?im)^\s*\*{0,2}(?:independent disposition|verdict|review outcome)\s*:\s*`?([a-z_]+)",
+        final,
+    )
+    if not verdicts or any(value.lower() != "passed" for value in verdicts) or workstream not in final:
         raise RunnerError("reviewer-authored final output does not support this exact PASS identity")
     summary_path = worktree / expected_summary_path(workstream)
     try:
@@ -1378,6 +1395,156 @@ def apply_procession_pass_closeout(repo: Path, plan_sha256: str) -> dict:
             raise
 
 
+def _committed_pass_continuation_identity(repo: Path, workstream: str, worktree: Path,
+                                          active_packet_path: str, target_workstream: str,
+                                          target_packet_path: str, reviewed_main: str,
+                                          archived_text: str, run_dir: Path,
+                                          host_evidence: dict) -> tuple[str, int, dict]:
+    """Authenticate the original reviewer session and continuation before retrying a PASS."""
+    supplied = host_evidence.get("continuation_dir", run_dir)
+    continuation_dir = Path(supplied)
+    if (continuation_dir.is_symlink() or continuation_dir.name != "continuation-01"
+            or not continuation_dir.is_dir() or continuation_dir.resolve() != continuation_dir):
+        raise RunnerError("committed PASS requires the exact regular continuation-01 directory")
+    if Path(run_dir).resolve() != continuation_dir.resolve():
+        raise RunnerError("committed PASS run directory differs from its authenticated continuation")
+    original_dir = continuation_dir.parent
+    if original_dir.is_symlink() or not original_dir.is_dir() or original_dir.resolve() != original_dir:
+        raise RunnerError("committed PASS continuation has an unsafe original run directory")
+    expected_run_dir = common_dir(repo).resolve() / "custodian-review-runs" / workstream / original_dir.name
+    if original_dir != expected_run_dir or not _RUN_ID_RE.fullmatch(original_dir.name):
+        raise RunnerError("committed PASS continuation is outside its exact workstream run")
+
+    try:
+        original = json.loads((original_dir / "metadata.json").read_text(encoding="utf-8"))
+        child = json.loads((continuation_dir / "metadata.json").read_text(encoding="utf-8"))
+        journal = json.loads((continuation_dir / "rc116-recovery-journal.json").read_text(encoding="utf-8"))
+        claim_file = json.loads((original_dir / "claim-receipt.json").read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise RunnerError("committed PASS continuation identity evidence is missing or malformed") from exc
+    if not all(isinstance(value, dict) for value in (original, child, journal, claim_file)):
+        raise RunnerError("committed PASS continuation identity evidence must be JSON objects")
+    run_id = original_dir.name
+    if (original.get("schema") != SCHEMA or original.get("workstream") != workstream
+            or original.get("run_id") != run_id or original.get("run_dir") != str(original_dir)
+            or original.get("phase") not in {"claim_profile_mismatch", "post_exit_recovery"}):
+        raise RunnerError("original paired-review run identity or phase contradicts the continuation")
+    if (child.get("schema") != CONTINUATION_SCHEMA or child.get("workstream") != workstream
+            or child.get("run_id") != run_id or child.get("phase") != "coordinator_closeout"
+            or type(child.get("continuation_number")) is not int or child.get("continuation_number") != 1
+            or type(child.get("reviewer_launch_count")) is not int or child.get("reviewer_launch_count") != 1
+            or type(child.get("exit_code")) is not int or child.get("exit_code") != 0
+            or child.get("original_run_dir") != str(original_dir)):
+        raise RunnerError("continuation is not the one completed reviewer turn awaiting coordinator closeout")
+    try:
+        claim, claim_source = _host_validation_claim_receipt(
+            original_dir, workstream, repo,
+            {**original, "recovery_worktree": child.get("worktree")},
+            str(child.get("active_packet_path", "")),
+        )
+    except RunnerError as exc:
+        raise RunnerError("original dispatcher claim could not be authenticated: " + str(exc)) from exc
+    if claim_file != claim or claim_source != "claim-receipt.json":
+        raise RunnerError("original claim receipt file disagrees with the dispatcher output")
+    if (not _RUN_ID_RE.fullmatch(str(claim.get("run_id", "")))
+            or child.get("branch") != claim.get("branch")
+            or child.get("worktree") != claim.get("worktree")
+            or child.get("active_packet_path") != claim.get("packet")
+            or (claim.get("authoring_chat") is not None
+                and child.get("authoring_chat") != claim.get("authoring_chat"))
+            or Path(claim["worktree"]).resolve() != Path(worktree).resolve()
+            or git(worktree, "branch", "--show-current") != claim["branch"]):
+        raise RunnerError("continuation branch, worktree, or packet differs from the original verified claim")
+    recovery_claim = child.get("checkout_profile_recovery")
+    if isinstance(recovery_claim, dict) and recovery_claim.get("claim_run_id") != claim["run_id"]:
+        raise RunnerError("continuation recovery claim provenance differs from the original dispatcher claim")
+
+    if (child.get("active_packet_path") != active_packet_path
+            or child.get("target_workstream") != target_workstream
+            or child.get("target_packet_path") != target_packet_path
+            or child.get("reviewed_main") != reviewed_main
+            or child.get("implementation_commit") != host_evidence.get("implementation_commit")
+            or not isinstance(child.get("review_cycle"), int)
+            or isinstance(child.get("review_cycle"), bool)):
+        raise RunnerError("continuation target, reviewed main, implementation, or cycle identity is inconsistent")
+    run_id_from_metadata, review_cycle = run_id, child["review_cycle"]
+    if ("run_id" in host_evidence and host_evidence["run_id"] != run_id_from_metadata
+            or "review_cycle" in host_evidence and host_evidence["review_cycle"] != review_cycle):
+        raise RunnerError("optional host-evidence identity contradicts authenticated continuation metadata")
+
+    if (journal.get("schema") != "custodian.rc116.review_receipt_recovery.v1"
+            or journal.get("workstream") != workstream or journal.get("run_id") != run_id
+            or journal.get("stage") != "closeout_blocked" or not isinstance(journal.get("plan"), dict)):
+        raise RunnerError("continuation recovery journal does not identify the held closeout")
+    plan = dict(journal["plan"])
+    plan_sha256 = plan.pop("plan_sha256", None)
+    calculated_plan_sha256 = _sha256_bytes(json.dumps(plan, sort_keys=True, separators=(",", ":")).encode())
+    if (not isinstance(plan_sha256, str) or plan_sha256 != calculated_plan_sha256
+            or journal.get("plan_sha256") != plan_sha256):
+        raise RunnerError("continuation recovery journal plan digest is invalid")
+    if (plan.get("schema") != journal.get("schema") or plan.get("workstream") != workstream
+            or plan.get("run_id") != run_id or plan.get("claim_run_id") != claim.get("run_id")
+            or plan.get("reviewed_main") != reviewed_main
+            or plan.get("implementation_commit") != host_evidence.get("implementation_commit")
+            or plan.get("branch") != claim["branch"] or plan.get("worktree") != claim["worktree"]
+            or plan.get("active_packet") != active_packet_path
+            or plan.get("target_workstream") != target_workstream
+            or plan.get("target_packet") != target_packet_path):
+        raise RunnerError("continuation recovery plan disagrees with the verified claim or target")
+    planned_outcome = plan.get("outcome")
+    if (not isinstance(planned_outcome, dict) or planned_outcome.get("Outcome") != "passed"
+            or planned_outcome.get("Finding IDs") != "none"
+            or planned_outcome.get("Run ID") != run_id
+            or planned_outcome.get("Review cycle") != str(review_cycle)):
+        raise RunnerError("continuation recovery plan does not bind one exact passing reviewer outcome")
+    planned_outcome_error = review_outcome.outcome_identity_error(
+        planned_outcome, review_workstream=workstream, target_workstream=target_workstream,
+        reviewed_main=reviewed_main, implementation_commit=host_evidence.get("implementation_commit"),
+        run_id=run_id, review_cycle=review_cycle,
+    )
+    if planned_outcome_error:
+        raise RunnerError("continuation recovery plan PASS identity failed verification: "
+                          + planned_outcome_error)
+    capture_sources = (
+        ("runner_source_sha256", "custodian/tools/agent/paired_review_runner.py"),
+        ("workflow_control_source_sha256", "custodian/tools/agent/workflow_control.py"),
+    )
+    for digest_key, source_path in capture_sources:
+        pinned_source = read_git_text(repo, reviewed_main, source_path)
+        if plan.get(digest_key) != _sha256_bytes(pinned_source.encode("utf-8")):
+            raise RunnerError("continuation recovery plan does not match the source-pinned reviewer capture pipeline")
+    session_pin = plan.get("session")
+    if (not isinstance(session_pin, dict)
+            or set(session_pin) != {"thread_id", "codex_jsonl_sha256", "last_message_sha256"}
+            or not all(isinstance(value, str) and value for value in session_pin.values())):
+        raise RunnerError("continuation recovery plan omits the exact original reviewer session identity")
+    manifest = _file_manifest(original_dir, omit=continuation_dir)
+    if (child.get("run_evidence_sha256") != manifest
+            or child.get("original_run_manifest_sha256") != _manifest_digest(manifest)):
+        raise RunnerError("original paired-review evidence changed after the continuation was recorded")
+    lock_path = common_dir(repo).resolve() / "custodian-review-runs" / "locks" / f"{workstream}.lock"
+    try:
+        if any(path.is_symlink() or not path.is_dir() for path in (lock_path.parent.parent, lock_path.parent)):
+            raise RunnerError("original paired-review lock directory is unsafe")
+        lock_stat = lock_path.lstat()
+    except RunnerError:
+        raise
+    except OSError as exc:
+        raise RunnerError("original paired-review supervisor lock is missing") from exc
+    lock_identity = plan.get("lock_identity")
+    if (not stat.S_ISREG(lock_stat.st_mode) or lock_path.is_symlink()
+            or not isinstance(lock_identity, dict)
+            or lock_identity != {"device": lock_stat.st_dev, "inode": lock_stat.st_ino}):
+        raise RunnerError("original paired-review supervisor lock provenance changed")
+    outcome = _verified_reviewer_pass(
+        repo, archived_text, child, worktree, workstream, target_workstream,
+        reviewed_main, host_evidence["implementation_commit"], expected_session=session_pin,
+    )
+    if outcome != planned_outcome:
+        raise RunnerError("reviewer-authored PASS differs from the recovery plan's corroborating outcome")
+    return run_id_from_metadata, review_cycle, outcome
+
+
 def coordinator_finish_review(repo: Path, workstream: str, worktree: Path, active_packet_path: str,
                               target_workstream: str, target_packet_path: str, target_content: str,
                               authoring_chat: str | None, reviewed_main: str, run_dir: Path,
@@ -1414,13 +1581,10 @@ def coordinator_finish_review(repo: Path, workstream: str, worktree: Path, activ
         if scope_error:
             raise RunnerError("already-committed review has out-of-scope changes: " + scope_error)
         archived = _show_at(repo, current_head, archive_path)
-        outcome_error = _passing_outcome_error(
-            archived, workstream=workstream, target_workstream=target_workstream,
-            reviewed_main=reviewed_main, implementation_commit=host_evidence["implementation_commit"],
-            run_id=host_evidence.get("run_id"), review_cycle=host_evidence.get("review_cycle"),
+        run_id, review_cycle, outcome = _committed_pass_continuation_identity(
+            repo, workstream, worktree, active_packet_path, target_workstream,
+            target_packet_path, reviewed_main, archived, run_dir, host_evidence,
         )
-        if outcome_error:
-            raise RunnerError("already-committed review lacks the exact independent PASS disposition: " + outcome_error)
         if git(worktree, "status", "--porcelain", "--untracked-files=all"):
             raise RunnerError("already-committed review worktree has additional changes; preserving it for inspection")
         recovery_dir = Path(host_evidence.get("continuation_dir", run_dir)).resolve()
@@ -2583,17 +2747,43 @@ def _verify_redacted_final_capture(final_message: str, logged_message: str,
 def _parse_redacted_final_session(run_dir: Path, metadata: dict, runner_source: str,
                                   control_source: str) -> tuple[str, dict[str, str]]:
     """Authenticate one completed reviewer turn under the pinned JSONL sanitizer."""
-    paths = (run_dir / "codex.jsonl", run_dir / "last-message.txt")
+    paths = (run_dir / "codex.jsonl", run_dir / "last-message.txt", run_dir / "codex.stderr")
     if any(path.is_symlink() or not path.is_file() for path in paths):
         raise RunnerError("reviewer JSONL or saved final message is missing or unsafe")
-    if metadata.get("fresh") is not True or metadata.get("exit_code") != 0:
+    fresh_session = metadata.get("fresh") is True
+    if metadata.get("schema") == CONTINUATION_SCHEMA:
+        invocation = metadata.get("invocation")
+        invocation = invocation if isinstance(invocation, list) and all(
+            isinstance(item, str) for item in invocation) else []
+        output_index = invocation.index("--output-last-message") if invocation.count("--output-last-message") == 1 else -1
+        cd_index = invocation.index("--cd") if invocation.count("--cd") == 1 else -1
+        fresh_session = (
+            type(metadata.get("continuation_number")) is int and metadata.get("continuation_number") == 1
+            and type(metadata.get("reviewer_launch_count")) is int and metadata.get("reviewer_launch_count") == 1
+            and metadata.get("phase") in {"coordinator_closeout", "landed_verification_failed"}
+            and isinstance(metadata.get("original_run_dir"), str)
+            and Path(metadata["original_run_dir"]).resolve() == run_dir.resolve().parent
+            and metadata.get("last_message") == str(paths[1].resolve())
+            and invocation[:3] == ["codex", "exec", "--ephemeral"]
+            and "--json" in invocation and "--resume" not in invocation and "--continue" not in invocation
+            and cd_index >= 0 and cd_index + 1 < len(invocation)
+            and isinstance(metadata.get("worktree"), str)
+            and invocation[cd_index + 1] == metadata["worktree"]
+            and output_index >= 0 and output_index + 1 < len(invocation)
+            and invocation[output_index + 1:output_index + 2]
+            == ["<continuation-dir>/last-message.txt"]
+        )
+    if not fresh_session or metadata.get("exit_code") != 0:
         raise RunnerError("original reviewer metadata does not prove a fresh successful session")
     try:
-        jsonl_bytes, final_bytes = (path.read_bytes() for path in paths)
+        jsonl_bytes, final_bytes, stderr_bytes = (path.read_bytes() for path in paths)
         final = final_bytes.decode("utf-8")
+        stderr = stderr_bytes.decode("utf-8")
         lines = jsonl_bytes.decode("utf-8").splitlines()
     except (OSError, UnicodeDecodeError) as exc:
         raise RunnerError("reviewer session evidence is unreadable UTF-8") from exc
+    if stderr.strip():
+        raise RunnerError("reviewer continuation stderr is non-empty and requires independent reconciliation")
     events: list[dict] = []
     for line in lines:
         try:
@@ -2603,6 +2793,20 @@ def _parse_redacted_final_session(run_dir: Path, metadata: dict, runner_source: 
         if not isinstance(event, dict):
             raise RunnerError("reviewer session event is not an object")
         events.append(event)
+    failure_event_types = {
+        "error", "item.failed", "turn.failed", "tool.error", "response.failed", "stream.error",
+    }
+    for event in events:
+        event_type = str(event.get("type", "")).strip().lower()
+        if (event_type in failure_event_types or event_type.endswith((".failed", ".error"))
+                or event.get("error") not in (None, "", {}, [])):
+            raise RunnerError("reviewer session contains an error or failure event")
+        item = event.get("item")
+        if isinstance(item, dict):
+            item_type = str(item.get("type", "")).strip().lower()
+            if (item_type in {"error", "tool_error", "failure", "failed"}
+                    or item.get("error") not in (None, "", {}, [])):
+                raise RunnerError("reviewer session contains an error or failure item")
     threads = [event for event in events if event.get("type") == "thread.started"]
     starts = [index for index, event in enumerate(events) if event.get("type") == "turn.started"]
     completes = [index for index, event in enumerate(events) if event.get("type") == "turn.completed"]
@@ -2620,15 +2824,61 @@ def _parse_redacted_final_session(run_dir: Path, metadata: dict, runner_source: 
             messages.append((index, text))
     if (not messages or any(index <= starts[0] or index >= completes[0] for index, _ in messages)):
         raise RunnerError("reviewer session has no final agent_message before turn completion")
-    verdict = re.compile(r"(?im)^\s*(?:verdict|review outcome)\s*:")
+    verdict = re.compile(
+        r"(?im)^\s*\*{0,2}(?:independent disposition|verdict|review outcome|"
+        r"finding(?:s)?|blocking findings|human_required|human-required)\s*:"
+    )
     if any(verdict.search(text) for _, text in messages[:-1]):
         raise RunnerError("reviewer session contains a contradictory earlier verdict")
     _verify_redacted_final_capture(final, messages[-1][1], runner_source, control_source)
-    return final, {
+    session = {
         "thread_id": threads[0]["thread_id"],
         "codex_jsonl_sha256": _sha256_bytes(jsonl_bytes),
         "last_message_sha256": _sha256_bytes(final_bytes),
     }
+    if metadata.get("schema") == CONTINUATION_SCHEMA:
+        session["command_failures"] = _classify_session_command_failures(events)
+        if any(item["classification"] == "required_profile_dependency_failure"
+               for item in session["command_failures"]):
+            raise RunnerError("reviewer session contains an unrecovered required profile dependency failure")
+    return final, session
+
+
+def _classify_session_command_failures(events: list[dict]) -> list[dict[str, object]]:
+    """Summarize nonzero command records for separate, evidence-based adjudication."""
+    failures = []
+    for index, event in enumerate(events):
+        item = event.get("item")
+        if not isinstance(item, dict) or item.get("type") != "command_execution":
+            continue
+        command = item.get("command")
+        output = item.get("aggregated_output")
+        if not isinstance(command, str) or not isinstance(output, str):
+            raise RunnerError("reviewer command event omits its command or captured output")
+        exit_code = item.get("exit_code")
+        if type(exit_code) is not int:
+            continue
+        has_traceback = "Traceback (most recent call last):" in output
+        if exit_code == 0 and not has_traceback:
+            continue
+        if ("validate_checkout_profile" in command
+                and "RunnerError: published review dependency is absent from origin/main:" in output):
+            classification = "required_profile_dependency_failure"
+        elif "rg " in command and exit_code == 1 and not output.strip():
+            classification = "search_no_match_candidate"
+        elif has_traceback:
+            classification = "python_traceback_requires_reconciliation"
+        else:
+            classification = "nonzero_command_requires_reconciliation"
+        failures.append({
+            "event_index": index,
+            "command": command,
+            "exit_code": exit_code,
+            "classification": classification,
+            "stored_output_sha256": _sha256_bytes(output.encode("utf-8")),
+            "sanitized_output": redact(output),
+        })
+    return failures
 
 
 def _redacted_final_journal_path(common: Path, workstream: str, run_id: str) -> Path:
