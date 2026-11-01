@@ -762,7 +762,8 @@ def _managed_index_is_current(repo: Path) -> bool:
 
 def _source_span_sync_merge_witness_error(workstream_id: str, path: Path,
                                           source_head: str, trace: RunTrace | None, *,
-                                          require_final_noop: bool = False) -> str | None:
+                                          require_final_noop: bool = False,
+                                          allow_pending_after_sync: bool = False) -> str | None:
     """Reject pre-archive sync merges that lack the source-span trace proof."""
     if trace is None or not trace.path.is_file():
         return "source-span synchronization merge provenance requires the active lifecycle trace"
@@ -1014,6 +1015,49 @@ def _source_span_sync_merge_witness_error(workstream_id: str, path: Path,
         line for line in history.stdout.splitlines()
         if len(git("rev-list", "--parents", "-n", "1", line, cwd=path).split()) == 3
     }
+    after_sync_events = [(i, event) for i, event in enumerate(events)
+                         if event.get("event") == "validation_after_sync"]
+    changed_merge_syncs = [
+        (i, event) for i, event in syncs
+        if isinstance(event.get("data"), dict)
+        and event["data"].get("changed") is True
+        and event["data"].get("head") in source_merge_heads
+    ]
+    consumed_after_sync: set[int] = set()
+    pending_after_sync_count = 0
+    for sync_pos, sync_event in changed_merge_syncs:
+        sync_data = sync_event["data"]
+        sync_head = sync_data.get("head")
+        witnesses = [
+            (i, event) for i, event in after_sync_events
+            if isinstance(event.get("data"), dict)
+            and event["data"].get("sync_head") == sync_head
+        ]
+        if not witnesses and allow_pending_after_sync and sync_head == source_head:
+            pending_after_sync_count += 1
+            continue
+        if len(witnesses) != 1:
+            return f"source-span changed main sync {sync_head} lacks one unique after-sync validation witness"
+        witness_pos, witness_event = witnesses[0]
+        witness = witness_event["data"]
+        expected_tree = git("rev-parse", f"{sync_head}^{{tree}}", cwd=path, check=False)
+        next_sync = min((i for i, _ in syncs if i > sync_pos), default=len(events))
+        if (witness_pos <= sync_pos or witness_pos >= next_sync
+                or witness.get("source_commit") != sync_head
+                or witness.get("source_tree") != expected_tree
+                or witness.get("source_status_sha256") != _git_source_identity(
+                    path, sync_head,
+                )["worktree_status_sha256"]
+                or witness.get("sync_main_sha") != sync_data.get("main_sha")
+                or witness.get("passed") is not True
+                or not isinstance(witness.get("path"), str) or not witness["path"]
+                or not isinstance(witness.get("sha256"), str)
+                or re.fullmatch(r"[0-9a-f]{64}", witness["sha256"]) is None):
+            return f"source-span changed main sync {sync_head} has an invalid or misordered after-sync validation witness"
+        consumed_after_sync.add(witness_pos)
+    if (len(consumed_after_sync) != len(after_sync_events)
+            or pending_after_sync_count > (1 if allow_pending_after_sync else 0)):
+        return "source-span lifecycle trace contains an unmatched, duplicate, or reused after-sync validation witness"
     if any(i not in consumed_resumes for i, event in resumes
            if isinstance(event.get("data"), dict)
            and event["data"].get("head") in source_merge_heads):
@@ -3166,6 +3210,136 @@ def validation_green(report: Path) -> bool:
     return _validation_data_green(data)
 
 
+def _git_source_identity(path: Path, commit: str | None = None) -> dict[str, str]:
+    commit = commit or git("rev-parse", "HEAD", cwd=path)
+    resolved = git("rev-parse", "--verify", f"{commit}^{{commit}}", cwd=path, check=False)
+    tree = git("rev-parse", "--verify", f"{commit}^{{tree}}", cwd=path, check=False)
+    if not resolved or resolved != commit or not tree:
+        raise WorkstreamError("cannot resolve exact validation source commit and tree")
+    status = subprocess.run(
+        ["git", "status", "--porcelain=v1", "-z", "--untracked-files=all"],
+        cwd=path, capture_output=True, check=False,
+    )
+    if status.returncode:
+        raise WorkstreamError("cannot determine exact validation source worktree state")
+    return {"commit": resolved, "tree": tree,
+            "worktree_status_sha256": hashlib.sha256(status.stdout).hexdigest()}
+
+
+def _after_sync_report_data(report: Path, path: Path, sync_head: str) -> tuple[dict, str]:
+    try:
+        raw = report.read_bytes()
+        data = json.loads(raw)
+    except (OSError, json.JSONDecodeError) as exc:
+        raise WorkstreamError(f"cannot read after-sync validation report {report}: {exc}") from exc
+    expected = _git_source_identity(path, sync_head)
+    current = _git_source_identity(path)
+    if current != expected or not status_clean(path):
+        raise WorkstreamError(
+            "after-sync validation source changed after synchronization; report cannot be consumed"
+        )
+    coverage = data.get("coverage") if isinstance(data, dict) else None
+    tests = data.get("tests") if isinstance(data, dict) else None
+    selected = data.get("selected") if isinstance(data, dict) else None
+    summary = data.get("summary") if isinstance(data, dict) else None
+    test_ids = [test.get("id") for test in tests] if isinstance(tests, list) and all(
+        isinstance(test, dict) for test in tests
+    ) else None
+    structurally_green = (
+        isinstance(data, dict)
+        and data.get("schema") == "custodian.validation.result.v1"
+        and data.get("passed") is True
+        and isinstance(coverage, dict)
+        and coverage.get("complete") is True
+        and coverage.get("uncovered_files") == []
+        and isinstance(tests, list) and bool(tests)
+        and test_ids is not None
+        and all(isinstance(test_id, str) and test_id for test_id in test_ids)
+        and len(set(test_ids)) == len(test_ids)
+        and selected == test_ids
+        and all(test.get("status") == "passed" for test in tests)
+        and isinstance(summary, dict)
+        and summary.get("selected") == len(tests)
+        and summary.get("passed") == len(tests)
+        and summary.get("failed") == 0
+        and summary.get("timed_out") == 0
+        and summary.get("skipped") == 0
+        and summary.get("infrastructure_errors") == 0
+    )
+    if (not structurally_green
+            or data.get("source_identity") != expected
+            or data.get("source_changed_during_validation") is not False):
+        raise WorkstreamError(
+            "after-sync validation report must be green, complete, and bound to the exact synchronized source commit and tree"
+        )
+    return expected, hashlib.sha256(raw).hexdigest()
+
+
+def _pending_after_sync_head(path: Path, trace: RunTrace | None) -> str | None:
+    """Return the one current changed-sync head still awaiting validation."""
+    if trace is None or not trace.path.is_file():
+        return None
+    try:
+        events = [json.loads(line) for line in trace.path.read_text().splitlines() if line.strip()]
+    except (OSError, ValueError, TypeError) as exc:
+        raise WorkstreamError(f"cannot inspect pending after-sync validation trace: {exc}") from exc
+    changed = [(i, event) for i, event in enumerate(events)
+               if isinstance(event, dict) and event.get("event") == "main_sync"
+               and isinstance(event.get("data"), dict)
+               and event["data"].get("changed") is True]
+    validations = [(i, event) for i, event in enumerate(events)
+                   if isinstance(event, dict) and event.get("event") == "validation_after_sync"]
+    if not changed:
+        if validations:
+            raise WorkstreamError("after-sync validation witness has no changed main synchronization")
+        return None
+    head = git("rev-parse", "HEAD", cwd=path)
+    tree = git("rev-parse", "HEAD^{tree}", cwd=path)
+    unresolved: list[tuple[int, str]] = []
+    used: set[int] = set()
+    for sync_pos, sync_event in changed:
+        sync_data = sync_event["data"]
+        sync_head = sync_data.get("head")
+        if (not isinstance(sync_head, str)
+                or not git("rev-parse", f"{sync_head}^{{commit}}", cwd=path, check=False)):
+            raise WorkstreamError("changed main-sync trace contains an invalid source head")
+        witnesses = [(i, event) for i, event in validations
+                     if isinstance(event.get("data"), dict)
+                     and event["data"].get("sync_head") == sync_head]
+        if len(witnesses) > 1:
+            raise WorkstreamError("changed main synchronization has duplicate after-sync validation witnesses")
+        if not witnesses:
+            unresolved.append((sync_pos, sync_head))
+            continue
+        witness_pos, witness_event = witnesses[0]
+        witness = witness_event["data"]
+        expected_tree = git("rev-parse", f"{sync_head}^{{tree}}", cwd=path)
+        next_sync = min((i for i, event in enumerate(events)
+                         if isinstance(event, dict) and event.get("event") == "main_sync"
+                         and i > sync_pos), default=len(events))
+        if (witness_pos <= sync_pos or witness_pos >= next_sync
+                or witness.get("source_commit") != sync_head
+                or witness.get("source_tree") != expected_tree
+                or witness.get("source_status_sha256") != _git_source_identity(
+                    path, sync_head,
+                )["worktree_status_sha256"]
+                or witness.get("sync_main_sha") != sync_data.get("main_sha")
+                or witness.get("passed") is not True
+                or not isinstance(witness.get("path"), str) or not witness["path"]
+                or not isinstance(witness.get("sha256"), str)
+                or re.fullmatch(r"[0-9a-f]{64}", witness["sha256"]) is None):
+            raise WorkstreamError("changed main synchronization has an invalid after-sync validation witness")
+        used.add(witness_pos)
+    if len(used) != len(validations):
+        raise WorkstreamError("after-sync validation trace contains an unmatched or reused witness")
+    if not unresolved:
+        return None
+    if len(unresolved) != 1 or unresolved[0][1] != head or tree != git(
+            "rev-parse", f"{unresolved[0][1]}^{{tree}}", cwd=path):
+        raise WorkstreamError("an unvalidated changed main synchronization is stale relative to the current checkout")
+    return unresolved[0][1]
+
+
 def _validation_data_green(data: object) -> bool:
     if not isinstance(data, dict) or data.get("schema") != "custodian.validation.result.v1" or not data.get("passed", False):
         return False
@@ -3497,6 +3671,49 @@ def _finish_impl(workstream_id: str, validation_report: Path, validation_report_
         import hashlib
         trace.record("validation_report", path=validation_report.name, sha256=hashlib.sha256(validation_report.read_bytes()).hexdigest(), passed=True)
 
+    # A prior finish attempt may already have merged origin/main and stopped
+    # before validating that tree. Consume its report before checkpoint_impl
+    # can publish the synchronized branch again, even when the retry's own
+    # sync_main() would be a no-op.
+    pending_after_sync = (
+        _pending_after_sync_head(path, trace) if requires_source_span_witnesses else None
+    )
+    if pending_after_sync is not None:
+        pending_trace_error = _source_span_sync_merge_witness_error(
+            workstream_id, path, git("rev-parse", "HEAD", cwd=path), trace,
+            allow_pending_after_sync=True,
+        )
+        if pending_trace_error:
+            raise WorkstreamError(pending_trace_error)
+        if validation_report_after_sync is None:
+            raise WorkstreamError(
+                "a prior main synchronization still requires --validation-report-after-sync; recovery state retained"
+            )
+        source_identity, report_sha256 = _after_sync_report_data(
+            validation_report_after_sync, path, pending_after_sync,
+        )
+        assert trace is not None
+        pending_sync_event = next(
+            event for event in reversed([
+                json.loads(line) for line in trace.path.read_text().splitlines() if line.strip()
+            ])
+            if event.get("event") == "main_sync"
+            and isinstance(event.get("data"), dict)
+            and event["data"].get("changed") is True
+            and event["data"].get("head") == pending_after_sync
+        )
+        trace.record(
+            "validation_after_sync", path=validation_report_after_sync.name,
+            sha256=report_sha256, passed=True, sync_head=pending_after_sync,
+            sync_main_sha=pending_sync_event["data"].get("main_sha"),
+            source_commit=source_identity["commit"], source_tree=source_identity["tree"],
+            source_status_sha256=source_identity["worktree_status_sha256"],
+        )
+        if not trace.publish():
+            raise WorkstreamError(
+                "after-sync validation trace publication failed; synchronized checkout is retained"
+            )
+
     if trace and requires_source_span_witnesses:
         source_span_error = _source_span_sync_merge_witness_error(
             workstream_id, path, git("rev-parse", "HEAD", cwd=path), trace,
@@ -3535,12 +3752,24 @@ def _finish_impl(workstream_id: str, validation_report: Path, validation_report_
     changed = sync_main(path)
     if trace: trace.record("main_sync", changed=changed, head=git("rev-parse", "HEAD", cwd=path), main_sha=git("rev-parse", "origin/main", cwd=path))
     if changed:
-        if validation_report_after_sync is None or not validation_green(validation_report_after_sync):
+        sync_head = git("rev-parse", "HEAD", cwd=path)
+        if validation_report_after_sync is None:
             raise WorkstreamError("main synchronization changed the tree; provide a green --validation-report-after-sync; recovery state retained")
+        if requires_source_span_witnesses:
+            source_identity, report_sha256 = _after_sync_report_data(
+                validation_report_after_sync, path, sync_head,
+            )
+        elif not validation_green(validation_report_after_sync):
+            raise WorkstreamError("main synchronization changed the tree; provide a green --validation-report-after-sync; recovery state retained")
+        else:
+            source_identity = _git_source_identity(path, sync_head)
+            report_sha256 = hashlib.sha256(validation_report_after_sync.read_bytes()).hexdigest()
         if trace:
-            import hashlib
             trace.record("validation_after_sync", path=validation_report_after_sync.name,
-                         sha256=hashlib.sha256(validation_report_after_sync.read_bytes()).hexdigest(), passed=True)
+                         sha256=report_sha256, passed=True, sync_head=sync_head,
+                         sync_main_sha=git("rev-parse", f"{sync_head}^2", cwd=path),
+                         source_commit=source_identity["commit"], source_tree=source_identity["tree"],
+                         source_status_sha256=source_identity["worktree_status_sha256"])
             # Recheck main after the validated merge. This emits the canonical
             # final no-op witness when main is stable; if main advanced again,
             # preserve the new merge and require validation of that newer tree.

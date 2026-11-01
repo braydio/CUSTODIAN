@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import fnmatch
+import hashlib
 import json
 import os
 import re
@@ -53,6 +54,29 @@ HARD_FATAL_DIAGNOSTICS = FATAL_DIAGNOSTICS[1:]
 
 class ManifestError(ValueError):
     pass
+
+
+def source_identity(repo_root: Path | None = None) -> dict[str, str]:
+    """Return the immutable Git commit/tree identity validated by this run."""
+    repo_root = repo_root or REPO_ROOT
+    values: dict[str, str] = {}
+    for name, revision in (("commit", "HEAD"), ("tree", "HEAD^{tree}")):
+        result = subprocess.run(
+            ["git", "rev-parse", "--verify", revision], cwd=repo_root,
+            capture_output=True, text=True, check=False,
+        )
+        value = result.stdout.strip()
+        if result.returncode or not re.fullmatch(r"[0-9a-f]{40,64}", value):
+            raise RuntimeError(f"cannot determine validation source {name} at HEAD")
+        values[name] = value
+    status = subprocess.run(
+        ["git", "status", "--porcelain=v1", "-z", "--untracked-files=all"],
+        cwd=repo_root, capture_output=True, check=False,
+    )
+    if status.returncode:
+        raise RuntimeError("cannot determine validation source worktree state")
+    values["worktree_status_sha256"] = hashlib.sha256(status.stdout).hexdigest()
+    return values
 
 
 def owner_patterns(test: dict[str, Any]) -> list[str]:
@@ -504,6 +528,13 @@ def main(argv: list[str] | None = None) -> int:
         payload = {"schema": "custodian.validation.result.v1", "passed": False, "configuration_error": f"unknown test id: {args.test}"}
         print(json.dumps(payload) if args.json else payload["configuration_error"])
         return EXIT_CONFIG
+    try:
+        validated_source = source_identity()
+    except RuntimeError as error:
+        payload = {"schema": "custodian.validation.result.v1", "passed": False,
+                   "configuration_error": str(error)}
+        print(json.dumps(payload) if args.json else payload["configuration_error"])
+        return EXIT_CONFIG
     # The import step and the tests that load its output are one critical
     # section: a second process importing the same project mid-run does not fail
     # cleanly, it stalls the import until it times out.
@@ -534,9 +565,17 @@ def main(argv: list[str] | None = None) -> int:
             "infrastructure_failure": "godot_project_busy", "error": str(error),
         }))
         return EXIT_LOCK
+    try:
+        source_after_validation = source_identity()
+    except RuntimeError:
+        source_after_validation = None
+    source_changed = source_after_validation != validated_source
     payload = {
         "schema": "custodian.validation.result.v1",
-        "passed": bool(coverage["complete"]) and all(item["status"] == "passed" for item in results),
+        "passed": (not source_changed and bool(coverage["complete"])
+                   and all(item["status"] == "passed" for item in results)),
+        "source_identity": validated_source,
+        "source_changed_during_validation": source_changed,
         "changed_files": files or [], "coverage": coverage,
         "selected": [item["id"] for item in selected], "tests": results,
         "summary": {"selected": len(results), "passed": sum(r["status"] == "passed" for r in results),
@@ -563,6 +602,8 @@ def main(argv: list[str] | None = None) -> int:
     if payload["summary"]["timed_out"]:
         return EXIT_TIMEOUT
     if payload["summary"]["failed"]:
+        return EXIT_FAILED
+    if source_changed:
         return EXIT_FAILED
     if not coverage["complete"]:
         return EXIT_COVERAGE
