@@ -63,6 +63,27 @@ def _prepare_historical_git_fixture(repository: Path, revision: str) -> None:
                    check=True, env=env)
 
 
+class _ImmediateFailureTextTestResult(unittest.TextTestResult):
+    """Keep failure tracebacks in bounded CI logs even if the suite times out."""
+
+    def _write_failure_details(self, label, test, error):
+        self.stream.writeln(f"\n{label}: {test.id()}")
+        self.stream.writeln(self._exc_info_to_string(error, test))
+        self.stream.flush()
+
+    def addError(self, test, err):
+        super().addError(test, err)
+        self._write_failure_details("IMMEDIATE TEST ERROR", test, err)
+
+    def addFailure(self, test, err):
+        super().addFailure(test, err)
+        self._write_failure_details("IMMEDIATE TEST FAILURE", test, err)
+
+
+class _ImmediateFailureTextTestRunner(unittest.TextTestRunner):
+    resultclass = _ImmediateFailureTextTestResult
+
+
 class HistoricalGitFixtureTests(unittest.TestCase):
     def test_historical_fixture_clone_and_checkout_skip_lfs_smudge(self):
         repository = Path("/tmp/historical-fixture")
@@ -10303,4 +10324,4 @@ Authoring chat: {chat}
 
 
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main(testRunner=_ImmediateFailureTextTestRunner)
