@@ -1,9 +1,209 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-01T18:02:46Z",
-  "source_main_sha": "1784cbe67eeb06d49d9202e66969e46ca98c15cd",
+  "generated_at": "2026-11-01T18:53:24Z",
+  "source_main_sha": "8bc0fe40184dec741ccc5a92997052f96e0deb43",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "wire-exporter-landed-review-attestation-blocked-38545e4c",
+      "headline": "WIRE's observation exporter lands; independent review stalls at an attestation gate",
+      "summary": "CUSTODIAN landed the local sanitized observation exporter and published its private-transport packet pair. The exporter passed reported focused tests, but its independent reviewer stopped at a source-attestation gate before launch. Dropbox transport remains unimplemented and dependency-blocked; a separate repository-validation run failed queue-authority checks.",
+      "body": "The local WIRE observation exporter landed on main at 38545e4c12b848861284d77c299790c046df6f62. It consumes a pre-existing task-administrator snapshot, checks evidence completeness and freshness, and preserves unavailable counts rather than manufacturing zeroes. The executor reported 15 focused synthetic tests and changed-file validation passing; GitHub repository validation also passed at the landing SHA. The implementation packet was archived, but implementation testing is not independent acceptance.\n\nThe paired review was reportedly claimed as codex-reviewer and stopped by host validation before reviewer launch: 'changed validation manifest is not covered by an accepted exact source attestation.' The preserved review runs and retained worktree are host-reported, not independently inspected here. No independent PASS is established. The private transport implementation/review pair was then published and promoted on main at 8bc0fe40184dec741ccc5a92997052f96e0deb43, with implementation dependent on accepted exporter review. No private observation upload, ChatGPT retrieval, or producer schedule is established.\n\nGitHub Actions additionally show a failed repository validation on the transport authoring commit 8967187af, specifically the task-packet queue-authority step; the automatic authoring handoff succeeded. The Godot Level Pipeline failed at the exporter landing SHA in a separate authored-level lifecycle step. These failures need separate diagnosis; neither proves the exporter itself failed.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-wire-observation-export-v1",
+      "occurred_at": "2026-11-01T18:13:59Z",
+      "bullets": [
+        "Exporter landed and implementation packet archived on main.",
+        "15 synthetic tests passed per executor; independent review has not started.",
+        "Source-attestation host gate blocks preserved paired review.",
+        "Transport packet pair promoted but dependency-gated; no private delivery yet.",
+        "Repository queue-authority validation failed on transport authoring commit; investigate separately."
+      ],
+      "links": [
+        {
+          "title": "Exporter landing",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/38545e4c12b848861284d77c299790c046df6f62"
+        },
+        {
+          "title": "Exporter implementation",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/5013c8404a6c9c3c08ac2800f66f7b5f5f035703"
+        },
+        {
+          "title": "Transport packet promotion",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/8bc0fe40184dec741ccc5a92997052f96e0deb43"
+        },
+        {
+          "title": "Exporter review packet",
+          "url": "https://github.com/braydio/CUSTODIAN/blob/8bc0fe40184dec741ccc5a92997052f96e0deb43/custodian/docs/ai_context/task_packets/REVIEW_AGENT_WIRE_OBSERVATION_EXPORT_V1.md"
+        },
+        {
+          "title": "Passing landing validation",
+          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41335445237"
+        },
+        {
+          "title": "Failing transport-authoring queue validation",
+          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41335491813"
+        },
+        {
+          "title": "Godot lifecycle failure",
+          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41335201305"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN now has the first working piece of its operational reporting pipeline: a local exporter that turns an existing task-administrator snapshot into a constrained, sanitized observation. The code has landed, but a separate evidence-authentication rule stopped its independent reviewer before review could begin. The private Dropbox delivery layer must wait.",
+        "sections": [
+          {
+            "heading": "What the exporter changes",
+            "text": "Instead of inferring project activity from GitHub branches, the exporter is designed to consume an existing operational snapshot and report only supported counts. It rejects stale or inconsistent evidence and keeps missing values unknown. That is the foundation for a more truthful WIRE status panel, but it is not a live telemetry service yet."
+          },
+          {
+            "heading": "Why the review cannot proceed",
+            "text": "The reviewer was stopped by a host-validation requirement for an accepted exact source attestation covering the changed validation manifest. Passing implementation tests cannot substitute for this proof. The preserved claim and review evidence need a supported recovery, not a bypass."
+          },
+          {
+            "heading": "Transport is queued, not operating",
+            "text": "A separate implementation and independent-review pair for private Dropbox delivery has been promoted. Its implementation explicitly depends on accepted exporter review. No upload or ChatGPT readback has been verified. Separately, a repository validation run failed a packet queue-authority check on the transport authoring commit; that failure should be diagnosed rather than conflated with exporter test results."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The bottleneck has shifted from code to provenance",
+            "explanation": "The exporter has landed and reported tests pass. The immediate obstacle is proving the exact reviewed source and validation policy to the independent review system. Resolving that gate unlocks the transport dependency without weakening the acceptance contract."
+          },
+          {
+            "title": "A ready packet is not an active data pipeline",
+            "explanation": "The transport pair exists in the queue, but its dependency is unmet and there is no verified upload, consumer retrieval, or schedule. WIRE must continue labeling GitHub-only observations as partial."
+          }
+        ],
+        "takeaway": "The exporter is landed, but the independent-review and private-delivery milestones remain open. Treat the source-attestation recovery as the next gate.",
+        "next_watch": "Watch for a supported source-attestation recovery plan and genuine independent PASS, plus a separate diagnosis of the queue-authority CI failure."
+      },
+      "scorecard": {
+        "stage": "Exporter landed; independent review blocked before launch",
+        "as_of": "2026-11-01T18:53:24Z",
+        "scope": "Named WIRE exporter and dependent private-transport packet pair; GitHub and reported host review evidence only",
+        "metrics": [
+          {
+            "id": "other-wire-transport-packets",
+            "label": "TRANSPORT PACKETS PROMOTED",
+            "value": 2,
+            "verification": "verified",
+            "basis": "Two named implementation/review packets promoted by automatic handoff on main; not a count of eligible claims",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/8bc0fe40184dec741ccc5a92997052f96e0deb43"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Exporter packet published",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Published and subsequently archived on main."
+          },
+          {
+            "label": "Exporter implementation landed",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Main contains implementation commit 5013c8404 and landing 38545e4c."
+          },
+          {
+            "label": "Implementation validation",
+            "status": "done",
+            "verification": "reported",
+            "evidence": "Executor reports 15 focused tests and changed-file coverage passing; repository validation at landing SHA passed."
+          },
+          {
+            "label": "Independent exporter review",
+            "status": "blocked",
+            "verification": "reported",
+            "evidence": "Host validation stopped before reviewer launch due to missing accepted exact source attestation for changed validation manifest; no PASS."
+          },
+          {
+            "label": "Transport implementation",
+            "status": "next",
+            "verification": "verified",
+            "evidence": "Published dependency-gated packet; no transport implementation landing identified."
+          },
+          {
+            "label": "Transport independent acceptance",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Requires completed transport and genuine review receipt."
+          },
+          {
+            "label": "Private upload and WIRE consumption",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No upload, readback, or producer schedule verified."
+          }
+        ],
+        "next_gate": "Authorized recovery owner must resolve exact source-attestation blocker and obtain a valid independent exporter-review result before transport claim."
+      },
+      "details": {
+        "overview": "Main advanced through exporter implementation, archive, and transport packet promotion. Source attestation is a host review prerequisite. GitHub cannot prove current local process, retained worktree, or disk status.",
+        "ledger": [
+          {
+            "stage": "Implementation source",
+            "status": "verified landed",
+            "evidence": "5013c8404 implementation; 38545e4c landing; 3dd84a7b archive transition."
+          },
+          {
+            "stage": "Validation",
+            "status": "reported pass plus verified CI",
+            "evidence": "Executor reports 15 tests, 5/5 and 6/6 changed-file validation; Validate Repository passed on 38545e4c."
+          },
+          {
+            "stage": "Independent review",
+            "status": "reported blocked before launch",
+            "evidence": "Preserved host run 20261101T181049Z-ec613c8a7c18 and claim run 20261101T181128Z-265f4bc374a4; no verdict."
+          },
+          {
+            "stage": "Transport packet promotion",
+            "status": "verified",
+            "evidence": "8967187af authored pair, 8bc0fe401 promoted it; implementation depends on exporter review."
+          },
+          {
+            "stage": "Repository validation",
+            "status": "verified failure on authoring commit",
+            "evidence": "Actions 41335491813 failed task-packet queue-authority step on 8967187af."
+          },
+          {
+            "stage": "Godot level pipeline",
+            "status": "verified failure",
+            "evidence": "Actions 41335201305 failed authored-level lifecycle suite at exporter landing SHA."
+          },
+          {
+            "stage": "Canonical teardown",
+            "status": "reported partial",
+            "evidence": "Exporter worktree retired; review worktree preserved according to host relay; no independent host verification."
+          }
+        ],
+        "notes": [
+          "Reported host: 2 worktrees created, 1 retired, 1 retained; 104 total and 72 GB free. These are not current independently measured figures.",
+          "Dispatcher-wide counts unavailable; do not extrapolate from named packets."
+        ],
+        "unknowns": [
+          "Accepted source-attestation recovery plan and reviewer verdict absent.",
+          "No independent current host ownership, worktree, or disk inspection.",
+          "No private Dropbox observation or ChatGPT consumer retrieval."
+        ],
+        "actions": [
+          "Authorized recovery owner: resolve the exact source-attestation gate without bypassing provenance.",
+          "Review owner: resume preserved review only after canonical recovery validation passes.",
+          "Transport executor: wait for independent exporter acceptance and dispatcher-confirmed eligibility.",
+          "CI owner: inspect failed queue-authority and Godot lifecycle jobs separately."
+        ]
+      },
+      "related": [
+        {
+          "title": "WIRE telemetry gets an authorized path: exporter and independent-review packets enter the queue",
+          "context": "Earlier packet publication established the implementation and independent-review sequence.",
+          "story_id": "wire-observation-export-packets-ready-f38d7f40"
+        }
+      ]
+    },
     {
       "id": "sepulcher-v2-host-validation-recovery-withdrawn-1784cbe6",
       "headline": "Sepulcher's second recovery queue is withdrawn, leaving its held review unresolved",
@@ -1393,158 +1593,24 @@
         ]
       },
       "related": []
-    },
-    {
-      "id": "validator-recertification-findings-correction-ca0d2895",
-      "headline": "Independent review finds a provenance loophole; corrective packets enter the dispatch queue",
-      "summary": "An independent validator-recertification review recorded blocking finding R0-01: the finish-time producer guard accepts some merge witnesses that the canonical consumer would reject. A narrowly scoped correction and independent review are now marked ready/auto, but neither has been executed or accepted.",
-      "body": "The reviewer documented R0-01 and archived the review with outcome findings, not PASS. Two follow-up packets now declare ready/auto with sequential dependencies. They are not proof of dispatcher eligibility or execution. The fix must reproduce the failure, strengthen producer-side witness validation without weakening the consumer, then receive a separate independent review.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-paired-review-validator-recertification-v1-review-corrections-1",
-      "occurred_at": "2026-11-01T08:55:34Z",
-      "bullets": [
-        "A verified blocking review finding has a defined corrective path, not an accepted fix.",
-        "Watch for a canonical dispatch/claim, reproducible regression tests, implementation landing and independent PASS for the correction."
-      ],
-      "links": [
-        {
-          "title": "Independent findings receipt",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/52dad5e3dd07ee707d0eba29e70a1752355fe261"
-        },
-        {
-          "title": "Correction packets authored",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/546fd232e6c5d8a323885274152f2b156c6bae69"
-        },
-        {
-          "title": "Correction packets marked ready",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/ca0d28956579680ce1ed84e575fc7a1f318ebdab"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "A fresh independent review caught a mismatch in CUSTODIAN's review-evidence safeguards. One validator accepts weaker proof of a source-sync merge than the other, so the new guard cannot yet be trusted as an equivalent pre-publication check.",
-        "sections": [
-          {
-            "heading": "What the reviewer found",
-            "text": "Finding R0-01 identifies a producer-side check that can accept a changed-sync witness without the unique matching checkpoint event and other structural evidence required by the canonical consumer. The archived review explicitly records findings rather than acceptance."
-          },
-          {
-            "heading": "A bounded correction is prepared",
-            "text": "The correction packet and its paired independent review were added and then switched from draft/manual to ready/auto. The correction must reproduce the failure and align the producer with the existing stronger consumer, not relax the consumer to pass tests."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The weak point is before publication",
-            "explanation": "The consumer already demands stronger provenance; the gap is that the producer may let inadequate evidence reach that later check. Fixing the earlier gate reduces invalid review handoffs."
-          },
-          {
-            "title": "Ready is not accepted",
-            "explanation": "Both new packets have declared readiness, but their dependencies, execution, tests and independent review still need separate evidence."
-          }
-        ],
-        "takeaway": "A verified blocking review finding has a defined corrective path, not an accepted fix.",
-        "next_watch": "Watch for a canonical dispatch/claim, reproducible regression tests, implementation landing and independent PASS for the correction."
-      },
-      "scorecard": {
-        "stage": "Correction and review declared ready; execution unverified",
-        "as_of": "2026-11-01T09:17:29.453Z",
-        "scope": "Two named correction-cycle packets only, not full dispatcher inventory",
-        "metrics": [
-          {
-            "id": "ready_auto",
-            "label": "READY/AUTO IN PAIR",
-            "value": 2,
-            "verification": "verified",
-            "basis": "Both named packets marked Status: ready and Dispatch: auto in commit ca0d2895; dependencies remain",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/ca0d28956579680ce1ed84e575fc7a1f318ebdab"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Independent parent review records R0-01",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Findings review archived in 52dad5e3; no PASS"
-          },
-          {
-            "label": "Correction and paired review packets authored",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "546fd232"
-          },
-          {
-            "label": "Packets declared ready/auto",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "ca0d2895; not proof of dispatch"
-          },
-          {
-            "label": "Correction implemented and validated",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No implementation landing established"
-          },
-          {
-            "label": "Correction independently accepted",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No accepted PASS receipt established"
-          },
-          {
-            "label": "Canonical teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "Host evidence unavailable"
-          }
-        ],
-        "next_gate": "Dispatcher owner verifies parent review dependency and claims the correction packet when eligible."
-      },
-      "details": {
-        "overview": "Parent validator recertification review run 20261031T095210Z-2a66bdc76153 has outcome findings, with R0-01 blocking implementation acceptance. No host or dispatcher audit was available.",
-        "ledger": [
-          {
-            "stage": "Parent independent review",
-            "status": "verified findings, not PASS",
-            "evidence": "52dad5e3"
-          },
-          {
-            "stage": "Correction handoff",
-            "status": "verified ready declarations",
-            "evidence": "ca0d2895"
-          }
-        ],
-        "notes": [
-          "The consumer validator was explicitly excluded from weakening as a shortcut."
-        ],
-        "unknowns": [
-          "Actual claim, execution, acceptance and teardown"
-        ],
-        "actions": [
-          "Dispatcher owner: verify prerequisites and dispatch correction; independent reviewer: assess after landing."
-        ]
-      },
-      "related": []
     }
   ],
   "snapshot": {
-    "observed_at": "2026-11-01T18:02:46Z",
-    "source_main_sha": "1784cbe67eeb06d49d9202e66969e46ca98c15cd",
+    "observed_at": "2026-11-01T18:53:24Z",
+    "source_main_sha": "8bc0fe40184dec741ccc5a92997052f96e0deb43",
     "coverage": "partial",
-    "scope": "Current main commit and changed files, two named WIRE packet headers, recent main commits and GitHub Actions; no full canonical dispatcher audit or host access.",
+    "scope": "Current main and selected named WIRE exporter/review/transport packets, recent main commits and GitHub Actions; no live canonical full dispatcher audit or host inspection.",
     "metrics": [
       {
-        "id": "ready_auto",
-        "label": "WIRE PAIR READY/AUTO",
+        "id": "other-wire-transport-packets",
+        "label": "TRANSPORT PAIR PROMOTED",
         "value": 2,
         "verification": "verified",
-        "basis": "Two specifically inspected WIRE exporter implementation and review packet headers on main; review is dependency-gated, not two eligible execution claims.",
-        "url": "https://github.com/braydio/CUSTODIAN/blob/1784cbe67eeb06d49d9202e66969e46ca98c15cd/custodian/docs/ai_context/task_packets/AGENT_WIRE_OBSERVATION_EXPORT_V1.md"
+        "basis": "Named transport implementation and review packet pair on main at 8bc0fe401; not a project-wide ready or eligible total.",
+        "url": "https://github.com/braydio/CUSTODIAN/commit/8bc0fe40184dec741ccc5a92997052f96e0deb43"
       }
     ],
-    "focus": "Reconcile the preserved Sepulcher V2 held review before further recovery; separately verify exporter dispatcher eligibility.",
-    "note": "New Sepulcher host-validation recovery pair withdrawn; distinct from prior salvage withdrawal. Partial GitHub-only coverage; full queue, host ownership, worktrees, locks and disk unknown."
+    "focus": "Resolve the exporter independent-review source-attestation blocker through an authorized supported recovery path.",
+    "note": "Exporter landed; review blocked before reviewer launch. Transport is dependency-gated. Host counts are relay-reported, not current. Repository queue-authority CI failed on transport authoring commit."
   }
 }
