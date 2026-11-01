@@ -5,8 +5,8 @@
 - Category: `agent-ops`
 - Authoring handoff: `auto`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `agent-sepulcher-paving-source-scope-attestation-v1`
 - Locks: `paired-review-source-provenance`

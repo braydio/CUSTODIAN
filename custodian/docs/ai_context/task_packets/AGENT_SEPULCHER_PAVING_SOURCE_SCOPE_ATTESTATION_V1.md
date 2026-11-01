@@ -4,8 +4,8 @@
 - Workstream: `agent-sepulcher-paving-source-scope-attestation-v1`
 - Category: `agent-ops`
 - Authoring handoff: `auto`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `sepulcher-paving-native-quad-playtest-v1`
 - Locks: `paired-review-source-provenance`
