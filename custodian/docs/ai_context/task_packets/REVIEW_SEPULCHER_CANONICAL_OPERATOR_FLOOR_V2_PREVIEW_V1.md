@@ -5,8 +5,8 @@
 - Category: `operator-actors`
 - Authoring handoff: `auto`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `sepulcher-canonical-operator-floor-v2-preview-v1`
 - Locks: `sepulcher-material-operator-v2-preview`

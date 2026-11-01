@@ -4,8 +4,8 @@
 - Workstream: `sepulcher-canonical-operator-floor-v2-preview-v1`
 - Category: `operator-actors`
 - Authoring handoff: `auto`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `sepulcher-paving-native-quad-playtest-v1`
 - Locks: `sepulcher-material-operator-v2-preview`
