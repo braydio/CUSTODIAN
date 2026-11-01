@@ -1,9 +1,275 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-10-31T22:37:53Z",
-  "source_main_sha": "e1bff4eb3360e7f0fcdbc5bb67fa86bc2b600f4f",
+  "generated_at": "2026-11-01T03:07:00Z",
+  "source_main_sha": "2d5240f002a9cd8d95e89cc6ff93124fac30878e",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "hub-sepulcher-art-manifest-2d5240f0",
+      "headline": "Hub and Awakening art gains a detailed production blueprint, but no images are approved",
+      "summary": "A new main-branch manifest establishes 71 core image states, 12 conditional states and 83 generation prompts for Hub, Sepulcher, Awakening and Dust Lung. It is an authorized production plan, not delivered art.",
+      "body": "Commit 2d5240f0 adds Markdown and JSON art manifests. The bounded document inventory contains 71 core states (36 Hub, 27 Awakening, 8 Dust Lung), 12 conditional states, and 83 prompts. A five-image individual calibration and approval gate precedes wider production. No images were generated, approved, uploaded or ingested by this commit. Main SHA 2d5240f002a9cd8d95e89cc6ff93124fac30878e. CI status for this commit is not established.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "hub-sepulcher-awakening-art-v1",
+      "occurred_at": "2026-11-01T03:05:27Z",
+      "bullets": [
+        "Art owner: generate and present the first calibration image for explicit approval."
+      ],
+      "links": [
+        {
+          "title": "Art manifest commit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/2d5240f002a9cd8d95e89cc6ff93124fac30878e"
+        },
+        {
+          "title": "Production manifest",
+          "url": "https://github.com/braydio/CUSTODIAN/blob/2d5240f002a9cd8d95e89cc6ff93124fac30878e/design/04_architecture/HUB_SEPULCHER_AWAKENING_ART_V1_MANIFEST.md"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN now has a concrete art production map for its first Hub, the Sepulcher and the Awakening approach. Rather than generating scenery in a large unreviewed batch, the new plan specifies individual image states and begins with five carefully inspected calibration images. The plan has landed; the artwork has not.",
+        "sections": [
+          {
+            "heading": "A unified visual language",
+            "text": "The blueprint connects the ruined civic spaces of the Hub with Sepulcher's burial terraces and the Awakening perimeter. It preserves established gameplay routes, collision and scene ownership while specifying materials, camera alignment and exact image-state targets."
+          },
+          {
+            "heading": "Approval comes before volume",
+            "text": "The first five images span a garden underlay, a memorial slab and three Awakening support views. Each must be generated, checked against the real scene and individually approved before wider production begins. No source images were published with the manifest."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The bottleneck moves from planning to visual calibration",
+            "explanation": "The manifest defines 83 individual prompts, but a small human-approved calibration gate controls whether those specifications become usable production assets."
+          },
+          {
+            "title": "Scenery cannot silently rewrite gameplay",
+            "explanation": "The plan explicitly protects existing routes, inspection points and collision ownership, keeping visual production separate from gameplay authority."
+          }
+        ],
+        "takeaway": "The art program is specified and committed, not produced or accepted.",
+        "next_watch": "Look for the first five individually approved calibration images and verifiable source receipts."
+      },
+      "details": {
+        "overview": "Commit 2d5240f0 adds Markdown and JSON art manifests. The bounded document inventory contains 71 core states (36 Hub, 27 Awakening, 8 Dust Lung), 12 conditional states, and 83 prompts. A five-image individual calibration and approval gate precedes wider production. No images were generated, approved, uploaded or ingested by this commit. Main SHA 2d5240f002a9cd8d95e89cc6ff93124fac30878e. CI status for this commit is not established.",
+        "ledger": [
+          {
+            "stage": "Production specification",
+            "status": "verified landed",
+            "evidence": "2d5240f0 includes manifest files."
+          },
+          {
+            "stage": "Art generation and acceptance",
+            "status": "not established",
+            "evidence": "Manifest explicitly says no images generated or approved."
+          }
+        ],
+        "notes": [],
+        "unknowns": [
+          "Actual visual output, Dropbox receipts, scene validation and CI not observed."
+        ],
+        "actions": [
+          "Art owner: generate and present the first calibration image for explicit approval."
+        ]
+      },
+      "scorecard": {
+        "stage": "A new main-branch manifest establishes 71 core image states, 12 conditional states and 83 generation prompts f",
+        "as_of": "2026-11-01T03:07:00Z",
+        "scope": "Named workstream and cited GitHub evidence only; no canonical live dispatcher audit",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Publish art manifest",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Commit 2d5240f0 adds Markdown and JSON manifests."
+          },
+          {
+            "label": "Generate five calibration images",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No image generation evidence in inspected commit."
+          },
+          {
+            "label": "Individual aesthetic approval",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Explicit approval required per image."
+          },
+          {
+            "label": "Produce remaining states",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Dependent on calibration."
+          },
+          {
+            "label": "Ingest and validate in game",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No ingestion receipt inspected."
+          }
+        ],
+        "next_gate": "Art owner: generate and present the first calibration image for explicit approval."
+      },
+      "related": [
+        {
+          "title": "Emergency review-recovery code lands on main, but the protected review remains held",
+          "context": "The recovery mechanism is part of the review infrastructure on which subsequent production acceptance may depend.",
+          "story_id": "paired-review-recovery-merge-dc5b7505"
+        }
+      ]
+    },
+    {
+      "id": "paired-review-recovery-merge-dc5b7505",
+      "headline": "Emergency review-recovery code lands on main, but the protected review remains held",
+      "summary": "PR #102 merged into main at 02:43 UTC. The code introduces digest-bound read-only planning and separately authorized apply for one pinned review. Merge does not prove an independent approval, actual recovery execution or clean teardown.",
+      "body": "GitHub confirms PR #102 merged in commit dc5b7505b930de1c7331104391edc3f1934cbac2. Its description reports local test passes and a pre-merge plan that is now stale. The only inspected PR review is COMMENTED on an earlier head, not APPROVED. A Validate Repository workflow associated with head b7dd0006 succeeded, while Godot Level Pipeline failed; these are distinct checks and do not establish full CI health. No fresh post-merge plan, authorized apply, independent review PASS, host cleanup or teardown was inspected. Current main advanced further to 2d5240f0.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "review-agent-paired-review-runner-profile-summary-coverage-v1",
+      "occurred_at": "2026-11-01T02:43:29Z",
+      "bullets": [
+        "Recovery owner: generate a fresh exact-run read-only plan; do not apply without separate explicit authorization."
+      ],
+      "links": [
+        {
+          "title": "Merged PR #102",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/102"
+        },
+        {
+          "title": "Merge commit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/dc5b7505b930de1c7331104391edc3f1934cbac2"
+        },
+        {
+          "title": "Validate Repository run",
+          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41263245863"
+        },
+        {
+          "title": "Godot pipeline run",
+          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41263245864"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "The emergency mechanism for resuming a stranded CUSTODIAN review has crossed a significant boundary: its code is now on main. It can prepare a read-only, evidence-pinned recovery plan and requires a separate authorization before applying it. That is a software landing, not proof the held review has resumed.",
+        "sections": [
+          {
+            "heading": "A narrowly bounded recovery route",
+            "text": "The merged change preserves the original claim and its evidence, while checking Git checkout contents, profile requirements and process ownership. A plan digest binds the proposed recovery to one exact historical review, reducing the risk of acting on a different claim."
+          },
+          {
+            "heading": "The safety gates remain separate",
+            "text": "The PR is merged, but the only inspected review submission was an earlier COMMENTED objection, not an approval. A repository validation run passed on the inspected head while a Godot pipeline run failed. Neither outcome proves the protected recovery was executed or accepted."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Landing a recovery tool is not recovering a review",
+            "explanation": "The code makes a controlled continuation possible. A fresh plan, explicit authorization, independent reviewer outcome and eventual cleanup are still distinct steps."
+          },
+          {
+            "title": "Green repository checks do not erase a failing game pipeline",
+            "explanation": "The two workflow conclusions differ. Reporting them separately avoids turning one successful validation job into a blanket CI PASS."
+          }
+        ],
+        "takeaway": "The emergency mechanism is merged, but the original held review and its host state remain unverified.",
+        "next_watch": "Watch for a fresh post-merge plan, separate apply authorization and an independent review receipt."
+      },
+      "details": {
+        "overview": "GitHub confirms PR #102 merged in commit dc5b7505b930de1c7331104391edc3f1934cbac2. Its description reports local test passes and a pre-merge plan that is now stale. The only inspected PR review is COMMENTED on an earlier head, not APPROVED. A Validate Repository workflow associated with head b7dd0006 succeeded, while Godot Level Pipeline failed; these are distinct checks and do not establish full CI health. No fresh post-merge plan, authorized apply, independent review PASS, host cleanup or teardown was inspected. Current main advanced further to 2d5240f0.",
+        "ledger": [
+          {
+            "stage": "Landing",
+            "status": "verified merged",
+            "evidence": "PR #102 merged at dc5b7505."
+          },
+          {
+            "stage": "CI",
+            "status": "mixed",
+            "evidence": "Validate Repository success, Godot Level Pipeline failure on inspected PR head."
+          },
+          {
+            "stage": "Independent approval",
+            "status": "unknown",
+            "evidence": "Only COMMENTED review returned."
+          },
+          {
+            "stage": "Protected apply and teardown",
+            "status": "unknown",
+            "evidence": "No host evidence available."
+          }
+        ],
+        "notes": [],
+        "unknowns": [
+          "Current host liveness, locks, worktrees, disk and protected review outcome unknown."
+        ],
+        "actions": [
+          "Recovery owner: generate a fresh exact-run read-only plan; do not apply without separate explicit authorization."
+        ]
+      },
+      "scorecard": {
+        "stage": "PR #102 merged into main at 02:43 UTC. The code introduces digest-bound read-only planning and separately auth",
+        "as_of": "2026-11-01T03:07:00Z",
+        "scope": "Named workstream and cited GitHub evidence only; no canonical live dispatcher audit",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Implement bounded plan/apply",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Merged code in dc5b7505."
+          },
+          {
+            "label": "Repository validation",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Validate Repository run 41263245863 succeeded on inspected PR head."
+          },
+          {
+            "label": "Independent approval",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "Only COMMENTED review returned."
+          },
+          {
+            "label": "Merge code to main",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "PR #102 merged 02:43 UTC."
+          },
+          {
+            "label": "Generate fresh post-merge plan",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Pre-merge digest is stale."
+          },
+          {
+            "label": "Separately authorize apply",
+            "status": "blocked",
+            "verification": "unknown",
+            "evidence": "No explicit apply authorization inspected."
+          },
+          {
+            "label": "Independent outcome and teardown",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No host receipt inspected."
+          }
+        ],
+        "next_gate": "Recovery owner: generate a fresh exact-run read-only plan; do not apply without separate explicit authorization."
+      },
+      "related": [
+        {
+          "title": "Emergency review recovery remains unmerged as validation fails",
+          "context": "Earlier coverage of the same PR before its merge.",
+          "story_id": "emergency-checkout-recovery-pr102-ci-failure-2fb8ed43"
+        }
+      ]
+    },
     {
       "id": "emergency-checkout-recovery-pr102-ci-failure-2fb8ed43",
       "headline": "Emergency review recovery remains unmerged as validation fails",
@@ -1503,290 +1769,24 @@
         "next_gate": "Correction owner must implement and independently clear the exact attestation before authorized original-review recovery."
       },
       "related": []
-    },
-    {
-      "id": "operator-chassis-attestation-ad42f092",
-      "headline": "A one-file evidence correction is queued to reopen the Operator chassis review",
-      "summary": "CUSTODIAN published a tightly bounded correction for an Operator review that never reached its reviewer. The original implementation packet omitted one regression-test file from its declared source scope. Both the correction and its independent review are ready, but no repair or protected recovery has been applied.",
-      "body": "Commits 6a74acd, 8dd8991 and ad42f09 published and readied the implementation/review packet pair. The proposed attestation binds the exact historical source span and one omitted test file, and must remain inert until the correction itself receives a genuine independent PASS. The original review run, claim and evidence remain protected. GitHub ready status does not prove active execution. No host teardown or accepted PASS verified.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-operator-chassis-seal-source-scope-attestation-v1",
-      "occurred_at": "2026-10-31T09:05:50Z",
-      "bullets": [
-        "Two specifically inspected packets are ready: correction and dependent review.",
-        "Correction is not implemented or independently accepted.",
-        "Original Operator review remains preserved and held.",
-        "Separate authorization required before original-review recovery."
-      ],
-      "links": [
-        {
-          "title": "Correction publication",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/6a74acd556487092ecf1ac13d5ea14660622abda"
-        },
-        {
-          "title": "Ready packet state",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/ad42f092761ed222b8da2fb0d41a61388f70d5fc"
-        },
-        {
-          "title": "Operator archive",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/5e250a1215cea536d3bf2030f7a82327f5a0ad58"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "The Operator chassis review has a precise route toward resumption. CUSTODIAN has queued a correction for one regression-test file that was changed during implementation but left out of the original review's declared scope. The remedy is deliberately narrow and remains only a plan.",
-        "sections": [
-          {
-            "heading": "Why a single file can stop a review",
-            "text": "CUSTODIAN authenticates which files belong to a reviewed change before letting an independent reviewer proceed. The missing declaration caused the preserved review to stop before any verdict could be written."
-          },
-          {
-            "heading": "A correction with its own safety gate",
-            "text": "The new packet requires immutable file identities and a separate independent PASS. Until that acceptance exists, the exception must do nothing. Even afterward, recovering the original review requires a new authorization."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The fix must not rewrite history",
-            "explanation": "The proposal adds a post-hoc attestation instead of altering the original archived packet or pretending the reviewer ran. That preserves the audit trail while providing a narrowly checkable recovery path."
-          }
-        ],
-        "takeaway": "The source-scope correction is ready for implementation, not completed; the original review remains blocked.",
-        "next_watch": "Landing and independent acceptance of the attestation, then a fresh read-only plan for the preserved original review."
-      },
-      "details": {
-        "overview": "At ad42f092761ed222b8da2fb0d41a61388f70d5fc, implementation and paired review packets are both ready. Scope is one omitted test_workstream.py path, pinned to original historical Git objects and preserved review run. The correction is inert before its own authenticated accepted PASS.",
-        "ledger": [
-          {
-            "stage": "Correction packet",
-            "status": "verified ready",
-            "evidence": "ad42f092 main packet."
-          },
-          {
-            "stage": "Implementation",
-            "status": "not established",
-            "evidence": "No correction implementation landing inspected."
-          },
-          {
-            "stage": "Independent review",
-            "status": "dependency-gated",
-            "evidence": "Ready review packet depends on implementation."
-          },
-          {
-            "stage": "Original protected review",
-            "status": "held",
-            "evidence": "Original reviewer did not launch."
-          },
-          {
-            "stage": "Teardown",
-            "status": "unknown",
-            "evidence": "No current host proof."
-          }
-        ],
-        "notes": [
-          "Ready is a dispatch state, not proof of a running agent."
-        ],
-        "unknowns": [
-          "Current host ownership and worktree state."
-        ],
-        "actions": [
-          "Existing implementation owner: deliver and validate exact one-path attestation.",
-          "Independent reviewer: authenticate the correction before any original-review recovery decision."
-        ]
-      },
-      "scorecard": {
-        "stage": "Ready for implementation; original review held",
-        "as_of": "2026-10-31T09:05:50Z",
-        "scope": "Exact attestation implementation and paired review only",
-        "metrics": [
-          {
-            "id": "ready_pair",
-            "label": "READY PACKETS",
-            "value": 2,
-            "verification": "verified",
-            "basis": "Both named packet files on main say Status ready; not a full queue count.",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/ad42f092761ed222b8da2fb0d41a61388f70d5fc"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Publish correction pair",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "6a74acd and ad42f092"
-          },
-          {
-            "label": "Implement attestation",
-            "status": "next",
-            "verification": "verified",
-            "evidence": "Implementation packet ready, no landing"
-          },
-          {
-            "label": "Independent correction review",
-            "status": "blocked",
-            "verification": "verified",
-            "evidence": "Depends on implementation"
-          },
-          {
-            "label": "Authorized original review recovery",
-            "status": "blocked",
-            "verification": "verified",
-            "evidence": "Requires accepted correction PASS and separate control"
-          },
-          {
-            "label": "Canonical teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No host proof"
-          }
-        ],
-        "next_gate": "Existing correction implementation owner must land and validate the exact one-file attestation."
-      },
-      "related": []
-    },
-    {
-      "id": "multi-sync-4693df7b-5c02e0dc",
-      "headline": "Review system learns to verify repeated code synchronizations, but missing historical evidence still blocks recovery",
-      "summary": "CUSTODIAN landed a source-history verifier that handles multiple merges back into main without confusing later code with the original work. Tests are reported passing, and its independent review is ready. A preserved historical review still lacks a required checkpoint witness, so the landing does not unblock its recovery.",
-      "body": "The multi-sync verifier is on main and its implementation packet is archived. The published implementation summary reports 258 runner tests, four focused real-Git tests and 2/2 selected checks passed. The new resolver authenticates merge parentage, ordering, deterministic trees and unique lifecycle witnesses. In a read-only attempt against the protected correction history, it progressed beyond the former one-merge limitation but stopped at a missing checkpoint witness. No original run was modified. The paired independent review remains ready, not accepted. Host teardown, process and disk status are unverified.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-paired-review-multi-sync-source-span-verification-v1",
-      "occurred_at": "2026-10-31T07:05:43Z",
-      "bullets": [
-        "Implementation landed and archived; review packet ready.",
-        "Protected historical correction still lacks an authenticated checkpoint witness.",
-        "No recovery applied; no independent PASS or teardown established."
-      ],
-      "links": [
-        {
-          "title": "Multi-sync implementation and archive",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/4693df7b1fa6184b6ea4596f5a672d0f60c123b0"
-        },
-        {
-          "title": "Ready independent review handoff",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/4f90902381aabce73075258cb0baa803f703ac12"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN can now examine development histories that synchronize with the main codebase more than once. That removes a hard limitation in its independent review machinery, but the first preserved case has exposed a second, more fundamental gap: a missing historical checkpoint record.",
-        "sections": [
-          {
-            "heading": "A stronger account of what actually changed",
-            "text": "The new verifier checks each merge's parents, event order and resulting code, then separates files authored by the workstream from unrelated changes inherited from main. This matters when older review work overlaps newer Operator or infrastructure commits."
-          },
-          {
-            "heading": "Why the original review is still held",
-            "text": "The implementation's own read-only check reached the next authenticity gate and could not find a unique checkpoint witness for the first historical merge. The system correctly refused to reconstruct evidence from Git history alone. Its own independent review is still pending."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Removing one blocker can expose the next",
-            "explanation": "The earlier blanket rejection of multi-merge histories is gone, but a missing authenticated lifecycle event remains. The recovery chain now needs real provenance evidence, not merely more permissive code."
-          },
-          {
-            "title": "Source isolation protects game-development work",
-            "explanation": "Separating inherited main changes from workstream-authored changes helps prevent newer art and gameplay edits from distorting the validation scope of older infrastructure reviews."
-          }
-        ],
-        "takeaway": "Multiple-sync verification is landed, not independently accepted, and it has not recovered the protected review.",
-        "next_watch": "An authenticated independent review receipt for this verifier, followed by an evidence-supported decision about the missing historical checkpoint."
-      },
-      "details": {
-        "overview": "At main 5c02e0dc6c0ff404625c50bbb7796cb47002bba7, the multi-sync implementation is archived complete. Its summary reports passing local tests. The preserved correction-1 source span now fails on an absent unique checkpoint witness; original evidence remains protected.",
-        "ledger": [
-          {
-            "stage": "Implementation landing",
-            "status": "verified",
-            "evidence": "4693df7b landed verifier and archived packet."
-          },
-          {
-            "stage": "Implementation validation",
-            "status": "reported passing",
-            "evidence": "Summary reports 258 runner tests, 4 focused tests and 2/2 selected checks."
-          },
-          {
-            "stage": "Independent review",
-            "status": "ready; not accepted",
-            "evidence": "REVIEW_AGENT_PAIRED_REVIEW_MULTI_SYNC_SOURCE_SPAN_VERIFICATION_V1.md status ready."
-          },
-          {
-            "stage": "Historical recovery",
-            "status": "blocked",
-            "evidence": "Missing first-merge checkpoint witness in preserved trace."
-          },
-          {
-            "stage": "Canonical teardown",
-            "status": "unknown",
-            "evidence": "No authoritative host cleanup proof."
-          }
-        ],
-        "notes": [
-          "A GitHub packet state does not establish active execution."
-        ],
-        "unknowns": [
-          "Current local worktree, lock, disk and process counts.",
-          "Whether a supported historical witness exists elsewhere."
-        ],
-        "actions": [
-          "Existing independent reviewer: authenticate the landed multi-sync verifier.",
-          "Existing recovery owner: assess the missing checkpoint only after review acceptance and separate authorization."
-        ]
-      },
-      "scorecard": {
-        "stage": "Landed and archived; independent review ready",
-        "as_of": "2026-10-31T07:05:43Z",
-        "scope": "Multi-sync verifier and its paired review only",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Land verifier",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "4693df7b"
-          },
-          {
-            "label": "Implementation tests",
-            "status": "current",
-            "verification": "reported",
-            "evidence": "Published summary reports passing suites"
-          },
-          {
-            "label": "Independent acceptance",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Ready review packet; no accepted receipt"
-          },
-          {
-            "label": "Historical evidence resolution",
-            "status": "blocked",
-            "verification": "verified",
-            "evidence": "Missing unique checkpoint witness reported in implementation summary"
-          },
-          {
-            "label": "Canonical teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No host proof"
-          }
-        ],
-        "next_gate": "Existing independent reviewer must accept the landed verifier before protected evidence resolution."
-      },
-      "related": []
     }
   ],
   "snapshot": {
-    "observed_at": "2026-10-31T16:25:07Z",
-    "source_main_sha": "e1bff4eb3360e7f0fcdbc5bb67fa86bc2b600f4f",
+    "observed_at": "2026-11-01T03:07:00Z",
+    "source_main_sha": "2d5240f002a9cd8d95e89cc6ff93124fac30878e",
     "coverage": "partial",
-    "scope": "Five inspected main commits and named review packet changes since 23bf33e3; no full canonical dispatcher audit",
-    "metrics": [],
-    "focus": "Obtain independent PASS for the two-path reviewer bootstrap profile correction",
-    "note": "No verified project-wide queue totals or host state. Reported validation is not independent acceptance."
+    "scope": "Inspected latest main commits, PR #102, two associated workflow runs and the new art manifest; not the full dispatcher queue.",
+    "metrics": [
+      {
+        "id": "other-art-core-states",
+        "label": "PLANNED CORE ART STATES",
+        "value": 71,
+        "verification": "verified",
+        "basis": "71 distinct core image states enumerated in committed V1 art manifest; planning scope only, not produced assets.",
+        "url": "https://github.com/braydio/CUSTODIAN/blob/2d5240f002a9cd8d95e89cc6ff93124fac30878e/design/04_architecture/HUB_SEPULCHER_AWAKENING_ART_V1_MANIFEST.md"
+      }
+    ],
+    "focus": "Generate and independently approve the first art calibration image; for recovery, obtain a fresh read-only exact-run plan before any separately authorized apply.",
+    "note": "No canonical live dispatcher audit or host telemetry. PR #102 merged; protected recovery and independent review acceptance remain unknown."
   }
 }
