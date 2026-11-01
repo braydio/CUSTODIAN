@@ -4,7 +4,7 @@
 - Workstream: `sepulcher-paving-native-quad-playtest-v1`
 - Category: `assets-art`
 - Authoring handoff: `auto`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -25,7 +25,7 @@
 - Current measured state: `At main 8beb9d9da9a0be46f470f959d111241d19169f88, design brief and four-asset planning manifest exist, with four exact source rectangles. Codex's November 1 host investigation confirmed no named active packet/claim and successfully downloaded SHA-verified Dropbox ZIP to /tmp, but performed no source staging, cropping, game-scene edits or Godot validation. Unapproved 1254x1254 source is only in pinned Dropbox ZIP/raw candidate; no approved tile or runnable Sepulcher modular preview exists.`
 - Evidence: `design/04_architecture/SEPULCHER_PAVING_NATIVE_QUAD_CODEX_BRIEF_V1.md; design/04_architecture/SEPULCHER_MODULAR_PLAYTEST_ASSET_PILOT_V1.json; pinned Dropbox source package and Codex failure report (2026-11-01); existing Kenney standalone playtest scene and smoke.`
 - Task-specific authority: `design/04_architecture/SEPULCHER_PAVING_NATIVE_QUAD_CODEX_BRIEF_V1.md; design/04_architecture/SEPULCHER_MODULAR_PLAYTEST_ASSET_PILOT_V1.md; custodian/docs/ai_context/IMPLEMENTATION_HANDOFF.md; custodian/docs/ai_context/VISUAL_REVIEW_HANDOFF.md; custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md.`
-- Work surface: `custodian/tools/art/sepulcher_paving_native_quad.py; custodian/tools/art/sepulcher_paving_source_stage.py; custodian/game/world/levels/authored/dev/sepulcher_modular_material_pilot/sepulcher_modular_material_pilot.tscn; adjacent scene-local script/neutral presentation and focused new smoke; four dev-only LFS-tracked cropped preview textures. No production Hub or Asset V2 family changes.`
+- Work surface: `custodian/tools/art/sepulcher_paving_native_quad.py; custodian/tools/art/sepulcher_paving_source_stage.py; custodian/game/world/levels/authored/dev/sepulcher_modular_material_pilot/sepulcher_modular_material_pilot.tscn; adjacent scene-local scripts/neutral presentation, focused smoke/capture helpers, validation-manifest registration, and four dev-only LFS-tracked cropped preview textures. No production Hub or Asset V2 family changes.`
 - Publication inputs: `design/04_architecture/SEPULCHER_PAVING_NATIVE_QUAD_CODEX_BRIEF_V1.md, design/04_architecture/SEPULCHER_MODULAR_PLAYTEST_ASSET_PILOT_V1.json, design/04_architecture/SEPULCHER_MODULAR_PLAYTEST_ASSET_PILOT_V1.md, custodian/tools/art/sepulcher_paving_native_quad.py, custodian/tools/art/sepulcher_paving_source_stage.py, custodian/docs/ai_context/IMPLEMENTATION_HANDOFF.md, custodian/game/world/levels/authored/dev/kenney_isometric_blockout_playtest/kenney_isometric_blockout_playtest.tscn, custodian/game/world/levels/authored/dev/kenney_isometric_blockout_playtest/kenney_isometric_blockout_playtest_level.tscn, custodian/tools/validation/levels/kenney_isometric_blockout_playtest_smoke.gd, custodian/tools/iteration/publish_review_artifacts.py`
 - Change: `Claim the existing named packet through dispatch, verify and stage immutable source only into source_work using the already published staging tool; run the fixed four-crop tool; construct the independent Godot test scene from real Operator, game Camera2D, and LevelPlaytestBootstrap; offer modes 1 neutral, 2 native adjacent quad, 3 NW-repeat diagnostic, Tab 1/2 toggle, and matched-camera three-view evidence; validate then land for independent review. Do not replace art by a giant downscaled map.`
 - Preserve: `Root/Hub collision, navigation, grave-event coordinates/persistence, production main scene and camera settings, Asset V2 source approval/inbox and independent-review workflow; original RGB master unchanged and SHA-pinned.`
@@ -70,6 +70,27 @@ First use source SHA, pixels, Godot scene/node assertions, camera equality, and 
 
 At workstream finish, populate `custodian.task_completion.v1` and `custodian.task_feedback.v1` in the implementation packet/summary. Technical completion of a playable preview does not mean the original source becomes a seamless tile or approved art. Keep the unapproved preview provenance visible.
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `The exact Dropbox ZIP SHA-256 1172e3e78741f0f18285dbbb50e40fd9e496470d84b1ec02f075bb7ff1d29344 and master SHA-256 62341f6850cd526b5b03187d9c9035318453c2b7cf2d6e213f19f1597af967bf passed. The source-staging tool wrote only the unchanged unapproved master to source_work. The crop self-test and actual four-piece 1024x1024 pixel reconstruction passed; all four 512x512 outputs are Git LFS tracked and `git lfs fsck --objects --pointers HEAD^..HEAD` passed. The standalone real-Operator/game-camera scene and three presentation-mode smoke passed, including movement and identical camera/collision checks. The neighboring Kenney playtest smoke passed. Three same-player/camera captures were uploaded to `/CUSTODIAN/visual_review/sepulcher-paving-native-quad-playtest-v1/20261101T111040Z/REVIEW_MANIFEST.json`. No production Hub, Asset V2 registration or source approval changed.`
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `The initial full-LFS claim checkout took extra time; retries correctly waited while its dispatcher lock and checkout remained active. The first Godot smoke also ran before the fresh worktree global-class cache was populated, so the editor import scan was required first.`
+- Root cause / contributing factors: `The dispatcher provisioned the full repository checkout and the new worktree had not yet completed its initial Godot script-class scan.`
+- Prevention / pipeline improvement: `Allow the original claim/checkout to finish before retrying. Run one editor import scan before script-based Godot smoke on a fresh checkout.`
+- Tooling / docs drift discovered: `The validation runner had no owner registration for this new focused smoke; the new integration smoke and capture helper are now registered under custodian/tools/validation/validation_manifest.json.`
+- Follow-up: `none`
+- What worked: `The published SHA-guarded source and fixed-rectangle crop tools completed without artwork normalization or Asset V2 intake.`
+
 ## Next Handoff
 
 - Next workstream: `review-sepulcher-paving-native-quad-playtest-v1`
@@ -80,4 +101,4 @@ At workstream finish, populate `custodian.task_completion.v1` and `custodian.tas
 - Summary backlink: `not-recorded`
 - Refresh reason: `none; the paired reviewer independently verifies the landed playable test and its objective proofs`
 - Next action: `After technical implementation lands, claim the separate paired review with fresh context. Return the three real-game-camera screenshots to the user for subjective judgment. Do not advance to pilot asset 2.`
-- Blockers or open questions: `No remaining art-direction decision is required to build the preview. Immutable Dropbox ZIP retrieval, host source staging, Git LFS and Godot execution are fail-closed checks inside the claimed workstream; user art approval is a later visual decision.`
+- Blockers or open questions: `No implementation blocker remains. Human review is requested for gameplay-scale masonry detail, floor-to-Operator proportions, and the NW repeat/seam diagnostic; the source remains an unapproved preview and the paired technical review must still complete.`
