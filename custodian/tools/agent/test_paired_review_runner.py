@@ -3678,6 +3678,321 @@ class PairedReviewRunnerTests(unittest.TestCase):
                                        capture_output=True).stdout.splitlines()
             self.assertEqual(set(committed), {active, archive, readme, summary.name, target_path})
 
+    def test_committed_pass_closeout_uses_authenticated_continuation_identity(self):
+        fixture = self._continuation_fixture()
+        self.addCleanup(fixture["temp"].cleanup)
+        repo, worktree = fixture["repo"], fixture["worktree"]
+        pinned_runner_source = Path(runner.__file__).read_text(encoding="utf-8")
+        control_source_path = Path(runner.redact.__code__.co_filename).resolve()
+        pinned_control_source = control_source_path.read_text(encoding="utf-8")
+        for relative, source in (("custodian/tools/agent/paired_review_runner.py", pinned_runner_source),
+                                 ("custodian/tools/agent/workflow_control.py", pinned_control_source)):
+            source_path = repo / relative
+            source_path.parent.mkdir(parents=True, exist_ok=True)
+            source_path.write_text(source)
+        subprocess.run(["git", "-C", str(repo), "add", "custodian/tools/agent/paired_review_runner.py",
+                        "custodian/tools/agent/workflow_control.py"], check=True)
+        subprocess.run(["git", "-C", str(repo), "commit", "-qm", "pinned capture source"], check=True)
+        subprocess.run(["git", "-C", str(repo), "push", "-q", "origin", "main"], check=True)
+        fixture["reviewed_main"] = subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"], check=True,
+                                                  text=True, capture_output=True).stdout.strip()
+        active = fixture["active"]
+        archive = f"{runner.PACKET_ROOT}/archived/{Path(active).name}"
+        target_path = fixture["target"]
+        readme = f"{runner.PACKET_ROOT}/README.md"
+        implementation_commit = "a" * 40
+        run_id = fixture["run_id"]
+
+        final_message = ("Workstream: review-sample\n\nIndependent disposition: passed. "
+                         "No blocking defects or material acceptance gaps found.\n\n" + "Evidence preserved. " * 180)
+        self.assertGreater(len(final_message), 1200)
+        outcome_text = runner.review_outcome.render_review_outcome(
+            outcome="passed", review_workstream="review-sample", target_workstream="sample",
+            reviewed_main=fixture["reviewed_main"], implementation_commit=implementation_commit,
+            provenance="different-agent", run_id=run_id, review_cycle=0, ids=(),
+        )
+        outcome, outcome_error = runner.review_outcome.parse_review_outcome(outcome_text)
+        self.assertIsNone(outcome_error)
+        archived_text = fixture["review"].replace("- Status: `ready`", "- Status: `complete`")
+        archived_text += "\n## Independent Review\n\nVerified reviewer PASS.\n\n"
+        archived_text += runner.render_review_receipt(outcome) + "\n" + outcome_text
+        (worktree / active).unlink()
+        (worktree / archive).parent.mkdir(parents=True, exist_ok=True)
+        (worktree / archive).write_text(archived_text)
+        (worktree / target_path).write_text(fixture["target_content"] + "\nCoordinator receipt.\n")
+        (worktree / readme).write_text("archived review index\n")
+        fixture["prior_summary"].unlink(missing_ok=True)
+        summary = worktree / runner.expected_summary_path("review-sample")
+        summary.write_text(f"Review outcome: passed\nRun ID: {run_id}\nReviewed main: {fixture['reviewed_main']}\n"
+                           "## Review Outcome\npassed\n")
+        subprocess.run(["git", "-C", str(worktree), "add", "-A"], check=True)
+        subprocess.run(["git", "-C", str(worktree), "commit", "-qm", "archived reviewer PASS"], check=True)
+        self.assertEqual(subprocess.run(["git", "-C", str(worktree), "status", "--porcelain"], check=True,
+                                        text=True, capture_output=True).stdout, "")
+
+        original_path = fixture["run_dir"] / "metadata.json"
+        original = json.loads(original_path.read_text())
+        original.update({"phase": "claim_profile_mismatch", "reviewed_main": fixture["reviewed_main"]})
+        original_path.write_text(json.dumps(original, sort_keys=True) + "\n")
+        receipt = dict(fixture["receipt"], run_id="20261017T120001Z-abcdefabcdef",
+                       authoring_chat=fixture["chat"])
+        (fixture["run_dir"] / "claim-receipt.json").write_text(json.dumps(receipt, sort_keys=True) + "\n")
+        (fixture["run_dir"] / "claim.stdout").write_text(
+            runner.CLAIM_SENTINEL + json.dumps(receipt, sort_keys=True) + "\n")
+
+        continuation = fixture["run_dir"] / "continuation-01"
+        continuation.mkdir()
+        (continuation / "last-message.txt").write_text(final_message)
+        logged_message = runner._redacted_agent_message(final_message)
+        (continuation / "codex.jsonl").write_text("\n".join((
+            json.dumps({"type": "thread.started", "thread_id": "thread-review-sample"}),
+            json.dumps({"type": "turn.started"}),
+            json.dumps({"item": {"type": "agent_message", "text": logged_message}}),
+            json.dumps({"type": "turn.completed"}),
+        )) + "\n")
+        lock = runner.common_dir(repo) / "custodian-review-runs/locks/review-sample.lock"
+        lock.parent.mkdir(parents=True, exist_ok=True)
+        lock.touch()
+        lock_stat = lock.stat()
+        plan = {
+            "schema": "custodian.rc116.review_receipt_recovery.v1", "workstream": "review-sample",
+            "run_id": run_id, "claim_run_id": receipt["run_id"], "reviewed_main": fixture["reviewed_main"],
+            "implementation_commit": implementation_commit, "branch": receipt["branch"],
+            "worktree": receipt["worktree"], "active_packet": active, "target_workstream": "sample",
+            "target_packet": target_path, "lock_identity": {"device": lock_stat.st_dev, "inode": lock_stat.st_ino},
+        }
+        plan["outcome"], plan_error = runner.review_outcome.parse_review_outcome(archived_text)
+        self.assertIsNone(plan_error)
+        plan["runner_source_sha256"] = hashlib.sha256(pinned_runner_source.encode()).hexdigest()
+        plan["workflow_control_source_sha256"] = hashlib.sha256(pinned_control_source.encode()).hexdigest()
+        plan["session"] = {
+            "thread_id": "thread-review-sample",
+            "codex_jsonl_sha256": hashlib.sha256((continuation / "codex.jsonl").read_bytes()).hexdigest(),
+            "last_message_sha256": hashlib.sha256((continuation / "last-message.txt").read_bytes()).hexdigest(),
+        }
+        plan["plan_sha256"] = hashlib.sha256(json.dumps(plan, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+        journal = {"schema": "custodian.rc116.review_receipt_recovery.v1", "workstream": "review-sample",
+                   "run_id": run_id, "stage": "closeout_blocked", "plan": plan,
+                   "plan_sha256": plan["plan_sha256"]}
+        (continuation / "rc116-recovery-journal.json").write_text(json.dumps(journal, sort_keys=True) + "\n")
+        child = {
+            "schema": runner.CONTINUATION_SCHEMA, "workstream": "review-sample", "run_id": run_id,
+            "phase": "coordinator_closeout", "continuation_number": 1, "reviewer_launch_count": 1,
+            "exit_code": 0, "original_run_dir": str(fixture["run_dir"]),
+            "last_message": str(continuation / "last-message.txt"),
+            "invocation": ["codex", "exec", "--ephemeral", "--json", "--cd", "<continuation-dir>",
+                           "--output-last-message", "<continuation-dir>/last-message.txt", "-"],
+            "branch": receipt["branch"], "worktree": receipt["worktree"],
+            "active_packet_path": active, "target_workstream": "sample", "target_packet_path": target_path,
+            "reviewed_main": fixture["reviewed_main"], "implementation_commit": implementation_commit,
+            "review_cycle": 0, "authoring_chat": fixture["chat"],
+            "checkout_profile_recovery": {"claim_run_id": receipt["run_id"]},
+        }
+        child["run_evidence_sha256"] = runner._file_manifest(fixture["run_dir"], omit=continuation)
+        child["original_run_manifest_sha256"] = runner._manifest_digest(child["run_evidence_sha256"])
+        (continuation / "metadata.json").write_text(json.dumps(child, sort_keys=True) + "\n")
+        host_evidence = {"implementation_commit": implementation_commit,
+                         "report_sha256": "c" * 64, "metadata_sha256": "d" * 64,
+                         "evidence_run_dir": str(fixture["run_dir"]),
+                         "continuation_dir": str(continuation)}
+
+        finish_calls = []
+        def finish(*args, **kwargs):
+            finish_calls.append((args, kwargs))
+            return "f" * 40
+
+        with patch.object(runner, "verify_coordinator_validation"), \
+             patch.object(runner, "_verify_host_validation_at_commit"), \
+             patch.object(runner, "landed_review_state", return_value={"complete": True}), \
+             patch.object(runner, "_finish_via_workstream", side_effect=finish):
+            landed = runner.coordinator_finish_review(
+                repo, "review-sample", worktree, active, "sample", target_path,
+                fixture["target_content"], fixture["chat"], fixture["reviewed_main"],
+                continuation, host_evidence,
+            )
+
+        self.assertEqual(landed, "f" * 40)
+        self.assertEqual(len(finish_calls), 1)
+        self.assertEqual(finish_calls[0][0][4], continuation.resolve())
+
+        def reject_without_lifecycle(reason):
+            before_head = subprocess.run(["git", "-C", str(worktree), "rev-parse", "HEAD"], check=True,
+                                         text=True, capture_output=True).stdout.strip()
+            calls_before = len(finish_calls)
+            with patch.object(runner, "verify_coordinator_validation"), \
+                 patch.object(runner, "_verify_host_validation_at_commit"), \
+                 patch.object(runner, "landed_review_state", return_value={"complete": True}), \
+                 patch.object(runner, "_finish_via_workstream", side_effect=finish), \
+                 self.assertRaisesRegex(runner.RunnerError, reason):
+                runner.coordinator_finish_review(
+                    repo, "review-sample", worktree, active, "sample", target_path,
+                    fixture["target_content"], fixture["chat"], fixture["reviewed_main"],
+                    continuation, host_evidence,
+                )
+            after_head = subprocess.run(["git", "-C", str(worktree), "rev-parse", "HEAD"], check=True,
+                                        text=True, capture_output=True).stdout.strip()
+            self.assertEqual(after_head, before_head)
+            self.assertEqual(len(finish_calls), calls_before)
+
+        child_path = continuation / "metadata.json"
+        child_bytes = child_path.read_bytes()
+        for field, wrong_value, reason in (
+            ("run_id", "20261017T120001Z-abcdefabcdef", "continuation is not the one completed"),
+            ("phase", "reviewer_exited", "continuation is not the one completed"),
+            ("reviewer_launch_count", 2, "continuation is not the one completed"),
+            ("exit_code", 1, "continuation is not the one completed"),
+            ("target_workstream", "other-target", "target, reviewed main"),
+            ("target_packet_path", "other-packet.md", "target, reviewed main"),
+            ("reviewed_main", "b" * 40, "target, reviewed main"),
+            ("implementation_commit", "b" * 40, "target, reviewed main"),
+            ("branch", "agent/foreign", "branch, worktree, or packet"),
+            ("worktree", str(repo), "branch, worktree, or packet"),
+            ("review_cycle", True, "target, reviewed main"),
+        ):
+            child = json.loads(child_bytes)
+            child[field] = wrong_value
+            child_path.write_text(json.dumps(child, sort_keys=True) + "\n")
+            with self.subTest(field=field):
+                reject_without_lifecycle(reason)
+        child_path.write_bytes(child_bytes)
+
+        for field, wrong_value in (("run_id", "20261017T120001Z-abcdefabcdef"), ("review_cycle", 1)):
+            prior = host_evidence.get(field)
+            host_evidence[field] = wrong_value
+            with self.subTest(host_evidence=field):
+                reject_without_lifecycle("optional host-evidence identity contradicts")
+            if prior is None:
+                host_evidence.pop(field)
+            else:
+                host_evidence[field] = prior
+
+        final_path = continuation / "last-message.txt"
+        jsonl_path = continuation / "codex.jsonl"
+        original_final_bytes, original_jsonl_bytes = final_path.read_bytes(), jsonl_path.read_bytes()
+        final_path.write_text(final_message + "tampered\n")
+        with self.subTest(capture="tampered-final"):
+            reject_without_lifecycle("recovery plan's original capture digests")
+        final_path.write_bytes(original_final_bytes)
+        events = [json.loads(line) for line in original_jsonl_bytes.splitlines()]
+        events[2]["item"]["text"] = final_message[:100]
+        jsonl_path.write_text("\n".join(json.dumps(event) for event in events) + "\n")
+        with self.subTest(capture="unapproved-prefix"):
+            reject_without_lifecycle("exact pinned transformation")
+        forged_final = ("Workstream: review-sample\nIndependent disposition: passed.\n" + "Different review. " * 120)
+        final_path.write_text(forged_final)
+        events[2]["item"]["text"] = runner._redacted_agent_message(forged_final)
+        jsonl_path.write_text("\n".join(json.dumps(event) for event in events) + "\n")
+        with self.subTest(capture="mutually-consistent-replay"):
+            reject_without_lifecycle("recovery plan's original capture digests")
+        final_path.write_bytes(original_final_bytes)
+        jsonl_path.write_bytes(original_jsonl_bytes)
+        child_bytes = child_path.read_bytes()
+        child = json.loads(child_bytes)
+        child["invocation"] = ["codex", "exec", "--resume", "old-thread"]
+        child_path.write_text(json.dumps(child, sort_keys=True) + "\n")
+        with self.subTest(capture="resumed-reviewer-invocation"):
+            reject_without_lifecycle("fresh successful session")
+        child_path.write_bytes(child_bytes)
+        events = [json.loads(line) for line in original_jsonl_bytes.splitlines()]
+        events.insert(2, {"item": {"type": "agent_message", "text": "Verdict: findings"}})
+        jsonl_path.write_text("\n".join(json.dumps(event) for event in events) + "\n")
+        with self.subTest(capture="contradictory-earlier-verdict"):
+            reject_without_lifecycle("contradictory earlier verdict")
+        events = [json.loads(line) for line in original_jsonl_bytes.splitlines()]
+        events.append({"type": "turn.completed"})
+        jsonl_path.write_text("\n".join(json.dumps(event) for event in events) + "\n")
+        with self.subTest(capture="duplicate-completed-turn"):
+            reject_without_lifecycle("exactly one identified completed turn")
+        jsonl_path.write_bytes(original_jsonl_bytes)
+
+        wrong_continuation = continuation.parent / "continuation-02"
+        wrong_continuation.mkdir()
+        host_evidence["continuation_dir"] = str(wrong_continuation)
+        reject_without_lifecycle("exact regular continuation-01")
+        host_evidence["continuation_dir"] = str(continuation)
+        wrong_continuation.rmdir()
+
+        claim_stdout = fixture["run_dir"] / "claim.stdout"
+        claim_bytes = claim_stdout.read_bytes()
+        altered_claim = dict(receipt, run_id="20261017T120002Z-abcdefabcdef")
+        claim_stdout.write_text(runner.CLAIM_SENTINEL + json.dumps(altered_claim, sort_keys=True) + "\n")
+        reject_without_lifecycle("dispatcher output|claim receipt|claim provenance")
+        claim_stdout.write_bytes(claim_bytes)
+
+        base_head = subprocess.run(["git", "-C", str(worktree), "rev-parse", "HEAD"], check=True,
+                                   text=True, capture_output=True).stdout.strip()
+        archive_bytes = (worktree / archive).read_bytes()
+        archive_prefix = archive_bytes.decode().split("## Review Outcome", 1)[0]
+        bad_outcomes = (
+            (archive_prefix, "canonical PASS outcome"),
+            (archive_prefix + "\n## Review Outcome\n- Outcome: `passed`\n", "canonical PASS outcome"),
+            (archive_prefix + runner.review_outcome.render_review_outcome(
+                outcome="findings", review_workstream="review-sample", target_workstream="sample",
+                reviewed_main=fixture["reviewed_main"], implementation_commit=implementation_commit,
+                provenance="different-agent", run_id=run_id, review_cycle=0, ids=("R0-01",)),
+             "canonical PASS outcome"),
+            (archive_prefix + runner.review_outcome.render_review_outcome(
+                outcome="human_required", review_workstream="review-sample", target_workstream="sample",
+                reviewed_main=fixture["reviewed_main"], implementation_commit=implementation_commit,
+                provenance="different-agent", run_id=run_id, review_cycle=0, ids=("R0-01",)),
+             "canonical PASS outcome"),
+            (archive_prefix + runner.review_outcome.render_review_outcome(
+                outcome="passed", review_workstream="review-sample", target_workstream="sample",
+                reviewed_main=fixture["reviewed_main"], implementation_commit=implementation_commit,
+                provenance="different-agent", run_id="20261017T120001Z-abcdefabcdef", review_cycle=0, ids=()),
+             "PASS outcome identity failed"),
+            (archive_prefix + runner.review_outcome.render_review_outcome(
+                outcome="passed", review_workstream="review-sample", target_workstream="sample",
+                reviewed_main=fixture["reviewed_main"], implementation_commit=implementation_commit,
+                provenance="different-agent", run_id=run_id, review_cycle=1, ids=()),
+             "PASS"),
+            (archive_prefix + runner.review_outcome.render_review_outcome(
+                outcome="passed", review_workstream="review-foreign", target_workstream="sample",
+                reviewed_main=fixture["reviewed_main"], implementation_commit=implementation_commit,
+                provenance="different-agent", run_id=run_id, review_cycle=0, ids=()),
+             "PASS outcome identity failed"),
+            (archive_prefix + runner.review_outcome.render_review_outcome(
+                outcome="passed", review_workstream="review-sample", target_workstream="foreign-target",
+                reviewed_main=fixture["reviewed_main"], implementation_commit=implementation_commit,
+                provenance="different-agent", run_id=run_id, review_cycle=0, ids=()),
+             "PASS outcome identity failed"),
+            (archive_prefix + runner.review_outcome.render_review_outcome(
+                outcome="passed", review_workstream="review-sample", target_workstream="sample",
+                reviewed_main="b" * 40, implementation_commit=implementation_commit,
+                provenance="different-agent", run_id=run_id, review_cycle=0, ids=()),
+             "PASS outcome identity failed"),
+            (archive_prefix + runner.review_outcome.render_review_outcome(
+                outcome="passed", review_workstream="review-sample", target_workstream="sample",
+                reviewed_main=fixture["reviewed_main"], implementation_commit="b" * 40,
+                provenance="different-agent", run_id=run_id, review_cycle=0, ids=()),
+             "PASS outcome identity failed"),
+        )
+        for index, (bad_archive, reason) in enumerate(bad_outcomes):
+            subprocess.run(["git", "-C", str(worktree), "reset", "--hard", base_head], check=True,
+                           capture_output=True)
+            (worktree / archive).write_text(bad_archive)
+            subprocess.run(["git", "-C", str(worktree), "add", archive], check=True)
+            subprocess.run(["git", "-C", str(worktree), "commit", "-qm", f"invalid outcome {index}"], check=True)
+            with self.subTest(outcome=index):
+                reject_without_lifecycle(reason)
+        subprocess.run(["git", "-C", str(worktree), "reset", "--hard", base_head], check=True,
+                       capture_output=True)
+        (worktree / archive).write_bytes(archive_bytes)
+
+        (worktree / "out-of-scope.txt").write_text("unexpected\n")
+        subprocess.run(["git", "-C", str(worktree), "add", "out-of-scope.txt"], check=True)
+        subprocess.run(["git", "-C", str(worktree), "commit", "-qm", "out of scope"], check=True)
+        reject_without_lifecycle("out-of-scope changes")
+        subprocess.run(["git", "-C", str(worktree), "reset", "--hard", base_head], check=True,
+                       capture_output=True)
+        (worktree / "dirty.tmp").write_text("uncommitted\n")
+        reject_without_lifecycle("additional changes")
+        (worktree / "dirty.tmp").unlink()
+
+        lock.rename(lock.with_suffix(".old"))
+        lock.touch()
+        reject_without_lifecycle("lock provenance changed")
+
     def test_landed_review_uses_exact_summary_and_pinned_git_paths(self):
         with tempfile.TemporaryDirectory() as temp:
             repo = Path(temp)
