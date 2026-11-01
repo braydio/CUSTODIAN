@@ -352,7 +352,6 @@ packet and its paired review, not as chat-only downloads.
 - `WORKTREE_BACKLOG_ARCHIVED_AND_DETACHED_RECONCILIATION_V1.md` — Safely reconcile archived-complete checkout leftovers and detached capture/support worktrees, without destroying unique history, media or user changes.
 - `WORKTREE_BACKLOG_OWNED_WORK_RECOVERY_V1.md` — For all unfinished attached packet worktrees, determine and execute only the original-owner-supported continuation, finishing or bounded correction path, wit...
 - `WORKTREE_BACKLOG_QUEUE_INVALID_CLAIM_TRIAGE_V1.md` — Separate genuine queue/schema/review-provenance defects from 65 reported invalid-recovery classifications and two claim-only interrupted dispatch refs, witho...
-- `AGENT_WIRE_OBSERVATION_EXPORT_V1.md` — Provide a safe local JSON observation of CUSTODIAN task and workstream state for downstream WIRE editorial use.
 - `CAMPAIGN_ABANDONED_STATION_CONTAINMENT_V1.md` — Station containment choice + completion; deliver one playable, bounded event slice.
 - `CAMPAIGN_ABANDONED_STATION_SITE_V1.md` — Alpine station generated site + relays; deliver one playable, bounded event slice.
 - `CAMPAIGN_ABANDONED_STATION_STABILITY_V1.md` — Station services + local 90s stability; deliver one playable, bounded event slice.
