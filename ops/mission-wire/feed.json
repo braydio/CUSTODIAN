@@ -1,9 +1,161 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-01T04:30:32Z",
-  "source_main_sha": "5ee4a63d1bfcabdd53d27ba2f1ad3f4f231663a5",
+  "generated_at": "2026-11-01T06:03:31Z",
+  "source_main_sha": "7eaf776dfe57b971069262925275331bb78c7dbc",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "review-closeout-guard-supersession-7eaf776d",
+      "headline": "Review closeout gains a stronger safety guard as a stranded-review recovery packet becomes ready",
+      "summary": "A new main-branch runner guard authenticates the original reviewer session before allowing a committed PASS to close. A separate P0 supersession implementation and its paired review were marked ready for automatic dispatch. Neither change proves the protected review was accepted or that an executor started.",
+      "body": "Commit 7e965f88 landed a fail-closed review closeout guard with a reported 274 runner tests passing. Its attached summary explicitly preserves the protected original review in HOLD after a required profile dependency failure; the local status in that summary is historical, not freshly verified host state. Commit 7eaf776d changes the new unaccepted-supersession implementation and paired review packets from draft/manual to ready/auto. Their dependencies still apply; ready is not claimed or running. Full canonical dispatcher audit and independent review acceptance were not inspected.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-paired-review-unaccepted-supersession-v1",
+      "occurred_at": "2026-11-01T05:39:45Z",
+      "bullets": [
+        "Dispatcher owner: verify prerequisite review-agent-legacy-claim-scoped-snapshot-v1 before any claim.",
+        "Review owner: independently assess the landed closeout guard and preserve the original protected HOLD."
+      ],
+      "links": [
+        {
+          "title": "Closeout guard landing",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/7e965f8834dbcd5aa10793f5a0e678dacc18da58"
+        },
+        {
+          "title": "Ready packet transition",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/7eaf776dfe57b971069262925275331bb78c7dbc"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN's review machinery has acquired another safeguard against prematurely closing a stranded review. A new guard checks the original reviewer evidence before treating a recorded PASS as authentic. Meanwhile, a separate recovery workstream has moved from draft to dispatch-ready, though neither step resolves the protected review on its own.",
+        "sections": [
+          {
+            "heading": "The PASS must belong to the actual review",
+            "text": "The landed guard ties a review outcome to its original session, continuation, evidence digests and claim identity. A contradictory verdict or unresolved required dependency must hold closeout rather than being treated as a successful review."
+          },
+          {
+            "heading": "A recovery route is queued, not running",
+            "text": "The new P0 unaccepted-supersession implementation and paired review now say ready/auto. The implementation still depends on a separate legacy-claim snapshot review, and the paired review depends on the implementation. Those declarations are dispatch eligibility inputs, not proof that either job has started."
+          }
+        ],
+        "insights": [
+          {
+            "title": "A recorded PASS is not the same as an accepted PASS",
+            "explanation": "The guard addresses a subtle failure mode: authentic-looking archived output can coexist with missing dependencies or mismatched session evidence. Closing such a review would incorrectly unlock downstream work."
+          },
+          {
+            "title": "Recovery can preserve history instead of rewriting it",
+            "explanation": "The new packet describes a supersession lifecycle for reviews that cannot be accepted. Its intended distinction is between retaining the old evidence and creating a separately reviewable path forward."
+          }
+        ],
+        "takeaway": "The safety guard is landed and a recovery implementation is ready, but independent acceptance and protected-run recovery remain unverified.",
+        "next_watch": "Verify the prerequisite snapshot review and watch for an actual dispatcher claim, implementation landing and independent review receipt."
+      },
+      "details": {
+        "overview": "Main 7e965f88 changes paired_review_runner.py and tests; its committed summary reports 274 passing tests and a protected original review HOLD. Main 7eaf776d marks two packet documents ready/auto. No full canonical audit or live host evidence was inspected.",
+        "ledger": [
+          {
+            "stage": "Closeout guard implementation",
+            "status": "verified landed",
+            "evidence": "Main commit 7e965f88."
+          },
+          {
+            "stage": "Runner tests",
+            "status": "reported passed",
+            "evidence": "Committed implementation summary reports 274 tests; no independent rerun in this watch."
+          },
+          {
+            "stage": "Supersession packet eligibility",
+            "status": "verified ready declaration",
+            "evidence": "Main commit 7eaf776d; prerequisite review still declared."
+          },
+          {
+            "stage": "Independent acceptance",
+            "status": "unknown",
+            "evidence": "No exact independent accepted PASS receipt inspected."
+          },
+          {
+            "stage": "Canonical teardown",
+            "status": "unknown",
+            "evidence": "No host proof inspected."
+          }
+        ],
+        "notes": [
+          "A ready packet is not evidence of a live worker."
+        ],
+        "unknowns": [
+          "Full dispatcher totals, claims and host worktree/disk state unavailable.",
+          "Protected original review remains HOLD according to the committed summary; current host state not refreshed."
+        ],
+        "actions": [
+          "Dispatcher owner: verify the named prerequisite through canonical audit before claiming the new implementation."
+        ]
+      },
+      "scorecard": {
+        "stage": "Guard landed; supersession ready, prerequisite unresolved",
+        "as_of": "2026-11-01T06:03:31Z",
+        "scope": "Two named supersession packets and one closeout-guard landing, not full dispatcher queue",
+        "metrics": [
+          {
+            "id": "other-ready-named-packets",
+            "label": "READY NAMED PACKETS",
+            "value": 2,
+            "verification": "verified",
+            "basis": "Exactly two named packet files changed from draft/manual to ready/auto in commit 7eaf776d; not a global ready count",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/7eaf776dfe57b971069262925275331bb78c7dbc"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Land closeout authentication guard",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Main 7e965f88."
+          },
+          {
+            "label": "Publish supersession packets",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Main c6bf1544."
+          },
+          {
+            "label": "Mark named packets dispatch-ready",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Main 7eaf776d."
+          },
+          {
+            "label": "Verify prerequisite snapshot review",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No canonical acceptance receipt inspected."
+          },
+          {
+            "label": "Implement supersession lifecycle",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No implementation landing inspected."
+          },
+          {
+            "label": "Independent supersession review",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No accepted review receipt inspected."
+          },
+          {
+            "label": "Protected recovery and teardown",
+            "status": "blocked",
+            "verification": "reported",
+            "evidence": "Requires separately supported recovery; committed summary retains HOLD."
+          }
+        ],
+        "next_gate": "Dispatcher owner verifies acceptance of review-agent-legacy-claim-scoped-snapshot-v1 before claiming the ready supersession implementation."
+      },
+      "related": []
+    },
     {
       "id": "art-next-set-dispatch-5ee4a63d",
       "headline": "Environment art gains a precise 'next set' command, starting with Sepulcher Gardens",
@@ -1647,163 +1799,24 @@
         "next_gate": "Existing paired reviewer must independently validate the landed grave implementation and record a canonical disposition."
       },
       "related": []
-    },
-    {
-      "id": "validator-finish-guard-landed-0de885c5",
-      "headline": "CUSTODIAN lands a safeguard against unverifiable code merges; independent review is next",
-      "summary": "The finish workflow now rejects synchronization merges without authenticated lifecycle evidence before publishing changes. The implementation is on main and its closeout reports passing focused and changed-file tests. Its separate independent review remains ready, not accepted; older blocked reviews are not cleared.",
-      "body": "The implementation at 0de885c5 adds a source-span merge witness gate to workstream.py and regression coverage, and is ancestral to observed main b41c4d86. The closeout reports 78 workstream tests, 258 paired-runner tests and 6/6 changed-file validation checks passing. These are author-reported validation results, not independent acceptance. The paired review packet remains ready/auto at the inspected main revision. Historical R0-01 and protected recovery cases remain unresolved. Host liveness, canonical teardown and full dispatcher counts were not inspected.",
-      "severity": "milestone",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-paired-review-validator-recertification-v1",
-      "occurred_at": "2026-10-31T09:46:38Z",
-      "bullets": [
-        "Implementation is on inspected main.",
-        "Author closeout reports passing focused and changed-file tests.",
-        "Paired independent review is ready, not accepted.",
-        "Historical protected reviews and host teardown remain unresolved."
-      ],
-      "links": [
-        {
-          "title": "Guard implementation and validation summary",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/0de885c5c6c482381cbcee0bbfa125fcaf26af7c"
-        },
-        {
-          "title": "Current main integration",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/b41c4d86b5bc40ec504b1e30fa3aadffd301cc9f"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN has moved an important review safeguard from a queued plan into the code on main. Before a workstream publishes changes, its finish workflow now checks whether synchronization merges have authentic lifecycle evidence. That closes a route by which a change could land only to fail later provenance review.",
-        "sections": [
-          {
-            "heading": "A checkpoint before publication",
-            "text": "The new guard examines merges along a workstream's source history, checking their ancestry, reconstructed tree and matching lifecycle records. Missing or inconsistent witnesses now block publication. Ordinary histories without synchronization merges remain compatible."
-          },
-          {
-            "heading": "Tests passed, but the reviewer has not signed off",
-            "text": "The implementation closeout reports 78 workstream tests, 258 paired-review runner tests and six changed-file validation checks passing. These results support the implementation, but a fresh independent review is still required. Existing protected historical reviews are not automatically forgiven by the new guard."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The evidence check moved upstream",
-            "explanation": "Rejecting an unauthenticated merge before publication is more useful than discovering its missing history after a review is already stranded. This is a workflow reliability improvement, not a gameplay feature."
-          },
-          {
-            "title": "The next bottleneck is independent acceptance",
-            "explanation": "The implementation is landed and archived, while its dependent review packet remains ready. Only an authentic independent disposition can establish acceptance, and host cleanup remains a separate proof obligation."
-          }
-        ],
-        "takeaway": "The provenance guard is landed, with reported passing validation; independent acceptance and canonical teardown are still unverified.",
-        "next_watch": "The paired reviewer’s authentic disposition and any follow-on recovery decisions supported by fresh host evidence."
-      },
-      "details": {
-        "overview": "Main b41c4d86 contains 0de885c5. The implementation summary describes a fail-closed first-parent merge witness gate in workstream.py, exact claim/packet binding and regression tests. The separate review packet remains ready/auto. Combined commit-status API returned no statuses, which is not a CI PASS or FAIL.",
-        "ledger": [
-          {
-            "stage": "Implementation and landing",
-            "status": "verified on main",
-            "evidence": "0de885c5 ancestor of main b41c4d86; archived implementation packet."
-          },
-          {
-            "stage": "Validation",
-            "status": "author-reported passing",
-            "evidence": "Closeout summary: 78 workstream tests, 258 paired runner tests, 6/6 changed-file checks."
-          },
-          {
-            "stage": "Independent review",
-            "status": "not accepted",
-            "evidence": "Dependent review packet inspected as ready/auto; no accepted receipt."
-          },
-          {
-            "stage": "Canonical teardown",
-            "status": "unknown",
-            "evidence": "No fresh host worktree, lock, process or disk proof."
-          }
-        ],
-        "notes": [
-          "Original historical multi-sync finding remains unresolved.",
-          "No CI conclusion follows from an empty combined-status result."
-        ],
-        "unknowns": [
-          "Full dispatcher queue and unique outstanding workstreams.",
-          "Current host claims, worktrees, locks and disk usage."
-        ],
-        "actions": [
-          "Existing paired reviewer: independently inspect complete validator and produce authentic review disposition after implementation landing.",
-          "Authorized recovery owner: separately audit protected historical reviews before any recovery."
-        ]
-      },
-      "scorecard": {
-        "stage": "Landed, awaiting independent review",
-        "as_of": "2026-10-31T10:19:37Z",
-        "scope": "Validator recertification implementation and its dependent review packet only",
-        "metrics": [
-          {
-            "id": "ready_review",
-            "label": "READY REVIEW PACKET",
-            "value": 1,
-            "verification": "verified",
-            "basis": "One specifically inspected dependent review packet has Status ready and Dispatch auto on main; excludes other packets.",
-            "url": "https://github.com/braydio/CUSTODIAN/blob/b41c4d86b5bc40ec504b1e30fa3aadffd301cc9f/custodian/docs/ai_context/task_packets/REVIEW_AGENT_PAIRED_REVIEW_VALIDATOR_RECERTIFICATION_V1.md"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Publish implementation packet",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "3c3acc05 and 72096cb4"
-          },
-          {
-            "label": "Implement and land guard",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "0de885c5 present on main b41c4d86"
-          },
-          {
-            "label": "Run author validation",
-            "status": "current",
-            "verification": "reported",
-            "evidence": "Closeout reports 78, 258 and 6/6 passing checks"
-          },
-          {
-            "label": "Independent review acceptance",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Review packet ready; no accepted receipt"
-          },
-          {
-            "label": "Canonical teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No current host proof"
-          }
-        ],
-        "next_gate": "Existing paired-review owner must independently inspect the landed validator and produce a canonical disposition."
-      },
-      "related": []
     }
   ],
   "snapshot": {
-    "observed_at": "2026-11-01T04:30:32Z",
-    "source_main_sha": "5ee4a63d1bfcabdd53d27ba2f1ad3f4f231663a5",
+    "observed_at": "2026-11-01T06:03:31Z",
+    "source_main_sha": "7eaf776dfe57b971069262925275331bb78c7dbc",
     "coverage": "partial",
-    "scope": "One inspected new main commit and its three changed design files; no canonical dispatcher audit",
+    "scope": "Two named supersession packet declarations and selected main commits; no canonical full dispatcher audit",
     "metrics": [
       {
-        "id": "other-art-core-states",
-        "label": "PLANNED CORE STATES",
-        "value": 71,
+        "id": "other-ready-named-packets",
+        "label": "READY IN INSPECTED PAIR",
+        "value": 2,
         "verification": "verified",
-        "basis": "Committed Hub/Sepulcher/Awakening manifest inventory, not completed images or active packets",
-        "url": "https://github.com/braydio/CUSTODIAN/commit/5ee4a63d1bfcabdd53d27ba2f1ad3f4f231663a5"
+        "basis": "Two explicitly inspected packet declarations are ready/auto; excludes all other packets",
+        "url": "https://github.com/braydio/CUSTODIAN/commit/7eaf776dfe57b971069262925275331bb78c7dbc"
       }
     ],
-    "focus": "Verify or generate CAL-01 source and obtain individual human approval",
-    "note": "No dispatcher, host, Dropbox or runtime state verified; no project-wide packet totals."
+    "focus": "Verify prerequisite legacy-claim snapshot review before supersession dispatch",
+    "note": "This is not a project-wide ready count or proof of execution."
   }
 }
