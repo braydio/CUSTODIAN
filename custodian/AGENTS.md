@@ -51,6 +51,7 @@ Use this map to land on the right material fast:
 | Runtime feature behavior | `../design/` matching feature/system doc | `game/` scripts and `docs/ai_context/*` |
 | Architecture or ownership | `docs/ai_context/FILE_INDEX.md` | `docs/ARCHITECTURE.md`, `docs/ai_context/ARCHITECTURE_OWNERSHIP_MAP.md`, `../design/04_architecture/` |
 | Current implementation status | `docs/ai_context/CURRENT_STATE.md` | `../design/TRACKING.md`, active feature docs |
+| AI image generation and art-review batching | `../design/04_architecture/AI_ART_GENERATION_REVIEW_PROTOCOL_V1.md` | Current program manifest, approved source references, Asset Pipeline V2 |
 | Asset layout or content placement | `docs/ASSET_LAYOUT_CONVENTION.md` | nearby `README.md` files in `content/` |
 | Scene/runtime structure | `docs/SCENE_HIERARCHY.md` | `scenes/`, `game/`, `project.godot` |
 | Migration or drift cleanup | `docs/AGENT_MIGRATION_PLAYBOOK.md` | this primer, `docs/ai_context/*` |
@@ -471,6 +472,22 @@ checkout is a coordination checkout, not the implementation surface. Use
 `python3 custodian/tools/agent/workstream.py start <stable-kebab-id>` to resume
 or create the canonical `agent/<id>` branch. Never reset/stash a dirty attached
 worktree; preserve it and report the blocker.
+
+Codex turn-end hygiene is mandatory even when work remains open: inventory
+attached worktrees and tracked, untracked **and ignored** files; verify every
+durable change at the exact remote SHA; and safely retire the checkout via
+`workstream.py finish` or, for a safely parked clean canonical branch,
+`workstream.py checkpoint <workstream-id> --remove-worktree`. Check for
+unresolved ignored content *before* checkpoint removal. Preserve any
+review/claim/owner uncertainty, private proof, unique files or missing remote
+evidence; report its exact reason. The remote branch retains committed work,
+not ignored files. Never default to leaving a checkout attached merely because
+a follow-up turn is possible. Every turn reports created/retired/retained/total
+worktrees and host disk evidence (or unavailable). Manual experiment branches
+and protected reviews are not auto-GC candidates. Full contract:
+repository-root `AGENTS.md` and
+`docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`.
+
 
 Keep work together through the smallest coherent completion boundary. Separate
 commits inside that boundary are fine; do not create review-dependent micro-

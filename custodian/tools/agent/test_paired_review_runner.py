@@ -26,6 +26,16 @@ from godot_project_lock import (
     BUDGET_FD_ENV, BUDGET_REENTRANCY_ENV, MAX_JOBS_ENV,
     GodotJobBudget, godot_home, job_budget_root,
 )
+
+
+def _mock_no_active_review_processes(test_case: unittest.TestCase) -> None:
+    """Keep recovery fixtures independent of the host's restricted /proc view."""
+    for name in ("_process_owns_worktree", "_processes_owning_review_checkout"):
+        owner_probe = patch.object(runner, name, return_value=[])
+        owner_probe.start()
+        test_case.addCleanup(owner_probe.stop)
+
+
 from review_receipt_delta import (
     read_git_text,
     render_review_receipt,
@@ -36,6 +46,373 @@ from review_receipt_delta import (
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "custodian/tools/validation"))
 import run_validation
+
+
+# This is the complete historical diagnostic-ref dependency set used by this
+# test module's source-span cases. Pin the remote commit and trace object
+# identities so clean CI checkouts can fetch exact refs without relying on a
+# developer's accumulated remote-tracking refs.
+_PINNED_HISTORICAL_DIAGNOSTIC_REFS = (
+    (
+        "refs/heads/agent-diagnostics/agent-execution-reset-v1/"
+        "20261020T135839Z-db96534ed3a7",
+        "826ce081626a0aa2980408728dbc8bc89a0a8811",
+        "6b4e626daf3b24a7d135145b9f432133576f3d89",
+        "7cd1c206992acc8af829087727fa8b5a66c0c29b3273c395c06cfd129bf8a545",
+    ),
+    (
+        "refs/heads/agent-diagnostics/agent-grunt-raster-review-scope-attestation-v1/"
+        "20261019T195635Z-441f0bc5ee6f",
+        "7edace7d2cfd54702570fc1f4501e3fb3ba828ce",
+        "f9ed2fb94ca16d5d931ee30cf679765908a2bc1a",
+        "d4a66e21e6cce45acc35d0cb5bb13a916d8614984f8dc31806a26b28e5305c80",
+    ),
+    (
+        "refs/heads/agent-diagnostics/agent-paired-review-failed-host-validation-import-recovery-v1/"
+        "20261020T200652Z-2fd156ce23d0",
+        "fc31dfe831d562f5e5c68fba7483e124942b2f44",
+        "cdde47b5855c709e639fabc0455abe567b326310",
+        "3c3327ae13b533e5e7e5bf483bbd92fe726f888a2c1d8f83a4c30482a003f502",
+    ),
+    (
+        "refs/heads/agent-diagnostics/agent-persistent-task-administrator-v1/"
+        "20261030T061213Z-c6cf54beac00",
+        "c76353e5f15b29386f6ff88f9524a940d15e9139",
+        "ccbb08eb138a8f238dbd5e1613c55630ab9a9a6e",
+        "d64c43b5672a311e1cdf4ea4c88aee37743a85a3a593c9cb2d274d574a381cc7",
+    ),
+    (
+        "refs/heads/agent-diagnostics/grunt-candidate-raster-workflow-v1/"
+        "20261019T100251Z-d7853dfb04a5",
+        "bb2360e038440f726027c65f60b9c3debaae3f56",
+        "3fc823c9c921da35d8d3fe97a7aa44afd68a74d0",
+        "ac119f809a780ec3f25c526d7a24ba90658a1663035a71ff818e8b7b0fc5ea7c",
+    ),
+    (
+        "refs/heads/agent-diagnostics/operator-3d-model-to-sprite-tooling-integration-v1/"
+        "20261031T020602Z-9e1691d59e2e",
+        "f182b790b053563027288ff3477113f6637f522f",
+        "e8d8618e4cbb13d5187ac8ce9904a243c7da4b72",
+        "7d644903b24fd84ec02028e3887dc937edad332a7abe11a76787a4776e4fc5b4",
+    ),
+    (
+        "refs/heads/agent-diagnostics/operator-motion-foundry-blender-2d-rig-v1/"
+        "20261020T144517Z-523ad5973c21",
+        "a50ee4c0a2d3967934bf39fb3c708e3df0cdd094",
+        "6110cf8ea45c85c25dea1cab7ec475d2a2e2b493",
+        "0b1af733f7fdaeef984a06ecbdb9219ea5651ede5f38b6bd03a5284de9a37a6f",
+    ),
+    (
+        "refs/heads/agent-diagnostics/hub-road-empty-procession-sequence-v1/"
+        "20261022T171105Z-cde73b9b6771",
+        "a33fe02e13c7a5c14f8b81645ff27a5fb916154c",
+        "73a7290d91f35f71243fc4c858bb1b7fdb9c68e8",
+        "f4f408e8c5302182a0dadb744b6449c8ae85c65238409284db248d6a8b8364ac",
+    ),
+    (
+        "refs/heads/agent-diagnostics/agent-paired-review-braced-work-surface-v1/"
+        "20261019T120857Z-96de098ad393",
+        "8efe6081452371bd5a9bf831d8b1b58939bbf2ae",
+        "e6be775fb00a3a1600dce5fbaaaf169db8e82fc3",
+        "9da035c6bf6a24bb059c934d234d4a5ec4ce47e2f2ad4a6d1a2ad8102f1b1ebf",
+    ),
+    (
+        "refs/heads/agent-diagnostics/agent-paired-review-conflict-resolution-merge-provenance-v1/"
+        "20261022T172255Z-7f774d406013",
+        "7b7b5c629cf84884c5a21ae58ef9b07e98c78b6c",
+        "8be166dd891e9a4156333833e4d290c383153fa1",
+        "c540e3a42945c76db7e8c19ec9d33fd5a04d450294da09d3cbd466da97c0e870",
+    ),
+    (
+        "refs/heads/agent-diagnostics/agent-paired-review-host-validation-recovery-v1-review-corrections-1/"
+        "20261018T005240Z-25f5254d4395",
+        "664b0ea1f25e12da8c998b2d3cf037af0af40d02",
+        "9b0d4a1a662ff186b64899a8fe43185f7435cb38",
+        "53c15b4bb12c9fdd39ae855e5db4400b9fdd4b3de50ea1c5ccecd1d7466873be",
+    ),
+    (
+        "refs/heads/agent-diagnostics/agent-paired-review-procession-doc-scope-recovery-v1/"
+        "20261023T024405Z-15085f4dcc61",
+        "4d5c1eb2530df568c918e1f1bada3fa9ba76d418",
+        "9c702e12f5427554f404130757b1850a8a5402ce",
+        "1ddd0c04f7f24e64c584ea3b7ae1953674b226044a41f6e08474da48c282da38",
+    ),
+    (
+        "refs/heads/agent-diagnostics/agent-paired-review-resumed-worktree-provenance-v1/"
+        "20261022T183152Z-d2bd0dbe47d1",
+        "af95b795f623fb5424ec18ceac6d2837e1a8970e",
+        "c97cf72aac99754b55cd6e9d7a4a80fc2a1bf45d",
+        "245eba20ead9c54cc41d793dcbb60cd345d08d70675f7e0f52edffb760e35b78",
+    ),
+    (
+        "refs/heads/agent-diagnostics/agent-paired-review-source-bearing-archive-gate-v1/"
+        "20261018T073442Z-9f32a80a4938",
+        "d46c93d011dfdf40f5074e2e57dbdbfa6ec3aa96",
+        "3a8c1b7069dd0986db4a341589cc840e47365427",
+        "acfadc48f714309c8404649f7bef8c92890d1e36b7f2696d2b057ffcd6915419",
+    ),
+    (
+        "refs/heads/agent-diagnostics/agent-paired-review-source-bearing-archive-gate-v1/"
+        "20261019T022243Z-fbd7e4e2f3d7",
+        "bba08f5b3318b07ecad6cea850ec532a7a30b1ea",
+        "e94e50179b19a9e2c7ea1b20ead693db43e96582",
+        "8c827cc37336788c11a88c4bd38988fcece7d7bfa16fb3a3db31e5f46ba96a10",
+    ),
+    (
+        "refs/heads/agent-diagnostics/agent-paired-review-source-span-main-sync-recovery-v1/"
+        "20261018T064130Z-f6559c757a1f",
+        "a7a7b179d336c10f21bf4d9d0857ec3403d3e04a",
+        "b00b3a1a9d2b9df146667fc72fb48b8af362b4a4",
+        "fb525360d7e546e4172cef68c1783347dc2fedd9363de278086c1bc9ee298157",
+    ),
+    (
+        "refs/heads/agent-diagnostics/operator-motion-foundry-core-v1/"
+        "20261019T111751Z-bc1d9d1546fb",
+        "d890de8a8e929562aa8d0810e49ed4a84d332aaf",
+        "1f977b9429f15f28c90435cf6fdce5722e3b2731",
+        "89854991cd1824ac6008c1756026a04dcd42e6ee9434e5173aae6a48baa208c6",
+    ),
+    (
+        "refs/heads/agent-diagnostics/queue-execution-frontier-restoration-v1/"
+        "20261019T003347Z-547f6421486d",
+        "25875923ced58e35d125aa72f27856a6067fe4ae",
+        "dbddb0d7477319460527f26ca0a003c459d51f3f",
+        "0a0936f9c51f2c21405276f72cbadd72db2fe581d06f4e0f9591d652b1879135",
+    ),
+    (
+        "refs/heads/agent-diagnostics/queue-execution-frontier-restoration-v1/"
+        "20261019T003556Z-5bd6e454aaf3",
+        "48e40607204947b64081e383865e168c51c9f8e3",
+        "0cc6a8ff9c3d65f01def94df9a30029a571a4074",
+        "6ef31a391334dcbf877e63f53ce755e6967bea2b7af6b475bba3260e21e85d05",
+    ),
+    (
+        "refs/heads/agent-diagnostics/queue-execution-frontier-restoration-v1/"
+        "20261019T003727Z-bb7d35e7b6b9",
+        "adf456d25c3bdceba8d841c4a7ac53516db1a82d",
+        "74a97d09e79e8cb8300acc5297a6a34f13488202",
+        "8c4a5e22a3596e0d8f9b35d0e3f50794519cde95c70e392116b8b6f92d240476",
+    ),
+    (
+        "refs/heads/agent-diagnostics/worktree-backlog-census-and-safety-ledger-v1-review-corrections-1/"
+        "20261017T195329Z-de38cd920078",
+        "8f8ee74420c2c0a7a23d2d43d1412736feaca6e5",
+        "83ff88cc2897ff9fc41ae547254392db7f928615",
+        "2905906b90bfc1792fa40c99ecc5c3afbbf214740298b79bf48d1eadacf10999",
+    ),
+)
+
+
+def _ensure_pinned_historical_diagnostic_refs(repository: Path = ROOT) -> None:
+    """Fetch only missing pinned trace refs and verify their immutable content."""
+    def git(*args: str, check: bool = True) -> subprocess.CompletedProcess:
+        return subprocess.run(
+            ["git", "-C", str(repository), *args],
+            check=check, text=True, capture_output=True,
+        )
+
+    pins = [
+        (remote_ref, remote_ref.replace("refs/heads/", "refs/remotes/origin/", 1),
+         expected_commit, expected_blob, expected_sha256)
+        for remote_ref, expected_commit, expected_blob, expected_sha256
+        in _PINNED_HISTORICAL_DIAGNOSTIC_REFS
+    ]
+    local_refs = [local_ref for _, local_ref, *_ in pins]
+
+    def existing_refs():
+        result = git(
+            "for-each-ref", "--format=%(refname) %(objectname)", *local_refs,
+        )
+        return {
+            ref: commit for ref, commit in
+            (line.split() for line in result.stdout.splitlines())
+            if ref in local_refs
+        }
+
+    existing = existing_refs()
+    for _, local_ref, expected_commit, _, _ in pins:
+        if local_ref in existing and existing[local_ref] != expected_commit:
+            raise AssertionError(
+                f"pinned historical trace ref changed: {local_ref} "
+                f"({existing[local_ref]} != {expected_commit})"
+            )
+    missing = [pin for pin in pins if pin[1] not in existing]
+    if missing:
+        git(
+            "fetch", "--no-tags", "origin",
+            *(f"{remote_ref}:{local_ref}" for remote_ref, local_ref, *_ in missing),
+        )
+        existing = existing_refs()
+
+    for _, local_ref, expected_commit, _, _ in pins:
+        actual_commit = existing.get(local_ref)
+        if actual_commit != expected_commit:
+            raise AssertionError(
+                f"fetched historical trace ref has unexpected commit: {local_ref} "
+                f"({actual_commit} != {expected_commit})"
+            )
+
+    blob_result = git(
+        "rev-parse",
+        *(f"{local_ref}:trace.jsonl" for _, local_ref, *_ in pins),
+    )
+    trace_blobs = blob_result.stdout.splitlines()
+    if len(trace_blobs) != len(pins):
+        raise AssertionError("could not resolve every pinned historical trace blob")
+    for (_, local_ref, _, expected_blob, _), blob in zip(pins, trace_blobs):
+        if blob != expected_blob:
+            raise AssertionError(
+                f"pinned historical trace blob changed: {local_ref} "
+                f"({blob} != {expected_blob})"
+            )
+
+    trace_result = subprocess.run(
+        ["git", "-C", str(repository), "cat-file", "--batch"],
+        input=("\n".join(trace_blobs) + "\n").encode(),
+        check=True, capture_output=True,
+    )
+    trace_output = trace_result.stdout
+    offset = 0
+    for (_, local_ref, _, _, expected_sha256), expected_blob in zip(pins, trace_blobs):
+        header_end = trace_output.find(b"\n", offset)
+        if header_end < 0:
+            raise AssertionError(f"truncated pinned historical trace object: {local_ref}")
+        header = trace_output[offset:header_end].decode("ascii").split()
+        if len(header) != 3 or header[0] != expected_blob or header[1] != "blob":
+            raise AssertionError(f"unexpected pinned historical trace object: {local_ref}")
+        size = int(header[2])
+        offset = header_end + 1
+        trace = trace_output[offset:offset + size]
+        if len(trace) != size or trace_output[offset + size:offset + size + 1] != b"\n":
+            raise AssertionError(f"truncated pinned historical trace bytes: {local_ref}")
+        offset += size + 1
+        if hashlib.sha256(trace).hexdigest() != expected_sha256:
+            raise AssertionError(f"pinned historical trace bytes changed: {local_ref}")
+
+
+def _historical_git_fixture_env() -> dict[str, str]:
+    env = os.environ.copy()
+    env["GIT_LFS_SKIP_SMUDGE"] = "1"
+    return env
+
+
+def _prepare_historical_git_fixture(repository: Path, revision: str) -> None:
+    """Check out historical source without hydrating unrelated LFS assets."""
+    env = _historical_git_fixture_env()
+    subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT),
+                    str(repository)], check=True, env=env)
+    refs = "".join(
+        f"update {remote_ref.replace('refs/heads/', 'refs/remotes/origin/', 1)} "
+        f"{commit}\n"
+        for remote_ref, commit, _, _ in _PINNED_HISTORICAL_DIAGNOSTIC_REFS
+    )
+    subprocess.run(
+        ["git", "-C", str(repository), "update-ref", "--stdin"],
+        input=refs, check=True, text=True, capture_output=True,
+    )
+    subprocess.run(["git", "-C", str(repository), "checkout", "-q", "--detach", revision],
+                   check=True, env=env)
+
+
+class _ImmediateFailureTextTestResult(unittest.TextTestResult):
+    """Keep failure tracebacks in bounded CI logs even if the suite times out."""
+
+    def _write_failure_details(self, label, test, error):
+        self.stream.writeln(f"\n{label}: {test.id()}")
+        self.stream.writeln(self._exc_info_to_string(error, test))
+        self.stream.flush()
+
+    def addError(self, test, err):
+        super().addError(test, err)
+        self._write_failure_details("IMMEDIATE TEST ERROR", test, err)
+
+    def addFailure(self, test, err):
+        super().addFailure(test, err)
+        self._write_failure_details("IMMEDIATE TEST FAILURE", test, err)
+
+    def emit_failure_report(self):
+        failures = self.errors + self.failures
+        if not failures:
+            return
+
+        fixture_refs = []
+        for remote_ref, expected_commit, expected_blob, expected_sha256 in (
+            _PINNED_HISTORICAL_DIAGNOSTIC_REFS
+        ):
+            local_ref = remote_ref.replace("refs/heads/", "refs/remotes/origin/", 1)
+            commit_result = subprocess.run(
+                ["git", "-C", str(ROOT), "rev-parse", "--verify", local_ref],
+                text=True, capture_output=True,
+            )
+            trace_result = subprocess.run(
+                ["git", "-C", str(ROOT), "show", f"{local_ref}:trace.jsonl"],
+                text=True, capture_output=True,
+            )
+            blob_result = subprocess.run(
+                ["git", "-C", str(ROOT), "rev-parse", "--verify",
+                 f"{local_ref}:trace.jsonl"],
+                text=True, capture_output=True,
+            )
+            trace = trace_result.stdout if trace_result.returncode == 0 else ""
+            claim_oids = sorted({
+                event["data"]["claim_oid"] for line in trace.splitlines()
+                if (event := json.loads(line)).get("event") == "remote_claim_acquired"
+            })
+            fixture_refs.append({
+                "remote_ref": remote_ref,
+                "fixture_ref": local_ref,
+                "expected_commit": expected_commit,
+                "actual_commit": commit_result.stdout.strip() or None,
+                "expected_trace_blob": expected_blob,
+                "actual_trace_blob": blob_result.stdout.strip() or None,
+                "expected_trace_sha256": expected_sha256,
+                "actual_trace_sha256": hashlib.sha256(trace_result.stdout.encode()).hexdigest()
+                if trace_result.returncode == 0 else None,
+                "claim_oids": claim_oids,
+            })
+        report = {
+            "schema": "custodian.paired_review_test_failure_report.v1",
+            "failures": [
+                {"test_id": test.id(), "traceback": traceback}
+                for test, traceback in failures
+            ],
+            "historical_fixture_lookup": {
+                "scope": "all pinned agent-diagnostics refs used by this module",
+                "refs_materialized_in_historical_git_fixtures": True,
+                "refs": fixture_refs,
+            },
+        }
+        self.stream.writeln(
+            "CUSTODIAN_TEST_FAILURE_REPORT_JSON:"
+            + json.dumps(report, sort_keys=True, separators=(",", ":"))
+        )
+        self.stream.flush()
+
+
+class _ImmediateFailureTextTestRunner(unittest.TextTestRunner):
+    resultclass = _ImmediateFailureTextTestResult
+
+    def run(self, test):
+        result = super().run(test)
+        result.emit_failure_report()
+        return result
+
+
+class HistoricalGitFixtureTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        _ensure_pinned_historical_diagnostic_refs(ROOT)
+
+    def test_historical_fixture_clone_and_checkout_skip_lfs_smudge(self):
+        repository = Path("/tmp/historical-fixture")
+        with patch("subprocess.run") as run:
+            _prepare_historical_git_fixture(repository, "a" * 40)
+
+        self.assertEqual(run.call_count, 3)
+        commands = [call.args[0] for call in run.call_args_list]
+        self.assertEqual(commands[1][3:5], ["update-ref", "--stdin"])
+        for call in (run.call_args_list[0], run.call_args_list[2]):
+            self.assertEqual(call.kwargs["env"]["GIT_LFS_SKIP_SMUDGE"], "1")
 
 
 def review_packet(*, visual="none", refresh="no"):
@@ -111,6 +488,306 @@ def append_receipt(target, *, review_workstream, target_workstream, reviewed_mai
 
 
 class PairedReviewRunnerTests(unittest.TestCase):
+    def setUp(self):
+        _mock_no_active_review_processes(self)
+
+    def test_profile_publication_inputs_are_concrete_and_path_safe(self):
+        self.assertEqual(runner._publication_inputs(
+            "- Publication inputs: `custodian/tools/a.py`; `custodian/tests/a.py`\n", "sample"),
+            {"custodian/tools/a.py", "custodian/tests/a.py"})
+        self.assertEqual(runner._publication_inputs(
+            "- Publication inputs: `custodian/tools/a.py`; `custodian/tests/a.py`.\n", "sample"),
+            {"custodian/tools/a.py", "custodian/tests/a.py"})
+        self.assertEqual(runner._publication_inputs("- Publication inputs: none\n", "sample"), set())
+        for malformed in (
+            "- Publication inputs: `../secret`\n",
+            "- Publication inputs: `safe.py`; prose\n",
+            "- Publication inputs: `safe.py`.; `other.py`\n",
+            "- Publication inputs: `safe.py`; `other.py`. extra\n",
+            "- Publication inputs: `safe.py`..\n",
+            "- Publication inputs: none.\n",
+            "- Publication inputs: `same.py`; `same.py`\n",
+            "- Publication inputs: `safe.py`\n- Publication inputs: `other.py`\n",
+        ):
+            with self.subTest(malformed=malformed), self.assertRaises(runner.RunnerError):
+                runner._publication_inputs(malformed, "sample")
+
+    def test_profile_publication_inputs_accepts_both_historical_packet_fields(self):
+        packets = (
+            ROOT / "custodian/docs/ai_context/task_packets/REVIEW_AGENT_PAIRED_REVIEW_RUNNER_CHECKOUT_PROFILE_V1.md",
+            ROOT / "custodian/docs/ai_context/task_packets/archived/AGENT_PAIRED_REVIEW_RUNNER_CHECKOUT_PROFILE_V1.md",
+        )
+        for packet_path in packets:
+            with self.subTest(packet=packet_path.name):
+                inputs = runner._publication_inputs(packet_path.read_text(), str(packet_path))
+                self.assertTrue(inputs)
+
+    def test_validation_manifest_dependencies_include_scripts_and_moment_scenarios(self):
+        payload = {
+            "tests": [
+                {"type": "python", "script": "tools/check_contract.py"},
+                {"type": "python", "script": "custodian/tools/iteration/test_handoff.py"},
+                {"type": "godot_script", "script": "res://tools/smoke.gd"},
+                {"type": "moment", "scenario": "traversal/route"},
+            ],
+        }
+        manifest = "custodian/tools/validation/validation_manifest.json"
+        script = "custodian/tools/iteration/test_handoff.py"
+        contents = {
+            manifest: json.dumps(payload),
+            "tools/check_contract.py": "# no sibling import\n",
+            script: 'from pathlib import Path\nSCRIPT = Path(__file__).with_name("publish_review_artifacts.py")\n',
+            "custodian/tools/iteration/publish_review_artifacts.py": "# dependency\n",
+        }
+        with patch.object(runner, "read_git_text", side_effect=lambda _repo, _revision, path: contents[path]):
+            dependencies = runner._validation_manifest_dependency_paths(Path("."), "a" * 40)
+        self.assertEqual(dependencies, {
+            manifest,
+            "custodian/tools/validation/known_headless_warnings.json",
+            "tools/check_contract.py",
+            script,
+            "custodian/tools/iteration/publish_review_artifacts.py",
+            "custodian/tools/smoke.gd",
+            "custodian/tools/iteration/scenarios/traversal/route.json",
+        })
+        for invalid in ("../escape.py", "/absolute.py", "bad\\path.py"):
+            with self.subTest(invalid=invalid), \
+                 patch.object(runner, "read_git_text", return_value=json.dumps({
+                     "tests": [{"type": "python", "script": invalid}],
+                 })), \
+                 self.assertRaisesRegex(runner.RunnerError, "unsafe dependency path"):
+                runner._validation_manifest_dependency_paths(Path("."), "a" * 40)
+
+    def test_checkout_profile_must_cover_both_packets_and_exact_implementation_diff(self):
+        review_path = "custodian/docs/ai_context/task_packets/REVIEW_SAMPLE.md"
+        target_path = "custodian/docs/ai_context/task_packets/archived/SAMPLE_IMPL.md"
+        review_content = ("- Publication inputs: `custodian/tools/review.py`; "
+                          "`custodian/tools/review_test.py`\n")
+        target_content = ("- Publication inputs: `custodian/tools/impl.py`; "
+                          "`custodian/docs/manifest.json`\n")
+        packet = SimpleNamespace(review_target_packet=target_path, review_target_workstream="sample-impl")
+        profile_path = "custodian/docs/ai_context/worktree_profiles/sample.json"
+        complete = runner.worktree_provisioning.Profile(
+            profile_path, "a" * 64, ("custodian/tools", "custodian/docs"), (),
+        )
+        with patch.object(runner, "git", side_effect=lambda _repo, *args, **_kwargs:
+                          "b" * 40 if args == ("rev-parse", "--verify", "origin/main^{commit}")
+                          else "custodian/tools/impl.py\ncustodian/tools/review_test.py\n"), \
+             patch.object(runner, "read_git_text",
+                          side_effect=lambda _repo, _revision, path:
+                          review_content if path == review_path else target_content), \
+             patch.object(runner, "resolve_target_implementation_commit", return_value=("c" * 40, None)), \
+             patch.object(runner.worktree_provisioning, "load_profile", return_value=complete), \
+             patch.object(runner.worktree_provisioning, "inventory", return_value=[]), \
+             patch.object(runner, "_python_import_dependency_paths",
+                          return_value={"custodian/tools/validation/imported.py"}) as import_closure, \
+             patch.object(runner, "_validation_manifest_dependency_paths", return_value={
+                 "custodian/tools/validation/validation_manifest.json",
+                 "custodian/tools/validation/known_headless_warnings.json",
+                 "custodian/tools/validation/test_manifest.py",
+             }), \
+             patch.object(runner.subprocess, "run", return_value=subprocess.CompletedProcess([], 0, "", "")):
+            profile, main, required = runner.validate_checkout_profile(
+                Path("."), review_path, review_content, packet, profile_path)
+        self.assertEqual(profile, complete)
+        self.assertEqual(main, "b" * 40)
+        self.assertEqual(required, {"custodian/tools/review.py", "custodian/tools/review_test.py",
+                                    "custodian/tools/impl.py", "custodian/docs/manifest.json",
+                                    "custodian/tools/validation/validation_manifest.json",
+                                    "custodian/tools/validation/known_headless_warnings.json",
+                                    "custodian/tools/validation/test_manifest.py",
+                                    "custodian/tools/validation/imported.py"})
+        self.assertIn("custodian/tools/validation/test_manifest.py", import_closure.call_args.args[2])
+
+    def test_checkout_profile_fails_before_claim_when_any_dependency_is_omitted(self):
+        review_path = "review.md"
+        target_path = "target.md"
+        review_content = "- Publication inputs: `review_test.py`\n"
+        target_content = "- Publication inputs: `impl.py`\n"
+        packet = SimpleNamespace(review_target_packet=target_path, review_target_workstream="sample-impl")
+        profile = runner.worktree_provisioning.Profile("profile.json", "a" * 64,
+                                                       ("review_test.py", "impl.py"), ())
+        with patch.object(runner, "git", side_effect=lambda _repo, *args, **_kwargs:
+                          "b" * 40 if args == ("rev-parse", "--verify", "origin/main^{commit}")
+                          else "omitted_from_profile.py"), \
+             patch.object(runner, "read_git_text",
+                          side_effect=lambda _repo, _revision, path:
+                          review_content if path == review_path else target_content), \
+             patch.object(runner, "resolve_target_implementation_commit", return_value=("c" * 40, None)), \
+             patch.object(runner.worktree_provisioning, "load_profile", return_value=profile), \
+             patch.object(runner, "_python_import_dependency_paths", return_value=set()), \
+             patch.object(runner, "_validation_manifest_dependency_paths",
+                          return_value={"omitted_from_profile.py"}), \
+             patch.object(runner.subprocess, "run", return_value=subprocess.CompletedProcess([], 0, "", "")):
+            with self.assertRaisesRegex(runner.RunnerError, "omitted_from_profile.py"):
+                runner.validate_checkout_profile(Path("."), review_path, review_content, packet, "profile.json")
+
+    def test_checkout_profile_rejects_untracked_profile_before_claim(self):
+        with patch.object(runner, "git", return_value="b" * 40), \
+             patch.object(runner.subprocess, "run", return_value=subprocess.CompletedProcess([], 1, "", "")) as git:
+            with self.assertRaisesRegex(runner.RunnerError, "not tracked at origin/main"):
+                runner.validate_checkout_profile(Path("."), "review.md", "", SimpleNamespace(), "missing.json")
+            git.assert_called_once()
+
+    def test_unsafe_checkout_profile_path_is_rejected_before_git_access(self):
+        with patch.object(runner, "git") as git:
+            with self.assertRaisesRegex(runner.RunnerError, "path is unsafe"):
+                runner.validate_checkout_profile(Path("."), "review.md", "", SimpleNamespace(), "../outside.json")
+            git.assert_not_called()
+
+    def test_profile_dependency_failure_stops_before_dispatch_claim(self):
+        packet_text = review_packet()
+        packet = runner.parse_packet("review.md", packet_text)
+        with tempfile.TemporaryDirectory() as temp:
+            repo = Path(temp)
+            with patch.object(runner, "git", return_value=str(repo)), \
+                 patch.object(runner, "validate_eligible_review",
+                              return_value=("review.md", packet_text, packet)), \
+                 patch.object(runner, "validate_checkout_profile",
+                              side_effect=runner.RunnerError("profile omits required dependency")), \
+                 patch.object(runner.subprocess, "run") as dispatch:
+                with self.assertRaisesRegex(runner.RunnerError, "omits required dependency"):
+                    runner.run(repo, "review-sample", checkout_profile="profile.json")
+                dispatch.assert_not_called()
+
+    def test_bootstrap_profile_covers_actual_sparse_runner_and_test_import_closure(self):
+        profile_path = "custodian/docs/ai_context/worktree_profiles/agent_ops_paired_review_bootstrap_v1.json"
+        raw = (ROOT / profile_path).read_bytes()
+        value = json.loads(raw)
+        profile = runner.worktree_provisioning.Profile(
+            profile_path, hashlib.sha256(raw).hexdigest(), tuple(value["include_paths"]),
+            tuple(value["hydrate_lfs_paths"]),
+        )
+        main = runner.git(ROOT, "rev-parse", "origin/main^{commit}")
+        entry_points = {
+            "custodian/tools/agent/paired_review_runner.py",
+            "custodian/tools/agent/test_paired_review_runner.py",
+            "custodian/tools/agent/dispatch.py",
+            "custodian/tools/agent/workstream.py",
+        }
+        dependencies = runner._python_import_dependency_paths(ROOT, main, entry_points)
+        missing = sorted(path for path in dependencies if not runner._profile_covers_path(profile, path))
+        self.assertEqual(missing, [])
+        self.assertIn("custodian/tools/godot_project_lock.py", dependencies)
+        self.assertIn("custodian/tools/pipelines/godot_import_preflight.py", dependencies)
+        self.assertIn("custodian/tools/iteration/changed_file_router.py", dependencies)
+
+    def test_profile_dispatch_and_claim_receipt_are_bound_to_path_digest_and_dependencies(self):
+        command = runner.dispatcher_claim_command(Path("repo"), "review-sample")
+        self.assertNotIn("--checkout-profile", command)
+        profiled = runner.dispatcher_claim_command(Path("repo"), "review-sample", "profile.json")
+        self.assertEqual(profiled[-2:], ["--checkout-profile", "profile.json"])
+        profile = runner.worktree_provisioning.Profile("profile.json", "d" * 64, ("custodian/tools",), ())
+        receipt = {"checkout": "created", "checkout_profile": {
+            "profile": "profile.json", "profile_sha256": "d" * 64,
+            "paths": ["custodian/tools/a.py", "custodian/tools/test_a.py"],
+            "hydrated_lfs_paths": [], "hydrated_lfs": [],
+        }}
+        runner.verify_checkout_profile_receipt(receipt, profile,
+                                              {"custodian/tools/a.py", "custodian/tools/test_a.py"})
+        for invalid in (
+            {"checkout": "created", "checkout_profile": {
+                "profile": "other.json", "profile_sha256": "d" * 64,
+                "paths": ["custodian/tools/a.py", "custodian/tools/test_a.py"],
+                "hydrated_lfs_paths": [], "hydrated_lfs": [],
+            }},
+            {"checkout": "created", "checkout_profile": {
+                "profile": "profile.json", "profile_sha256": "e" * 64,
+                "paths": ["custodian/tools/a.py", "custodian/tools/test_a.py"],
+                "hydrated_lfs_paths": [], "hydrated_lfs": [],
+            }},
+            {"checkout": "created", "checkout_profile": {
+                "profile": "profile.json", "profile_sha256": "d" * 64,
+                "paths": ["custodian/tools/a.py"],
+                "hydrated_lfs_paths": [], "hydrated_lfs": [],
+            }},
+        ):
+            with self.subTest(invalid=invalid), self.assertRaises(runner.RunnerError):
+                runner.verify_checkout_profile_receipt(
+                    invalid, profile, {"custodian/tools/a.py", "custodian/tools/test_a.py"})
+
+    def test_profile_receipt_keeps_legacy_disposition_and_requires_separate_profile_evidence(self):
+        profile = runner.worktree_provisioning.Profile("profile.json", "d" * 64, ("custodian/tools",), ())
+        with self.assertRaisesRegex(runner.RunnerError, "checkout_profile"):
+            runner.verify_checkout_profile_receipt(
+                {"checkout": "created"}, profile, {"custodian/tools/a.py"},
+            )
+        with self.assertRaisesRegex(runner.RunnerError, "disposition"):
+            runner.verify_checkout_profile_receipt(
+                {"checkout": {"profile": "profile.json"}, "checkout_profile": {
+                    "profile": "profile.json", "profile_sha256": "d" * 64,
+                    "paths": ["custodian/tools/a.py"],
+                    "hydrated_lfs_paths": [], "hydrated_lfs": [],
+                }}, profile, {"custodian/tools/a.py"},
+            )
+
+    def test_profiled_worktree_is_verified_against_sparse_rules_and_git_blobs(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp) / "repo"
+            repo.mkdir()
+            subprocess.run(["git", "init", "-q", str(repo)], check=True)
+            subprocess.run(["git", "-C", str(repo), "config", "user.name", "Test"], check=True)
+            subprocess.run(["git", "-C", str(repo), "config", "user.email", "test@example.invalid"], check=True)
+            (repo / "review.py").write_text("print('ok')\n")
+            subprocess.run(["git", "-C", str(repo), "add", "review.py"], check=True)
+            subprocess.run(["git", "-C", str(repo), "commit", "-qm", "fixture"], check=True)
+            subprocess.run(["git", "-C", str(repo), "sparse-checkout", "init", "--no-cone"], check=True)
+            subprocess.run(["git", "-C", str(repo), "sparse-checkout", "set", "--no-cone", "--stdin"],
+                           input="/review.py\n", text=True, check=True)
+            main = subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"],
+                                  text=True, capture_output=True, check=True).stdout.strip()
+            profile = runner.worktree_provisioning.Profile("profile.json", "a" * 64, ("review.py",), ())
+            # The reviewed implementation history may name files deleted from
+            # the pinned tree; they remain review evidence but cannot be
+            # materialized into the current sparse checkout.
+            runner.verify_checkout_profile_worktree(repo, repo, profile, {"review.py", "removed.py"}, main)
+            (repo / "review.py").write_text("tampered\n")
+            with self.assertRaisesRegex(runner.RunnerError, "dirty"):
+                runner.verify_checkout_profile_worktree(repo, repo, profile, {"review.py"}, main)
+
+    def test_checkout_profile_mismatch_recovery_requires_plan_then_separately_authorized_apply(self):
+        plan = {"plan_sha256": "a" * 64}
+        with patch.object(runner, "plan_checkout_profile_mismatch_recovery", return_value=plan) as planner:
+            self.assertEqual(runner.main([
+                runner.CHECKOUT_PROFILE_MISMATCH_WORKSTREAM,
+                "--continue-run", runner.CHECKOUT_PROFILE_MISMATCH_RUN_ID,
+                "--recover-checkout-profile-mismatch", "--plan",
+            ]), 0)
+            self.assertEqual(runner.main([
+                runner.CHECKOUT_PROFILE_MISMATCH_WORKSTREAM,
+                "--continue-run", runner.CHECKOUT_PROFILE_MISMATCH_RUN_ID,
+                "--recover-checkout-profile-mismatch", "--plan",
+                "--authorize-fresh-reviewer-context",
+            ]), 2)
+        planner.assert_called_once_with(
+            Path.cwd(), runner.CHECKOUT_PROFILE_MISMATCH_WORKSTREAM,
+            runner.CHECKOUT_PROFILE_MISMATCH_RUN_ID,
+        )
+        with patch.object(runner, "continue_run", return_value=0) as continuation:
+            self.assertEqual(runner.main([
+                runner.CHECKOUT_PROFILE_MISMATCH_WORKSTREAM,
+                "--continue-run", runner.CHECKOUT_PROFILE_MISMATCH_RUN_ID,
+                "--recover-checkout-profile-mismatch", "--apply",
+                "--plan-sha256", "a" * 64,
+            ]), 2)
+            self.assertEqual(runner.main([
+                "review-other", "--continue-run", runner.CHECKOUT_PROFILE_MISMATCH_RUN_ID,
+                "--recover-checkout-profile-mismatch", "--apply",
+                "--authorize-fresh-reviewer-context", "--plan-sha256", "a" * 64,
+            ]), 2)
+            self.assertEqual(runner.main([
+                runner.CHECKOUT_PROFILE_MISMATCH_WORKSTREAM,
+                "--continue-run", runner.CHECKOUT_PROFILE_MISMATCH_RUN_ID,
+                "--recover-checkout-profile-mismatch", "--apply",
+                "--authorize-fresh-reviewer-context", "--plan-sha256", "a" * 64,
+            ]), 0)
+        continuation.assert_called_once_with(
+            Path.cwd(), runner.CHECKOUT_PROFILE_MISMATCH_WORKSTREAM,
+            runner.CHECKOUT_PROFILE_MISMATCH_RUN_ID,
+            authorize_fresh_reviewer_context=True,
+            recover_checkout_profile_mismatch=True, plan_sha256="a" * 64, timeout=None,
+        )
+
     def test_finish_index_recovery_authenticates_original_five_message_pass(self):
         messages = ["progress: reconstructing", "progress: checking evidence",
                     "progress: running focused tests", "progress: findings-first review"]
@@ -533,7 +1210,7 @@ class PairedReviewRunnerTests(unittest.TestCase):
             {key: value for key, value in published_pair.items()
              if key not in {"owners", "timeout_sec"}},
         )
-        self.assertIn(actual_pair["timeout_sec"], (90, 120))
+        self.assertEqual(actual_pair["timeout_sec"], 300)
         self.assertTrue(set(published_pair["owners"]).issubset(actual_pair["owners"]))
 
     def test_invalid_disposition_repair_moves_only_the_four_allowlisted_handoff_lines(self):
@@ -3001,6 +3678,352 @@ class PairedReviewRunnerTests(unittest.TestCase):
                                        capture_output=True).stdout.splitlines()
             self.assertEqual(set(committed), {active, archive, readme, summary.name, target_path})
 
+    def test_committed_pass_closeout_uses_authenticated_continuation_identity(self):
+        fixture = self._continuation_fixture()
+        self.addCleanup(fixture["temp"].cleanup)
+        repo, worktree = fixture["repo"], fixture["worktree"]
+        pinned_runner_source = Path(runner.__file__).read_text(encoding="utf-8")
+        control_source_path = Path(runner.redact.__code__.co_filename).resolve()
+        pinned_control_source = control_source_path.read_text(encoding="utf-8")
+        for relative, source in (("custodian/tools/agent/paired_review_runner.py", pinned_runner_source),
+                                 ("custodian/tools/agent/workflow_control.py", pinned_control_source)):
+            source_path = repo / relative
+            source_path.parent.mkdir(parents=True, exist_ok=True)
+            source_path.write_text(source)
+        subprocess.run(["git", "-C", str(repo), "add", "custodian/tools/agent/paired_review_runner.py",
+                        "custodian/tools/agent/workflow_control.py"], check=True)
+        subprocess.run(["git", "-C", str(repo), "commit", "-qm", "pinned capture source"], check=True)
+        subprocess.run(["git", "-C", str(repo), "push", "-q", "origin", "main"], check=True)
+        fixture["reviewed_main"] = subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"], check=True,
+                                                  text=True, capture_output=True).stdout.strip()
+        active = fixture["active"]
+        archive = f"{runner.PACKET_ROOT}/archived/{Path(active).name}"
+        target_path = fixture["target"]
+        readme = f"{runner.PACKET_ROOT}/README.md"
+        implementation_commit = "a" * 40
+        run_id = fixture["run_id"]
+
+        final_message = ("Workstream: review-sample\n\nIndependent disposition: passed. "
+                         "No blocking defects or material acceptance gaps found.\n\n" + "Evidence preserved. " * 180)
+        self.assertGreater(len(final_message), 1200)
+        outcome_text = runner.review_outcome.render_review_outcome(
+            outcome="passed", review_workstream="review-sample", target_workstream="sample",
+            reviewed_main=fixture["reviewed_main"], implementation_commit=implementation_commit,
+            provenance="different-agent", run_id=run_id, review_cycle=0, ids=(),
+        )
+        outcome, outcome_error = runner.review_outcome.parse_review_outcome(outcome_text)
+        self.assertIsNone(outcome_error)
+        archived_text = fixture["review"].replace("- Status: `ready`", "- Status: `complete`")
+        archived_text += "\n## Independent Review\n\nVerified reviewer PASS.\n\n"
+        archived_text += runner.render_review_receipt(outcome) + "\n" + outcome_text
+        (worktree / active).unlink()
+        (worktree / archive).parent.mkdir(parents=True, exist_ok=True)
+        (worktree / archive).write_text(archived_text)
+        (worktree / target_path).write_text(fixture["target_content"] + "\nCoordinator receipt.\n")
+        (worktree / readme).write_text("archived review index\n")
+        fixture["prior_summary"].unlink(missing_ok=True)
+        summary = worktree / runner.expected_summary_path("review-sample")
+        summary.write_text(f"Review outcome: passed\nRun ID: {run_id}\nReviewed main: {fixture['reviewed_main']}\n"
+                           "## Review Outcome\npassed\n")
+        subprocess.run(["git", "-C", str(worktree), "add", "-A"], check=True)
+        subprocess.run(["git", "-C", str(worktree), "commit", "-qm", "archived reviewer PASS"], check=True)
+        self.assertEqual(subprocess.run(["git", "-C", str(worktree), "status", "--porcelain"], check=True,
+                                        text=True, capture_output=True).stdout, "")
+
+        original_path = fixture["run_dir"] / "metadata.json"
+        original = json.loads(original_path.read_text())
+        original.update({"phase": "claim_profile_mismatch", "reviewed_main": fixture["reviewed_main"]})
+        original_path.write_text(json.dumps(original, sort_keys=True) + "\n")
+        receipt = dict(fixture["receipt"], run_id="20261017T120001Z-abcdefabcdef",
+                       authoring_chat=fixture["chat"], historical_extension="x" * 1000)
+        (fixture["run_dir"] / "claim-receipt.json").write_text(json.dumps(receipt, sort_keys=True) + "\n")
+        claim_output = runner.CLAIM_SENTINEL + json.dumps(receipt, sort_keys=True) + "\n"
+        self.assertGreater(len(claim_output), 1200)
+        (fixture["run_dir"] / "claim.stdout").write_text(claim_output[:1200])
+
+        continuation = fixture["run_dir"] / "continuation-01"
+        continuation.mkdir()
+        (continuation / "last-message.txt").write_text(final_message)
+        logged_message = runner._redacted_agent_message(final_message)
+        (continuation / "codex.jsonl").write_text("\n".join((
+            json.dumps({"type": "thread.started", "thread_id": "thread-review-sample"}),
+            json.dumps({"type": "turn.started"}),
+            json.dumps({"type": "item.completed", "item": {
+                "type": "command_execution", "command": "/bin/bash -lc 'rg -n pattern file'",
+                "exit_code": 1, "status": "failed", "aggregated_output": "",
+            }}),
+            json.dumps({"type": "item.completed", "item": {
+                "type": "command_execution", "command": "/bin/bash -lc 'python3 inspect.py'",
+                "exit_code": 1, "status": "failed",
+                "aggregated_output": "Traceback (most recent call last):\\nImportError: exploratory import\\n",
+            }}),
+            json.dumps({"item": {"type": "agent_message", "text": logged_message}}),
+            json.dumps({"type": "turn.completed"}),
+        )) + "\n")
+        (continuation / "codex.stderr").write_text("")
+        lock = runner.common_dir(repo) / "custodian-review-runs/locks/review-sample.lock"
+        lock.parent.mkdir(parents=True, exist_ok=True)
+        lock.touch()
+        lock_stat = lock.stat()
+        plan = {
+            "schema": "custodian.rc116.review_receipt_recovery.v1", "workstream": "review-sample",
+            "run_id": run_id, "claim_run_id": receipt["run_id"], "reviewed_main": fixture["reviewed_main"],
+            "implementation_commit": implementation_commit, "branch": receipt["branch"],
+            "worktree": receipt["worktree"], "active_packet": active, "target_workstream": "sample",
+            "target_packet": target_path, "lock_identity": {"device": lock_stat.st_dev, "inode": lock_stat.st_ino},
+        }
+        plan["outcome"], plan_error = runner.review_outcome.parse_review_outcome(archived_text)
+        self.assertIsNone(plan_error)
+        plan["runner_source_sha256"] = hashlib.sha256(pinned_runner_source.encode()).hexdigest()
+        plan["workflow_control_source_sha256"] = hashlib.sha256(pinned_control_source.encode()).hexdigest()
+        plan["session"] = {
+            "thread_id": "thread-review-sample",
+            "codex_jsonl_sha256": hashlib.sha256((continuation / "codex.jsonl").read_bytes()).hexdigest(),
+            "last_message_sha256": hashlib.sha256((continuation / "last-message.txt").read_bytes()).hexdigest(),
+        }
+        plan["plan_sha256"] = hashlib.sha256(json.dumps(plan, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+        journal = {"schema": "custodian.rc116.review_receipt_recovery.v1", "workstream": "review-sample",
+                   "run_id": run_id, "stage": "closeout_blocked", "plan": plan,
+                   "plan_sha256": plan["plan_sha256"]}
+        (continuation / "rc116-recovery-journal.json").write_text(json.dumps(journal, sort_keys=True) + "\n")
+        child = {
+            "schema": runner.CONTINUATION_SCHEMA, "workstream": "review-sample", "run_id": run_id,
+            "phase": "coordinator_closeout", "continuation_number": 1, "reviewer_launch_count": 1,
+            "exit_code": 0, "original_run_dir": str(fixture["run_dir"]),
+            "last_message": str(continuation / "last-message.txt"),
+            "invocation": ["codex", "exec", "--ephemeral", "--json", "--cd", receipt["worktree"],
+                           "--output-last-message", "<continuation-dir>/last-message.txt", "-"],
+            "branch": receipt["branch"], "worktree": receipt["worktree"],
+            "active_packet_path": active, "target_workstream": "sample", "target_packet_path": target_path,
+            "reviewed_main": fixture["reviewed_main"], "implementation_commit": implementation_commit,
+            "review_cycle": 0, "authoring_chat": fixture["chat"],
+            "checkout_profile_recovery": {"claim_run_id": receipt["run_id"]},
+        }
+        child["run_evidence_sha256"] = runner._file_manifest(fixture["run_dir"], omit=continuation)
+        child["original_run_manifest_sha256"] = runner._manifest_digest(child["run_evidence_sha256"])
+        (continuation / "metadata.json").write_text(json.dumps(child, sort_keys=True) + "\n")
+        host_evidence = {"implementation_commit": implementation_commit,
+                         "report_sha256": "c" * 64, "metadata_sha256": "d" * 64,
+                         "evidence_run_dir": str(fixture["run_dir"]),
+                         "continuation_dir": str(continuation)}
+
+        finish_calls = []
+        def finish(*args, **kwargs):
+            finish_calls.append((args, kwargs))
+            return "f" * 40
+
+        with patch.object(runner, "verify_coordinator_validation"), \
+             patch.object(runner, "_verify_host_validation_at_commit"), \
+             patch.object(runner, "landed_review_state", return_value={"complete": True}), \
+             patch.object(runner, "_finish_via_workstream", side_effect=finish):
+            landed = runner.coordinator_finish_review(
+                repo, "review-sample", worktree, active, "sample", target_path,
+                fixture["target_content"], fixture["chat"], fixture["reviewed_main"],
+                continuation, host_evidence,
+            )
+
+        self.assertEqual(landed, "f" * 40)
+        self.assertEqual(len(finish_calls), 1)
+        self.assertEqual(finish_calls[0][0][4], continuation.resolve())
+        parsed_events = [json.loads(line) for line in (continuation / "codex.jsonl").read_text().splitlines()]
+        command_classifications = runner._classify_session_command_failures(parsed_events)
+        self.assertEqual([entry["classification"] for entry in command_classifications], [
+            "search_no_match_candidate", "python_traceback_requires_reconciliation",
+        ])
+
+        def reject_without_lifecycle(reason):
+            before_head = subprocess.run(["git", "-C", str(worktree), "rev-parse", "HEAD"], check=True,
+                                         text=True, capture_output=True).stdout.strip()
+            calls_before = len(finish_calls)
+            with patch.object(runner, "verify_coordinator_validation"), \
+                 patch.object(runner, "_verify_host_validation_at_commit"), \
+                 patch.object(runner, "landed_review_state", return_value={"complete": True}), \
+                 patch.object(runner, "_finish_via_workstream", side_effect=finish), \
+                 self.assertRaisesRegex(runner.RunnerError, reason):
+                runner.coordinator_finish_review(
+                    repo, "review-sample", worktree, active, "sample", target_path,
+                    fixture["target_content"], fixture["chat"], fixture["reviewed_main"],
+                    continuation, host_evidence,
+                )
+            after_head = subprocess.run(["git", "-C", str(worktree), "rev-parse", "HEAD"], check=True,
+                                        text=True, capture_output=True).stdout.strip()
+            self.assertEqual(after_head, before_head)
+            self.assertEqual(len(finish_calls), calls_before)
+
+        child_path = continuation / "metadata.json"
+        child_bytes = child_path.read_bytes()
+        for field, wrong_value, reason in (
+            ("run_id", "20261017T120001Z-abcdefabcdef", "continuation is not the one completed"),
+            ("phase", "reviewer_exited", "continuation is not the one completed"),
+            ("reviewer_launch_count", 2, "continuation is not the one completed"),
+            ("exit_code", 1, "continuation is not the one completed"),
+            ("target_workstream", "other-target", "target, reviewed main"),
+            ("target_packet_path", "other-packet.md", "target, reviewed main"),
+            ("reviewed_main", "b" * 40, "target, reviewed main"),
+            ("implementation_commit", "b" * 40, "target, reviewed main"),
+            ("branch", "agent/foreign", "branch, worktree, or packet"),
+            ("worktree", str(repo), "original dispatcher claim could not be authenticated|branch, worktree, or packet"),
+            ("review_cycle", True, "target, reviewed main"),
+        ):
+            child = json.loads(child_bytes)
+            child[field] = wrong_value
+            child_path.write_text(json.dumps(child, sort_keys=True) + "\n")
+            with self.subTest(field=field):
+                reject_without_lifecycle(reason)
+        child_path.write_bytes(child_bytes)
+
+        for field, wrong_value in (("run_id", "20261017T120001Z-abcdefabcdef"), ("review_cycle", 1)):
+            prior = host_evidence.get(field)
+            host_evidence[field] = wrong_value
+            with self.subTest(host_evidence=field):
+                reject_without_lifecycle("optional host-evidence identity contradicts")
+            if prior is None:
+                host_evidence.pop(field)
+            else:
+                host_evidence[field] = prior
+
+        final_path = continuation / "last-message.txt"
+        jsonl_path = continuation / "codex.jsonl"
+        original_final_bytes, original_jsonl_bytes = final_path.read_bytes(), jsonl_path.read_bytes()
+        events = [json.loads(line) for line in original_jsonl_bytes.splitlines()]
+        events.insert(2, {"type": "item.completed", "item": {
+            "type": "command_execution", "command": "python validate_checkout_profile for both review packets",
+            "exit_code": 0, "status": "completed",
+            "aggregated_output": (
+                "first review packet required=399 uncovered=[]\\n"
+                "Traceback (most recent call last):\\n"
+                "RunnerError: published review dependency is absent from origin/main: "
+                "custodian/docs/ai_context/task_packets/AGENT_PAIRED_REVIEW_RUNNER_PUBLICATION_INPUT_GRAMMAR_V1.md\\n"
+            ),
+        }})
+        jsonl_path.write_text("\n".join(json.dumps(event) for event in events) + "\n")
+        with self.subTest(capture="hidden-required-profile-failure-with-zero-shell-exit"):
+            reject_without_lifecycle("unrecovered required profile dependency failure")
+        jsonl_path.write_bytes(original_jsonl_bytes)
+        final_path.write_text(final_message + "tampered\n")
+        with self.subTest(capture="tampered-final"):
+            reject_without_lifecycle("recovery plan's original capture digests")
+        final_path.write_bytes(original_final_bytes)
+        events = [json.loads(line) for line in original_jsonl_bytes.splitlines()]
+        events[2]["item"]["text"] = final_message[:100]
+        jsonl_path.write_text("\n".join(json.dumps(event) for event in events) + "\n")
+        with self.subTest(capture="unapproved-prefix"):
+            reject_without_lifecycle("exact pinned transformation|original capture digests")
+        forged_final = ("Workstream: review-sample\nIndependent disposition: passed.\n" + "Different review. " * 120)
+        final_path.write_text(forged_final)
+        events[2]["item"]["text"] = runner._redacted_agent_message(forged_final)
+        jsonl_path.write_text("\n".join(json.dumps(event) for event in events) + "\n")
+        with self.subTest(capture="mutually-consistent-replay"):
+            reject_without_lifecycle("recovery plan's original capture digests|exact pinned transformation")
+        final_path.write_bytes(original_final_bytes)
+        jsonl_path.write_bytes(original_jsonl_bytes)
+        child_bytes = child_path.read_bytes()
+        child = json.loads(child_bytes)
+        child["invocation"] = ["codex", "exec", "--resume", "old-thread"]
+        child_path.write_text(json.dumps(child, sort_keys=True) + "\n")
+        with self.subTest(capture="resumed-reviewer-invocation"):
+            reject_without_lifecycle("fresh successful session")
+        child_path.write_bytes(child_bytes)
+        events = [json.loads(line) for line in original_jsonl_bytes.splitlines()]
+        events.insert(2, {"item": {"type": "agent_message", "text": "Verdict: findings"}})
+        jsonl_path.write_text("\n".join(json.dumps(event) for event in events) + "\n")
+        with self.subTest(capture="contradictory-earlier-verdict"):
+            reject_without_lifecycle("contradictory earlier verdict")
+        events = [json.loads(line) for line in original_jsonl_bytes.splitlines()]
+        events.append({"type": "turn.completed"})
+        jsonl_path.write_text("\n".join(json.dumps(event) for event in events) + "\n")
+        with self.subTest(capture="duplicate-completed-turn"):
+            reject_without_lifecycle("exactly one identified completed turn")
+        jsonl_path.write_bytes(original_jsonl_bytes)
+
+        wrong_continuation = continuation.parent / "continuation-02"
+        wrong_continuation.mkdir()
+        host_evidence["continuation_dir"] = str(wrong_continuation)
+        reject_without_lifecycle("exact regular continuation-01")
+        host_evidence["continuation_dir"] = str(continuation)
+        wrong_continuation.rmdir()
+
+        claim_stdout = fixture["run_dir"] / "claim.stdout"
+        claim_bytes = claim_stdout.read_bytes()
+        altered_claim = dict(receipt, run_id="20261017T120002Z-abcdefabcdef")
+        claim_stdout.write_text(runner.CLAIM_SENTINEL + json.dumps(altered_claim, sort_keys=True) + "\n")
+        reject_without_lifecycle("dispatcher output|claim receipt|claim provenance|evidence changed")
+        claim_stdout.write_bytes(claim_bytes)
+
+        base_head = subprocess.run(["git", "-C", str(worktree), "rev-parse", "HEAD"], check=True,
+                                   text=True, capture_output=True).stdout.strip()
+        archive_bytes = (worktree / archive).read_bytes()
+        archive_prefix = archive_bytes.decode().split("## Review Outcome", 1)[0]
+        bad_outcomes = (
+            (archive_prefix, "canonical PASS outcome"),
+            (archive_prefix + "\n## Review Outcome\n- Outcome: `passed`\n", "canonical PASS outcome"),
+            (archive_prefix + runner.review_outcome.render_review_outcome(
+                outcome="findings", review_workstream="review-sample", target_workstream="sample",
+                reviewed_main=fixture["reviewed_main"], implementation_commit=implementation_commit,
+                provenance="different-agent", run_id=run_id, review_cycle=0, ids=("R0-01",)),
+             "canonical PASS outcome"),
+            (archive_prefix + runner.review_outcome.render_review_outcome(
+                outcome="human_required", review_workstream="review-sample", target_workstream="sample",
+                reviewed_main=fixture["reviewed_main"], implementation_commit=implementation_commit,
+                provenance="different-agent", run_id=run_id, review_cycle=0, ids=("R0-01",)),
+             "canonical PASS outcome"),
+            (archive_prefix + runner.review_outcome.render_review_outcome(
+                outcome="passed", review_workstream="review-sample", target_workstream="sample",
+                reviewed_main=fixture["reviewed_main"], implementation_commit=implementation_commit,
+                provenance="different-agent", run_id="20261017T120001Z-abcdefabcdef", review_cycle=0, ids=()),
+             "PASS outcome identity failed"),
+            (archive_prefix + runner.review_outcome.render_review_outcome(
+                outcome="passed", review_workstream="review-sample", target_workstream="sample",
+                reviewed_main=fixture["reviewed_main"], implementation_commit=implementation_commit,
+                provenance="different-agent", run_id=run_id, review_cycle=1, ids=()),
+             "PASS"),
+            (archive_prefix + runner.review_outcome.render_review_outcome(
+                outcome="passed", review_workstream="review-foreign", target_workstream="sample",
+                reviewed_main=fixture["reviewed_main"], implementation_commit=implementation_commit,
+                provenance="different-agent", run_id=run_id, review_cycle=0, ids=()),
+             "PASS outcome identity failed"),
+            (archive_prefix + runner.review_outcome.render_review_outcome(
+                outcome="passed", review_workstream="review-sample", target_workstream="foreign-target",
+                reviewed_main=fixture["reviewed_main"], implementation_commit=implementation_commit,
+                provenance="different-agent", run_id=run_id, review_cycle=0, ids=()),
+             "PASS outcome identity failed"),
+            (archive_prefix + runner.review_outcome.render_review_outcome(
+                outcome="passed", review_workstream="review-sample", target_workstream="sample",
+                reviewed_main="b" * 40, implementation_commit=implementation_commit,
+                provenance="different-agent", run_id=run_id, review_cycle=0, ids=()),
+             "PASS outcome identity failed"),
+            (archive_prefix + runner.review_outcome.render_review_outcome(
+                outcome="passed", review_workstream="review-sample", target_workstream="sample",
+                reviewed_main=fixture["reviewed_main"], implementation_commit="b" * 40,
+                provenance="different-agent", run_id=run_id, review_cycle=0, ids=()),
+             "PASS outcome identity failed"),
+        )
+        for index, (bad_archive, reason) in enumerate(bad_outcomes):
+            subprocess.run(["git", "-C", str(worktree), "reset", "--hard", base_head], check=True,
+                           capture_output=True)
+            (worktree / archive).write_text(bad_archive)
+            subprocess.run(["git", "-C", str(worktree), "add", archive], check=True)
+            subprocess.run(["git", "-C", str(worktree), "commit", "-qm", f"invalid outcome {index}"], check=True)
+            with self.subTest(outcome=index):
+                reject_without_lifecycle(reason)
+        subprocess.run(["git", "-C", str(worktree), "reset", "--hard", base_head], check=True,
+                       capture_output=True)
+        (worktree / archive).write_bytes(archive_bytes)
+
+        (worktree / "out-of-scope.txt").write_text("unexpected\n")
+        subprocess.run(["git", "-C", str(worktree), "add", "out-of-scope.txt"], check=True)
+        subprocess.run(["git", "-C", str(worktree), "commit", "-qm", "out of scope"], check=True)
+        reject_without_lifecycle("out-of-scope changes")
+        subprocess.run(["git", "-C", str(worktree), "reset", "--hard", base_head], check=True,
+                       capture_output=True)
+        (worktree / "dirty.tmp").write_text("uncommitted\n")
+        reject_without_lifecycle("additional changes")
+        (worktree / "dirty.tmp").unlink()
+
+        lock.rename(lock.with_suffix(".old"))
+        lock.touch()
+        reject_without_lifecycle("lock provenance changed")
+
     def test_landed_review_uses_exact_summary_and_pinned_git_paths(self):
         with tempfile.TemporaryDirectory() as temp:
             repo = Path(temp)
@@ -3423,14 +4446,27 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
             cache_root = base / "review-cache" / "custodian"
             cache_root.mkdir(parents=True)
 
+            profile = runner.worktree_provisioning.Profile("profile.json", "d" * 64,
+                                                           ("custodian/tools/agent",), ())
+            required_paths = {"custodian/tools/agent/paired_review_runner.py"}
             receipt = {"result": "claimed", "workstream": "review-sample", "verified": True,
-                       "worktree": str(worktree), "branch": "agent/review-sample", "packet": packet_path}
+                       "worktree": str(worktree), "branch": "agent/review-sample", "packet": packet_path,
+                       "checkout": "created", "checkout_profile": {
+                           "profile": profile.path, "profile_sha256": profile.digest,
+                           "paths": sorted(required_paths),
+                           "hydrated_lfs_paths": [], "hydrated_lfs": [],
+                       }}
             completed = subprocess.CompletedProcess([], 0, "CLAIMED\n" + runner.CLAIM_SENTINEL + json.dumps(receipt), "")
             original_run = subprocess.run
             def run_side_effect(argv, *args, **kwargs):
                 if argv and len(argv) > 1 and str(argv[1]).endswith("dispatch.py"):
                     self.assertEqual(argv[2:5], ["claim", "review-sample", "--agent"])
                     self.assertEqual(argv[5], "codex-reviewer")
+                    if len(dispatch_commands) == 0:
+                        self.assertEqual(argv[-2:], ["--checkout-profile", profile.path])
+                    else:
+                        self.assertNotIn("--checkout-profile", argv)
+                    dispatch_commands.append(argv)
                     return completed
                 if argv and argv[:2] == ["git", "show"]:
                     requested = argv[2]
@@ -3443,6 +4479,7 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
                 return original_run(argv, *args, **kwargs)
 
             summary_path = "REVIEW_SAMPLE_CLAUDE_SUMMARY.md"
+            dispatch_commands = []
             summary = "## Findings\nPass.\n\n## Next Handoff\n- Next workstream: none\n- Next action: done\n"
             summary_available = {"value": True}
             def git_side_effect(_repo, *args, check=True):
@@ -3521,6 +4558,8 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
                         "metadata_sha256": "def456", "summary": {"passed": 1}, "selected": ["focused"]}
 
             with patch.object(runner, "validate_eligible_review", return_value=(packet_path, review_packet(), runner.parse_packet(packet_path, review_packet()))), \
+                 patch.object(runner, "validate_checkout_profile", return_value=(profile, "a" * 40, required_paths)), \
+                 patch.object(runner, "verify_checkout_profile_receipt") as verify_profile_receipt, \
                  patch.object(runner, "codex_preflight", return_value="/fake/codex"), \
                  patch.object(runner, "run_coordinator_validation", side_effect=fake_host_validation), \
                  patch.object(runner, "verify_coordinator_validation"), \
@@ -3534,7 +4573,8 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
                      "complete": summary_available["value"], "summary_path": summary_path,
                      "reasons": [] if summary_available["value"] else ["missing exact summary"]}), \
                  patch.object(runner, "common_dir", return_value=repo / ".git"):
-                self.assertEqual(runner.run(repo, "review-sample"), 0)
+                self.assertEqual(runner.run(repo, "review-sample", checkout_profile=profile.path), 0)
+                verify_profile_receipt.assert_called_once()
                 summary_available["value"] = False
                 with self.assertRaisesRegex(runner.RunnerError, "without durable review state"):
                     runner.run(repo, "review-sample")
@@ -3546,6 +4586,8 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
             self.assertNotIn("should-not-persist", log_text)
             metadata = json.loads((successful_run / "metadata.json").read_text())
             self.assertEqual(metadata["phase"], "complete")
+            self.assertEqual(metadata["checkout_profile"]["path"], profile.path)
+            self.assertEqual(metadata["checkout_profile"]["sha256"], profile.digest)
             self.assertEqual(metadata["next_handoff"].splitlines()[0], "- Next workstream: none")
             failed_run = next(path for path in run_dirs if json.loads((path / "metadata.json").read_text())["phase"] == "failed_missing_durable_review_state")
             self.assertTrue((failed_run / "RECOVERY.md").is_file())
@@ -3789,7 +4831,12 @@ class AdvancedHeadPassRecoveryTests(unittest.TestCase):
 
 
 class PairedReviewHostValidationTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        _ensure_pinned_historical_diagnostic_refs()
+
     def setUp(self):
+        _mock_no_active_review_processes(self)
         self.temp = tempfile.TemporaryDirectory()
         self.root = Path(self.temp.name) / "repo"
         self.root.mkdir()
@@ -3833,14 +4880,12 @@ class PairedReviewHostValidationTests(unittest.TestCase):
     def _build_admin_scope_approval_history(self, *, outcome="passed"):
         """Build a disposable, accepted one-path approval on top of the real pinned history."""
         repository = Path(self.temp.name) / "admin-approval"
-        subprocess.run(["git", "clone", "--shared", "--no-checkout", str(ROOT), str(repository)],
-                       check=True, capture_output=True)
+        base_main = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "origin/main^{commit}"],
+                                   check=True, text=True, capture_output=True).stdout.strip()
+        _prepare_historical_git_fixture(repository, base_main)
         run = lambda *args, check=True: subprocess.run(
             ["git", *args], cwd=repository, check=check, text=True, capture_output=True,
         )
-        base_main = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "origin/main^{commit}"],
-                                   check=True, text=True, capture_output=True).stdout.strip()
-        run("checkout", "--detach", base_main)
         run("update-ref", "refs/remotes/origin/main", base_main)
         run("config", "user.name", "test")
         run("config", "user.email", "test@example.invalid")
@@ -3907,13 +4952,14 @@ class PairedReviewHostValidationTests(unittest.TestCase):
 
     def test_admin_scope_attestation_accepts_only_exact_historically_reviewed_service_path(self):
         repository, _, approval_main = self._build_admin_scope_approval_history()
-        source_span = host_validation.resolve_validation_source_span(
-            repository, host_validation._ADMIN_SCOPE_SOURCE_ARCHIVE,
-            host_validation._ADMIN_SCOPE_SOURCE_ARCHIVE,
-            host_validation._ADMIN_SCOPE_SOURCE_WORKSTREAM,
-            host_validation._ADMIN_SCOPE_SOURCE_PACKET,
-            approval_main=approval_main,
-        )
+        with self._historical_claim_objects():
+            source_span = host_validation.resolve_validation_source_span(
+                repository, host_validation._ADMIN_SCOPE_SOURCE_ARCHIVE,
+                host_validation._ADMIN_SCOPE_SOURCE_ARCHIVE,
+                host_validation._ADMIN_SCOPE_SOURCE_WORKSTREAM,
+                host_validation._ADMIN_SCOPE_SOURCE_PACKET,
+                approval_main=approval_main,
+            )
         self.assertEqual(source_span["provenance"]["scope_attestation"]["approval_main"], approval_main)
         self.assertEqual(
             set(source_span["provenance"]["scope_attestation"]["source_files"]),
@@ -4007,8 +5053,7 @@ class PairedReviewHostValidationTests(unittest.TestCase):
             ["git", "-C", str(ROOT), "rev-parse", "9845e1db2^"],
             check=True, text=True, capture_output=True,
         ).stdout.strip()
-        subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT), str(repository)], check=True)
-        subprocess.run(["git", "-C", str(repository), "checkout", "-q", "--detach", base_main], check=True)
+        _prepare_historical_git_fixture(repository, base_main)
         subprocess.run(["git", "-C", str(repository), "config", "user.name", "test"], check=True)
         subprocess.run(["git", "-C", str(repository), "config", "user.email", "test@example.invalid"], check=True)
         trace_prefix = ("refs/remotes/origin/agent-diagnostics/"
@@ -4151,13 +5196,14 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         self.assertEqual(set(provenance["source_code_files"]), set(host_validation._OPERATOR_3D_SCOPE_SOURCE_CODE_BLOBS))
 
         # Exercise the full original source-span resolver with its real immutable run trace.
-        span = host_validation.resolve_validation_source_span(
-            repository, host_validation._OPERATOR_3D_SCOPE_SOURCE_REVIEWED_MAIN,
-            host_validation._OPERATOR_3D_SCOPE_SOURCE_ARCHIVE,
-            host_validation._OPERATOR_3D_SCOPE_SOURCE_WORKSTREAM,
-            host_validation._OPERATOR_3D_SCOPE_SOURCE_PACKET,
-            approval_main=approval_main,
-        )
+        with self._historical_claim_objects():
+            span = host_validation.resolve_validation_source_span(
+                repository, host_validation._OPERATOR_3D_SCOPE_SOURCE_REVIEWED_MAIN,
+                host_validation._OPERATOR_3D_SCOPE_SOURCE_ARCHIVE,
+                host_validation._OPERATOR_3D_SCOPE_SOURCE_WORKSTREAM,
+                host_validation._OPERATOR_3D_SCOPE_SOURCE_PACKET,
+                approval_main=approval_main,
+            )
         self.assertEqual(span["base"], host_validation._OPERATOR_3D_SCOPE_SOURCE_BASE)
         self.assertEqual(span["head"], host_validation._OPERATOR_3D_SCOPE_SOURCE_HEAD)
         self.assertEqual(span["provenance"]["scope_attestation"]["approval_outcome"], "passed")
@@ -4172,7 +5218,8 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         review_path = host_validation._OPERATOR_3D_SCOPE_REVIEW_PACKET
         worktree = Path(self.temp.name) / "operator-3d-forged-review"
         subprocess.run(["git", "-C", str(repository), "worktree", "add", "-q", "-b",
-                        "fixture/operator-3d-forged-review", str(worktree), approval_main], check=True)
+                        "fixture/operator-3d-forged-review", str(worktree), approval_main], check=True,
+                       env=_historical_git_fixture_env())
         review_file = worktree / review_path
         forged = review_file.read_text(encoding="utf-8").replace("- Outcome: `passed`", "- Outcome: `findings`", 1)
         review_file.write_text(forged, encoding="utf-8")
@@ -4264,25 +5311,27 @@ class PairedReviewHostValidationTests(unittest.TestCase):
 
     def test_operator_3d_source_span_rejects_unrelated_trace_worktree(self):
         repository, implementation_commit, approval_main = self._build_operator_3d_scope_approval_history()
-        with self.assertRaises(host_validation.HostValidationError):
-            host_validation.resolve_validation_source_span(
+        with self._historical_claim_objects():
+            with self.assertRaises(host_validation.HostValidationError):
+                host_validation.resolve_validation_source_span(
+                    repository, host_validation._OPERATOR_3D_SCOPE_SOURCE_REVIEWED_MAIN,
+                    host_validation._OPERATOR_3D_SCOPE_SOURCE_ARCHIVE,
+                    host_validation._OPERATOR_3D_SCOPE_SOURCE_WORKSTREAM,
+                    host_validation._OPERATOR_3D_SCOPE_SOURCE_PACKET,
+                    approval_main=implementation_commit,
+                )
+            span = host_validation.resolve_validation_source_span(
                 repository, host_validation._OPERATOR_3D_SCOPE_SOURCE_REVIEWED_MAIN,
                 host_validation._OPERATOR_3D_SCOPE_SOURCE_ARCHIVE,
                 host_validation._OPERATOR_3D_SCOPE_SOURCE_WORKSTREAM,
                 host_validation._OPERATOR_3D_SCOPE_SOURCE_PACKET,
-                approval_main=implementation_commit,
+                approval_main=approval_main,
             )
-        span = host_validation.resolve_validation_source_span(
-            repository, host_validation._OPERATOR_3D_SCOPE_SOURCE_REVIEWED_MAIN,
-            host_validation._OPERATOR_3D_SCOPE_SOURCE_ARCHIVE,
-            host_validation._OPERATOR_3D_SCOPE_SOURCE_WORKSTREAM,
-            host_validation._OPERATOR_3D_SCOPE_SOURCE_PACKET,
-            approval_main=approval_main,
-        )
         trace_ref = span["provenance"]["ref"]
         trace_path = Path(self.temp.name) / "operator-3d-forged-trace"
         subprocess.run(["git", "-C", str(repository), "worktree", "add", "-q", "-b",
-                        "fixture/operator-3d-forged-trace", str(trace_path), trace_ref], check=True)
+                        "fixture/operator-3d-forged-trace", str(trace_path), trace_ref], check=True,
+                       env=_historical_git_fixture_env())
         file_path = trace_path / "trace.jsonl"
         events = [json.loads(line) for line in file_path.read_text(encoding="utf-8").splitlines()]
         published = [event for event in events if event.get("event") == "worktree_published"]
@@ -4335,6 +5384,50 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         objects left in a developer's local repository.
         """
         claims = {
+            "599c97403c67d53d60f3c394d09c756ff2b79c2d": (
+                "2e7fe81a9eff9d32fc5ec5d101f5e2f6772fdfc1",
+                "b5a46e82913455cb341c84811fd9be66b78ed138", 1792504723,
+                "workstream claim agent-execution-reset-v1 codex:1406435:20261020T135839Z-db96534ed3a7"),
+            "830cff8d534c84c28cde56ac345fb59648ec9323": (
+                "c3701f164a060eb167949cfad306229183e15590",
+                "f76854cf22aece96701bb17da14580df6ce879a2", 1792439796,
+                "workstream claim agent-grunt-raster-review-scope-attestation-v1 codex:823606:20261019T195635Z-441f0bc5ee6f"),
+            "5249f25988aa13cdf99372754509fb7b91eeef94": (
+                "157c31f685be66885059def2dd586c96713b289f",
+                "030dbe986c0ced4e8b1dc2c816f466c81146b5f2", 1792526813,
+                "workstream claim agent-paired-review-failed-host-validation-import-recovery-v1 codex:278112:20261020T200652Z-2fd156ce23d0"),
+            "0ab2d171550ea7359e7c026ca64b81eb5ee27a23": (
+                "53755f1b18574df7e10293cdb996e138dd54aba4",
+                "c1e1739e0bf44fbbc4453d879e1eec089e62c8e9", 1793340734,
+                "workstream claim agent-persistent-task-administrator-v1 codex:2968038:20261030T061213Z-c6cf54beac00"),
+            "fd2e120b5cba66fdda9e887ad58f3e98e3d66f82": (
+                "e0b3073891aa10cd945d3f54fac45cbe6b6a7052",
+                "5c659db5d9bfac7cacfd3cc67391af757dc7237c", 1792404172,
+                "workstream claim grunt-candidate-raster-workflow-v1 codex:1207098:20261019T100251Z-d7853dfb04a5"),
+            "e8198ffaf650f40495a051ca96974f7b267bcd9f": (
+                "d210ddced9e282cce63e32e0e58cb1acf3b43af6",
+                "cfa1c476e054a68eaf139b8a05610726ffc6cb92", 1793412363,
+                "workstream claim operator-3d-model-to-sprite-tooling-integration-v1 codex:4076206:20261031T020602Z-9e1691d59e2e"),
+            "e6ba1d7d33a54bfffe3e27446743ab969379dfd3": (
+                "2e7fe81a9eff9d32fc5ec5d101f5e2f6772fdfc1",
+                "b5a46e82913455cb341c84811fd9be66b78ed138", 1792507524,
+                "workstream claim operator-motion-foundry-blender-2d-rig-v1 codex:1897196:20261020T144517Z-523ad5973c21"),
+            "ade161deef427bb069096f3469ceeef3234e940e": (
+                "b7d9a623591e14bfa86bec2415b8899ff563adf7",
+                "3e68c0b1b6b19d618f18c57b97bb1c111b2b5891", 1792689066,
+                "workstream claim hub-road-empty-procession-sequence-v1 codex:2403599:20261022T171105Z-cde73b9b6771"),
+            "840af1b9a74e97f25ec806ecc78ba9eea2cf0f06": (
+                "67afd0da75287bb65169a0e698d7a5634f13e90d",
+                "9254dc8465820279723e35a3ec232557a9cf4cae", 1792689776,
+                "workstream claim agent-paired-review-conflict-resolution-merge-provenance-v1 codex:2505147:20261022T172255Z-7f774d406013"),
+            "8b6b3e83794b1e732a4010a111efd48a3577745a": (
+                "9bbcb93ca9ec59db73e5bbe4bda3824163efc26a",
+                "49a93aa726e26bd40220d3bdb658079ea9da3440", 1792723446,
+                "workstream claim agent-paired-review-procession-doc-scope-recovery-v1 codex:2204972:20261023T024405Z-15085f4dcc61"),
+            "32906fb10fc11f689f312c5b8a70c7cfa1f5873d": (
+                "66fc7f9758aa6b928e40d257431cb9dfa8194c47",
+                "dd7282d9cb96827a8b54060aae993eb994a1882e", 1792693913,
+                "workstream claim agent-paired-review-resumed-worktree-provenance-v1 codex:3187333:20261022T183152Z-d2bd0dbe47d1"),
             "34a947cf00cb0050fbb435bb1840eed57adf63b0": (
                 "ed748c33cd10c7d55c84752cfc79eea15fcea72d",
                 "83bdbd1e53fdcb06b18a5a5645f70a050c3cba01", 1792308887,
@@ -4376,6 +5469,18 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                 "55918d257cb3c663fb066f56eb79b23d174b7ae2", 1792408672,
                 "workstream claim operator-motion-foundry-core-v1 codex:503300:20261019T111751Z-bc1d9d1546fb"),
         }
+        trace_claim_oids = set()
+        for remote_ref, *_ in _PINNED_HISTORICAL_DIAGNOSTIC_REFS:
+            local_ref = remote_ref.replace("refs/heads/", "refs/remotes/origin/", 1)
+            trace = subprocess.run(
+                ["git", "show", f"{local_ref}:trace.jsonl"], cwd=ROOT,
+                check=True, capture_output=True, text=True,
+            ).stdout
+            trace_claim_oids.update(
+                event["data"]["claim_oid"] for line in trace.splitlines()
+                if (event := json.loads(line)).get("event") == "remote_claim_acquired"
+            )
+        self.assertEqual(trace_claim_oids, set(claims))
         with tempfile.TemporaryDirectory() as temporary:
             object_repo = Path(temporary) / "claim-objects.git"
             subprocess.run(["git", "init", "--bare", "-q", str(object_repo)], check=True)
@@ -7458,9 +8563,7 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         """Create disposable Git history for exact Procession scope approval checks."""
         repository = Path(self.temp.name) / f"procession-scope-{len(list(Path(self.temp.name).glob('procession-scope-*')))}"
         base_main = "49a93aa726e26bd40220d3bdb658079ea9da3440"
-        subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT),
-                        str(repository)], check=True)
-        subprocess.run(["git", "-C", str(repository), "checkout", "-q", "--detach", base_main], check=True)
+        _prepare_historical_git_fixture(repository, base_main)
         subprocess.run(["git", "-C", str(repository), "config", "user.name", "test"], check=True)
         subprocess.run(["git", "-C", str(repository), "config", "user.email", "test@example.invalid"], check=True)
         trace_prefix = ("refs/remotes/origin/agent-diagnostics/"
@@ -7595,14 +8698,20 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         self.assertEqual(extra_paths, set(host_validation._PROCESSION_SCOPE_SOURCE_FILES))
         subprocess.run(["git", "-C", str(repository), "update-ref", "refs/remotes/origin/main",
                         implementation_commit], check=True)
-        with self.assertRaisesRegex(host_validation.HostValidationError, "lacks archived correction review"):
-            host_validation.resolve_validation_source_span(
+        with self._historical_claim_objects():
+            with self.assertRaisesRegex(host_validation.HostValidationError, "lacks archived correction review"):
+                host_validation.resolve_validation_source_span(
+                    repository, pinned_p1_main, host_validation._PROCESSION_SCOPE_SOURCE_ARCHIVE,
+                    host_validation._PROCESSION_SCOPE_SOURCE_WORKSTREAM,
+                    host_validation._PROCESSION_SCOPE_SOURCE_PACKET,
+                )
+            subprocess.run(["git", "-C", str(repository), "update-ref", "refs/remotes/origin/main",
+                            approval_main], check=True)
+            span = host_validation.resolve_validation_source_span(
                 repository, pinned_p1_main, host_validation._PROCESSION_SCOPE_SOURCE_ARCHIVE,
                 host_validation._PROCESSION_SCOPE_SOURCE_WORKSTREAM,
                 host_validation._PROCESSION_SCOPE_SOURCE_PACKET,
             )
-        subprocess.run(["git", "-C", str(repository), "update-ref", "refs/remotes/origin/main",
-                        approval_main], check=True)
         provenance = host_validation._verified_procession_scope_attestation(
             repository, pinned_p1_main, host_validation._PROCESSION_SCOPE_SOURCE_ARCHIVE, extra_paths,
         )
@@ -7612,11 +8721,6 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         self.assertEqual(set(provenance["source_files"]), set(host_validation._PROCESSION_SCOPE_SOURCE_FILES))
         self.assertTrue(host_validation._is_ancestor(repository, pinned_p1_main, approval_main))
         self.assertTrue(host_validation._is_ancestor(repository, base_main, approval_main))
-        span = host_validation.resolve_validation_source_span(
-            repository, pinned_p1_main, host_validation._PROCESSION_SCOPE_SOURCE_ARCHIVE,
-            host_validation._PROCESSION_SCOPE_SOURCE_WORKSTREAM,
-            host_validation._PROCESSION_SCOPE_SOURCE_PACKET,
-        )
         self.assertEqual(set(span["paths"]), archive_paths)
         self.assertEqual(span["provenance"]["scope_attestation"]["approval_outcome"], "passed")
 
@@ -7705,10 +8809,7 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         repository = Path(self.temp.name) / "grunt-attestation"
         base_main = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "origin/main^{commit}"],
                                    check=True, text=True, capture_output=True).stdout.strip()
-        subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT),
-                        str(repository)], check=True)
-        subprocess.run(["git", "-C", str(repository), "checkout", "-q", "--detach", base_main],
-                       check=True)
+        _prepare_historical_git_fixture(repository, base_main)
         subprocess.run(["git", "-C", str(repository), "config", "user.name", "test"], check=True)
         subprocess.run(["git", "-C", str(repository), "config", "user.email",
                         "test@example.invalid"], check=True)
@@ -7856,17 +8957,18 @@ Verify the exact post-hoc attestation.
             self.assertFalse(host_validation._source_path_documented(
                 seventh, target_text, documented, packet_terms, set(), exact_paths,
             ), seventh)
-        with self.assertRaisesRegex(host_validation.HostValidationError, "lacks archived correction review"):
-            host_validation.resolve_validation_source_span(
-                repository, correction_commit, "e29847bb2dc409ad994ac59ee3e8bb4db637142e",
+        with self._historical_claim_objects():
+            with self.assertRaisesRegex(host_validation.HostValidationError, "lacks archived correction review"):
+                host_validation.resolve_validation_source_span(
+                    repository, correction_commit, "e29847bb2dc409ad994ac59ee3e8bb4db637142e",
+                    "grunt-candidate-raster-workflow-v1",
+                    "custodian/docs/ai_context/task_packets/archived/GRUNT_CANDIDATE_RASTER_WORKFLOW_V1.md",
+                )
+            replay = host_validation.resolve_validation_source_span(
+                repository, approved_main, "e29847bb2dc409ad994ac59ee3e8bb4db637142e",
                 "grunt-candidate-raster-workflow-v1",
                 "custodian/docs/ai_context/task_packets/archived/GRUNT_CANDIDATE_RASTER_WORKFLOW_V1.md",
             )
-        replay = host_validation.resolve_validation_source_span(
-            repository, approved_main, "e29847bb2dc409ad994ac59ee3e8bb4db637142e",
-            "grunt-candidate-raster-workflow-v1",
-            "custodian/docs/ai_context/task_packets/archived/GRUNT_CANDIDATE_RASTER_WORKFLOW_V1.md",
-        )
         self.assertEqual(set(replay["paths"]).intersection(exact_paths), exact_paths)
         self.assertEqual(replay["provenance"]["scope_attestation"]["approval_outcome"], "passed")
         source_paths = host_validation._source_code_paths(replay["paths"])
@@ -7888,25 +8990,27 @@ Verify the exact post-hoc attestation.
             self._assert_exact_validation_command(command, replay["base"], changed_paths)
             return subprocess.CompletedProcess(command, 0, json.dumps(report) + "\n", "")
 
-        evidence = host_validation.run_coordinator_validation(
-            repository, run_dir, approved_main, "e29847bb2dc409ad994ac59ee3e8bb4db637142e",
-            target_workstream="grunt-candidate-raster-workflow-v1",
-            target_packet_path=("custodian/docs/ai_context/task_packets/archived/"
-                                "GRUNT_CANDIDATE_RASTER_WORKFLOW_V1.md"),
-            run_validation=validate,
-            capability_probe=lambda: {"loopback_bind": True, "godot_home_writable": True},
-        )
+        with self._historical_claim_objects():
+            evidence = host_validation.run_coordinator_validation(
+                repository, run_dir, approved_main, "e29847bb2dc409ad994ac59ee3e8bb4db637142e",
+                target_workstream="grunt-candidate-raster-workflow-v1",
+                target_packet_path=("custodian/docs/ai_context/task_packets/archived/"
+                                    "GRUNT_CANDIDATE_RASTER_WORKFLOW_V1.md"),
+                run_validation=validate,
+                capability_probe=lambda: {"loopback_bind": True, "godot_home_writable": True},
+            )
         metadata = json.loads((run_dir / "coordinator-validation.json").read_text())
         self.assertEqual(metadata["source_span"]["provenance"]["scope_attestation"],
                          replay["provenance"]["scope_attestation"])
-        verified = host_validation.verify_coordinator_validation(
-            repository, run_dir, approved_main, "e29847bb2dc409ad994ac59ee3e8bb4db637142e",
-            target_workstream="grunt-candidate-raster-workflow-v1",
-            target_packet_path=("custodian/docs/ai_context/task_packets/archived/"
-                                "GRUNT_CANDIDATE_RASTER_WORKFLOW_V1.md"),
-            expected_report_sha256=evidence["report_sha256"],
-            expected_metadata_sha256=evidence["metadata_sha256"],
-        )
+        with self._historical_claim_objects():
+            verified = host_validation.verify_coordinator_validation(
+                repository, run_dir, approved_main, "e29847bb2dc409ad994ac59ee3e8bb4db637142e",
+                target_workstream="grunt-candidate-raster-workflow-v1",
+                target_packet_path=("custodian/docs/ai_context/task_packets/archived/"
+                                    "GRUNT_CANDIDATE_RASTER_WORKFLOW_V1.md"),
+                expected_report_sha256=evidence["report_sha256"],
+                expected_metadata_sha256=evidence["metadata_sha256"],
+            )
         self.assertTrue(verified["passed"])
         metadata_path = run_dir / "coordinator-validation.json"
         preserved_metadata = metadata_path.read_bytes()
@@ -7926,7 +9030,8 @@ Verify the exact post-hoc attestation.
         # A forged PASS outcome without an accepted target receipt cannot activate it.
         outcome_forgery = Path(self.temp.name) / "forged-outcome"
         subprocess.run(["git", "-C", str(repository), "worktree", "add", "-q", "-b",
-                        "fixture/forged-outcome", str(outcome_forgery), approved_main], check=True)
+                        "fixture/forged-outcome", str(outcome_forgery), approved_main], check=True,
+                       env=_historical_git_fixture_env())
         forged_review = outcome_forgery / review_path
         forged_review.write_text(forged_review.read_text().replace(
             "- Outcome: `passed`", "- Outcome: `findings`", 1).replace(
@@ -7945,7 +9050,8 @@ Verify the exact post-hoc attestation.
         # Altering the attestation after its accepted origin is detected by exact bytes.
         mutated = Path(self.temp.name) / "mutated-attestation"
         subprocess.run(["git", "-C", str(repository), "worktree", "add", "-q", "-b",
-                        "fixture/mutated-attestation", str(mutated), approved_main], check=True)
+                        "fixture/mutated-attestation", str(mutated), approved_main], check=True,
+                       env=_historical_git_fixture_env())
         attestation = mutated / attestation_path
         attestation.write_text(attestation.read_text().replace("post_hoc\": true", "post_hoc\": false"),
                                encoding="utf-8")
@@ -8098,10 +9204,7 @@ Verify the exact post-hoc attestation.
                    "AGENT_GRUNT_RASTER_REVIEW_SCOPE_ATTESTATION_V1.md")
         exact_attested_paths = set(host_validation._GRUNT_SCOPE_FILES)
         repository = Path(self.temp.name) / "historical-grunt"
-        subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT),
-                        str(repository)], check=True)
-        subprocess.run(["git", "-C", str(repository), "checkout", "-q", "--detach",
-                        reviewed_main], check=True)
+        _prepare_historical_git_fixture(repository, reviewed_main)
         prefix = f"refs/remotes/origin/agent-diagnostics/{workstream}/"
         for record in subprocess.run(
             ["git", "for-each-ref", "--format=%(refname) %(objectname)", prefix],
@@ -8785,10 +9888,11 @@ Verify the exact post-hoc attestation.
         workstream = "agent-paired-review-resumed-worktree-provenance-v1"
         archive = (f"{runner.PACKET_ROOT}/archived/"
                    "PAIRED_REVIEW_RESUMED_WORKTREE_PROVENANCE_V1.md")
-        span = host_validation.resolve_validation_source_span(
-            ROOT, "d5c6315979f1e3fd2ee55c6e15cae7f9e30c1f99",
-            "2e898dddc82a596b0a2bd15c150b1645cf61f29c", workstream, archive,
-        )
+        with self._historical_claim_objects():
+            span = host_validation.resolve_validation_source_span(
+                ROOT, "d5c6315979f1e3fd2ee55c6e15cae7f9e30c1f99",
+                "2e898dddc82a596b0a2bd15c150b1645cf61f29c", workstream, archive,
+            )
         self.assertEqual(span["provenance"]["trace_landing_commit"],
                          "d5c6315979f1e3fd2ee55c6e15cae7f9e30c1f99")
         self.assertEqual(span["provenance"]["trace_landing_kind"], "main-sync-merge")
@@ -8862,14 +9966,13 @@ Verify the exact post-hoc attestation.
                        "AGENT_PAIRED_REVIEW_RESUMED_WORKTREE_PROVENANCE_V1.md")
         parent = "e05c5376b570277d19dffdbca3968e194b473016"
         repository = Path(self.temp.name) / "forged-review-metadata"
-        subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT),
-                        str(repository)], check=True)
-        subprocess.run(["git", "-C", str(repository), "checkout", "-q", "--detach", parent], check=True)
+        _prepare_historical_git_fixture(repository, parent)
         subprocess.run(["git", "-C", str(repository), "config", "user.name", "Fixture"], check=True)
         subprocess.run(["git", "-C", str(repository), "config", "user.email",
                         "fixture@example.invalid"], check=True)
         subprocess.run(["git", "-C", str(repository), "read-tree", "2e898dddc82a596b0a2bd15c150b1645cf61f29c"], check=True)
-        subprocess.run(["git", "-C", str(repository), "checkout-index", "-a", "-f"], check=True)
+        subprocess.run(["git", "-C", str(repository), "checkout-index", "-a", "-f"],
+                       check=True, env=_historical_git_fixture_env())
         changed_file = repository / review_path
         changed_file.write_bytes(changed_file.read_bytes() + b"\nUnexpected Field: forged\n")
         subprocess.run(["git", "-C", str(repository), "add", review_path], check=True)
@@ -8899,17 +10002,15 @@ Verify the exact post-hoc attestation.
         trace_ref = (f"refs/remotes/origin/agent-diagnostics/{workstream}/"
                      "20261022T172255Z-7f774d406013")
         repository = Path(self.temp.name) / "historical-resume-coordinator"
-        subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT),
-                        str(repository)], check=True)
-        subprocess.run(["git", "-C", str(repository), "checkout", "-q", "--detach",
-                        reviewed_main], check=True)
+        _prepare_historical_git_fixture(repository, reviewed_main)
         trace_commit = subprocess.run(["git", "rev-parse", trace_ref], cwd=ROOT,
                                       check=True, text=True, capture_output=True).stdout.strip()
         subprocess.run(["git", "-C", str(repository), "update-ref", trace_ref, trace_commit], check=True)
 
-        span = host_validation.resolve_validation_source_span(
-            repository, reviewed_main, implementation, workstream, archive,
-        )
+        with self._historical_claim_objects():
+            span = host_validation.resolve_validation_source_span(
+                repository, reviewed_main, implementation, workstream, archive,
+            )
         selected_paths = subprocess.run(
             ["git", "diff", "--name-only", f"{span['base']}..{reviewed_main}"],
             cwd=repository, check=True, text=True, capture_output=True,
@@ -8933,18 +10034,19 @@ Verify the exact post-hoc attestation.
             self._assert_exact_validation_command(command, span["base"], selected_paths)
             return subprocess.CompletedProcess(command, 0, json.dumps(report) + "\n", "")
 
-        evidence = host_validation.run_coordinator_validation(
-            repository, run_dir, reviewed_main, implementation,
-            target_workstream=workstream, target_packet_path=archive,
-            run_validation=validate,
-            capability_probe=lambda: {"loopback_bind": True, "godot_home_writable": True},
-        )
-        verified = host_validation.verify_coordinator_validation(
-            repository, run_dir, reviewed_main, implementation,
-            target_workstream=workstream, target_packet_path=archive,
-            expected_report_sha256=evidence["report_sha256"],
-            expected_metadata_sha256=evidence["metadata_sha256"],
-        )
+        with self._historical_claim_objects():
+            evidence = host_validation.run_coordinator_validation(
+                repository, run_dir, reviewed_main, implementation,
+                target_workstream=workstream, target_packet_path=archive,
+                run_validation=validate,
+                capability_probe=lambda: {"loopback_bind": True, "godot_home_writable": True},
+            )
+            verified = host_validation.verify_coordinator_validation(
+                repository, run_dir, reviewed_main, implementation,
+                target_workstream=workstream, target_packet_path=archive,
+                expected_report_sha256=evidence["report_sha256"],
+                expected_metadata_sha256=evidence["metadata_sha256"],
+            )
         self.assertTrue(verified["passed"])
         self.assertEqual(evidence["source_span"]["base"],
                          "9254dc8465820279723e35a3ec232557a9cf4cae")
@@ -8958,9 +10060,7 @@ Verify the exact post-hoc attestation.
         ))
 
         repository = Path(self.temp.name) / "forged-index-merge"
-        subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT),
-                        str(repository)], check=True)
-        subprocess.run(["git", "-C", str(repository), "checkout", "-q", "--detach", merge], check=True)
+        _prepare_historical_git_fixture(repository, merge)
         for key, value in (("user.name", "test"), ("user.email", "test@example.invalid")):
             subprocess.run(["git", "-C", str(repository), "config", key, value], check=True)
         readme_path = f"{runner.PACKET_ROOT}/README.md"
@@ -9160,6 +10260,9 @@ Verify the exact post-hoc attestation.
 
 
 class RedactedFinalCaptureTests(unittest.TestCase):
+    def setUp(self):
+        _mock_no_active_review_processes(self)
+
     def pass_fixture(self, root: Path):
         def git(cwd, *args):
             result = subprocess.run(["git", "-C", str(cwd), *args], text=True, capture_output=True)
@@ -9368,6 +10471,7 @@ Authoring chat: {chat}
                                      "text": runner._redacted_agent_message(final) if logged is None else logged}},
                            {"type": "turn.completed"}])
         (root / "codex.jsonl").write_text("".join(json.dumps(event) + "\n" for event in events))
+        (root / "codex.stderr").write_text("")
         return final, source, control
 
     def test_exact_safe_output_transformation_is_accepted_but_prefix_is_not(self):
@@ -9396,6 +10500,41 @@ Authoring chat: {chat}
             self.write_session(root, turns=2)
             with self.assertRaisesRegex(runner.RunnerError, "exactly one identified completed turn"):
                 runner._parse_redacted_final_session(root, {"fresh": True, "exit_code": 0}, source, control)
+
+    def test_session_parser_rejects_stderr_and_turn_failures_but_classifies_commands(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            _, source, control = self.write_session(root)
+            (root / "codex.stderr").write_text("reviewer warning\n")
+            with self.assertRaisesRegex(runner.RunnerError, "stderr is non-empty"):
+                runner._parse_redacted_final_session(root, {"fresh": True, "exit_code": 0}, source, control)
+
+            _, source, control = self.write_session(root)
+            events = [json.loads(line) for line in (root / "codex.jsonl").read_text().splitlines()]
+            events.insert(2, {"type": "turn.failed", "error": {"message": "turn failed"}})
+            (root / "codex.jsonl").write_text("".join(json.dumps(event) + "\n" for event in events))
+            with self.assertRaisesRegex(runner.RunnerError, "error or failure event"):
+                runner._parse_redacted_final_session(root, {"fresh": True, "exit_code": 0}, source, control)
+
+            _, source, control = self.write_session(root)
+            events = [json.loads(line) for line in (root / "codex.jsonl").read_text().splitlines()]
+            events.insert(2, {"type": "item.completed", "item": {
+                "type": "command_execution", "command": "/bin/bash -lc 'rg absent path'",
+                "status": "failed", "exit_code": 1, "aggregated_output": "",
+            }})
+            events.insert(3, {"type": "item.completed", "item": {
+                "type": "command_execution", "command": "/bin/bash -lc 'python3 inspect.py'",
+                "status": "failed", "exit_code": 1,
+                "aggregated_output": "Traceback (most recent call last):\\nImportError: exploratory import\\n",
+            }})
+            (root / "codex.jsonl").write_text("".join(json.dumps(event) + "\n" for event in events))
+            _, session = runner._parse_redacted_final_session(
+                root, {"fresh": True, "exit_code": 0}, source, control)
+            failures = runner._classify_session_command_failures(events)
+            self.assertEqual([entry["classification"] for entry in failures], [
+                "search_no_match_candidate", "python_traceback_requires_reconciliation",
+            ])
+            self.assertEqual(session["thread_id"], "thread-synthetic")
 
     def test_session_parser_rejects_unapproved_truncation(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -9961,4 +11100,4 @@ Authoring chat: {chat}
 
 
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main(testRunner=_ImmediateFailureTextTestRunner)

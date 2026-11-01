@@ -14,6 +14,11 @@ const READING_OFFSETS: Array[Vector2] = [
 	Vector2(448.0, 512.0),
 ]
 const READING_IDS: Array[StringName] = [&"record_a", &"record_b", &"record_c"]
+const RESOLUTION_CHOICES: Dictionary = {
+	"attest_provenance_conflict": "ATTEST: PROVENANCE CONFLICT",
+	"leave_unresolved": "LEAVE UNRESOLVED",
+}
+const RESOLUTION_OFFSETS: Array[Vector2] = [Vector2(-92.0, 112.0), Vector2(92.0, 112.0)]
 const READING_READOUTS: Array[String] = [
 	"WEST FACE / CYCLE 184 · NINTH WATCH\nRECORD A: ELIAN VALE / WITNESS\n\nThe date is cut cleanly into the stone. A witness identity occupies the first line.",
 	"NORTH APPROACH / CYCLE 184 · NINTH WATCH\nRECORD B: MARROW SEN / RELAY KEEPER\n\nThe date is unchanged. A different office and identity are entered beneath it.",
@@ -65,10 +70,42 @@ class InspectionPoint extends Node2D:
 			)
 
 
+class ResolutionPoint extends Node2D:
+	var controller: Node
+	var resolution_id := ""
+	var choice_text := ""
+
+	func _ready() -> void:
+		add_to_group("interactable")
+
+	func can_interact(actor: Node) -> bool:
+		return is_instance_valid(controller) \
+			and bool(controller.call("can_resolve", resolution_id, actor))
+
+	func get_interaction_prompt() -> String:
+		return choice_text if is_instance_valid(controller) and bool(controller.call("can_offer_resolution")) else ""
+
+	func get_interaction_position() -> Vector2:
+		return global_position
+
+	func get_interaction_distance() -> float:
+		return INTERACTION_DISTANCE
+
+	func interact(actor: Node) -> void:
+		if is_instance_valid(controller):
+			controller.call("resolve", resolution_id, actor)
+
+	func _draw() -> void:
+		draw_circle(Vector2.ZERO, 10.0, Color("777b72"))
+		draw_arc(Vector2.ZERO, 15.0, 0.0, TAU, 24, Color("b8b49e"), 1.5)
+
+
 var _hub_state: HubState
 var _hub_map: CanvasItem
 var _event_record: Dictionary = {}
 var _inspection_points: Array[InspectionPoint] = []
+var _resolution_points: Array[ResolutionPoint] = []
+var _growth_visible_on_arrival := false
 
 
 func configure(hub_state: HubState, hub_map: CanvasItem) -> void:
@@ -99,11 +136,30 @@ func get_completed_readings() -> int:
 	return int(_event_record.get("completed_readings", 0))
 
 
+func get_resolution() -> String:
+	return str(_event_record.get("resolution", ""))
+
+
+func get_resolution_points() -> Array[ResolutionPoint]:
+	return _resolution_points.duplicate()
+
+
+func can_offer_resolution() -> bool:
+	return get_completed_readings() == READING_READOUTS.size() and get_resolution().is_empty()
+
+
+func get_growth_visible() -> bool:
+	return _growth_visible_on_arrival
+
+
 func get_event_snapshot() -> Dictionary:
 	return {
 		"event_id": EVENT_ID,
 		"completed_readings": get_completed_readings(),
 		"last_reading_id": str(_event_record.get("last_reading_id", "")),
+		"resolution": get_resolution(),
+		"resolution_available": can_offer_resolution(),
+		"growth_visible": get_growth_visible(),
 		"inspection_positions": get_inspection_positions(),
 	}
 
@@ -114,17 +170,18 @@ func can_inspect(reading_index: int, actor: Node) -> bool:
 		and _hub_map.is_visible_in_tree() \
 		and is_instance_valid(actor) \
 		and actor.is_in_group("player") \
-		and reading_index == get_completed_readings() \
+		and (reading_index == get_completed_readings() or get_completed_readings() == READING_READOUTS.size()) \
 		and reading_index >= 0 \
 		and reading_index < READING_READOUTS.size()
 
 
 func get_inspection_prompt(reading_index: int) -> String:
-	if reading_index != get_completed_readings() \
+	if (reading_index != get_completed_readings() and get_completed_readings() < READING_READOUTS.size()) \
 		or reading_index < 0 \
 		or reading_index >= READING_READOUTS.size():
 		return ""
-	return "INSPECT THE GRAVE · READING %d OF 3" % (reading_index + 1)
+	return ("REREAD" if get_completed_readings() == READING_READOUTS.size() else "INSPECT THE GRAVE") \
+		+ " · READING %d OF 3" % (reading_index + 1)
 
 
 func inspect(reading_index: int, actor: Node) -> void:
@@ -133,6 +190,9 @@ func inspect(reading_index: int, actor: Node) -> void:
 	var point := get_inspection_point(reading_index)
 	if not is_instance_valid(point) \
 		or (actor as Node2D).global_position.distance_to(point.global_position) > INTERACTION_DISTANCE:
+		return
+	if get_completed_readings() == READING_READOUTS.size():
+		_show_readout(reading_index)
 		return
 
 	var next_count := reading_index + 1
@@ -147,11 +207,41 @@ func inspect(reading_index: int, actor: Node) -> void:
 	_show_readout(reading_index)
 
 
+func can_resolve(resolution_id: String, actor: Node) -> bool:
+	if _hub_state == null or _hub_map == null or not _hub_map.is_visible_in_tree() \
+		or not can_offer_resolution() or not RESOLUTION_CHOICES.has(resolution_id) \
+		or not is_instance_valid(actor) or not actor.is_in_group("player") or not actor is Node2D:
+		return false
+	var point := _find_resolution_point(resolution_id)
+	return is_instance_valid(point) \
+		and (actor as Node2D).global_position.distance_to(point.global_position) <= INTERACTION_DISTANCE
+
+
+func resolve(resolution_id: String, actor: Node) -> void:
+	if not can_resolve(resolution_id, actor):
+		return
+	var previous := _event_record.duplicate(true)
+	_event_record["resolution"] = resolution_id
+	if not _hub_state.set_authored_event_record(EVENT_ID, _event_record):
+		_event_record = previous
+		return
+	for point in _resolution_points:
+		point.queue_redraw()
+
+
+func _find_resolution_point(resolution_id: String) -> ResolutionPoint:
+	for point in _resolution_points:
+		if point.resolution_id == resolution_id:
+			return point
+	return null
+
+
 func _ready() -> void:
 	if _hub_state == null or _hub_map == null:
 		push_error("[SepulcherGraveEvidence] HubState and the active Hub map are required")
 		return
 	_event_record = _normalize_record(_hub_state.get_authored_event_record(EVENT_ID))
+	_growth_visible_on_arrival = not get_resolution().is_empty()
 	for reading_index in READING_READOUTS.size():
 		var point := InspectionPoint.new()
 		point.name = "InspectionPoint_%s" % String(READING_IDS[reading_index]).to_pascal_case()
@@ -160,6 +250,15 @@ func _ready() -> void:
 		point.position = get_inspection_positions()[reading_index]
 		add_child(point)
 		_inspection_points.append(point)
+	for choice_id: String in RESOLUTION_CHOICES:
+		var point := ResolutionPoint.new()
+		point.name = "Resolution_%s" % choice_id.to_pascal_case()
+		point.controller = self
+		point.resolution_id = choice_id
+		point.choice_text = str(RESOLUTION_CHOICES[choice_id])
+		point.position = GRAVE_POSITION + RESOLUTION_OFFSETS[_resolution_points.size()]
+		add_child(point)
+		_resolution_points.append(point)
 
 
 func _draw() -> void:
@@ -167,6 +266,8 @@ func _draw() -> void:
 	draw_rect(Rect2(GRAVE_POSITION + Vector2(-50.0, -24.0), Vector2(100.0, 48.0)), Color("898878"), true)
 	draw_line(GRAVE_POSITION + Vector2(-39.0, -8.0), GRAVE_POSITION + Vector2(39.0, -8.0), Color("d0c9a8"), 2.0)
 	draw_line(GRAVE_POSITION + Vector2(-26.0, 8.0), GRAVE_POSITION + Vector2(26.0, 8.0), Color("676b61"), 2.0)
+	if _growth_visible_on_arrival:
+		_draw_returning_growth()
 	var font := ThemeDB.fallback_font
 	if font != null:
 		draw_string(font, GRAVE_POSITION + Vector2(-54.0, 51.0), "SEPULCHER", HORIZONTAL_ALIGNMENT_CENTER, 108.0, 14, Color("d9d4bf"))
@@ -177,10 +278,14 @@ func _normalize_record(record: Dictionary) -> Dictionary:
 	if not schema.is_empty() and schema != RECORD_SCHEMA:
 		return _default_record()
 	var completed := clampi(int(record.get("completed_readings", 0)), 0, READING_READOUTS.size())
+	var resolution := str(record.get("resolution", ""))
+	if not RESOLUTION_CHOICES.has(resolution):
+		resolution = ""
 	return {
 		"schema": RECORD_SCHEMA,
 		"completed_readings": completed,
 		"last_reading_id": String(READING_IDS[completed - 1]) if completed > 0 else "",
+		"resolution": resolution if completed == READING_READOUTS.size() else "",
 	}
 
 
@@ -189,7 +294,17 @@ func _default_record() -> Dictionary:
 		"schema": RECORD_SCHEMA,
 		"completed_readings": 0,
 		"last_reading_id": "",
+		"resolution": "",
 	}
+
+
+func _draw_returning_growth() -> void:
+	var base := GRAVE_POSITION + Vector2(42.0, 18.0)
+	draw_line(base, base + Vector2(0.0, -13.0), Color("c7c4a8"), 2.0)
+	draw_line(base + Vector2(0.0, -7.0), base + Vector2(-9.0, -13.0), Color("b8c2a5"), 2.0)
+	draw_line(base + Vector2(0.0, -9.0), base + Vector2(9.0, -16.0), Color("b8c2a5"), 2.0)
+	draw_circle(base + Vector2(-9.0, -13.0), 2.5, Color("d1d5b8"))
+	draw_circle(base + Vector2(9.0, -16.0), 2.5, Color("d1d5b8"))
 
 
 func _show_readout(reading_index: int) -> void:

@@ -553,6 +553,29 @@
       "needs_import": true
     },
     {
+      "id": "hub_sepulcher_grave_resolution",
+      "type": "godot_script",
+      "script": "res://tools/validation/hub_sepulcher_grave_resolution_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "hub",
+        "authored_event",
+        "persistence",
+        "operator_interaction"
+      ],
+      "owners": [
+        "custodian/game/state/persistent/hub_state.gd",
+        "custodian/game/world/hub/first_set/hub_first_set_map.gd",
+        "custodian/game/world/hub/events/sepulcher_grave/sepulcher_grave_evidence.gd",
+        "custodian/scenes/hub_runtime_host.tscn",
+        "custodian/game/actors/operator/operator.tscn",
+        "custodian/tools/validation/hub_sepulcher_grave_resolution_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
+    },
+    {
       "id": "biome_field",
       "type": "godot_script",
       "script": "res://tools/validation/biome_field_smoke.gd",
@@ -6807,6 +6830,26 @@
       "needs_import": true
     },
     {
+      "id": "sepulcher_modular_material_pilot",
+      "type": "godot_script",
+      "script": "res://tools/validation/levels/sepulcher_modular_material_pilot_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "sepulcher",
+        "presentation",
+        "assets",
+        "experiment",
+        "playtest"
+      ],
+      "owners": [
+        "custodian/game/world/levels/authored/dev/sepulcher_modular_material_pilot/**",
+        "custodian/tools/validation/levels/sepulcher_modular_material_pilot_smoke.gd",
+        "custodian/tools/validation/levels/sepulcher_modular_material_pilot_capture.gd"
+      ],
+      "timeout_sec": 60,
+      "needs_import": true
+    },
+    {
       "id": "sundered_keep_marine_ambush",
       "type": "godot_script",
       "script": "res://tools/validation/sundered_keep_marine_ambush_smoke.gd",
@@ -7011,7 +7054,7 @@
         "custodian/tools/agent/task_packet_contract.py",
         "custodian/tools/agent/workflow_control.py"
       ],
-      "timeout_sec": 120,
+      "timeout_sec": 300,
       "needs_import": false
     },
     {

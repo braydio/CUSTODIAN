@@ -96,6 +96,18 @@ checks are insufficient and minimize the capture budget. More than two full-fram
 stills, any repeated full-frame pass, or full-motion capture needs explicit
 task-specific justification.
 
+## Generated Non-Operator Artwork: Authoring and Review
+
+Before using an image generator for production environment, connector, prop,
+decal or ambient art, read
+`design/04_architecture/AI_ART_GENERATION_REVIEW_PROTOCOL_V1.md`.
+Plan 5–10 manifest states at a time, but generate complex assets individually;
+after human-approved style calibration, small compatible prop/decal groups are
+permitted. Never treat a ten-image collage as ten approved Asset V2 sources.
+Human approval remains per image; the production manifest identifies exact
+prompts and source/inbox paths. See Asset Pipeline V2 for the *separate* intake
+and runtime authority. Specialized Operator art remains under its own tooling.
+
 ## Operator Main-Character Pixel-Art Resizing
 
 For any pixel-art conversion or resizing of the Operator main character's
@@ -267,6 +279,64 @@ commit, or push.` Paired post-land review packets may authorize commits only for
   blocker is independently resolved.
   Rebase conflicts and failed required validation are blockers; never force-push.
 - Do not amend or force-push unless explicitly asked.
+
+### Turn-boundary ephemeral worktree retirement (mandatory default)
+
+A Codex session/turn is disposable. A Git checkout is a temporary execution
+surface, **not** the durable record of a workstream. Keep the stable workstream
+ID, committed Git history on a SHA-verified remote branch (or landed
+`origin/main`), registered source assets, root closing summary, and
+independently preserved run/review evidence as the durable record. A push
+preserves **only tracked, committed content**: ignored files, untracked files,
+local LFS objects not available remotely, private Blender/Godot proof, and
+unsaved editor state are *not* preserved by pushing a branch.
+
+**At the end of every Codex turn, including a blocked or human-review turn,
+perform a checkout-retirement decision; default to retiring the checkout
+when all safety predicates are proven.** Do not keep it merely because the
+next turn might revisit the work. Before any removal:
+
+1. Inventory the exact workstream branch, local/remote HEAD, attached checkout,
+   tracked status, untracked files **and ignored files**, LFS/source dependencies,
+   and associated process/claim/review ownership. Show a machine-readable or
+   command-reproducible count of all attached worktrees, relevant sizes, and
+   explicit retain reasons at handoff. A missing host inventory is `unknown`,
+   not zero.
+2. Commit only authorized durable source, packet, summary and manifest changes;
+   push the correct branch, fetch/verify the *exact* remote commit SHA. Externalize
+   irreplaceable ignored/untracked evidence to a content-hashed, referenced
+   repository artifact or approved external proof store (e.g. the existing
+   Dropbox visual-review route) **before** removing its checkout. Do not turn
+   sensitive private caches into commits. Disposable caches may be deliberately
+   discarded only when their ownership and regenerability are established.
+3. For a completed normal workstream, use `workstream.py finish` and its
+   verified teardown; do not substitute `git worktree remove` for its acceptance
+   and claim lifecycle. For a still-open but safely parked **canonical**
+   workstream, prefer `workstream.py checkpoint <id> --remove-worktree` after
+   verifying a clean tracked/untracked status **and zero unresolved ignored
+   files**. The published `origin/agent/<id>` branch survives for a later
+   `workstream.py resume <id>` in a fresh checkout. A checkpoint is not PASS,
+   landing, review acceptance or claim release.
+4. Protect any live/unknown owner, active review, `post_exit_recovery`, dirty
+   or unique files, missing remote branch/LFS objects, unverified evidence,
+   protected run/claim, ambiguous ignored content or failing lifecycle guard.
+   Record `retained: <path> | <predicate> | <next action>`; do not reset,
+   stash, force-remove, manually delete Git metadata, or release claims to
+   manufacture eligibility. Manual `manual/*` experiment branches are not
+   eligible for the canonical auto-reaper; their removal requires a separate
+   explicit branch-bound verification and an unambiguous no-loss decision.
+5. End every turn with `worktrees: created / retired / retained / total`,
+   remote durable SHA(s), and disk evidence or `host-unavailable`. Run a
+   bounded preview of `transient_worktree_gc.py` or the supported
+   `workstream.py gc --reap-finished` only when safe. Do not pretend that
+   either tool removes protected/manual worktrees, or that a future agent
+   can recover ignored local bytes from Git.
+
+This rule changes the default **decision and reporting**, not the existing
+fail-closed recovery, ownership, independent-review and asset-provenance gates.
+See `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md` for the
+exact supported commands and preservation boundary.
+
 
 ## Automatic Task Packet Handoff
 

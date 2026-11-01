@@ -18,8 +18,9 @@ from pathlib import Path, PurePosixPath
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from workflow_control import (
-    RemoteClaim, RunTrace, WorkflowControlError, acquire_remote_claim,
-    release_remote_claim, resolve_agent_id, workstream_mutex,
+    TRACE_SCHEMA, TRACE_VERSION, RemoteClaim, RunTrace, WorkflowControlError, acquire_remote_claim,
+    common_mutex, find_local_trace, release_remote_claim, resolve_agent_id,
+    workstream_mutex,
 )
 from persistent_checkout_sync import ROOT_PROFILE, apply_profiles, format_result
 from task_packet_contract import (
@@ -27,6 +28,7 @@ from task_packet_contract import (
 )
 from review_receipt_delta import read_git_text, resolve_target_implementation_commit, verify_review_receipt_delta
 import review_outcome
+import worktree_provisioning
 
 class WorkstreamError(RuntimeError):
     pass
@@ -50,10 +52,32 @@ INVALID_DISPOSITION_REVIEW_PACKET = (
 )
 ADVANCED_HEAD_PASS_REVIEW = "review-agent-paired-review-exact-claim-parking-v1"
 
+# RC-119 authorizes this one immutable, reviewer-preserving administrative
+# correction between the original archive transition and main synchronization.
+# Every value is content-addressed from the two existing commits; this is not a
+# general exception for post-archive metadata edits.
+ARCHIVE_METADATA_FOLLOWUP = {
+    "workstream": "review-agent-paired-review-runner-profile-summary-coverage-v1",
+    "archive": "704a1fbb3df6deae64e06291769eabd1d48f7eb2",
+    "archive_parent": "e1bff4eb3360e7f0fcdbc5bb67fa86bc2b600f4f",
+    "archive_tree": "14574039da27513ecaad7b02aeb08f75d2a11ae4",
+    "archive_packet_blob_oid": "16307c7f771abe5587ccd95baa6f69e239544e59",
+    "archive_packet_sha256": "01398f7950b9cbf617d97204e03e041cb6df99983ac187e8b66a3f56073c8764",
+    "correction": "81fb8ca935bb2d5f9f00f18d547c185035e7b8dd",
+    "correction_tree": "58e639a24470c27a1999a796fd0ae53d5ed778a5",
+    "corrected_packet_blob_oid": "b3d842692d5b31871f86b03b6a830dee1734be1a",
+    "corrected_packet_sha256": "b42d92e3d40815a37ec17fa5a776e480950d99520a253f1e0500b859af5315d8",
+    "packet": (
+        "custodian/docs/ai_context/task_packets/archived/"
+        "REVIEW_AGENT_PAIRED_REVIEW_RUNNER_PROFILE_SUMMARY_COVERAGE_V1.md"
+    ),
+}
 
 
-def git(*args: str, cwd: Path | None = None, check: bool = True) -> str:
-    p = subprocess.run(["git", *args], cwd=cwd, text=True, capture_output=True)
+
+def git(*args: str, cwd: Path | None = None, check: bool = True,
+        env: dict[str, str] | None = None) -> str:
+    p = subprocess.run(["git", *args], cwd=cwd, text=True, capture_output=True, env=env)
     if check and p.returncode:
         raise WorkstreamError(f"git {' '.join(args)} failed: {(p.stderr or p.stdout).strip()}")
     return p.stdout.strip()
@@ -737,7 +761,9 @@ def _managed_index_is_current(repo: Path) -> bool:
 
 
 def _source_span_sync_merge_witness_error(workstream_id: str, path: Path,
-                                          source_head: str, trace: RunTrace | None) -> str | None:
+                                          source_head: str, trace: RunTrace | None, *,
+                                          require_final_noop: bool = False,
+                                          allow_pending_after_sync: bool = False) -> str | None:
     """Reject pre-archive sync merges that lack the source-span trace proof."""
     if trace is None or not trace.path.is_file():
         return "source-span synchronization merge provenance requires the active lifecycle trace"
@@ -747,11 +773,16 @@ def _source_span_sync_merge_witness_error(workstream_id: str, path: Path,
         return f"cannot read source-span lifecycle trace: {exc}"
     if not events:
         return "source-span lifecycle trace is empty"
+    if any(not isinstance(event, dict) for event in events):
+        return "source-span lifecycle trace contains a non-object event"
     active_packet = trace.packet
-    if any(event.get("schema") != "custodian.workflow_trace_event.v1"
+    if any(event.get("schema") != TRACE_SCHEMA
+           or type(event.get("schema_version")) is not int
+           or event.get("schema_version") != TRACE_VERSION
+           or not isinstance(event.get("data"), dict)
            or event.get("workstream") != workstream_id
            or event.get("run_id") != trace.run_id for event in events):
-        return "source-span lifecycle trace identity is inconsistent"
+        return "source-span lifecycle trace schema, data shape, or identity is inconsistent"
     main = git("rev-parse", "origin/main", cwd=path, check=False)
     if not main:
         return "cannot authenticate source-span synchronization parents without origin/main"
@@ -778,20 +809,62 @@ def _source_span_sync_merge_witness_error(workstream_id: str, path: Path,
     claim = claim_event.get("data")
     publication = published_event.get("data")
     branch = branch_for(workstream_id)
+    claim_oid = claim.get("claim_oid") if isinstance(claim, dict) else None
+    claim_base = claim.get("main_sha") if isinstance(claim, dict) else None
+    claim_agent = claim_event.get("agent")
+    claim_pid = claim_event.get("pid")
+    expected_local_ref = f"refs/custodian/claims/{workstream_id}/{trace.run_id}"
+    expected_remote_ref = f"refs/heads/dispatch-claims/{workstream_id}"
+    claim_oid_valid = (isinstance(claim_oid, str)
+                       and re.fullmatch(r"[0-9a-f]{40,64}", claim_oid) is not None)
+    claim_base_valid = (isinstance(claim_base, str)
+                        and re.fullmatch(r"[0-9a-f]{40,64}", claim_base) is not None)
+    resolved_claim = (git("rev-parse", "--verify", f"{claim_oid}^{{commit}}",
+                          cwd=path, check=False)
+                      if claim_oid_valid else "")
+    claim_parents = (git("rev-list", "--parents", "-n", "1", claim_oid,
+                         cwd=path, check=False).split() if claim_oid_valid else [])
+    claim_subject = (git("show", "-s", "--format=%s", claim_oid, cwd=path, check=False)
+                     if claim_oid_valid else "")
+    claim_tree = (git("rev-parse", f"{claim_oid}^{{tree}}", cwd=path, check=False)
+                  if claim_oid_valid else "")
+    base_tree = (git("rev-parse", f"{claim_base}^{{tree}}", cwd=path, check=False)
+                 if claim_base_valid else "")
+    claim_subject_match = re.fullmatch(
+        rf"workstream claim {re.escape(workstream_id)} ([^:\s]+):([0-9]+):{re.escape(trace.run_id)}",
+        claim_subject,
+    )
+    published_worktree = publication.get("worktree") if isinstance(publication, dict) else None
+    try:
+        published_path_matches = (
+            isinstance(published_worktree, str)
+            and Path(published_worktree).is_absolute()
+            and os.path.normpath(published_worktree) == published_worktree
+            and Path(published_worktree).resolve() == path.resolve()
+        )
+    except (OSError, RuntimeError, ValueError):
+        published_path_matches = False
     if (not isinstance(claim, dict) or not isinstance(publication, dict)
-            or claim.get("remote_ref") != f"refs/heads/dispatch-claims/{workstream_id}"
-            or not re.fullmatch(r"[0-9a-f]{40,64}", str(claim.get("claim_oid", "")))
-            or not re.fullmatch(r"[0-9a-f]{40,64}", str(claim.get("main_sha", "")))
+            or claim.get("remote_ref") != expected_remote_ref
+            or claim.get("local_ref") != expected_local_ref
+            or not claim_oid_valid
+            or resolved_claim != claim_oid
+            or not claim_base_valid
+            or claim_parents != [claim_oid, claim_base]
+            or claim_subject_match is None
+            or (claim_agent is not None and claim_agent != claim_subject_match.group(1))
+            or isinstance(claim_pid, bool) or not isinstance(claim_pid, int) or claim_pid <= 0
+            or claim_pid != int(claim_subject_match.group(2) if claim_subject_match else -1)
+            or claim_tree != base_tree
             or publication.get("branch") != branch
-            or publication.get("head") != claim.get("main_sha")
-            or publication.get("upstream") != claim.get("main_sha")
+            or publication.get("head") != claim_base
+            or publication.get("upstream") != claim_base
             or publication.get("clean") is not True
-            or not isinstance(publication.get("worktree"), str)
-            or not Path(publication["worktree"]).is_absolute()
+            or not published_path_matches
             or claim_pos >= published_pos):
-        return "source-span lifecycle claim or published-worktree identity is invalid"
+        return "source-span lifecycle claim commit or published-worktree identity is invalid"
 
-    source_base = claim["main_sha"]
+    source_base = claim_base
     if subprocess.run(["git", "merge-base", "--is-ancestor", source_base, source_head],
                       cwd=path, capture_output=True).returncode:
         return "source-span claim base is not an ancestor of its archive transition"
@@ -813,14 +886,21 @@ def _source_span_sync_merge_witness_error(workstream_id: str, path: Path,
             or any(event.get("packet") != active_packet for event in events)):
         return "source-span lifecycle trace does not pin the active task packet"
 
+    if subprocess.run(["git", "merge-base", "--is-ancestor", source_base, main],
+                      cwd=path, capture_output=True).returncode:
+        return "source-span claim base is not an ancestor of origin/main"
+
     checkpoints = [(i, event) for i, event in enumerate(events)
                    if event.get("event") == "checkpoint_completed"]
+    checkpoint_starts = [(i, event) for i, event in enumerate(events)
+                         if event.get("event") == "checkpoint_started"]
     resumes = [(i, event) for i, event in enumerate(events)
                if event.get("event") == "worktree_resumed"]
     syncs = [(i, event) for i, event in enumerate(events)
              if event.get("event") == "main_sync"]
     consumed_resumes: set[int] = set()
     consumed_syncs: set[int] = set()
+    consumed_checkpoints: set[int] = set()
     previous = source_base
     previous_witness = published_pos
     for commit in history_commits:
@@ -848,41 +928,84 @@ def _source_span_sync_merge_witness_error(workstream_id: str, path: Path,
                 or git("rev-parse", f"{commit}^{{tree}}", cwd=path) != expected_tree):
             return f"source-span merge {commit} differs from Git's deterministic merge tree"
 
-        matching_checkpoints = [
+        checkpoint_candidates = [
             (i, event) for i, event in checkpoints
             if isinstance(event.get("data"), dict)
             and event["data"].get("remote_head") == first_parent
+        ]
+        matching_checkpoints = [
+            (i, event) for i, event in checkpoint_candidates
+            if isinstance(event.get("data"), dict)
             and event["data"].get("branch") == branch
             and event["data"].get("removed") is False
         ]
-        matching_resumes = [
+        if len(checkpoint_candidates) != 1 or len(matching_checkpoints) != 1:
+            return f"source-span merge {commit} lacks a unique exact checkpoint witness"
+        checkpoint_pos, checkpoint_event = matching_checkpoints[0]
+        if checkpoint_pos <= previous_witness or checkpoint_pos in consumed_checkpoints:
+            return f"source-span merge {commit} checkpoint witness is reused or out of order"
+        prior_completions = [i for i, _ in checkpoints if i < checkpoint_pos]
+        last_completion = max(prior_completions, default=-1)
+        starts_between = [
+            (i, event) for i, event in checkpoint_starts
+            if last_completion < i < checkpoint_pos
+        ]
+        if (len(starts_between) != 1
+                or starts_between[0][1]["data"].get("remove_worktree") is not False):
+            return f"source-span merge {commit} checkpoint lacks one completed retained-checkout operation"
+        consumed_checkpoints.add(checkpoint_pos)
+
+        resume_candidates = [
             (i, event) for i, event in resumes
             if isinstance(event.get("data"), dict)
             and event["data"].get("head") == commit
-            and event["data"].get("branch") == branch
-            and event["data"].get("worktree") == publication["worktree"]
         ]
-        matching_syncs = [
+        matching_resumes = [
+            (i, event) for i, event in resume_candidates
+            if isinstance(event.get("data"), dict)
+            and event["data"].get("branch") == branch
+            and event["data"].get("worktree") == published_worktree
+        ]
+        sync_candidates = [
             (i, event) for i, event in syncs
             if isinstance(event.get("data"), dict)
             and event["data"].get("changed") is True
-            and event["data"].get("head") == commit
+            and (event["data"].get("head") == commit
+                 or event["data"].get("main_sha") == second_parent)
+        ]
+        matching_syncs = [
+            (i, event) for i, event in sync_candidates
+            if event["data"].get("head") == commit
             and event["data"].get("main_sha") == second_parent
         ]
-        if (len(matching_checkpoints) > 1 or len(matching_resumes) > 1
-                or len(matching_syncs) > 1 or (matching_resumes and matching_syncs)):
+        if (len(resume_candidates) > 1 or len(matching_resumes) != len(resume_candidates)
+                or len(sync_candidates) > 1 or len(matching_syncs) != len(sync_candidates)
+                or (matching_resumes and matching_syncs)):
             return f"source-span merge {commit} has duplicate or conflicting lifecycle witnesses"
         if matching_syncs:
             witness_pos, _ = matching_syncs[0]
-            if witness_pos <= previous_witness:
+            if witness_pos <= checkpoint_pos:
                 return f"source-span merge {commit} lifecycle witness is missing or out of order"
             consumed_syncs.add(witness_pos)
-        elif matching_resumes and len(matching_checkpoints) == 1:
-            checkpoint_pos, _ = matching_checkpoints[0]
+        elif matching_resumes:
             witness_pos, _ = matching_resumes[0]
-            if checkpoint_pos <= previous_witness or witness_pos <= checkpoint_pos:
+            if witness_pos <= checkpoint_pos:
                 return f"source-span merge {commit} lifecycle witnesses are missing or out of order"
             consumed_resumes.add(witness_pos)
+        elif require_final_noop and commit == merge_commits[-1]:
+            final_noop_candidates = [
+                (i, event) for i, event in syncs
+                if isinstance(event.get("data"), dict)
+                and event["data"].get("changed") is False
+                and event["data"].get("head") == source_head
+                and event["data"].get("main_sha") == second_parent
+            ]
+            if len(final_noop_candidates) != 1:
+                return f"source-span merge {commit} lacks its unique exact lifecycle witness"
+            witness_pos, _ = final_noop_candidates[0]
+            if witness_pos <= checkpoint_pos:
+                return f"source-span merge {commit} final no-op witness is out of order"
+            consumed_syncs.add(witness_pos)
         else:
             return f"source-span merge {commit} lacks its unique exact lifecycle witness"
         previous_witness = witness_pos
@@ -892,6 +1015,49 @@ def _source_span_sync_merge_witness_error(workstream_id: str, path: Path,
         line for line in history.stdout.splitlines()
         if len(git("rev-list", "--parents", "-n", "1", line, cwd=path).split()) == 3
     }
+    after_sync_events = [(i, event) for i, event in enumerate(events)
+                         if event.get("event") == "validation_after_sync"]
+    changed_merge_syncs = [
+        (i, event) for i, event in syncs
+        if isinstance(event.get("data"), dict)
+        and event["data"].get("changed") is True
+        and event["data"].get("head") in source_merge_heads
+    ]
+    consumed_after_sync: set[int] = set()
+    pending_after_sync_count = 0
+    for sync_pos, sync_event in changed_merge_syncs:
+        sync_data = sync_event["data"]
+        sync_head = sync_data.get("head")
+        witnesses = [
+            (i, event) for i, event in after_sync_events
+            if isinstance(event.get("data"), dict)
+            and event["data"].get("sync_head") == sync_head
+        ]
+        if not witnesses and allow_pending_after_sync and sync_head == source_head:
+            pending_after_sync_count += 1
+            continue
+        if len(witnesses) != 1:
+            return f"source-span changed main sync {sync_head} lacks one unique after-sync validation witness"
+        witness_pos, witness_event = witnesses[0]
+        witness = witness_event["data"]
+        expected_tree = git("rev-parse", f"{sync_head}^{{tree}}", cwd=path, check=False)
+        next_sync = min((i for i, _ in syncs if i > sync_pos), default=len(events))
+        if (witness_pos <= sync_pos or witness_pos >= next_sync
+                or witness.get("source_commit") != sync_head
+                or witness.get("source_tree") != expected_tree
+                or witness.get("source_status_sha256") != _git_source_identity(
+                    path, sync_head,
+                )["worktree_status_sha256"]
+                or witness.get("sync_main_sha") != sync_data.get("main_sha")
+                or witness.get("passed") is not True
+                or not isinstance(witness.get("path"), str) or not witness["path"]
+                or not isinstance(witness.get("sha256"), str)
+                or re.fullmatch(r"[0-9a-f]{64}", witness["sha256"]) is None):
+            return f"source-span changed main sync {sync_head} has an invalid or misordered after-sync validation witness"
+        consumed_after_sync.add(witness_pos)
+    if (len(consumed_after_sync) != len(after_sync_events)
+            or pending_after_sync_count > (1 if allow_pending_after_sync else 0)):
+        return "source-span lifecycle trace contains an unmatched, duplicate, or reused after-sync validation witness"
     if any(i not in consumed_resumes for i, event in resumes
            if isinstance(event.get("data"), dict)
            and event["data"].get("head") in source_merge_heads):
@@ -901,7 +1067,80 @@ def _source_span_sync_merge_witness_error(workstream_id: str, path: Path,
            and event["data"].get("changed") is True
            and event["data"].get("head") in source_merge_heads):
         return "source-span lifecycle trace contains an unmatched main-sync event"
+    source_merge_first_parents = {
+        git("rev-list", "--parents", "-n", "1", commit, cwd=path).split()[1]
+        for commit in source_merge_heads
+    }
+    if any(i not in consumed_checkpoints for i, event in checkpoints
+           if isinstance(event.get("data"), dict)
+           and event["data"].get("remote_head") in source_merge_first_parents):
+        return "source-span lifecycle trace contains an unmatched or reused checkpoint event"
+    if require_final_noop and merge_commits:
+        final_noops = [
+            (i, event) for i, event in syncs
+            if isinstance(event.get("data"), dict)
+            and event["data"].get("changed") is False
+            and (event["data"].get("head") == source_head
+                 or event["data"].get("main_sha") in {
+                     git("rev-list", "--parents", "-n", "1", commit, cwd=path).split()[2]
+                     for commit in source_merge_heads
+                     if len(git("rev-list", "--parents", "-n", "1", commit, cwd=path).split()) == 3
+                 })
+        ]
+        expected_main = git("rev-parse", "origin/main", cwd=path, check=False)
+        if (len(final_noops) != 1
+                or final_noops[0][1]["data"].get("head") != source_head
+                or final_noops[0][1]["data"].get("main_sha") != expected_main):
+            return "source-span lifecycle trace lacks one exact final no-op main-sync witness"
+        latest_witness = max([
+            published_pos, *consumed_checkpoints, *consumed_resumes,
+            *(i for i in consumed_syncs if i != final_noops[0][0]),
+        ])
+        if final_noops[0][0] <= latest_witness:
+            return "source-span final no-op main-sync witness is out of order"
     return None
+
+
+def _is_authorized_archive_metadata_followup(
+    workstream_id: str, path: Path, transition_commit: str, archived_packet: str,
+    candidate: str,
+) -> bool:
+    """Match only RC-119's exact archive and one-line metadata correction."""
+    pinned = ARCHIVE_METADATA_FOLLOWUP
+    if (workstream_id != pinned["workstream"]
+            or transition_commit != pinned["archive"]
+            or archived_packet != pinned["packet"]
+            or candidate != pinned["correction"]):
+        return False
+    expected_objects = (
+        (f"{transition_commit}^1", pinned["archive_parent"]),
+        (f"{transition_commit}^{{tree}}", pinned["archive_tree"]),
+        (f"{transition_commit}:{archived_packet}", pinned["archive_packet_blob_oid"]),
+        (f"{candidate}^1", transition_commit),
+        (f"{candidate}^{{tree}}", pinned["correction_tree"]),
+        (f"{candidate}:{archived_packet}", pinned["corrected_packet_blob_oid"]),
+    )
+    if any(git("rev-parse", "--verify", rev, cwd=path, check=False) != oid
+           for rev, oid in expected_objects):
+        return False
+    changed = git("diff-tree", "--no-commit-id", "--name-status", "--no-renames",
+                  "-r", candidate, cwd=path).splitlines()
+    if changed != [f"M\t{archived_packet}"]:
+        return False
+    for rev, expected_sha256 in (
+        (transition_commit, pinned["archive_packet_sha256"]),
+        (candidate, pinned["corrected_packet_sha256"]),
+    ):
+        entry = subprocess.run(["git", "ls-tree", "-z", rev, "--", archived_packet],
+                              cwd=path, capture_output=True)
+        content = subprocess.run(["git", "show", f"{rev}:{archived_packet}"],
+                                 cwd=path, capture_output=True)
+        if (entry.returncode or not entry.stdout
+                or entry.stdout.split(b"\t", 1)[0].split()[0] != b"100644"
+                or content.returncode
+                or hashlib.sha256(content.stdout).hexdigest() != expected_sha256):
+            return False
+    return True
 
 
 def _archive_transition_tip_error(workstream_id: str, path: Path,
@@ -959,6 +1198,11 @@ def _archive_transition_tip_error(workstream_id: str, path: Path,
         return f"multiple canonical archive transitions found; latest is {transition_commit} ({packet})"
     transition_commit, packet = transitions[0]
     if transition_commit == head:
+        return None
+    if _is_authorized_archive_metadata_followup(
+            workstream_id, path, transition_commit, packet, head):
+        # RC-119 permits this exact clean pre-sync tip so normal finish can
+        # merge the latest main and validate the complete first-parent chain.
         return None
     transition_packet_blob = _git_blob(path, transition_commit, packet)
     try:
@@ -1086,6 +1330,7 @@ def _archive_transition_tip_error(workstream_id: str, path: Path,
         host_validation = None
         pending_conflict_repair: tuple[str, bytes] | None = None
         repaired_managed_conflict = False
+        archive_metadata_correction_seen = False
         failure_detail = "the archive-to-head commit chain did not satisfy a supported shape"
         for commit in commits:
             parents = git("rev-list", "--parents", "-n", "1", commit, cwd=path).split()
@@ -1177,6 +1422,11 @@ def _archive_transition_tip_error(workstream_id: str, path: Path,
                         failure_detail = f"{commit}: merge differs from the authenticated generated-index reconciliation"
                         break
                 sync_merges.append((commit, main_parent))
+            elif (len(parents) == 2 and parents[1] == previous and not sync_merges
+                  and not archive_metadata_correction_seen
+                  and _is_authorized_archive_metadata_followup(
+                      workstream_id, path, transition_commit, packet, commit)):
+                archive_metadata_correction_seen = True
             elif len(parents) == 2 and parents[1] == previous and sync_merges:
                 status = git("diff-tree", "--no-commit-id", "--name-status", "--no-renames",
                              "-r", commit, cwd=path).splitlines()
@@ -1206,6 +1456,10 @@ def _archive_transition_tip_error(workstream_id: str, path: Path,
                         "_V1_CLAUDE_SUMMARY.md", "_CLAUDE_SUMMARY.md"
                     )
                     permitted_admin = {packet, archived_summary, legacy_summary, readme}
+                    if workstream_id == ARCHIVE_METADATA_FOLLOWUP["workstream"]:
+                        # The protected packet's only authorized correction is
+                        # the pinned child immediately after archival above.
+                        permitted_admin.discard(ARCHIVE_METADATA_FOLLOWUP["packet"])
                     if workstream_id == "operator-2-5d-source-strip-evidence-availability-correction-v1":
                         # This owner-authorized continuation includes the narrowly
                         # scoped archive-history verifier regression itself.
@@ -2404,7 +2658,350 @@ def tracking_branch(repo: Path, branch: str) -> None:
     git("branch", "--set-upstream-to", f"origin/{branch}", branch, cwd=repo)
 
 
-def sync_main(path: Path) -> bool:
+def checkout_capacity(repo: Path, profile_path: str | None = None) -> dict:
+    """Measure checkout bytes and reserve headroom before a claim is created."""
+    pool = repo.parent / ".custodian-worktrees"
+    return worktree_provisioning.preflight_capacity(repo, profile_path=profile_path, target=pool)
+
+
+def _ensure_checkout_capacity(repo: Path, profile_path: str | None, trace: RunTrace | None = None) -> dict:
+    report = checkout_capacity(repo, profile_path)
+    if trace:
+        trace.record("checkout_capacity_preflight", **report)
+    if report.get("local_lfs_failures"):
+        details = ", ".join(
+            f"{item['path']} (oid={item['oid']}, size={item['size']})"
+            for item in report["local_lfs_failures"]
+        )
+        raise WorkstreamError(f"profile requires unavailable or corrupt local Git LFS objects: {details}")
+    if not report["sufficient"]:
+        raise WorkstreamError(
+            f"insufficient checkout capacity before worktree creation: need "
+            f"{report['required_free_bytes']} bytes including reserve, have {report['available_free_bytes']}"
+        )
+    return report
+
+
+def _create_worktree_checkout(repo: Path, path: Path, branch: str, ref: str,
+                              profile_path: str | None, *, new_branch: bool, track: bool = False) -> dict | None:
+    env = {**os.environ}
+    if profile_path is not None:
+        env["GIT_LFS_SKIP_SMUDGE"] = "1"
+    else:
+        env.pop("GIT_LFS_SKIP_SMUDGE", None)
+    args = (["git", "worktree", "add", *( ["--track"] if track else []), "-b", branch, str(path), ref] if new_branch
+            else ["git", "worktree", "add", str(path), branch])
+    try:
+        git(*args[1:], cwd=repo, env=env)
+    except WorkstreamError:
+        raise
+    if profile_path is not None:
+        if not new_branch or ref != "origin/main":
+            sync_main(path, skip_lfs=True)
+        profile = worktree_provisioning.load_profile(repo, "origin/main", profile_path)
+        assert profile is not None
+        try:
+            files = worktree_provisioning.configure_sparse_checkout(path, repo, "origin/main", profile)
+        except worktree_provisioning.ProvisioningError as exc:
+            raise WorkstreamError(str(exc)) from exc
+        if not status_clean(path):
+            raise WorkstreamError("deferred-LFS checkout is dirty after sparse setup or path-scoped hydration")
+        return {
+            "profile": profile.path,
+            "profile_sha256": profile.digest,
+            "paths": [item.path for item in files],
+            "hydrated_lfs_paths": list(profile.hydrate_lfs),
+            "hydrated_lfs": [
+                {"path": item.path, "oid": item.lfs_oid, "size": item.lfs_size}
+                for item in files if item.path in profile.hydrate_lfs
+            ],
+        }
+    return None
+
+
+def _record_checkout_profile(trace: RunTrace | None, receipt: dict | None) -> None:
+    if trace is not None and receipt is not None:
+        trace.record("checkout_profile_applied", **receipt)
+
+
+def _trace_jsonl(trace_path: Path) -> tuple[list[dict], str]:
+    import hashlib
+    raw = trace_path.read_bytes()
+    try:
+        events = [json.loads(line) for line in raw.decode("utf-8").splitlines() if line.strip()]
+    except (UnicodeError, json.JSONDecodeError) as exc:
+        raise WorkstreamError(f"failed-start trace is malformed: {exc}") from exc
+    return events, hashlib.sha256(raw).hexdigest()
+
+
+def _recovery_process_blockers(repo: Path, workstream_id: str, run_pid: int, target: Path) -> list[str]:
+    """Conservatively reject a live failed starter or another same-user writer."""
+    blockers: list[str] = []
+    try:
+        os.kill(run_pid, 0)
+        blockers.append(f"recorded starter PID {run_pid} is still live or reused")
+    except ProcessLookupError:
+        pass
+    except PermissionError:
+        blockers.append(f"recorded starter PID {run_pid} liveness is ambiguous")
+    except OSError as exc:
+        blockers.append(f"recorded starter PID {run_pid} liveness is ambiguous: {exc}")
+
+    ancestors: set[int] = set()
+    current = os.getpid()
+    while current > 1 and current not in ancestors:
+        ancestors.add(current)
+        try:
+            stat = Path(f"/proc/{current}/stat").read_text()
+            current = int(stat.rsplit(")", 1)[1].split()[1])
+        except (OSError, ValueError, IndexError):
+            break
+    wanted_paths = (str(repo.resolve()), str(target.resolve()))
+    try:
+        processes = list(Path("/proc").iterdir())
+    except OSError as exc:
+        return blockers + [f"cannot enumerate local processes: {exc}"]
+    for proc in processes:
+        if not proc.name.isdigit() or int(proc.name) in ancestors:
+            continue
+        try:
+            if proc.stat().st_uid != os.getuid():
+                continue
+            cwd = os.readlink(proc / "cwd")
+            argv = (proc / "cmdline").read_bytes().replace(b"\0", b" ").decode("utf-8", "replace")
+        except FileNotFoundError:
+            continue
+        except PermissionError:
+            blockers.append(f"same-user process {proc.name} is not fully observable")
+            continue
+        if any(path in cwd or path in argv for path in wanted_paths) or workstream_id in argv:
+            blockers.append(f"possible competing workstream writer PID {proc.name}")
+    return blockers
+
+
+def _activate_recovered_trace(trace: RunTrace, failed_run_id: str) -> str | None:
+    """Move the active pointer only from the authenticated failed run to its recovery trace."""
+    import hashlib
+    path = trace.active_path
+    previous = None
+    if path.exists():
+        raw = path.read_bytes()
+        try:
+            pointer = json.loads(raw)
+        except (UnicodeError, json.JSONDecodeError) as exc:
+            raise WorkstreamError(f"active run pointer is malformed; preserved at {path}") from exc
+        if pointer.get("workstream") != trace.workstream_id or pointer.get("run_id") != failed_run_id:
+            raise WorkstreamError("active run pointer no longer identifies the authenticated failed run")
+        previous = hashlib.sha256(raw).hexdigest()
+    pointer = {
+        "run_id": trace.run_id,
+        "workstream": trace.workstream_id,
+        "trace_path": str(trace.path),
+        "diagnostic_ref": trace.diagnostic_ref,
+    }
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temp = path.with_suffix(".tmp")
+    with temp.open("w", encoding="utf-8") as stream:
+        stream.write(json.dumps(pointer, sort_keys=True) + "\n")
+        stream.flush()
+        os.fsync(stream.fileno())
+    os.replace(temp, path)
+    return previous
+
+
+def initial_checkout_recovery_plan(workstream_id: str, run_id: str, profile_path: str,
+                                   repo: Path | None = None) -> dict:
+    """Read-only plan for the exact failed initial checkout; never changes refs."""
+    from workflow_control import common_dir
+    repo = (repo or root_repo()).resolve()
+    validate_id(workstream_id)
+    trace_path = find_local_trace(repo, run_id)
+    if trace_path is None or not trace_path.is_file():
+        raise WorkstreamError(f"failed-start trace is unavailable for run {run_id}")
+    events, trace_sha = _trace_jsonl(trace_path)
+    if not events:
+        raise WorkstreamError("failed-start trace is empty")
+    first = events[0]
+    starts = [item for item in events if item.get("event") == "worktree_create_begin"]
+    claims = [item for item in events if item.get("event") == "remote_claim_acquired"]
+    run_starts = [item for item in events if item.get("event") == "run_started"]
+    blocked = [item for item in events if item.get("event") == "run_blocked"]
+    if (first.get("event") != "run_started" or first.get("workstream") != workstream_id
+            or first.get("run_id") != run_id or len(run_starts) != 1 or len(starts) != 1
+            or len(claims) != 1 or len(blocked) != 1):
+        raise WorkstreamError("trace does not authenticate exactly one initial checkout under this run and claim")
+    begin = starts[0]
+    claim_event = claims[0]
+    begin_data = begin.get("data", {})
+    claim_data = claim_event.get("data", {})
+    branch = branch_for(workstream_id)
+    base_sha = begin_data.get("main_sha")
+    target = Path(os.path.abspath(begin_data.get("worktree", "")))
+    expected_target = Path(os.path.abspath(
+        repo.parent / ".custodian-worktrees" / f"{workstream_id}-{run_id}"
+    ))
+    claim_ref = f"refs/heads/dispatch-claims/{workstream_id}"
+    remote_agent_ref = f"refs/heads/{branch}"
+    diagnostic_ref = f"refs/heads/agent-diagnostics/{workstream_id}/{run_id}"
+    host = first.get("host")
+    try:
+        pid = int(first.get("pid", -1))
+    except (TypeError, ValueError):
+        raise WorkstreamError("failed-start trace has a malformed process identity") from None
+    if pid <= 1:
+        raise WorkstreamError("failed-start trace has an invalid process identity")
+    failures = [item.get("data", {}).get("reason", "") for item in events if item.get("event") == "run_blocked"]
+    original_failure = "\n".join(failures)
+    blockers: list[str] = []
+    if host != __import__("socket").gethostname():
+        blockers.append("failed-start host differs from this host")
+    metadata_consistent = all(
+        item.get("workstream") == workstream_id and item.get("run_id") == run_id
+        and item.get("host") == host and item.get("pid") == pid
+        for item in events
+    )
+    event_positions = {id(item): index for index, item in enumerate(events)}
+    if (not metadata_consistent or begin.get("host") != host or begin.get("pid") != pid
+            or event_positions[id(claim_event)] >= event_positions[id(begin)]
+            or event_positions[id(begin)] >= event_positions[id(blocked[0])]
+            or begin_data.get("branch") != branch or target != expected_target or target.is_symlink()
+            or claim_data.get("remote_ref") != claim_ref or claim_data.get("main_sha") != base_sha):
+        blockers.append("failed-start trace branch, path, claim ref, and base identity do not match")
+    if "No space left on device" not in original_failure and "ENOSPC" not in original_failure:
+        blockers.append("original checkout trace does not prove an ENOSPC failure")
+    if any(item.get("event") == "worktree_published" for item in events):
+        blockers.append("original failed run already published a worktree")
+    local_trace_ref = f"refs/custodian/diagnostics/{workstream_id}/{run_id}"
+    diagnostic = subprocess.run(["git", "show", f"{local_trace_ref}:trace.jsonl"],
+                                cwd=repo, capture_output=True, check=False)
+    if diagnostic.returncode != 0 or __import__("hashlib").sha256(diagnostic.stdout).hexdigest() != trace_sha:
+        blockers.append("local diagnostic ref does not authenticate the exact preserved trace bytes")
+    remote_diagnostic = git("ls-remote", "origin", diagnostic_ref, cwd=repo, check=False).split()
+    local_diag_sha = git("rev-parse", local_trace_ref, cwd=repo, check=False)
+    if not remote_diagnostic or remote_diagnostic[0] != local_diag_sha:
+        blockers.append("published diagnostic ref is absent or differs from the authenticated trace")
+    active_path = common_dir(repo) / "custodian-workflow" / "active" / f"{workstream_id}.json"
+    active_sha = None
+    active_run_id = None
+    active_absent = not active_path.exists()
+    if not active_absent:
+        try:
+            active_raw = active_path.read_bytes()
+            active_sha = __import__("hashlib").sha256(active_raw).hexdigest()
+            active_pointer = json.loads(active_raw)
+            active_run_id = active_pointer.get("run_id")
+            if active_pointer.get("workstream") != workstream_id or active_run_id != run_id:
+                blockers.append("active run pointer no longer identifies the authenticated failed run")
+        except (OSError, UnicodeError, json.JSONDecodeError):
+            blockers.append("active run pointer is unreadable or malformed")
+    remote_claim = git("ls-remote", "origin", claim_ref, cwd=repo, check=False).split()
+    if not remote_claim or remote_claim[0] != claim_data.get("claim_oid"):
+        blockers.append("remote dispatch claim is absent or changed")
+    remote_agent = git("ls-remote", "origin", remote_agent_ref, cwd=repo, check=False).split()
+    if remote_agent:
+        blockers.append("remote agent branch already exists")
+    local_branch = git("rev-parse", f"refs/heads/{branch}", cwd=repo, check=False)
+    if not base_sha or local_branch != base_sha:
+        blockers.append("local agent branch is absent or no longer at the exact failed-start base")
+    target_empty = target.is_dir() and not any(target.iterdir()) if target.exists() else False
+    if target.is_symlink():
+        blockers.append("original worktree target path is a symlink; preserve and inspect it")
+    if target.exists() and not target_empty:
+        blockers.append("original worktree target path contains data; preserve and inspect it")
+    if any(Path(item.get("worktree", "/nonexistent")).resolve() == target
+           for item in worktree_records(repo)):
+        blockers.append("original worktree path is registered in Git")
+    blockers.extend(_recovery_process_blockers(repo, workstream_id, pid, target))
+    main_remote = git("ls-remote", "origin", "refs/heads/main", cwd=repo, check=False).split()
+    main_local = git("rev-parse", "refs/remotes/origin/main", cwd=repo, check=False)
+    if not main_remote or main_remote[0] != main_local:
+        blockers.append("origin/main tracking ref is stale; fetch before planning recovery")
+    elif subprocess.run(["git", "merge-base", "--is-ancestor", base_sha, main_local], cwd=repo).returncode != 0:
+        blockers.append("failed-start base is not an ancestor of current origin/main")
+    try:
+        capacity = worktree_provisioning.preflight_capacity(
+            repo, profile_path=profile_path, ref="origin/main", target=target.parent,
+        )
+        if capacity.get("local_lfs_failures"):
+            blockers.extend(
+                f"required local LFS object unavailable or corrupt: {item['path']} (oid={item['oid']})"
+                for item in capacity["local_lfs_failures"]
+            )
+        if not capacity["sufficient"]:
+            if capacity["available_free_bytes"] < capacity["required_free_bytes"]:
+                blockers.append("insufficient storage for the profiled worktree and safety reserve")
+    except worktree_provisioning.ProvisioningError as exc:
+        capacity = {"error": str(exc)}
+        blockers.append(f"checkout profile or capacity estimate failed: {exc}")
+    plan = {
+        "schema": "custodian.workstream_initial_checkout_recovery_plan.v1",
+        "workstream": workstream_id, "run_id": run_id, "trace_sha256": trace_sha,
+        "diagnostic_ref": diagnostic_ref, "diagnostic_sha": local_diag_sha,
+        "active_pointer_sha256": active_sha, "active_run_id": active_run_id,
+        "active_pointer_absent": active_absent,
+        "claim_ref": claim_ref, "claim_sha": claim_data.get("claim_oid"),
+        "agent_ref": remote_agent_ref, "agent_ref_absent": not bool(remote_agent),
+        "branch": branch, "branch_sha": local_branch, "base_sha": base_sha,
+        "worktree": str(target), "worktree_absent": not target.exists(),
+        "worktree_empty": target_empty,
+        "profile": profile_path, "capacity": capacity, "blockers": blockers,
+    }
+    canonical = json.dumps(plan, sort_keys=True, separators=(",", ":")).encode()
+    plan["plan_sha256"] = __import__("hashlib").sha256(canonical).hexdigest()
+    return plan
+
+
+def recover_initial_checkout(workstream_id: str, run_id: str, profile_path: str,
+                             plan_sha256: str, repo: Path | None = None) -> Path:
+    """Apply only an unchanged, safe plan for the exact original dispatch claim."""
+    repo = (repo or root_repo()).resolve()
+    try:
+        with common_mutex(repo):
+            with workstream_mutex(repo, workstream_id):
+                plan = initial_checkout_recovery_plan(workstream_id, run_id, profile_path, repo)
+                if plan["blockers"]:
+                    raise WorkstreamError("recovery plan is blocked: " + "; ".join(plan["blockers"]))
+                if plan["plan_sha256"] != plan_sha256:
+                    raise WorkstreamError("recovery plan digest changed; re-plan and inspect")
+                trace = RunTrace.start(repo, workstream_id, packet=TASK_PACKET_ROOT.as_posix(), agent="codex")
+                trace.record("same_claim_checkout_recovery_begin", failed_run_id=run_id,
+                             failed_trace_sha256=plan["trace_sha256"], plan_sha256=plan_sha256,
+                             profile=profile_path, profile_sha256=plan["capacity"]["profile_sha256"])
+                path = Path(plan["worktree"])
+                _ensure_checkout_capacity(repo, profile_path, trace)
+                checkout = _create_worktree_checkout(
+                    repo, path, plan["branch"], "origin/main", profile_path, new_branch=False,
+                )
+                _record_checkout_profile(trace, checkout)
+                claim_now = git("ls-remote", "origin", plan["claim_ref"], cwd=repo, check=False).split()
+                agent_now = git("ls-remote", "origin", plan["agent_ref"], cwd=repo, check=False).split()
+                diagnostic_now = git("ls-remote", "origin", plan["diagnostic_ref"], cwd=repo, check=False).split()
+                if (not claim_now or claim_now[0] != plan["claim_sha"] or agent_now
+                        or not diagnostic_now or diagnostic_now[0] != plan["diagnostic_sha"]):
+                    raise WorkstreamError("pinned claim/diagnostic refs changed or agent branch appeared before publication")
+                active_sha = _activate_recovered_trace(trace, run_id)
+                trace.record("failed_run_active_pointer_replaced", failed_run_id=run_id,
+                             previous_pointer_sha256=active_sha, failed_trace_sha256=plan["trace_sha256"])
+                # Creation-only lease: a competing writer that created the ref
+                # after planning makes this fail instead of accepting a fast-forward.
+                git("push", f"--force-with-lease=refs/heads/{plan['branch']}:" ,
+                    "-u", "origin", plan["branch"], cwd=path)
+                fetch(repo)
+                published = git("rev-parse", f"refs/remotes/origin/{plan['branch']}", cwd=repo)
+                head = git("rev-parse", "HEAD", cwd=path)
+                if published != head or git("ls-remote", "origin", plan["claim_ref"], cwd=repo).split()[0] != plan["claim_sha"]:
+                    raise WorkstreamError("post-recovery ref verification failed; original claim and checkout preserved")
+                trace.record("same_claim_checkout_recovery_complete", failed_run_id=run_id,
+                             worktree=str(path), branch=plan["branch"], head=head,
+                             remote_agent_sha=published, profile_sha256=plan["capacity"]["profile_sha256"])
+                trace.complete("same_claim_checkout_recovered", publish=False)
+                trace.publish()
+                return path
+    except (WorkflowControlError, worktree_provisioning.ProvisioningError) as exc:
+        raise WorkstreamError(f"same-claim checkout recovery failed closed: {exc}") from exc
+
+
+def sync_main(path: Path, *, skip_lfs: bool = False) -> bool:
     """Merge latest origin/main into a published workstream without rewriting it."""
     head = git("rev-parse", "HEAD", cwd=path)
     main = git("rev-parse", "origin/main", cwd=path)
@@ -2415,33 +3012,37 @@ def sync_main(path: Path) -> bool:
         raise WorkstreamError("could not compare workstream with origin/main")
     # If workstream is behind and has no unique commits, this is a fast-forward.
     unique = git("rev-list", "origin/main..HEAD", cwd=path).splitlines()
+    env = {**os.environ, "GIT_LFS_SKIP_SMUDGE": "1"} if skip_lfs else None
     if not unique:
-        git("merge", "--ff-only", "origin/main", cwd=path)
+        git("merge", "--ff-only", "origin/main", cwd=path, env=env)
     else:
-        merge = subprocess.run(["git", "merge", "--no-edit", "origin/main"], cwd=path, text=True, capture_output=True)
+        merge = subprocess.run(["git", "merge", "--no-edit", "origin/main"], cwd=path, text=True, capture_output=True, env=env)
         if merge.returncode:
             raise WorkstreamError("origin/main merge conflicted; resolve in the preserved worktree")
     return True
 
 
-def sync_remote_branch(path: Path, branch: str) -> bool:
+def sync_remote_branch(path: Path, branch: str, *, skip_lfs: bool = False) -> bool:
     remote = f"origin/{branch}"
     head = git("rev-parse", "HEAD", cwd=path)
     remote_head = git("rev-parse", remote, cwd=path)
     if subprocess.run(["git", "merge-base", "--is-ancestor", remote_head, head], cwd=path).returncode == 0:
         return False
     if subprocess.run(["git", "merge-base", "--is-ancestor", head, remote_head], cwd=path).returncode == 0:
-        git("merge", "--ff-only", remote, cwd=path)
+        git("merge", "--ff-only", remote, cwd=path,
+            env={**os.environ, "GIT_LFS_SKIP_SMUDGE": "1"} if skip_lfs else None)
     else:
-        merge = subprocess.run(["git", "merge", "--no-edit", remote], cwd=path, text=True, capture_output=True)
+        merge = subprocess.run(["git", "merge", "--no-edit", remote], cwd=path, text=True, capture_output=True,
+                               env={**os.environ, "GIT_LFS_SKIP_SMUDGE": "1"} if skip_lfs else None)
         if merge.returncode:
             raise WorkstreamError("local and remote workstream histories diverged; merge conflicted and worktree was preserved")
     return True
 
 
-def start(workstream_id: str, repo: Path | None = None, *, report: dict[str, str] | None = None,
+def start(workstream_id: str, repo: Path | None = None, *, report: dict[str, object] | None = None,
           agent: str | None = None, _claim: RemoteClaim | None = None, _trace: RunTrace | None = None,
-          _lock_held: bool = False, _publish_trace: bool = True) -> Path:
+          _lock_held: bool = False, _publish_trace: bool = True,
+          profile_path: str | None = None) -> Path:
     repo = (repo or root_repo()).resolve()
     assert_not_legacy_quarantined(repo, workstream_id, "start")
     branch = branch_for(workstream_id)
@@ -2482,6 +3083,7 @@ def start(workstream_id: str, repo: Path | None = None, *, report: dict[str, str
                     if unique:
                         raise WorkstreamError(f"local-only attached worktree for {branch} has unique commits; explicit recovery required at {location}")
                 raise WorkstreamError(f"{branch} already exists or is attached ({location}); use explicit workstream.py resume after inspecting ownership; ordinary start will not adopt it")
+            _ensure_checkout_capacity(repo, profile_path, trace)
             if claim is None:
                 claim = acquire_remote_claim(repo, workstream_id, resolve_agent_id(agent), trace.run_id, trace=trace)
             else:
@@ -2490,7 +3092,9 @@ def start(workstream_id: str, repo: Path | None = None, *, report: dict[str, str
             pool.mkdir(parents=True, exist_ok=True)
             path = pool / f"{workstream_id}-{trace.run_id}"
             trace.record("worktree_create_begin", worktree=str(path), branch=branch, main_sha=git("rev-parse", "origin/main", cwd=repo))
-            git("worktree", "add", "-b", branch, str(path), "origin/main", cwd=repo)
+            _ensure_checkout_capacity(repo, profile_path, trace)
+            checkout = _create_worktree_checkout(repo, path, branch, "origin/main", profile_path, new_branch=True)
+            _record_checkout_profile(trace, checkout)
             git("push", "-u", "origin", branch, cwd=path)
             fetch(repo)
             if not path.is_dir() or git("branch", "--show-current", cwd=path) != branch or subprocess.run(["git", "show-ref", "--verify", "--quiet", f"refs/remotes/origin/{branch}"], cwd=repo).returncode != 0:
@@ -2503,6 +3107,8 @@ def start(workstream_id: str, repo: Path | None = None, *, report: dict[str, str
                 trace.record("claim_cleanup_pending", remote_ref=claim.ref)
             if report is not None:
                 report["checkout"] = "created"
+                if checkout is not None:
+                    report["checkout_profile"] = checkout
             trace.record("start_completed", disposition="created", worktree=str(path), branch=branch)
             if _publish_trace:
                 trace.publish()
@@ -2521,7 +3127,8 @@ def start(workstream_id: str, repo: Path | None = None, *, report: dict[str, str
         raise WorkstreamError(f"{exc} [run_id={trace.run_id}; trace_ref={trace.diagnostic_ref}]") from exc
 
 
-def _resume_impl(workstream_id: str, repo: Path, report: dict[str, str] | None, trace: RunTrace) -> Path:
+def _resume_impl(workstream_id: str, repo: Path, report: dict[str, str] | None, trace: RunTrace,
+                 profile_path: str | None = None) -> Path:
     """Explicitly resume an existing clean canonical workstream checkout."""
     with workstream_mutex(repo, workstream_id, trace=trace):
         # Quarantine may have landed after the public resume preflight.
@@ -2534,10 +3141,33 @@ def _resume_impl(workstream_id: str, repo: Path, report: dict[str, str] | None, 
             path = Path(attached[0]["worktree"]).resolve()
             if path == repo or not status_clean(path):
                 raise WorkstreamError(f"resume requires a clean non-coordination checkout; preserved at {path} [run_id={trace.run_id}]")
+            if profile_path is not None:
+                _ensure_checkout_capacity(repo, profile_path, trace)
             fetch(path)
             if remote_exists:
-                sync_remote_branch(path, branch)
-            sync_main(path)
+                sync_remote_branch(path, branch, skip_lfs=profile_path is not None)
+            if profile_path is not None:
+                sync_main(path, skip_lfs=True)
+                profile = worktree_provisioning.load_profile(repo, "origin/main", profile_path)
+                assert profile is not None
+                try:
+                    files = worktree_provisioning.configure_sparse_checkout(path, repo, "origin/main", profile)
+                except worktree_provisioning.ProvisioningError as exc:
+                    raise WorkstreamError(str(exc)) from exc
+                if not status_clean(path):
+                    raise WorkstreamError("deferred-LFS checkout is dirty after sparse setup or path-scoped hydration")
+                _record_checkout_profile(trace, {
+                    "profile": profile.path,
+                    "profile_sha256": profile.digest,
+                    "paths": [item.path for item in files],
+                    "hydrated_lfs_paths": list(profile.hydrate_lfs),
+                    "hydrated_lfs": [
+                        {"path": item.path, "oid": item.lfs_oid, "size": item.lfs_size}
+                        for item in files if item.path in profile.hydrate_lfs
+                    ],
+                })
+            else:
+                sync_main(path)
             trace.record("worktree_resumed", worktree=str(path), branch=branch, head=git("rev-parse", "HEAD", cwd=path))
             if report is not None: report["checkout"] = "resumed"
             trace.publish()
@@ -2547,8 +3177,11 @@ def _resume_impl(workstream_id: str, repo: Path, report: dict[str, str] | None, 
         pool = repo.parent / ".custodian-worktrees"
         pool.mkdir(parents=True, exist_ok=True)
         path = pool / f"{workstream_id}-{trace.run_id}"
-        git("worktree", "add", "--track", "-b", branch, str(path), f"origin/{branch}", cwd=repo)
-        sync_main(path)
+        _ensure_checkout_capacity(repo, profile_path, trace)
+        checkout = _create_worktree_checkout(repo, path, branch, f"origin/{branch}", profile_path,
+                                             new_branch=True, track=True)
+        _record_checkout_profile(trace, checkout)
+        sync_main(path, skip_lfs=profile_path is not None)
         git("push", "origin", branch, cwd=path)
         trace.record("worktree_resumed", worktree=str(path), branch=branch, head=git("rev-parse", "HEAD", cwd=path))
         if report is not None: report["checkout"] = "resumed"
@@ -2556,12 +3189,13 @@ def _resume_impl(workstream_id: str, repo: Path, report: dict[str, str] | None, 
         return path
 
 
-def resume(workstream_id: str, repo: Path | None = None, *, report: dict[str, str] | None = None) -> Path:
+def resume(workstream_id: str, repo: Path | None = None, *, report: dict[str, str] | None = None,
+           profile_path: str | None = None) -> Path:
     repo = (repo or root_repo()).resolve()
     assert_not_legacy_quarantined(repo, workstream_id, "resume")
     trace = RunTrace.resume(repo, workstream_id)
     try:
-        return _resume_impl(workstream_id, repo, report, trace)
+        return _resume_impl(workstream_id, repo, report, trace, profile_path)
     except Exception as exc:
         if not _is_quarantine_fence_error(exc):
             trace.finish_blocked(str(exc))
@@ -2574,6 +3208,136 @@ def validation_green(report: Path) -> bool:
     except (OSError, json.JSONDecodeError) as exc:
         raise WorkstreamError(f"cannot read validation report {report}: {exc}") from exc
     return _validation_data_green(data)
+
+
+def _git_source_identity(path: Path, commit: str | None = None) -> dict[str, str]:
+    commit = commit or git("rev-parse", "HEAD", cwd=path)
+    resolved = git("rev-parse", "--verify", f"{commit}^{{commit}}", cwd=path, check=False)
+    tree = git("rev-parse", "--verify", f"{commit}^{{tree}}", cwd=path, check=False)
+    if not resolved or resolved != commit or not tree:
+        raise WorkstreamError("cannot resolve exact validation source commit and tree")
+    status = subprocess.run(
+        ["git", "status", "--porcelain=v1", "-z", "--untracked-files=all"],
+        cwd=path, capture_output=True, check=False,
+    )
+    if status.returncode:
+        raise WorkstreamError("cannot determine exact validation source worktree state")
+    return {"commit": resolved, "tree": tree,
+            "worktree_status_sha256": hashlib.sha256(status.stdout).hexdigest()}
+
+
+def _after_sync_report_data(report: Path, path: Path, sync_head: str) -> tuple[dict, str]:
+    try:
+        raw = report.read_bytes()
+        data = json.loads(raw)
+    except (OSError, json.JSONDecodeError) as exc:
+        raise WorkstreamError(f"cannot read after-sync validation report {report}: {exc}") from exc
+    expected = _git_source_identity(path, sync_head)
+    current = _git_source_identity(path)
+    if current != expected or not status_clean(path):
+        raise WorkstreamError(
+            "after-sync validation source changed after synchronization; report cannot be consumed"
+        )
+    coverage = data.get("coverage") if isinstance(data, dict) else None
+    tests = data.get("tests") if isinstance(data, dict) else None
+    selected = data.get("selected") if isinstance(data, dict) else None
+    summary = data.get("summary") if isinstance(data, dict) else None
+    test_ids = [test.get("id") for test in tests] if isinstance(tests, list) and all(
+        isinstance(test, dict) for test in tests
+    ) else None
+    structurally_green = (
+        isinstance(data, dict)
+        and data.get("schema") == "custodian.validation.result.v1"
+        and data.get("passed") is True
+        and isinstance(coverage, dict)
+        and coverage.get("complete") is True
+        and coverage.get("uncovered_files") == []
+        and isinstance(tests, list) and bool(tests)
+        and test_ids is not None
+        and all(isinstance(test_id, str) and test_id for test_id in test_ids)
+        and len(set(test_ids)) == len(test_ids)
+        and selected == test_ids
+        and all(test.get("status") == "passed" for test in tests)
+        and isinstance(summary, dict)
+        and summary.get("selected") == len(tests)
+        and summary.get("passed") == len(tests)
+        and summary.get("failed") == 0
+        and summary.get("timed_out") == 0
+        and summary.get("skipped") == 0
+        and summary.get("infrastructure_errors") == 0
+    )
+    if (not structurally_green
+            or data.get("source_identity") != expected
+            or data.get("source_changed_during_validation") is not False):
+        raise WorkstreamError(
+            "after-sync validation report must be green, complete, and bound to the exact synchronized source commit and tree"
+        )
+    return expected, hashlib.sha256(raw).hexdigest()
+
+
+def _pending_after_sync_head(path: Path, trace: RunTrace | None) -> str | None:
+    """Return the one current changed-sync head still awaiting validation."""
+    if trace is None or not trace.path.is_file():
+        return None
+    try:
+        events = [json.loads(line) for line in trace.path.read_text().splitlines() if line.strip()]
+    except (OSError, ValueError, TypeError) as exc:
+        raise WorkstreamError(f"cannot inspect pending after-sync validation trace: {exc}") from exc
+    changed = [(i, event) for i, event in enumerate(events)
+               if isinstance(event, dict) and event.get("event") == "main_sync"
+               and isinstance(event.get("data"), dict)
+               and event["data"].get("changed") is True]
+    validations = [(i, event) for i, event in enumerate(events)
+                   if isinstance(event, dict) and event.get("event") == "validation_after_sync"]
+    if not changed:
+        if validations:
+            raise WorkstreamError("after-sync validation witness has no changed main synchronization")
+        return None
+    head = git("rev-parse", "HEAD", cwd=path)
+    tree = git("rev-parse", "HEAD^{tree}", cwd=path)
+    unresolved: list[tuple[int, str]] = []
+    used: set[int] = set()
+    for sync_pos, sync_event in changed:
+        sync_data = sync_event["data"]
+        sync_head = sync_data.get("head")
+        if (not isinstance(sync_head, str)
+                or not git("rev-parse", f"{sync_head}^{{commit}}", cwd=path, check=False)):
+            raise WorkstreamError("changed main-sync trace contains an invalid source head")
+        witnesses = [(i, event) for i, event in validations
+                     if isinstance(event.get("data"), dict)
+                     and event["data"].get("sync_head") == sync_head]
+        if len(witnesses) > 1:
+            raise WorkstreamError("changed main synchronization has duplicate after-sync validation witnesses")
+        if not witnesses:
+            unresolved.append((sync_pos, sync_head))
+            continue
+        witness_pos, witness_event = witnesses[0]
+        witness = witness_event["data"]
+        expected_tree = git("rev-parse", f"{sync_head}^{{tree}}", cwd=path)
+        next_sync = min((i for i, event in enumerate(events)
+                         if isinstance(event, dict) and event.get("event") == "main_sync"
+                         and i > sync_pos), default=len(events))
+        if (witness_pos <= sync_pos or witness_pos >= next_sync
+                or witness.get("source_commit") != sync_head
+                or witness.get("source_tree") != expected_tree
+                or witness.get("source_status_sha256") != _git_source_identity(
+                    path, sync_head,
+                )["worktree_status_sha256"]
+                or witness.get("sync_main_sha") != sync_data.get("main_sha")
+                or witness.get("passed") is not True
+                or not isinstance(witness.get("path"), str) or not witness["path"]
+                or not isinstance(witness.get("sha256"), str)
+                or re.fullmatch(r"[0-9a-f]{64}", witness["sha256"]) is None):
+            raise WorkstreamError("changed main synchronization has an invalid after-sync validation witness")
+        used.add(witness_pos)
+    if len(used) != len(validations):
+        raise WorkstreamError("after-sync validation trace contains an unmatched or reused witness")
+    if not unresolved:
+        return None
+    if len(unresolved) != 1 or unresolved[0][1] != head or tree != git(
+            "rev-parse", f"{unresolved[0][1]}^{{tree}}", cwd=path):
+        raise WorkstreamError("an unvalidated changed main synchronization is stale relative to the current checkout")
+    return unresolved[0][1]
 
 
 def _validation_data_green(data: object) -> bool:
@@ -2907,6 +3671,49 @@ def _finish_impl(workstream_id: str, validation_report: Path, validation_report_
         import hashlib
         trace.record("validation_report", path=validation_report.name, sha256=hashlib.sha256(validation_report.read_bytes()).hexdigest(), passed=True)
 
+    # A prior finish attempt may already have merged origin/main and stopped
+    # before validating that tree. Consume its report before checkpoint_impl
+    # can publish the synchronized branch again, even when the retry's own
+    # sync_main() would be a no-op.
+    pending_after_sync = (
+        _pending_after_sync_head(path, trace) if requires_source_span_witnesses else None
+    )
+    if pending_after_sync is not None:
+        pending_trace_error = _source_span_sync_merge_witness_error(
+            workstream_id, path, git("rev-parse", "HEAD", cwd=path), trace,
+            allow_pending_after_sync=True,
+        )
+        if pending_trace_error:
+            raise WorkstreamError(pending_trace_error)
+        if validation_report_after_sync is None:
+            raise WorkstreamError(
+                "a prior main synchronization still requires --validation-report-after-sync; recovery state retained"
+            )
+        source_identity, report_sha256 = _after_sync_report_data(
+            validation_report_after_sync, path, pending_after_sync,
+        )
+        assert trace is not None
+        pending_sync_event = next(
+            event for event in reversed([
+                json.loads(line) for line in trace.path.read_text().splitlines() if line.strip()
+            ])
+            if event.get("event") == "main_sync"
+            and isinstance(event.get("data"), dict)
+            and event["data"].get("changed") is True
+            and event["data"].get("head") == pending_after_sync
+        )
+        trace.record(
+            "validation_after_sync", path=validation_report_after_sync.name,
+            sha256=report_sha256, passed=True, sync_head=pending_after_sync,
+            sync_main_sha=pending_sync_event["data"].get("main_sha"),
+            source_commit=source_identity["commit"], source_tree=source_identity["tree"],
+            source_status_sha256=source_identity["worktree_status_sha256"],
+        )
+        if not trace.publish():
+            raise WorkstreamError(
+                "after-sync validation trace publication failed; synchronized checkout is retained"
+            )
+
     if trace and requires_source_span_witnesses:
         source_span_error = _source_span_sync_merge_witness_error(
             workstream_id, path, git("rev-parse", "HEAD", cwd=path), trace,
@@ -2917,8 +3724,13 @@ def _finish_impl(workstream_id: str, validation_report: Path, validation_report_
     if archive_tip_error:
         raise WorkstreamError(archive_tip_error)
 
-    git("push", "-u", "origin", branch, cwd=path)
-    fetch(path)
+    # Record a genuine, remotely verified checkpoint before main synchronization.
+    # The public lifecycle helper is also the source of its start/completion events.
+    if trace:
+        _checkpoint_impl(workstream_id, False, repo, trace)
+    else:
+        git("push", "-u", "origin", branch, cwd=path)
+        fetch(path)
 
     if task_head_reachable_from_main(path):
         # ALREADY_LANDED: this exact task history is already on origin/main (a
@@ -2940,12 +3752,38 @@ def _finish_impl(workstream_id: str, validation_report: Path, validation_report_
     changed = sync_main(path)
     if trace: trace.record("main_sync", changed=changed, head=git("rev-parse", "HEAD", cwd=path), main_sha=git("rev-parse", "origin/main", cwd=path))
     if changed:
-        if validation_report_after_sync is None or not validation_green(validation_report_after_sync):
+        sync_head = git("rev-parse", "HEAD", cwd=path)
+        if validation_report_after_sync is None:
             raise WorkstreamError("main synchronization changed the tree; provide a green --validation-report-after-sync; recovery state retained")
+        if requires_source_span_witnesses:
+            source_identity, report_sha256 = _after_sync_report_data(
+                validation_report_after_sync, path, sync_head,
+            )
+        elif not validation_green(validation_report_after_sync):
+            raise WorkstreamError("main synchronization changed the tree; provide a green --validation-report-after-sync; recovery state retained")
+        else:
+            source_identity = _git_source_identity(path, sync_head)
+            report_sha256 = hashlib.sha256(validation_report_after_sync.read_bytes()).hexdigest()
         if trace:
-            import hashlib
             trace.record("validation_after_sync", path=validation_report_after_sync.name,
-                         sha256=hashlib.sha256(validation_report_after_sync.read_bytes()).hexdigest(), passed=True)
+                         sha256=report_sha256, passed=True, sync_head=sync_head,
+                         sync_main_sha=git("rev-parse", f"{sync_head}^2", cwd=path),
+                         source_commit=source_identity["commit"], source_tree=source_identity["tree"],
+                         source_status_sha256=source_identity["worktree_status_sha256"])
+            # Recheck main after the validated merge. This emits the canonical
+            # final no-op witness when main is stable; if main advanced again,
+            # preserve the new merge and require validation of that newer tree.
+            _checkpoint_impl(workstream_id, False, repo, trace)
+            changed_again = sync_main(path)
+            trace.record("main_sync", changed=changed_again,
+                         head=git("rev-parse", "HEAD", cwd=path),
+                         main_sha=git("rev-parse", "origin/main", cwd=path))
+            if changed_again:
+                trace.publish()
+                raise WorkstreamError(
+                    "main advanced again after after-sync validation; provide a fresh green "
+                    "--validation-report-after-sync for the latest synchronization; recovery state retained"
+                )
     if trace:
         if not trace.publish():
             raise WorkstreamError(
@@ -2955,6 +3793,7 @@ def _finish_impl(workstream_id: str, validation_report: Path, validation_report_
         if requires_source_span_witnesses:
             source_span_error = _source_span_sync_merge_witness_error(
                 workstream_id, path, git("rev-parse", "HEAD", cwd=path), trace,
+                require_final_noop=True,
             )
             if source_span_error:
                 raise WorkstreamError(source_span_error)
@@ -3101,8 +3940,10 @@ def gc(repo: Path | None = None, *, reap_finished: bool = False) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     subs = parser.add_subparsers(dest="command", required=True)
-    p = subs.add_parser("start"); p.add_argument("workstream_id"); p.add_argument("--agent", default=None)
-    p = subs.add_parser("resume"); p.add_argument("workstream_id")
+    p = subs.add_parser("start"); p.add_argument("workstream_id"); p.add_argument("--agent", default=None); p.add_argument("--profile", default=None, help="tracked path-exact deferred-LFS checkout profile")
+    p = subs.add_parser("resume"); p.add_argument("workstream_id"); p.add_argument("--profile", default=None, help="tracked path-exact deferred-LFS checkout profile")
+    p = subs.add_parser("recover-initial-checkout"); p.add_argument("workstream_id"); p.add_argument("--run-id", required=True); p.add_argument("--profile", required=True)
+    mode = p.add_mutually_exclusive_group(required=True); mode.add_argument("--plan", action="store_true"); mode.add_argument("--apply", action="store_true"); p.add_argument("--plan-sha256", default=None)
     p = subs.add_parser("status"); p.add_argument("workstream_id", nargs="?")
     p = subs.add_parser("checkpoint"); p.add_argument("workstream_id"); p.add_argument("--remove-worktree", action="store_true")
     p = subs.add_parser("finish"); p.add_argument("workstream_id"); p.add_argument("--validation-report", type=Path, required=True); p.add_argument("--validation-report-after-sync", type=Path)
@@ -3117,8 +3958,19 @@ def main() -> int:
                                            help="remove only verified clean, archived, landed transient checkouts")
     args = parser.parse_args()
     try:
-        if args.command == "start": start(args.workstream_id, agent=args.agent)
-        elif args.command == "resume": print(f"resumed worktree: {resume(args.workstream_id)}")
+        if args.command == "start": start(args.workstream_id, agent=args.agent, profile_path=args.profile)
+        elif args.command == "resume": print(f"resumed worktree: {resume(args.workstream_id, profile_path=args.profile)}")
+        elif args.command == "recover-initial-checkout":
+            if args.plan:
+                plan = initial_checkout_recovery_plan(args.workstream_id, args.run_id, args.profile)
+                print(json.dumps(plan, sort_keys=True, indent=2))
+                if plan["blockers"]:
+                    return 2
+            else:
+                if not args.plan_sha256:
+                    raise WorkstreamError("--apply requires the exact --plan-sha256 from a read-only plan")
+                path = recover_initial_checkout(args.workstream_id, args.run_id, args.profile, args.plan_sha256)
+                print(f"same-claim checkout recovered: {path}")
         elif args.command == "status": status(args.workstream_id)
         elif args.command == "checkpoint": checkpoint(args.workstream_id, args.remove_worktree)
         elif args.command == "finish":

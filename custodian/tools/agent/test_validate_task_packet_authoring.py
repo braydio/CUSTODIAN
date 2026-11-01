@@ -103,6 +103,21 @@ class AuthoringPreflightTests(unittest.TestCase):
     def test_valid_pair_passes(self):
         self.assertEqual(self.validate(self.impl, self.rev), [])
 
+    def test_preflight_accepts_terminal_period_after_final_publication_path(self):
+        self.impl.write_text(
+            implementation()
+            + "- Publication inputs: `custodian/tools/a.py`; `custodian/tools/b.py`.\n"
+        )
+        self.assertEqual(self.validate(self.impl), [])
+
+    def test_preflight_rejects_malformed_publication_input_instead_of_ignoring_it(self):
+        self.impl.write_text(
+            implementation()
+            + "- Publication inputs: `custodian/tools/a.py`; prose\n"
+        )
+        findings = self.validate(self.impl)
+        self.assertTrue(any("Publication inputs" in finding for finding in findings))
+
     def test_cli_pass_surfaces_main_publication_instead_of_claiming(self):
         output = io.StringIO()
         with contextlib.redirect_stdout(output):
