@@ -473,6 +473,22 @@ checkout is a coordination checkout, not the implementation surface. Use
 or create the canonical `agent/<id>` branch. Never reset/stash a dirty attached
 worktree; preserve it and report the blocker.
 
+Codex turn-end hygiene is mandatory even when work remains open: inventory
+attached worktrees and tracked, untracked **and ignored** files; verify every
+durable change at the exact remote SHA; and safely retire the checkout via
+`workstream.py finish` or, for a safely parked clean canonical branch,
+`workstream.py checkpoint <workstream-id> --remove-worktree`. Check for
+unresolved ignored content *before* checkpoint removal. Preserve any
+review/claim/owner uncertainty, private proof, unique files or missing remote
+evidence; report its exact reason. The remote branch retains committed work,
+not ignored files. Never default to leaving a checkout attached merely because
+a follow-up turn is possible. Every turn reports created/retired/retained/total
+worktrees and host disk evidence (or unavailable). Manual experiment branches
+and protected reviews are not auto-GC candidates. Full contract:
+repository-root `AGENTS.md` and
+`docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`.
+
+
 Keep work together through the smallest coherent completion boundary. Separate
 commits inside that boundary are fine; do not create review-dependent micro-
 packets when sequential migration steps share one architectural acceptance gate.

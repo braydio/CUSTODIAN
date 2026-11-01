@@ -590,6 +590,74 @@ documentation edits, and the required `<TASK>_CLAUDE_SUMMARY.md` inside that
 worktree. Commit only scoped task files. The task branch is pushed before
 landing, providing a remote recovery ref.
 
+### Turn-end handoff: publish, verify, retire or explain
+
+The normal endpoint of **each Codex turn** is a safe checkout-retirement
+decision, not an indefinitely attached directory. A task can remain
+`in_progress` after its local checkout is removed. Use one canonical
+`agent/<workstream-id>` remote branch as a recoverable Git state; a later
+worker should use the existing `workstream.py resume <id>` machinery to
+recreate a linked checkout, rather than making full repository clones.
+
+Before attempting removal, inspect:
+
+```bash
+git worktree list --porcelain
+git -C "<worktree>" status --porcelain=v1 --untracked-files=all
+git -C "<worktree>" ls-files --others --ignored --exclude-standard -z
+git -C "<worktree>" rev-parse HEAD
+git -C "<coordination-root>" rev-parse refs/remotes/origin/agent/<workstream-id>
+```
+
+The ignored-file probe is **additional** to `checkpoint`'s existing clean
+status check. An ignored local texture, proof, Godot import, Blender edit,
+cached LFS dependency or reviewer artifact may be unique. Classify and
+hash/externalize any irreplaceable content first; do not interpret
+`status --porcelain` being empty as proof all local state is disposable.
+Do not use `git clean`, `git reset --hard`, `--force` removal or manual
+worktree directory deletion. The V002-style manual experiment is similarly
+protected: existing `transient_worktree_gc.py` only reaps canonical
+`agent/*` checkouts after their packet is archived and HEAD is proven
+reachable from `origin/main`.
+
+When a canonical implementation is complete, use the regular validated
+`workstream.py finish`; it owns archive, main landing, review separation
+and teardown. When a still-open canonical task is paused, and all unique-file,
+ownership, remote-identity and provenance guards pass, run:
+
+```bash
+python3 custodian/tools/agent/workstream.py checkpoint \
+  <workstream-id> --remove-worktree
+```
+
+This publishes and verifies the branch and removes its **clean** checkout
+while leaving the workstream active. Do not run it while the checkout contains
+unresolved ignored files or when its claim/review/process state requires
+preservation. It does not approve a review or clear a failed claim. On
+continuation, independently verify no conflicting writer, then:
+
+```bash
+python3 custodian/tools/agent/workstream.py resume <workstream-id>
+```
+
+At the handoff, always report the number of worktrees **created, retired,
+retained and attached total**, at least the relevant disk consumption, exact
+published SHA, any external evidence hash/manifest, and the explicit reason
+for each unreaped protected checkout. The host-private list must be measured
+from the host; a GitHub-only session must report `unknown` rather than
+inventing a count. The safe cleanup preview is:
+
+```bash
+python3 custodian/tools/agent/transient_worktree_gc.py --repo .
+```
+
+Only after verifying safe eligibility may the existing bounded
+`python3 custodian/tools/agent/workstream.py gc --reap-finished` run.
+Neither tool releases claims, removes protected worktrees, or authorizes
+deletion of manual experiment branches. Review evidence and generated
+Asset Pipeline V2 sources must retain their own authenticated durability.
+
+
 ### Run-artifact contract
 
 A worktree is disposable; its unresolved artifacts are not. If a task packet is
