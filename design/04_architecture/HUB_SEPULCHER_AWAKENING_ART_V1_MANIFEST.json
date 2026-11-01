@@ -502,7 +502,18 @@
       "asset_v2_job": null,
       "live_status": "not_checked_at_publication",
       "human_image_approval": "pending",
-      "handoff_review_status": null
+      "handoff_review_status": null,
+      "candidate_technical_review": {
+        "candidate_sha256": "8666706f842a0822bded5251fd361878cbe660b81243d6ed2714f55199324234",
+        "dimensions_px": {
+          "width": 1134,
+          "height": 1387
+        },
+        "technical_outcome": "REQUIRES_CORRECTION__DO_NOT_INGEST",
+        "review_summary": "Canonical east connectors and eastern reading footprints obstructed; regenerate with spatial lock.",
+        "source_persisted_to_dropbox": false,
+        "reviewed_2026_11_01": true
+      }
     },
     {
       "id": "hub_first_set_archive_rise_environment/underlay",
@@ -3950,16 +3961,59 @@
   "checkpoint": {
     "current_stage": "CAL-A",
     "next_image_id": "hub_first_set_sepulcher_gardens_environment/underlay",
-    "generated_image_ids": [],
+    "generated_image_ids": [
+      "hub_first_set_sepulcher_gardens_environment/underlay"
+    ],
     "human_approved_image_ids": [],
     "rejected_image_ids": [],
     "dropbox_receipts": [],
     "asset_v2_job_receipts": [],
     "last_verified_runtime": null,
-    "disposition": "PROGRAM APPROVED; NO ART GENERATED, INGESTED OR APPROVED BY THIS PUBLICATION; prior independent sources require live recheck",
+    "disposition": "CAL-01 source candidate generated and reviewed; objective geometry and registration corrections required; NOT human-approved, NOT in Dropbox or Asset V2. Continue CAL-01 corrective generation/review, not CAL-02.",
     "next_generation_set_id": "CAL-01",
-    "last_generation_set_receipt": null,
-    "generation_set_receipts": []
+    "last_generation_set_receipt": {
+      "set_id": "CAL-01",
+      "asset_id": "hub_first_set_sepulcher_gardens_environment/underlay",
+      "technical_outcome": "REQUIRES_CORRECTION__DO_NOT_INGEST",
+      "source_review_decision": "human_approval_pending",
+      "candidate_sha256": "8666706f842a0822bded5251fd361878cbe660b81243d6ed2714f55199324234"
+    },
+    "generation_set_receipts": [
+      {
+        "set_id": "CAL-01",
+        "asset_id": "hub_first_set_sepulcher_gardens_environment/underlay",
+        "candidate_generation_id": "cc946e7d-f5bf-4281-b0e2-52ff5d543a85",
+        "candidate_provenance": "ChatGPT image generation in current authoring conversation, 2026-11-01; image bytes NOT in GitHub nor Dropbox",
+        "candidate_sha256": "8666706f842a0822bded5251fd361878cbe660b81243d6ed2714f55199324234",
+        "candidate_bytes": 3335773,
+        "candidate_dimensions_px": {
+          "width": 1134,
+          "height": 1387
+        },
+        "candidate_mode": "RGB_no_alpha",
+        "target_dimensions_px": {
+          "width": 1152,
+          "height": 1408
+        },
+        "technical_outcome": "REQUIRES_CORRECTION__DO_NOT_INGEST",
+        "source_review_decision": "human_approval_pending",
+        "rejected_or_approved_by_user": false,
+        "review_findings": [
+          "Atmosphere and institutional burial architecture compelling and useful for style reference, but current source not accepted.",
+          "World-to-image projection based on registered Sepulcher Gardens 1152x1408 envelope and existing grave event places Reading B at local (1024,704) within raised root garden and Reading C at (1024,1216) inside lower-right blocked terrain; Reading A at (256,704) close to wall.",
+          "Required east-side northern connector spans the garden's local y=576..832 at right edge; southern connector spans local y=1120..1376. Generated masonry and nonwalkable margin encroach on both required passages.",
+          "Grave center local (576,704) and resolution points (484,816),(668,816) are clear; visual design overly ceremony-circle-focused; northern arcade has oblique frontal elevation in tension with strict overhead art.",
+          "Image source measures 1134x1387 RGB; target 1152x1408. Opaque underlay permits RGB once registered, but no silent stretch or fake geometry correction."
+        ],
+        "recommended_next_action": "Regenerate or substantially edit the SAME CAL-01 underlay using this candidate only as a style/material reference. Reserve clear, fully walkable bands at BOTH existing east passage coordinates; move all raised walls/roots/terrain off the three reading footprints; preserve grave and choices; produce exact or safely normalizable 1152x1408 true-overhead source. Repeat review and seek explicit human decision before CAL-02.",
+        "image_storage": "No independent durable Dropbox/source_work upload; source exists only as authoring-conversation artifact at time of this receipt, cannot be assumed retrievable after interruption",
+        "normalized_sha256": null,
+        "dropbox_receipt": null,
+        "asset_v2_job": null,
+        "review_snapshot": "Annotation generated locally, not a production art asset or permanent source",
+        "notes": "Objective findings are an AI technical/art-direction audit; final aesthetic accept/reject remains human-owned."
+      }
+    ]
   },
   "gates": {
     "user_image_review_before_dropbox": true,
