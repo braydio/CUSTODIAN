@@ -1,0 +1,57 @@
+{
+  "candidate_state": "candidate_unapproved",
+  "conservation": {
+    "after_body_faces": 10367,
+    "after_body_vertices": 17578,
+    "before_faces": 10516,
+    "before_vertices": 17839,
+    "left_faces": 71,
+    "left_vertices": 122,
+    "right_faces": 78,
+    "right_vertices": 139,
+    "total_faces": 10516,
+    "total_vertices": 17839
+  },
+  "donor_preflight": {
+    "disjoint": true,
+    "left_faces": 71,
+    "left_vertices": 122,
+    "mixed_body_shell_faces": 0,
+    "right_faces": 78,
+    "right_vertices": 139
+  },
+  "output_sha256": "17c3cc57ce58aff1e400636d8b5f1db5bc97058d7028d6de587803514a131589",
+  "retained_helpers": [
+    "Icosphere",
+    "Icosphere.001"
+  ],
+  "rigging": {
+    "Operator_Pauldron_Left_V003": {
+      "max_bone_influences": 5,
+      "non_normalized_vertices": 0,
+      "unweighted_vertices": 0
+    },
+    "Operator_Pauldron_Right_V003": {
+      "max_bone_influences": 5,
+      "non_normalized_vertices": 0,
+      "unweighted_vertices": 0
+    },
+    "output_unwrapped": {
+      "max_bone_influences": 4,
+      "non_normalized_vertices": 0,
+      "unweighted_vertices": 0
+    }
+  },
+  "schema": "custodian.operator_3d_mesh_object_split_validation.v1",
+  "source_rest_pose_unchanged": true,
+  "source_running_action_preserved": true,
+  "source_v003_sha256": "b0686b23acb583d3eb8ae50d82a8cc713d8449627727927f7c42cd76ba42a6a0",
+  "source_vs_split_hashes": {
+    "faces_material_uv_after": "642afddf8fc31721fc661bb84f06aa6cfd82ab06f630ba4ddce93f78b1938bf3",
+    "faces_material_uv_before": "642afddf8fc31721fc661bb84f06aa6cfd82ab06f630ba4ddce93f78b1938bf3",
+    "faces_material_uv_equal": true,
+    "vertex_weights_after": "cb80e7ad8c7a37391480209470591275465433d48031d6ef3ae46a83d9916993",
+    "vertex_weights_before": "cb80e7ad8c7a37391480209470591275465433d48031d6ef3ae46a83d9916993",
+    "vertex_weights_equal": true
+  }
+}

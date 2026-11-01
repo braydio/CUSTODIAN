@@ -1,0 +1,28 @@
+{
+  "approval_state": "experimental",
+  "candidate_state": "candidate_unapproved",
+  "files": [
+    {
+      "bytes": 4683,
+      "path": "master.v1.json",
+      "sha256": "c20d76b5fccee17cbb520f91292631cc9974d6a08cd96aca3621d46bc30dafbf"
+    },
+    {
+      "bytes": 1857,
+      "path": "mesh_split_validation.v1.json",
+      "sha256": "d7e83f4fc4531ea748d45cf99ca31f978d0112d881a99c745154fdf6142741b3"
+    },
+    {
+      "bytes": 47975211,
+      "path": "operator_3d_iter005_visual_fidelity_candidate_v003_mesh_split.blend",
+      "sha256": "17c3cc57ce58aff1e400636d8b5f1db5bc97058d7028d6de587803514a131589"
+    },
+    {
+      "bytes": 5959,
+      "path": "source_lineage.v1.json",
+      "sha256": "07eb5480d67a6219987b5a1e3f6b128b794acd9f6476cf5e86e2723b9b023b30"
+    }
+  ],
+  "master_id": "operator_3d_iter005_visual_fidelity_candidate_v003_mesh_split",
+  "schema": "custodian.operator_3d_visual_fidelity_snapshot.v1"
+}

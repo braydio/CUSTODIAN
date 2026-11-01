@@ -1,0 +1,133 @@
+{
+  "animation": {
+    "active_action": "V003 Neutral Idle Upper Body Candidate",
+    "source_running_action_preserved": true
+  },
+  "approval_state": "experimental",
+  "candidate_state": "candidate_unapproved",
+  "derivation": "Structure-only derivative from the existing V003 candidate. Authenticated PAULDRON_Left_V003 and PAULDRON_Right_V003 isolated islands are separated into named mesh objects; their geometry, UVs, material indices, armature parent, modifiers, and weights are preserved. V002 remains immutable.",
+  "inputs": {
+    "v002_blend": {
+      "path": "custodian/asset_drop/source_work/operator/operator_3d_master/masters/operator_3d_iter005_visual_fidelity_candidate_v002/operator_3d_iter005_visual_fidelity_candidate_v002.blend",
+      "sha256": "2c4c097039b25727c0ce51f22251d33462b6f020ad4f8863d23913b4efe7dc23"
+    },
+    "v003_blend": {
+      "path": "custodian/asset_drop/source_work/operator/operator_3d_master/masters/operator_3d_iter005_visual_fidelity_candidate_v003/operator_3d_iter005_visual_fidelity_candidate_v003.blend",
+      "sha256": "b0686b23acb583d3eb8ae50d82a8cc713d8449627727927f7c42cd76ba42a6a0"
+    }
+  },
+  "master_id": "operator_3d_iter005_visual_fidelity_candidate_v003_mesh_split",
+  "mesh_objects": {
+    "Operator_Pauldron_Left_V003": {
+      "armature_modifier": "SmartRigArmature",
+      "armature_parent": "SmartRigArmature",
+      "faces": 71,
+      "material_slots": [
+        "V002_Graphite_Gold_Cloth_PBR",
+        "V002_Amber_Visor_Core",
+        "V002_Amber_Visor_Local_Glow",
+        "V003_Left_Graphite_Pauldron",
+        "V003_Left_Muted_Gold_Edge",
+        "V003_Right_Graphite_Pauldron",
+        "V003_Right_Muted_Gold_Edge"
+      ],
+      "material_slots_sha256": "773bcaee81f33652b1061145041d9770f9fafea0632f7c46b2d401dfb63cfe7b",
+      "mesh_sha256": "6ca19b9f117614d911ce17256df04a682b561af406d8fa1130ae333386d6fa48",
+      "vertices": 122,
+      "weights_sha256": "63cd3ad07ef9252076790431f4ff81010d9e44d787e684a562b66b23c6a38063"
+    },
+    "Operator_Pauldron_Right_V003": {
+      "armature_modifier": "SmartRigArmature",
+      "armature_parent": "SmartRigArmature",
+      "faces": 78,
+      "material_slots": [
+        "V002_Graphite_Gold_Cloth_PBR",
+        "V002_Amber_Visor_Core",
+        "V002_Amber_Visor_Local_Glow",
+        "V003_Left_Graphite_Pauldron",
+        "V003_Left_Muted_Gold_Edge",
+        "V003_Right_Graphite_Pauldron",
+        "V003_Right_Muted_Gold_Edge"
+      ],
+      "material_slots_sha256": "773bcaee81f33652b1061145041d9770f9fafea0632f7c46b2d401dfb63cfe7b",
+      "mesh_sha256": "656dbc94e4632687d7db9616122f5fdaf566e1594dbf6d8f4a1de14771d3d36a",
+      "vertices": 139,
+      "weights_sha256": "2fca6e333f732221fec3b9fa7e5495991894ca66eb1314ce7814e94bdd07030e"
+    },
+    "output_unwrapped": {
+      "armature_modifier": "SmartRigArmature",
+      "armature_parent": "SmartRigArmature",
+      "faces": 10367,
+      "material_slots": [
+        "V002_Graphite_Gold_Cloth_PBR",
+        "V002_Amber_Visor_Core",
+        "V002_Amber_Visor_Local_Glow",
+        "V003_Left_Graphite_Pauldron",
+        "V003_Left_Muted_Gold_Edge",
+        "V003_Right_Graphite_Pauldron",
+        "V003_Right_Muted_Gold_Edge"
+      ],
+      "material_slots_sha256": "773bcaee81f33652b1061145041d9770f9fafea0632f7c46b2d401dfb63cfe7b",
+      "mesh_sha256": "5f3fda64b07325202e0bcfc2fb31112f7ac5f5847810ca1937fd99651a2ba6e1",
+      "vertices": 17578,
+      "weights_sha256": "2d594813158e30129a41a5c186c5feac335de3f1aad5f1b822066092a0bea277"
+    }
+  },
+  "output": {
+    "bytes": 47975211,
+    "path": "custodian/asset_drop/source_work/operator/operator_3d_master/masters/operator_3d_iter005_visual_fidelity_candidate_v003_mesh_split/operator_3d_iter005_visual_fidelity_candidate_v003_mesh_split.blend",
+    "sha256": "17c3cc57ce58aff1e400636d8b5f1db5bc97058d7028d6de587803514a131589"
+  },
+  "retained_helpers": {
+    "Icosphere": {
+      "vertices": 42
+    },
+    "Icosphere.001": {
+      "hidden_nonrendering_helper": true,
+      "vertices": 42
+    }
+  },
+  "rig": {
+    "identity_sha256": "36ed6d35469faf5e6f03802371df345321147e1624be35d079fd5140de36d597",
+    "object_name": "SmartRigArmature",
+    "rest_pose_sha256": "62b18ce51ea85907f7270855608be0cdc804ec7e1c17fff5d6da97bf543e55eb",
+    "skeleton_signature_sha256": "abcadb2f29bb273b25d8db278b5e33af27597a8a68a1c90550a92e2b7da7bbd2"
+  },
+  "schema": "custodian.operator_3d_mesh_object_split_lineage.v1",
+  "source_material_identities": [
+    {
+      "id": "V002_Graphite_Gold_Cloth_PBR",
+      "sha256": "66aada920414a34eff54a7b87a8e5d470cbed931f2f2ae21ed64f203828f6918"
+    },
+    {
+      "id": "V002_Amber_Visor_Core",
+      "sha256": "6dd2399ee5ac3cae2adbed8ed493209e1bc1f8e5950fc846f064229834de801d"
+    },
+    {
+      "id": "V002_Amber_Visor_Local_Glow",
+      "sha256": "e4925e8f8be95376d3e42c1b2c76c0fbcd3a15df582b8f7bf791b3ed444d825e"
+    },
+    {
+      "id": "V003_Left_Graphite_Pauldron",
+      "sha256": "53de52893193df36014f949c100da9970504036184378545f015a7e3c58b6bfd"
+    },
+    {
+      "id": "V003_Left_Muted_Gold_Edge",
+      "sha256": "d30dff368d7fa1f645736a60c90b3f8de746698b1f348b9739ca5c87fa06a3d8"
+    },
+    {
+      "id": "V003_Right_Graphite_Pauldron",
+      "sha256": "5e568dd311c41752bd9e74475206f754d781a7457b9b9e4a64148853f1d5fd5c"
+    },
+    {
+      "id": "V003_Right_Muted_Gold_Edge",
+      "sha256": "c9774236c834d0d8719e838ddfbe3d9777d23bc50b73afabf2fc937ac2168701"
+    }
+  ],
+  "visual_proof_reuse": {
+    "geometry_weights_material_uv_identical_to_v003": true,
+    "reason": "Geometry and pose are unchanged by the object split; existing V003 comparison images remain representative. Existing right-shoulder overlap findings remain.",
+    "source_manifest": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v3/human_review_handoff/comparison_manifest.v1.json",
+    "source_manifest_sha256": "ae8711ad643a1f2b2382556b5ad491d35f0bf15ec9cb046c9978215bf0b6d1f9"
+  }
+}
