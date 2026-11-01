@@ -1,9 +1,258 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-01T08:30:25.666Z",
-  "source_main_sha": "44c07109a34e2a3935265a5127e2f1962a310031",
+  "generated_at": "2026-11-01T09:17:29.453Z",
+  "source_main_sha": "543bc5e23cfb969045ada655220917b0c6d50a1f",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "validator-recertification-findings-correction-ca0d2895",
+      "headline": "Independent review finds a provenance loophole; corrective packets enter the dispatch queue",
+      "summary": "An independent validator-recertification review recorded blocking finding R0-01: the finish-time producer guard accepts some merge witnesses that the canonical consumer would reject. A narrowly scoped correction and independent review are now marked ready/auto, but neither has been executed or accepted.",
+      "body": "The reviewer documented R0-01 and archived the review with outcome findings, not PASS. Two follow-up packets now declare ready/auto with sequential dependencies. They are not proof of dispatcher eligibility or execution. The fix must reproduce the failure, strengthen producer-side witness validation without weakening the consumer, then receive a separate independent review.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-paired-review-validator-recertification-v1-review-corrections-1",
+      "occurred_at": "2026-11-01T08:55:34Z",
+      "bullets": [
+        "A verified blocking review finding has a defined corrective path, not an accepted fix.",
+        "Watch for a canonical dispatch/claim, reproducible regression tests, implementation landing and independent PASS for the correction."
+      ],
+      "links": [
+        {
+          "title": "Independent findings receipt",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/52dad5e3dd07ee707d0eba29e70a1752355fe261"
+        },
+        {
+          "title": "Correction packets authored",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/546fd232e6c5d8a323885274152f2b156c6bae69"
+        },
+        {
+          "title": "Correction packets marked ready",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/ca0d28956579680ce1ed84e575fc7a1f318ebdab"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "A fresh independent review caught a mismatch in CUSTODIAN's review-evidence safeguards. One validator accepts weaker proof of a source-sync merge than the other, so the new guard cannot yet be trusted as an equivalent pre-publication check.",
+        "sections": [
+          {
+            "heading": "What the reviewer found",
+            "text": "Finding R0-01 identifies a producer-side check that can accept a changed-sync witness without the unique matching checkpoint event and other structural evidence required by the canonical consumer. The archived review explicitly records findings rather than acceptance."
+          },
+          {
+            "heading": "A bounded correction is prepared",
+            "text": "The correction packet and its paired independent review were added and then switched from draft/manual to ready/auto. The correction must reproduce the failure and align the producer with the existing stronger consumer, not relax the consumer to pass tests."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The weak point is before publication",
+            "explanation": "The consumer already demands stronger provenance; the gap is that the producer may let inadequate evidence reach that later check. Fixing the earlier gate reduces invalid review handoffs."
+          },
+          {
+            "title": "Ready is not accepted",
+            "explanation": "Both new packets have declared readiness, but their dependencies, execution, tests and independent review still need separate evidence."
+          }
+        ],
+        "takeaway": "A verified blocking review finding has a defined corrective path, not an accepted fix.",
+        "next_watch": "Watch for a canonical dispatch/claim, reproducible regression tests, implementation landing and independent PASS for the correction."
+      },
+      "scorecard": {
+        "stage": "Correction and review declared ready; execution unverified",
+        "as_of": "2026-11-01T09:17:29.453Z",
+        "scope": "Two named correction-cycle packets only, not full dispatcher inventory",
+        "metrics": [
+          {
+            "id": "ready_auto",
+            "label": "READY/AUTO IN PAIR",
+            "value": 2,
+            "verification": "verified",
+            "basis": "Both named packets marked Status: ready and Dispatch: auto in commit ca0d2895; dependencies remain",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/ca0d28956579680ce1ed84e575fc7a1f318ebdab"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Independent parent review records R0-01",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Findings review archived in 52dad5e3; no PASS"
+          },
+          {
+            "label": "Correction and paired review packets authored",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "546fd232"
+          },
+          {
+            "label": "Packets declared ready/auto",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "ca0d2895; not proof of dispatch"
+          },
+          {
+            "label": "Correction implemented and validated",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No implementation landing established"
+          },
+          {
+            "label": "Correction independently accepted",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No accepted PASS receipt established"
+          },
+          {
+            "label": "Canonical teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "Host evidence unavailable"
+          }
+        ],
+        "next_gate": "Dispatcher owner verifies parent review dependency and claims the correction packet when eligible."
+      },
+      "details": {
+        "overview": "Parent validator recertification review run 20261031T095210Z-2a66bdc76153 has outcome findings, with R0-01 blocking implementation acceptance. No host or dispatcher audit was available.",
+        "ledger": [
+          {
+            "stage": "Parent independent review",
+            "status": "verified findings, not PASS",
+            "evidence": "52dad5e3"
+          },
+          {
+            "stage": "Correction handoff",
+            "status": "verified ready declarations",
+            "evidence": "ca0d2895"
+          }
+        ],
+        "notes": [
+          "The consumer validator was explicitly excluded from weakening as a shortcut."
+        ],
+        "unknowns": [
+          "Actual claim, execution, acceptance and teardown"
+        ],
+        "actions": [
+          "Dispatcher owner: verify prerequisites and dispatch correction; independent reviewer: assess after landing."
+        ]
+      },
+      "related": []
+    },
+    {
+      "id": "sepulcher-native-paving-quad-543bc5e2",
+      "headline": "Sepulcher paving gets a native-resolution playable preview plan, but the source has not reached Codex",
+      "summary": "The Sepulcher pilot now specifies four exact 512-pixel crops from its 1254-pixel source and a three-mode comparison using the real Operator and camera. The document explicitly says the source master is not known to be on the Codex host, so this is an implementation brief, not a completed playable preview or approved art.",
+      "body": "The new brief pins the original source hash and exact crop coordinates, forbids substitution, and defines a neutral-versus-native-quad-versus-repeated-tile diagnostic. It remains blocked on staging verified original bytes. The existing paving source is unapproved and the preview does not demonstrate seamless repetition.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "sepulcher-paving-native-quad-playtest-v1",
+      "occurred_at": "2026-11-01T09:10:31Z",
+      "bullets": [
+        "The preview design is specified, but the source transfer, playable build and art approval remain outstanding.",
+        "Watch for hash-verified source staging, a real Operator scene capture and an explicit source approval decision."
+      ],
+      "links": [
+        {
+          "title": "Native quad preview brief",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/543bc5e23cfb969045ada655220917b0c6d50a1f"
+        },
+        {
+          "title": "Prior paving repeatability review",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/44c07109a34e2a3935265a5127e2f1962a310031"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "Sepulcher Gardens has a more exact way to test its first paving image in-game. The new brief replaces arbitrary resizing with four fixed native-resolution crops and asks for a comparison inside a scene using the actual Operator and camera.",
+        "sections": [
+          {
+            "heading": "A test designed to expose, not conceal, repetition",
+            "text": "The proposed three views distinguish a neutral blockout, a native four-crop mosaic, and a repeated northwest crop. That should reveal how the original texture reads at gameplay scale without claiming it already tiles seamlessly."
+          },
+          {
+            "heading": "The missing physical handoff",
+            "text": "The source exists as an authoring artifact, but its presence on the Codex host or in Dropbox is not established. The brief requires matching its SHA-256 before work starts and forbids replacing it with a lookalike."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Exact pixels make comparisons reproducible",
+            "explanation": "Pinned crops and a hash remove artistic discretion from the preview build, making any observed difference attributable to the chosen image arrangement rather than resampling."
+          },
+          {
+            "title": "A playable preview is not an art approval",
+            "explanation": "The scene can inform the decision while the original paving still fails its seamless-repeat gate. Asset V2 intake remains separate."
+          }
+        ],
+        "takeaway": "The preview design is specified, but the source transfer, playable build and art approval remain outstanding.",
+        "next_watch": "Watch for hash-verified source staging, a real Operator scene capture and an explicit source approval decision."
+      },
+      "scorecard": {
+        "stage": "Preview brief landed; source transfer unverified",
+        "as_of": "2026-11-01T09:17:29.453Z",
+        "scope": "One named Sepulcher paving preview, not full environment-art pipeline",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "First paving candidate reviewed",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "44c07109 documents failed repeatability gate"
+          },
+          {
+            "label": "Exact crop and scene brief landed",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "543bc5e2"
+          },
+          {
+            "label": "Original source staged and hash verified",
+            "status": "blocked",
+            "verification": "verified",
+            "evidence": "Brief says source not known to be on Codex host; no transfer proof"
+          },
+          {
+            "label": "Playable preview captured",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No build or capture proof"
+          },
+          {
+            "label": "Art approved for production",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Existing candidate remains unapproved"
+          }
+        ],
+        "next_gate": "Source owner stages the original hash-matched master on the Codex host before executor work."
+      },
+      "details": {
+        "overview": "The native quad preview brief is documentation only. It prescribes original-pixel crops and three scene modes, without asserting host staging, runtime completion or Asset V2 approval.",
+        "ledger": [
+          {
+            "stage": "Preview specification",
+            "status": "verified landed",
+            "evidence": "543bc5e2"
+          },
+          {
+            "stage": "Source staging",
+            "status": "unknown",
+            "evidence": "Brief explicitly states host/Dropbox transfer unverified"
+          }
+        ],
+        "notes": [
+          "The native quad is not a seamless-repeat proof."
+        ],
+        "unknowns": [
+          "Host source presence and runnable scene evidence"
+        ],
+        "actions": [
+          "Source owner: stage and verify original bytes; executor: build preview only after hash match."
+        ]
+      },
+      "related": []
+    },
     {
       "id": "sepulcher-paving-candidate-review-44c07109",
       "headline": "Sepulcher Gardens' first modular paving candidate looks promising, but fails its repeatability gate",
@@ -1503,333 +1752,28 @@
           "story_id": "paired-review-profile-grammar-blocker-23bf33e3"
         }
       ]
-    },
-    {
-      "id": "paired-review-profile-grammar-blocker-23bf33e3",
-      "headline": "Review checkout fix lands, but a punctuation mismatch blocks its independent test",
-      "summary": "CUSTODIAN landed the paired-review runner's selective-checkout integration and archived its implementation packet. Its own report records passing tests and a sparse checkout, but the independent review remains unaccepted. A newly documented parser mismatch rejects conventional punctuation in packet publication inputs before claim; a corrective implementation and paired review are now ready for dispatch.",
-      "body": "Main 23bf33e3 adds runner profile forwarding, pre-claim dependency closure and tests, and archives the implementation packet. The implementation summary reports 266 runner tests passing and 389 required paths covered, but these are author-reported validation, not independent acceptance. New grammar packets identify a conventional trailing period after a final backtick path as incompatible with the runner's strict parser, plus a circular adapter review prerequisite. The correction packets were set ready/auto; neither correction implementation nor independent PASS was inspected. Host liveness, teardown and full dispatcher counts are unknown.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-paired-review-runner-publication-input-grammar-v1",
-      "occurred_at": "2026-10-31T15:17:55Z",
-      "bullets": [
-        "Runner selective checkout integration landed and implementation packet archived.",
-        "Reported focused validation does not establish independent acceptance.",
-        "Publication-input grammar and review dependency correction packets are ready/auto, not running.",
-        "Original provisioning review and protected Awakening recovery remain downstream."
-      ],
-      "links": [
-        {
-          "title": "Runner integration landed",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/52c0198480b7520eb335ac173ebe80023eb050ee"
-        },
-        {
-          "title": "Implementation archived",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/96fa884e3122f274a1b0ac325169c170cda31f15"
-        },
-        {
-          "title": "Grammar correction packets",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/3011aae9d6717f4f5d194b9128637bb76b69143a"
-        },
-        {
-          "title": "Automatic packet handoff",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/23bf33e3d5898e98a4750893300e71832e055d59"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN has landed the missing connection that lets independent reviewers request smaller checkouts. But the first handoff exposed a surprisingly small gate: ordinary punctuation at the end of a task packet's file list can cause the review launcher to reject it before starting. A targeted correction is now queued, while the actual independent verdict remains outstanding.",
-        "sections": [
-          {
-            "heading": "The smaller reviewer checkout is now implemented",
-            "text": "The canonical runner now accepts an optional checkout profile, checks the implementation diff and review dependencies before claiming work, and binds the selected profile to its claim receipt. Its implementation packet was archived on main. The author's tests report a complete sparse profile, but an independent reviewer has not yet accepted the change."
-          },
-          {
-            "heading": "A period becomes a blocking input",
-            "text": "The new packets document a mismatch between conventional packet wording and the runner's strict parser: a single period after the last backtick-enclosed path is rejected. The correction will share one safe parser between review launch and packet authoring, while continuing to reject ambiguous or unsafe paths."
-          },
-          {
-            "heading": "The review order also needs untangling",
-            "text": "The active adapter review reportedly requires the older provisioning review to finish, even though the provisioning review is waiting for the adapter. The corrective packet calls for removing that circular prerequisite. Both correction packets are marked ready for automatic handoff, which does not establish that either agent is executing."
-          }
-        ],
-        "insights": [
-          {
-            "title": "A code landing is not a review clearance",
-            "explanation": "The runner's new capability is visible on main, and its implementation reports passing tests. That is materially different from a fresh independent PASS, which is still required before retrying the earlier provisioning review."
-          },
-          {
-            "title": "The bottleneck has shifted from disk to contract compatibility",
-            "explanation": "A smaller checkout addresses storage, but the reviewer still depends on exact packet grammar and a non-circular review order. Both must work before the storage fix can unlock the downstream review chain."
-          }
-        ],
-        "takeaway": "The selective-reviewer implementation has landed; a narrow parser and dependency-order correction is now the next verified gate, not protected Awakening recovery.",
-        "next_watch": "Look for the grammar correction landing, its own independent PASS, then a successful fresh adapter review and the original provisioning review."
-      },
-      "details": {
-        "overview": "Compared previous main bbc5c580 with 23bf33e3: four new commits changed runner code/tests, profile, archived packet, and grammar correction packets. Implementation summary reports claim run 20261031T141754Z-06d667c64286, 266 runner tests, 389 combined required paths without omissions, and a genuinely sparse worktree. These are implementation-reported results, not independently reproduced host measurements.",
-        "ledger": [
-          {
-            "stage": "Runner checkout integration",
-            "status": "verified landed",
-            "evidence": "Commit 52c01984 modifies paired_review_runner.py, tests and tracked profile."
-          },
-          {
-            "stage": "Implementation packet closure",
-            "status": "verified archived; validation reported",
-            "evidence": "Commit 96fa884e archives completion packet with author-reported tests."
-          },
-          {
-            "stage": "Grammar correction",
-            "status": "verified packet ready/auto, implementation not evidenced",
-            "evidence": "Commits 3011aae9 and 23bf33e3 create and hand off grammar correction and review packets."
-          },
-          {
-            "stage": "Independent acceptance",
-            "status": "unknown",
-            "evidence": "No fresh accepted PASS receipt inspected for runner integration or grammar correction."
-          },
-          {
-            "stage": "Protected recovery and canonical teardown",
-            "status": "unknown / not authorized by this report",
-            "evidence": "No trusted host audit or separate recovery authorization."
-          }
-        ],
-        "notes": [
-          "Latest inspected main: 23bf33e3d5898e98a4750893300e71832e055d59.",
-          "GitHub inspection is partial; no canonical dispatcher audit was available."
-        ],
-        "unknowns": [
-          "Current CI outcome and full dispatcher packet totals not established.",
-          "Host disk, locks, live processes and worktree teardown not verified."
-        ],
-        "actions": [
-          "Grammar correction implementer: land shared safe parser and remove circular active-review prerequisite with regression tests.",
-          "Independent reviewer: accept or reject grammar correction before retrying adapter review."
-        ]
-      },
-      "scorecard": {
-        "stage": "Runner integration landed; grammar correction queued",
-        "as_of": "2026-10-31T15:17:55Z",
-        "scope": "Runner checkout-profile integration and newly queued grammar correction, not all project workstreams",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Land selective reviewer checkout",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "52c01984 implementation on main."
-          },
-          {
-            "label": "Archive implementation packet",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "96fa884e completion archive."
-          },
-          {
-            "label": "Correct publication-input parser and review dependency",
-            "status": "current",
-            "verification": "verified",
-            "evidence": "23bf33e3 marks corrective packet ready/auto; implementation not verified."
-          },
-          {
-            "label": "Independently accept grammar correction",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No PASS receipt."
-          },
-          {
-            "label": "Independently accept checkout-profile adapter",
-            "status": "blocked",
-            "verification": "unknown",
-            "evidence": "Documented parser and circular-dependency obstacles."
-          },
-          {
-            "label": "Retry provisioning review and consider separately authorized recovery",
-            "status": "blocked",
-            "verification": "unknown",
-            "evidence": "Dependent independent verdicts and separate authorization missing."
-          }
-        ],
-        "next_gate": "Correction implementer must land shared grammar parsing and non-circular review acceptance; independent reviewer then verifies it."
-      },
-      "related": [
-        {
-          "title": "Lightweight checkout hits a second bottleneck: the independent reviewer still requests a full worktree",
-          "context": "Previous report identified the full-checkout reviewer bottleneck that the newly landed integration addresses.",
-          "story_id": "paired-review-checkout-blocked-ab738a8c"
-        }
-      ]
-    },
-    {
-      "id": "paired-review-checkout-blocked-ab738a8c",
-      "headline": "Lightweight checkout hits a second bottleneck: the independent reviewer still requests a full worktree",
-      "summary": "The new selective checkout passed its implementation milestone, but the canonical paired-review runner did not forward the checkout profile. A documented retry was rejected before claim creation because its full checkout exceeded available storage. A narrowly scoped runner integration packet and paired review were added; neither is an accepted fix.",
-      "body": "Main now documents a failed review-claim preflight and a new runner integration workstream. The packet reports 7,264,018,781 bytes required including reserve against 2,279,641,088 available at the failed attempt. The runner did not pass the supported checkout-profile option through to the dispatcher. New implementation and review packets were prepared and their dispatch states changed by workflow commits, but no runner implementation or accepted review is established. Host liveness and current disk space remain unverified.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-paired-review-runner-checkout-profile-v1",
-      "occurred_at": "2026-10-31T14:41:19Z",
-      "bullets": [
-        "Original provisioning review failed before acquiring a claim, according to the new packet.",
-        "Runner profile forwarding and dependency-closure checks remain to be implemented.",
-        "Independent review and protected Awakening recovery remain gated."
-      ],
-      "links": [
-        {
-          "title": "New runner integration packet",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/ab738a8c0e63c10bee3abe645abda09e909d2f45"
-        },
-        {
-          "title": "Tracked minimal review profile and dispatch revision",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/d13102ca267495696945786cb201f1c3c96f98d7"
-        },
-        {
-          "title": "Latest automatic packet handoff",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/bbc5c580bf4e350ef168b7a1cad1b2712781caec"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN's new lightweight worktrees solve the asset-download problem, but the first independent review exposed another obstacle: the review launcher still requested a full checkout. The storage guard correctly refused the request before creating a claim. A follow-up workstream now targets the missing connection between the reviewer and the selective-checkout system.",
-        "sections": [
-          {
-            "heading": "A safety check did its job",
-            "text": "The new packet records a review attempt needing roughly 7.26 GB including reserve with only 2.28 GB available at that attempt. Rather than creating another stranded claim, the dispatcher rejected it. These are reported measurements from the attempt, not a live disk reading."
-          },
-          {
-            "heading": "The missing link is in the review launcher",
-            "text": "The dispatcher already understands a checkout profile, but the paired-review runner did not forward one. The proposed fix must check that the smaller checkout contains every file needed to evaluate the implementation, including the actual changed files. A small checkout cannot become an excuse for incomplete review."
-          },
-          {
-            "heading": "A new gate before Awakening",
-            "text": "New implementation and independent-review packets define the repair and its checks. GitHub workflow commits show packet handoffs, not proof that an agent is running or that the fix is landed. The original provisioning review still needs a genuine accepted verdict before protected recovery can be considered."
-          }
-        ],
-        "insights": [
-          {
-            "title": "A safe failure is progress, not completion",
-            "explanation": "The capacity preflight prevented a second stranded claim. That validates an important failure boundary while revealing that the reviewer still needs to adopt the new checkout mechanism."
-          },
-          {
-            "title": "Review completeness is the real constraint",
-            "explanation": "The proposed minimal profile must cover the exact implementation diff and both packets' declared evidence. Otherwise a smaller reviewer worktree could silently omit the material needed for independent judgment."
-          }
-        ],
-        "takeaway": "Selective checkout is implemented, but the canonical independent-review path has not yet adopted it. The new runner integration is the next dependency.",
-        "next_watch": "Look for the runner implementation landing, tests proving profile completeness and fail-before-claim behavior, then an authentic independent review receipt."
-      },
-      "details": {
-        "overview": "The new packet reports claim-failed record 20261031T140744Z-6260ae2c2aca. Its proposed runner change adds optional --checkout-profile handling, validates required tracked paths against packet publication inputs and exact implementation diff before claim, and binds profile digest to claim receipt. Commits at 14:14-14:17 UTC toggled implementation/review packet dispatch states; this does not demonstrate execution.",
-        "ledger": [
-          {
-            "stage": "Selective provisioning implementation",
-            "status": "verified landed",
-            "evidence": "Previously inspected main f4c6c1fb archived the provisioning implementation."
-          },
-          {
-            "stage": "Original provisioning independent review",
-            "status": "reported claim failure",
-            "evidence": "New packet cites failed attempt and capacity figures; no accepted PASS receipt."
-          },
-          {
-            "stage": "Runner integration packet",
-            "status": "verified authored and handed off",
-            "evidence": "Commits ab738a8c, d13102ca and bbc5c580 contain packet/profile and dispatch-state changes, not implementation code."
-          },
-          {
-            "stage": "Runner integration implementation",
-            "status": "not verified",
-            "evidence": "No implementation commit inspected."
-          },
-          {
-            "stage": "Independent review and teardown",
-            "status": "unknown",
-            "evidence": "No accepted review or trusted host audit inspected."
-          }
-        ],
-        "notes": [
-          "Latest inspected main is bbc5c580bf4e350ef168b7a1cad1b2712781caec.",
-          "One open PR #78 concerns a separate bounded archive transition recovery; no disposition inferred."
-        ],
-        "unknowns": [
-          "Canonical full dispatcher audit unavailable; project-wide counts unknown.",
-          "Current host free disk, process, locks and worktree disposition unknown."
-        ],
-        "actions": [
-          "Runner implementation owner: land exact profile-forwarding and dependency-closure safeguards with tests.",
-          "Independent reviewer: verify runner integration and retry the original provisioning review only through authorized canonical flow."
-        ]
-      },
-      "scorecard": {
-        "stage": "Reviewer checkout blocked; runner integration packet prepared",
-        "as_of": "2026-10-31T14:41:19Z",
-        "scope": "Runner integration and original provisioning review only",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Land selective provisioning",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Archived implementation f4c6c1fb."
-          },
-          {
-            "label": "Attempt original independent review",
-            "status": "current",
-            "verification": "reported",
-            "evidence": "Packet reports preclaim capacity rejection."
-          },
-          {
-            "label": "Implement runner profile forwarding",
-            "status": "next",
-            "verification": "verified",
-            "evidence": "Defined in new packet; no implementation landed in inspected commits."
-          },
-          {
-            "label": "Independently review runner fix",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Paired review packet exists; no accepted receipt."
-          },
-          {
-            "label": "Accept original provisioning review",
-            "status": "blocked",
-            "verification": "unknown",
-            "evidence": "Retry requires working runner and authentic reviewer verdict."
-          },
-          {
-            "label": "Authorize protected recovery and verify teardown",
-            "status": "blocked",
-            "verification": "unknown",
-            "evidence": "Separate authorization and host proof required."
-          }
-        ],
-        "next_gate": "Runner implementation owner must land and validate exact profile forwarding and complete review dependency coverage."
-      },
-      "related": [
-        {
-          "title": "CUSTODIAN lands smaller worktree checkouts to reopen storage-blocked Awakening development",
-          "context": "The previously landed storage remedy exposed this separate review-launcher integration gap.",
-          "story_id": "lightweight-lfs-provisioning-f4c6c1fb"
-        }
-      ]
     }
   ],
   "snapshot": {
-    "observed_at": "2026-11-01T08:30:25.666Z",
-    "source_main_sha": "44c07109a34e2a3935265a5127e2f1962a310031",
+    "observed_at": "2026-11-01T09:17:29.453Z",
+    "source_main_sha": "543bc5e23cfb969045ada655220917b0c6d50a1f",
     "coverage": "partial",
-    "scope": "One named four-source Sepulcher Gardens pilot manifest and selected GitHub commits; no canonical full dispatcher audit",
+    "scope": "Two named validator correction packets, one Sepulcher paving pilot and inspected main commits; canonical full dispatcher audit unavailable",
     "metrics": [
+      {
+        "id": "ready_auto",
+        "label": "CORRECTION PAIR READY",
+        "value": 2,
+        "verification": "verified",
+        "basis": "Exactly two named validator correction-cycle packets declared ready/auto; not project-wide or proven eligible",
+        "url": "https://github.com/braydio/CUSTODIAN/commit/ca0d28956579680ce1ed84e575fc7a1f318ebdab"
+      },
       {
         "id": "other-pilot-candidates",
         "label": "PILOT CANDIDATES",
         "value": 1,
         "verification": "verified",
-        "basis": "Generated candidate count in this specific four-source pilot only; not a project-wide count",
+        "basis": "One generated candidate in the named four-source Sepulcher pilot; from prior review",
         "url": "https://github.com/braydio/CUSTODIAN/commit/44c07109a34e2a3935265a5127e2f1962a310031"
       },
       {
@@ -1837,11 +1781,11 @@
         "label": "PILOT APPROVED",
         "value": 0,
         "verification": "verified",
-        "basis": "Explicit approved_source_count=0 in exhaustive pilot manifest; not project-wide",
+        "basis": "Explicit zero approvals in the bounded four-source pilot manifest; not project-wide",
         "url": "https://github.com/braydio/CUSTODIAN/commit/44c07109a34e2a3935265a5127e2f1962a310031"
       }
     ],
-    "focus": "Correct first paving candidate's repetition and obtain individual human approval",
-    "note": "Prior partial supersession count remains historical; no full dispatcher audit or live host status available."
+    "focus": "Resolve R0-01 via the ready correction packet, then independently review; separately stage the original Sepulcher source",
+    "note": "No full dispatcher audit, live claim/host teardown evidence or complete CI coverage. New review findings are not PASS; art preview is a brief, not a build."
   }
 }
