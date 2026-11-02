@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `campaign-empty-convoy-security-integrated-correction-v1`
 - Category: `gameplay-systems`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `campaign-empty-convoy-recovery-v1`
@@ -19,7 +19,7 @@
 - Current measured state: Integrated gameplay retest on contract seed `2` generated map seed `3570245418` and inserted `campaign_empty_convoy_v1` at tile `(115,98)`. The player scanned the cargo cradle, observed no hostiles, and immediately received `RECORD CUSTODY TRACE`. Exact runtime trigger is unconfirmed. Source inspection shows capacity exhaustion, no resolved safe spawn, service unavailability, total queue failure, and missing active actors on reentry can all transition to `empty_defense`; the C3 trace path accepts that state as completion. The intended security encounter did not occur.
 - Evidence: Original retry screenshot `/tmp/cqa-seed2-retry-final.png` (SHA-256 `29798452169388f4ed953e347bee4d47849d53aae157ff45dcc8ba2c232e61b9`); run log `/tmp/custodian-convoy-seed2-retry-gui.log` (SHA-256 captured after shutdown); the existing DevObservatory session record identifies the contract/map seeds. Host-local files are diagnostic provenance, not required implementation inputs.
 - Task-specific authority: `design/02_features/events/AUTHORED_HUB_CAMPAIGN_MICROEVENTS_V1.md`; completed C1/C2/C3 convoy packets and archived evidence; existing event-memory, ambient-spawn, and enemy death ownership. The C2/C3 implementation chain is complete; this is a bounded correction, not a reopened C1-C3 task.
-- Work surface: `custodian/game/world/events/campaign/empty_convoy_site.gd`; existing `custodian/tools/validation/campaign_empty_convoy_security_smoke.gd`, `campaign_empty_convoy_recovery_smoke.gd`, and `campaign_empty_convoy_placement_smoke.gd`; only directly required event-memory/spawner/test owners if the correction proves necessary.
+- Work surface: `custodian/game/world/events/campaign/empty_convoy_site.gd`; `custodian/tools/validation/campaign_empty_convoy_security_smoke.gd`. The existing recovery and placement smokes were run unchanged.
 - Publication inputs: `design/02_features/events/AUTHORED_HUB_CAMPAIGN_MICROEVENTS_V1.md`; `custodian/game/world/events/campaign/empty_convoy_site.gd`; `custodian/tools/validation/campaign_empty_convoy_security_smoke.gd`; `custodian/tools/validation/campaign_empty_convoy_recovery_smoke.gd`; `custodian/tools/validation/campaign_empty_convoy_placement_smoke.gd`; `custodian/docs/ai_context/VALIDATION_RECIPES.md`.
 - Change: Distinguish permanent registered-defender absence from temporary inability to spawn or observe defenders. On full ambient capacity, record a retryable deferred state and retry within a bounded, event-owned mechanism when capacity becomes available. On failed walkability resolution or queue-time rejection, retain a retryable unresolved state with sanitized reason/count diagnostics. Failed or partial queue slots must not count as defeated or permit duplicate identities. On reentry, missing active actors remain unresolved unless WorldEventMemory or authoritative enemy-death ownership proves their defeat. Preserve safe-empty completion only when registered defender absence is authoritative. Permit custody trace and the existing exactly-once salvage only after verified clearance or that legitimate safe-empty outcome. Record the first relevant transition and its event identity, generated seed, prior/new state, reason, active/pending/cap counts, candidate positions, and queued/accepted/rejected counts through existing DevObservatory facilities; diagnostics must not control gameplay.
 - Preserve: Existing C1 placement, C2 bounded defender wave, C3 custody trace and exactly-once ledger transaction; WorldEventMemory and AmbientEnemySpawner ownership; run-seed event identity; deterministic simulation; existing enemy health, AI, death signals, and combat rules.
@@ -28,6 +28,32 @@
 - Validation: Extend the existing security and recovery smoke tests for cap exhaustion/retry, no safe spawn, queue rejection, partial spawn, interrupted encounter/reentry, verified deaths, trace eligibility, and exactly-once salvage. Use the actual generated map/walkability owner for a production-realistic case; do not use an always-accepting probe as its substitute. Run the focused convoy security and recovery smokes plus placement regression. Record the contract seed and generated map seed. Follow committed-source validation in `custodian/docs/ai_context/VALIDATION_RECIPES.md`; do not run a broad sweep unless the changed-file recipe requires it.
 - Task overrides: `none`
 - Deferred: Review disposition for this correction requires a separate coordinator control. The implementation may not report this packet as independently reviewed or accepted.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: `c7bc91207a7b582b657c63785515f0aac19496e9` changes only the declared runtime and security-smoke paths. Focused security, recovery, and placement smokes passed. The real generated contract seed `2` produced map seed `3570245418`, inserted the convoy at tile `(115,98)`, and accepted three actual registered defenders using the generated map walkability owner. Canonical changed-file validation passed `4/4`, with complete coverage of both changed paths and no failed, skipped, timed-out, or infrastructure-error tests; report SHA-256 `4adaac526829167ae300569f2e7af9e82bdee03106028c6924b26db819abf1db`, bound to source commit `c7bc91207a7b582b657c63785515f0aac19496e9` and tree `4a5797e7509bc0d9832b5614a44832dfc7ca49ad`. The original production trigger remains unknown; the corrected transition guards cover the identified unsafe paths. A production GUI retest remains pending after landing. No independent review was run or claimed.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: `The isolated worktree lacked generated Godot import state; an editor import aborted with an allocator diagnostic, so the ignored .godot cache was copied from the exact-baseline QA checkout. The post-commit changed-file command initially selected zero files because it compared only the clean worktree; rerunning with --base origin/main selected and validated the committed source paths.`
+- Root cause / contributing factors: `Generated import caches are checkout-local, and committed branch changes require an explicit origin/main comparison for changed-file selection.`
+- Prevention / pipeline improvement: `Reuse an exact-source generated Godot cache when available, and pass --base origin/main when validating a clean committed workstream branch.`
+- Tooling / docs drift discovered: `none`
+- Follow-up: `Coordinator-directed production seed-2 retest after landing; correction review disposition awaits separate coordinator control.`
+
+## Handoff
+
+- Next workstream: `none authorized`
+- Next packet state: `awaiting separate coordinator control for correction review disposition`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
 
 ## Refresh Planning Authority
 - Refresh owner: `execution-agent`
