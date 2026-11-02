@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="EnemyLifecycleConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/actors/enemies/components/enemy_lifecycle_config.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+starting_health = 92.0
+maximum_health = 92.0
+material_drop_min = 1
+material_drop_max = 3

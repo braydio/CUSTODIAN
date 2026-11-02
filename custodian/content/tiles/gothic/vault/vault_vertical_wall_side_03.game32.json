@@ -1,0 +1,80 @@
+{
+  "schema": "game32.asset.v2",
+  "id": "vault_vertical_wall_side_03",
+  "display_name": "Vault Vertical Wall Side 03",
+  "source": {
+    "master_sheet": null,
+    "original_path": "res://content/tiles/gothic/vault/vault_vertical_wall_side_03.png",
+    "section": "tiles",
+    "subtype": "vault",
+    "source_rect_px": {
+      "x": 0,
+      "y": 0,
+      "w": 64,
+      "h": 96
+    },
+    "review_source": "human_llm_compact_review",
+    "review_status": "reviewed"
+  },
+  "file": {
+    "path": "res://content/tiles/gothic/vault/vault_vertical_wall_side_03.png",
+    "pixel_size": {
+      "w": 64,
+      "h": 96
+    }
+  },
+  "classification": {
+    "asset_type": "walls",
+    "semantic_role": "vault_vertical_side_wall_segment_tall",
+    "placement_layer": "wall",
+    "tags": [
+      "gothic",
+      "wall",
+      "blocking",
+      "vault",
+      "vertical_side",
+      "tall",
+      "stone",
+      "interior_wall"
+    ],
+    "review_status": "reviewed"
+  },
+  "placement": {
+    "tile_size": 32,
+    "footprint_tiles": {
+      "w": 2,
+      "h": 3
+    },
+    "origin_mode": "bottom_center",
+    "snap": "tile",
+    "allow_mirror_x": false,
+    "allow_rotation": false,
+    "y_sort": true,
+    "pivot_px": {
+      "x": 32,
+      "y": 96
+    },
+    "review_status": "reviewed"
+  },
+  "collision": {
+    "blocks_movement": true,
+    "blocks_sight": true,
+    "cover_value": 2,
+    "review_status": "reviewed",
+    "collision_shape": "footprint"
+  },
+  "procgen": {
+    "uses": [
+      "vault_wall",
+      "vertical_wall",
+      "interior_wall",
+      "storage_room_boundary"
+    ],
+    "weight": 14,
+    "can_spawn_indoor": true,
+    "can_spawn_outdoor": true,
+    "review_status": "reviewed",
+    "supports_gothic_compound": true
+  },
+  "master_index": 8
+}

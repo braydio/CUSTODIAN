@@ -1,0 +1,45 @@
+{
+  "$schema": "../weapon_schema.json",
+  "version": "1.0.0",
+
+  "ammo_types": {
+    "kinetic": {
+      "damage_type": "physical",
+      "armor_penetration": 1.0,
+      "armor_damage_multiplier": 1.0,
+      "status_effect": null,
+      "description": "Standard physical ammunition"
+    },
+    "energy": {
+      "damage_type": "energy",
+      "armor_penetration": 1.2,
+      "armor_damage_multiplier": 0.8,
+      "status_effect": null,
+      "description": "Energy-based ammunition, effective against shields"
+    },
+    "explosive": {
+      "damage_type": "explosive",
+      "armor_penetration": 2.0,
+      "armor_damage_multiplier": 1.5,
+      "splash_radius_px": 50,
+      "status_effect": null,
+      "description": "Explosive ammunition with area damage"
+    },
+    "incendiary": {
+      "damage_type": "fire",
+      "armor_penetration": 0.8,
+      "armor_damage_multiplier": 0.9,
+      "status_effect": "burn",
+      "burn_duration_sec": 3.0,
+      "burn_damage_per_sec": 2.0,
+      "description": "Incendiary ammunition that causes burning"
+    },
+    "armor_piercing": {
+      "damage_type": "physical",
+      "armor_penetration": 2.5,
+      "armor_damage_multiplier": 1.8,
+      "status_effect": null,
+      "description": "Heavy armor-piercing ammunition"
+    }
+  }
+}

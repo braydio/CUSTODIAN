@@ -1,0 +1,36 @@
+{
+  "schema": "custodian.moment_forge_adopter_spec.v1",
+  "id": "twin_crown_forensics",
+  "feature_packet": "TWIN_SOLARIA_CROWN_INCIDENT_FORENSICS",
+  "sequence": ["baseline", "stage_b", "stage_f", "restored"],
+  "roles": {
+    "second_crown_overlay": "Bind to the presentation-only Second Crown overlay node."
+  },
+  "probes": [
+    {
+      "id": "second_crown_overlay_facts",
+      "role": "second_crown_overlay",
+      "fields": ["effective_visible", "effective_alpha", "global_bounds", "effective_z_index", "collision_shape_count", "navigation_node_count"],
+      "required": true,
+      "sample_sequence": true
+    }
+  ],
+  "assertion_templates": [
+    {"type": "probe_compare", "probe": "second_crown_overlay_facts", "field": "effective_visible", "op": "eq", "value": false, "state": "baseline"},
+    {"type": "probe_compare", "probe": "second_crown_overlay_facts", "field": "effective_visible", "op": "eq", "value": true, "state": "stage_b"},
+    {"type": "probe_compare", "probe": "second_crown_overlay_facts", "field": "collision_shape_count", "op": "eq", "value": 0, "each_state": true},
+    {"type": "probe_compare", "probe": "second_crown_overlay_facts", "field": "navigation_node_count", "op": "eq", "value": 0, "each_state": true},
+    {"type": "probe_sequence_equal", "probe": "second_crown_overlay_facts", "field": "global_bounds", "states": ["stage_f", "restored"], "tolerance": 0.01}
+  ],
+  "authority_invariants": [
+    "The overlay has zero collision shapes and navigation nodes at every sampled stage.",
+    "Restoring Stage F reproduces its overlay registration without creating route or Passage authority."
+  ],
+  "evidence": {
+    "capture_mode": "evidence",
+    "contact_sheet_builder": "build_roi_contact_sheet",
+    "roi_label": "Second Crown",
+    "contact_sheet_states": ["baseline", "stage_b", "stage_f"],
+    "raw_frames_secondary": true
+  }
+}

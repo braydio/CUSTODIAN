@@ -1,0 +1,242 @@
+{
+  "schema": "custodian.game32.return_mooring_module.v1",
+  "module_id": "return_mooring_3x3_01",
+  "set": "sundered_keep",
+  "module_kind": "return_interaction",
+  "tile_size_px": 32,
+  "footprint_tiles": [
+    5,
+    5
+  ],
+  "interaction_tile": [
+    2,
+    2
+  ],
+  "generated_at_utc": "2026-05-30T08:55:36.775625+00:00",
+  "generator": "custodian/tools/art/extract_return_mooring_game32.py",
+  "layout_3x3": [
+    [
+      "return_mooring_floor_corner_nw",
+      "return_mooring_floor_ring_n",
+      "return_mooring_floor_corner_ne"
+    ],
+    [
+      "return_mooring_floor_ring_w",
+      "return_mooring_floor_center_01",
+      "return_mooring_floor_ring_e"
+    ],
+    [
+      "return_mooring_floor_corner_sw",
+      "return_mooring_floor_ring_s",
+      "return_mooring_floor_corner_se"
+    ]
+  ],
+  "overlays": [
+    "return_mooring_glow_overlay_01",
+    "return_mooring_active_overlay_01",
+    "return_mooring_prompt_marker_01"
+  ],
+  "props": [
+    "prop_return_beacon_01",
+    "prop_return_console_ruined_01"
+  ],
+  "assets": {
+    "return_mooring_floor_center_01": {
+      "runtime_path": "res://content/tiles/sundered_keep/return_mooring/floors/return_mooring_floor_center_01.png",
+      "metadata_path": "res://content/tiles/sundered_keep/return_mooring/floors/return_mooring_floor_center_01.game32.json",
+      "size_px": [
+        32,
+        32
+      ],
+      "domain": "return_mooring_floor",
+      "layer": "FloorDetail",
+      "walkable": true,
+      "blocks_movement": false,
+      "interactable": true
+    },
+    "return_mooring_floor_ring_n": {
+      "runtime_path": "res://content/tiles/sundered_keep/return_mooring/floors/return_mooring_floor_ring_n.png",
+      "metadata_path": "res://content/tiles/sundered_keep/return_mooring/floors/return_mooring_floor_ring_n.game32.json",
+      "size_px": [
+        32,
+        32
+      ],
+      "domain": "return_mooring_floor",
+      "layer": "FloorDetail",
+      "walkable": true,
+      "blocks_movement": false,
+      "interactable": false
+    },
+    "return_mooring_floor_ring_e": {
+      "runtime_path": "res://content/tiles/sundered_keep/return_mooring/floors/return_mooring_floor_ring_e.png",
+      "metadata_path": "res://content/tiles/sundered_keep/return_mooring/floors/return_mooring_floor_ring_e.game32.json",
+      "size_px": [
+        32,
+        32
+      ],
+      "domain": "return_mooring_floor",
+      "layer": "FloorDetail",
+      "walkable": true,
+      "blocks_movement": false,
+      "interactable": false
+    },
+    "return_mooring_floor_ring_s": {
+      "runtime_path": "res://content/tiles/sundered_keep/return_mooring/floors/return_mooring_floor_ring_s.png",
+      "metadata_path": "res://content/tiles/sundered_keep/return_mooring/floors/return_mooring_floor_ring_s.game32.json",
+      "size_px": [
+        32,
+        32
+      ],
+      "domain": "return_mooring_floor",
+      "layer": "FloorDetail",
+      "walkable": true,
+      "blocks_movement": false,
+      "interactable": false
+    },
+    "return_mooring_floor_ring_w": {
+      "runtime_path": "res://content/tiles/sundered_keep/return_mooring/floors/return_mooring_floor_ring_w.png",
+      "metadata_path": "res://content/tiles/sundered_keep/return_mooring/floors/return_mooring_floor_ring_w.game32.json",
+      "size_px": [
+        32,
+        32
+      ],
+      "domain": "return_mooring_floor",
+      "layer": "FloorDetail",
+      "walkable": true,
+      "blocks_movement": false,
+      "interactable": false
+    },
+    "return_mooring_floor_corner_ne": {
+      "runtime_path": "res://content/tiles/sundered_keep/return_mooring/floors/return_mooring_floor_corner_ne.png",
+      "metadata_path": "res://content/tiles/sundered_keep/return_mooring/floors/return_mooring_floor_corner_ne.game32.json",
+      "size_px": [
+        32,
+        32
+      ],
+      "domain": "return_mooring_floor",
+      "layer": "FloorDetail",
+      "walkable": true,
+      "blocks_movement": false,
+      "interactable": false
+    },
+    "return_mooring_floor_corner_nw": {
+      "runtime_path": "res://content/tiles/sundered_keep/return_mooring/floors/return_mooring_floor_corner_nw.png",
+      "metadata_path": "res://content/tiles/sundered_keep/return_mooring/floors/return_mooring_floor_corner_nw.game32.json",
+      "size_px": [
+        32,
+        32
+      ],
+      "domain": "return_mooring_floor",
+      "layer": "FloorDetail",
+      "walkable": true,
+      "blocks_movement": false,
+      "interactable": false
+    },
+    "return_mooring_floor_corner_se": {
+      "runtime_path": "res://content/tiles/sundered_keep/return_mooring/floors/return_mooring_floor_corner_se.png",
+      "metadata_path": "res://content/tiles/sundered_keep/return_mooring/floors/return_mooring_floor_corner_se.game32.json",
+      "size_px": [
+        32,
+        32
+      ],
+      "domain": "return_mooring_floor",
+      "layer": "FloorDetail",
+      "walkable": true,
+      "blocks_movement": false,
+      "interactable": false
+    },
+    "return_mooring_floor_corner_sw": {
+      "runtime_path": "res://content/tiles/sundered_keep/return_mooring/floors/return_mooring_floor_corner_sw.png",
+      "metadata_path": "res://content/tiles/sundered_keep/return_mooring/floors/return_mooring_floor_corner_sw.game32.json",
+      "size_px": [
+        32,
+        32
+      ],
+      "domain": "return_mooring_floor",
+      "layer": "FloorDetail",
+      "walkable": true,
+      "blocks_movement": false,
+      "interactable": false
+    },
+    "return_mooring_glow_overlay_01": {
+      "runtime_path": "res://content/tiles/sundered_keep/return_mooring/overlays/return_mooring_glow_overlay_01.png",
+      "metadata_path": "res://content/tiles/sundered_keep/return_mooring/overlays/return_mooring_glow_overlay_01.game32.json",
+      "size_px": [
+        32,
+        32
+      ],
+      "domain": "return_mooring_overlay",
+      "layer": "Overlays",
+      "walkable": true,
+      "blocks_movement": false,
+      "interactable": false
+    },
+    "return_mooring_active_overlay_01": {
+      "runtime_path": "res://content/tiles/sundered_keep/return_mooring/overlays/return_mooring_active_overlay_01.png",
+      "metadata_path": "res://content/tiles/sundered_keep/return_mooring/overlays/return_mooring_active_overlay_01.game32.json",
+      "size_px": [
+        32,
+        32
+      ],
+      "domain": "return_mooring_overlay",
+      "layer": "Effects",
+      "walkable": true,
+      "blocks_movement": false,
+      "interactable": false
+    },
+    "return_mooring_prompt_marker_01": {
+      "runtime_path": "res://content/tiles/sundered_keep/return_mooring/overlays/return_mooring_prompt_marker_01.png",
+      "metadata_path": "res://content/tiles/sundered_keep/return_mooring/overlays/return_mooring_prompt_marker_01.game32.json",
+      "size_px": [
+        32,
+        32
+      ],
+      "domain": "return_mooring_overlay",
+      "layer": "WorldUI",
+      "walkable": true,
+      "blocks_movement": false,
+      "interactable": false
+    },
+    "prop_return_beacon_01": {
+      "runtime_path": "res://content/props/sundered_keep/return_mooring/prop_return_beacon_01.png",
+      "metadata_path": "res://content/props/sundered_keep/return_mooring/prop_return_beacon_01.game32.json",
+      "size_px": [
+        32,
+        64
+      ],
+      "domain": "return_mooring_prop",
+      "layer": "PropsBlocking",
+      "walkable": false,
+      "blocks_movement": true,
+      "interactable": false
+    },
+    "prop_return_console_ruined_01": {
+      "runtime_path": "res://content/props/sundered_keep/return_mooring/prop_return_console_ruined_01.png",
+      "metadata_path": "res://content/props/sundered_keep/return_mooring/prop_return_console_ruined_01.game32.json",
+      "size_px": [
+        64,
+        32
+      ],
+      "domain": "return_mooring_prop",
+      "layer": "PropsBlocking",
+      "walkable": false,
+      "blocks_movement": true,
+      "interactable": true
+    }
+  },
+  "recommended_layers": [
+    "TerrainBase",
+    "FloorDetail",
+    "PropsBlocking",
+    "Overlays",
+    "Effects",
+    "WorldUI"
+  ],
+  "placement_notes": [
+    "Place near the Sundered Keep entrance, preferably in a side alcove.",
+    "Do not place directly on the player spawn tile.",
+    "Use the center tile as the interaction target.",
+    "Beacon should be side-mounted as a landmark/small blocker.",
+    "Console may be low cover or optional interactable flavor."
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "schema": "custodian.game32.domain_manifest.v1",
+  "set": "sundered_keep",
+  "domain": "overlays",
+  "base_path": "res://content/tiles/sundered_keep/return_mooring/overlays",
+  "generated_at_utc": "2026-05-30T08:55:36.773497+00:00",
+  "generator": "custodian/tools/art/extract_return_mooring_game32.py",
+  "asset_count": 3,
+  "assets": [
+    {
+      "id": "return_mooring_glow_overlay_01",
+      "runtime_path": "res://content/tiles/sundered_keep/return_mooring/overlays/return_mooring_glow_overlay_01.png",
+      "metadata_path": "res://content/tiles/sundered_keep/return_mooring/overlays/return_mooring_glow_overlay_01.game32.json",
+      "size_px": [
+        32,
+        32
+      ],
+      "layer": "Overlays",
+      "walkable": true,
+      "blocks_movement": false,
+      "interactable": false
+    },
+    {
+      "id": "return_mooring_active_overlay_01",
+      "runtime_path": "res://content/tiles/sundered_keep/return_mooring/overlays/return_mooring_active_overlay_01.png",
+      "metadata_path": "res://content/tiles/sundered_keep/return_mooring/overlays/return_mooring_active_overlay_01.game32.json",
+      "size_px": [
+        32,
+        32
+      ],
+      "layer": "Effects",
+      "walkable": true,
+      "blocks_movement": false,
+      "interactable": false
+    },
+    {
+      "id": "return_mooring_prompt_marker_01",
+      "runtime_path": "res://content/tiles/sundered_keep/return_mooring/overlays/return_mooring_prompt_marker_01.png",
+      "metadata_path": "res://content/tiles/sundered_keep/return_mooring/overlays/return_mooring_prompt_marker_01.game32.json",
+      "size_px": [
+        32,
+        32
+      ],
+      "layer": "WorldUI",
+      "walkable": true,
+      "blocks_movement": false,
+      "interactable": false
+    }
+  ]
+}

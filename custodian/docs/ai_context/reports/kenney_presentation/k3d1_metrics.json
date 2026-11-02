@@ -1,0 +1,38 @@
+{
+	"capture_paths": [
+		"custodian/docs/ai_context/reports/kenney_presentation/k3d1_native.png",
+		"custodian/docs/ai_context/reports/kenney_presentation/k3d1_kenney.png",
+		"custodian/docs/ai_context/reports/kenney_presentation/k3d1_ab_compare.png"
+	],
+	"presentation_modes": {
+		"kenney": {
+			"OBJECT_NODE_COUNT": 221,
+			"RENDER_TOTAL_DRAW_CALLS_IN_FRAME": 30,
+			"RENDER_TOTAL_OBJECTS_IN_FRAME": 149,
+			"frame_ms_p50": 0.419,
+			"frame_ms_p95": 0.665,
+			"instance_count": 115,
+			"presentation_node_count": 116,
+			"renderer_available": true,
+			"selected_runtime_asset_count": 16
+		},
+		"native": {
+			"OBJECT_NODE_COUNT": 221,
+			"RENDER_TOTAL_DRAW_CALLS_IN_FRAME": 22,
+			"RENDER_TOTAL_OBJECTS_IN_FRAME": 46,
+			"frame_ms_p50": 0.45,
+			"frame_ms_p95": 0.679,
+			"instance_count": 10,
+			"presentation_node_count": 21,
+			"renderer_available": true,
+			"selected_runtime_asset_count": 16
+		}
+	},
+	"sample_frames": 120,
+	"schema": "custodian.kenney_k3d1_metrics.v1",
+	"settle_frames": 30,
+	"viewport": {
+		"height": 720,
+		"width": 1280
+	}
+}

@@ -1,0 +1,23 @@
+{
+  "source": "operator__full_body__unarmed__reaction__death_01__omni__8f__96.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "operator/source/animations/unarmed/reaction/death_01/operator__full_body__unarmed__reaction__death_01__omni__8f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 8
+      }
+    }
+  ],
+  "post_process": [
+    "operator_runtime_build"
+  ],
+  "frame_size": [
+    96,
+    96
+  ],
+  "remove_superseded": true
+}

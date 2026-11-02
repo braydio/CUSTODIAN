@@ -1,0 +1,12 @@
+{
+  "source": "operator__body__ranged_2h__run_01__e__5f__96.png",
+  "mode": "strip",
+  "frame_size": [96, 96],
+  "outputs": [
+    {
+      "path": "operator/runtime/body/ranged_2h/operator__body__ranged_2h__run_01__e__5f__96.png",
+      "layout": "horizontal_strip",
+      "select": { "type": "range", "start": 0, "count": 5 }
+    }
+  ]
+}

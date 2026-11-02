@@ -1,0 +1,36 @@
+{
+  "argv": [
+    "/usr/bin/godot",
+    "--path",
+    "/home/braydenchaffee/Projects/CUSTODIAN/custodian",
+    "--fixed-fps",
+    "60",
+    "--write-movie",
+    "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/visual-anchor-fix/raw/capture.png",
+    "--script",
+    "res://tools/iteration/godot/moment_runner.gd",
+    "--",
+    "--custodian-dev",
+    "--observe",
+    "--moment-forge",
+    "--moment-scenario",
+    "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/visual-anchor-fix/scenario.snapshot.json",
+    "--moment-output",
+    "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/visual-anchor-fix",
+    "--moment-capture-mode",
+    "full"
+  ],
+  "capture_mode": "full",
+  "repository": {
+    "branch": "main",
+    "changed_files": [
+      "M custodian/game/actors/operator/operator.tscn",
+      "?? fix_operator_visual_anchor.patch",
+      "?? reports/moment_forge/combat/light_hit_grunt/20260729T173311-0400/",
+      "?? reports/moment_forge/combat/light_hit_grunt/visual-anchor-fix/"
+    ],
+    "commit": "aa80639d67d6535233756e5a35b82e1a3d524c03",
+    "dirty": true
+  },
+  "scenario_sha256": "f7be6f8ad547dce2e2e60a74eb942b874722e4610fde947d0df84f8ddde87d04"
+}

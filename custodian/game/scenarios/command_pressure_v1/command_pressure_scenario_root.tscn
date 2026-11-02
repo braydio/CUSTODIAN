@@ -1,0 +1,84 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/scenarios/command_pressure_v1/command_pressure_scenario_director.gd" id="1_director"]
+[ext_resource type="PackedScene" path="res://game/resources/resource_node.tscn" id="2_resource"]
+[ext_resource type="Script" path="res://game/infrastructure/repair/field_repair_interaction.gd" id="3_repair"]
+
+[node name="CommandPressureScenarioRoot" type="Node2D"]
+
+[node name="ScenarioGround" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(240, -2320, 1720, -2320, 1720, 260, 240, 260)
+color = Color(0.085, 0.095, 0.105, 1)
+z_index = -100
+
+[node name="ResourceNodes" type="Node2D" parent="."]
+
+[node name="WreckA" parent="ResourceNodes" instance=ExtResource("2_resource")]
+position = Vector2(560, -620)
+node_kind = "machine_wreckage"
+harvest_label = "SALVAGE"
+resource_id = "ruin_scrap"
+work_required = 2
+yield_amount = 10
+secondary_yields = {"power_components": 1}
+
+[node name="WreckB" parent="ResourceNodes" instance=ExtResource("2_resource")]
+position = Vector2(980, -260)
+node_kind = "machine_wreckage"
+harvest_label = "SALVAGE"
+resource_id = "ruin_scrap"
+work_required = 2
+yield_amount = 10
+secondary_yields = {"power_components": 1}
+
+[node name="AlloyVein" parent="ResourceNodes" instance=ExtResource("2_resource")]
+position = Vector2(1260, -300)
+node_kind = "alloy_vein"
+harvest_label = "MINE"
+resource_id = "structural_alloy"
+work_required = 4
+yield_amount = 8
+secondary_yields = {"ruin_scrap": 2}
+
+[node name="RupturedCapacitor" parent="ResourceNodes" instance=ExtResource("2_resource")]
+position = Vector2(1320, -710)
+node_kind = "ruptured_capacitor_bank"
+harvest_label = "EXTRACT"
+resource_id = "capacitor_dust"
+work_required = 4
+yield_amount = 8
+secondary_yields = {"ruin_scrap": 2}
+
+[node name="ResinPod" parent="ResourceNodes" instance=ExtResource("2_resource")]
+position = Vector2(520, -300)
+node_kind = "fungal_resin_pod"
+harvest_label = "EXTRACT"
+resource_id = "resin_clot"
+work_required = 2
+yield_amount = 1
+secondary_yields = {}
+
+[node name="ServicePorts" type="Node2D" parent="."]
+
+[node name="PowerServicePort" type="Area2D" parent="ServicePorts"]
+position = Vector2(1410, -400)
+script = ExtResource("3_repair")
+target_path = NodePath("/root/GameRoot/World/Sectors/POWER")
+hold_duration = 3.5
+resource_cost = {"ruin_scrap": 6, "power_components": 1}
+repair_amount = 30.0
+prompt_label = "SERVICE POWER"
+
+[node name="DefenseServicePort" type="Area2D" parent="ServicePorts"]
+position = Vector2(720, -780)
+script = ExtResource("3_repair")
+target_path = NodePath("/root/GameRoot/World/Sectors/DEFENSE")
+hold_duration = 3.0
+resource_cost = {"ruin_scrap": 4}
+repair_amount = 30.0
+prompt_label = "SERVICE DEFENSE"
+
+[node name="ScenarioMarkers" type="Node2D" parent="."]
+
+[node name="ScenarioDirector" type="Node" parent="."]
+script = ExtResource("1_director")

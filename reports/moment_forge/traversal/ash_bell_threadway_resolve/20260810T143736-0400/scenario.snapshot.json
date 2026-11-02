@@ -1,0 +1,158 @@
+{
+  "assertions": [
+    {
+      "role": "presentation",
+      "severity": "error",
+      "type": "role_exists"
+    },
+    {
+      "field": "persistent_tiles",
+      "op": "eq",
+      "probe": "threadway_state",
+      "severity": "error",
+      "tick": 0,
+      "type": "probe_compare",
+      "value": 0
+    },
+    {
+      "field": "reveal_count",
+      "op": "eq",
+      "probe": "threadway_state",
+      "severity": "error",
+      "tick": 20,
+      "type": "probe_compare",
+      "value": 1
+    },
+    {
+      "field": "blocker_active",
+      "op": "eq",
+      "probe": "threadway_state",
+      "severity": "error",
+      "tick": 20,
+      "type": "probe_compare",
+      "value": true
+    },
+    {
+      "field": "persistent_tiles",
+      "op": "eq",
+      "probe": "threadway_state",
+      "severity": "error",
+      "tick": 110,
+      "type": "probe_compare",
+      "value": 18
+    },
+    {
+      "field": "blocker_active",
+      "op": "eq",
+      "probe": "threadway_state",
+      "severity": "error",
+      "tick": 110,
+      "type": "probe_compare",
+      "value": false
+    },
+    {
+      "severity": "error",
+      "type": "no_unreleased_inputs"
+    },
+    {
+      "path": "telemetry.json",
+      "severity": "error",
+      "type": "output_exists"
+    }
+  ],
+  "capture": {
+    "audio": false,
+    "background": "opaque",
+    "contact_sheet_ticks": [
+      0,
+      18,
+      30,
+      46,
+      68,
+      110
+    ],
+    "end_tick": 131,
+    "fps": 60,
+    "height": 720,
+    "required_keyframes": true,
+    "start_tick": 0,
+    "width": 1280
+  },
+  "description": "An isolated Ash-Bell lift pocket remembers its White Thread causeway from mainland to lift.",
+  "duration_ticks": 132,
+  "id": "traversal/ash_bell_threadway_resolve",
+  "probes": [
+    {
+      "fields": [
+        "persistent_tiles",
+        "reveal_count",
+        "blocker_active"
+      ],
+      "id": "threadway_state",
+      "required": true,
+      "role": "fixture",
+      "ticks": [
+        0,
+        20,
+        46,
+        110
+      ]
+    }
+  ],
+  "scene": "res://tools/validation/fixtures/ash_bell_threadway_moment.tscn",
+  "schema_version": 1,
+  "seed": 1138,
+  "setup": {
+    "fixture": {
+      "config": {
+        "review": "island_to_resolved"
+      },
+      "id": "ash_bell_threadway"
+    },
+    "processing": [],
+    "properties": [],
+    "remove_nodes": [],
+    "roles": {
+      "fixture": {
+        "node_path": "."
+      },
+      "presentation": {
+        "node_path": "AshBellLiftIngressPresentation"
+      }
+    },
+    "spawns": []
+  },
+  "simulation": {
+    "max_wall_seconds": 30,
+    "pause_during_setup": true,
+    "physics_hz": 60,
+    "warmup_ticks": 4
+  },
+  "stable_fingerprint": {
+    "counters": [],
+    "event_payload_fields": {},
+    "float_quantum": 0.0001,
+    "position_quantum_px": 0.25,
+    "probes": [
+      "threadway_state"
+    ]
+  },
+  "tags": [
+    "traversal",
+    "ash_bell",
+    "threadway",
+    "white_thread",
+    "world_ingress"
+  ],
+  "timeline": [
+    {
+      "action": "fixture_command",
+      "name": "acquire_white_thread_knot",
+      "tick": 18
+    },
+    {
+      "action": "finish",
+      "tick": 130
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260823T012151Z_1057001d",
+  "timestamp": "2026-08-23T01:21:51.071493+00:00",
+  "family": "enemy_grunt",
+  "kind": "enemy",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/enemy_grunt/enemy_grunt__body__locomotion__unarmed_walk_01__e__5f__96.png",
+      "sha256": "e77a6f61ddb94d004f741bc6c11fbc9bb2901d10fc87cac619a515d9d19ee04f"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "unarmed_walk_01",
+      "direction": "e",
+      "semantic_identity": [
+        "enemy_grunt",
+        "enemy",
+        "body",
+        "locomotion",
+        "unarmed_walk_01",
+        "e"
+      ],
+      "path": "content/sprites/enemies/enemy_grunt/runtime/body/locomotion/enemy_grunt__body__locomotion__unarmed_walk_01__e__5f__96.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "e77a6f61ddb94d004f741bc6c11fbc9bb2901d10fc87cac619a515d9d19ee04f",
+      "operation": "duplicate",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "unarmed_walk_01",
+      "direction": "w",
+      "semantic_identity": [
+        "enemy_grunt",
+        "enemy",
+        "body",
+        "locomotion",
+        "unarmed_walk_01",
+        "w"
+      ],
+      "path": "content/sprites/enemies/enemy_grunt/runtime/body/locomotion/enemy_grunt__body__locomotion__unarmed_walk_01__w__5f__96.png",
+      "provenance": "mirrored",
+      "source_asset": "unarmed_walk_01::e",
+      "sha256": "9fcdab4e0c0552fb96a607b7633c5cb0ed81c0f86ebf637527d1fe9857385229",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    }
+  ],
+  "backends": [
+    "sprite_ingest"
+  ],
+  "post_process_hooks": [
+    "enemy_runtime_import"
+  ],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

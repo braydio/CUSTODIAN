@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "validation/render_probe",
+  "description": "Small rendered probe for the Moment Forge capture path.",
+  "scene": "res://tools/validation/fixtures/moment_forge_probe.tscn",
+  "seed": 104729,
+  "duration_ticks": 12,
+  "capture": {
+    "width": 128,
+    "height": 128,
+    "fps": 60,
+    "audio": true,
+    "video": true,
+    "contact_sheet_ticks": [0, 2, 4, 6, 8, 11]
+  },
+  "setup": {
+    "kind": "healing",
+    "operator_position": [64, 64],
+    "operator_facing": "e"
+  },
+  "timeline": [
+    {"tick": 11, "action": "export_observatory"}
+  ],
+  "assertions": {
+    "completed": true,
+    "player_damage_events": 0,
+    "warnings": 0
+  },
+  "tags": ["validation"]
+}

@@ -1,0 +1,253 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20261004T010248Z_81de640c",
+  "timestamp": "2026-10-04T01:02:48.501403+00:00",
+  "family": "kenney_iso_miniature_prototype_ref",
+  "kind": "tile",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/kenney_iso_miniature_prototype_ref/block_s.png",
+      "sha256": "59e6440b9f8e1435d6cd6a3ef1f5a630b2659ab942229472d4cadaebf3b26dad"
+    },
+    {
+      "path": "asset_drop/inbox/kenney_iso_miniature_prototype_ref/column_s.png",
+      "sha256": "5e23b8928993310c538f01474f3bba7a1cb3bfc150995c352b4f0ff9686eba9e"
+    },
+    {
+      "path": "asset_drop/inbox/kenney_iso_miniature_prototype_ref/doorway_s.png",
+      "sha256": "cd93f20a657670b03da47e262c496341d4dbc8a08741a6f66a69a9c21692e6d9"
+    },
+    {
+      "path": "asset_drop/inbox/kenney_iso_miniature_prototype_ref/floor_s.png",
+      "sha256": "fd6d5b63876030b2173e43ef9d262901a08fd0e36961b1d5bb9e37b9288e66bf"
+    },
+    {
+      "path": "asset_drop/inbox/kenney_iso_miniature_prototype_ref/pole_s.png",
+      "sha256": "1737b40d8d943ec64beb9cd51b8186a20b3dd199dd5bbf76d51f5d7ed9335309"
+    },
+    {
+      "path": "asset_drop/inbox/kenney_iso_miniature_prototype_ref/slab_s.png",
+      "sha256": "e33ffdaf415a93127dc81f4c0e27d0b992abede0f870d53b173c610354966671"
+    },
+    {
+      "path": "asset_drop/inbox/kenney_iso_miniature_prototype_ref/slope_s.png",
+      "sha256": "0e13927ee5e3c002ac4af56dc565dbef05ab3aa15e84752edc58fc2df54c27e5"
+    },
+    {
+      "path": "asset_drop/inbox/kenney_iso_miniature_prototype_ref/stairs_s.png",
+      "sha256": "cf83846da031af97a6d4386b17f4909d590e5bc471c66cc3cc9f00a8ba0935fe"
+    },
+    {
+      "path": "asset_drop/inbox/kenney_iso_miniature_prototype_ref/wall_corner_s.png",
+      "sha256": "2053b38ab90e8430c26dcb314ecf37cd515b9246976bc9893b4f1de909024dc8"
+    },
+    {
+      "path": "asset_drop/inbox/kenney_iso_miniature_prototype_ref/wall_s.png",
+      "sha256": "bc1b9058145b00dd87ea26d947e62cf1255924997bd65c0bcdf0c6865c38ade6"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "block_s",
+      "direction": "omni",
+      "semantic_identity": [
+        "kenney_iso_miniature_prototype_ref",
+        "tile",
+        "body",
+        "tile",
+        "block_s",
+        "omni"
+      ],
+      "path": "content/tiles/experiments/kenney_feasibility/kenney_iso_miniature_prototype_ref_block_s_256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "59e6440b9f8e1435d6cd6a3ef1f5a630b2659ab942229472d4cadaebf3b26dad",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "column_s",
+      "direction": "omni",
+      "semantic_identity": [
+        "kenney_iso_miniature_prototype_ref",
+        "tile",
+        "body",
+        "tile",
+        "column_s",
+        "omni"
+      ],
+      "path": "content/tiles/experiments/kenney_feasibility/kenney_iso_miniature_prototype_ref_column_s_256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "5e23b8928993310c538f01474f3bba7a1cb3bfc150995c352b4f0ff9686eba9e",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "doorway_s",
+      "direction": "omni",
+      "semantic_identity": [
+        "kenney_iso_miniature_prototype_ref",
+        "tile",
+        "body",
+        "tile",
+        "doorway_s",
+        "omni"
+      ],
+      "path": "content/tiles/experiments/kenney_feasibility/kenney_iso_miniature_prototype_ref_doorway_s_256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "cd93f20a657670b03da47e262c496341d4dbc8a08741a6f66a69a9c21692e6d9",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "floor_s",
+      "direction": "omni",
+      "semantic_identity": [
+        "kenney_iso_miniature_prototype_ref",
+        "tile",
+        "body",
+        "tile",
+        "floor_s",
+        "omni"
+      ],
+      "path": "content/tiles/experiments/kenney_feasibility/kenney_iso_miniature_prototype_ref_floor_s_256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "fd6d5b63876030b2173e43ef9d262901a08fd0e36961b1d5bb9e37b9288e66bf",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "pole_s",
+      "direction": "omni",
+      "semantic_identity": [
+        "kenney_iso_miniature_prototype_ref",
+        "tile",
+        "body",
+        "tile",
+        "pole_s",
+        "omni"
+      ],
+      "path": "content/tiles/experiments/kenney_feasibility/kenney_iso_miniature_prototype_ref_pole_s_256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "1737b40d8d943ec64beb9cd51b8186a20b3dd199dd5bbf76d51f5d7ed9335309",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "slab_s",
+      "direction": "omni",
+      "semantic_identity": [
+        "kenney_iso_miniature_prototype_ref",
+        "tile",
+        "body",
+        "tile",
+        "slab_s",
+        "omni"
+      ],
+      "path": "content/tiles/experiments/kenney_feasibility/kenney_iso_miniature_prototype_ref_slab_s_256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "e33ffdaf415a93127dc81f4c0e27d0b992abede0f870d53b173c610354966671",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "slope_s",
+      "direction": "omni",
+      "semantic_identity": [
+        "kenney_iso_miniature_prototype_ref",
+        "tile",
+        "body",
+        "tile",
+        "slope_s",
+        "omni"
+      ],
+      "path": "content/tiles/experiments/kenney_feasibility/kenney_iso_miniature_prototype_ref_slope_s_256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "0e13927ee5e3c002ac4af56dc565dbef05ab3aa15e84752edc58fc2df54c27e5",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "stairs_s",
+      "direction": "omni",
+      "semantic_identity": [
+        "kenney_iso_miniature_prototype_ref",
+        "tile",
+        "body",
+        "tile",
+        "stairs_s",
+        "omni"
+      ],
+      "path": "content/tiles/experiments/kenney_feasibility/kenney_iso_miniature_prototype_ref_stairs_s_256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "cf83846da031af97a6d4386b17f4909d590e5bc471c66cc3cc9f00a8ba0935fe",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "wall_corner_s",
+      "direction": "omni",
+      "semantic_identity": [
+        "kenney_iso_miniature_prototype_ref",
+        "tile",
+        "body",
+        "tile",
+        "wall_corner_s",
+        "omni"
+      ],
+      "path": "content/tiles/experiments/kenney_feasibility/kenney_iso_miniature_prototype_ref_wall_corner_s_256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "2053b38ab90e8430c26dcb314ecf37cd515b9246976bc9893b4f1de909024dc8",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "wall_s",
+      "direction": "omni",
+      "semantic_identity": [
+        "kenney_iso_miniature_prototype_ref",
+        "tile",
+        "body",
+        "tile",
+        "wall_s",
+        "omni"
+      ],
+      "path": "content/tiles/experiments/kenney_feasibility/kenney_iso_miniature_prototype_ref_wall_s_256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "bc1b9058145b00dd87ea26d947e62cf1255924997bd65c0bcdf0c6865c38ade6",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "retired_states": [],
+  "retired_files": [],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

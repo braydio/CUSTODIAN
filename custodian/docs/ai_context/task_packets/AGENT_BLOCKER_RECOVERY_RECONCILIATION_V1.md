@@ -1,0 +1,44 @@
+# AGENT BLOCKER RECOVERY RECONCILIATION V1
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `agent-blocker-recovery-reconciliation-v1`
+- Status: `ready`
+- Dispatch: `auto`
+- Authoring handoff: `auto`
+- Priority: `P1`
+- Depends on: `review-agent-blocker-capture-hooks-v1`
+- Locks: `agent-workflow`
+- Kind: `implementation`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, architecture, workflow`
+- Paired review workstream: `review-agent-blocker-recovery-reconciliation-v1`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Review rationale: `Critical workflow state, provenance and preservation require independent review`
+- Reviewed main: `07d1180f42540ba815dfc6605bb6a5c44a6d4ff7`
+- Authoring chat: https://chatgpt.com/share/6ad6ab3d-1030-83ea-8b46-400ac48316b3?ogimg=plain
+- Visual review: `none`
+- Goal: Support ChatGPT on-demand blocker triage, root-cause grouping and evidence-verified incident closure without autonomous claim or reviewer authority.
+- Completion boundary: Add blocker_inbox.py check --json and guarded resolve or a bounded blocker_recovery.py; read ops/blocker-inbox index/events with revision, cross-check fetched origin/main dispatcher, archived packets and accepted review receipts, and group roots with queue_frontier.py; classify recoverable, owner-held, human, unknown/stale. Publish closure only after current SHA/authority proof; add test_blocker_recovery.py and a brief GitHub read runbook.
+- Current measured state: Mission Control attention center is planned MC3/MC7, not currently a branch-based authority; dispatcher, queue frontier and genuine review receipts remain authoritative.
+- Evidence: `custodian/docs/ai_context/AGENT_BLOCKER_INBOX_PROTOCOL_V1.md`, `custodian/tools/agent/{dispatch.py,queue_frontier.py,workflow_control.py,workstream.py,paired_review_runner.py}`.
+- Task-specific authority: Existing dispatcher, workstream, RunTrace, independent reviewer and recovery owners remain sole authorities; `ops/blocker-inbox` is a redacted diagnostic transport.
+- Work surface: Add blocker_inbox.py check --json and guarded resolve or a bounded blocker_recovery.py; read ops/blocker-inbox index/events with revision, cross-check fetched origin/main dispatcher, archived packets and accepted review receipts, and group roots with queue_frontier.py; classify recoverable, owner-held, human, unknown/stale. Publish closure only after current SHA/authority proof; add test_blocker_recovery.py and a brief GitHub read runbook.
+- Publication inputs: `custodian/docs/ai_context/AGENT_BLOCKER_INBOX_PROTOCOL_V1.md`
+- Change: Implement the exact completion boundary using the existing owner seams, narrow tests and validation ownership; capture proof of side-effect-free behavior and schema fidelity; update only documentation made stale by landed behavior.
+- Preserve: Protected `agent/*`, `dispatch-claims/*`, `agent-diagnostics/*`, reviewer receipts, origin/main, original worktrees and local user files. Never alter process ownership or force-push.
+- Non-goals: New dispatcher, automatic Codex execution/claim release, review PASS synthesis, an MC TUI, daemon or gameplay/Asset V2 changes.
+- Acceptance: Stale/forged closure fails; genuinely fixed issue records immutable resolution; findings never become PASS without accepted review; ambiguous/offline/host-local gives honest unknown; reopened incidents retain full lineage; no modification to main/claims/worktrees.
+- Validation: test_blocker_recovery, test_blocker_inbox, test_queue_frontier, test_dispatch, test_review_outcome plus pairing/index/changed-file validation. Also `python3 custodian/tools/agent/check_ai_context.py --json`, `python3 custodian/tools/agent/task_packet_index.py`, `python3 custodian/tools/agent/validate_review_pairing.py`, `python3 custodian/tools/validation/run_validation.py --changed --json`, `git diff --check`.
+- Task overrides: `none`
+- Deferred: Future Mission Control adapter and optional scheduled notifications.
+
+## Handoff
+- Next workstream: `review-agent-blocker-recovery-reconciliation-v1`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: https://chatgpt.com/share/6ad6ab3d-1030-83ea-8b46-400ac48316b3?ogimg=plain
+- Refresh reason: `none`
+- Next action: Land validated scope, run fresh paired review; after acceptance continue `none`.
+- Blockers or open questions: `none`

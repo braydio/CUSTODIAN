@@ -1,0 +1,47 @@
+# REVIEW PROCGEN ARCHIVE RESOLVE CONNECTED CASCADE V1
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `review-procgen-archive-resolve-connected-cascade-v1`
+- Status: `ready`
+- Dispatch: `auto`
+- Authoring handoff: `auto`
+- Priority: `P1`
+- Depends on: `procgen-archive-resolve-connected-cascade-v1`
+- Locks: `procgen-archive-resolve-presentation`
+- Kind: `review`
+- Review: `none`
+- Review stage: `post-land`
+- Review modes: `code, runtime, visual`
+- Paired review workstream: `none`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Review rationale: `fresh connected-wave ordering review`
+- Review target workstream: `procgen-archive-resolve-connected-cascade-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/PROCGEN_ARCHIVE_RESOLVE_CONNECTED_CASCADE_V1.md`
+- Reviewed main: `<fill at claim>`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391`
+- Visual review: `conditional`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Goal: Falsify cascade ownership, connectivity, isolation fallback and LOS/radius behavior.
+- Completion boundary: One presentation owner remains; old independent READY ordering is gone from production; fixtures prove connected waves with no starvation/through-wall leak.
+- Current measured state: Reconstruct from landed main.
+- Evidence: implementation summary and focused cascade/frontier evidence.
+- Task-specific authority: reveal owner + visual frontier.
+- Work surface: landed slice only.
+- Change: Trace origins, neighbor propagation, late adoption, singleton fallback, token budget and enlarged LOS; require old-scan mutation to fail.
+- Preserve: upstream streaming/gameplay semantics.
+- Non-goals: no shader rewrite or taste tuning.
+- Acceptance: no blocking finding/evidence gap; focused suite + S1 green.
+- Validation: implementation focused suite plus changed-file validation.
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+- Deferred: world-cover successor.
+
+## Handoff
+- Next workstream: `none`
+- Next packet state: `none`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391`
+- Refresh reason: `draft/manual only while the automatic authoring handoff validates and promotes this paired packet; do not claim manually before that preflight succeeds`
+- Next action: `After automatic promotion, wait for the implementation dependency and then claim through normal dispatcher authority.`
+- Blockers or open questions: `implementation dependency only`

@@ -1,0 +1,35 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://game/world/hub/first_set/hub_first_set_map.gd" id="1_map"]
+[ext_resource type="Script" path="res://game/world/levels/authored_blockout_grid_2d.gd" id="2_grid"]
+[ext_resource type="Script" path="res://game/world/levels/authored_navigation_provider_2d.gd" id="3_navigation"]
+[ext_resource type="PackedScene" path="res://scenes/road_of_witnesses_presentation.tscn" id="4_road"]
+
+[node name="HubFirstSetMap" type="Node2D"]
+script = ExtResource("1_map")
+camera_bounds = Rect2(-2816, -5504, 6016, 6080)
+draw_placeholder_grid = false
+
+[node name="BlockoutGrid" type="Node2D" parent="."]
+script = ExtResource("2_grid")
+
+[node name="NavigationRoot" type="Node2D" parent="."]
+
+[node name="AuthoredNavigationProvider" type="Node" parent="NavigationRoot"]
+script = ExtResource("3_navigation")
+
+[node name="CollisionRoot" type="StaticBody2D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="RoadPresentationRoot" parent="." instance=ExtResource("4_road")]
+build_collision = false
+apply_camera_bounds = false
+
+[node name="DistrictPresentation" type="Node2D" parent="."]
+
+[node name="Markers" type="Node2D" parent="."]
+
+[node name="Interactables" type="Node2D" parent="."]
+
+[node name="TransitionMarkers" type="Node2D" parent="."]

@@ -1,0 +1,28 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scenes/debug/level_collision_poi_mapper.gd" id="1_mapper"]
+[ext_resource type="Script" path="res://scenes/debug/level_collision_poi_mapper_overlay.gd" id="2_overlay"]
+
+[node name="GameRoot" type="Node2D"]
+script = ExtResource("1_mapper")
+
+[node name="World" type="Node2D" parent="."]
+
+[node name="Camera2D" type="Camera2D" parent="World"]
+zoom = Vector2(0.5, 0.5)
+
+[node name="CollisionOverlay" type="Node2D" parent="World"]
+script = ExtResource("2_overlay")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Help" type="Label" parent="CanvasLayer"]
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 1100.0
+offset_bottom = 180.0
+theme_override_colors/font_color = Color(0.92, 0.96, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.85)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+autowrap_mode = 2

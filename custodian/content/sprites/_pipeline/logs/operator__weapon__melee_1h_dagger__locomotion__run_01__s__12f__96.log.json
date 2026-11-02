@@ -1,0 +1,11 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__weapon__melee_1h_dagger__locomotion__run_01__s__12f__96.json",
+	"outputs": [
+		"res://content/sprites/operator/source/animations/melee_1h_dagger/locomotion/run_01/operator__weapon__melee_1h_dagger__locomotion__run_01__s__12f__96.png"
+	],
+	"post_process": [
+		"operator_runtime_build"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/operator__weapon__melee_1h_dagger__locomotion__run_01__s__12f__96.png",
+	"timestamp_utc": "2026-09-06 14:48:32"
+}

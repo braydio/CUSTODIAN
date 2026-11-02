@@ -1,0 +1,30 @@
+# REVIEW: OPERATOR PARRY RIPOSTE COMPLETION
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `review-operator-parry-riposte-completion`
+- Kind: `review`
+- Status: `ready`
+- Dispatch: `auto`
+- Priority: `P1`
+- Depends on: `operator-parry-riposte-completion`
+- Locks: `operator-runtime, combat-feel`
+- Review: `none`
+- Review target workstream: `operator-parry-riposte-completion`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/OPERATOR_PARRY_RIPOSTE_COMPLETION.md`
+- Reviewed main: `83d5d62b6426175b4873170653b06d770a83fa45`
+- Authoring chat: `not-recorded`
+- Visual review: `none`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture, runtime`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Goal: Independently verify that the landed riposte completion adds only the missing lightweight post-parry action and does not duplicate or weaken current critical-open / paired-execution authority.
+- Reviewed implementation acceptance: Reuse every Acceptance item from the archived `OPERATOR_PARRY_RIPOSTE_COMPLETION.md`, with special attention to exact parried-target ownership, critical-execution priority, exactly-once consumption/damage, preservation of current counter tuning, and absence of a second enemy-opened-state implementation.
+- Review evidence: Archived implementation packet and closing summary; landed focused riposte smoke; current guard/parry, critical-open, paired execution, Falcon Reversal, melee-contact, and Integrity Reclaim regressions; current diff against the post-F2 authority.
+- Correction threshold: Create correction work only for a confirmed acceptance/correctness defect or an evidence gap that prevents confidence in required acceptance. Route non-blocking issues and optional improvements to next-slice/deferred unless separately justified. Escalate unresolved subjective decisions as `human_required`.
+- Focused validation: Re-run the implementation's focused riposte smoke, `operator_guard_flow`, current parry presentation/input regression, `grunt_parry_crit_reaction`, Falcon Reversal, and the narrow melee/direct-hit tests touched by the implementation. Broaden only for a demonstrated gap.
+- Review focus: Counter target lifecycle; invalid/dead target cleanup; wrong-nearby-enemy rejection; contextual-primary ordering; critical reservation never co-starting riposte; no raw duplicate damage path; counter tuning preservation; ordinary fast-melee negative control; telemetry truth; post-F2 ownership boundaries.
+- Acceptance: Produce a findings-first independent review of live `main`. Record a `passed` receipt or concrete findings. Give each finding a stable cycle-scoped ID (`R<cycle>-<NN>`) and the required class, domain, affected acceptance, evidence, disposition, and rationale. Blocking defects and material acceptance-proof gaps create `operator-parry-riposte-completion-review-corrections-<n>` plus its paired review packet. Do not patch reviewed implementation code.
+- Non-goals: Do not redesign parry/critical execution, retune combat, create riposte art, or fix reviewed runtime code inside this review workstream.
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`

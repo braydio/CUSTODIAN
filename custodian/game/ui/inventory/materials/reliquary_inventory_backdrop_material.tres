@@ -1,0 +1,17 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3]
+
+[ext_resource type="Shader" path="res://game/ui/inventory/shaders/reliquary_inventory_backdrop.gdshader" id="1_shader"]
+
+[resource]
+shader = ExtResource("1_shader")
+shader_parameter/blur_lod = 2.25
+shader_parameter/exposure = 0.46
+shader_parameter/saturation = 0.38
+shader_parameter/highlight_compression = 0.9
+shader_parameter/reliquary_tint = Color(0.018, 0.046, 0.041, 1)
+shader_parameter/tint_strength = 0.13
+shader_parameter/vignette_strength = 0.24
+shader_parameter/vignette_start = 0.25
+shader_parameter/vignette_end = 0.82
+shader_parameter/grain_strength = 0.0035
+shader_parameter/grain_rate = 8.0

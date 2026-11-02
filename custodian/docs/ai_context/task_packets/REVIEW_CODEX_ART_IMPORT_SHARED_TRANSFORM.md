@@ -1,0 +1,40 @@
+# REVIEW: CODEX ART IMPORT SHARED TRANSFORM
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `review-codex-art-import-shared-transform`
+- Kind: `review`
+- Status: `ready`
+- Dispatch: `auto`
+- Authoring handoff: `auto`
+- Priority: `P1`
+- Depends on: `codex-art-import-shared-transform`
+- Locks: `none`
+- Review: `none`
+- Review target workstream: `codex-art-import-shared-transform`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/CODEX_ART_IMPORT_SHARED_TRANSFORM.md`
+- Reviewed main: `d099e541941c5f7525f7c9af38f6e36536f9d574`
+- Authoring chat: `not-recorded`
+- Visual review: `conditional`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture, asset-pipeline, workflow`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Goal: Independently falsify every implementation Acceptance clause of `codex-art-import-shared-transform` against landed source/tests and the immutable authority chain.
+- Reviewed implementation acceptance: Same verified source+contract+options yield byte-identical plan and derived geometry; 8f and 6f golden dimensions exact; one global scale in every frame; no mixed-frame resizes, no clip, no smoothing; missing/ambiguous contracts fail; Operator existing tests remain green; no new publishing authority.
+- Review evidence: Reconstruct from archived implementation packet, authored closing summary, landed main diff, exact source+plan+QA hashes and focused fixture evidence; do not use implementation-session interpretation as proof.
+- Correction threshold: Blocking correctness, security, data-integrity, authority-confusion or material unverified-acceptance defects require bounded correction + new paired review. Subjective artistic preferences are not code failures.
+- Focused validation: Run existing custodian/tools/validation/operator_art_source_smoke.py and custodian/tools/validation/operator_art_registration_profile_smoke.py, plus custodian/tools/validation/pixelart_colors_smoke.py and custodian/tools/validation/asset_pipeline_plan_smoke.py; add/run focused new geometry smoke and register it; then changed-file validation.
+- Review focus: Plan determinism and source hashing, reproducible 3x2/8x1 geometry, operator pixelart policy, no per-frame geometry creep, alpha handling, unsupported source rejection; prove no duplicate conversion engine.
+- Acceptance: Findings-first independent review with stable `R0-NN` IDs, tested negative controls, explicit PASS/FAIL/needs-human disposition and durable receipt. Do not modify reviewed implementation; initiate narrow correction/re-review only for material defects.
+- Non-goals: No new feature scope, runtime-art generation, stylistic reauthoring or production-code fixes during review.
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+
+## Handoff
+- Next workstream: `codex-art-import-registration`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `not-recorded`
+- Refresh reason: `none`
+- Next action: On PASS, allow dispatcher to consider the next implementation workstream after review archives.
+- Blockers or open questions: `none beyond actual recorded findings`.

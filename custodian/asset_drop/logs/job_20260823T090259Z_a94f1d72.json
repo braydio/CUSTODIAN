@@ -1,0 +1,94 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260823T090259Z_a94f1d72",
+  "timestamp": "2026-08-23T09:02:59.690473+00:00",
+  "family": "field_fabricator_mk1",
+  "kind": "world_prop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/field_fabricator_mk1/field_fabricator_mk1__body__interaction__fabricate__omni__8f__96.png",
+      "sha256": "b02434774102f739bbf5619dba1f2f23bc7134c6b0fb72f5197bdcb7b8dcc08b"
+    },
+    {
+      "path": "asset_drop/inbox/field_fabricator_mk1/field_fabricator_mk1__body__interaction__idle__omni__8f__96.png",
+      "sha256": "f6231d61a2ce54b676b070acafb60cff828b8f13764b9c203c299fed4075be8c"
+    },
+    {
+      "path": "asset_drop/inbox/field_fabricator_mk1/field_fabricator_mk1__fx__interaction__fabricate__omni__8f__96.png",
+      "sha256": "beecab45d29c5c647de77ec59e4f6d376a693ed7e0205304319e82e2411cb0f9"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "fabricate",
+      "direction": "omni",
+      "semantic_identity": [
+        "field_fabricator_mk1",
+        "world_prop",
+        "body",
+        "interaction",
+        "fabricate",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/field_fabricator_mk1/runtime/body/interaction/field_fabricator_mk1__body__interaction__fabricate__omni__8f__96.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "b02434774102f739bbf5619dba1f2f23bc7134c6b0fb72f5197bdcb7b8dcc08b",
+      "operation": "replace",
+      "superseded_paths": [
+        "content/sprites/environment/props/field_fabricator_mk1/runtime/body/field_fabricator_mk1__body__interaction__fabricate__omni__4f__128x96.png"
+      ],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "idle",
+      "direction": "omni",
+      "semantic_identity": [
+        "field_fabricator_mk1",
+        "world_prop",
+        "body",
+        "interaction",
+        "idle",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/field_fabricator_mk1/runtime/body/interaction/field_fabricator_mk1__body__interaction__idle__omni__8f__96.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "fc40da8241df9bdcfbd32483c01bcd1b0ca1fb169ab294ece4b23ab368bb2273",
+      "operation": "replace",
+      "superseded_paths": [
+        "content/sprites/environment/props/field_fabricator_mk1/runtime/body/field_fabricator_mk1__body__interaction__idle__omni__1f__128x96.png"
+      ],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "fabricate_fx",
+      "direction": "omni",
+      "semantic_identity": [
+        "field_fabricator_mk1",
+        "world_prop",
+        "fx",
+        "interaction",
+        "fabricate",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/field_fabricator_mk1/runtime/fx/interaction/field_fabricator_mk1__fx__interaction__fabricate__omni__8f__96.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "beecab45d29c5c647de77ec59e4f6d376a693ed7e0205304319e82e2411cb0f9",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    }
+  ],
+  "backends": [
+    "sprite_ingest"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

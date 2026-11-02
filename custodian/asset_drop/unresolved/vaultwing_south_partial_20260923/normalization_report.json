@@ -1,0 +1,170 @@
+[
+  {
+    "input": "vw_1.png",
+    "output": "ground_idle_s_source.png",
+    "state": "ground_idle",
+    "direction": "s",
+    "frames": 6,
+    "input_sha256": "3022f7a7dbe1674c156a82075149a8814c43d67f6391354714277924afd1f244",
+    "output_sha256": "d2629d659c6e0be0a60057bfe7cc6ff19c4b76852810250e14bc0d727f61dede",
+    "input_size": [
+      2172,
+      724
+    ],
+    "output_size": [
+      1536,
+      256
+    ],
+    "input_bounds": [
+      59,
+      41,
+      2115,
+      682
+    ],
+    "scale": 0.3619344773790952
+  },
+  {
+    "input": "vw_2.png",
+    "output": "ground_walk_s_source.png",
+    "state": "ground_walk",
+    "direction": "s",
+    "frames": 8,
+    "input_sha256": "2e6ad3f836e2ebc76e576e544384f25dfb86c7359a23c150dba9c76e162279fa",
+    "output_sha256": "f7d4b541268a8f348e85f8f96a0bb64eb0bc996f277e44852b90ddacce0266eb",
+    "input_size": [
+      2172,
+      724
+    ],
+    "output_size": [
+      2048,
+      256
+    ],
+    "input_bounds": [
+      25,
+      100,
+      2140,
+      700
+    ],
+    "scale": 0.3938879456706282
+  },
+  {
+    "input": "vw_4.png",
+    "output": "death_s_source.png",
+    "state": "death",
+    "direction": "s",
+    "frames": 8,
+    "input_sha256": "ba5308f68148c6cc757759cea9091a529773e64136112c3c8487dc028da58f4a",
+    "output_sha256": "1a34463a95350998f4a1163b27d27b8a6f0f3c0f4e34bf5e687ae5b3ed538613",
+    "input_size": [
+      2172,
+      724
+    ],
+    "output_size": [
+      2048,
+      256
+    ],
+    "input_bounds": [
+      40,
+      249,
+      2171,
+      656
+    ],
+    "scale": 0.8529411764705882
+  },
+  {
+    "input": "vw_5.png",
+    "output": "dive_strike_s_source.png",
+    "state": "dive_strike",
+    "direction": "s",
+    "frames": 6,
+    "input_sha256": "3b3829bb3f6bbc283396d9b263d63ce063dc90338f80f2cc9323ba2de54369c3",
+    "output_sha256": "c15ed9627fa8f38cc4981c0fc653fdc1dacc9fe44b55966c29ab44db5a6d8fd5",
+    "input_size": [
+      2172,
+      724
+    ],
+    "output_size": [
+      1536,
+      256
+    ],
+    "input_bounds": [
+      63,
+      23,
+      2166,
+      700
+    ],
+    "scale": 0.35098335854765506
+  },
+  {
+    "input": "vw_6.png",
+    "output": "dive_windup_s_source.png",
+    "state": "dive_windup",
+    "direction": "s",
+    "frames": 4,
+    "input_sha256": "b0671259e88fa6ce5f9cb6385a688ae6e19bd01b86b7b02d98d68d762f372d6b",
+    "output_sha256": "9e27c72023478e40613a9f7007b110087bfac805f810883aaa72a2fac14bde3e",
+    "input_size": [
+      2172,
+      724
+    ],
+    "output_size": [
+      1024,
+      256
+    ],
+    "input_bounds": [
+      23,
+      39,
+      2070,
+      650
+    ],
+    "scale": 0.3912310286677909
+  },
+  {
+    "input": "vw_8.png",
+    "output": "perch_idle_s_source.png",
+    "state": "perch_idle",
+    "direction": "s",
+    "frames": 6,
+    "input_sha256": "286e2260a89d462d18b147be09daba064ee5548f64a41bd4b17cf7cdd378cf8a",
+    "output_sha256": "0d69bc5ddd8080b00dae58985c701b4c3443c9dea4ddba9e08fd499edd972a15",
+    "input_size": [
+      2172,
+      724
+    ],
+    "output_size": [
+      1536,
+      256
+    ],
+    "input_bounds": [
+      17,
+      10,
+      2140,
+      692
+    ],
+    "scale": 0.34017595307917886
+  },
+  {
+    "input": "vw_9.png",
+    "output": "hurt_s_source.png",
+    "state": "hurt",
+    "direction": "s",
+    "frames": 4,
+    "input_sha256": "1a2b1d2de72be06f8c8c434584410c54a2fc014cf0e9d2a452f230f3aeee81a4",
+    "output_sha256": "728e00fc10bbb701c5bac59ca90b920cce8a3df07c63b836ec7eb5a8c5d38474",
+    "input_size": [
+      2172,
+      724
+    ],
+    "output_size": [
+      1024,
+      256
+    ],
+    "input_bounds": [
+      96,
+      46,
+      2152,
+      700
+    ],
+    "scale": 0.35857805255023184
+  }
+]

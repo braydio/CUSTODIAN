@@ -1,0 +1,128 @@
+{
+  "artifacts": {
+    "assertions": "assertions.json",
+    "audio": "audio_mix.wav",
+    "contact_sheet": "current_contact_sheet.png",
+    "metrics": "metrics.json",
+    "probes": "probes.json",
+    "report": "index.html",
+    "telemetry": "telemetry.json",
+    "timeline": "timeline.json",
+    "video": "current.mp4",
+    "visual_diff": null
+  },
+  "baseline": {
+    "status": "not_requested"
+  },
+  "baseline_compatibility": {
+    "contact_sheet_ticks": [
+      0,
+      36,
+      72,
+      108,
+      156,
+      228
+    ],
+    "end_tick": 239,
+    "fps": 60,
+    "height": 720,
+    "metrics_schema_major": 1,
+    "scenario_id": "vista/sundered_keep_first_reveal",
+    "scenario_schema_version": 1,
+    "scenario_sha256": "390115e01dc6070d0a8c825eb71cddafc0a3769005dd425543e75aecb9c72fc2",
+    "start_tick": 0,
+    "width": 1280
+  },
+  "capture": {
+    "audio_requested": true,
+    "fps": 60,
+    "height": 720,
+    "mode": "full",
+    "synchronization": "verified",
+    "width": 1280
+  },
+  "generated_at": "2026-08-10T14:06:43.436611-04:00",
+  "media": {
+    "audio_metrics": {
+      "available": true,
+      "channels": 2,
+      "duration_sec": 4.066666666666666,
+      "frames": 195200,
+      "noise_floor_dbfs": -27.04351479587883,
+      "onset_ms": 2935.2708333333335,
+      "onset_threshold_dbfs": -15.043514795878831,
+      "peak_dbfs": -13.826216944503,
+      "peak_time_ms": 4002.59375,
+      "rms_dbfs": -26.20238699659238,
+      "sample_rate": 48000,
+      "sample_width": 2
+    },
+    "audio_state": {
+      "available": true,
+      "canonical_available": true,
+      "conversion": "ffmpeg",
+      "requested": true
+    },
+    "ffmpeg_available": true,
+    "visual_diff": null
+  },
+  "repository": {
+    "branch": "main",
+    "changed_files": [
+      "M custodian/docs/ai_context/CURRENT_STATE.md",
+      " M custodian/docs/ai_context/task_packets/SUNDERED_KEEP_PROCGEN_FRONTAGE.md",
+      " M custodian/game/world/vistas/sundered_keep/sundered_keep_procgen_vista_presentation.gd",
+      " M custodian/game/world/vistas/sundered_keep/sundered_keep_procgen_vista_presentation.tscn",
+      " M custodian/tools/validation/sundered_keep_procgen_vista_layering_smoke.gd",
+      " M design/05_levels/SUNDERED_KEEP_PROCGEN_FRONTAGE.md",
+      "?? custodian/content/sprites/world/ingress/ash_bell/ash_bell__underground_ingress_fx__warning_lamp__loop__omni__8f__64.aseprite.uid",
+      "?? custodian/content/sprites/world/ingress/ash_bell/ash_bell_threadway_resolve_01__7f__32.png.import",
+      "?? custodian/content/sprites/world/ingress/ash_bell/source/generated/ash_bell_threadway_floor_tiles_6t_32px_1.png.import",
+      "?? custodian/content/sprites/world/ingress/ash_bell/source/generated/ash_bell_threadway_floor_tiles_6t_32px_2.png.import",
+      "?? custodian/content/sprites/world/ingress/ash_bell/source/generated/ash_bell_threadway_floor_tiles_6t_32px_3.png.import",
+      "?? custodian/content/sprites/world/ingress/ash_bell/source/generated/ash_bell_threadway_floor_tiles_6t_32px_4.png.import",
+      "?? custodian/content/sprites/world/ingress/ash_bell/source/generated/ash_bell_threadway_floor_tiles_6t_32px_5.png.import",
+      "?? custodian/content/sprites/world/ingress/ash_bell/source/generated/ash_bell_threadway_floor_tiles_6t_32px_6.png.import",
+      "?? custodian/content/sprites/world/ingress/ash_bell/source/generated/ash_bell_threadway_floor_tiles_source_01__6t__3072x512.aseprite.uid",
+      "?? reports/moment_forge/vista/sundered_keep_first_reveal/20260810T140539-0400/"
+    ],
+    "commit": "f6794e071988b36f6cfd329ac92a721bf561f95d",
+    "dirty": true,
+    "root": "/home/braydenchaffee/Projects/CUSTODIAN"
+  },
+  "run_id": "20260810T140539-0400",
+  "runtime": {
+    "godot": {
+      "build": "arch_linux",
+      "hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+      "hex": 263937,
+      "major": 4,
+      "minor": 7,
+      "patch": 1,
+      "status": "stable",
+      "string": "4.7.1-stable (arch_linux)",
+      "timestamp": 1783976428
+    },
+    "physics_hz": 60,
+    "renderer": "vulkan"
+  },
+  "scenario": {
+    "id": "vista/sundered_keep_first_reveal",
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/vista/sundered_keep_first_reveal/20260810T140539-0400/scenario.snapshot.json",
+    "schema_version": 1,
+    "sha256": "390115e01dc6070d0a8c825eb71cddafc0a3769005dd425543e75aecb9c72fc2"
+  },
+  "schema": "custodian.moment_forge.run_manifest.v1",
+  "stable_assertions_passed": true,
+  "stable_fingerprint": {
+    "algorithm": "sha256",
+    "schema": "custodian.moment_forge.stable_fingerprint.v1",
+    "value": "4d1e9caab765a8b7f11eadad0ca411ad85645af3961031f5c86b2af710f6930f"
+  },
+  "status": "passed",
+  "tools": {
+    "ffmpeg": "/usr/bin/ffmpeg",
+    "pillow": "12.3.0",
+    "python": "3.14.6"
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260910T084719Z_2bf9e236",
+  "timestamp": "2026-09-10T08:47:19.185821+00:00",
+  "family": "awakening_creche_fixtures",
+  "kind": "world_prop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/awakening_creche_fixtures/alcove_broken.png",
+      "sha256": "018f3995f120188d2dd6ec50d1bb0c889dd3cc8f0a5d6291455b5ef9bd3a5e44"
+    },
+    {
+      "path": "asset_drop/inbox/awakening_creche_fixtures/alcove_closed.png",
+      "sha256": "abb7639078849c24abe81348052f4c7ab92c8f6d48d3f22bcc72b90156e84a43"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "alcove_broken",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_creche_fixtures",
+        "world_prop",
+        "body",
+        "fixture",
+        "alcove_broken",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/awakening/awakening_creche_fixtures/runtime/body/awakening_creche_fixtures__body__fixture__alcove_broken__omni__1f__128x192.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "018f3995f120188d2dd6ec50d1bb0c889dd3cc8f0a5d6291455b5ef9bd3a5e44",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "alcove_closed",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_creche_fixtures",
+        "world_prop",
+        "body",
+        "fixture",
+        "alcove_closed",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/awakening/awakening_creche_fixtures/runtime/body/awakening_creche_fixtures__body__fixture__alcove_closed__omni__1f__128x192.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "abb7639078849c24abe81348052f4c7ab92c8f6d48d3f22bcc72b90156e84a43",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": false,
+    "ok": null
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

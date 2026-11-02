@@ -1,0 +1,12 @@
+{
+  "schema": "custodian.level_definition.v1",
+  "level_id": "ash_bell_station_ix",
+  "display_name": "Ash-Bell — Station IX",
+  "route_scene_path": "res://game/world/levels/authored/ash_bell/station_ix/station_ix.tscn",
+  "target_scene_path": "res://game/world/levels/authored/ash_bell/station_ix/station_ix.tscn",
+  "world_context": "campaign_region",
+  "presentation_profile": "gameplay",
+  "spawns": ["Spawn_FromLowerQuarter"],
+  "lifecycle": {"cache_policy": "snapshot_and_unload", "state_policy": "session"},
+  "tags": ["authored", "playable_map", "route_node", "ash_bell", "station_ix"]
+}

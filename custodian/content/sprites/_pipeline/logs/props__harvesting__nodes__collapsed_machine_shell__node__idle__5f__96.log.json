@@ -1,0 +1,9 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/props__harvesting__nodes__collapsed_machine_shell__node__idle__5f__96.json",
+	"outputs": [
+		"res://content/sprites/props/runtime/harvesting/props__harvesting__nodes__collapsed_machine_shell__node__idle__5f__96.png"
+	],
+	"post_process": [],
+	"source": "res://content/sprites/_pipeline/inbox/props__harvesting__nodes__collapsed_machine_shell__node__idle__5f__96.png",
+	"timestamp_utc": "2026-05-26 09:43:40"
+}

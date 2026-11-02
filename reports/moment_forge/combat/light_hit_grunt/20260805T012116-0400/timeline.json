@@ -1,0 +1,163 @@
+[
+	{
+		"data": {
+			"authored_action": {
+				"action": "input_tap",
+				"hold_ticks": 1.0,
+				"name": "toggle_unarmed",
+				"tick": 2.0
+			},
+			"moment_tick": 2,
+			"result": {
+				"action": "input_tap",
+				"ok": true,
+				"tick": 2
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 2
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "aim_at_role",
+				"role": "operator",
+				"target_role": "target",
+				"tick": 50.0
+			},
+			"moment_tick": 50,
+			"result": {
+				"action": "aim_at_role",
+				"ok": true,
+				"tick": 50
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 50
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "input_press",
+				"name": "aim_right",
+				"tick": 55.0
+			},
+			"moment_tick": 55,
+			"result": {
+				"action": "input_press",
+				"ok": true,
+				"tick": 55
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 55
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "input_tap",
+				"hold_ticks": 1.0,
+				"name": "attack_primary",
+				"tick": 60.0
+			},
+			"moment_tick": 60,
+			"result": {
+				"action": "input_tap",
+				"ok": true,
+				"tick": 60
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 60
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "capture_marker",
+				"name": "expected_contact",
+				"tick": 72.0
+			},
+			"moment_tick": 72,
+			"result": {
+				"action": "capture_marker",
+				"ok": true,
+				"tick": 72
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 72
+	},
+	{
+		"data": {
+			"attack_objective": "breach_command",
+			"enemy": "GRUNT",
+			"from": "staging",
+			"health": 68.0,
+			"max_health": 78.0,
+			"position": "(458.0, 360.0)",
+			"target": "",
+			"to": "commit"
+		},
+		"kind": "enemy_assault_state_changed",
+		"tick": 78
+	},
+	{
+		"data": {
+			"amount": 10.0,
+			"kind": "rejected",
+			"reason": "no_recoverable_room"
+		},
+		"kind": "player_reclaim_rejected",
+		"tick": 78
+	},
+	{
+		"data": {
+			"attack_kind": "fast",
+			"bullet_impact_fx": "default",
+			"contact_kind": "melee_impact",
+			"damage": 10.0,
+			"footstep_noise_mult": 1.0,
+			"material_id": "unknown",
+			"melee_impact_fx": "default",
+			"position": "(444.0, 360.0)",
+			"target": "EnemyGrunt1",
+			"weapon": "unarmed_fast_1"
+		},
+		"kind": "material_contact",
+		"tick": 78
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "input_release",
+				"name": "aim_right",
+				"tick": 80.0
+			},
+			"moment_tick": 80,
+			"result": {
+				"action": "input_release",
+				"ok": true,
+				"tick": 80
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 80
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "finish",
+				"tick": 148.0
+			},
+			"moment_tick": 148,
+			"result": {
+				"action": "finish",
+				"finish": true,
+				"ok": true,
+				"tick": 148
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 148
+	}
+]

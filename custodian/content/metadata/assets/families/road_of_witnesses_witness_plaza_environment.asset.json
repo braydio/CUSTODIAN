@@ -1,0 +1,36 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "road_of_witnesses_witness_plaza_environment",
+  "kind": "backdrop",
+  "priority": "P1",
+  "runtime": {
+    "domain": "levels/hub/road_of_witnesses/witness_plaza",
+    "owner": "road_of_witnesses_witness_plaza",
+    "template": "{domain}/{filename}",
+    "filename_policy": "template",
+    "filename_template": "{owner}_{variant}_{frame_size}.png"
+  },
+  "canvas": {
+    "width": 896,
+    "height": 896
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "underlay": {
+      "required": true,
+      "layer": "underlay",
+      "action_group": "display",
+      "variant": "underlay",
+      "layout": "copy"
+    },
+    "foreground": {
+      "required": true,
+      "layer": "foreground",
+      "action_group": "display",
+      "variant": "foreground",
+      "layout": "copy"
+    }
+  },
+  "aliases": {}
+}

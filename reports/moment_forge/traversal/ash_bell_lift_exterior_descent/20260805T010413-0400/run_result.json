@@ -1,0 +1,163 @@
+{
+	"actions": [
+		{
+			"action": "fixture_command",
+			"ok": true,
+			"response": true,
+			"tick": 20
+		},
+		{
+			"action": "fixture_command",
+			"ok": true,
+			"response": true,
+			"tick": 96
+		},
+		{
+			"action": "finish",
+			"finish": true,
+			"ok": true,
+			"tick": 130
+		}
+	],
+	"assertions": [
+		{
+			"actual": true,
+			"expected": {
+				"role": "presentation",
+				"severity": "error",
+				"type": "role_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "role_exists"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"role": "operator",
+				"severity": "error",
+				"type": "role_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "role_exists"
+		},
+		{
+			"actual": false,
+			"expected": {
+				"field": "shaft_visible",
+				"op": "eq",
+				"probe": "lift_state",
+				"severity": "error",
+				"tick": 0.0,
+				"type": "probe_compare",
+				"value": false
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"field": "shaft_visible",
+				"op": "eq",
+				"probe": "lift_state",
+				"severity": "error",
+				"tick": 28.0,
+				"type": "probe_compare",
+				"value": true
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"field": "puppet_active",
+				"op": "eq",
+				"probe": "lift_state",
+				"severity": "error",
+				"tick": 38.0,
+				"type": "probe_compare",
+				"value": true
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": false,
+			"expected": {
+				"field": "shaft_visible",
+				"op": "eq",
+				"probe": "lift_state",
+				"severity": "error",
+				"tick": 120.0,
+				"type": "probe_compare",
+				"value": false
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": false,
+			"expected": {
+				"severity": "error",
+				"type": "no_unreleased_inputs"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "no_unreleased_inputs"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"path": "telemetry.json",
+				"severity": "error",
+				"type": "output_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "output_exists"
+		}
+	],
+	"capture_failures": [],
+	"capture_mode": "none",
+	"completed": true,
+	"completed_tick": 130,
+	"failures": [],
+	"keyframes": [],
+	"markers": [],
+	"passed": true,
+	"probe_failures": [],
+	"runtime": {
+		"godot": {
+			"build": "arch_linux",
+			"hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+			"hex": 263937,
+			"major": 4,
+			"minor": 7,
+			"patch": 1,
+			"status": "stable",
+			"string": "4.7.1-stable (arch_linux)",
+			"timestamp": 1783976428
+		},
+		"physics_hz": 60,
+		"renderer": "vulkan"
+	},
+	"scenario_id": "traversal/ash_bell_lift_exterior_descent",
+	"scenario_path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/traversal/ash_bell_lift_exterior_descent/20260805T010413-0400/scenario.snapshot.json",
+	"schema": "custodian.moment_forge.run_result.v1",
+	"seed": 104729
+}

@@ -1,0 +1,28 @@
+{
+  "schema": "custodian.directional_tile_slice_manifest.v1",
+  "source": "res://content/tiles/sundered_keep/floors/causeway_source.png",
+  "generated_at_utc": "2026-06-02T03:41:06.726674+00:00",
+  "tile_size_px": 32,
+  "source_size_px": [
+    128,
+    128
+  ],
+  "prefix": "entrance_causeway_surface",
+  "domain": "directional_edges",
+  "include_cardinal_variants": true,
+  "count": 12,
+  "outputs": [
+    "res://content/tiles/sundered_keep/entrance/causeway_surfaces/entrance_causeway_surface_nw.png",
+    "res://content/tiles/sundered_keep/entrance/causeway_surfaces/entrance_causeway_surface_n.png",
+    "res://content/tiles/sundered_keep/entrance/causeway_surfaces/entrance_causeway_surface_ne.png",
+    "res://content/tiles/sundered_keep/entrance/causeway_surfaces/entrance_causeway_surface_w.png",
+    "res://content/tiles/sundered_keep/entrance/causeway_surfaces/entrance_causeway_surface_e.png",
+    "res://content/tiles/sundered_keep/entrance/causeway_surfaces/entrance_causeway_surface_sw.png",
+    "res://content/tiles/sundered_keep/entrance/causeway_surfaces/entrance_causeway_surface_s.png",
+    "res://content/tiles/sundered_keep/entrance/causeway_surfaces/entrance_causeway_surface_se.png",
+    "res://content/tiles/sundered_keep/entrance/causeway_surfaces/entrance_causeway_surface_n_02.png",
+    "res://content/tiles/sundered_keep/entrance/causeway_surfaces/entrance_causeway_surface_e_02.png",
+    "res://content/tiles/sundered_keep/entrance/causeway_surfaces/entrance_causeway_surface_s_02.png",
+    "res://content/tiles/sundered_keep/entrance/causeway_surfaces/entrance_causeway_surface_w_02.png"
+  ]
+}

@@ -1,0 +1,8 @@
+Directory Tree Mapping
+/home/braydenchaffee/Projects/CUSTODIAN/reports/operator_body_audit
+├── nocat
+├── operator_body_animation_metrics.csv
+├── operator_body_audit_report.md
+├── operator_body_direction_metrics.csv
+├── operator_body_frame_metrics.csv
+└── operator_body_sources.txt

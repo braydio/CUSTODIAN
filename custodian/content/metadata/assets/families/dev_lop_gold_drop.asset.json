@@ -1,0 +1,217 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "dev_lop_gold_drop",
+  "kind": "world_prop",
+  "priority": "P2",
+  "runtime": {
+    "domain": "sprites/dev/lords_of_pain",
+    "owner": "dev_lop_gold_drop"
+  },
+  "canvas": {
+    "width": 256,
+    "height": 256
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "idle_n": {
+      "required": true,
+      "layer": "body",
+      "action_group": "pickup",
+      "variant": "idle_n",
+      "layout": "horizontal_strip",
+      "frame_width": 256,
+      "frame_height": 256,
+      "animation": true,
+      "frames": 8,
+      "fps": 8
+    },
+    "idle_nne": {
+      "required": true,
+      "layer": "body",
+      "action_group": "pickup",
+      "variant": "idle_nne",
+      "layout": "horizontal_strip",
+      "frame_width": 256,
+      "frame_height": 256,
+      "animation": true,
+      "frames": 8,
+      "fps": 8
+    },
+    "idle_ne": {
+      "required": true,
+      "layer": "body",
+      "action_group": "pickup",
+      "variant": "idle_ne",
+      "layout": "horizontal_strip",
+      "frame_width": 256,
+      "frame_height": 256,
+      "animation": true,
+      "frames": 8,
+      "fps": 8
+    },
+    "idle_nee": {
+      "required": true,
+      "layer": "body",
+      "action_group": "pickup",
+      "variant": "idle_nee",
+      "layout": "horizontal_strip",
+      "frame_width": 256,
+      "frame_height": 256,
+      "animation": true,
+      "frames": 8,
+      "fps": 8
+    },
+    "idle_e": {
+      "required": true,
+      "layer": "body",
+      "action_group": "pickup",
+      "variant": "idle_e",
+      "layout": "horizontal_strip",
+      "frame_width": 256,
+      "frame_height": 256,
+      "animation": true,
+      "frames": 8,
+      "fps": 8
+    },
+    "idle_see": {
+      "required": true,
+      "layer": "body",
+      "action_group": "pickup",
+      "variant": "idle_see",
+      "layout": "horizontal_strip",
+      "frame_width": 256,
+      "frame_height": 256,
+      "animation": true,
+      "frames": 8,
+      "fps": 8
+    },
+    "idle_se": {
+      "required": true,
+      "layer": "body",
+      "action_group": "pickup",
+      "variant": "idle_se",
+      "layout": "horizontal_strip",
+      "frame_width": 256,
+      "frame_height": 256,
+      "animation": true,
+      "frames": 8,
+      "fps": 8
+    },
+    "idle_sse": {
+      "required": true,
+      "layer": "body",
+      "action_group": "pickup",
+      "variant": "idle_sse",
+      "layout": "horizontal_strip",
+      "frame_width": 256,
+      "frame_height": 256,
+      "animation": true,
+      "frames": 8,
+      "fps": 8
+    },
+    "idle_s": {
+      "required": true,
+      "layer": "body",
+      "action_group": "pickup",
+      "variant": "idle_s",
+      "layout": "horizontal_strip",
+      "frame_width": 256,
+      "frame_height": 256,
+      "animation": true,
+      "frames": 8,
+      "fps": 8
+    },
+    "idle_ssw": {
+      "required": true,
+      "layer": "body",
+      "action_group": "pickup",
+      "variant": "idle_ssw",
+      "layout": "horizontal_strip",
+      "frame_width": 256,
+      "frame_height": 256,
+      "animation": true,
+      "frames": 8,
+      "fps": 8
+    },
+    "idle_sw": {
+      "required": true,
+      "layer": "body",
+      "action_group": "pickup",
+      "variant": "idle_sw",
+      "layout": "horizontal_strip",
+      "frame_width": 256,
+      "frame_height": 256,
+      "animation": true,
+      "frames": 8,
+      "fps": 8
+    },
+    "idle_sww": {
+      "required": true,
+      "layer": "body",
+      "action_group": "pickup",
+      "variant": "idle_sww",
+      "layout": "horizontal_strip",
+      "frame_width": 256,
+      "frame_height": 256,
+      "animation": true,
+      "frames": 8,
+      "fps": 8
+    },
+    "idle_w": {
+      "required": true,
+      "layer": "body",
+      "action_group": "pickup",
+      "variant": "idle_w",
+      "layout": "horizontal_strip",
+      "frame_width": 256,
+      "frame_height": 256,
+      "animation": true,
+      "frames": 8,
+      "fps": 8
+    },
+    "idle_nww": {
+      "required": true,
+      "layer": "body",
+      "action_group": "pickup",
+      "variant": "idle_nww",
+      "layout": "horizontal_strip",
+      "frame_width": 256,
+      "frame_height": 256,
+      "animation": true,
+      "frames": 8,
+      "fps": 8
+    },
+    "idle_nw": {
+      "required": true,
+      "layer": "body",
+      "action_group": "pickup",
+      "variant": "idle_nw",
+      "layout": "horizontal_strip",
+      "frame_width": 256,
+      "frame_height": 256,
+      "animation": true,
+      "frames": 8,
+      "fps": 8
+    },
+    "idle_nnw": {
+      "required": true,
+      "layer": "body",
+      "action_group": "pickup",
+      "variant": "idle_nnw",
+      "layout": "horizontal_strip",
+      "frame_width": 256,
+      "frame_height": 256,
+      "animation": true,
+      "frames": 8,
+      "fps": 8
+    }
+  },
+  "aliases": {},
+  "consumers": [
+    {
+      "type": "manifest",
+      "path": "res://content/data/dev/lords_of_pain/gallery_manifest.json"
+    }
+  ]
+}

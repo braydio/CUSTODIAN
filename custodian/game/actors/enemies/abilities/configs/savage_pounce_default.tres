@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="SavagePounceConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/actors/enemies/abilities/savage_pounce_config.gd" id="1_config"]
+
+[resource]
+script = ExtResource("1_config")
+windup_time = 0.28
+leap_time = 0.18
+recovery_time = 0.55
+distance_px = 64.0
+damage = 18.0
+knockback_px = 52.0
+cooldown = 1.8
+launch_band_min = 44.0
+launch_band_max = 132.0
+hit_active_start_ratio = 0.2
+hit_active_end_ratio = 0.86
+hit_forward_reach_px = 30.0
+hit_lateral_reach_px = 22.0

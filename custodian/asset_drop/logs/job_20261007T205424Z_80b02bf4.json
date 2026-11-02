@@ -1,0 +1,116 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20261007T205424Z_80b02bf4",
+  "timestamp": "2026-10-07T20:54:24.083842+00:00",
+  "family": "awakening_designation_locker",
+  "kind": "world_prop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/awakening_designation_locker/authorize_open.png",
+      "sha256": "1d9079f54da531e9bc4593c0f1042a2e68373712ea36a0e87be3e9969b59ec76"
+    },
+    {
+      "path": "asset_drop/inbox/awakening_designation_locker/closed.png",
+      "sha256": "c4899a5ea165eb000ae8aa7b7f6dcfe4ed542f1191a1f60957e88ab01e4c1eae"
+    },
+    {
+      "path": "asset_drop/inbox/awakening_designation_locker/empty.png",
+      "sha256": "a81ef45060d0b0f4ac44bcc91073c59e91ce1c3aafb9c8f4a873d7918b208b10"
+    },
+    {
+      "path": "asset_drop/inbox/awakening_designation_locker/open_loaded.png",
+      "sha256": "4d79cd27bf1c9091a4636b0c54131c2bf51524b8fd9a739f6c85076ab143a04d"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "authorize_open",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_designation_locker",
+        "world_prop",
+        "body",
+        "interaction",
+        "authorize_open",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/awakening/awakening_designation_locker/runtime/body/awakening_designation_locker__body__interaction__authorize_open__omni__8f__128x160.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "84675b649b8cf3b477e2b87ecd2a7ad405dfab1babb20d9146b4872e59b04156",
+      "operation": "replace",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "closed",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_designation_locker",
+        "world_prop",
+        "body",
+        "state",
+        "closed",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/awakening/awakening_designation_locker/runtime/body/awakening_designation_locker__body__state__closed__omni__1f__128x160.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "c4899a5ea165eb000ae8aa7b7f6dcfe4ed542f1191a1f60957e88ab01e4c1eae",
+      "operation": "replace",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "empty",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_designation_locker",
+        "world_prop",
+        "body",
+        "state",
+        "empty",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/awakening/awakening_designation_locker/runtime/body/awakening_designation_locker__body__state__empty__omni__1f__128x160.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "a81ef45060d0b0f4ac44bcc91073c59e91ce1c3aafb9c8f4a873d7918b208b10",
+      "operation": "replace",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "open_loaded",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_designation_locker",
+        "world_prop",
+        "body",
+        "state",
+        "open_loaded",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/awakening/awakening_designation_locker/runtime/body/awakening_designation_locker__body__state__open_loaded__omni__1f__128x160.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "4d79cd27bf1c9091a4636b0c54131c2bf51524b8fd9a739f6c85076ab143a04d",
+      "operation": "replace",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "retired_states": [],
+  "retired_files": [],
+  "backends": [
+    "runtime_ready",
+    "sprite_ingest"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

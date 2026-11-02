@@ -1,0 +1,20 @@
+{
+  "source": "operator__weapon__melee_1h__e__8f__156x96.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "operator/runtime/weapon/melee_1h/operator__weapon__melee_1h__e__8f__156x96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 8
+      }
+    }
+  ],
+  "frame_size": [
+    156,
+    96
+  ],
+  "remove_superseded": true
+}

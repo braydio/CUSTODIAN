@@ -1,0 +1,39 @@
+# OPERATOR RANGED STATIC WEAPON / SOCKET CLOSEOUT
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `operator-ranged-static-weapon-socket-closeout`
+- Status: `ready`
+- Dispatch: `auto`
+- Priority: `P1`
+- Depends on: `operator-ranged-domain-extraction`
+- Locks: `operator-runtime, operator-assets`
+- Kind: `implementation`
+- Review: `manual`
+- Reviewed main: `7511489095a7fc35a3e5c907d0e1ba42e8787f8e`
+- Goal: Finish the already-live Carbine hybrid socket architecture by making the static directional `WeaponSprite` the sole primary-ranged weapon renderer for authored socketed phases and retiring the remaining animated weapon-strip dependency without pretending incomplete body/socket directions are complete.
+- Completion boundary: Done when the live primary two-handed stance/relaxed/aim/fire presentation no longer needs `ModularSidearmSprite` weapon animation strips as a primary-ranged renderer or presentation clock follower; `WeaponSprite` plus frame-aware socket metadata owns weapon placement/draw order/muzzle/ejection for every currently supported body action/sector; relaxed posture has real authored/calibrated socket tracks for its published directions instead of sharing stance calibration; production socket metadata is reproducible from source marker/slice authority rather than bootstrap-only coordinates; and sidearm continues using its own weapon renderer unchanged.
+- Current measured state: The target architecture is already partly live. `operator.tscn` contains `PrimaryWeaponSocket/WeaponSprite` as a `Sprite2D`; the Carbine definition supplies all eight `directional_weapon_textures`; `_apply_frame_aware_primary_weapon_socket()` selects the static sector texture and applies grip/muzzle/support/ejection/z metadata; `operator_weapon_socket_smoke.gd` proves the static sprite becomes visible and projectile/ejection origins match its socket. However primary-ranged presentation code still carries canonical animated weapon-strip identities on `ModularSidearmSprite`, frame-slaves that renderer in transition/fire paths, and the active design explicitly records those strips as compatibility presentation art. `relaxed_01` still uses `SHARED_WEAPON_SOCKET_POSTURES` to borrow same-sector stance calibration because no real relaxed track is published. Generated socket data remains only a phase-1 subset of body/action sectors, and missing body directions are a separate art-coverage problem.
+- Evidence: `custodian/game/actors/operator/operator.gd` static weapon/socket helpers and remaining `modular_sidearm_sprite` primary-ranged branches; `operator.tscn`; `carbine_rifle_mk1_definition.tres`; `operator_weapon_socket_smoke.gd`; `content/data/operator/generated/operator_weapon_sockets.generated.json`; `tools/aseprite/export_operator_weapon_sockets.lua`; `design/02_features/operator_modular_weapon/HYBRID_WEAPON_SOCKET_SYSTEM.md`.
+- Task-specific authority: `design/02_features/operator_modular_weapon/HYBRID_WEAPON_SOCKET_SYSTEM.md`; Operator animation/runtime authority; Asset Pipeline V2 for any source metadata publication.
+- Work surface: Primary-ranged presentation after F3 extraction; Carbine weapon definition/static texture presentation; socket library/generated data/exporter; source animation metadata needed to reproduce sockets; focused socket/ranged validation. Sidearm remains a separate presentation consumer.
+- Change:
+  1. Re-measure every current primary-ranged use of `ModularSidearmSprite` after F3 lands. Remove it only from the primary-ranged weapon role; do not break P-9 sidearm presentation, which may continue using that renderer or its extracted equivalent.
+  2. Make `WeaponSprite` the sole visible Carbine weapon layer for supported relaxed/stance/aim/fire phases. Upper-body animation remains the semantic/frame clock; static weapon texture selection follows the same accepted authored sector, while socket metadata supplies absolute grip/muzzle/support/ejection/z and bounded fine correction.
+  3. Delete primary-ranged weapon-strip playback, retargeting and frame-slaving branches once static/socket presentation proves equivalent or better. Remove dead canonical primary-ranged weapon-strip publication only if the animation reachability/orphan tooling proves zero other consumer; otherwise classify preservation truthfully rather than force-deleting art.
+  4. Calibrate real `ranged_2h/posture/relaxed_01` socket tracks for every currently published relaxed upper-body direction and remove `SHARED_WEAPON_SOCKET_POSTURES`. Do not synthesize missing directional body art or copy stance numbers blindly as final calibration.
+  5. Make production socket data reproducible from named source markers/slices using the existing exporter. Where current data was bootstrap-authored, add/reconcile the required named slices in the canonical source or an explicit reviewed source-metadata authority and regenerate the JSON. This is metadata/registration work, not pixel restyling.
+  6. Preserve strict missing-track behavior. A missing supported-action socket clears the active socket and fails loudly; no generic forward-distance muzzle or stale prior-frame socket may become authority.
+  7. Keep all eight static directional weapon textures, but do not claim eight-octant body/socket completion until corresponding upper-body actions exist and have calibrated tracks. The directional-art packet owns those missing body sectors.
+  8. Preserve the existing fine-angle correction contract and static texture scale unless focused evidence proves a defect. No ballistic-direction authority moves into socket orientation.
+- Preserve: accepted player aim owns shot center; upper body owns action/frame clock; projectile/muzzle/ejection/debug origin consistency; Carbine recoil tuning; camera ownership; sidearm presentation; fixed-step gameplay; canonical selector/runtime database.
+- Non-goals: No new body/FX direction art. No reload redesign. No sidearm static-weapon migration. No weapon-balance changes. No generic weapon-socket framework rewrite. No deletion of provenance art without zero-consumer proof.
+- Acceptance: Primary-ranged stance/relaxed/aim/fire shows exactly one Carbine weapon renderer and it is the static `WeaponSprite`; no primary-ranged path plays/slaves an animated weapon strip; socket/muzzle/ejection/z behavior remains exact; real relaxed tracks replace the sharing table for all published relaxed directions; generated socket JSON can be reproduced from the checked-in source marker/metadata path; missing-track negative controls fail closed; sidearm regressions remain green.
+- Validation: Extend `operator_weapon_socket_smoke.gd` with zero-primary-animated-weapon assertions, relaxed-track validation and source-generated-data parity; run primary modular fire, ranged-ready, ballistic aim, sidearm canonical and runtime animation-authority/reachability checks. Prefer exact track/frame/texture identity checks to screenshots. Use one compact ranged Moment Forge evidence capture only if static-vs-animated presentation equivalence cannot be falsified structurally. Finish with one changed-file closeout.
+- Task overrides: `none`
+- Deferred: N/NE/S/NW body/action authoring and matching socket calibration belong to `operator-modular-directional-coverage-closeout`; casing and magazine/offhand props remain content follow-ups unless already available when this packet executes.
+
+## Handoff
+
+- Next action: After F3 removes ranged state from the actor, cut the remaining primary animated weapon presentation over to the already-live static/socket renderer and close the relaxed/source-calibration exceptions.
+- Best starting files: ranged presenter/controller after F3; `operator.gd` socket helpers; `operator_weapon_socket_library.gd`; generated socket JSON/exporter; socket smoke.
+- Blockers or open questions: None requiring design judgment.

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="TerrainStampCatalog" load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://game/world/procgen/presentation/terrain_stamp_catalog.gd" id="1_catalog"]
+[ext_resource type="Resource" path="res://content/procgen/presentation/depth_chunks/depth_civic_foundation_breach_v1.tres" id="2"]
+[ext_resource type="Resource" path="res://content/procgen/presentation/depth_chunks/depth_fractured_ravine_v1.tres" id="3"]
+[ext_resource type="Resource" path="res://content/procgen/presentation/depth_chunks/depth_service_infrastructure_field_v1.tres" id="4"]
+[ext_resource type="Resource" path="res://content/procgen/presentation/depth_chunks/depth_talus_and_rubble_shelf_v1.tres" id="5"]
+[ext_resource type="Resource" path="res://content/procgen/presentation/depth_chunks/depth_scrubland_dry_basin_v1.tres" id="6"]
+[ext_resource type="Resource" path="res://content/procgen/presentation/depth_chunks/depth_scrubland_wash_channel_v1.tres" id="7"]
+[ext_resource type="Resource" path="res://content/procgen/presentation/depth_chunks/depth_scrubland_service_scar_v1.tres" id="8"]
+[ext_resource type="Resource" path="res://content/procgen/presentation/depth_chunks/depth_woodland_canopy_basin_v1.tres" id="9"]
+[ext_resource type="Resource" path="res://content/procgen/presentation/depth_chunks/depth_woodland_ravine_v1.tres" id="10"]
+
+[resource]
+script = ExtResource("1_catalog")
+stamps = Array[TerrainStampProfile]([ExtResource("2"), ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("6"), ExtResource("7"), ExtResource("8"), ExtResource("9"), ExtResource("10")])

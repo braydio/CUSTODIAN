@@ -1,0 +1,24 @@
+{
+  "asset_id": "sundered_keep_main",
+  "source_size_px": [
+    5048,
+    7000
+  ],
+  "grid": [
+    3,
+    4
+  ],
+  "plate_count": 9,
+  "omitted_empty_plate_count": 3,
+  "plate_core_size_px": 2048,
+  "bleed_px": 16,
+  "manifest": "res://content/backgrounds/authored_underlays/sundered_keep_main/sundered_keep_main.plates.json",
+  "runtime_scene": "res://game/world/presentation/generated/sundered_keep_main_underlay_runtime.tscn",
+  "preview_scene": "res://scenes/debug/generated/sundered_keep_main_underlay_preview.tscn",
+  "master_world_rect": [
+    0.0,
+    0.0,
+    3583.9992319999997,
+    4969.888
+  ]
+}

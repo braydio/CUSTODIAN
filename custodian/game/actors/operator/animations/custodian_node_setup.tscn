@@ -1,0 +1,20 @@
+[gd_scene format=3]
+
+[node name="Custodian" type="CharacterBody2D"]
+script = "res://game/actors/operator/operator.gd"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -20)
+scale = Vector2(0.15, 0.15)
+
+[node name="HitboxRoot" type="Node2D" parent="."]
+
+[node name="Hurtbox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+shape = "CapsuleShape2D"
+
+[node name="CameraShake" type="Node" parent="."]
+script = "res://game/actors/operator/animations/camera_shake.gd"

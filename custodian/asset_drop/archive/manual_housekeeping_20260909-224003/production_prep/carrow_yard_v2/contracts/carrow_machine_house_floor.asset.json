@@ -1,0 +1,662 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "carrow_machine_house_floor",
+  "kind": "tile",
+  "runtime": {
+    "domain": "tiles/interiors/runtime",
+    "owner": "carrow_machine_house_floor",
+    "template": "{domain}/{filename}",
+    "filename_policy": "template",
+    "filename_template": "floor_carrow_{variant}_32.png"
+  },
+  "canvas": {
+    "width": 32,
+    "height": 32
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "slab_plain_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "slab_plain_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "slab_worn_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "slab_worn_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "slab_cracked_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "slab_cracked_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "slab_cracked_02": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "slab_cracked_02",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "slab_oil_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "slab_oil_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "slab_pocked_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "slab_pocked_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "slab_scuffed_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "slab_scuffed_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "slab_oil_02": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "slab_oil_02",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "tread_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "tread_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "tread_worn_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "tread_worn_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "tread_scuffed_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "tread_scuffed_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "tread_hazard_left_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "tread_hazard_left_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "tread_hazard_right_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "tread_hazard_right_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "panel_bolted_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "panel_bolted_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "access_panel_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "access_panel_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "grate_horizontal_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "grate_horizontal_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "grate_horizontal_02": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "grate_horizontal_02",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "grate_vertical_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "grate_vertical_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "grate_grid_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "grate_grid_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "grate_honeycomb_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "grate_honeycomb_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "grate_slots_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "grate_slots_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "grate_slots_02": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "grate_slots_02",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "drain_square_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "drain_square_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "indicator_panel_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "indicator_panel_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "conduit_horizontal_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "conduit_horizontal_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "conduit_vertical_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "conduit_vertical_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "conduit_corner_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "conduit_corner_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "conduit_t_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "conduit_t_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "conduit_cross_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "conduit_cross_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "conduit_clamp_horizontal_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "conduit_clamp_horizontal_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "conduit_indicator_vertical_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "conduit_indicator_vertical_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "conduit_indicator_edge_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "conduit_indicator_edge_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "edge_plain_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "edge_plain_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "conduit_vertical_02": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "conduit_vertical_02",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "conduit_corner_02": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "conduit_corner_02",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "conduit_t_02": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "conduit_t_02",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "conduit_cross_02": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "conduit_cross_02",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "conduit_clamp_horizontal_02": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "conduit_clamp_horizontal_02",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "conduit_indicator_vertical_02": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "conduit_indicator_vertical_02",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "conduit_indicator_edge_02": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "conduit_indicator_edge_02",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "edge_vent_corner_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "edge_vent_corner_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "edge_vent_horizontal_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "edge_vent_horizontal_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "edge_vent_corner_02": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "edge_vent_corner_02",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "edge_vent_vertical_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "edge_vent_vertical_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "edge_bevel_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "edge_bevel_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "drain_round_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "drain_round_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "access_panel_02": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "access_panel_02",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "hazard_diagonal_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "hazard_diagonal_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "marking_line_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "marking_line_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "marking_cross_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "marking_cross_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "marking_corner_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "marking_corner_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "marking_bracket_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "marking_bracket_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "hazard_diagonal_02": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "hazard_diagonal_02",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "socket_small_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "socket_small_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "hatch_small_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "hatch_small_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "slot_small_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "slot_small_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "conduit_port_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "conduit_port_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "conduit_vertical_clamp_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "conduit_vertical_clamp_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "conduit_horizontal_clamp_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "conduit_horizontal_clamp_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "vent_square_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "vent_square_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "vent_triple_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "vent_triple_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "indicator_quad_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "indicator_quad_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "brace_x_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "brace_x_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "service_panel_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "service_panel_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    }
+  },
+  "aliases": {},
+  "consumers": []
+}

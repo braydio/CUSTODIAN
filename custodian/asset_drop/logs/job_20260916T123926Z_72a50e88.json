@@ -1,0 +1,44 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260916T123926Z_72a50e88",
+  "timestamp": "2026-09-16T12:39:26.801877+00:00",
+  "family": "awakening_undergate_environment",
+  "kind": "backdrop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/awakening_undergate_environment/foreground.png",
+      "sha256": "960efc257bf5fabdc0db96116a91087e3bb0c5c23ac36161f196ab2102976bda"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "foreground",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_undergate",
+        "backdrop",
+        "foreground",
+        "display",
+        "foreground",
+        "omni"
+      ],
+      "path": "content/levels/awakening/06_undergate/awakening_undergate_foreground_1536x1216.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "960efc257bf5fabdc0db96116a91087e3bb0c5c23ac36161f196ab2102976bda",
+      "operation": "replace",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

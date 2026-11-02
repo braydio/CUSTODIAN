@@ -1,0 +1,140 @@
+[
+	{
+		"data": {
+			"application_focused": true,
+			"duration_ms": 2004.855,
+			"overlay_visible": false,
+			"phase": "baseline",
+			"reason": "external_or_unclassified_stall",
+			"time_scale": 1.0,
+			"tree_paused": false,
+			"uptime_sec": 5.251
+		},
+		"kind": "performance_external_stall",
+		"tick": 0
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"name": "direct_line",
+				"tick": 15.0
+			},
+			"moment_tick": 15,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": true,
+				"tick": 15
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 15
+	},
+	{
+		"data": {
+			"from": "ARMED",
+			"to": "CAPTURING"
+		},
+		"kind": "performance_incident_state_changed",
+		"tick": 25
+	},
+	{
+		"data": {
+			"phase": "baseline",
+			"preroll_samples": 30,
+			"trigger": "automatic"
+		},
+		"kind": "performance_incident_started",
+		"tick": 25
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"name": "evacuation_turn",
+				"tick": 29.0
+			},
+			"moment_tick": 29,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": true,
+				"tick": 29
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 29
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"name": "civic_basin",
+				"tick": 43.0
+			},
+			"moment_tick": 43,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": true,
+				"tick": 43
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 43
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"name": "answers_court",
+				"tick": 57.0
+			},
+			"moment_tick": 57,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": true,
+				"tick": 57
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 57
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"name": "station_threshold",
+				"tick": 71.0
+			},
+			"moment_tick": 71,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": true,
+				"tick": 71
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 71
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "finish",
+				"tick": 86.0
+			},
+			"moment_tick": 86,
+			"result": {
+				"action": "finish",
+				"finish": true,
+				"ok": true,
+				"tick": 86
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 86
+	}
+]

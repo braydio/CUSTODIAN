@@ -1,0 +1,167 @@
+{
+  "schema": "game32.aggregate_review_apply_report.v1",
+  "aggregate": "custodian/content/tiles/gothic/vault/.review_batches/game32_asset_review/batch_0000_aggregate.game32.review.json",
+  "applied_utc": "2026-05-28T06:07:39+00:00",
+  "dry_run": false,
+  "results": [
+    {
+      "batch_index": 0,
+      "action": "keep",
+      "old_png": "custodian/content/tiles/gothic/vault/vault_floor_metal_inlay_01.png",
+      "old_manifest": "custodian/content/tiles/gothic/vault/vault_floor_metal_inlay_01.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/tiles/gothic/vault/vault_floor_metal_inlay_01.png",
+      "target_manifest": "custodian/content/tiles/gothic/vault/vault_floor_metal_inlay_01.game32.json"
+    },
+    {
+      "batch_index": 1,
+      "action": "keep",
+      "old_png": "custodian/content/tiles/gothic/vault/vault_floor_stone_01.png",
+      "old_manifest": "custodian/content/tiles/gothic/vault/vault_floor_stone_01.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/tiles/gothic/vault/vault_floor_stone_01.png",
+      "target_manifest": "custodian/content/tiles/gothic/vault/vault_floor_stone_01.game32.json"
+    },
+    {
+      "batch_index": 2,
+      "action": "keep",
+      "old_png": "custodian/content/tiles/gothic/vault/vault_floor_stone_02.png",
+      "old_manifest": "custodian/content/tiles/gothic/vault/vault_floor_stone_02.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/tiles/gothic/vault/vault_floor_stone_02.png",
+      "target_manifest": "custodian/content/tiles/gothic/vault/vault_floor_stone_02.game32.json"
+    },
+    {
+      "batch_index": 3,
+      "action": "keep",
+      "old_png": "custodian/content/tiles/gothic/vault/vault_floor_threshold_01.png",
+      "old_manifest": "custodian/content/tiles/gothic/vault/vault_floor_threshold_01.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/tiles/gothic/vault/vault_floor_threshold_01.png",
+      "target_manifest": "custodian/content/tiles/gothic/vault/vault_floor_threshold_01.game32.json"
+    },
+    {
+      "batch_index": 4,
+      "action": "keep",
+      "old_png": "custodian/content/tiles/gothic/vault/vault_reliquary_cache.png",
+      "old_manifest": "custodian/content/tiles/gothic/vault/vault_reliquary_cache.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/tiles/gothic/vault/vault_reliquary_cache.png",
+      "target_manifest": "custodian/content/tiles/gothic/vault/vault_reliquary_cache.game32.json"
+    },
+    {
+      "batch_index": 5,
+      "action": "keep",
+      "old_png": "custodian/content/tiles/gothic/vault/vault_vertical_wall_side_01.png",
+      "old_manifest": "custodian/content/tiles/gothic/vault/vault_vertical_wall_side_01.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/tiles/gothic/vault/vault_vertical_wall_side_01.png",
+      "target_manifest": "custodian/content/tiles/gothic/vault/vault_vertical_wall_side_01.game32.json"
+    },
+    {
+      "batch_index": 6,
+      "action": "keep",
+      "old_png": "custodian/content/tiles/gothic/vault/vault_vertical_wall_side_02.png",
+      "old_manifest": "custodian/content/tiles/gothic/vault/vault_vertical_wall_side_02.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/tiles/gothic/vault/vault_vertical_wall_side_02.png",
+      "target_manifest": "custodian/content/tiles/gothic/vault/vault_vertical_wall_side_02.game32.json"
+    },
+    {
+      "batch_index": 7,
+      "action": "keep",
+      "old_png": "custodian/content/tiles/gothic/vault/vault_vertical_wall_side_03.png",
+      "old_manifest": "custodian/content/tiles/gothic/vault/vault_vertical_wall_side_03.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/tiles/gothic/vault/vault_vertical_wall_side_03.png",
+      "target_manifest": "custodian/content/tiles/gothic/vault/vault_vertical_wall_side_03.game32.json"
+    },
+    {
+      "batch_index": 8,
+      "action": "keep",
+      "old_png": "custodian/content/tiles/gothic/vault/vault_vertical_wall_side_04.png",
+      "old_manifest": "custodian/content/tiles/gothic/vault/vault_vertical_wall_side_04.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/tiles/gothic/vault/vault_vertical_wall_side_04.png",
+      "target_manifest": "custodian/content/tiles/gothic/vault/vault_vertical_wall_side_04.game32.json"
+    },
+    {
+      "batch_index": 9,
+      "action": "keep",
+      "old_png": "custodian/content/tiles/gothic/vault/vault_wall_back_01.png",
+      "old_manifest": "custodian/content/tiles/gothic/vault/vault_wall_back_01.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/tiles/gothic/vault/vault_wall_back_01.png",
+      "target_manifest": "custodian/content/tiles/gothic/vault/vault_wall_back_01.game32.json"
+    },
+    {
+      "batch_index": 10,
+      "action": "keep",
+      "old_png": "custodian/content/tiles/gothic/vault/vault_wall_back_02.png",
+      "old_manifest": "custodian/content/tiles/gothic/vault/vault_wall_back_02.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/tiles/gothic/vault/vault_wall_back_02.png",
+      "target_manifest": "custodian/content/tiles/gothic/vault/vault_wall_back_02.game32.json"
+    },
+    {
+      "batch_index": 11,
+      "action": "keep",
+      "old_png": "custodian/content/tiles/gothic/vault/vault_wall_broken_01.png",
+      "old_manifest": "custodian/content/tiles/gothic/vault/vault_wall_broken_01.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/tiles/gothic/vault/vault_wall_broken_01.png",
+      "target_manifest": "custodian/content/tiles/gothic/vault/vault_wall_broken_01.game32.json"
+    },
+    {
+      "batch_index": 12,
+      "action": "keep",
+      "old_png": "custodian/content/tiles/gothic/vault/vault_wall_cap_01.png",
+      "old_manifest": "custodian/content/tiles/gothic/vault/vault_wall_cap_01.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/tiles/gothic/vault/vault_wall_cap_01.png",
+      "target_manifest": "custodian/content/tiles/gothic/vault/vault_wall_cap_01.game32.json"
+    },
+    {
+      "batch_index": 13,
+      "action": "keep",
+      "old_png": "custodian/content/tiles/gothic/vault/vault_wall_corner_01.png",
+      "old_manifest": "custodian/content/tiles/gothic/vault/vault_wall_corner_01.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/tiles/gothic/vault/vault_wall_corner_01.png",
+      "target_manifest": "custodian/content/tiles/gothic/vault/vault_wall_corner_01.game32.json"
+    },
+    {
+      "batch_index": 14,
+      "action": "keep",
+      "old_png": "custodian/content/tiles/gothic/vault/vault_wall_side_01.png",
+      "old_manifest": "custodian/content/tiles/gothic/vault/vault_wall_side_01.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/tiles/gothic/vault/vault_wall_side_01.png",
+      "target_manifest": "custodian/content/tiles/gothic/vault/vault_wall_side_01.game32.json"
+    }
+  ],
+  "master_manifest": {
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/gothic/gothic_master_sheet.game32.json",
+    "backup": null,
+    "assets_applied": 0,
+    "assets_skipped_unmatched": 15,
+    "unmatched": [
+      "custodian/content/tiles/gothic/vault/vault_floor_metal_inlay_01.png",
+      "custodian/content/tiles/gothic/vault/vault_floor_stone_01.png",
+      "custodian/content/tiles/gothic/vault/vault_floor_stone_02.png",
+      "custodian/content/tiles/gothic/vault/vault_floor_threshold_01.png",
+      "custodian/content/tiles/gothic/vault/vault_reliquary_cache.png",
+      "custodian/content/tiles/gothic/vault/vault_vertical_wall_side_01.png",
+      "custodian/content/tiles/gothic/vault/vault_vertical_wall_side_02.png",
+      "custodian/content/tiles/gothic/vault/vault_vertical_wall_side_03.png",
+      "custodian/content/tiles/gothic/vault/vault_vertical_wall_side_04.png",
+      "custodian/content/tiles/gothic/vault/vault_wall_back_01.png",
+      "custodian/content/tiles/gothic/vault/vault_wall_back_02.png",
+      "custodian/content/tiles/gothic/vault/vault_wall_broken_01.png",
+      "custodian/content/tiles/gothic/vault/vault_wall_cap_01.png",
+      "custodian/content/tiles/gothic/vault/vault_wall_corner_01.png",
+      "custodian/content/tiles/gothic/vault/vault_wall_side_01.png"
+    ],
+    "total_assets": 617
+  }
+}

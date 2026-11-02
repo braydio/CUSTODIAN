@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "asset_pack": "custodian_runtime_lane_road_pieces",
+  "source_image": "custodian/content/tiles/roads_paths/",
+  "export_root": "res://content/tiles/roads_paths/runtime/roads/lane",
+  "piece_count": 10,
+  "tile_contract": {
+    "tile_size": [32, 32],
+    "placement_model": "lane_offset_from_centerline",
+    "lane_roles": ["center", "left_1", "left_2", "right_1", "right_2"],
+    "fallback": "connection_bitmask"
+  },
+  "direction_bitmask": {
+    "n": 1,
+    "e": 2,
+    "s": 4,
+    "w": 8
+  },
+  "procgen_notes": {
+    "purpose": "Production 32x32 lane-role road tiles for main-map road overlays. Each lane role has a horizontal (primary) and vertical (variant) piece for orientation coverage.",
+    "naming_rule": "roads_lane_<role>.png and roads_lane_<role>_v.png for vertical variant"
+  },
+  "pieces": [
+    {
+      "id": "roads_lane_center",
+      "file": "pieces/roads_lane_center.png",
+      "name": "roads_lane_center",
+      "kind": "lane",
+      "width_class": "lane",
+      "lane_role": "center",
+      "lane_offset": 0,
+      "tile_size": [32, 32],
+      "tags": ["road", "lane", "center"]
+    },
+    {
+      "id": "roads_lane_center_v",
+      "file": "pieces/roads_lane_center_v.png",
+      "name": "roads_lane_center_vertical_variant",
+      "kind": "lane",
+      "width_class": "lane",
+      "lane_role": "center",
+      "lane_offset": 0,
+      "tile_size": [32, 32],
+      "tags": ["road", "lane", "center", "vertical"]
+    },
+    {
+      "id": "roads_lane_left_1",
+      "file": "pieces/roads_lane_left_1.png",
+      "name": "roads_lane_left_1",
+      "kind": "lane",
+      "width_class": "lane",
+      "lane_role": "left_1",
+      "lane_offset": -1,
+      "tile_size": [32, 32],
+      "tags": ["road", "lane", "left"]
+    },
+    {
+      "id": "roads_lane_left_1_v",
+      "file": "pieces/roads_lane_left_1_v.png",
+      "name": "roads_lane_left_1_vertical_variant",
+      "kind": "lane",
+      "width_class": "lane",
+      "lane_role": "left_1",
+      "lane_offset": -1,
+      "tile_size": [32, 32],
+      "tags": ["road", "lane", "left", "vertical"]
+    },
+    {
+      "id": "roads_lane_left_2",
+      "file": "pieces/roads_lane_left_2.png",
+      "name": "roads_lane_left_2",
+      "kind": "lane",
+      "width_class": "lane",
+      "lane_role": "left_2",
+      "lane_offset": -2,
+      "tile_size": [32, 32],
+      "tags": ["road", "lane", "left"]
+    },
+    {
+      "id": "roads_lane_left_2_v",
+      "file": "pieces/roads_lane_left_2_v.png",
+      "name": "roads_lane_left_2_vertical_variant",
+      "kind": "lane",
+      "width_class": "lane",
+      "lane_role": "left_2",
+      "lane_offset": -2,
+      "tile_size": [32, 32],
+      "tags": ["road", "lane", "left", "vertical"]
+    },
+    {
+      "id": "roads_lane_right_1",
+      "file": "pieces/roads_lane_right_1.png",
+      "name": "roads_lane_right_1",
+      "kind": "lane",
+      "width_class": "lane",
+      "lane_role": "right_1",
+      "lane_offset": 1,
+      "tile_size": [32, 32],
+      "tags": ["road", "lane", "right"]
+    },
+    {
+      "id": "roads_lane_right_1_v",
+      "file": "pieces/roads_lane_right_1_v.png",
+      "name": "roads_lane_right_1_vertical_variant",
+      "kind": "lane",
+      "width_class": "lane",
+      "lane_role": "right_1",
+      "lane_offset": 1,
+      "tile_size": [32, 32],
+      "tags": ["road", "lane", "right", "vertical"]
+    },
+    {
+      "id": "roads_lane_right_2",
+      "file": "pieces/roads_lane_right_2.png",
+      "name": "roads_lane_right_2",
+      "kind": "lane",
+      "width_class": "lane",
+      "lane_role": "right_2",
+      "lane_offset": 2,
+      "tile_size": [32, 32],
+      "tags": ["road", "lane", "right"]
+    },
+    {
+      "id": "roads_lane_right_2_v",
+      "file": "pieces/roads_lane_right_2_v.png",
+      "name": "roads_lane_right_2_vertical_variant",
+      "kind": "lane",
+      "width_class": "lane",
+      "lane_role": "right_2",
+      "lane_offset": 2,
+      "tile_size": [32, 32],
+      "tags": ["road", "lane", "right", "vertical"]
+    }
+  ]
+}

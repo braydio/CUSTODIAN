@@ -1,0 +1,163 @@
+{
+  "schema": "game32.aggregate_review_apply_report.v1",
+  "aggregate": "custodian/content/props/gothic/uncategorized_environment_asset/.review_batches/game32_asset_review/batch_0000_aggregate.game32.review.json",
+  "applied_utc": "2026-05-27T07:59:34+00:00",
+  "dry_run": false,
+  "results": [
+    {
+      "batch_index": 0,
+      "action": "move",
+      "old_png": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_01.png",
+      "old_manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_01.game32.json",
+      "status": "moved",
+      "target_png": "custodian/content/props/gothic/forest_intrusion/gothic_dead_root_stump_01.png",
+      "import_status": "deleted_import",
+      "target_manifest": "custodian/content/props/gothic/forest_intrusion/gothic_dead_root_stump_01.game32.json"
+    },
+    {
+      "batch_index": 1,
+      "action": "move",
+      "old_png": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_02.png",
+      "old_manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_02.game32.json",
+      "status": "moved",
+      "target_png": "custodian/content/props/gothic/forest_intrusion/gothic_dead_bramble_shrub_01.png",
+      "import_status": "deleted_import",
+      "target_manifest": "custodian/content/props/gothic/forest_intrusion/gothic_dead_bramble_shrub_01.game32.json"
+    },
+    {
+      "batch_index": 2,
+      "action": "move",
+      "old_png": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_07.png",
+      "old_manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_07.game32.json",
+      "status": "moved",
+      "target_png": "custodian/content/props/gothic/storage/gothic_barrel_stack_01.png",
+      "import_status": "deleted_import",
+      "target_manifest": "custodian/content/props/gothic/storage/gothic_barrel_stack_01.game32.json"
+    },
+    {
+      "batch_index": 3,
+      "action": "move",
+      "old_png": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_09.png",
+      "old_manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_09.game32.json",
+      "status": "moved",
+      "target_png": "custodian/content/props/gothic/barricades/gothic_curved_sandbag_barricade_01.png",
+      "import_status": "deleted_import",
+      "target_manifest": "custodian/content/props/gothic/barricades/gothic_curved_sandbag_barricade_01.game32.json"
+    },
+    {
+      "batch_index": 4,
+      "action": "move",
+      "old_png": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_10.png",
+      "old_manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_10.game32.json",
+      "status": "moved",
+      "target_png": "custodian/content/props/gothic/fences/gothic_spiked_fence_barricade_01.png",
+      "import_status": "deleted_import",
+      "target_manifest": "custodian/content/props/gothic/fences/gothic_spiked_fence_barricade_01.game32.json"
+    },
+    {
+      "batch_index": 5,
+      "action": "move",
+      "old_png": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_11.png",
+      "old_manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_11.game32.json",
+      "status": "moved",
+      "target_png": "custodian/content/props/gothic/fences/gothic_iron_fence_segment_01.png",
+      "import_status": "deleted_import",
+      "target_manifest": "custodian/content/props/gothic/fences/gothic_iron_fence_segment_01.game32.json"
+    },
+    {
+      "batch_index": 6,
+      "action": "move",
+      "old_png": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_12.png",
+      "old_manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_12.game32.json",
+      "status": "moved",
+      "target_png": "custodian/content/props/gothic/wall_dressing/gothic_tattered_black_banner_01.png",
+      "import_status": "deleted_import",
+      "target_manifest": "custodian/content/props/gothic/wall_dressing/gothic_tattered_black_banner_01.game32.json"
+    },
+    {
+      "batch_index": 7,
+      "action": "move",
+      "old_png": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_13.png",
+      "old_manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_13.game32.json",
+      "status": "moved",
+      "target_png": "custodian/content/props/gothic/wall_dressing/gothic_hanging_chain_hook_01.png",
+      "import_status": "deleted_import",
+      "target_manifest": "custodian/content/props/gothic/wall_dressing/gothic_hanging_chain_hook_01.game32.json"
+    },
+    {
+      "batch_index": 8,
+      "action": "move",
+      "old_png": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_14.png",
+      "old_manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_14.game32.json",
+      "status": "moved",
+      "target_png": "custodian/content/props/gothic/machines/gothic_cyan_power_core_machine_01.png",
+      "import_status": "deleted_import",
+      "target_manifest": "custodian/content/props/gothic/machines/gothic_cyan_power_core_machine_01.game32.json"
+    },
+    {
+      "batch_index": 9,
+      "action": "move",
+      "old_png": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_15.png",
+      "old_manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_15.game32.json",
+      "status": "moved",
+      "target_png": "custodian/content/props/gothic/rubble/gothic_twisted_root_machine_wreck_01.png",
+      "import_status": "deleted_import",
+      "target_manifest": "custodian/content/props/gothic/rubble/gothic_twisted_root_machine_wreck_01.game32.json"
+    },
+    {
+      "batch_index": 10,
+      "action": "move",
+      "old_png": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_16.png",
+      "old_manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_16.game32.json",
+      "status": "moved",
+      "target_png": "custodian/content/props/gothic/barricades/gothic_straight_sandbag_barricade_01.png",
+      "import_status": "deleted_import",
+      "target_manifest": "custodian/content/props/gothic/barricades/gothic_straight_sandbag_barricade_01.game32.json"
+    },
+    {
+      "batch_index": 11,
+      "action": "move",
+      "old_png": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_17.png",
+      "old_manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_17.game32.json",
+      "status": "moved",
+      "target_png": "custodian/content/props/gothic/architectural/gothic_small_stone_pillar_01.png",
+      "import_status": "deleted_import",
+      "target_manifest": "custodian/content/props/gothic/architectural/gothic_small_stone_pillar_01.game32.json"
+    },
+    {
+      "batch_index": 12,
+      "action": "move",
+      "old_png": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_18.png",
+      "old_manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_18.game32.json",
+      "status": "moved",
+      "target_png": "custodian/content/props/gothic/barricades/gothic_long_sandbag_barricade_01.png",
+      "import_status": "deleted_import",
+      "target_manifest": "custodian/content/props/gothic/barricades/gothic_long_sandbag_barricade_01.game32.json"
+    },
+    {
+      "batch_index": 13,
+      "action": "move",
+      "old_png": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_19.png",
+      "old_manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_19.game32.json",
+      "status": "moved",
+      "target_png": "custodian/content/props/gothic/machines/gothic_broken_control_machine_wreck_01.png",
+      "import_status": "deleted_import",
+      "target_manifest": "custodian/content/props/gothic/machines/gothic_broken_control_machine_wreck_01.game32.json"
+    }
+  ],
+  "master_manifest": {
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/gothic/gothic_master_sheet.game32.json",
+    "backup": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/gothic/gothic_master_sheet.game32.json.bak-20260527T075934Z",
+    "assets_applied": 14,
+    "assets_skipped_unmatched": 0,
+    "unmatched": [],
+    "total_assets": 618
+  },
+  "cleanup": {
+    "sidecars_deleted": 14,
+    "sidecars_skipped_dry_run": 0,
+    "sidecars_skipped_not_mastered": 0,
+    "sidecars_skipped_due_errors": 0,
+    "cleanup_allowed": true
+  }
+}

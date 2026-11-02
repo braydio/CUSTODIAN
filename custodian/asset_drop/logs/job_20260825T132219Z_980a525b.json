@@ -1,0 +1,44 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260825T132219Z_980a525b",
+  "timestamp": "2026-08-25T13:22:19.733601+00:00",
+  "family": "meridian_civic_floor",
+  "kind": "tile",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/meridian_civic_floor/atlas.png",
+      "sha256": "65dc9abc0d9689940f8d3ff475437ecf22ef33c1183af2b3d4ad8d8250af43db"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "atlas",
+      "direction": "omni",
+      "semantic_identity": [
+        "meridian_civic_floor",
+        "tile",
+        "body",
+        "tile",
+        "atlas",
+        "omni"
+      ],
+      "path": "content/tiles/ash_bell/lower_quarter/meridian_civic_floor_atlas_512.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "65dc9abc0d9689940f8d3ff475437ecf22ef33c1183af2b3d4ad8d8250af43db",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": false,
+    "ok": null
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

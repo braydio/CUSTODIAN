@@ -1,0 +1,23 @@
+[procgen_spatial_normalization_smoke] ROOT scale = (1.0, 1.0)
+[procgen_spatial_normalization_smoke] TILESET floor.tile_size = (32, 32), walls.tile_size = (32, 32)
+[procgen_spatial_normalization_smoke] RUNTIME get_runtime_tile_size() = (32.0, 32.0)
+[procgen_spatial_normalization_smoke] HORIZONTAL STEP (0,0)->(1,0) = 32.0000
+[procgen_spatial_normalization_smoke] VERTICAL STEP (0,0)->(0,1) = 32.0000
+[procgen_spatial_normalization_smoke] ROUND TRIP (0, 0) -> (16.0, 16.0) -> (0, 0)
+[procgen_spatial_normalization_smoke] ROUND TRIP (1, 0) -> (48.0, 16.0) -> (1, 0)
+[procgen_spatial_normalization_smoke] ROUND TRIP (0, 1) -> (16.0, 48.0) -> (0, 1)
+[procgen_spatial_normalization_smoke] ROUND TRIP (10, 10) -> (336.0, 336.0) -> (10, 10)
+[procgen_spatial_normalization_smoke] ROUND TRIP (31, 17) -> (1008.0, 560.0) -> (31, 17)
+[procgen_spatial_normalization_smoke] CENTERING map_to_local(0,0) local = (16.0, 16.0) (expected half-cell (16.0, 16.0))
+[procgen_spatial_normalization_smoke] MAP EXTENTS map_size=(96, 80) measured_width=3040.00 expected_width=3040.00 measured_height=2528.00 expected_height=2528.00
+[procgen_spatial_normalization_smoke] PLAYER SPAWN tile=(48, 68) global=(1552.0, 2192.0)
+[procgen_spatial_normalization_smoke] WALL COLLISION sample_tile=(0, 33) shape_size=(32.0, 32.0)
+[procgen_spatial_normalization_smoke] NAVIGATION spawn=(48, 68) neighbor=(49, 68) neighbor_global=(1584.0, 2192.0) projected=(1584.0, 2192.0)
+[procgen_spatial_normalization_smoke] SHADOW _tile_size = (32.0, 32.0)
+[procgen_spatial_normalization_smoke] THREADWAY source_tile_size=(32.0, 32.0) runtime_tile_size=(32.0, 32.0)
+[procgen_spatial_normalization_smoke] THREADWAY floor sprite scale = (1.0, 1.0)
+[procgen_spatial_normalization_smoke] CONTRACT_WORLD_LOADER tile=(5, 5) loader_world=(176.0, 176.0) canonical=(176.0, 176.0)
+[procgen_spatial_normalization_smoke] STREAMING chunk_tiles=16 world_span=512.00
+[procgen_spatial_normalization_smoke] NO SCALE COMPENSATION offenders=[]
+procgen_spatial_normalization_smoke: PASS
+ERROR: 4 resources still in use at exit (run with --verbose for details).

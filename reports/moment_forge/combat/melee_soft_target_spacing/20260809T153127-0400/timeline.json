@@ -1,0 +1,178 @@
+[
+	{
+		"data": {
+			"authored_action": {
+				"action": "input_tap",
+				"hold_ticks": 1.0,
+				"name": "toggle_unarmed",
+				"tick": 2.0
+			},
+			"moment_tick": 2,
+			"result": {
+				"action": "input_tap",
+				"ok": true,
+				"tick": 2
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 2
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "input_tap",
+				"hold_ticks": 1.0,
+				"name": "toggle_unarmed",
+				"tick": 4.0
+			},
+			"moment_tick": 4,
+			"result": {
+				"action": "input_tap",
+				"ok": true,
+				"tick": 4
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 4
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "aim_at_role",
+				"role": "operator",
+				"target_role": "aimed_target",
+				"tick": 8.0
+			},
+			"moment_tick": 8,
+			"result": {
+				"action": "aim_at_role",
+				"ok": true,
+				"tick": 8
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 8
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "input_press",
+				"name": "move_right",
+				"tick": 16.0
+			},
+			"moment_tick": 16,
+			"result": {
+				"action": "input_press",
+				"ok": true,
+				"tick": 16
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 16
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "input_release",
+				"name": "move_right",
+				"tick": 35.0
+			},
+			"moment_tick": 35,
+			"result": {
+				"action": "input_release",
+				"ok": true,
+				"tick": 35
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 35
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "input_tap",
+				"hold_ticks": 1.0,
+				"name": "attack_primary",
+				"tick": 62.0
+			},
+			"moment_tick": 62,
+			"result": {
+				"action": "input_tap",
+				"ok": true,
+				"tick": 62
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 62
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "capture_marker",
+				"name": "assisted_contact",
+				"tick": 76.0
+			},
+			"moment_tick": 76,
+			"result": {
+				"action": "capture_marker",
+				"ok": true,
+				"tick": 76
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 76
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "aim_at_role",
+				"role": "operator",
+				"target_role": "near_off_aim",
+				"tick": 132.0
+			},
+			"moment_tick": 132,
+			"result": {
+				"action": "aim_at_role",
+				"ok": true,
+				"tick": 132
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 132
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "input_tap",
+				"hold_ticks": 1.0,
+				"name": "attack_primary",
+				"tick": 142.0
+			},
+			"moment_tick": 142,
+			"result": {
+				"action": "input_tap",
+				"ok": true,
+				"tick": 142
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 142
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "finish",
+				"tick": 358.0
+			},
+			"moment_tick": 358,
+			"result": {
+				"action": "finish",
+				"finish": true,
+				"ok": true,
+				"tick": 358
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 358
+	}
+]

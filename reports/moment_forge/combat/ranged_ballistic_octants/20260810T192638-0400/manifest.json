@@ -1,0 +1,164 @@
+{
+  "artifacts": {
+    "assertions": "assertions.json",
+    "audio": "audio_mix.wav",
+    "contact_sheet": "current_contact_sheet.png",
+    "metrics": "metrics.json",
+    "probes": "probes.json",
+    "report": "index.html",
+    "telemetry": "telemetry.json",
+    "timeline": "timeline.json",
+    "video": "current.mp4",
+    "visual_diff": null
+  },
+  "baseline": {
+    "status": "not_requested"
+  },
+  "baseline_compatibility": {
+    "contact_sheet_ticks": [
+      28,
+      62,
+      96,
+      164,
+      232,
+      266
+    ],
+    "end_tick": 291,
+    "fps": 60,
+    "height": 720,
+    "metrics_schema_major": 1,
+    "scenario_id": "combat/ranged_ballistic_octants",
+    "scenario_schema_version": 1,
+    "scenario_sha256": "feb4fe6d4ea1a95656987cc82ee31988ca9e7a4d396eec708e1cec93cac5c336",
+    "start_tick": 0,
+    "width": 1280
+  },
+  "capture": {
+    "audio_requested": false,
+    "fps": 60,
+    "height": 720,
+    "mode": "full",
+    "synchronization": "verified",
+    "width": 1280
+  },
+  "generated_at": "2026-08-10T19:26:56.299884-04:00",
+  "media": {
+    "audio_metrics": {
+      "available": true,
+      "channels": 2,
+      "duration_sec": 4.9,
+      "frames": 235200,
+      "noise_floor_dbfs": -27.04351479587883,
+      "onset_ms": 2935.2708333333335,
+      "onset_threshold_dbfs": -15.043514795878831,
+      "peak_dbfs": -13.826216944503,
+      "peak_time_ms": 4002.59375,
+      "rms_dbfs": -25.79639917490921,
+      "sample_rate": 48000,
+      "sample_width": 2
+    },
+    "audio_state": {
+      "available": true,
+      "canonical_available": true,
+      "conversion": "ffmpeg",
+      "requested": false
+    },
+    "ffmpeg_available": true,
+    "visual_diff": null
+  },
+  "repository": {
+    "branch": "main",
+    "changed_files": [
+      "M custodian/content/routes/ash_bell/forlorn_ritualant_underground_route.json",
+      " M custodian/docs/ai_context/CURRENT_STATE.md",
+      " M custodian/docs/ai_context/FILE_INDEX.md",
+      " M custodian/docs/ai_context/VALIDATION_RECIPES.md",
+      " M custodian/docs/ai_context/task_packets/RANGED_BALLISTIC_AIM_RESOLUTION.md",
+      " M custodian/docs/ai_context/task_packets/SUNDERED_KEEP_PROCGEN_FRONTAGE.md",
+      " M custodian/game/actors/operator/operator.gd",
+      " M custodian/game/ui/hud/components/ranged_ballistic_pip.gd",
+      " M custodian/game/world/approaches/ash_bell/ash_bell_lift_ingress_presentation.gd",
+      " M custodian/game/world/approaches/ash_bell/ash_bell_lift_ingress_site.gd",
+      " M custodian/game/world/levels/world_ingress_placement_resolver.gd",
+      " M custodian/game/world/levels/world_ingress_spawner.gd",
+      " M custodian/game/world/procgen/proc_gen_tilemap.gd",
+      " M custodian/game/world/vistas/sundered_keep/sundered_keep_procgen_vista_presentation.gd",
+      " M custodian/game/world/vistas/sundered_keep/sundered_keep_procgen_vista_presentation.tscn",
+      " M custodian/tools/iteration/godot/moment_action_driver.gd",
+      " M custodian/tools/iteration/godot/moment_runner.gd",
+      " M custodian/tools/validation/ash_bell_lift_ingress_presentation_smoke.gd",
+      " M custodian/tools/validation/operator_ranged_ballistic_aim_smoke.gd",
+      " M custodian/tools/validation/ranged_ballistic_reticle_smoke.gd",
+      " M custodian/tools/validation/sundered_keep_procgen_vista_layering_smoke.gd",
+      " M custodian/tools/validation/world_ingress_spawner_smoke.gd",
+      " M design/02_features/combat_feel/RANGED_COMBAT_BALANCE_AND_STEALTH_SYSTEM.md",
+      " M design/02_features/operator/CROSSHAIR_SYSTEM.md",
+      " M design/02_features/operator_modular_weapon/HYBRID_WEAPON_SOCKET_SYSTEM.md",
+      " M design/05_levels/ASH_BELL_LIFT_INGRESS_PRESENTATION.md",
+      " M design/05_levels/FORLORN_RITUALANT_UNDERGROUND_MIGRATION.md",
+      " M design/05_levels/SUNDERED_KEEP_PROCGEN_FRONTAGE.md",
+      "?? custodian/content/sprites/world/ingress/ash_bell/ash_bell__underground_ingress_fx__warning_lamp__loop__omni__8f__64.aseprite.uid",
+      "?? custodian/content/sprites/world/ingress/ash_bell/ash_bell_threadway_resolve_01__7f__32.png.import",
+      "?? custodian/content/sprites/world/ingress/ash_bell/source/generated/ash_bell_threadway_floor_tiles_6t_32px_1.png.import",
+      "?? custodian/content/sprites/world/ingress/ash_bell/source/generated/ash_bell_threadway_floor_tiles_6t_32px_2.png.import",
+      "?? custodian/content/sprites/world/ingress/ash_bell/source/generated/ash_bell_threadway_floor_tiles_6t_32px_3.png.import",
+      "?? custodian/content/sprites/world/ingress/ash_bell/source/generated/ash_bell_threadway_floor_tiles_6t_32px_4.png.import",
+      "?? custodian/content/sprites/world/ingress/ash_bell/source/generated/ash_bell_threadway_floor_tiles_6t_32px_5.png.import",
+      "?? custodian/content/sprites/world/ingress/ash_bell/source/generated/ash_bell_threadway_floor_tiles_6t_32px_6.png.import",
+      "?? custodian/content/sprites/world/ingress/ash_bell/source/generated/ash_bell_threadway_floor_tiles_source_01__6t__3072x512.aseprite.uid",
+      "?? custodian/game/world/approaches/ash_bell/ash_bell_threadway_causeway.gd",
+      "?? custodian/game/world/approaches/ash_bell/ash_bell_threadway_causeway.gd.uid",
+      "?? custodian/tools/iteration/scenarios/combat/ranged_ballistic_octants.json",
+      "?? custodian/tools/iteration/scenarios/traversal/ash_bell_threadway_resolve.json",
+      "?? custodian/tools/validation/ash_bell_threadway_causeway_smoke.gd",
+      "?? custodian/tools/validation/ash_bell_threadway_causeway_smoke.gd.uid",
+      "?? custodian/tools/validation/fixtures/ash_bell_threadway_moment.gd",
+      "?? custodian/tools/validation/fixtures/ash_bell_threadway_moment.gd.uid",
+      "?? custodian/tools/validation/fixtures/ash_bell_threadway_moment.tscn",
+      "?? reports/moment_forge/combat/ranged_ballistic_alignment/20260810T192430-0400/",
+      "?? reports/moment_forge/combat/ranged_ballistic_octants/",
+      "?? reports/moment_forge/traversal/ash_bell_threadway_resolve/",
+      "?? reports/moment_forge/vista/sundered_keep_first_reveal/20260810T140539-0400/",
+      "?? reports/sundered_keep_layering_review_20260810/",
+      "?? reports/sundered_keep_layering_review_20260810_final/"
+    ],
+    "commit": "f6794e071988b36f6cfd329ac92a721bf561f95d",
+    "dirty": true,
+    "root": "/home/braydenchaffee/Projects/CUSTODIAN"
+  },
+  "run_id": "20260810T192638-0400",
+  "runtime": {
+    "godot": {
+      "build": "arch_linux",
+      "hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+      "hex": 263937,
+      "major": 4,
+      "minor": 7,
+      "patch": 1,
+      "status": "stable",
+      "string": "4.7.1-stable (arch_linux)",
+      "timestamp": 1783976428
+    },
+    "physics_hz": 60,
+    "renderer": "vulkan"
+  },
+  "scenario": {
+    "id": "combat/ranged_ballistic_octants",
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/ranged_ballistic_octants/20260810T192638-0400/scenario.snapshot.json",
+    "schema_version": 1,
+    "sha256": "feb4fe6d4ea1a95656987cc82ee31988ca9e7a4d396eec708e1cec93cac5c336"
+  },
+  "schema": "custodian.moment_forge.run_manifest.v1",
+  "stable_assertions_passed": true,
+  "stable_fingerprint": {
+    "algorithm": "sha256",
+    "schema": "custodian.moment_forge.stable_fingerprint.v1",
+    "value": "699f7c9de43458a853a16109b12ed461853e45caa41a86299b651de1ad0e72a6"
+  },
+  "status": "passed",
+  "tools": {
+    "ffmpeg": "/usr/bin/ffmpeg",
+    "pillow": "12.3.0",
+    "python": "3.14.6"
+  }
+}

@@ -1,0 +1,278 @@
+{
+	"actions": [
+		{
+			"action": "fixture_command",
+			"ok": true,
+			"response": true,
+			"tick": 10
+		},
+		{
+			"action": "fixture_command",
+			"ok": true,
+			"response": true,
+			"tick": 200
+		},
+		{
+			"action": "fixture_command",
+			"ok": true,
+			"response": true,
+			"tick": 220
+		},
+		{
+			"action": "fixture_command",
+			"ok": true,
+			"response": true,
+			"tick": 245
+		}
+	],
+	"assertions": [
+		{
+			"actual": true,
+			"expected": {
+				"role": "vaultwing",
+				"severity": "error",
+				"type": "role_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "role_exists"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"field": "bond_trial_started",
+				"op": "eq",
+				"probe": "bond",
+				"severity": "error",
+				"tick": 20.0,
+				"type": "probe_compare",
+				"value": true
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"field": "guarded_observation_seen",
+				"op": "eq",
+				"probe": "bond",
+				"severity": "error",
+				"tick": 180.0,
+				"type": "probe_compare",
+				"value": true
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"field": "controlled_approach_seen",
+				"op": "eq",
+				"probe": "bond",
+				"severity": "error",
+				"tick": 205.0,
+				"type": "probe_compare",
+				"value": true
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"field": "bond_completed",
+				"op": "eq",
+				"probe": "bond",
+				"severity": "error",
+				"tick": 225.0,
+				"type": "probe_compare",
+				"value": true
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1,
+			"expected": {
+				"field": "bond_completion_count",
+				"op": "eq",
+				"probe": "bond",
+				"severity": "error",
+				"tick": 225.0,
+				"type": "probe_compare",
+				"value": 1.0
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": "bonded",
+			"expected": {
+				"field": "vaultwing_stage",
+				"op": "eq",
+				"probe": "bond",
+				"severity": "error",
+				"tick": 225.0,
+				"type": "probe_compare",
+				"value": "bonded"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": "operator_allied",
+			"expected": {
+				"field": "vaultwing_allegiance",
+				"op": "eq",
+				"probe": "bond",
+				"severity": "error",
+				"tick": 225.0,
+				"type": "probe_compare",
+				"value": "operator_allied"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"field": "bond_same_actor",
+				"op": "eq",
+				"probe": "bond",
+				"severity": "error",
+				"tick": 225.0,
+				"type": "probe_compare",
+				"value": true
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": false,
+			"expected": {
+				"field": "hostile_attack_during_trial",
+				"op": "eq",
+				"probe": "bond",
+				"severity": "error",
+				"tick": 225.0,
+				"type": "probe_compare",
+				"value": false
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": false,
+			"expected": {
+				"field": "operator_targetable_after_bond",
+				"op": "eq",
+				"probe": "bond",
+				"severity": "error",
+				"tick": 225.0,
+				"type": "probe_compare",
+				"value": false
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": false,
+			"expected": {
+				"severity": "error",
+				"type": "no_unreleased_inputs"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "no_unreleased_inputs"
+		}
+	],
+	"capture_failures": [],
+	"capture_mode": "evidence",
+	"completed": true,
+	"completed_tick": 250,
+	"failures": [],
+	"keyframes": [
+		{
+			"path": "/home/braydenchaffee/Projects/.custodian-worktrees/vaultwing-bond-greet-final-ingest-20260929T025940/reports/moment_forge/combat/vaultwing_first_bond/20260929T044349-0400/keyframes/tick_000000.png",
+			"render_frame": 6,
+			"sha256": "f602bf7545a6f864ce95c97bff549faa049f9dff04202b29c9ba6f8babf23d9d",
+			"tick": 0
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/.custodian-worktrees/vaultwing-bond-greet-final-ingest-20260929T025940/reports/moment_forge/combat/vaultwing_first_bond/20260929T044349-0400/keyframes/tick_000040.png",
+			"render_frame": 46,
+			"sha256": "53d7195c25fe3dc03e618e0d3c34c1a3836ded2d93f351f0a30bfcf51a464c6f",
+			"tick": 40
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/.custodian-worktrees/vaultwing-bond-greet-final-ingest-20260929T025940/reports/moment_forge/combat/vaultwing_first_bond/20260929T044349-0400/keyframes/tick_000090.png",
+			"render_frame": 96,
+			"sha256": "2158b60bd7074d0a210edadcd764e2438336e06e6f2d3ebc10d992780dc96fff",
+			"tick": 90
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/.custodian-worktrees/vaultwing-bond-greet-final-ingest-20260929T025940/reports/moment_forge/combat/vaultwing_first_bond/20260929T044349-0400/keyframes/tick_000145.png",
+			"render_frame": 151,
+			"sha256": "ee673a0321380f2f2b6081b91212db11c714e6f344c74698532584d606a20b7e",
+			"tick": 145
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/.custodian-worktrees/vaultwing-bond-greet-final-ingest-20260929T025940/reports/moment_forge/combat/vaultwing_first_bond/20260929T044349-0400/keyframes/tick_000200.png",
+			"render_frame": 206,
+			"sha256": "e484f893c27454c91e78564f1f9a5e57db0290844e883359ebe084eb88c297dc",
+			"tick": 200
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/.custodian-worktrees/vaultwing-bond-greet-final-ingest-20260929T025940/reports/moment_forge/combat/vaultwing_first_bond/20260929T044349-0400/keyframes/tick_000235.png",
+			"render_frame": 241,
+			"sha256": "3447f1c27b5999ab697395a87b8d5eab124d990e590229486cfe909913b08db3",
+			"tick": 235
+		}
+	],
+	"markers": [],
+	"passed": true,
+	"probe_failures": [],
+	"runtime": {
+		"godot": {
+			"build": "arch_linux",
+			"hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+			"hex": 263938,
+			"major": 4,
+			"minor": 7,
+			"patch": 2,
+			"status": "stable",
+			"string": "4.7.2-stable (arch_linux)",
+			"timestamp": 1786929518
+		},
+		"physics_hz": 60,
+		"renderer": "vulkan"
+	},
+	"scenario_id": "combat/vaultwing_first_bond",
+	"scenario_path": "/home/braydenchaffee/Projects/.custodian-worktrees/vaultwing-bond-greet-final-ingest-20260929T025940/reports/moment_forge/combat/vaultwing_first_bond/20260929T044349-0400/scenario.snapshot.json",
+	"schema": "custodian.moment_forge.run_result.v1",
+	"seed": 4410
+}

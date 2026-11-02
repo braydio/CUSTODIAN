@@ -1,0 +1,459 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260907T033505Z_fdb35a54",
+  "timestamp": "2026-09-07T03:35:05.243842+00:00",
+  "family": "district_transfer_frame",
+  "kind": "world_prop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/district_transfer_frame/aperture_loop.png",
+      "sha256": "57f8aae1d585a1691d1c5d94128a095ec934d7d45f7d27cbbb94e818af2d0914"
+    },
+    {
+      "path": "asset_drop/inbox/district_transfer_frame/body.png",
+      "sha256": "4bd0e1469967b1094ed669a3e2621ff18779aba1b365b28aca72b72f0bd194da"
+    },
+    {
+      "path": "asset_drop/inbox/district_transfer_frame/boot.png",
+      "sha256": "0c61dd46e1d3485e4de716c51d94aae7aeea2fa47b0b98d35d761bab2d9135f5"
+    },
+    {
+      "path": "asset_drop/inbox/district_transfer_frame/cable_feed_left.png",
+      "sha256": "b4d6a2e11be64583a90c0e70c9a6dea63016166d638fa5aa02a18d0186bac6f7"
+    },
+    {
+      "path": "asset_drop/inbox/district_transfer_frame/cable_feed_right.png",
+      "sha256": "58839d9280bacca43f6cbcf6e7ba99ef57fbc3b89f80a40c64bf942103989d79"
+    },
+    {
+      "path": "asset_drop/inbox/district_transfer_frame/contact_shadow.png",
+      "sha256": "2d545a27b83b94e9ab4018101c7b3748259bfd08893b4e544c87cd96d45fa1b0"
+    },
+    {
+      "path": "asset_drop/inbox/district_transfer_frame/emissive_acquiring.png",
+      "sha256": "624a4aa3f3e6b526b380112d100cc9d4fb07aeb2f424bdbf392723e358b82c2b"
+    },
+    {
+      "path": "asset_drop/inbox/district_transfer_frame/emissive_active.png",
+      "sha256": "78ec8ac39b96a3ada01b5c62b5f27dfcc0c18b42349237102b77945b12bd270d"
+    },
+    {
+      "path": "asset_drop/inbox/district_transfer_frame/emissive_dead.png",
+      "sha256": "84f5e7655281a9ceffa3c7bffdc5d220e341ce5f5bc885ca9974bc45fce41cb2"
+    },
+    {
+      "path": "asset_drop/inbox/district_transfer_frame/emissive_standby.png",
+      "sha256": "885c78e04b89b5c1a7636ba104640151014aa01a22f814bc722ea276b9a24636"
+    },
+    {
+      "path": "asset_drop/inbox/district_transfer_frame/failure.png",
+      "sha256": "27e35f41a7e7d99b88288c035a21e1db50f395e0e3047e67a333f1fb1efb6882"
+    },
+    {
+      "path": "asset_drop/inbox/district_transfer_frame/pedestal.png",
+      "sha256": "2a24cf031733c6b722366b41f4861cea3464944131268101707d8f6501ee95bd"
+    },
+    {
+      "path": "asset_drop/inbox/district_transfer_frame/pedestal_screen_acquiring.png",
+      "sha256": "9731c17756b990ad3bb9ef8d83176630fb6b858477b89bd8f80991ef6f25748c"
+    },
+    {
+      "path": "asset_drop/inbox/district_transfer_frame/pedestal_screen_active.png",
+      "sha256": "9cfe9a8f1746a11829287ca310f825ab9575deaf422af0fd13796406e7036aa8"
+    },
+    {
+      "path": "asset_drop/inbox/district_transfer_frame/pedestal_screen_off.png",
+      "sha256": "26726a60af3e90a3f2f72071912dc59c944ca494f33ce2f7b216c81fc8e5ff7d"
+    },
+    {
+      "path": "asset_drop/inbox/district_transfer_frame/pedestal_screen_ready.png",
+      "sha256": "afbaf25aa8876f1260be1523cffec0d58814cfab54c6fde9711d13f033aa3b5a"
+    },
+    {
+      "path": "asset_drop/inbox/district_transfer_frame/route_plate.png",
+      "sha256": "877fedda5f8731b098bb9b899b9fdacc21b26b3d1390491d2c7c3b359cce5b71"
+    },
+    {
+      "path": "asset_drop/inbox/district_transfer_frame/service_junction.png",
+      "sha256": "c739f9cf811d09c0e58448635c76ce3effdcd2d0608eaa030fa151d9c8dfdbc6"
+    },
+    {
+      "path": "asset_drop/inbox/district_transfer_frame/threshold.png",
+      "sha256": "f1d09c306af46956907310db9e12fa75fa334996b1c7370f71c280b64a7ac385"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "aperture_loop",
+      "direction": "omni",
+      "semantic_identity": [
+        "district_transfer_frame",
+        "world_prop",
+        "fx",
+        "interaction",
+        "aperture_loop",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/district_transfer_frame/runtime/fx/interaction/district_transfer_frame__fx__interaction__aperture_loop__omni__8f__96x160.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "567c355f676e13eb10a2072e8250d7538b74daa4725d430ef37263a939f12ac4",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "body",
+      "direction": "omni",
+      "semantic_identity": [
+        "district_transfer_frame",
+        "world_prop",
+        "body",
+        "structure",
+        "body",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/district_transfer_frame/runtime/body/structure/district_transfer_frame__body__structure__body__omni__1f__192x256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "4bd0e1469967b1094ed669a3e2621ff18779aba1b365b28aca72b72f0bd194da",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "boot",
+      "direction": "omni",
+      "semantic_identity": [
+        "district_transfer_frame",
+        "world_prop",
+        "fx",
+        "interaction",
+        "boot",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/district_transfer_frame/runtime/fx/interaction/district_transfer_frame__fx__interaction__boot__omni__6f__96x160.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "98defb5dfb6e13be87225c16413210cfac31aaf38c2b6cb375ae34d5a735e45e",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "cable_feed_left",
+      "direction": "omni",
+      "semantic_identity": [
+        "district_transfer_frame",
+        "world_prop",
+        "body",
+        "dressing",
+        "cable_feed_left",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/district_transfer_frame/runtime/body/dressing/district_transfer_frame__body__dressing__cable_feed_left__omni__1f__96x128.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "b4d6a2e11be64583a90c0e70c9a6dea63016166d638fa5aa02a18d0186bac6f7",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "cable_feed_right",
+      "direction": "omni",
+      "semantic_identity": [
+        "district_transfer_frame",
+        "world_prop",
+        "body",
+        "dressing",
+        "cable_feed_right",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/district_transfer_frame/runtime/body/dressing/district_transfer_frame__body__dressing__cable_feed_right__omni__1f__96x128.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "58839d9280bacca43f6cbcf6e7ba99ef57fbc3b89f80a40c64bf942103989d79",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "contact_shadow",
+      "direction": "omni",
+      "semantic_identity": [
+        "district_transfer_frame",
+        "world_prop",
+        "fx",
+        "structure",
+        "contact_shadow",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/district_transfer_frame/runtime/fx/structure/district_transfer_frame__fx__structure__contact_shadow__omni__1f__192x96.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "2d545a27b83b94e9ab4018101c7b3748259bfd08893b4e544c87cd96d45fa1b0",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "emissive_acquiring",
+      "direction": "omni",
+      "semantic_identity": [
+        "district_transfer_frame",
+        "world_prop",
+        "fx",
+        "state",
+        "emissive_acquiring",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/district_transfer_frame/runtime/fx/state/district_transfer_frame__fx__state__emissive_acquiring__omni__1f__192x256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "624a4aa3f3e6b526b380112d100cc9d4fb07aeb2f424bdbf392723e358b82c2b",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "emissive_active",
+      "direction": "omni",
+      "semantic_identity": [
+        "district_transfer_frame",
+        "world_prop",
+        "fx",
+        "state",
+        "emissive_active",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/district_transfer_frame/runtime/fx/state/district_transfer_frame__fx__state__emissive_active__omni__1f__192x256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "78ec8ac39b96a3ada01b5c62b5f27dfcc0c18b42349237102b77945b12bd270d",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "emissive_dead",
+      "direction": "omni",
+      "semantic_identity": [
+        "district_transfer_frame",
+        "world_prop",
+        "fx",
+        "state",
+        "emissive_dead",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/district_transfer_frame/runtime/fx/state/district_transfer_frame__fx__state__emissive_dead__omni__1f__192x256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "84f5e7655281a9ceffa3c7bffdc5d220e341ce5f5bc885ca9974bc45fce41cb2",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "emissive_standby",
+      "direction": "omni",
+      "semantic_identity": [
+        "district_transfer_frame",
+        "world_prop",
+        "fx",
+        "state",
+        "emissive_standby",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/district_transfer_frame/runtime/fx/state/district_transfer_frame__fx__state__emissive_standby__omni__1f__192x256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "885c78e04b89b5c1a7636ba104640151014aa01a22f814bc722ea276b9a24636",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "failure",
+      "direction": "omni",
+      "semantic_identity": [
+        "district_transfer_frame",
+        "world_prop",
+        "fx",
+        "interaction",
+        "failure",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/district_transfer_frame/runtime/fx/interaction/district_transfer_frame__fx__interaction__failure__omni__6f__96x160.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "09ecb8b12df20f94317397a7d8fe9fbe9057fdcd3fe960c9c8772ec85edfc348",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "pedestal",
+      "direction": "omni",
+      "semantic_identity": [
+        "district_transfer_frame",
+        "world_prop",
+        "body",
+        "control",
+        "pedestal",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/district_transfer_frame/runtime/body/control/district_transfer_frame__body__control__pedestal__omni__1f__64x96.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "2a24cf031733c6b722366b41f4861cea3464944131268101707d8f6501ee95bd",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "pedestal_screen_acquiring",
+      "direction": "omni",
+      "semantic_identity": [
+        "district_transfer_frame",
+        "world_prop",
+        "fx",
+        "control",
+        "screen_acquiring",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/district_transfer_frame/runtime/fx/control/district_transfer_frame__fx__control__screen_acquiring__omni__1f__32x32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "9731c17756b990ad3bb9ef8d83176630fb6b858477b89bd8f80991ef6f25748c",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "pedestal_screen_active",
+      "direction": "omni",
+      "semantic_identity": [
+        "district_transfer_frame",
+        "world_prop",
+        "fx",
+        "control",
+        "screen_active",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/district_transfer_frame/runtime/fx/control/district_transfer_frame__fx__control__screen_active__omni__1f__32x32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "9cfe9a8f1746a11829287ca310f825ab9575deaf422af0fd13796406e7036aa8",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "pedestal_screen_off",
+      "direction": "omni",
+      "semantic_identity": [
+        "district_transfer_frame",
+        "world_prop",
+        "fx",
+        "control",
+        "screen_off",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/district_transfer_frame/runtime/fx/control/district_transfer_frame__fx__control__screen_off__omni__1f__32x32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "26726a60af3e90a3f2f72071912dc59c944ca494f33ce2f7b216c81fc8e5ff7d",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "pedestal_screen_ready",
+      "direction": "omni",
+      "semantic_identity": [
+        "district_transfer_frame",
+        "world_prop",
+        "fx",
+        "control",
+        "screen_ready",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/district_transfer_frame/runtime/fx/control/district_transfer_frame__fx__control__screen_ready__omni__1f__32x32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "afbaf25aa8876f1260be1523cffec0d58814cfab54c6fde9711d13f033aa3b5a",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "route_plate",
+      "direction": "omni",
+      "semantic_identity": [
+        "district_transfer_frame",
+        "world_prop",
+        "body",
+        "control",
+        "route_plate",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/district_transfer_frame/runtime/body/control/district_transfer_frame__body__control__route_plate__omni__1f__96x32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "877fedda5f8731b098bb9b899b9fdacc21b26b3d1390491d2c7c3b359cce5b71",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "service_junction",
+      "direction": "omni",
+      "semantic_identity": [
+        "district_transfer_frame",
+        "world_prop",
+        "body",
+        "control",
+        "service_junction",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/district_transfer_frame/runtime/body/control/district_transfer_frame__body__control__service_junction__omni__1f__64x64.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "c739f9cf811d09c0e58448635c76ce3effdcd2d0608eaa030fa151d9c8dfdbc6",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "threshold",
+      "direction": "omni",
+      "semantic_identity": [
+        "district_transfer_frame",
+        "world_prop",
+        "body",
+        "structure",
+        "threshold",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/district_transfer_frame/runtime/body/structure/district_transfer_frame__body__structure__threshold__omni__1f__160x96.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "f1d09c306af46956907310db9e12fa75fa334996b1c7370f71c280b64a7ac385",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready",
+    "sprite_ingest"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

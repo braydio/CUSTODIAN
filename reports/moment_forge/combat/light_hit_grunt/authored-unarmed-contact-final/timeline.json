@@ -1,0 +1,90 @@
+[
+	{
+		"data": {
+			"authored_action": {
+				"action": "input_tap",
+				"hold_ticks": 1.0,
+				"name": "toggle_unarmed",
+				"tick": 2.0
+			},
+			"moment_tick": 2,
+			"result": {
+				"action": "input_tap",
+				"ok": true,
+				"tick": 2
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 2
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "aim_at_role",
+				"role": "operator",
+				"target_role": "target",
+				"tick": 20.0
+			},
+			"moment_tick": 20,
+			"result": {
+				"action": "aim_at_role",
+				"ok": true,
+				"tick": 20
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 20
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "input_tap",
+				"hold_ticks": 1.0,
+				"name": "attack_primary",
+				"tick": 30.0
+			},
+			"moment_tick": 30,
+			"result": {
+				"action": "input_tap",
+				"ok": true,
+				"tick": 30
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 30
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "capture_marker",
+				"name": "expected_contact",
+				"tick": 34.0
+			},
+			"moment_tick": 34,
+			"result": {
+				"action": "capture_marker",
+				"ok": true,
+				"tick": 34
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 34
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "finish",
+				"tick": 118.0
+			},
+			"moment_tick": 118,
+			"result": {
+				"action": "finish",
+				"finish": true,
+				"ok": true,
+				"tick": 118
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 118
+	}
+]

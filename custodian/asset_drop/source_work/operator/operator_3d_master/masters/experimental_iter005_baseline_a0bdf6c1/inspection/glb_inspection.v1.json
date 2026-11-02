@@ -1,0 +1,113 @@
+{
+  "asset": {
+    "generator": "Khronos glTF Blender I/O v5.2.41",
+    "version": "2.0"
+  },
+  "dependencies": [],
+  "extensions": {
+    "required": [],
+    "used": []
+  },
+  "geometry": [
+    {
+      "index": 0,
+      "material_indices": [
+        0
+      ],
+      "name": "output_unwrapped",
+      "skinned_attributes": true,
+      "triangles": 10367,
+      "vertices": 17592
+    }
+  ],
+  "images": [
+    {
+      "index": 0,
+      "mime_type": "image/png",
+      "name": "normal",
+      "sha256": "99104bf59973815afe271982e7d506dcb0b387a9471b8ed222670ef2a7b88cb6"
+    },
+    {
+      "index": 1,
+      "mime_type": "image/png",
+      "name": "texture_0",
+      "sha256": "817980f1cb24a817248a88b62d1db0f4aab05952f576ea71b16e1e34d52a6a31"
+    },
+    {
+      "index": 2,
+      "mime_type": "image/png",
+      "name": "texture_0_metallic_roughness",
+      "sha256": "d0e7094812bfcf4221c2b993a2293fe0cc74b635e705ef4ec003abaaadaded26"
+    }
+  ],
+  "materials": [
+    {
+      "index": 0,
+      "name": "BakedMaterial",
+      "pbr_metallic_roughness": {
+        "baseColorTexture": {
+          "index": 1
+        },
+        "metallicRoughnessTexture": {
+          "index": 2
+        }
+      },
+      "sha256": "e957808d48e054bc241de8c4bc4e4e72d96210a7c037fafe39cb8afbb93cf743"
+    }
+  ],
+  "rig": {
+    "joint_count": 42,
+    "joint_names": [
+      "Bone_004",
+      "Bone_005",
+      "Bone_006",
+      "Bone_007",
+      "Bone_008",
+      "Bone_009",
+      "Bone_010",
+      "Bone_011",
+      "Bone_012",
+      "Bone_013",
+      "Bone_017",
+      "Bone_018",
+      "Bone_022",
+      "Bone_023",
+      "Bone_027",
+      "Bone_028",
+      "headfront",
+      "mixamorig:Head",
+      "mixamorig:HeadTop_End",
+      "mixamorig:Hips",
+      "mixamorig:LeftArm",
+      "mixamorig:LeftFoot",
+      "mixamorig:LeftForeArm",
+      "mixamorig:LeftHand",
+      "mixamorig:LeftLeg",
+      "mixamorig:LeftShoulder",
+      "mixamorig:LeftToeBase",
+      "mixamorig:LeftToe_End",
+      "mixamorig:LeftUpLeg",
+      "mixamorig:Neck",
+      "mixamorig:RightArm",
+      "mixamorig:RightFoot",
+      "mixamorig:RightForeArm",
+      "mixamorig:RightHand",
+      "mixamorig:RightLeg",
+      "mixamorig:RightShoulder",
+      "mixamorig:RightToeBase",
+      "mixamorig:RightToe_End",
+      "mixamorig:RightUpLeg",
+      "mixamorig:Spine",
+      "mixamorig:Spine1",
+      "mixamorig:Spine2"
+    ],
+    "skin_count": 1,
+    "skinned": true
+  },
+  "schema": "custodian.operator_3d_glb_inspection.v1",
+  "source": {
+    "bytes": 47298084,
+    "filename": "operator_run_mixamo_iter005_contact_ik.glb",
+    "sha256": "3968f0bbb47b9f0a9775537b669e7b69c972ad948da0ff121b216f26e5021479"
+  }
+}

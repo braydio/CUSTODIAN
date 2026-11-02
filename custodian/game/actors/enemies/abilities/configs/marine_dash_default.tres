@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="MarineDashConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/actors/enemies/abilities/marine_dash_config.gd" id="1_config"]
+
+[resource]
+script = ExtResource("1_config")
+windup_time = 0.32
+travel_time = 0.18
+impact_lock_time = 0.08
+recovery_time = 0.42
+distance_px = 150.0
+damage = 32.0
+poise_damage = 55.0
+knockback_px = 105.0
+attacker_hitstop = 0.045
+victim_hitstop = 0.09
+camera_shake_strength = 0.45
+camera_shake_duration = 0.16
+cooldown = 1.1
+hit_radius = 24.0
+hit_active_start_ratio = 0.28
+hit_active_end_ratio = 0.9
+hit_forward_reach_px = 30.0
+hit_lateral_reach_px = 22.0
+launch_band_min = 96.0
+launch_band_max = 240.0
+charge_extra_windup = 0.56
+charge_distance_bonus = 0.72
+charge_damage_bonus = 0.66
+prediction_time = 0.3
+reset_time = 0.48
+reset_speed = 100.0

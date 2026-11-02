@@ -1,0 +1,29 @@
+{
+	"durations": [
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0
+	],
+	"fps": 11.0,
+	"frame_rgba_sha256": [
+		"f8a5818254550e1143ad53d4253e9cb3e981b009c1797bf192aff48eba5dd393",
+		"98f5d56846c278f84388e304ac377119398702b02d7dd94c914aa0e96f57357e",
+		"0ca1fe9c7205a546c9df4a0aece08c8b86e938cf620bb97cc701c1538f56dac8",
+		"907783c2894327257b21ea1c5aa7660bd4cb2dbb877a37aba994696302deb8e9",
+		"003c18af26081a8b5dffc1a7dff9482ea36a7aaf405a8b56efb822f8bc906d74",
+		"1456a3142e4ecbc1a1c020b5bd6eee8b1d2acdab26da93ddb5be0585997213fa",
+		"4f9440689ab6300b6108e04a8df47b3ea5de9981af0a1e6443cea610e6f75ba4"
+	],
+	"frames": 7,
+	"loop": false,
+	"migration_source": {
+		"animation": "melee_2h_heavy_fx",
+		"consumer": "res://game/actors/operator/operator.gd",
+		"resource": "res://game/actors/operator/operator_melee_overlay_frames.tres"
+	},
+	"schema": "custodian.operator_animation_timing.v1"
+}

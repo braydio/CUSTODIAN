@@ -1,0 +1,9 @@
+depth_civic_foundation_breach_v1.tres
+depth_fractured_ravine_v1.tres
+depth_scrubland_dry_basin_v1.tres
+depth_scrubland_service_scar_v1.tres
+depth_scrubland_wash_channel_v1.tres
+depth_service_infrastructure_field_v1.tres
+depth_talus_and_rubble_shelf_v1.tres
+depth_woodland_canopy_basin_v1.tres
+depth_woodland_ravine_v1.tres

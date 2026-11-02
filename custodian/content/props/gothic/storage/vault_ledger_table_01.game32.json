@@ -1,0 +1,83 @@
+{
+  "schema": "game32.asset.v2",
+  "id": "vault_ledger_table_01",
+  "display_name": "Vault Ledger Table 01",
+  "source": {
+    "master_sheet": null,
+    "original_path": "res://content/props/gothic/storage/vault_ledger_table_01.png",
+    "section": "props",
+    "subtype": "props",
+    "source_rect_px": {
+      "x": 0,
+      "y": 0,
+      "w": 128,
+      "h": 96
+    },
+    "review_source": "human_llm_compact_review",
+    "review_status": "reviewed"
+  },
+  "file": {
+    "path": "res://content/props/gothic/storage/vault_ledger_table_01.png",
+    "pixel_size": {
+      "w": 128,
+      "h": 96
+    }
+  },
+  "classification": {
+    "asset_type": "props",
+    "semantic_role": "vault_ledger_table_storage_prop",
+    "placement_layer": "prop",
+    "tags": [
+      "gothic",
+      "prop",
+      "environment",
+      "vault",
+      "ledger",
+      "table",
+      "storage",
+      "records",
+      "interactable_candidate",
+      "loot_context"
+    ],
+    "review_status": "reviewed"
+  },
+  "placement": {
+    "tile_size": 32,
+    "footprint_tiles": {
+      "w": 4,
+      "h": 3
+    },
+    "origin_mode": "bottom_center",
+    "snap": "tile",
+    "allow_mirror_x": false,
+    "allow_rotation": false,
+    "y_sort": true,
+    "pivot_px": {
+      "x": 64,
+      "y": 96
+    },
+    "review_status": "reviewed"
+  },
+  "collision": {
+    "blocks_movement": true,
+    "blocks_sight": false,
+    "cover_value": 1,
+    "review_status": "reviewed",
+    "collision_shape": "footprint"
+  },
+  "procgen": {
+    "uses": [
+      "vault_dressing",
+      "storage_room_dressing",
+      "loot_context",
+      "interactable_candidate",
+      "resource_accounting"
+    ],
+    "weight": 8,
+    "can_spawn_indoor": true,
+    "can_spawn_outdoor": false,
+    "review_status": "reviewed",
+    "supports_gothic_compound": true
+  },
+  "master_index": 18
+}

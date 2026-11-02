@@ -1,0 +1,350 @@
+{
+  "schema": "custodian.authored_underlay_plate_manifest.v1",
+  "asset_id": "sundered_keep_main",
+  "generated_by": "slice_authored_underlay.py",
+  "source": {
+    "path": "art_source/underlays/sundered_keep/sundered_keep_main_overlay-production.png",
+    "size_px": [
+      5048,
+      7000
+    ],
+    "mode": "RGBA",
+    "sha256": "c48ccd5334467b243f414270a89f2a3e78fee313890631e731244d6e35632f5f",
+    "runtime_authority": false
+  },
+  "layout": {
+    "plate_core_size_px": 2048,
+    "bleed_px": 16,
+    "grid_columns": 3,
+    "grid_rows": 4,
+    "world_origin": [
+      0.0,
+      0.0
+    ],
+    "world_units_per_pixel": 0.709984,
+    "master_world_rect": [
+      0.0,
+      0.0,
+      3583.9992319999997,
+      4969.888
+    ],
+    "z_index": -120,
+    "texture_filter": "linear_mipmaps",
+    "omit_fully_transparent": true,
+    "omitted_empty_core_grid": [
+      [
+        0,
+        3
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        2,
+        3
+      ]
+    ]
+  },
+  "runtime": {
+    "manifest_res_path": "res://content/backgrounds/authored_underlays/sundered_keep_main/sundered_keep_main.plates.json",
+    "runtime_scene_res_path": "res://game/world/presentation/generated/sundered_keep_main_underlay_runtime.tscn",
+    "preview_scene_res_path": "res://scenes/debug/generated/sundered_keep_main_underlay_preview.tscn",
+    "loader_script_res_path": "res://game/world/presentation/authored_underlay_plate_loader.gd",
+    "streaming_enabled": true,
+    "preload_margin_world": 768.0,
+    "unload_margin_world": 1536.0,
+    "max_loads_per_tick": 2
+  },
+  "plate_count": 9,
+  "plates": [
+    {
+      "id": "000_000",
+      "grid": [
+        0,
+        0
+      ],
+      "res_path": "res://content/backgrounds/authored_underlays/sundered_keep_main/plates/sundered_keep_main__p_000_000.png",
+      "source_core_rect": [
+        0,
+        0,
+        2048,
+        2048
+      ],
+      "texture_core_rect": [
+        0,
+        0,
+        2048,
+        2048
+      ],
+      "texture_size_px": [
+        2064,
+        2064
+      ],
+      "world_rect": [
+        0.0,
+        0.0,
+        1454.047232,
+        1454.047232
+      ],
+      "world_units_per_pixel": 0.709984,
+      "sha256": "6c0cc4b9213a7fbdfb50514d46dc31c88e31b6bba9683cd4372ba88d1a3d55c5"
+    },
+    {
+      "id": "001_000",
+      "grid": [
+        1,
+        0
+      ],
+      "res_path": "res://content/backgrounds/authored_underlays/sundered_keep_main/plates/sundered_keep_main__p_001_000.png",
+      "source_core_rect": [
+        2048,
+        0,
+        2048,
+        2048
+      ],
+      "texture_core_rect": [
+        16,
+        0,
+        2048,
+        2048
+      ],
+      "texture_size_px": [
+        2080,
+        2064
+      ],
+      "world_rect": [
+        1454.047232,
+        0.0,
+        1454.047232,
+        1454.047232
+      ],
+      "world_units_per_pixel": 0.709984,
+      "sha256": "8cbd772f5d9da0b020fa07717cec93b952c12213598a8510b9de35710cede430"
+    },
+    {
+      "id": "002_000",
+      "grid": [
+        2,
+        0
+      ],
+      "res_path": "res://content/backgrounds/authored_underlays/sundered_keep_main/plates/sundered_keep_main__p_002_000.png",
+      "source_core_rect": [
+        4096,
+        0,
+        952,
+        2048
+      ],
+      "texture_core_rect": [
+        16,
+        0,
+        952,
+        2048
+      ],
+      "texture_size_px": [
+        968,
+        2064
+      ],
+      "world_rect": [
+        2908.094464,
+        0.0,
+        675.904768,
+        1454.047232
+      ],
+      "world_units_per_pixel": 0.709984,
+      "sha256": "78da4b4401c83c07707dfa6bf6e7b959c986bceb088780783248d97a7d80f5f5"
+    },
+    {
+      "id": "000_001",
+      "grid": [
+        0,
+        1
+      ],
+      "res_path": "res://content/backgrounds/authored_underlays/sundered_keep_main/plates/sundered_keep_main__p_000_001.png",
+      "source_core_rect": [
+        0,
+        2048,
+        2048,
+        2048
+      ],
+      "texture_core_rect": [
+        0,
+        16,
+        2048,
+        2048
+      ],
+      "texture_size_px": [
+        2064,
+        2080
+      ],
+      "world_rect": [
+        0.0,
+        1454.047232,
+        1454.047232,
+        1454.047232
+      ],
+      "world_units_per_pixel": 0.709984,
+      "sha256": "bd96bedae0b07dab962ca1bd11b19d5764800e4d5aa9608d3db847796a7982f4"
+    },
+    {
+      "id": "001_001",
+      "grid": [
+        1,
+        1
+      ],
+      "res_path": "res://content/backgrounds/authored_underlays/sundered_keep_main/plates/sundered_keep_main__p_001_001.png",
+      "source_core_rect": [
+        2048,
+        2048,
+        2048,
+        2048
+      ],
+      "texture_core_rect": [
+        16,
+        16,
+        2048,
+        2048
+      ],
+      "texture_size_px": [
+        2080,
+        2080
+      ],
+      "world_rect": [
+        1454.047232,
+        1454.047232,
+        1454.047232,
+        1454.047232
+      ],
+      "world_units_per_pixel": 0.709984,
+      "sha256": "ecadafdcabe2da40d5552801bed95c7c160463e6ce167ec3def91860c8927207"
+    },
+    {
+      "id": "002_001",
+      "grid": [
+        2,
+        1
+      ],
+      "res_path": "res://content/backgrounds/authored_underlays/sundered_keep_main/plates/sundered_keep_main__p_002_001.png",
+      "source_core_rect": [
+        4096,
+        2048,
+        952,
+        2048
+      ],
+      "texture_core_rect": [
+        16,
+        16,
+        952,
+        2048
+      ],
+      "texture_size_px": [
+        968,
+        2080
+      ],
+      "world_rect": [
+        2908.094464,
+        1454.047232,
+        675.904768,
+        1454.047232
+      ],
+      "world_units_per_pixel": 0.709984,
+      "sha256": "9bae89b3ff4b8053bb1e4188be23ec440afdf04761ff5f79149530aa9af5f3a8"
+    },
+    {
+      "id": "000_002",
+      "grid": [
+        0,
+        2
+      ],
+      "res_path": "res://content/backgrounds/authored_underlays/sundered_keep_main/plates/sundered_keep_main__p_000_002.png",
+      "source_core_rect": [
+        0,
+        4096,
+        2048,
+        2048
+      ],
+      "texture_core_rect": [
+        0,
+        16,
+        2048,
+        2048
+      ],
+      "texture_size_px": [
+        2064,
+        2080
+      ],
+      "world_rect": [
+        0.0,
+        2908.094464,
+        1454.047232,
+        1454.047232
+      ],
+      "world_units_per_pixel": 0.709984,
+      "sha256": "a28d5f1c928a8d0c5ec0375b1ef36e4d41111675cc84fdce707b92294c7413b4"
+    },
+    {
+      "id": "001_002",
+      "grid": [
+        1,
+        2
+      ],
+      "res_path": "res://content/backgrounds/authored_underlays/sundered_keep_main/plates/sundered_keep_main__p_001_002.png",
+      "source_core_rect": [
+        2048,
+        4096,
+        2048,
+        2048
+      ],
+      "texture_core_rect": [
+        16,
+        16,
+        2048,
+        2048
+      ],
+      "texture_size_px": [
+        2080,
+        2080
+      ],
+      "world_rect": [
+        1454.047232,
+        2908.094464,
+        1454.047232,
+        1454.047232
+      ],
+      "world_units_per_pixel": 0.709984,
+      "sha256": "f75384c1c08498ad2cf0cc4afe8b4290dd372beee53aa5ae1cd792540e98355d"
+    },
+    {
+      "id": "002_002",
+      "grid": [
+        2,
+        2
+      ],
+      "res_path": "res://content/backgrounds/authored_underlays/sundered_keep_main/plates/sundered_keep_main__p_002_002.png",
+      "source_core_rect": [
+        4096,
+        4096,
+        952,
+        2048
+      ],
+      "texture_core_rect": [
+        16,
+        16,
+        952,
+        2048
+      ],
+      "texture_size_px": [
+        968,
+        2080
+      ],
+      "world_rect": [
+        2908.094464,
+        2908.094464,
+        675.904768,
+        1454.047232
+      ],
+      "world_units_per_pixel": 0.709984,
+      "sha256": "0af90459ab85a264ae2d49055760b2779fbfbccc89a889826fef12075ef81b62"
+    }
+  ]
+}

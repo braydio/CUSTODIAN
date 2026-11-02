@@ -1,0 +1,43 @@
+{
+  "action_count": 4,
+  "completed": true,
+  "duration_ticks": 250,
+  "event_count": 11,
+  "fixture": {
+    "position": [
+      0.0,
+      0.0
+    ]
+  },
+  "media": {
+    "audio": {
+      "available": false
+    },
+    "baseline_audio": null,
+    "visual_diff": null
+  },
+  "operator": {
+    "position": [
+      664.686767578125,
+      361.485778808594
+    ]
+  },
+  "probe_sample_count": 7,
+  "stable": {
+    "completed_tick": 250,
+    "visible_visual_anchor_delta_px": null,
+    "visible_visual_anchor_sample_count": 0
+  },
+  "stable_fingerprint": {
+    "algorithm": "sha256",
+    "schema": "custodian.moment_forge.stable_fingerprint.v1",
+    "value": "155d7a9140e8aab7b618f74bb174a5ddf9e93981a357627b6ce181917894dee5"
+  },
+  "vaultwing": {
+    "position": [
+      610.686767578125,
+      361.485778808594
+    ]
+  },
+  "warning_count": 0
+}

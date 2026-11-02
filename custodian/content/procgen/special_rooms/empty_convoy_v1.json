@@ -1,0 +1,11 @@
+{
+  "id": "campaign_empty_convoy_v1",
+  "display_name": "Empty Convoy",
+  "scene_path": "res://game/world/events/campaign/empty_convoy_site.tscn",
+  "size_tiles": [12, 10],
+  "max_instances_per_run": 1,
+  "require_main_playable_component": true,
+  "clearance_tiles": 2,
+  "tags": ["campaign_event", "empty_convoy", "inspectable_manifest"],
+  "rarity": "uncommon"
+}

@@ -1,0 +1,23 @@
+{
+  "source": "operator__modular_weapon_vigil_dagger__melee_1h__walk_01__e__8f__96.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "operator/source/animations/melee_1h_dagger/locomotion/walk_01/operator__weapon__melee_1h_dagger__locomotion__walk_01__e__8f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 8
+      }
+    }
+  ],
+  "post_process": [
+    "operator_runtime_build"
+  ],
+  "frame_size": [
+    96,
+    96
+  ],
+  "remove_superseded": true
+}

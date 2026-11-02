@@ -1,0 +1,11 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__modular_upper_body__actions__field_patch_use_01__w__14f__96.json",
+	"outputs": [
+		"res://content/sprites/operator/new_operator/modular/field_patch_use_01/operator__modular_upper_body__actions__field_patch_use_01__w__14f__96.png"
+	],
+	"post_process": [
+		"operator_modular_runtime"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/operator__modular_upper_body__actions__field_patch_use_01__w__14f__96.png",
+	"timestamp_utc": "2026-07-11 15:03:53"
+}

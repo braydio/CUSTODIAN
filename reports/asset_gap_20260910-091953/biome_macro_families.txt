@@ -1,0 +1,4 @@
+custodian/content/procgen/biomes/wetland.tres:9:macro_stamp_families = PackedStringArray("procgen_depth_universal")
+custodian/content/procgen/biomes/rocky_upland.tres:9:macro_stamp_families = PackedStringArray("procgen_depth_universal")
+custodian/content/procgen/biomes/woodland.tres:9:macro_stamp_families = PackedStringArray("procgen_depth_universal", "procgen_depth_woodland")
+custodian/content/procgen/biomes/scrubland.tres:9:macro_stamp_families = PackedStringArray("procgen_depth_universal", "procgen_depth_scrubland")

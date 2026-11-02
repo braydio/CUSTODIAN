@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "id": "combat/ranged_ballistic_octants",
+  "description": "Steady Carbine aim review across all eight octants; exposes authored-track and socket-axis coverage without snap reversal.",
+  "scene": "res://scenes/debug/combat_playground.tscn",
+  "seed": 104729,
+  "duration_ticks": 292,
+  "simulation": {"physics_hz": 60, "warmup_ticks": 2, "max_wall_seconds": 30, "pause_during_setup": true},
+  "capture": {"width": 1280, "height": 720, "fps": 60, "audio": false, "start_tick": 0, "end_tick": 291, "contact_sheet_ticks": [28, 62, 96, 164, 232, 266], "required_keyframes": true, "background": "opaque"},
+  "setup": {
+    "remove_nodes": ["World/Enemies/EnemyGrunt1", "World/Enemies/EnemyGrunt2", "World/Enemies/EnemyGrunt3", "World/DroneManager"],
+    "roles": {"operator": {"node_path": "World/Operator"}},
+    "spawns": [],
+    "properties": [
+      {"role": "operator", "property": "global_position", "value": [420, 360]},
+      {"role": "operator", "property": "combat_loadout_mode", "value": "ranged"},
+      {"role": "operator", "property": "using_unarmed", "value": false},
+      {"role": "operator", "property": "primary_weapon_equipped", "value": true},
+      {"role": "operator", "property": "arrow_aim_enabled", "value": true},
+      {"role": "operator", "property": "operator_weapon_socket_debug_enabled", "value": true}
+    ],
+    "processing": [],
+    "fixture": {"id": "combat_playground", "config": {"review": "steady_octants"}}
+  },
+  "timeline": [
+    {"tick": 2, "action": "input_press", "name": "aim_hold"},
+    {"tick": 4, "action": "aim_at_world", "actor_role": "operator", "position": [420, 120]},
+    {"tick": 38, "action": "aim_at_world", "actor_role": "operator", "position": [590, 190]},
+    {"tick": 72, "action": "aim_at_world", "actor_role": "operator", "position": [660, 360]},
+    {"tick": 106, "action": "aim_at_world", "actor_role": "operator", "position": [590, 530]},
+    {"tick": 140, "action": "aim_at_world", "actor_role": "operator", "position": [420, 600]},
+    {"tick": 174, "action": "aim_at_world", "actor_role": "operator", "position": [250, 530]},
+    {"tick": 208, "action": "aim_at_world", "actor_role": "operator", "position": [180, 360]},
+    {"tick": 242, "action": "aim_at_world", "actor_role": "operator", "position": [250, 190]},
+    {"tick": 284, "action": "input_release", "name": "aim_hold"},
+    {"tick": 290, "action": "finish"}
+  ],
+  "probes": [
+    {"id": "operator_octants", "role": "operator", "fields": ["aim_direction", "visible_visual_anchor_delta_px"], "ticks": [28, 62, 96, 130, 164, 198, 232, 266], "required": true}
+  ],
+  "assertions": [
+    {"type": "role_exists", "role": "operator", "severity": "error"},
+    {"type": "no_unreleased_inputs", "severity": "error"},
+    {"type": "output_exists", "path": "telemetry.json", "severity": "error"}
+  ],
+  "stable_fingerprint": {"event_payload_fields": {}, "counters": [], "probes": ["operator_octants"], "position_quantum_px": 0.25, "float_quantum": 0.0001},
+  "tags": ["combat", "ranged", "ballistic_aim", "octants", "operator_animation", "socket_debug"]
+}

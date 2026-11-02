@@ -1,0 +1,7 @@
+# Python Simulation Infrastructure Degradation — Completion Summary
+
+- Implemented REMAP-1 review corrections and REMAP-2 wear, macro fidelity, simulation-owned repair/fabrication, shared recipe/output rules, ambient fabrication, snapshot v4 migration, invariants, focused tests, and authority documentation.
+- The historical Python wear formula matched across 25 readiness/fortification combinations. Fidelity and resource/economics behavior intentionally follows current Godot authority rather than forcing false historical parity.
+- Validation passed: focused REMAP-2, macro state, repair/fabrication, Python parity, Lattice canon docs, and the world-simulation migration suite (run once at closeout). Changed-unit validation passed 6/6 with complete coverage; `git diff --check` passed.
+- Rough edges: the migration suite emitted existing procgen stuck-pocket diagnostics and live-scene ObjectDB/resource shutdown warnings while returning PASS. An initial changed-unit run found stale retired-era wording in the active Lattice canon doc; that wording was corrected and its smoke now passes. A first coverage report was incomplete until the new smoke ownership included logistics, command ingress, and invariants; the final report is complete.
+- No packet requirement was dropped as unmigratable. Existing unrelated generated import/UID files in the root checkout were preserved and excluded from the task commit.

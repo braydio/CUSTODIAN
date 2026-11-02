@@ -1,0 +1,110 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "awakening_late_service_fixtures",
+  "kind": "world_prop",
+  "priority": "P1",
+  "runtime": {
+    "domain": "sprites/environment/props/awakening",
+    "owner": "awakening_late_service_fixtures"
+  },
+  "canvas": {
+    "width": 192,
+    "height": 96
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "broken_pew_a": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "broken_pew_a",
+      "layout": "copy",
+      "frame_width": 192,
+      "frame_height": 96
+    },
+    "broken_pew_b": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "broken_pew_b",
+      "layout": "copy",
+      "frame_width": 192,
+      "frame_height": 96
+    },
+    "thread_anchor": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "thread_anchor",
+      "layout": "copy",
+      "frame_width": 64,
+      "frame_height": 64
+    },
+    "white_thread_floor_bundle": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "white_thread_floor_bundle",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 256
+    },
+    "mosaic_floor": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "mosaic_floor",
+      "layout": "copy",
+      "frame_width": 384,
+      "frame_height": 384
+    },
+    "broken_pew_c": {
+      "required": false,
+      "recommended": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "broken_pew_c",
+      "layout": "copy",
+      "frame_width": 192,
+      "frame_height": 96
+    },
+    "altar_cloth": {
+      "required": false,
+      "recommended": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "altar_cloth",
+      "layout": "copy",
+      "frame_width": 128,
+      "frame_height": 192
+    },
+    "reward_cache": {
+      "required": false,
+      "recommended": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "reward_cache",
+      "layout": "copy",
+      "frame_width": 96,
+      "frame_height": 96
+    },
+    "devotional_objects": {
+      "required": false,
+      "recommended": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "devotional_objects",
+      "layout": "copy",
+      "frame_width": 128,
+      "frame_height": 128
+    }
+  },
+  "aliases": {},
+  "consumers": [
+    {
+      "type": "scene",
+      "path": "res://scenes/awakening_first_return.tscn"
+    }
+  ]
+}

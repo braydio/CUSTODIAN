@@ -1,0 +1,93 @@
+{
+	"failures": [],
+	"records": [
+		{
+			"id": "operator_state",
+			"role": "operator",
+			"tick": 0,
+			"values": {
+				"global_position": [
+					420.0,
+					360.0
+				]
+			}
+		},
+		{
+			"id": "target_state",
+			"role": "target",
+			"tick": 0,
+			"values": {
+				"global_position": [
+					480.0,
+					360.0
+				]
+			}
+		},
+		{
+			"id": "operator_state",
+			"role": "operator",
+			"tick": 28,
+			"values": {
+				"global_position": [
+					420.0,
+					360.0
+				]
+			}
+		},
+		{
+			"id": "target_state",
+			"role": "target",
+			"tick": 50,
+			"values": {
+				"global_position": [
+					480.0,
+					360.0
+				]
+			}
+		},
+		{
+			"id": "operator_state",
+			"role": "operator",
+			"tick": 62,
+			"values": {
+				"global_position": [
+					420.0,
+					360.0
+				]
+			}
+		},
+		{
+			"id": "target_state",
+			"role": "target",
+			"tick": 100,
+			"values": {
+				"global_position": [
+					480.0,
+					360.0
+				]
+			}
+		},
+		{
+			"id": "operator_state",
+			"role": "operator",
+			"tick": 148,
+			"values": {
+				"global_position": [
+					420.0,
+					360.0
+				]
+			}
+		},
+		{
+			"id": "target_state",
+			"role": "target",
+			"tick": 148,
+			"values": {
+				"global_position": [
+					480.0,
+					360.0
+				]
+			}
+		}
+	]
+}

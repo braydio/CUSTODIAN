@@ -1,0 +1,9 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/resources__blackwood_item__1f__64.json",
+	"outputs": [
+		"res://content/sprites/items/resources/blackwood_item.png"
+	],
+	"post_process": [],
+	"source": "res://content/sprites/_pipeline/inbox/resources__blackwood_item__1f__64.png",
+	"timestamp_utc": "2026-05-17 05:38:47"
+}

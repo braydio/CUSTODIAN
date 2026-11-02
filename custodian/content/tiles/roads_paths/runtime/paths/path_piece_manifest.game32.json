@@ -1,0 +1,2145 @@
+{
+  "schema_version": 1,
+  "asset_pack": "custodian_industrial_road_pieces_1254_paths_game32",
+  "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/roads_paths/unprocessed_street_tilesheet.png",
+  "reference_size": {
+    "w": 1254,
+    "h": 1254
+  },
+  "export_root": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/roads_paths/runtime/paths",
+  "piece_count": 19,
+  "direction_bitmask": {
+    "n": 1,
+    "e": 2,
+    "s": 4,
+    "w": 8
+  },
+  "procgen_notes": {
+    "connection_rule": "A module connects to a neighbor when both expose matching opposite sockets.",
+    "opposites": {
+      "n": "s",
+      "e": "w",
+      "s": "n",
+      "w": "e"
+    },
+    "selection_rule": "Build a required connection bitmask, then pick a random piece where connection_bitmask equals that mask.",
+    "module_warning": "These are variable-size road stamps, not uniform single-cell tiles. Use as prefab stamps or slice further for TileMap atlas use.",
+    "naming_rule": "road_<kind>_<connection_string>_<size>_<variant>.png"
+  },
+  "pieces": [
+    {
+      "id": "road_straight_e_w_short_01",
+      "file": "pieces/road_straight_e_w_short_01.png",
+      "name": "road_straight_e_w_short_01",
+      "kind": "straight",
+      "width_class": "short",
+      "connections": [
+        "e",
+        "w"
+      ],
+      "connection_string": "e_w",
+      "connection_bitmask": 10,
+      "tags": [
+        "road",
+        "straight",
+        "horizontal",
+        "short"
+      ],
+      "description": "Short east-west road connector.",
+      "size_px": {
+        "w": 160,
+        "h": 128
+      },
+      "source_rect_px": {
+        "x": 65,
+        "y": 878,
+        "w": 142,
+        "h": 102
+      },
+      "source_rect_reference_px": {
+        "x": 65,
+        "y": 878,
+        "w": 142,
+        "h": 102
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 80,
+        "y": 64
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_straight_e_w_short_01.png",
+      "original_size_px": {
+        "w": 142,
+        "h": 102
+      },
+      "scaled_art_size_px": {
+        "w": 142,
+        "h": 102
+      },
+      "art_offset_px": {
+        "x": 9,
+        "y": 13
+      },
+      "grid_size_tiles": {
+        "w": 5,
+        "h": 4
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 80,
+          "y": 0
+        },
+        "e": {
+          "x": 160,
+          "y": 64
+        },
+        "s": {
+          "x": 80,
+          "y": 128
+        },
+        "w": {
+          "x": 0,
+          "y": 64
+        }
+      }
+    },
+    {
+      "id": "road_straight_e_w_tiny_01",
+      "file": "pieces/road_straight_e_w_tiny_01.png",
+      "name": "road_straight_e_w_tiny_01",
+      "kind": "straight",
+      "width_class": "tiny",
+      "connections": [
+        "e",
+        "w"
+      ],
+      "connection_string": "e_w",
+      "connection_bitmask": 10,
+      "tags": [
+        "road",
+        "straight",
+        "horizontal",
+        "tiny"
+      ],
+      "description": "Tiny east-west road connector, useful as filler or cap-adjacent module.",
+      "size_px": {
+        "w": 64,
+        "h": 128
+      },
+      "source_rect_px": {
+        "x": 240,
+        "y": 878,
+        "w": 63,
+        "h": 102
+      },
+      "source_rect_reference_px": {
+        "x": 240,
+        "y": 878,
+        "w": 63,
+        "h": 102
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 32,
+        "y": 64
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_straight_e_w_tiny_01.png",
+      "original_size_px": {
+        "w": 63,
+        "h": 102
+      },
+      "scaled_art_size_px": {
+        "w": 63,
+        "h": 102
+      },
+      "art_offset_px": {
+        "x": 0,
+        "y": 13
+      },
+      "grid_size_tiles": {
+        "w": 2,
+        "h": 4
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 32,
+          "y": 0
+        },
+        "e": {
+          "x": 64,
+          "y": 64
+        },
+        "s": {
+          "x": 32,
+          "y": 128
+        },
+        "w": {
+          "x": 0,
+          "y": 64
+        }
+      }
+    },
+    {
+      "id": "road_straight_e_w_tiny_02",
+      "file": "pieces/road_straight_e_w_tiny_02.png",
+      "name": "road_straight_e_w_tiny_02",
+      "kind": "straight",
+      "width_class": "tiny",
+      "connections": [
+        "e",
+        "w"
+      ],
+      "connection_string": "e_w",
+      "connection_bitmask": 10,
+      "tags": [
+        "road",
+        "straight",
+        "horizontal",
+        "tiny",
+        "variant"
+      ],
+      "description": "Tiny east-west road connector, variant 02.",
+      "size_px": {
+        "w": 64,
+        "h": 128
+      },
+      "source_rect_px": {
+        "x": 348,
+        "y": 878,
+        "w": 64,
+        "h": 102
+      },
+      "source_rect_reference_px": {
+        "x": 348,
+        "y": 878,
+        "w": 64,
+        "h": 102
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 32,
+        "y": 64
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_straight_e_w_tiny_02.png",
+      "original_size_px": {
+        "w": 64,
+        "h": 102
+      },
+      "scaled_art_size_px": {
+        "w": 64,
+        "h": 102
+      },
+      "art_offset_px": {
+        "x": 0,
+        "y": 13
+      },
+      "grid_size_tiles": {
+        "w": 2,
+        "h": 4
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 32,
+          "y": 0
+        },
+        "e": {
+          "x": 64,
+          "y": 64
+        },
+        "s": {
+          "x": 32,
+          "y": 128
+        },
+        "w": {
+          "x": 0,
+          "y": 64
+        }
+      }
+    },
+    {
+      "id": "road_straight_n_s_short_01",
+      "file": "pieces/road_straight_n_s_short_01.png",
+      "name": "road_straight_n_s_short_01",
+      "kind": "straight",
+      "width_class": "short",
+      "connections": [
+        "n",
+        "s"
+      ],
+      "connection_string": "n_s",
+      "connection_bitmask": 5,
+      "tags": [
+        "road",
+        "straight",
+        "vertical",
+        "short"
+      ],
+      "description": "Short north-south road connector.",
+      "size_px": {
+        "w": 96,
+        "h": 128
+      },
+      "source_rect_px": {
+        "x": 452,
+        "y": 878,
+        "w": 79,
+        "h": 102
+      },
+      "source_rect_reference_px": {
+        "x": 452,
+        "y": 878,
+        "w": 79,
+        "h": 102
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 48,
+        "y": 64
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_straight_n_s_short_01.png",
+      "original_size_px": {
+        "w": 79,
+        "h": 102
+      },
+      "scaled_art_size_px": {
+        "w": 79,
+        "h": 102
+      },
+      "art_offset_px": {
+        "x": 8,
+        "y": 13
+      },
+      "grid_size_tiles": {
+        "w": 3,
+        "h": 4
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 48,
+          "y": 0
+        },
+        "e": {
+          "x": 96,
+          "y": 64
+        },
+        "s": {
+          "x": 48,
+          "y": 128
+        },
+        "w": {
+          "x": 0,
+          "y": 64
+        }
+      }
+    },
+    {
+      "id": "road_straight_n_s_short_02",
+      "file": "pieces/road_straight_n_s_short_02.png",
+      "name": "road_straight_n_s_short_02",
+      "kind": "straight",
+      "width_class": "short",
+      "connections": [
+        "n",
+        "s"
+      ],
+      "connection_string": "n_s",
+      "connection_bitmask": 5,
+      "tags": [
+        "road",
+        "straight",
+        "vertical",
+        "short",
+        "variant"
+      ],
+      "description": "Short north-south road connector, variant 02.",
+      "size_px": {
+        "w": 96,
+        "h": 128
+      },
+      "source_rect_px": {
+        "x": 566,
+        "y": 878,
+        "w": 74,
+        "h": 102
+      },
+      "source_rect_reference_px": {
+        "x": 566,
+        "y": 878,
+        "w": 74,
+        "h": 102
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 48,
+        "y": 64
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_straight_n_s_short_02.png",
+      "original_size_px": {
+        "w": 74,
+        "h": 102
+      },
+      "scaled_art_size_px": {
+        "w": 74,
+        "h": 102
+      },
+      "art_offset_px": {
+        "x": 11,
+        "y": 13
+      },
+      "grid_size_tiles": {
+        "w": 3,
+        "h": 4
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 48,
+          "y": 0
+        },
+        "e": {
+          "x": 96,
+          "y": 64
+        },
+        "s": {
+          "x": 48,
+          "y": 128
+        },
+        "w": {
+          "x": 0,
+          "y": 64
+        }
+      }
+    },
+    {
+      "id": "road_straight_n_s_tiny_01",
+      "file": "pieces/road_straight_n_s_tiny_01.png",
+      "name": "road_straight_n_s_tiny_01",
+      "kind": "straight",
+      "width_class": "tiny",
+      "connections": [
+        "n",
+        "s"
+      ],
+      "connection_string": "n_s",
+      "connection_bitmask": 5,
+      "tags": [
+        "road",
+        "straight",
+        "vertical",
+        "tiny"
+      ],
+      "description": "Tiny north-south road connector.",
+      "size_px": {
+        "w": 64,
+        "h": 128
+      },
+      "source_rect_px": {
+        "x": 672,
+        "y": 878,
+        "w": 49,
+        "h": 102
+      },
+      "source_rect_reference_px": {
+        "x": 672,
+        "y": 878,
+        "w": 49,
+        "h": 102
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 32,
+        "y": 64
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_straight_n_s_tiny_01.png",
+      "original_size_px": {
+        "w": 49,
+        "h": 102
+      },
+      "scaled_art_size_px": {
+        "w": 49,
+        "h": 102
+      },
+      "art_offset_px": {
+        "x": 7,
+        "y": 13
+      },
+      "grid_size_tiles": {
+        "w": 2,
+        "h": 4
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 32,
+          "y": 0
+        },
+        "e": {
+          "x": 64,
+          "y": 64
+        },
+        "s": {
+          "x": 32,
+          "y": 128
+        },
+        "w": {
+          "x": 0,
+          "y": 64
+        }
+      }
+    },
+    {
+      "id": "road_straight_n_s_tiny_02",
+      "file": "pieces/road_straight_n_s_tiny_02.png",
+      "name": "road_straight_n_s_tiny_02",
+      "kind": "straight",
+      "width_class": "tiny",
+      "connections": [
+        "n",
+        "s"
+      ],
+      "connection_string": "n_s",
+      "connection_bitmask": 5,
+      "tags": [
+        "road",
+        "straight",
+        "vertical",
+        "tiny",
+        "variant"
+      ],
+      "description": "Tiny narrow north-south road connector, variant 02.",
+      "size_px": {
+        "w": 64,
+        "h": 128
+      },
+      "source_rect_px": {
+        "x": 751,
+        "y": 878,
+        "w": 41,
+        "h": 102
+      },
+      "source_rect_reference_px": {
+        "x": 751,
+        "y": 878,
+        "w": 41,
+        "h": 102
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 32,
+        "y": 64
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_straight_n_s_tiny_02.png",
+      "original_size_px": {
+        "w": 41,
+        "h": 102
+      },
+      "scaled_art_size_px": {
+        "w": 41,
+        "h": 102
+      },
+      "art_offset_px": {
+        "x": 11,
+        "y": 13
+      },
+      "grid_size_tiles": {
+        "w": 2,
+        "h": 4
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 32,
+          "y": 0
+        },
+        "e": {
+          "x": 64,
+          "y": 64
+        },
+        "s": {
+          "x": 32,
+          "y": 128
+        },
+        "w": {
+          "x": 0,
+          "y": 64
+        }
+      }
+    },
+    {
+      "id": "road_straight_n_s_tiny_03",
+      "file": "pieces/road_straight_n_s_tiny_03.png",
+      "name": "road_straight_n_s_tiny_03",
+      "kind": "straight",
+      "width_class": "tiny",
+      "connections": [
+        "n",
+        "s"
+      ],
+      "connection_string": "n_s",
+      "connection_bitmask": 5,
+      "tags": [
+        "road",
+        "straight",
+        "vertical",
+        "tiny",
+        "variant"
+      ],
+      "description": "Tiny north-south road connector, variant 03.",
+      "size_px": {
+        "w": 64,
+        "h": 128
+      },
+      "source_rect_px": {
+        "x": 822,
+        "y": 878,
+        "w": 49,
+        "h": 102
+      },
+      "source_rect_reference_px": {
+        "x": 822,
+        "y": 878,
+        "w": 49,
+        "h": 102
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 32,
+        "y": 64
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_straight_n_s_tiny_03.png",
+      "original_size_px": {
+        "w": 49,
+        "h": 102
+      },
+      "scaled_art_size_px": {
+        "w": 49,
+        "h": 102
+      },
+      "art_offset_px": {
+        "x": 7,
+        "y": 13
+      },
+      "grid_size_tiles": {
+        "w": 2,
+        "h": 4
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 32,
+          "y": 0
+        },
+        "e": {
+          "x": 64,
+          "y": 64
+        },
+        "s": {
+          "x": 32,
+          "y": 128
+        },
+        "w": {
+          "x": 0,
+          "y": 64
+        }
+      }
+    },
+    {
+      "id": "road_dead_end_w_rounded_01",
+      "file": "pieces/road_dead_end_w_rounded_01.png",
+      "name": "road_dead_end_w_rounded_01",
+      "kind": "dead_end",
+      "width_class": "short",
+      "connections": [
+        "w"
+      ],
+      "connection_string": "w",
+      "connection_bitmask": 8,
+      "tags": [
+        "road",
+        "dead_end",
+        "rounded",
+        "west"
+      ],
+      "description": "Rounded road dead-end with west-facing connection.",
+      "size_px": {
+        "w": 96,
+        "h": 128
+      },
+      "source_rect_px": {
+        "x": 900,
+        "y": 878,
+        "w": 74,
+        "h": 102
+      },
+      "source_rect_reference_px": {
+        "x": 900,
+        "y": 878,
+        "w": 74,
+        "h": 102
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 48,
+        "y": 64
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_dead_end_w_rounded_01.png",
+      "original_size_px": {
+        "w": 74,
+        "h": 102
+      },
+      "scaled_art_size_px": {
+        "w": 74,
+        "h": 102
+      },
+      "art_offset_px": {
+        "x": 11,
+        "y": 13
+      },
+      "grid_size_tiles": {
+        "w": 3,
+        "h": 4
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 48,
+          "y": 0
+        },
+        "e": {
+          "x": 96,
+          "y": 64
+        },
+        "s": {
+          "x": 48,
+          "y": 128
+        },
+        "w": {
+          "x": 0,
+          "y": 64
+        }
+      }
+    },
+    {
+      "id": "road_straight_e_w_short_02",
+      "file": "pieces/road_straight_e_w_short_02.png",
+      "name": "road_straight_e_w_short_02",
+      "kind": "straight",
+      "width_class": "short",
+      "connections": [
+        "e",
+        "w"
+      ],
+      "connection_string": "e_w",
+      "connection_bitmask": 10,
+      "tags": [
+        "road",
+        "straight",
+        "horizontal",
+        "short",
+        "variant"
+      ],
+      "description": "Short east-west road connector, variant 02.",
+      "size_px": {
+        "w": 64,
+        "h": 128
+      },
+      "source_rect_px": {
+        "x": 999,
+        "y": 878,
+        "w": 60,
+        "h": 102
+      },
+      "source_rect_reference_px": {
+        "x": 999,
+        "y": 878,
+        "w": 60,
+        "h": 102
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 32,
+        "y": 64
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_straight_e_w_short_02.png",
+      "original_size_px": {
+        "w": 60,
+        "h": 102
+      },
+      "scaled_art_size_px": {
+        "w": 60,
+        "h": 102
+      },
+      "art_offset_px": {
+        "x": 2,
+        "y": 13
+      },
+      "grid_size_tiles": {
+        "w": 2,
+        "h": 4
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 32,
+          "y": 0
+        },
+        "e": {
+          "x": 64,
+          "y": 64
+        },
+        "s": {
+          "x": 32,
+          "y": 128
+        },
+        "w": {
+          "x": 0,
+          "y": 64
+        }
+      }
+    },
+    {
+      "id": "road_transition_n_s_to_rubble_01",
+      "file": "pieces/road_transition_n_s_to_rubble_01.png",
+      "name": "road_transition_n_s_to_rubble_01",
+      "kind": "transition",
+      "width_class": "wide",
+      "connections": [
+        "n",
+        "s"
+      ],
+      "connection_string": "n_s",
+      "connection_bitmask": 5,
+      "tags": [
+        "road",
+        "transition",
+        "vertical",
+        "rubble",
+        "damaged"
+      ],
+      "description": "North-south road transition into broken rubble, variant 01.",
+      "size_px": {
+        "w": 128,
+        "h": 160
+      },
+      "source_rect_px": {
+        "x": 65,
+        "y": 1019,
+        "w": 113,
+        "h": 158
+      },
+      "source_rect_reference_px": {
+        "x": 65,
+        "y": 1019,
+        "w": 113,
+        "h": 158
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 64,
+        "y": 80
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_transition_n_s_to_rubble_01.png",
+      "original_size_px": {
+        "w": 113,
+        "h": 158
+      },
+      "scaled_art_size_px": {
+        "w": 113,
+        "h": 158
+      },
+      "art_offset_px": {
+        "x": 7,
+        "y": 1
+      },
+      "grid_size_tiles": {
+        "w": 4,
+        "h": 5
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 64,
+          "y": 0
+        },
+        "e": {
+          "x": 128,
+          "y": 80
+        },
+        "s": {
+          "x": 64,
+          "y": 160
+        },
+        "w": {
+          "x": 0,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "road_transition_n_s_to_rubble_02",
+      "file": "pieces/road_transition_n_s_to_rubble_02.png",
+      "name": "road_transition_n_s_to_rubble_02",
+      "kind": "transition",
+      "width_class": "wide",
+      "connections": [
+        "n",
+        "s"
+      ],
+      "connection_string": "n_s",
+      "connection_bitmask": 5,
+      "tags": [
+        "road",
+        "transition",
+        "vertical",
+        "rubble",
+        "damaged",
+        "variant"
+      ],
+      "description": "North-south road transition into broken rubble, variant 02.",
+      "size_px": {
+        "w": 128,
+        "h": 160
+      },
+      "source_rect_px": {
+        "x": 219,
+        "y": 1019,
+        "w": 101,
+        "h": 158
+      },
+      "source_rect_reference_px": {
+        "x": 219,
+        "y": 1019,
+        "w": 101,
+        "h": 158
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 64,
+        "y": 80
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_transition_n_s_to_rubble_02.png",
+      "original_size_px": {
+        "w": 101,
+        "h": 158
+      },
+      "scaled_art_size_px": {
+        "w": 101,
+        "h": 158
+      },
+      "art_offset_px": {
+        "x": 13,
+        "y": 1
+      },
+      "grid_size_tiles": {
+        "w": 4,
+        "h": 5
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 64,
+          "y": 0
+        },
+        "e": {
+          "x": 128,
+          "y": 80
+        },
+        "s": {
+          "x": 64,
+          "y": 160
+        },
+        "w": {
+          "x": 0,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "road_transition_n_s_to_rubble_03",
+      "file": "pieces/road_transition_n_s_to_rubble_03.png",
+      "name": "road_transition_n_s_to_rubble_03",
+      "kind": "transition",
+      "width_class": "wide",
+      "connections": [
+        "n",
+        "s"
+      ],
+      "connection_string": "n_s",
+      "connection_bitmask": 5,
+      "tags": [
+        "road",
+        "transition",
+        "vertical",
+        "rubble",
+        "damaged",
+        "variant"
+      ],
+      "description": "North-south road transition into broken rubble, variant 03.",
+      "size_px": {
+        "w": 128,
+        "h": 160
+      },
+      "source_rect_px": {
+        "x": 350,
+        "y": 1019,
+        "w": 99,
+        "h": 158
+      },
+      "source_rect_reference_px": {
+        "x": 350,
+        "y": 1019,
+        "w": 99,
+        "h": 158
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 64,
+        "y": 80
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_transition_n_s_to_rubble_03.png",
+      "original_size_px": {
+        "w": 99,
+        "h": 158
+      },
+      "scaled_art_size_px": {
+        "w": 99,
+        "h": 158
+      },
+      "art_offset_px": {
+        "x": 14,
+        "y": 1
+      },
+      "grid_size_tiles": {
+        "w": 4,
+        "h": 5
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 64,
+          "y": 0
+        },
+        "e": {
+          "x": 128,
+          "y": 80
+        },
+        "s": {
+          "x": 64,
+          "y": 160
+        },
+        "w": {
+          "x": 0,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "road_transition_n_s_to_rubble_04",
+      "file": "pieces/road_transition_n_s_to_rubble_04.png",
+      "name": "road_transition_n_s_to_rubble_04",
+      "kind": "transition",
+      "width_class": "wide",
+      "connections": [
+        "n",
+        "s"
+      ],
+      "connection_string": "n_s",
+      "connection_bitmask": 5,
+      "tags": [
+        "road",
+        "transition",
+        "vertical",
+        "rubble",
+        "damaged",
+        "variant"
+      ],
+      "description": "North-south road transition into broken rubble, variant 04.",
+      "size_px": {
+        "w": 96,
+        "h": 160
+      },
+      "source_rect_px": {
+        "x": 480,
+        "y": 1017,
+        "w": 95,
+        "h": 160
+      },
+      "source_rect_reference_px": {
+        "x": 480,
+        "y": 1017,
+        "w": 95,
+        "h": 160
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 48,
+        "y": 80
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_transition_n_s_to_rubble_04.png",
+      "original_size_px": {
+        "w": 95,
+        "h": 160
+      },
+      "scaled_art_size_px": {
+        "w": 95,
+        "h": 160
+      },
+      "art_offset_px": {
+        "x": 0,
+        "y": 0
+      },
+      "grid_size_tiles": {
+        "w": 3,
+        "h": 5
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 48,
+          "y": 0
+        },
+        "e": {
+          "x": 96,
+          "y": 80
+        },
+        "s": {
+          "x": 48,
+          "y": 160
+        },
+        "w": {
+          "x": 0,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "road_transition_n_s_to_rubble_05",
+      "file": "pieces/road_transition_n_s_to_rubble_05.png",
+      "name": "road_transition_n_s_to_rubble_05",
+      "kind": "transition",
+      "width_class": "wide",
+      "connections": [
+        "n",
+        "s"
+      ],
+      "connection_string": "n_s",
+      "connection_bitmask": 5,
+      "tags": [
+        "road",
+        "transition",
+        "vertical",
+        "rubble",
+        "damaged",
+        "variant"
+      ],
+      "description": "North-south road transition into broken rubble, variant 05.",
+      "size_px": {
+        "w": 128,
+        "h": 160
+      },
+      "source_rect_px": {
+        "x": 609,
+        "y": 1020,
+        "w": 98,
+        "h": 157
+      },
+      "source_rect_reference_px": {
+        "x": 609,
+        "y": 1020,
+        "w": 98,
+        "h": 157
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 64,
+        "y": 80
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_transition_n_s_to_rubble_05.png",
+      "original_size_px": {
+        "w": 98,
+        "h": 157
+      },
+      "scaled_art_size_px": {
+        "w": 98,
+        "h": 157
+      },
+      "art_offset_px": {
+        "x": 15,
+        "y": 1
+      },
+      "grid_size_tiles": {
+        "w": 4,
+        "h": 5
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 64,
+          "y": 0
+        },
+        "e": {
+          "x": 128,
+          "y": 80
+        },
+        "s": {
+          "x": 64,
+          "y": 160
+        },
+        "w": {
+          "x": 0,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "road_transition_n_s_to_rubble_06",
+      "file": "pieces/road_transition_n_s_to_rubble_06.png",
+      "name": "road_transition_n_s_to_rubble_06",
+      "kind": "transition",
+      "width_class": "wide",
+      "connections": [
+        "n",
+        "s"
+      ],
+      "connection_string": "n_s",
+      "connection_bitmask": 5,
+      "tags": [
+        "road",
+        "transition",
+        "vertical",
+        "rubble",
+        "damaged",
+        "variant"
+      ],
+      "description": "North-south road transition into broken rubble, variant 06.",
+      "size_px": {
+        "w": 96,
+        "h": 160
+      },
+      "source_rect_px": {
+        "x": 742,
+        "y": 1020,
+        "w": 95,
+        "h": 157
+      },
+      "source_rect_reference_px": {
+        "x": 742,
+        "y": 1020,
+        "w": 95,
+        "h": 157
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 48,
+        "y": 80
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_transition_n_s_to_rubble_06.png",
+      "original_size_px": {
+        "w": 95,
+        "h": 157
+      },
+      "scaled_art_size_px": {
+        "w": 95,
+        "h": 157
+      },
+      "art_offset_px": {
+        "x": 0,
+        "y": 1
+      },
+      "grid_size_tiles": {
+        "w": 3,
+        "h": 5
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 48,
+          "y": 0
+        },
+        "e": {
+          "x": 96,
+          "y": 80
+        },
+        "s": {
+          "x": 48,
+          "y": 160
+        },
+        "w": {
+          "x": 0,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "road_transition_n_s_to_rubble_07",
+      "file": "pieces/road_transition_n_s_to_rubble_07.png",
+      "name": "road_transition_n_s_to_rubble_07",
+      "kind": "transition",
+      "width_class": "medium",
+      "connections": [
+        "n",
+        "s"
+      ],
+      "connection_string": "n_s",
+      "connection_bitmask": 5,
+      "tags": [
+        "road",
+        "transition",
+        "vertical",
+        "rubble",
+        "damaged",
+        "variant"
+      ],
+      "description": "Medium north-south road transition into broken rubble, variant 07.",
+      "size_px": {
+        "w": 96,
+        "h": 160
+      },
+      "source_rect_px": {
+        "x": 869,
+        "y": 1019,
+        "w": 82,
+        "h": 158
+      },
+      "source_rect_reference_px": {
+        "x": 869,
+        "y": 1019,
+        "w": 82,
+        "h": 158
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 48,
+        "y": 80
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_transition_n_s_to_rubble_07.png",
+      "original_size_px": {
+        "w": 82,
+        "h": 158
+      },
+      "scaled_art_size_px": {
+        "w": 82,
+        "h": 158
+      },
+      "art_offset_px": {
+        "x": 7,
+        "y": 1
+      },
+      "grid_size_tiles": {
+        "w": 3,
+        "h": 5
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 48,
+          "y": 0
+        },
+        "e": {
+          "x": 96,
+          "y": 80
+        },
+        "s": {
+          "x": 48,
+          "y": 160
+        },
+        "w": {
+          "x": 0,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "road_transition_n_s_to_rubble_08",
+      "file": "pieces/road_transition_n_s_to_rubble_08.png",
+      "name": "road_transition_n_s_to_rubble_08",
+      "kind": "transition",
+      "width_class": "medium",
+      "connections": [
+        "n",
+        "s"
+      ],
+      "connection_string": "n_s",
+      "connection_bitmask": 5,
+      "tags": [
+        "road",
+        "transition",
+        "vertical",
+        "rubble",
+        "damaged",
+        "variant"
+      ],
+      "description": "Medium north-south road transition into broken rubble, variant 08.",
+      "size_px": {
+        "w": 96,
+        "h": 160
+      },
+      "source_rect_px": {
+        "x": 982,
+        "y": 1019,
+        "w": 77,
+        "h": 158
+      },
+      "source_rect_reference_px": {
+        "x": 982,
+        "y": 1019,
+        "w": 77,
+        "h": 158
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 48,
+        "y": 80
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_transition_n_s_to_rubble_08.png",
+      "original_size_px": {
+        "w": 77,
+        "h": 158
+      },
+      "scaled_art_size_px": {
+        "w": 77,
+        "h": 158
+      },
+      "art_offset_px": {
+        "x": 9,
+        "y": 1
+      },
+      "grid_size_tiles": {
+        "w": 3,
+        "h": 5
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 48,
+          "y": 0
+        },
+        "e": {
+          "x": 96,
+          "y": 80
+        },
+        "s": {
+          "x": 48,
+          "y": 160
+        },
+        "w": {
+          "x": 0,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "road_transition_n_s_to_rubble_09",
+      "file": "pieces/road_transition_n_s_to_rubble_09.png",
+      "name": "road_transition_n_s_to_rubble_09",
+      "kind": "transition",
+      "width_class": "medium",
+      "connections": [
+        "n",
+        "s"
+      ],
+      "connection_string": "n_s",
+      "connection_bitmask": 5,
+      "tags": [
+        "road",
+        "transition",
+        "vertical",
+        "rubble",
+        "damaged",
+        "variant"
+      ],
+      "description": "Medium north-south road transition into broken rubble, variant 09.",
+      "size_px": {
+        "w": 96,
+        "h": 160
+      },
+      "source_rect_px": {
+        "x": 1088,
+        "y": 1020,
+        "w": 92,
+        "h": 157
+      },
+      "source_rect_reference_px": {
+        "x": 1088,
+        "y": 1020,
+        "w": 92,
+        "h": 157
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 48,
+        "y": 80
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_transition_n_s_to_rubble_09.png",
+      "original_size_px": {
+        "w": 92,
+        "h": 157
+      },
+      "scaled_art_size_px": {
+        "w": 92,
+        "h": 157
+      },
+      "art_offset_px": {
+        "x": 2,
+        "y": 1
+      },
+      "grid_size_tiles": {
+        "w": 3,
+        "h": 5
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 48,
+          "y": 0
+        },
+        "e": {
+          "x": 96,
+          "y": 80
+        },
+        "s": {
+          "x": 48,
+          "y": 160
+        },
+        "w": {
+          "x": 0,
+          "y": 80
+        }
+      }
+    }
+  ],
+  "tile_size_px": 32,
+  "surface": "paths",
+  "pathways_json": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/roads_paths/source/Pathways.json",
+  "normalization": {
+    "mode": "pad_to_32px_game_grid",
+    "tile_size_px": 32,
+    "scale_art": 1.0,
+    "resampled": false,
+    "resample_filter": "nearest",
+    "force_square_intersections": true,
+    "note": "Default behavior pads transparent canvas; it does not resize the art."
+  },
+  "pathways_tileset": {
+    "name": "ancient_ruined_roads_and_paths",
+    "tile_size": "identical_per_tile",
+    "intended_use": "modular road/path connectivity kit",
+    "connection_model": {
+      "N": "connects upward / north",
+      "S": "connects downward / south",
+      "E": "connects right / east",
+      "W": "connects left / west"
+    },
+    "sections": {
+      "top_left": {
+        "description": "wide horizontal ruined road segments",
+        "count": 4,
+        "primary_roles": [
+          {
+            "role": "road_straight_h",
+            "connects": [
+              "W",
+              "E"
+            ],
+            "count": 4
+          }
+        ],
+        "notes": "These are mostly visual variants of the same east-west road topology."
+      },
+      "top_right": {
+        "description": "vertical ruined road segments",
+        "count": 4,
+        "primary_roles": [
+          {
+            "role": "road_straight_v",
+            "connects": [
+              "N",
+              "S"
+            ],
+            "count": 4
+          }
+        ],
+        "notes": "Use as north-south road filler. Variants differ by rubble, moss, cracks, and side trim."
+      },
+      "center_left": {
+        "description": "large intersection cluster",
+        "count": 4,
+        "primary_roles": [
+          {
+            "role": "road_cross",
+            "connects": [
+              "N",
+              "S",
+              "E",
+              "W"
+            ],
+            "count": 3
+          },
+          {
+            "role": "road_t_side_variant",
+            "connects": [
+              "N",
+              "S",
+              "E"
+            ],
+            "count": 1
+          }
+        ],
+        "notes": "This region is mostly 4-way crossings, with one piece reading closer to a sideways T / branch intersection."
+      },
+      "center_center": {
+        "description": "T-junction and branch pieces",
+        "count": 4,
+        "primary_roles": [
+          {
+            "role": "road_t_e",
+            "connects": [
+              "N",
+              "S",
+              "E"
+            ],
+            "count": 1
+          },
+          {
+            "role": "road_t_w",
+            "connects": [
+              "N",
+              "S",
+              "W"
+            ],
+            "count": 1
+          },
+          {
+            "role": "road_t_n",
+            "connects": [
+              "W",
+              "E",
+              "N"
+            ],
+            "count": 1
+          },
+          {
+            "role": "road_t_s",
+            "connects": [
+              "W",
+              "E",
+              "S"
+            ],
+            "count": 1
+          }
+        ],
+        "notes": "This is the main T-junction family. These are where roads split into three directions."
+      },
+      "center_right": {
+        "description": "corners, partial branches, caps, and compact utility pieces",
+        "count": 6,
+        "primary_roles": [
+          {
+            "role": "road_corner_ne",
+            "connects": [
+              "N",
+              "E"
+            ],
+            "count": 1
+          },
+          {
+            "role": "road_corner_es",
+            "connects": [
+              "E",
+              "S"
+            ],
+            "count": 1
+          },
+          {
+            "role": "road_corner_sw",
+            "connects": [
+              "S",
+              "W"
+            ],
+            "count": 1
+          },
+          {
+            "role": "road_corner_wn",
+            "connects": [
+              "W",
+              "N"
+            ],
+            "count": 1
+          },
+          {
+            "role": "road_end_or_cap",
+            "connects": [
+              "one_direction"
+            ],
+            "count": 2
+          }
+        ],
+        "notes": "Use this area for bends, short endings, and weird non-rectangular road transitions."
+      },
+      "pre_bottom_row": {
+        "description": "small connector and terminal utility row",
+        "count": 10,
+        "primary_roles": [
+          {
+            "role": "small_straight_h",
+            "connects": [
+              "W",
+              "E"
+            ],
+            "count": 3
+          },
+          {
+            "role": "small_straight_v",
+            "connects": [
+              "N",
+              "S"
+            ],
+            "count": 3
+          },
+          {
+            "role": "small_endcap",
+            "connects": [
+              "one_direction"
+            ],
+            "count": 3
+          },
+          {
+            "role": "rounded_or_u_terminal",
+            "connects": [
+              "one_direction"
+            ],
+            "count": 1
+          }
+        ],
+        "notes": "These are not main road masses. They are for short links, narrow paths, caps, and transition details."
+      },
+      "bottom_row": {
+        "description": "degraded dirt paths and road-to-path transitions",
+        "count": 8,
+        "primary_roles": [
+          {
+            "role": "path_straight_v",
+            "connects": [
+              "N",
+              "S"
+            ],
+            "count": 3
+          },
+          {
+            "role": "road_to_dirt_transition_v",
+            "connects": [
+              "N",
+              "S"
+            ],
+            "count": 3
+          },
+          {
+            "role": "path_fade_end",
+            "connects": [
+              "N"
+            ],
+            "count": 2
+          }
+        ],
+        "notes": "Use these to let ancient stone roads degrade into dirt trails, rubble, or terrain."
+      }
+    },
+    "summary_counts": {
+      "total_described_tiles": 36,
+      "wide_horizontal_straights": 4,
+      "vertical_straights": 4,
+      "cross_intersections": 3,
+      "t_junctions": 5,
+      "corners": 4,
+      "endcaps_or_terminals": 6,
+      "small_connectors": 6,
+      "path_or_degraded_transition_tiles": 8
+    },
+    "recommended_tile_role_names": [
+      "road_straight_h_a",
+      "road_straight_h_b",
+      "road_straight_h_c",
+      "road_straight_h_d",
+      "road_straight_v_a",
+      "road_straight_v_b",
+      "road_straight_v_c",
+      "road_straight_v_d",
+      "road_cross_a",
+      "road_cross_b",
+      "road_cross_c",
+      "road_t_n",
+      "road_t_s",
+      "road_t_e",
+      "road_t_w",
+      "road_corner_ne",
+      "road_corner_es",
+      "road_corner_sw",
+      "road_corner_wn",
+      "road_end_n",
+      "road_end_s",
+      "road_end_e",
+      "road_end_w",
+      "small_straight_h_a",
+      "small_straight_h_b",
+      "small_straight_h_c",
+      "small_straight_v_a",
+      "small_straight_v_b",
+      "small_straight_v_c",
+      "small_end_a",
+      "small_end_b",
+      "small_end_c",
+      "path_transition_v_a",
+      "path_transition_v_b",
+      "path_transition_v_c",
+      "path_fade_end_a",
+      "path_fade_end_b"
+    ]
+  },
+  "source_piece_count": 39
+}

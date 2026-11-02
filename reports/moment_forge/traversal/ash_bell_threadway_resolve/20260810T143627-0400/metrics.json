@@ -1,0 +1,25 @@
+{
+	"action_count": 2,
+	"completed": false,
+	"duration_ticks": 130,
+	"event_count": 4,
+	"fixture": {
+		"position": [
+			0.0,
+			0.0
+		]
+	},
+	"presentation": {
+		"position": [
+			0.0,
+			-190.0
+		]
+	},
+	"probe_sample_count": 4,
+	"stable": {
+		"completed_tick": 130,
+		"visible_visual_anchor_delta_px": null,
+		"visible_visual_anchor_sample_count": 0
+	},
+	"warning_count": 0
+}

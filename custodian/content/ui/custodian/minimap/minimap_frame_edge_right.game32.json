@@ -1,0 +1,42 @@
+{
+  "schema": "custodian.game32.ui_asset.v1",
+  "id": "minimap_frame_edge_right",
+  "name": "minimap_frame_edge_right",
+  "set": "ui_black_reliquary",
+  "domain": "minimap",
+  "ui_role": "frame_edge",
+  "godot_node_hint": "TextureRect",
+  "runtime_path": "res://content/ui/custodian/minimap/minimap_frame_edge_right.png",
+  "source": {
+    "sheet_path": "res://content/masters/ui/ui_black_reliquary_components.png",
+    "crop_box_px": [
+      1150,
+      710,
+      1177,
+      837
+    ],
+    "reference_sheet_size_px": [
+      1448,
+      1086
+    ]
+  },
+  "size_px": [
+    27,
+    121
+  ],
+  "anchor": "top_left",
+  "import": {
+    "filter": "nearest",
+    "mipmaps": false,
+    "repeat": false
+  },
+  "ninepatch": null,
+  "tags": [
+    "minimap",
+    "edge",
+    "right"
+  ],
+  "notes": "",
+  "generated_at_utc": "2026-06-02T03:47:46.652985+00:00",
+  "generator": "custodian/tools/art/extract_ui_black_reliquary_game32.py"
+}

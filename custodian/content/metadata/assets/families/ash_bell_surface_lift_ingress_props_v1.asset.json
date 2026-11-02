@@ -1,0 +1,41 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "ash_bell_surface_lift_ingress_props_v1",
+  "kind": "world_prop",
+  "runtime": {
+    "domain": "sprites/environment/ash_bell_surface_lift",
+    "owner": "ash_bell_surface_lift_ingress_props_v1"
+  },
+  "canvas": {
+    "width": 448,
+    "height": 320
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "lift_deck": {
+      "required": true,
+      "layer": "body",
+      "action_group": "interaction",
+      "variant": "lift_deck",
+      "layout": "copy",
+      "frame_width": 448,
+      "frame_height": 320,
+      "animation": false,
+      "frames": 1
+    },
+    "field_projector": {
+      "required": true,
+      "layer": "body",
+      "action_group": "interaction",
+      "variant": "field_projector",
+      "layout": "copy",
+      "frame_width": 64,
+      "frame_height": 128,
+      "animation": false,
+      "frames": 1
+    }
+  },
+  "aliases": {},
+  "consumers": []
+}

@@ -1,0 +1,12 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__modular_head__hooded__stance_01__e__1f__96.json",
+	"outputs": [
+		"res://content/sprites/operator/new_operator/modular/stance_01/operator__modular_head__hooded__stance_01__e__1f__96.png",
+		"res://content/sprites/operator/new_operator/modular/stance_01/operator__modular_head__hooded__stance_01__w__1f__96.png"
+	],
+	"post_process": [
+		"operator_modular_runtime"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/operator__modular_head__hooded__stance_01__e__1f__96.png",
+	"timestamp_utc": "2026-07-26 08:38:23"
+}

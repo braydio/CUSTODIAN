@@ -1,0 +1,460 @@
+{
+	"counters": {
+		"enemy_assault_state_commit": 1,
+		"enemy_reactions_flinch": 1
+	},
+	"engine": {
+		"frames_per_second": 1.0,
+		"time_scale": 1.0,
+		"version": {
+			"build": "arch_linux",
+			"hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+			"hex": 263937,
+			"major": 4,
+			"minor": 7,
+			"patch": 1,
+			"status": "stable",
+			"string": "4.7.1-stable (arch_linux)",
+			"timestamp": 1783976428
+		}
+	},
+	"events": [
+		{
+			"data": {},
+			"kind": "observatory_cleared",
+			"time_msec": 2232,
+			"uptime_sec": 0.954
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "input_tap",
+					"hold_ticks": 1.0,
+					"name": "toggle_unarmed",
+					"tick": 2.0
+				},
+				"moment_tick": 2,
+				"result": {
+					"action": "input_tap",
+					"ok": true,
+					"tick": 2
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 2242,
+			"uptime_sec": 0.964
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "aim_at_role",
+					"role": "operator",
+					"target_role": "target",
+					"tick": 50.0
+				},
+				"moment_tick": 50,
+				"result": {
+					"action": "aim_at_role",
+					"ok": true,
+					"tick": 50
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 2351,
+			"uptime_sec": 1.073
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "input_press",
+					"name": "aim_right",
+					"tick": 55.0
+				},
+				"moment_tick": 55,
+				"result": {
+					"action": "input_press",
+					"ok": true,
+					"tick": 55
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 2363,
+			"uptime_sec": 1.085
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "input_tap",
+					"hold_ticks": 1.0,
+					"name": "attack_primary",
+					"tick": 60.0
+				},
+				"moment_tick": 60,
+				"result": {
+					"action": "input_tap",
+					"ok": true,
+					"tick": 60
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 2375,
+			"uptime_sec": 1.097
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "capture_marker",
+					"name": "expected_contact",
+					"tick": 72.0
+				},
+				"moment_tick": 72,
+				"result": {
+					"action": "capture_marker",
+					"ok": true,
+					"tick": 72
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 2402,
+			"uptime_sec": 1.124
+		},
+		{
+			"data": {
+				"attack_objective": "breach_command",
+				"enemy": "GRUNT",
+				"from": "staging",
+				"health": 68.0,
+				"max_health": 78.0,
+				"position": {
+					"x": 458.0,
+					"y": 360.0
+				},
+				"target": "",
+				"to": "commit"
+			},
+			"kind": "enemy_assault_state_changed",
+			"time_msec": 2420,
+			"uptime_sec": 1.142
+		},
+		{
+			"data": {
+				"amount": 10.0,
+				"kind": "rejected",
+				"reason": "no_recoverable_room"
+			},
+			"kind": "player_reclaim_rejected",
+			"time_msec": 2421,
+			"uptime_sec": 1.143
+		},
+		{
+			"data": {
+				"attack_kind": "fast",
+				"bullet_impact_fx": "default",
+				"contact_kind": "melee_impact",
+				"damage": 10.0,
+				"footstep_noise_mult": 1.0,
+				"material_id": "unknown",
+				"melee_impact_fx": "default",
+				"position": {
+					"x": 444.0,
+					"y": 360.0
+				},
+				"target": "EnemyGrunt1",
+				"weapon": "unarmed_fast_1"
+			},
+			"kind": "material_contact",
+			"time_msec": 2421,
+			"uptime_sec": 1.143
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "input_release",
+					"name": "aim_right",
+					"tick": 80.0
+				},
+				"moment_tick": 80,
+				"result": {
+					"action": "input_release",
+					"ok": true,
+					"tick": 80
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 2424,
+			"uptime_sec": 1.146
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "finish",
+					"tick": 148.0
+				},
+				"moment_tick": 148,
+				"result": {
+					"action": "finish",
+					"finish": true,
+					"ok": true,
+					"tick": 148
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 2576,
+			"uptime_sec": 1.298
+		}
+	],
+	"export_path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/20260805T012116-0400/telemetry.json",
+	"exported_at": "2026-08-05 01:21:18",
+	"gauges": {
+		"active_enemies": 1,
+		"active_projectiles": 0,
+		"ambient_critters": 0,
+		"collision_shape_count": 8,
+		"collision_shape_count_enemies": 1,
+		"collision_shape_count_foliage": 0,
+		"collision_shape_count_peak": 8,
+		"collision_shape_count_projectiles": 0,
+		"collision_shape_count_ruin_props": 0,
+		"collision_shape_count_runtime_walls": 0,
+		"director_behavior_agents": 1,
+		"enemy_behavior_sample": {
+			"blackboard": {
+				"alerted": false,
+				"ambient_activity": "none",
+				"ambient_anchor": "",
+				"camp_id": "",
+				"carried_resources": {},
+				"carrying_loot": false,
+				"investigation_position": {
+					"x": 0.0,
+					"y": 0.0
+				},
+				"last_known_operator_position": {
+					"x": 0.0,
+					"y": 0.0
+				},
+				"morale": 97.5,
+				"objective_type": "none",
+				"pursuit_timer": 0.0,
+				"scores": {},
+				"search_timer": 0.0,
+				"suspicious": false,
+				"target_visible": false
+			},
+			"detection": 0.0,
+			"enabled": true,
+			"profile_id": "raider_grunt",
+			"state": "idle",
+			"state_time": 0.0
+		},
+		"field_patch_active": false,
+		"field_patches_max": 2,
+		"field_patches_remaining": 1,
+		"fps": 1.0,
+		"heat_player_presence_cells": 1,
+		"heatmap_cells": 1,
+		"heatmap_samples": 5,
+		"interest_active": 1,
+		"interest_background": 0,
+		"interest_dormant": 0,
+		"interest_nearby": 0,
+		"legacy_combat_agents": 0,
+		"loaded_procgen_root_count": 0,
+		"loaded_world_branch_count": 0,
+		"node_class_histogram": {
+			"AnimatedSprite2D": 14,
+			"Area2D": 2,
+			"AudioStreamPlayer2D": 5,
+			"Button": 2,
+			"Camera2D": 1,
+			"CanvasLayer": 4,
+			"CharacterBody2D": 2,
+			"CollisionShape2D": 8,
+			"ColorRect": 3,
+			"Control": 2,
+			"HBoxContainer": 2,
+			"Label": 2,
+			"LineEdit": 2,
+			"MarginContainer": 2,
+			"Marker2D": 5,
+			"Node": 33,
+			"Node2D": 16,
+			"Panel": 4,
+			"Polygon2D": 1,
+			"ProgressBar": 2,
+			"RichTextLabel": 3,
+			"Sprite2D": 6,
+			"StaticBody2D": 4,
+			"VBoxContainer": 2,
+			"Window": 1
+		},
+		"node_count": 128,
+		"node_count_collision": 16,
+		"node_count_peak": 128,
+		"node_count_procgen": 0,
+		"node_count_props": 1,
+		"node_count_ui": 30,
+		"node_count_vfx": 1,
+		"node_count_world": 71,
+		"observatory_full_tree_scan_count": 1,
+		"observatory_scan_usec": 821,
+		"performance_draw_calls": 0,
+		"performance_frame_ms_average": 0.0,
+		"performance_frame_ms_current": 0.0,
+		"performance_frame_ms_p95": 0.0,
+		"performance_frame_ms_p99": 0.0,
+		"performance_frame_ms_worst": 0.0,
+		"performance_frame_sample_count": 0,
+		"performance_hitch_count": 0,
+		"performance_rendered_objects": 0,
+		"performance_severe_hitch_count": 0,
+		"physics_body_count": 6,
+		"physics_body_count_foliage": 0,
+		"physics_body_count_peak": 6,
+		"physics_body_count_ruin_props": 0,
+		"physics_body_count_runtime_walls": 0,
+		"physics_process_enabled_node_count": 1,
+		"player_active_weapon_id": "",
+		"player_active_weapon_state_key": "",
+		"player_alive": true,
+		"player_ammo_per_shot": 0,
+		"player_dead": false,
+		"player_health": 100.0,
+		"player_last_live_loaded_ammo": 0,
+		"player_last_live_reserve_ammo": 0,
+		"player_last_live_stamina": 100.0,
+		"player_last_live_weapon_id": "",
+		"player_loaded_ammo": 0,
+		"player_magazine_capacity": 0,
+		"player_material": "unknown",
+		"player_material_footstep_noise_mult": 1.0,
+		"player_max_health": 100.0,
+		"player_position": {
+			"x": 420,
+			"y": 360
+		},
+		"player_reclaim_active": 0.0,
+		"player_reclaim_packet_count": 0,
+		"player_reclaim_window_remaining": 0.0,
+		"player_reserve_ammo": 0,
+		"player_sprinting": false,
+		"player_stamina": 100.0,
+		"player_stamina_max": 100.0,
+		"player_weapon_heat": 0.0,
+		"player_weapon_overheated": false,
+		"process_enabled_node_count": 18,
+		"procgen_reveal_queue": 0,
+		"top_level_subtree_counts": {
+			"ARRNManager": 1,
+			"BuildInventory": 1,
+			"CognitiveState": 1,
+			"CommandRegistry": 1,
+			"DebugBus": 1,
+			"DebugConsoleLayer": 8,
+			"DebugCore": 1,
+			"DebugSnapshotCollector": 1,
+			"DevConsole": 12,
+			"DevMode": 3,
+			"DevObservatory": 1,
+			"DevObservatoryOverlay": 4,
+			"EnemyEngagementCoordinator": 1,
+			"FabPipeline": 1,
+			"GameConsoleManager": 1,
+			"GameRoot": 74,
+			"GameState": 1,
+			"GameStats": 1,
+			"InfrastructureRegistry": 1,
+			"InventoryManager": 1,
+			"MaterialIntelligence": 1,
+			"MusicManager": 1,
+			"NoiseEventBus": 1,
+			"ResourceLedger": 1,
+			"SectorHeatmap": 1,
+			"SimulationInterestManager": 1,
+			"VaultManager": 1,
+			"WorldEventMemory": 1,
+			"WorldHistory": 1,
+			"WorldStateGraph": 1,
+			"_mcp_game_helper": 1,
+			"root": 1
+		},
+		"uptime_sec": 1.3
+	},
+	"heatmap": {
+		"cell_count": 1,
+		"cell_size_px": 64.0,
+		"cells": {
+			"6,5": {
+				"by_type": {
+					"material_melee_impact": 0.25,
+					"presence": 4.0
+				},
+				"cell": {
+					"x": 6,
+					"y": 5
+				},
+				"first_seen_sec": 1.02,
+				"last_seen_sec": 1.236,
+				"sample_count": 5,
+				"total": 4.25,
+				"world": {
+					"x": 384.0,
+					"y": 320.0
+				}
+			}
+		},
+		"event_type_counts": {
+			"material_melee_impact": 0.25,
+			"presence": 4.0
+		},
+		"schema": "custodian.sector_heatmap.v1",
+		"total_samples": 5
+	},
+	"material_intelligence": {
+		"contact_counts_by_kind": {
+			"melee_impact": 1
+		},
+		"contact_counts_by_material": {
+			"unknown": 1
+		},
+		"default_cell_size_px": 64.0,
+		"material_counts": {},
+		"override_cell_count": 0,
+		"schema": "custodian.material_intelligence.summary.v1",
+		"total_contacts": 1
+	},
+	"metadata": {
+		"project_name": "CUSTODIAN",
+		"project_version": ""
+	},
+	"performance": {
+		"frame_ms_average": 0.0,
+		"frame_ms_current": 0.0,
+		"frame_ms_p95": 0.0,
+		"frame_ms_p99": 0.0,
+		"frame_ms_worst": 0.0,
+		"hitch_count": 0,
+		"sample_capacity": 600,
+		"sample_count": 0,
+		"severe_hitch_count": 0
+	},
+	"scene": {
+		"name": "GameRoot",
+		"path": "res://scenes/debug/combat_playground.tscn"
+	},
+	"schema": "custodian.dev_observatory.session.v1",
+	"session": {
+		"boot_time_msec": 1278,
+		"counter_count": 2,
+		"dropped_event_count": 0,
+		"event_buffer_saturated": false,
+		"event_capacity": 300,
+		"event_count": 11,
+		"gauge_count": 82,
+		"observatory_enabled": false,
+		"total_events_logged": 11,
+		"uptime_sec": 1.299,
+		"warning_count": 0
+	},
+	"warnings": []
+}

@@ -1,0 +1,12 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__modular_lower_body__melee_1h__idle_ready_01__e__4f__128x96.json",
+	"outputs": [
+		"res://content/sprites/operator/source/animations/melee_1h/locomotion/idle_ready_01/operator__lower_body__melee_1h__locomotion__idle_ready_01__e__4f__128x96.png",
+		"res://content/sprites/operator/source/animations/melee_1h/locomotion/idle_ready_01/operator__lower_body__melee_1h__locomotion__idle_ready_01__w__4f__128x96.png"
+	],
+	"post_process": [
+		"operator_runtime_build"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/operator__modular_lower_body__melee_1h__idle_ready_01__e__4f__128x96.png",
+	"timestamp_utc": "2026-08-23 14:20:40"
+}

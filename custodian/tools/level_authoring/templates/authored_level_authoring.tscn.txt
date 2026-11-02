@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/debug/level_collision_poi_mapper.tscn" id="1_mapper"]
+
+[node name="{{CLASS_NAME}}Authoring" instance=ExtResource("1_mapper")]
+target_scene_path = "{{PRODUCTION_SCENE_PATH}}"
+target_script_path = "{{PRODUCTION_SCRIPT_PATH}}"
+target_instance_name = "{{CLASS_NAME}}UnderReview"
+mapper_title = "{{DISPLAY_NAME}} Collision / POI Mapper"

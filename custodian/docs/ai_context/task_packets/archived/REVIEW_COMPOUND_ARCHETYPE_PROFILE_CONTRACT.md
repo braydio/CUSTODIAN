@@ -1,0 +1,81 @@
+# REVIEW COMPOUND ARCHETYPE PROFILE CONTRACT
+
+- Packet schema: custodian.task_packet.v2
+- Workstream: review-compound-archetype-profile-contract
+- Authoring handoff: auto
+- Status: `complete`
+- Dispatch: `auto`
+- Priority: P1
+- Depends on: compound-archetype-profile-contract
+- Locks: compound-layout
+- Kind: review
+- Review: none
+- Review target workstream: compound-archetype-profile-contract
+- Review target packet: custodian/docs/ai_context/task_packets/archived/COMPOUND_ARCHETYPE_PROFILE_CONTRACT.md
+- Reviewed main: b414f16e9e61e78ed9bcc0dbcee99372698e2869
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad08a2d-2ae4-83ea-be79-dd8534ffa488
+- Review modes: code, architecture, runtime, visual
+- Review cycle: 0
+- Max automatic review cycles: 2
+- Reviewer context: fresh
+- Reviewer provenance: different-agent
+- Visual review: conditional
+- Goal: Independently verify the landed implementation of compound-archetype-profile-contract.
+- Reviewed implementation acceptance: Every Acceptance item in custodian/docs/ai_context/task_packets/COMPOUND_ARCHETYPE_PROFILE_CONTRACT.md.
+- Review evidence: Actual landed code, provenance, deterministic traces, smoke outputs and scoped changed-file validation.
+- Correction threshold: Missing proof, second runtime authority, invalid geometry/nav, double state, broken backwards-compatibility or incomplete accepted behavior yields findings and correction, not PASS.
+- Review focus: For each of seeds 1,2,3,10,42,99,1337, unchanged legacy output, repeatable selected-profile output, invalid ID rejects, no duplicate room IDs or existing connector mismatch.
+- Focused validation: Existing persistent_compound_layout_smoke and persistent_compound_runtime_smoke plus NEW focused profile determinism test; create new tests before invoking them as file references.
+- Acceptance: Findings-first pass or bounded correction/re-review DAG with reproduction and exact impacted files; user visual acceptance not agent-owned.
+- Non-goals: New runtime implementation, gameplay feel certification or retroactive art approval.
+- Task overrides: TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.
+
+## Handoff
+
+- Next action: On genuine PASS, release review-gated descendants; on defect create one minimal correction and a fresh review.
+- Blockers or open questions: None for deterministic acceptance; human feel/art remains separate.
+
+
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: yes
+- Acceptance satisfied: yes
+- Findings: none
+- Evidence: All three required focused validations passed; the deterministic profile smoke covers seeds 1, 2, 3, 10, 42, 99, and 1337, including legacy topology equality, repeatability, unknown-ID rejection, room/connector uniqueness and references, and level-data metadata export.
+- Reviewed main: `b414f16e9e61e78ed9bcc0dbcee99372698e2869`
+- Reviewed implementation commit: `4e9d9feaa0eea6d4ea3824efaf6c2a1c9783cfc6`
+- Validation result: `/home/braydenchaffee/Projects/CUSTODIAN/.git/custodian-review-runs/review-compound-archetype-profile-contract/20261016T101948Z-4a1c650ee24c/validation.json`
+
+## Execution Feedback
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: medium
+- What went wrong: initial validation attempts used a cold Godot project cache and failed before test execution; after validation passed, the runner's post-exit verifier blocked because the archived review packet lacked its own canonical receipt and used `Review: passed`, which is outside the packet contract's allowed intent values.
+- Root cause / contributing factors: the reviewer wrote the target receipt and review verdict but omitted the separate review-packet receipt, then stored the verdict in the packet's `Review` intent field.
+- Prevention / pipeline improvement: require both packet receipts in reviewer closeout checks and keep `Review` intent metadata to `auto`, `manual`, or `none`; record verdict only in the canonical receipt.
+- Tooling / docs drift discovered: paired-review closeout instructions did not make the required independent receipt inside the archived review packet prominent enough; its metadata parser correctly rejected the invalid `Review: passed` value.
+- Follow-up: none
+- What worked: deterministic profile coverage and the official structured validation runner.
+
+## Next Handoff
+- Next workstream: none
+- Next packet state: none
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad08a2d-2ae4-83ea-be79-dd8534ffa488
+- Refresh reason: none
+- Next action: release review-gated descendants through the coordinator.
+- Blockers or open questions: none
+
+## Independent Review
+
+- Schema: `custodian.paired_review.v1`
+- Review workstream: `review-compound-archetype-profile-contract`
+- Review target workstream: `compound-archetype-profile-contract`
+- Status: `passed`
+- Blocking defects: `0`
+- Material gaps: `0`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Reviewed main: `b414f16e9e61e78ed9bcc0dbcee99372698e2869`
+- Reviewed implementation commit: `4e9d9feaa0eea6d4ea3824efaf6c2a1c9783cfc6`

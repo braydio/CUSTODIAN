@@ -1,0 +1,34 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scenes/debug/kenney_isometric_blockout_feasibility.gd" id="1"]
+
+[node name="KenneyIsometricBlockoutFeasibility" type="Node2D"]
+script = ExtResource("1")
+
+[node name="EvaluationViewport" type="SubViewportContainer" parent="."]
+unique_name_in_owner = true
+size = Vector2(1280, 720)
+
+[node name="ComparisonViewport" type="SubViewport" parent="EvaluationViewport"]
+unique_name_in_owner = true
+size = Vector2i(1280, 720)
+render_target_update_mode = 4
+
+[node name="SharedSpatialSample" type="Node2D" parent="EvaluationViewport/ComparisonViewport"]
+unique_name_in_owner = true
+
+[node name="AnchorMarkers" type="Node2D" parent="EvaluationViewport/ComparisonViewport/SharedSpatialSample"]
+unique_name_in_owner = true
+
+[node name="NativePresentation" type="Node2D" parent="EvaluationViewport/ComparisonViewport"]
+unique_name_in_owner = true
+
+[node name="KenneyPresentation" type="Node2D" parent="EvaluationViewport/ComparisonViewport"]
+unique_name_in_owner = true
+visible = false
+
+[node name="Camera2D" type="Camera2D" parent="EvaluationViewport/ComparisonViewport"]
+unique_name_in_owner = true
+position = Vector2(0, -2000)
+zoom = Vector2(0.3, 0.3)
+enabled = true

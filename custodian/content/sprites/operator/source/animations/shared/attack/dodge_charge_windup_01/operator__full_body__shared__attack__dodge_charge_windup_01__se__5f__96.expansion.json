@@ -1,0 +1,9 @@
+{
+  "schema": "custodian.operator_directional_expansion.v1",
+  "identity": "shared/attack/dodge_charge_windup_01/se/full_body",
+  "authored_direction": "s",
+  "target_direction": "se",
+  "reuses_authored_pixels": true,
+  "source_sha256": "16322575abaa1d81d7f2927b2b0b6dd925e8dc3baa4c7cd053d3a51426674a56",
+  "reason": "N/NE reuse E; SE/SW reuse S; NW reuses W."
+}

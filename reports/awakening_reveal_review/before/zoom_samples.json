@@ -1,0 +1,74 @@
+[
+  {
+    "phase": "normal",
+    "target_zoom": 2.02499985694885,
+    "zone": "zone05_dust_lung",
+    "zoom": 2.01019358634949
+  },
+  {
+    "phase": "halfway",
+    "target_zoom": 1.18811547756195,
+    "zone": "zone05_dust_lung",
+    "zoom": 1.52469432353973
+  },
+  {
+    "phase": "hold",
+    "target_zoom": 0.720000028610229,
+    "zone": "zone05_dust_lung",
+    "zoom": 0.766767382621765
+  },
+  {
+    "phase": "released",
+    "target_zoom": 2.02499985694885,
+    "zone": "zone05_dust_lung",
+    "zoom": 2.01750206947327
+  },
+  {
+    "phase": "normal",
+    "target_zoom": 2.02499985694885,
+    "zone": "zone07_gate_of_dust",
+    "zoom": 2.01514720916748
+  },
+  {
+    "phase": "halfway",
+    "target_zoom": 1.10945296287537,
+    "zone": "zone07_gate_of_dust",
+    "zoom": 1.45240926742554
+  },
+  {
+    "phase": "hold",
+    "target_zoom": 0.680000007152557,
+    "zone": "zone07_gate_of_dust",
+    "zoom": 0.727163851261139
+  },
+  {
+    "phase": "released",
+    "target_zoom": 2.02499985694885,
+    "zone": "zone07_gate_of_dust",
+    "zoom": 2.01126098632812
+  },
+  {
+    "phase": "normal",
+    "target_zoom": 2.02499985694885,
+    "zone": "zone08_custodian_approach",
+    "zoom": 2.01411819458008
+  },
+  {
+    "phase": "halfway",
+    "target_zoom": 1.20838141441345,
+    "zone": "zone08_custodian_approach",
+    "zoom": 1.49853110313416
+  },
+  {
+    "phase": "hold",
+    "target_zoom": 0.660000026226044,
+    "zone": "zone08_custodian_approach",
+    "zoom": 0.694980144500732
+  },
+  {
+    "phase": "released",
+    "target_zoom": 2.02499985694885,
+    "zone": "zone08_custodian_approach",
+    "zoom": 2.01169967651367
+  }
+]

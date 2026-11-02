@@ -1,0 +1,31 @@
+{
+  "source": "enemy_forlorn_ritualant__body__pin_strike__s__10f__128.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "enemies/enemy_forlorn_ritualant/runtime/body/enemy_forlorn_ritualant__body__pin_strike__s__10f__128.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 10
+      }
+    },
+    {
+      "path": "enemies/enemy_forlorn_ritualant/enemy_forlorn_ritualant__body__pin_strike__s__10f__128.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 10
+      }
+    }
+  ],
+  "frame_size": [
+    128,
+    128
+  ],
+  "post_process": [
+    "enemy_runtime_import"
+  ]
+}

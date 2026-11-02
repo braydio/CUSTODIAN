@@ -1,0 +1,1087 @@
+{
+  "schema": "custodian.operator_art_metrics.v2",
+  "frames": [
+    {
+      "size": [
+        96,
+        96
+      ],
+      "alpha_bbox": [
+        10,
+        15,
+        68,
+        85
+      ],
+      "opaque_pixels": 1988,
+      "semi_transparent_pixels": 0,
+      "visual_centroid": [
+        43.10513078470825,
+        52.033702213279675
+      ],
+      "lowest_occupied_y": 84,
+      "highest_occupied_y": 15,
+      "width": 58,
+      "height": 70,
+      "palette_size": 204,
+      "pixel_sha": "af60f5bc5d5c9e84ac16f0eb1609ac397ed320ef9307c69b2d7f3d3db1c63f20",
+      "baseline_y": 84,
+      "alpha_area": 4060,
+      "isolated_opaque_pixels": [],
+      "single_pixel_components": 0,
+      "landmarks": {
+        "ankle_far": [
+          27,
+          77
+        ],
+        "ankle_near": [
+          49,
+          79
+        ],
+        "head_center": [
+          38,
+          25
+        ],
+        "hip_center": [
+          38,
+          58
+        ],
+        "knee_far": [
+          27,
+          68
+        ],
+        "knee_near": [
+          49,
+          70
+        ],
+        "toe_far": [
+          25,
+          83
+        ],
+        "toe_near": [
+          51,
+          84
+        ],
+        "weapon_grip": [
+          19,
+          60
+        ],
+        "weapon_tip": [
+          54,
+          43
+        ]
+      }
+    },
+    {
+      "size": [
+        96,
+        96
+      ],
+      "alpha_bbox": [
+        13,
+        15,
+        85,
+        85
+      ],
+      "opaque_pixels": 1842,
+      "semi_transparent_pixels": 0,
+      "visual_centroid": [
+        46.67589576547231,
+        50.61943539630836
+      ],
+      "lowest_occupied_y": 84,
+      "highest_occupied_y": 15,
+      "width": 72,
+      "height": 70,
+      "palette_size": 156,
+      "pixel_sha": "8ca13e3c381115299a6ff3e1322ba80446d1349482c427fd96eb2e9ff918ab73",
+      "baseline_y": 84,
+      "alpha_area": 5040,
+      "isolated_opaque_pixels": [],
+      "single_pixel_components": 0,
+      "landmarks": {
+        "ankle_far": [
+          28,
+          78
+        ],
+        "ankle_near": [
+          48,
+          80
+        ],
+        "head_center": [
+          48,
+          25
+        ],
+        "hip_center": [
+          38,
+          59
+        ],
+        "knee_far": [
+          28,
+          69
+        ],
+        "knee_near": [
+          48,
+          71
+        ],
+        "toe_far": [
+          26,
+          83
+        ],
+        "toe_near": [
+          50,
+          84
+        ],
+        "weapon_grip": [
+          38,
+          50
+        ],
+        "weapon_tip": [
+          84,
+          45
+        ]
+      }
+    },
+    {
+      "size": [
+        96,
+        96
+      ],
+      "alpha_bbox": [
+        8,
+        15,
+        89,
+        85
+      ],
+      "opaque_pixels": 2169,
+      "semi_transparent_pixels": 0,
+      "visual_centroid": [
+        43.25910557860765,
+        49.13600737667128
+      ],
+      "lowest_occupied_y": 84,
+      "highest_occupied_y": 15,
+      "width": 81,
+      "height": 70,
+      "palette_size": 204,
+      "pixel_sha": "da6044e886a256b11d5316a10a102f25ab5a9cb3bce20490d7d9daaa1989a295",
+      "baseline_y": 84,
+      "alpha_area": 5670,
+      "isolated_opaque_pixels": [],
+      "single_pixel_components": 0,
+      "landmarks": {
+        "ankle_far": [
+          25,
+          77
+        ],
+        "ankle_near": [
+          47,
+          79
+        ],
+        "head_center": [
+          48,
+          25
+        ],
+        "hip_center": [
+          36,
+          57
+        ],
+        "knee_far": [
+          25,
+          68
+        ],
+        "knee_near": [
+          47,
+          70
+        ],
+        "toe_far": [
+          23,
+          83
+        ],
+        "toe_near": [
+          49,
+          84
+        ],
+        "weapon_grip": [
+          53,
+          38
+        ],
+        "weapon_tip": [
+          88,
+          21
+        ]
+      }
+    },
+    {
+      "size": [
+        96,
+        96
+      ],
+      "alpha_bbox": [
+        8,
+        15,
+        84,
+        85
+      ],
+      "opaque_pixels": 1660,
+      "semi_transparent_pixels": 0,
+      "visual_centroid": [
+        44.619277108433735,
+        48.74759036144578
+      ],
+      "lowest_occupied_y": 84,
+      "highest_occupied_y": 15,
+      "width": 76,
+      "height": 70,
+      "palette_size": 156,
+      "pixel_sha": "737688058c2a16bb50335412dea9417326ee6823174d1c158c0d64eef9be651e",
+      "baseline_y": 84,
+      "alpha_area": 5320,
+      "isolated_opaque_pixels": [],
+      "single_pixel_components": 0,
+      "landmarks": {
+        "ankle_far": [
+          23,
+          78
+        ],
+        "ankle_near": [
+          41,
+          80
+        ],
+        "head_center": [
+          46,
+          25
+        ],
+        "hip_center": [
+          32,
+          59
+        ],
+        "knee_far": [
+          23,
+          69
+        ],
+        "knee_near": [
+          41,
+          71
+        ],
+        "toe_far": [
+          21,
+          83
+        ],
+        "toe_near": [
+          43,
+          84
+        ],
+        "weapon_grip": [
+          37,
+          48
+        ],
+        "weapon_tip": [
+          83,
+          43
+        ]
+      }
+    },
+    {
+      "size": [
+        96,
+        96
+      ],
+      "alpha_bbox": [
+        6,
+        15,
+        69,
+        85
+      ],
+      "opaque_pixels": 1954,
+      "semi_transparent_pixels": 35,
+      "visual_centroid": [
+        41.22171945701358,
+        50.59678230266466
+      ],
+      "lowest_occupied_y": 84,
+      "highest_occupied_y": 15,
+      "width": 63,
+      "height": 70,
+      "palette_size": 253,
+      "pixel_sha": "00ea7dc7daf48938e44b90f475579752daa935d2a316a320e5c8a4b1026a95c1",
+      "baseline_y": 84,
+      "alpha_area": 4410,
+      "isolated_opaque_pixels": [],
+      "single_pixel_components": 0,
+      "landmarks": {
+        "ankle_far": [
+          25,
+          77
+        ],
+        "ankle_near": [
+          49,
+          79
+        ],
+        "head_center": [
+          37,
+          25
+        ],
+        "hip_center": [
+          37,
+          57
+        ],
+        "knee_far": [
+          25,
+          68
+        ],
+        "knee_near": [
+          49,
+          70
+        ],
+        "toe_far": [
+          23,
+          83
+        ],
+        "toe_near": [
+          51,
+          84
+        ],
+        "weapon_grip": [
+          18,
+          54
+        ],
+        "weapon_tip": [
+          53,
+          38
+        ]
+      }
+    },
+    {
+      "size": [
+        96,
+        96
+      ],
+      "alpha_bbox": [
+        7,
+        15,
+        85,
+        86
+      ],
+      "opaque_pixels": 1821,
+      "semi_transparent_pixels": 0,
+      "visual_centroid": [
+        43.77265238879736,
+        51.028555738605164
+      ],
+      "lowest_occupied_y": 85,
+      "highest_occupied_y": 15,
+      "width": 78,
+      "height": 71,
+      "palette_size": 156,
+      "pixel_sha": "922d35aeba25afaebed5ded8414d555b9ed973ea2005b43c7f1828bf648e5125",
+      "baseline_y": 85,
+      "alpha_area": 5538,
+      "isolated_opaque_pixels": [],
+      "single_pixel_components": 0,
+      "landmarks": {
+        "ankle_far": [
+          22,
+          78
+        ],
+        "ankle_near": [
+          42,
+          80
+        ],
+        "head_center": [
+          46,
+          25
+        ],
+        "hip_center": [
+          32,
+          59
+        ],
+        "knee_far": [
+          22,
+          69
+        ],
+        "knee_near": [
+          42,
+          71
+        ],
+        "toe_far": [
+          20,
+          84
+        ],
+        "toe_near": [
+          44,
+          85
+        ],
+        "weapon_grip": [
+          38,
+          50
+        ],
+        "weapon_tip": [
+          84,
+          44
+        ]
+      }
+    },
+    {
+      "size": [
+        96,
+        96
+      ],
+      "alpha_bbox": [
+        14,
+        15,
+        92,
+        85
+      ],
+      "opaque_pixels": 2069,
+      "semi_transparent_pixels": 0,
+      "visual_centroid": [
+        46.52005799903335,
+        49.267762203963265
+      ],
+      "lowest_occupied_y": 84,
+      "highest_occupied_y": 15,
+      "width": 78,
+      "height": 70,
+      "palette_size": 204,
+      "pixel_sha": "56350e83f4a611f30f03fef86cd11e1c8f6695c9131dd8efdae877b11437f50a",
+      "baseline_y": 84,
+      "alpha_area": 5460,
+      "isolated_opaque_pixels": [],
+      "single_pixel_components": 0,
+      "landmarks": {
+        "ankle_far": [
+          30,
+          77
+        ],
+        "ankle_near": [
+          52,
+          79
+        ],
+        "head_center": [
+          52,
+          25
+        ],
+        "hip_center": [
+          41,
+          58
+        ],
+        "knee_far": [
+          30,
+          68
+        ],
+        "knee_near": [
+          52,
+          70
+        ],
+        "toe_far": [
+          28,
+          83
+        ],
+        "toe_near": [
+          54,
+          84
+        ],
+        "weapon_grip": [
+          56,
+          36
+        ],
+        "weapon_tip": [
+          91,
+          20
+        ]
+      }
+    },
+    {
+      "size": [
+        96,
+        96
+      ],
+      "alpha_bbox": [
+        6,
+        15,
+        84,
+        85
+      ],
+      "opaque_pixels": 1808,
+      "semi_transparent_pixels": 0,
+      "visual_centroid": [
+        42.68307522123894,
+        50.49944690265487
+      ],
+      "lowest_occupied_y": 84,
+      "highest_occupied_y": 15,
+      "width": 78,
+      "height": 70,
+      "palette_size": 156,
+      "pixel_sha": "00c3b099d421bb09680062ae304adc34690b014c18887d4b0cae9ecc4c7fb070",
+      "baseline_y": 84,
+      "alpha_area": 5460,
+      "isolated_opaque_pixels": [],
+      "single_pixel_components": 0,
+      "landmarks": {
+        "ankle_far": [
+          22,
+          77
+        ],
+        "ankle_near": [
+          42,
+          79
+        ],
+        "head_center": [
+          44,
+          25
+        ],
+        "hip_center": [
+          32,
+          58
+        ],
+        "knee_far": [
+          22,
+          68
+        ],
+        "knee_near": [
+          42,
+          70
+        ],
+        "toe_far": [
+          20,
+          83
+        ],
+        "toe_near": [
+          44,
+          84
+        ],
+        "weapon_grip": [
+          37,
+          50
+        ],
+        "weapon_tip": [
+          83,
+          44
+        ]
+      }
+    }
+  ],
+  "duplicate_adjacent_frames": [],
+  "trajectories": {
+    "ankle_far": [
+      [
+        1,
+        27,
+        77
+      ],
+      [
+        2,
+        28,
+        78
+      ],
+      [
+        3,
+        25,
+        77
+      ],
+      [
+        4,
+        23,
+        78
+      ],
+      [
+        5,
+        25,
+        77
+      ],
+      [
+        6,
+        22,
+        78
+      ],
+      [
+        7,
+        30,
+        77
+      ],
+      [
+        8,
+        22,
+        77
+      ]
+    ],
+    "ankle_near": [
+      [
+        1,
+        49,
+        79
+      ],
+      [
+        2,
+        48,
+        80
+      ],
+      [
+        3,
+        47,
+        79
+      ],
+      [
+        4,
+        41,
+        80
+      ],
+      [
+        5,
+        49,
+        79
+      ],
+      [
+        6,
+        42,
+        80
+      ],
+      [
+        7,
+        52,
+        79
+      ],
+      [
+        8,
+        42,
+        79
+      ]
+    ],
+    "head_center": [
+      [
+        1,
+        38,
+        25
+      ],
+      [
+        2,
+        48,
+        25
+      ],
+      [
+        3,
+        48,
+        25
+      ],
+      [
+        4,
+        46,
+        25
+      ],
+      [
+        5,
+        37,
+        25
+      ],
+      [
+        6,
+        46,
+        25
+      ],
+      [
+        7,
+        52,
+        25
+      ],
+      [
+        8,
+        44,
+        25
+      ]
+    ],
+    "hip_center": [
+      [
+        1,
+        38,
+        58
+      ],
+      [
+        2,
+        38,
+        59
+      ],
+      [
+        3,
+        36,
+        57
+      ],
+      [
+        4,
+        32,
+        59
+      ],
+      [
+        5,
+        37,
+        57
+      ],
+      [
+        6,
+        32,
+        59
+      ],
+      [
+        7,
+        41,
+        58
+      ],
+      [
+        8,
+        32,
+        58
+      ]
+    ],
+    "knee_far": [
+      [
+        1,
+        27,
+        68
+      ],
+      [
+        2,
+        28,
+        69
+      ],
+      [
+        3,
+        25,
+        68
+      ],
+      [
+        4,
+        23,
+        69
+      ],
+      [
+        5,
+        25,
+        68
+      ],
+      [
+        6,
+        22,
+        69
+      ],
+      [
+        7,
+        30,
+        68
+      ],
+      [
+        8,
+        22,
+        68
+      ]
+    ],
+    "knee_near": [
+      [
+        1,
+        49,
+        70
+      ],
+      [
+        2,
+        48,
+        71
+      ],
+      [
+        3,
+        47,
+        70
+      ],
+      [
+        4,
+        41,
+        71
+      ],
+      [
+        5,
+        49,
+        70
+      ],
+      [
+        6,
+        42,
+        71
+      ],
+      [
+        7,
+        52,
+        70
+      ],
+      [
+        8,
+        42,
+        70
+      ]
+    ],
+    "toe_far": [
+      [
+        1,
+        25,
+        83
+      ],
+      [
+        2,
+        26,
+        83
+      ],
+      [
+        3,
+        23,
+        83
+      ],
+      [
+        4,
+        21,
+        83
+      ],
+      [
+        5,
+        23,
+        83
+      ],
+      [
+        6,
+        20,
+        84
+      ],
+      [
+        7,
+        28,
+        83
+      ],
+      [
+        8,
+        20,
+        83
+      ]
+    ],
+    "toe_near": [
+      [
+        1,
+        51,
+        84
+      ],
+      [
+        2,
+        50,
+        84
+      ],
+      [
+        3,
+        49,
+        84
+      ],
+      [
+        4,
+        43,
+        84
+      ],
+      [
+        5,
+        51,
+        84
+      ],
+      [
+        6,
+        44,
+        85
+      ],
+      [
+        7,
+        54,
+        84
+      ],
+      [
+        8,
+        44,
+        84
+      ]
+    ],
+    "weapon_grip": [
+      [
+        1,
+        19,
+        60
+      ],
+      [
+        2,
+        38,
+        50
+      ],
+      [
+        3,
+        53,
+        38
+      ],
+      [
+        4,
+        37,
+        48
+      ],
+      [
+        5,
+        18,
+        54
+      ],
+      [
+        6,
+        38,
+        50
+      ],
+      [
+        7,
+        56,
+        36
+      ],
+      [
+        8,
+        37,
+        50
+      ]
+    ],
+    "weapon_tip": [
+      [
+        1,
+        54,
+        43
+      ],
+      [
+        2,
+        84,
+        45
+      ],
+      [
+        3,
+        88,
+        21
+      ],
+      [
+        4,
+        83,
+        43
+      ],
+      [
+        5,
+        53,
+        38
+      ],
+      [
+        6,
+        84,
+        44
+      ],
+      [
+        7,
+        91,
+        20
+      ],
+      [
+        8,
+        83,
+        44
+      ]
+    ]
+  },
+  "loop_seam_metrics": {
+    "head_center": {
+      "loop_seam_displacement": 6.0,
+      "median_internal_step": 8.0,
+      "max_internal_step": 10.0,
+      "normalized_seam_ratio": 0.75
+    },
+    "hip_center": {
+      "loop_seam_displacement": 6.0,
+      "median_internal_step": 5.385164807134504,
+      "max_internal_step": 9.055385138137417,
+      "normalized_seam_ratio": 1.1141720290623112
+    },
+    "knee_near": {
+      "loop_seam_displacement": 7.0,
+      "median_internal_step": 7.0710678118654755,
+      "max_internal_step": 10.04987562112089,
+      "normalized_seam_ratio": 0.9899494936611665
+    },
+    "knee_far": {
+      "loop_seam_displacement": 5.0,
+      "median_internal_step": 3.1622776601683795,
+      "max_internal_step": 8.06225774829855,
+      "normalized_seam_ratio": 1.5811388300841895
+    },
+    "ankle_near": {
+      "loop_seam_displacement": 7.0,
+      "median_internal_step": 7.0710678118654755,
+      "max_internal_step": 10.04987562112089,
+      "normalized_seam_ratio": 0.9899494936611665
+    },
+    "ankle_far": {
+      "loop_seam_displacement": 5.0,
+      "median_internal_step": 3.1622776601683795,
+      "max_internal_step": 8.06225774829855,
+      "normalized_seam_ratio": 1.5811388300841895
+    },
+    "toe_near": {
+      "loop_seam_displacement": 7.0,
+      "median_internal_step": 7.0710678118654755,
+      "max_internal_step": 10.04987562112089,
+      "normalized_seam_ratio": 0.9899494936611665
+    },
+    "toe_far": {
+      "loop_seam_displacement": 5.0,
+      "median_internal_step": 3.0,
+      "max_internal_step": 8.06225774829855,
+      "normalized_seam_ratio": 1.6666666666666667
+    },
+    "weapon_grip": {
+      "loop_seam_displacement": 20.591260281974,
+      "median_internal_step": 20.396078054371138,
+      "max_internal_step": 23.600847442411894,
+      "normalized_seam_ratio": 1.0095695960312838
+    },
+    "weapon_tip": {
+      "loop_seam_displacement": 29.017236257093817,
+      "median_internal_step": 25.298221281347036,
+      "max_internal_step": 31.575306807693888,
+      "normalized_seam_ratio": 1.147006974695446
+    }
+  },
+  "layer_shas": {},
+  "masks": [
+    {
+      "mask_id": "near_leg_f4_0c27f425d6",
+      "part": "near_leg",
+      "frame": 4,
+      "layer": "lower_body",
+      "bbox": [
+        32,
+        56,
+        25,
+        29
+      ],
+      "centroid": [
+        44.0,
+        70.0
+      ],
+      "span_pixel_count": 725
+    },
+    {
+      "mask_id": "far_leg_f4_0eab5d2d5f",
+      "part": "far_leg",
+      "frame": 4,
+      "layer": "lower_body",
+      "bbox": [
+        8,
+        56,
+        25,
+        29
+      ],
+      "centroid": [
+        20.0,
+        70.0
+      ],
+      "span_pixel_count": 725
+    }
+  ]
+}

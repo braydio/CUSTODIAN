@@ -1,0 +1,12 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/vigil_pattern_dagger__weapon__melee_1h_dagger__transition__relaxed_to_ready_01__e__3f__96.json",
+	"outputs": [
+		"res://content/sprites/weapons/vigil_pattern_dagger/source/operator/melee_1h_dagger/overrides/transition/relaxed_to_ready_01/vigil_pattern_dagger__weapon__melee_1h_dagger__transition__relaxed_to_ready_01__e__3f__96.png",
+		"res://content/sprites/weapons/vigil_pattern_dagger/source/operator/melee_1h_dagger/overrides/transition/relaxed_to_ready_01/vigil_pattern_dagger__weapon__melee_1h_dagger__transition__relaxed_to_ready_01__w__3f__96.png"
+	],
+	"post_process": [
+		"operator_runtime_build"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/vigil_pattern_dagger__weapon__melee_1h_dagger__transition__relaxed_to_ready_01__e__3f__96.png",
+	"timestamp_utc": "2026-09-10 08:53:05"
+}

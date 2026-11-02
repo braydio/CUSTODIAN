@@ -1,0 +1,40 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://game/vehicles/pilotable_vehicle.gd" id="1_vehicle"]
+[ext_resource type="Script" path="res://game/vehicles/vehicle_seat.gd" id="2_seat"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_vehicle"]
+radius = 26.0
+height = 58.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_entry"]
+radius = 64.0
+
+[node name="PilotableVehicle" type="CharacterBody2D"]
+script = ExtResource("1_vehicle")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 8)
+shape = SubResource("CapsuleShape2D_vehicle")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -8)
+
+[node name="EntryArea2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EntryArea2D"]
+shape = SubResource("CircleShape2D_entry")
+
+[node name="DriverSeat" type="Node2D" parent="."]
+script = ExtResource("2_seat")
+
+[node name="ExitMarker" type="Marker2D" parent="."]
+position = Vector2(48, 4)
+
+[node name="Hardpoints" type="Node2D" parent="."]
+
+[node name="FrontLight" type="Marker2D" parent="Hardpoints"]
+position = Vector2(0, -32)
+
+[node name="RearUtility" type="Marker2D" parent="Hardpoints"]
+position = Vector2(0, 28)

@@ -1,0 +1,134 @@
+{
+  "schema": "game32.asset.v1",
+  "asset_id": "sundered_keep/gothic_castle_wall_endcap_n",
+  "name": "gothic_castle_wall_endcap_n",
+  "filename": "gothic_castle_wall_endcap_n.png",
+  "set": "sundered_keep",
+  "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
+  "created_utc": "2026-05-30T07:30:01+00:00",
+  "source": {
+    "sheet_key": "gothic_castle_walls",
+    "sheet_file": "sundered_walls_gates.png",
+    "sheet_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/sundered_walls_gates.png",
+    "sheet_sha256": "70f8dee31248b7359f97b58b95bb62e85959d203c8ae5dc20304e73b95c3a525",
+    "sheet_asset_index": 12,
+    "sheet_bbox_px": [
+      0,
+      576,
+      256,
+      192
+    ],
+    "source_crop_bbox_px": [
+      0,
+      0,
+      256,
+      192
+    ],
+    "detected_background_colors_rgb": [],
+    "extraction_method": {
+      "background": "none",
+      "component_join_radius_px": 18,
+      "crop_padding_px": 8,
+      "min_component_area_px": 900,
+      "type": "grid_full_cell"
+    },
+    "cell_grid": {
+      "rows": 8,
+      "cols": 4,
+      "row": 3,
+      "col": 0,
+      "cell_box_px": [
+        0,
+        576,
+        256,
+        768
+      ]
+    }
+  },
+  "runtime": {
+    "base_tile_px": 32,
+    "path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_endcap_n.png",
+    "metadata_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_endcap_n.game32.json",
+    "domain": "gothic_castle_walls",
+    "kind": "wall",
+    "subkind": "wall_module",
+    "canvas_px": [
+      256,
+      64
+    ],
+    "canvas_tiles": [
+      1,
+      1
+    ],
+    "content_bbox_px": [
+      0,
+      0,
+      256,
+      64
+    ],
+    "scale_from_source_crop": 1.0,
+    "paste_offset_px": [
+      0,
+      0
+    ],
+    "anchor": "bottom_center",
+    "pivot_px": [
+      128,
+      64
+    ],
+    "pivot_normalized": [
+      0.5,
+      1.0
+    ],
+    "y_sort": true,
+    "draw_order": "architecture",
+    "godot_import_hints": {
+      "filter": false,
+      "mipmaps": false,
+      "repeat": false,
+      "compress_mode": "lossless",
+      "pixel_snap": true
+    },
+    "sha256": "ee0570ede2403903aaa72b60c082c0201bdafa71730481996bd5b9c555411f6f",
+    "file_size": 7294
+  },
+  "gameplay": {
+    "walkable": false,
+    "interactable": false,
+    "traversal": null,
+    "direction": "n",
+    "state": null,
+    "tags": [
+      "facing_n",
+      "gothic castle walls",
+      "solid",
+      "sundered_keep",
+      "vertical_sprite",
+      "wall"
+    ]
+  },
+  "collision": {
+    "kind": "solid_base_cell",
+    "blocks_movement": true,
+    "blocks_projectiles": true,
+    "footprint_tiles_wh": [
+      1,
+      1
+    ],
+    "footprint_cells": [
+      {
+        "x": 0,
+        "y": 0
+      }
+    ],
+    "origin_tile": {
+      "x": 0,
+      "y": 0,
+      "anchor": "bottom_center"
+    }
+  },
+  "editor": {
+    "display_name": "Gothic Castle Wall Endcap N",
+    "notes": "Generated from Sundered Keep master sheet; adjust footprint/collision after in-editor placement review if needed."
+  }
+}

@@ -1,0 +1,154 @@
+{
+	"actions": [
+		{
+			"action": "input_tap",
+			"ok": true,
+			"tick": 2
+		},
+		{
+			"action": "input_tap",
+			"ok": true,
+			"tick": 4
+		},
+		{
+			"action": "aim_at_role",
+			"ok": true,
+			"tick": 8
+		},
+		{
+			"action": "input_press",
+			"ok": true,
+			"tick": 16
+		},
+		{
+			"action": "input_release",
+			"ok": true,
+			"tick": 35
+		},
+		{
+			"action": "input_tap",
+			"ok": true,
+			"tick": 62
+		},
+		{
+			"action": "capture_marker",
+			"ok": true,
+			"tick": 76
+		},
+		{
+			"action": "aim_at_role",
+			"ok": true,
+			"tick": 132
+		},
+		{
+			"action": "input_tap",
+			"ok": true,
+			"tick": 142
+		},
+		{
+			"action": "finish",
+			"finish": true,
+			"ok": true,
+			"tick": 358
+		}
+	],
+	"assertions": [
+		{
+			"actual": true,
+			"expected": {
+				"role": "aimed_target",
+				"severity": "error",
+				"type": "role_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "role_exists"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"role": "near_off_aim",
+				"severity": "error",
+				"type": "role_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "role_exists"
+		},
+		{
+			"actual": false,
+			"expected": {
+				"severity": "error",
+				"type": "no_unreleased_inputs"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "no_unreleased_inputs"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"path": "telemetry.json",
+				"severity": "error",
+				"type": "output_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "output_exists"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 76.0,
+				"type": "probe_compare",
+				"value": 1.0
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		}
+	],
+	"capture_failures": [],
+	"capture_mode": "none",
+	"completed": true,
+	"completed_tick": 358,
+	"failures": [],
+	"keyframes": [],
+	"markers": [
+		{
+			"data": {},
+			"name": "assisted_contact",
+			"tick": 76
+		}
+	],
+	"passed": true,
+	"probe_failures": [],
+	"runtime": {
+		"godot": {
+			"build": "arch_linux",
+			"hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+			"hex": 263937,
+			"major": 4,
+			"minor": 7,
+			"patch": 1,
+			"status": "stable",
+			"string": "4.7.1-stable (arch_linux)",
+			"timestamp": 1783976428
+		},
+		"physics_hz": 60,
+		"renderer": "vulkan"
+	},
+	"scenario_id": "combat/melee_soft_target_spacing",
+	"scenario_path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/melee_soft_target_spacing/20260809T153127-0400/scenario.snapshot.json",
+	"schema": "custodian.moment_forge.run_result.v1",
+	"seed": 104729
+}

@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "id": "traversal/ash_bell_lower_quarter_opening",
+  "description": "Real Operator and gameplay Camera2D review of the Lower Quarter opening and landmark reacquisition beats.",
+  "scene": "res://tools/validation/fixtures/ash_bell_lower_quarter_opening_moment.tscn",
+  "seed": 104729,
+  "duration_ticks": 90,
+  "simulation": {"physics_hz": 60, "warmup_ticks": 6, "max_wall_seconds": 45, "pause_during_setup": true},
+  "capture": {"width": 1280, "height": 720, "fps": 60, "audio": false, "start_tick": 0, "end_tick": 89, "contact_sheet_ticks": [8, 22, 36, 50, 64, 78], "required_keyframes": true, "background": "opaque"},
+  "setup": {"remove_nodes": [], "roles": {"fixture": {"node_path": "."}, "level": {"node_path": "World/AshBellLowerQuarter"}, "operator": {"node_path": "World/Operator"}}, "spawns": [], "properties": [], "processing": [], "fixture": {"id": "ash_bell_lower_quarter_opening", "config": {}}},
+  "timeline": [
+    {"tick": 15, "action": "fixture_command", "name": "direct_line"},
+    {"tick": 29, "action": "fixture_command", "name": "evacuation_turn"},
+    {"tick": 43, "action": "fixture_command", "name": "civic_basin"},
+    {"tick": 57, "action": "fixture_command", "name": "answers_court"},
+    {"tick": 71, "action": "fixture_command", "name": "station_threshold"},
+    {"tick": 86, "action": "finish"}
+  ],
+  "probes": [{"id": "fixture_state", "role": "fixture", "fields": ["checkpoint", "real_camera", "real_operator"], "ticks": [8, 22, 36, 50, 64, 78], "required": true}, {"id": "operator_path", "role": "operator", "fields": ["global_position"], "ticks": [8, 22, 36, 50, 64, 78], "required": true}],
+  "assertions": [{"type": "role_exists", "role": "level", "severity": "error"}, {"type": "role_exists", "role": "operator", "severity": "error"}, {"type": "probe_compare", "probe": "fixture_state", "tick": 8, "field": "real_camera", "op": "eq", "value": true, "severity": "error"}, {"type": "probe_compare", "probe": "fixture_state", "tick": 8, "field": "real_operator", "op": "eq", "value": true, "severity": "error"}, {"type": "no_unreleased_inputs", "severity": "error"}, {"type": "output_exists", "path": "telemetry.json", "severity": "error"}],
+  "stable_fingerprint": {"event_payload_fields": {}, "counters": [], "probes": ["operator_path"], "position_quantum_px": 0.25, "float_quantum": 0.0001},
+  "tags": ["traversal", "ash_bell", "lower_quarter", "visual_review", "production_art", "camera"]
+}

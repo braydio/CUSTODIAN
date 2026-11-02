@@ -1,0 +1,41 @@
+{
+  "schema": "custodian.game32.ui_domain_manifest.v1",
+  "set": "ui_black_reliquary",
+  "domain": "divider",
+  "base_path": "res://content/ui/custodian/dividers",
+  "asset_count": 2,
+  "assets": [
+    {
+      "id": "ui_divider_gold_horizontal",
+      "runtime_path": "res://content/ui/custodian/dividers/ui_divider_gold_horizontal.png",
+      "metadata_path": "res://content/ui/custodian/dividers/ui_divider_gold_horizontal.game32.json",
+      "size_px": [
+        321,
+        24
+      ],
+      "ui_role": "separator",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "gold",
+        "horizontal"
+      ]
+    },
+    {
+      "id": "ui_divider_gold_vertical",
+      "runtime_path": "res://content/ui/custodian/dividers/ui_divider_gold_vertical.png",
+      "metadata_path": "res://content/ui/custodian/dividers/ui_divider_gold_vertical.game32.json",
+      "size_px": [
+        23,
+        90
+      ],
+      "ui_role": "separator",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "gold",
+        "vertical"
+      ]
+    }
+  ],
+  "generated_at_utc": "2026-06-02T03:47:46.726418+00:00",
+  "generator": "custodian/tools/art/extract_ui_black_reliquary_game32.py"
+}

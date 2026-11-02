@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash tools/crg-refresh.sh --status",
+            "timeout": 60
+          }
+        ]
+      }
+    ]
+  }
+}

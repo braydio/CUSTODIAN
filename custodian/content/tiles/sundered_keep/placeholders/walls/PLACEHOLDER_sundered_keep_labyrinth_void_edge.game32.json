@@ -1,0 +1,10 @@
+{
+  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_void_edge",
+  "name": "PLACEHOLDER_sundered_keep_labyrinth_void_edge",
+  "filename": "PLACEHOLDER_sundered_keep_labyrinth_void_edge.png",
+  "kind": "terrain",
+  "subkind": "placeholder_void_edge",
+  "walkable": false,
+  "blocks_movement": true,
+  "runtime_path": "res://content/tiles/sundered_keep/placeholders/walls/PLACEHOLDER_sundered_keep_labyrinth_void_edge.png"
+}

@@ -1,0 +1,12 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__upper_body__unarmed__transition__relaxed_to_ready_01__e__1f__96.json",
+	"outputs": [
+		"res://content/sprites/operator/source/animations/unarmed/transition/relaxed_to_ready_01/operator__upper_body__unarmed__transition__relaxed_to_ready_01__e__1f__96.png",
+		"res://content/sprites/operator/source/animations/unarmed/transition/relaxed_to_ready_01/operator__upper_body__unarmed__transition__relaxed_to_ready_01__w__1f__96.png"
+	],
+	"post_process": [
+		"operator_runtime_build"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/operator__upper_body__unarmed__transition__relaxed_to_ready_01__e__1f__96.png",
+	"timestamp_utc": "2026-09-20 04:41:54"
+}

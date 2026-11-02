@@ -1,0 +1,2757 @@
+{
+  "schema": "custodian.semantic_ruins_annotations.v1",
+  "family_id": "meridian_civic_ruins_native",
+  "expected_extracted_count": 161,
+  "recommended_final_manifest_path": "custodian/content/metadata/assets/meridian_civic_ruins_native.semantic.json",
+  "source_master_path": "custodian/asset_drop/source_work/lower_quarter_region/meridian_civic_ruins_props__master.png",
+  "raw_extract_manifest_path": "custodian/asset_drop/source_work/meridian_civic_ruins_props/native_extract/manifest.json",
+  "runtime_contract": {
+    "native_scale": 1.0,
+    "authored_cell_world_px": 32,
+    "operator_reference_px": 96,
+    "placement": "Exact authored placement only. No procedural scatter.",
+    "collision": "Semantic collision hints are non-authoritative. Initial catastrophe dressing is visual-only.",
+    "history_layer": "This family is aftermath/catastrophe dressing layered over surviving Meridian civic substrate; do not replace the surviving-city family wholesale.",
+    "custodian_rule": "Do not label generic salvage/repair props as explicitly Custodian-made unless an authored placement or evidence record establishes that provenance.",
+    "compound_rule": "review_required compound extracts may be used only as explicit authored set pieces, never generic variants."
+  },
+  "entries": [
+    {
+      "source_id": 1,
+      "semantic_name": "dead_boxhead_lamppost",
+      "semantic_family": "ruined_lighting",
+      "runtime_family": "meridian_ruins_lighting",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 2,
+      "semantic_name": "amber_globe_lamppost",
+      "semantic_family": "ruined_lighting",
+      "runtime_family": "meridian_ruins_lighting",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 3,
+      "semantic_name": "bent_dead_streetlamp",
+      "semantic_family": "ruined_lighting",
+      "runtime_family": "meridian_ruins_lighting",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 4,
+      "semantic_name": "damaged_amber_streetlamp",
+      "semantic_family": "ruined_lighting",
+      "runtime_family": "meridian_ruins_lighting",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 5,
+      "semantic_name": "curved_broken_lamp",
+      "semantic_family": "ruined_lighting",
+      "runtime_family": "meridian_ruins_lighting",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 6,
+      "semantic_name": "tattered_banner_lamppost",
+      "semantic_family": "ruined_lighting",
+      "runtime_family": "meridian_ruins_lighting",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 7,
+      "semantic_name": "ruptured_cable_lamppost_pair",
+      "semantic_family": "ruined_lighting",
+      "runtime_family": "meridian_ruins_lighting",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 8,
+      "semantic_name": "bent_cable_lamppost_pair",
+      "semantic_family": "ruined_lighting",
+      "runtime_family": "meridian_ruins_lighting",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 9,
+      "semantic_name": "double_head_emergency_lamp",
+      "semantic_family": "ruined_lighting",
+      "runtime_family": "meridian_ruins_lighting",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 10,
+      "semantic_name": "leaning_service_lamp",
+      "semantic_family": "ruined_lighting",
+      "runtime_family": "meridian_ruins_lighting",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 11,
+      "semantic_name": "amber_chain_stanchion_pair",
+      "semantic_family": "ruined_lighting",
+      "runtime_family": "meridian_ruins_lighting",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 12,
+      "semantic_name": "caged_beacon_column",
+      "semantic_family": "ruined_lighting",
+      "runtime_family": "meridian_ruins_lighting",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 13,
+      "semantic_name": "caged_service_beacon",
+      "semantic_family": "ruined_lighting",
+      "runtime_family": "meridian_ruins_lighting",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 14,
+      "semantic_name": "snapped_service_post",
+      "semantic_family": "ruined_lighting",
+      "runtime_family": "meridian_ruins_lighting",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 15,
+      "semantic_name": "segmented_dead_service_post",
+      "semantic_family": "ruined_lighting",
+      "runtime_family": "meridian_ruins_lighting",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 16,
+      "semantic_name": "segmented_amber_service_post",
+      "semantic_family": "ruined_lighting",
+      "runtime_family": "meridian_ruins_lighting",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 17,
+      "semantic_name": "compound_failed_lighting_cluster",
+      "semantic_family": "ruined_lighting",
+      "runtime_family": "meridian_ruins_lighting",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": true,
+      "usage_policy": "explicit_authored_only"
+    },
+    {
+      "source_id": 18,
+      "semantic_name": "damaged_surveillance_post",
+      "semantic_family": "damaged_civic_signals",
+      "runtime_family": "meridian_ruins_signals",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 19,
+      "semantic_name": "dead_civic_terminal_tall",
+      "semantic_family": "damaged_civic_signals",
+      "runtime_family": "meridian_ruins_signals",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 20,
+      "semantic_name": "ruptured_camera_post",
+      "semantic_family": "damaged_civic_signals",
+      "runtime_family": "meridian_ruins_signals",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 21,
+      "semantic_name": "angled_surveillance_post",
+      "semantic_family": "damaged_civic_signals",
+      "runtime_family": "meridian_ruins_signals",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 22,
+      "semantic_name": "damaged_camera_post",
+      "semantic_family": "damaged_civic_signals",
+      "runtime_family": "meridian_ruins_signals",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 23,
+      "semantic_name": "cabled_surveillance_stanchions",
+      "semantic_family": "damaged_civic_signals",
+      "runtime_family": "meridian_ruins_signals",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 24,
+      "semantic_name": "bent_service_frame",
+      "semantic_family": "damaged_civic_signals",
+      "runtime_family": "meridian_ruins_signals",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 25,
+      "semantic_name": "dead_directory_sign",
+      "semantic_family": "damaged_civic_signals",
+      "runtime_family": "meridian_ruins_signals",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 26,
+      "semantic_name": "amber_warning_column",
+      "semantic_family": "damaged_civic_signals",
+      "runtime_family": "meridian_ruins_signals",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 27,
+      "semantic_name": "dual_sensor_post",
+      "semantic_family": "damaged_civic_signals",
+      "runtime_family": "meridian_ruins_signals",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 28,
+      "semantic_name": "dead_service_marker",
+      "semantic_family": "damaged_civic_signals",
+      "runtime_family": "meridian_ruins_signals",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 29,
+      "semantic_name": "collapsed_civic_panel",
+      "semantic_family": "damaged_civic_signals",
+      "runtime_family": "meridian_ruins_signals",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 30,
+      "semantic_name": "red_warning_beacon_post",
+      "semantic_family": "damaged_civic_signals",
+      "runtime_family": "meridian_ruins_signals",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 31,
+      "semantic_name": "damaged_sign_panel",
+      "semantic_family": "damaged_civic_signals",
+      "runtime_family": "meridian_ruins_signals",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 32,
+      "semantic_name": "masonry_rubble_small",
+      "semantic_family": "structural_debris",
+      "runtime_family": "meridian_ruins_debris",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "catastrophe",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 33,
+      "semantic_name": "worn_wood_bench",
+      "semantic_family": "ruined_seating",
+      "runtime_family": "meridian_ruins_furniture",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_medium_rect",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 34,
+      "semantic_name": "worn_metal_bench",
+      "semantic_family": "ruined_seating",
+      "runtime_family": "meridian_ruins_furniture",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_medium_rect",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 35,
+      "semantic_name": "collapsed_bench",
+      "semantic_family": "ruined_seating",
+      "runtime_family": "meridian_ruins_furniture",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_medium_rect",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 36,
+      "semantic_name": "half_buried_bench",
+      "semantic_family": "ruined_seating",
+      "runtime_family": "meridian_ruins_furniture",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_medium_rect",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 37,
+      "semantic_name": "overgrown_long_planter",
+      "semantic_family": "ruined_planters",
+      "runtime_family": "meridian_ruins_greenery",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_medium_rect",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 38,
+      "semantic_name": "black_chain_stanchions",
+      "semantic_family": "broken_edge_control",
+      "runtime_family": "meridian_ruins_edge_control",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_line_or_none",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 39,
+      "semantic_name": "red_chain_stanchions",
+      "semantic_family": "broken_edge_control",
+      "runtime_family": "meridian_ruins_edge_control",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_line_or_none",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 40,
+      "semantic_name": "long_chain_stanchions",
+      "semantic_family": "broken_edge_control",
+      "runtime_family": "meridian_ruins_edge_control",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_line_or_none",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 41,
+      "semantic_name": "broken_curved_railing",
+      "semantic_family": "broken_edge_control",
+      "runtime_family": "meridian_ruins_edge_control",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_line_or_none",
+      "y_sort": true,
+      "era_layer": "damaged_precatastrophe_infrastructure",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 42,
+      "semantic_name": "compound_failed_roadwork_cluster",
+      "semantic_family": "failed_emergency_control",
+      "runtime_family": "meridian_ruins_emergency",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_line_or_none",
+      "y_sort": true,
+      "era_layer": "failed_emergency_response",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": true,
+      "usage_policy": "explicit_authored_only"
+    },
+    {
+      "source_id": 43,
+      "semantic_name": "overgrown_small_planter",
+      "semantic_family": "ruined_planters",
+      "runtime_family": "meridian_ruins_greenery",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_medium_rect",
+      "y_sort": true,
+      "era_layer": "failed_emergency_response",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 44,
+      "semantic_name": "worn_wood_bench_b",
+      "semantic_family": "ruined_seating",
+      "runtime_family": "meridian_ruins_furniture",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_medium_rect",
+      "y_sort": true,
+      "era_layer": "failed_emergency_response",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 45,
+      "semantic_name": "collapsed_bench_b",
+      "semantic_family": "ruined_seating",
+      "runtime_family": "meridian_ruins_furniture",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_medium_rect",
+      "y_sort": true,
+      "era_layer": "failed_emergency_response",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 46,
+      "semantic_name": "mixed_rubble_pile",
+      "semantic_family": "structural_debris",
+      "runtime_family": "meridian_ruins_debris",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "failed_emergency_response",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 47,
+      "semantic_name": "collapsed_crowd_barrier",
+      "semantic_family": "broken_edge_control",
+      "runtime_family": "meridian_ruins_edge_control",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_line_or_none",
+      "y_sort": true,
+      "era_layer": "failed_emergency_response",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 48,
+      "semantic_name": "crowd_barrier",
+      "semantic_family": "broken_edge_control",
+      "runtime_family": "meridian_ruins_edge_control",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_line_or_none",
+      "y_sort": true,
+      "era_layer": "failed_emergency_response",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 49,
+      "semantic_name": "snapped_emergency_chain_barrier",
+      "semantic_family": "broken_edge_control",
+      "runtime_family": "meridian_ruins_edge_control",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_line_or_none",
+      "y_sort": true,
+      "era_layer": "failed_emergency_response",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 50,
+      "semantic_name": "warning_sign_beacon",
+      "semantic_family": "failed_emergency_control",
+      "runtime_family": "meridian_ruins_emergency",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_line_or_none",
+      "y_sort": true,
+      "era_layer": "failed_emergency_response",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 51,
+      "semantic_name": "broken_sawhorse",
+      "semantic_family": "failed_emergency_control",
+      "runtime_family": "meridian_ruins_emergency",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_line_or_none",
+      "y_sort": true,
+      "era_layer": "failed_emergency_response",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 52,
+      "semantic_name": "lit_emergency_barricade",
+      "semantic_family": "failed_emergency_control",
+      "runtime_family": "meridian_ruins_emergency",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_line_or_none",
+      "y_sort": true,
+      "era_layer": "failed_emergency_response",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 53,
+      "semantic_name": "rusted_civic_barrel",
+      "semantic_family": "warning_and_bollards",
+      "runtime_family": "meridian_ruins_emergency",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "failed_emergency_response",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 54,
+      "semantic_name": "heavy_bollard_a",
+      "semantic_family": "warning_and_bollards",
+      "runtime_family": "meridian_ruins_emergency",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "failed_emergency_response",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 55,
+      "semantic_name": "heavy_bollard_b",
+      "semantic_family": "warning_and_bollards",
+      "runtime_family": "meridian_ruins_emergency",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "failed_emergency_response",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 56,
+      "semantic_name": "slim_bollard",
+      "semantic_family": "warning_and_bollards",
+      "runtime_family": "meridian_ruins_emergency",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "failed_emergency_response",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 57,
+      "semantic_name": "heavy_hazard_barrier",
+      "semantic_family": "failed_emergency_control",
+      "runtime_family": "meridian_ruins_emergency",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_line_or_none",
+      "y_sort": true,
+      "era_layer": "failed_emergency_response",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 58,
+      "semantic_name": "barrier_wreckage",
+      "semantic_family": "failed_emergency_control",
+      "runtime_family": "meridian_ruins_emergency",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_line_or_none",
+      "y_sort": true,
+      "era_layer": "failed_emergency_response",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 59,
+      "semantic_name": "field_barricade",
+      "semantic_family": "failed_emergency_control",
+      "runtime_family": "meridian_ruins_emergency",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_line_or_none",
+      "y_sort": true,
+      "era_layer": "failed_emergency_response",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 60,
+      "semantic_name": "amber_ground_beacon",
+      "semantic_family": "warning_and_bollards",
+      "runtime_family": "meridian_ruins_emergency",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "failed_emergency_response",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 61,
+      "semantic_name": "amber_ground_beacon_b",
+      "semantic_family": "warning_and_bollards",
+      "runtime_family": "meridian_ruins_emergency",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "failed_emergency_response",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 62,
+      "semantic_name": "dead_service_canister",
+      "semantic_family": "warning_and_bollards",
+      "runtime_family": "meridian_ruins_emergency",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "failed_emergency_response",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 63,
+      "semantic_name": "long_concrete_barrier",
+      "semantic_family": "failed_emergency_control",
+      "runtime_family": "meridian_ruins_emergency",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_line_or_none",
+      "y_sort": true,
+      "era_layer": "failed_emergency_response",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 64,
+      "semantic_name": "traffic_cone",
+      "semantic_family": "failed_emergency_control",
+      "runtime_family": "meridian_ruins_emergency",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_line_or_none",
+      "y_sort": true,
+      "era_layer": "failed_emergency_response",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 65,
+      "semantic_name": "cone_cluster",
+      "semantic_family": "failed_emergency_control",
+      "runtime_family": "meridian_ruins_emergency",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_line_or_none",
+      "y_sort": true,
+      "era_layer": "failed_emergency_response",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 66,
+      "semantic_name": "tripod_floodlight",
+      "semantic_family": "structural_debris",
+      "runtime_family": "meridian_ruins_debris",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "failed_emergency_response",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 67,
+      "semantic_name": "small_warning_bollard",
+      "semantic_family": "warning_and_bollards",
+      "runtime_family": "meridian_ruins_emergency",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "failed_emergency_response",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 68,
+      "semantic_name": "dual_worklight_tripod",
+      "semantic_family": "warning_and_bollards",
+      "runtime_family": "meridian_ruins_emergency",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "failed_emergency_response",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 69,
+      "semantic_name": "tripod_service_marker",
+      "semantic_family": "warning_and_bollards",
+      "runtime_family": "meridian_ruins_emergency",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_footprint",
+      "y_sort": true,
+      "era_layer": "failed_emergency_response",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 70,
+      "semantic_name": "closed_utility_cabinet",
+      "semantic_family": "damaged_utility",
+      "runtime_family": "meridian_ruins_utility",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_rect",
+      "y_sort": true,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 71,
+      "semantic_name": "shattered_utility_cabinet",
+      "semantic_family": "damaged_utility",
+      "runtime_family": "meridian_ruins_utility",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_rect",
+      "y_sort": true,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 72,
+      "semantic_name": "scarred_utility_cabinet",
+      "semantic_family": "damaged_utility",
+      "runtime_family": "meridian_ruins_utility",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_rect",
+      "y_sort": true,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 73,
+      "semantic_name": "open_damaged_cabinet",
+      "semantic_family": "damaged_utility",
+      "runtime_family": "meridian_ruins_utility",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_rect",
+      "y_sort": true,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 74,
+      "semantic_name": "exposed_wiring_cabinet",
+      "semantic_family": "damaged_utility",
+      "runtime_family": "meridian_ruins_utility",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_rect",
+      "y_sort": true,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 75,
+      "semantic_name": "amber_patch_cabinet",
+      "semantic_family": "damaged_utility",
+      "runtime_family": "meridian_ruins_utility",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_rect",
+      "y_sort": true,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 76,
+      "semantic_name": "ruptured_wiring_cabinet",
+      "semantic_family": "damaged_utility",
+      "runtime_family": "meridian_ruins_utility",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_rect",
+      "y_sort": true,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 77,
+      "semantic_name": "open_service_cabinet",
+      "semantic_family": "damaged_utility",
+      "runtime_family": "meridian_ruins_utility",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_rect",
+      "y_sort": true,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 78,
+      "semantic_name": "patched_field_cabinet",
+      "semantic_family": "damaged_utility",
+      "runtime_family": "meridian_ruins_utility",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_rect",
+      "y_sort": true,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 79,
+      "semantic_name": "cabled_dual_cabinet",
+      "semantic_family": "damaged_utility",
+      "runtime_family": "meridian_ruins_utility",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_rect",
+      "y_sort": true,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 80,
+      "semantic_name": "narrow_service_terminal",
+      "semantic_family": "damaged_utility",
+      "runtime_family": "meridian_ruins_utility",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_rect",
+      "y_sort": true,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 81,
+      "semantic_name": "caged_service_terminal",
+      "semantic_family": "damaged_utility",
+      "runtime_family": "meridian_ruins_utility",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_rect",
+      "y_sort": true,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 82,
+      "semantic_name": "low_open_service_kiosk",
+      "semantic_family": "damaged_utility",
+      "runtime_family": "meridian_ruins_utility",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_rect",
+      "y_sort": true,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 83,
+      "semantic_name": "compound_repair_staging",
+      "semantic_family": "salvage_and_service_debris",
+      "runtime_family": "meridian_ruins_salvage",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": true,
+      "usage_policy": "explicit_authored_only"
+    },
+    {
+      "source_id": 84,
+      "semantic_name": "strapped_salvage_case",
+      "semantic_family": "salvage_and_service_debris",
+      "runtime_family": "meridian_ruins_salvage",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 85,
+      "semantic_name": "cable_coil",
+      "semantic_family": "salvage_and_service_debris",
+      "runtime_family": "meridian_ruins_salvage",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 86,
+      "semantic_name": "short_pipe_bundle",
+      "semantic_family": "salvage_and_service_debris",
+      "runtime_family": "meridian_ruins_salvage",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 87,
+      "semantic_name": "stacked_pipe_bundle",
+      "semantic_family": "salvage_and_service_debris",
+      "runtime_family": "meridian_ruins_salvage",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 88,
+      "semantic_name": "strapped_pipe_rack",
+      "semantic_family": "salvage_and_service_debris",
+      "runtime_family": "meridian_ruins_salvage",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 89,
+      "semantic_name": "pipe_rack",
+      "semantic_family": "salvage_and_service_debris",
+      "runtime_family": "meridian_ruins_salvage",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 90,
+      "semantic_name": "compound_floor_service_hardware",
+      "semantic_family": "floor_service_hardware",
+      "runtime_family": "meridian_ruins_floor_hardware",
+      "anchor_mode": "floor_center",
+      "collision_hint": "none_visual_only",
+      "y_sort": false,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": true,
+      "usage_policy": "explicit_authored_only"
+    },
+    {
+      "source_id": 91,
+      "semantic_name": "floor_grille",
+      "semantic_family": "floor_service_hardware",
+      "runtime_family": "meridian_ruins_floor_hardware",
+      "anchor_mode": "floor_center",
+      "collision_hint": "none_visual_only",
+      "y_sort": false,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 92,
+      "semantic_name": "round_floor_grate",
+      "semantic_family": "floor_service_hardware",
+      "runtime_family": "meridian_ruins_floor_hardware",
+      "anchor_mode": "floor_center",
+      "collision_hint": "none_visual_only",
+      "y_sort": false,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 93,
+      "semantic_name": "paired_service_plates",
+      "semantic_family": "floor_service_hardware",
+      "runtime_family": "meridian_ruins_floor_hardware",
+      "anchor_mode": "floor_center",
+      "collision_hint": "none_visual_only",
+      "y_sort": false,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 94,
+      "semantic_name": "open_access_hatch",
+      "semantic_family": "floor_service_hardware",
+      "runtime_family": "meridian_ruins_floor_hardware",
+      "anchor_mode": "floor_center",
+      "collision_hint": "none_visual_only",
+      "y_sort": false,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 95,
+      "semantic_name": "portable_warning_marker",
+      "semantic_family": "emergency_remnants",
+      "runtime_family": "meridian_ruins_emergency",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "none_visual_only",
+      "y_sort": true,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 96,
+      "semantic_name": "red_civic_barrel",
+      "semantic_family": "emergency_remnants",
+      "runtime_family": "meridian_ruins_emergency",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "none_visual_only",
+      "y_sort": true,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 97,
+      "semantic_name": "damaged_utility_cube",
+      "semantic_family": "damaged_utility",
+      "runtime_family": "meridian_ruins_utility",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_rect",
+      "y_sort": true,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 98,
+      "semantic_name": "compound_floor_hardware",
+      "semantic_family": "floor_service_hardware",
+      "runtime_family": "meridian_ruins_floor_hardware",
+      "anchor_mode": "floor_center",
+      "collision_hint": "none_visual_only",
+      "y_sort": false,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": true,
+      "usage_policy": "explicit_authored_only"
+    },
+    {
+      "source_id": 99,
+      "semantic_name": "horizontal_pipe_bundle",
+      "semantic_family": "salvage_and_service_debris",
+      "runtime_family": "meridian_ruins_salvage",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 100,
+      "semantic_name": "horizontal_pipe_stack",
+      "semantic_family": "salvage_and_service_debris",
+      "runtime_family": "meridian_ruins_salvage",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 101,
+      "semantic_name": "mixed_beam_bundle",
+      "semantic_family": "salvage_and_service_debris",
+      "runtime_family": "meridian_ruins_salvage",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 102,
+      "semantic_name": "curved_conduit_section",
+      "semantic_family": "floor_service_hardware",
+      "runtime_family": "meridian_ruins_floor_hardware",
+      "anchor_mode": "floor_center",
+      "collision_hint": "none_visual_only",
+      "y_sort": false,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 103,
+      "semantic_name": "round_manhole",
+      "semantic_family": "floor_service_hardware",
+      "runtime_family": "meridian_ruins_floor_hardware",
+      "anchor_mode": "floor_center",
+      "collision_hint": "none_visual_only",
+      "y_sort": false,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 104,
+      "semantic_name": "square_access_plate",
+      "semantic_family": "floor_service_hardware",
+      "runtime_family": "meridian_ruins_floor_hardware",
+      "anchor_mode": "floor_center",
+      "collision_hint": "none_visual_only",
+      "y_sort": false,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 105,
+      "semantic_name": "open_floor_hatch",
+      "semantic_family": "floor_service_hardware",
+      "runtime_family": "meridian_ruins_floor_hardware",
+      "anchor_mode": "floor_center",
+      "collision_hint": "none_visual_only",
+      "y_sort": false,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 106,
+      "semantic_name": "small_damaged_service_box",
+      "semantic_family": "damaged_utility",
+      "runtime_family": "meridian_ruins_utility",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_small_rect",
+      "y_sort": true,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 107,
+      "semantic_name": "amber_civic_barrel",
+      "semantic_family": "emergency_remnants",
+      "runtime_family": "meridian_ruins_emergency",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "none_visual_only",
+      "y_sort": true,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 108,
+      "semantic_name": "compound_salvage_cache",
+      "semantic_family": "salvage_and_service_debris",
+      "runtime_family": "meridian_ruins_salvage",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": true,
+      "usage_policy": "explicit_authored_only"
+    },
+    {
+      "source_id": 109,
+      "semantic_name": "compound_planter_service_cluster",
+      "semantic_family": "floor_service_hardware",
+      "runtime_family": "meridian_ruins_floor_hardware",
+      "anchor_mode": "floor_center",
+      "collision_hint": "none_visual_only",
+      "y_sort": false,
+      "era_layer": "infrastructure_failure_or_later_salvage",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": true,
+      "usage_policy": "explicit_authored_only"
+    },
+    {
+      "source_id": 110,
+      "semantic_name": "overgrown_square_planter",
+      "semantic_family": "ruined_planters",
+      "runtime_family": "meridian_ruins_greenery",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_medium_rect",
+      "y_sort": true,
+      "era_layer": "abandonment",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 111,
+      "semantic_name": "dead_shrub_planter",
+      "semantic_family": "ruined_planters",
+      "runtime_family": "meridian_ruins_greenery",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_medium_rect",
+      "y_sort": true,
+      "era_layer": "abandonment",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 112,
+      "semantic_name": "overgrown_long_planter_b",
+      "semantic_family": "ruined_planters",
+      "runtime_family": "meridian_ruins_greenery",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_medium_rect",
+      "y_sort": true,
+      "era_layer": "abandonment",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 113,
+      "semantic_name": "broken_overgrown_planter",
+      "semantic_family": "ruined_planters",
+      "runtime_family": "meridian_ruins_greenery",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_medium_rect",
+      "y_sort": true,
+      "era_layer": "abandonment",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 114,
+      "semantic_name": "broken_civic_fountain",
+      "semantic_family": "broken_civic_monuments",
+      "runtime_family": "meridian_ruins_civic_remains",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_topology_required",
+      "y_sort": true,
+      "era_layer": "abandonment",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 115,
+      "semantic_name": "compound_fountain_service_cluster",
+      "semantic_family": "broken_civic_monuments",
+      "runtime_family": "meridian_ruins_civic_remains",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_topology_required",
+      "y_sort": true,
+      "era_layer": "abandonment",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": true,
+      "usage_policy": "explicit_authored_only"
+    },
+    {
+      "source_id": 116,
+      "semantic_name": "overgrown_long_planter_c",
+      "semantic_family": "ruined_planters",
+      "runtime_family": "meridian_ruins_greenery",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_medium_rect",
+      "y_sort": true,
+      "era_layer": "abandonment",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 117,
+      "semantic_name": "ruptured_planter_service_box",
+      "semantic_family": "ruined_planters",
+      "runtime_family": "meridian_ruins_greenery",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_medium_rect",
+      "y_sort": true,
+      "era_layer": "abandonment",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 118,
+      "semantic_name": "compound_broken_fountain",
+      "semantic_family": "broken_civic_monuments",
+      "runtime_family": "meridian_ruins_civic_remains",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_topology_required",
+      "y_sort": true,
+      "era_layer": "abandonment",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": true,
+      "usage_policy": "explicit_authored_only"
+    },
+    {
+      "source_id": 119,
+      "semantic_name": "low_overgrown_planter",
+      "semantic_family": "ruined_planters",
+      "runtime_family": "meridian_ruins_greenery",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_medium_rect",
+      "y_sort": true,
+      "era_layer": "abandonment",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 120,
+      "semantic_name": "broken_monument_basin",
+      "semantic_family": "broken_civic_monuments",
+      "runtime_family": "meridian_ruins_civic_remains",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_topology_required",
+      "y_sort": true,
+      "era_layer": "abandonment",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 121,
+      "semantic_name": "abandoned_civic_slab",
+      "semantic_family": "floor_service_hardware",
+      "runtime_family": "meridian_ruins_floor_hardware",
+      "anchor_mode": "floor_center",
+      "collision_hint": "none_visual_only",
+      "y_sort": false,
+      "era_layer": "abandonment",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 122,
+      "semantic_name": "compound_fountain_salvage",
+      "semantic_family": "broken_civic_monuments",
+      "runtime_family": "meridian_ruins_civic_remains",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_topology_required",
+      "y_sort": true,
+      "era_layer": "abandonment",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": true,
+      "usage_policy": "explicit_authored_only"
+    },
+    {
+      "source_id": 123,
+      "semantic_name": "compound_rubble_tarp_cache",
+      "semantic_family": "salvage_and_service_debris",
+      "runtime_family": "meridian_ruins_salvage",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "abandonment",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": true,
+      "usage_policy": "explicit_authored_only"
+    },
+    {
+      "source_id": 124,
+      "semantic_name": "compound_cargo_salvage",
+      "semantic_family": "salvage_and_service_debris",
+      "runtime_family": "meridian_ruins_salvage",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "abandonment",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": true,
+      "usage_policy": "explicit_authored_only"
+    },
+    {
+      "source_id": 125,
+      "semantic_name": "broken_post_pipe_cache",
+      "semantic_family": "salvage_and_service_debris",
+      "runtime_family": "meridian_ruins_salvage",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "abandonment",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": true,
+      "usage_policy": "explicit_authored_only"
+    },
+    {
+      "source_id": 126,
+      "semantic_name": "compound_waste_salvage",
+      "semantic_family": "abandoned_waste",
+      "runtime_family": "meridian_ruins_waste",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_medium_rect",
+      "y_sort": true,
+      "era_layer": "abandonment",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": true,
+      "usage_policy": "explicit_authored_only"
+    },
+    {
+      "source_id": 127,
+      "semantic_name": "green_ruined_dumpster",
+      "semantic_family": "abandoned_waste",
+      "runtime_family": "meridian_ruins_waste",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_medium_rect",
+      "y_sort": true,
+      "era_layer": "abandonment",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 128,
+      "semantic_name": "blue_ruined_dumpster",
+      "semantic_family": "abandoned_waste",
+      "runtime_family": "meridian_ruins_waste",
+      "anchor_mode": "floor_contact",
+      "collision_hint": "authored_medium_rect",
+      "y_sort": true,
+      "era_layer": "abandonment",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 129,
+      "semantic_name": "amber_salvage_crate",
+      "semantic_family": "salvage_and_service_debris",
+      "runtime_family": "meridian_ruins_salvage",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "abandonment",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 130,
+      "semantic_name": "blue_salvage_crate",
+      "semantic_family": "salvage_and_service_debris",
+      "runtime_family": "meridian_ruins_salvage",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "abandonment",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 131,
+      "semantic_name": "yellow_salvage_crate",
+      "semantic_family": "salvage_and_service_debris",
+      "runtime_family": "meridian_ruins_salvage",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "abandonment",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 132,
+      "semantic_name": "paired_cylinders",
+      "semantic_family": "salvage_and_service_debris",
+      "runtime_family": "meridian_ruins_salvage",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "abandonment",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 133,
+      "semantic_name": "metal_salvage_case",
+      "semantic_family": "salvage_and_service_debris",
+      "runtime_family": "meridian_ruins_salvage",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "abandonment",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 134,
+      "semantic_name": "yellow_civic_barrel",
+      "semantic_family": "salvage_and_service_debris",
+      "runtime_family": "meridian_ruins_salvage",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "abandonment",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 135,
+      "semantic_name": "compound_dumpster_wall_collapse",
+      "semantic_family": "structural_debris",
+      "runtime_family": "meridian_ruins_debris",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "catastrophe",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": true,
+      "usage_policy": "explicit_authored_only"
+    },
+    {
+      "source_id": 136,
+      "semantic_name": "compound_catastrophe_cluster",
+      "semantic_family": "structural_debris",
+      "runtime_family": "meridian_ruins_debris",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "catastrophe",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": true,
+      "usage_policy": "explicit_authored_only"
+    },
+    {
+      "source_id": 137,
+      "semantic_name": "beam_rubble_pile",
+      "semantic_family": "structural_debris",
+      "runtime_family": "meridian_ruins_debris",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "catastrophe",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 138,
+      "semantic_name": "compound_heavy_salvage_rubble",
+      "semantic_family": "structural_debris",
+      "runtime_family": "meridian_ruins_debris",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "catastrophe",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": true,
+      "usage_policy": "explicit_authored_only"
+    },
+    {
+      "source_id": 139,
+      "semantic_name": "compound_heavy_collapse",
+      "semantic_family": "structural_debris",
+      "runtime_family": "meridian_ruins_debris",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "catastrophe",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": true,
+      "usage_policy": "explicit_authored_only"
+    },
+    {
+      "source_id": 140,
+      "semantic_name": "stacked_salvage_pipes",
+      "semantic_family": "salvage_and_service_debris",
+      "runtime_family": "meridian_ruins_salvage",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "catastrophe",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 141,
+      "semantic_name": "rebar_debris_run",
+      "semantic_family": "structural_debris",
+      "runtime_family": "meridian_ruins_debris",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "catastrophe",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 142,
+      "semantic_name": "hanging_broken_panel",
+      "semantic_family": "structural_debris",
+      "runtime_family": "meridian_ruins_debris",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "catastrophe",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 143,
+      "semantic_name": "broken_wall_section",
+      "semantic_family": "structural_debris",
+      "runtime_family": "meridian_ruins_debris",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "catastrophe",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": true,
+      "usage_policy": "explicit_authored_only"
+    },
+    {
+      "source_id": 144,
+      "semantic_name": "breached_wall_corner",
+      "semantic_family": "structural_debris",
+      "runtime_family": "meridian_ruins_debris",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "catastrophe",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": true,
+      "usage_policy": "explicit_authored_only"
+    },
+    {
+      "source_id": 145,
+      "semantic_name": "masonry_chunk_large",
+      "semantic_family": "structural_debris",
+      "runtime_family": "meridian_ruins_debris",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "catastrophe",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 146,
+      "semantic_name": "micro_stone_debris",
+      "semantic_family": "structural_debris",
+      "runtime_family": "meridian_ruins_debris",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "catastrophe",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 147,
+      "semantic_name": "broken_marked_road_slab",
+      "semantic_family": "structural_debris",
+      "runtime_family": "meridian_ruins_debris",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "catastrophe",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 148,
+      "semantic_name": "small_masonry_rubble",
+      "semantic_family": "structural_debris",
+      "runtime_family": "meridian_ruins_debris",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "catastrophe",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 149,
+      "semantic_name": "small_pipe_debris",
+      "semantic_family": "structural_debris",
+      "runtime_family": "meridian_ruins_debris",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "catastrophe",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 150,
+      "semantic_name": "large_masonry_rubble",
+      "semantic_family": "structural_debris",
+      "runtime_family": "meridian_ruins_debris",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "catastrophe",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 151,
+      "semantic_name": "collapsed_route_slab",
+      "semantic_family": "structural_debris",
+      "runtime_family": "meridian_ruins_debris",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "catastrophe",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 152,
+      "semantic_name": "pipe_rubble_cluster",
+      "semantic_family": "structural_debris",
+      "runtime_family": "meridian_ruins_debris",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "catastrophe",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 153,
+      "semantic_name": "heavy_conduit_wreckage",
+      "semantic_family": "structural_debris",
+      "runtime_family": "meridian_ruins_debris",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "catastrophe",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 154,
+      "semantic_name": "small_beam_bundle",
+      "semantic_family": "salvage_and_service_debris",
+      "runtime_family": "meridian_ruins_salvage",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "catastrophe",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 155,
+      "semantic_name": "micro_metal_debris",
+      "semantic_family": "structural_debris",
+      "runtime_family": "meridian_ruins_debris",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "catastrophe",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 156,
+      "semantic_name": "small_pipe_wreckage",
+      "semantic_family": "structural_debris",
+      "runtime_family": "meridian_ruins_debris",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "catastrophe",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 157,
+      "semantic_name": "small_rubble_cluster",
+      "semantic_family": "structural_debris",
+      "runtime_family": "meridian_ruins_debris",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "catastrophe",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 158,
+      "semantic_name": "micro_hazard_debris",
+      "semantic_family": "structural_debris",
+      "runtime_family": "meridian_ruins_debris",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "catastrophe",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 159,
+      "semantic_name": "stone_cluster_a",
+      "semantic_family": "structural_debris",
+      "runtime_family": "meridian_ruins_debris",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "catastrophe",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 160,
+      "semantic_name": "stone_cluster_b",
+      "semantic_family": "structural_debris",
+      "runtime_family": "meridian_ruins_debris",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "catastrophe",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    },
+    {
+      "source_id": 161,
+      "semantic_name": "twisted_metal_debris",
+      "semantic_family": "structural_debris",
+      "runtime_family": "meridian_ruins_debris",
+      "anchor_mode": "floor_center",
+      "collision_hint": "authored_topology_required",
+      "y_sort": false,
+      "era_layer": "catastrophe",
+      "districts": [
+        "lower_quarter",
+        "west_gate_works",
+        "station_ix"
+      ],
+      "review_required": false,
+      "usage_policy": "semantic_variant"
+    }
+  ]
+}

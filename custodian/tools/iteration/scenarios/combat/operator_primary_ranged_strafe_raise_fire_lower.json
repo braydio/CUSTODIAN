@@ -1,0 +1,322 @@
+{
+  "schema_version": 1,
+  "id": "combat/operator_primary_ranged_strafe_raise_fire_lower",
+  "description": "Carbine raise, committed fire, and reverse lower preserve movement-owned lower-body cadence while aiming east.",
+  "scene": "res://scenes/debug/combat_playground.tscn",
+  "seed": 104729,
+  "duration_ticks": 180,
+  "simulation": {
+    "physics_hz": 60,
+    "warmup_ticks": 2,
+    "max_wall_seconds": 25,
+    "pause_during_setup": true
+  },
+  "capture": {
+    "width": 1280,
+    "height": 720,
+    "fps": 60,
+    "audio": true,
+    "start_tick": 0,
+    "end_tick": 179,
+    "contact_sheet_ticks": [
+      0,
+      24,
+      48,
+      72,
+      120,
+      168
+    ],
+    "required_keyframes": true,
+    "background": "opaque"
+  },
+  "setup": {
+    "remove_nodes": [
+      "World/Enemies/EnemyGrunt3",
+      "World/DroneManager"
+    ],
+    "roles": {
+      "operator": {
+        "node_path": "World/Operator"
+      },
+      "target_a": {
+        "node_path": "World/Enemies/EnemyGrunt1"
+      },
+      "target_b": {
+        "node_path": "World/Enemies/EnemyGrunt2"
+      },
+      "camera": {
+        "node_path": "World/Camera2D"
+      },
+      "lower_body": {
+        "node_path": "World/Operator/ModularLowerBodySprite"
+      },
+      "upper_body": {
+        "node_path": "World/Operator/ModularUpperBodySprite"
+      }
+    },
+    "spawns": [],
+    "properties": [
+      {
+        "role": "operator",
+        "property": "global_position",
+        "value": [
+          420,
+          360
+        ]
+      },
+      {
+        "role": "operator",
+        "property": "combat_loadout_mode",
+        "value": "ranged"
+      },
+      {
+        "role": "operator",
+        "property": "using_unarmed",
+        "value": false
+      },
+      {
+        "role": "operator",
+        "property": "primary_weapon_equipped",
+        "value": true
+      },
+      {
+        "role": "operator",
+        "property": "arrow_aim_enabled",
+        "value": true
+      },
+      {
+        "role": "operator",
+        "property": "global_position",
+        "value": [
+          420,
+          360
+        ]
+      },
+      {
+        "role": "operator",
+        "property": "combat_loadout_mode",
+        "value": "ranged"
+      },
+      {
+        "role": "operator",
+        "property": "using_unarmed",
+        "value": false
+      },
+      {
+        "role": "operator",
+        "property": "primary_weapon_equipped",
+        "value": true
+      },
+      {
+        "role": "operator",
+        "property": "arrow_aim_enabled",
+        "value": true
+      },
+      {
+        "role": "target_a",
+        "property": "global_position",
+        "value": [
+          620,
+          360
+        ]
+      }
+    ],
+    "processing": [
+      {
+        "role": "target_a",
+        "physics": false,
+        "process": false
+      },
+      {
+        "role": "target_b",
+        "physics": false,
+        "process": false
+      }
+    ],
+    "fixture": {
+      "id": "combat_playground",
+      "config": {
+        "stationary_target": true
+      }
+    }
+  },
+  "timeline": [
+    {
+      "tick": 4,
+      "action": "aim_at_role",
+      "role": "operator",
+      "target_role": "target_a"
+    },
+    {
+      "tick": 8,
+      "action": "input_press",
+      "name": "aim_hold"
+    },
+    {
+      "tick": 10,
+      "action": "input_press",
+      "name": "move_down"
+    },
+    {
+      "tick": 70,
+      "action": "input_tap",
+      "name": "attack_primary",
+      "hold_ticks": 1
+    },
+    {
+      "tick": 105,
+      "action": "input_release",
+      "name": "aim_hold"
+    },
+    {
+      "tick": 155,
+      "action": "input_release",
+      "name": "move_down"
+    },
+    {
+      "tick": 178,
+      "action": "finish"
+    }
+  ],
+  "probes": [
+    {
+      "id": "operator_state",
+      "role": "operator",
+      "fields": [
+        "global_position",
+        "movement_direction",
+        "aim_direction",
+        "_primary_ranged_action_phase"
+      ],
+      "ticks": [
+        12,
+        24,
+        48,
+        72,
+        96,
+        132,
+        168
+      ],
+      "required": true
+    },
+    {
+      "id": "lower_body_state",
+      "role": "lower_body",
+      "fields": [
+        "animation",
+        "frame",
+        "frame_progress",
+        "effective_visible"
+      ],
+      "ticks": [
+        12,
+        24,
+        48,
+        72,
+        96,
+        132,
+        168
+      ],
+      "required": true
+    },
+    {
+      "id": "upper_body_state",
+      "role": "upper_body",
+      "fields": [
+        "animation",
+        "frame",
+        "frame_progress",
+        "effective_visible"
+      ],
+      "ticks": [
+        12,
+        24,
+        48,
+        72,
+        96,
+        132,
+        168
+      ],
+      "required": true
+    }
+  ],
+  "assertions": [
+    {
+      "type": "role_exists",
+      "role": "operator",
+      "severity": "error"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "lower_body_state",
+      "tick": 24,
+      "field": "animation",
+      "op": "eq",
+      "value": "unarmed/locomotion/walk_01/s/lower_body",
+      "severity": "error"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "upper_body_state",
+      "tick": 12,
+      "field": "animation",
+      "op": "eq",
+      "value": "ranged_2h/cosmetic/aim_01/e/upper_body",
+      "severity": "error"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "lower_body_state",
+      "tick": 72,
+      "field": "animation",
+      "op": "eq",
+      "value": "unarmed/locomotion/walk_01/s/lower_body",
+      "severity": "error"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "lower_body_state",
+      "tick": 96,
+      "field": "animation",
+      "op": "eq",
+      "value": "unarmed/locomotion/walk_01/s/lower_body",
+      "severity": "error"
+    },
+    {
+      "type": "no_unreleased_inputs",
+      "severity": "error"
+    },
+    {
+      "type": "output_exists",
+      "path": "telemetry.json",
+      "severity": "error"
+    }
+  ],
+  "stable_fingerprint": {
+    "event_payload_fields": {
+      "player_ranged_shot": [
+        "accepted_aim_direction",
+        "accepted_aim_world_position",
+        "ballistic_direction"
+      ]
+    },
+    "counters": [
+      "player_ranged_shots_fired"
+    ],
+    "probes": [
+      "operator_state",
+      "lower_body_state",
+      "upper_body_state"
+    ],
+    "position_quantum_px": 0.25,
+    "float_quantum": 0.0001
+  },
+  "tags": [
+    "combat",
+    "ranged",
+    "operator",
+    "presentation",
+    "operator_animation",
+    "ranged_2h"
+  ]
+}

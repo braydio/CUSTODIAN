@@ -1,0 +1,131 @@
+{
+	"failures": [],
+	"records": [
+		{
+			"id": "fixture_state",
+			"role": "fixture",
+			"tick": 8,
+			"values": {
+				"checkpoint": "arrival",
+				"real_camera": true,
+				"real_operator": true
+			}
+		},
+		{
+			"id": "operator_path",
+			"role": "operator",
+			"tick": 8,
+			"values": {
+				"global_position": [
+					16.0,
+					1264.0
+				]
+			}
+		},
+		{
+			"id": "fixture_state",
+			"role": "fixture",
+			"tick": 22,
+			"values": {
+				"checkpoint": "direct_line",
+				"real_camera": true,
+				"real_operator": true
+			}
+		},
+		{
+			"id": "operator_path",
+			"role": "operator",
+			"tick": 22,
+			"values": {
+				"global_position": [
+					16.0,
+					976.0
+				]
+			}
+		},
+		{
+			"id": "fixture_state",
+			"role": "fixture",
+			"tick": 36,
+			"values": {
+				"checkpoint": "evacuation_turn",
+				"real_camera": true,
+				"real_operator": true
+			}
+		},
+		{
+			"id": "operator_path",
+			"role": "operator",
+			"tick": 36,
+			"values": {
+				"global_position": [
+					-336.0,
+					912.0
+				]
+			}
+		},
+		{
+			"id": "fixture_state",
+			"role": "fixture",
+			"tick": 50,
+			"values": {
+				"checkpoint": "civic_basin",
+				"real_camera": true,
+				"real_operator": true
+			}
+		},
+		{
+			"id": "operator_path",
+			"role": "operator",
+			"tick": 50,
+			"values": {
+				"global_position": [
+					80.0,
+					-144.0
+				]
+			}
+		},
+		{
+			"id": "fixture_state",
+			"role": "fixture",
+			"tick": 64,
+			"values": {
+				"checkpoint": "answers_court",
+				"real_camera": true,
+				"real_operator": true
+			}
+		},
+		{
+			"id": "operator_path",
+			"role": "operator",
+			"tick": 64,
+			"values": {
+				"global_position": [
+					272.0,
+					-880.0
+				]
+			}
+		},
+		{
+			"id": "fixture_state",
+			"role": "fixture",
+			"tick": 78,
+			"values": {
+				"checkpoint": "station_threshold",
+				"real_camera": true,
+				"real_operator": true
+			}
+		},
+		{
+			"id": "operator_path",
+			"role": "operator",
+			"tick": 78,
+			"values": {
+				"global_position": [
+					464.0,
+					528.0
+				]
+			}
+		}
+	]
+}

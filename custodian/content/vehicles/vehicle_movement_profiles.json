@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "profiles": {
+    "ground_wheeled_light": {
+      "domain": "GROUND",
+      "mobility": ["WHEELED"],
+      "max_speed": 175.0,
+      "acceleration": 420.0,
+      "deceleration": 520.0,
+      "turn_response": 10.0,
+      "reverse_multiplier": 0.45,
+      "road_speed_multiplier_enabled": true,
+      "offroad_speed_multiplier": 0.78,
+      "collision_damage_enabled": false
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+	"durations": [
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0
+	],
+	"fps": 18.0,
+	"frame_rgba_sha256": [
+		"c902224dcaf99903a8ebb1de9b71f3efdd47410529e0b42338c879e25fa6126f",
+		"e33f9e41fd4690c9f104903bf45b03ca912df6e4a96843d4aab6d8f8d793f7a9",
+		"a3cc8f8686d3a5dc5c9dd865062f623829b7c0106aa8346b92bbacac153ef91e",
+		"24cbb37414111bc97aba4bc65e4407a2a5808a33054cd33d88a9318d82f500b7",
+		"f3f627ad6399a76f6afedd9bc6aab929efdb9ede8911e62e23eeddf96d3a6fc7",
+		"d8f184780c45d44fba8c6546a1b21577d93458eb73415158b7c1576b2cc30290",
+		"7460cd729db4bcac88fae3ccb033e3b883060a246198c09db46bba1437290ba7",
+		"7e5d0031d7430ea624e3cd7ac80630436791b9c98b2f25d6097b63f0939e3beb",
+		"34abacb50d16cefa3ddf0b0a051827f8bc6886414df7d4112acff71c703886bc",
+		"c902224dcaf99903a8ebb1de9b71f3efdd47410529e0b42338c879e25fa6126f"
+	],
+	"frames": 10,
+	"loop": false,
+	"migration_source": {
+		"consumer": "res://game/actors/operator/vigil_pattern_dagger_definition.tres",
+		"note": "Cadence recovered from the pre-C2b compatibility SpriteFrames the Vigil dagger installed at equip time; matches the already-published weapon-layer sidecars for the same actions.",
+		"resource": "res://game/actors/operator/vigil_pattern_dagger_body_frames.tres"
+	},
+	"schema": "custodian.operator_animation_timing.v1"
+}

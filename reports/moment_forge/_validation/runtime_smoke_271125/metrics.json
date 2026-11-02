@@ -1,0 +1,11 @@
+{
+  "schema": "custodian.moment_forge.metrics.v1",
+  "stable": {
+    "action_count": 2,
+    "completed": true,
+    "duration_ticks": 30,
+    "operator_x": 2.0,
+    "physics_steps": 30,
+    "seed": 104729
+  }
+}

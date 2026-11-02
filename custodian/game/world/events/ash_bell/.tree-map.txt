@@ -1,0 +1,8 @@
+Directory Tree Mapping
+File: ash_bell_dev_spawner.gd
+File: ash_bell_event_state.gd
+File: ash_bell_interactable.gd
+File: ash_bell_trigger.gd
+File: forlorn_ritualant_npc.gd
+File: forlorn_ritualant_site.gd
+File: white_thread_hazard.gd

@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "id": "traversal/ash_bell_lift_exterior_descent",
+  "description": "Ash Bell exterior landmark, traversal-only shaft reveal, cave-lip descent occlusion, and parked reset comparison.",
+  "scene": "res://tools/validation/fixtures/ash_bell_lift_moment.tscn",
+  "seed": 104729,
+  "duration_ticks": 132,
+  "simulation": {"physics_hz": 60, "warmup_ticks": 4, "max_wall_seconds": 30, "pause_during_setup": true},
+  "capture": {"width": 1280, "height": 720, "fps": 60, "audio": false, "start_tick": 0, "end_tick": 131, "contact_sheet_ticks": [0, 19, 28, 38, 70, 120], "required_keyframes": true, "background": "opaque"},
+  "setup": {
+    "remove_nodes": [],
+    "roles": {
+      "fixture": {"node_path": "."},
+      "presentation": {"node_path": "AshBellLiftIngressPresentation"},
+      "operator": {"node_path": "Operator"}
+    },
+    "spawns": [],
+    "properties": [],
+    "processing": [],
+    "fixture": {"id": "ash_bell_lift", "config": {"review": "exterior_descent_reset"}}
+  },
+  "timeline": [
+    {"tick": 20, "action": "fixture_command", "name": "begin_lift_descent"},
+    {"tick": 96, "action": "fixture_command", "name": "reset_lift_exterior"},
+    {"tick": 130, "action": "finish"}
+  ],
+  "probes": [
+    {"id": "lift_state", "role": "fixture", "fields": ["shaft_visible", "lift_position", "puppet_active"], "ticks": [0, 28, 38, 70, 120], "required": true}
+  ],
+  "assertions": [
+    {"type": "role_exists", "role": "presentation", "severity": "error"},
+    {"type": "role_exists", "role": "operator", "severity": "error"},
+    {"type": "probe_compare", "probe": "lift_state", "tick": 0, "field": "shaft_visible", "op": "eq", "value": false, "severity": "error"},
+    {"type": "probe_compare", "probe": "lift_state", "tick": 28, "field": "shaft_visible", "op": "eq", "value": true, "severity": "error"},
+    {"type": "probe_compare", "probe": "lift_state", "tick": 38, "field": "puppet_active", "op": "eq", "value": true, "severity": "error"},
+    {"type": "probe_compare", "probe": "lift_state", "tick": 120, "field": "shaft_visible", "op": "eq", "value": false, "severity": "error"},
+    {"type": "no_unreleased_inputs", "severity": "error"},
+    {"type": "output_exists", "path": "telemetry.json", "severity": "error"}
+  ],
+  "stable_fingerprint": {"event_payload_fields": {}, "counters": [], "probes": ["lift_state"], "position_quantum_px": 0.25, "float_quantum": 0.0001},
+  "tags": ["traversal", "ash_bell", "lift", "world_ingress", "operator_presentation"]
+}

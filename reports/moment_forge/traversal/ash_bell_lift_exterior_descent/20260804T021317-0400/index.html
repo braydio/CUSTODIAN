@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Moment Forge — traversal/ash_bell_lift_exterior_descent</title>
+<style>
+:root{color-scheme:dark;--bg:#090d13;--panel:#111925;--line:#2d425a;--text:#dce8f2;--muted:#8ca0b4;--cyan:#66d9ef;--red:#ff6b72;--green:#72d69b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,sans-serif}main{max-width:1600px;margin:auto;padding:24px}code{color:var(--cyan)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.panel{background:var(--panel);border:1px solid var(--line);padding:16px;border-radius:8px;overflow:auto;margin-bottom:16px}video,img{width:100%;height:auto;background:#000}table{width:100%;border-collapse:collapse}th,td{padding:7px 9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.pass{color:var(--green)}.fail{color:var(--red)}.muted{color:var(--muted)}button,input{margin:4px}@media(max-width:900px){.grid{grid-template-columns:1fr}}
+</style></head><body><main>
+<h1>CUSTODIAN Moment Forge</h1>
+<p><code>traversal/ash_bell_lift_exterior_descent</code> — Ash Bell exterior landmark, traversal-only shaft reveal, cave-lip descent occlusion, and parked reset comparison.</p>
+<p>Status: <b>passed</b> · fingerprint <code>a45a96df8d4d5e2b</code></p>
+<section class="panel"><button id="playBoth">Play both</button><button id="pauseBoth">Pause</button><label>Scrub <input id="scrub" type="range" min="0" max="1000" value="0"></label>
+<div class="grid"><div><h2>Baseline</h2><p class='muted'>Unavailable.</p></div><div><h2>Current</h2><video controls loop src='current.mp4'></video></div></div></section>
+<div class="grid"><section class="panel"><h2>Baseline contact sheet</h2><p class='muted'>Unavailable.</p></section><section class="panel"><h2>Current contact sheet</h2><img src='current_contact_sheet.png' alt='current_contact_sheet.png'></section></div>
+<section class="panel"><h2>Visual difference (advisory)</h2><p class='muted'>Unavailable.</p></section>
+<section class="panel"><h2>Assertions</h2><ul><li class='pass'><b>role_exists</b> [error]: </li>
+<li class='pass'><b>role_exists</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>no_unreleased_inputs</b> [error]: </li>
+<li class='pass'><b>output_exists</b> [error]: </li></ul></section>
+<section class="panel"><h2>Metric deltas</h2><table><thead><tr><th>Metric</th><th>Baseline</th><th>Current</th><th>Delta</th></tr></thead><tbody><tr><td>completed_tick</td><td>None</td><td>130</td><td>None</td></tr>
+<tr><td>visible_visual_anchor_delta_px</td><td>None</td><td>None</td><td>None</td></tr>
+<tr><td>visible_visual_anchor_sample_count</td><td>None</td><td>0</td><td>None</td></tr></tbody></table></section>
+<section class="panel"><h2>Tick-enriched timeline</h2><table><thead><tr><th>Tick</th><th>Kind</th><th>Evidence</th></tr></thead><tbody><tr><td>20</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;fixture_command&quot;, &quot;name&quot;: &quot;begin_lift_descent&quot;, &quot;tick&quot;: 20.0}, &quot;moment_tick&quot;: 20, &quot;result&quot;: {&quot;action&quot;: &quot;fixture_command&quot;, &quot;ok&quot;: true, &quot;response&quot;: true, &quot;tick&quot;: 20}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 20}</code></td></tr>
+<tr><td>96</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;fixture_command&quot;, &quot;name&quot;: &quot;reset_lift_exterior&quot;, &quot;tick&quot;: 96.0}, &quot;moment_tick&quot;: 96, &quot;result&quot;: {&quot;action&quot;: &quot;fixture_command&quot;, &quot;ok&quot;: true, &quot;response&quot;: true, &quot;tick&quot;: 96}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 96}</code></td></tr>
+<tr><td>130</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;finish&quot;, &quot;tick&quot;: 130.0}, &quot;moment_tick&quot;: 130, &quot;result&quot;: {&quot;action&quot;: &quot;finish&quot;, &quot;finish&quot;: true, &quot;ok&quot;: true, &quot;tick&quot;: 130}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 130}</code></td></tr></tbody></table></section>
+<section class="panel"><h2>Provenance</h2><pre>{
+  &quot;capture&quot;: {
+    &quot;audio_requested&quot;: false,
+    &quot;fps&quot;: 60,
+    &quot;height&quot;: 720,
+    &quot;mode&quot;: &quot;full&quot;,
+    &quot;synchronization&quot;: &quot;verified&quot;,
+    &quot;width&quot;: 1280
+  },
+  &quot;repository&quot;: {
+    &quot;branch&quot;: &quot;main&quot;,
+    &quot;changed_files&quot;: [
+      &quot;M custodian/assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__foreground_occluder__idle__s__1f__256x256.png&quot;,
+      &quot; M custodian/assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_chain__idle__s__1f__64x256.png&quot;,
+      &quot; M custodian/assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_platform__idle__s__1f__128x128.png&quot;,
+      &quot; M custodian/content/routes/ash_bell/forlorn_ritualant_underground_route.json&quot;,
+      &quot; M custodian/content/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__mountain_cliff_mass__768x512.png&quot;,
+      &quot; M custodian/docs/ai_context/CURRENT_STATE.md&quot;,
+      &quot; M custodian/docs/ai_context/FILE_INDEX.md&quot;,
+      &quot; M custodian/game/actors/operator/operator_melee_overlay_frames.tres&quot;,
+      &quot; M custodian/game/actors/operator/operator_modular_cape_frames.tres&quot;,
+      &quot; M custodian/game/actors/operator/operator_modular_head_frames.tres&quot;,
+      &quot; M custodian/game/actors/operator/operator_modular_lower_body_frames.tres&quot;,
+      &quot; M custodian/game/actors/operator/operator_modular_sidearm_frames.tres&quot;,
+      &quot; M custodian/game/actors/operator/operator_modular_upper_body_frames.tres&quot;,
+      &quot; M custodian/game/actors/operator/operator_modular_upper_fx_frames.tres&quot;,
+      &quot; M custodian/game/actors/operator/operator_ranged_fx_frames.tres&quot;,
+      &quot; M custodian/game/actors/operator/operator_runtime_frames.tres&quot;,
+      &quot; M custodian/game/actors/operator/operator_weapon_frames.tres&quot;,
+      &quot; M custodian/game/actors/operator/vigil_pattern_dagger_body_frames.tres&quot;,
+      &quot; M custodian/game/actors/operator/vigil_pattern_dagger_fx_frames.tres&quot;,
+      &quot; M custodian/game/actors/operator/vigil_pattern_dagger_melee_overlay_frames.tres&quot;,
+      &quot; M custodian/game/world/approaches/ash_bell/ash_bell_lift_ingress_presentation.gd&quot;,
+      &quot; M custodian/game/world/approaches/ash_bell/ash_bell_lift_ingress_presentation.tscn&quot;,
+      &quot; M custodian/game/world/approaches/ash_bell/ash_bell_lift_ingress_site.gd&quot;,
+      &quot; M custodian/tools/validation/ash_bell_lift_ingress_presentation_smoke.gd&quot;,
+      &quot; M design/05_levels/ASH_BELL_LIFT_INGRESS_PRESENTATION.md&quot;,
+      &quot;?? custodian/assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_platform_back__idle__s__1f__128x128.png&quot;,
+      &quot;?? custodian/assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_platform_back__idle__s__1f__128x128.png.import&quot;,
+      &quot;?? custodian/assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_platform_back__vibrate__s__4f__128x128.png&quot;,
+      &quot;?? custodian/assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_platform_back__vibrate__s__4f__128x128.png.import&quot;,
+      &quot;?? custodian/assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_platform_front_lip__idle__s__1f__128x128.png&quot;,
+      &quot;?? custodian/assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_platform_front_lip__idle__s__1f__128x128.png.import&quot;,
+      &quot;?? custodian/assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_platform_front_lip__vibrate__s__4f__128x128.png&quot;,
+      &quot;?? custodian/assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_platform_front_lip__vibrate__s__4f__128x128.png.import&quot;,
+      &quot;?? custodian/assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__support_timber__idle__s__1f__64x256.png&quot;,
+      &quot;?? custodian/assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__support_timber__idle__s__1f__64x256.png.import&quot;,
+      &quot;?? reports/moment_forge/traversal/ash_bell_lift_exterior_descent/20260804T003731-0400/&quot;,
+      &quot;?? reports/moment_forge/traversal/ash_bell_lift_exterior_descent/20260804T021317-0400/&quot;
+    ],
+    &quot;commit&quot;: &quot;567b1b947ca33bb386f6a6ca5e09fbe4da606b83&quot;,
+    &quot;dirty&quot;: true,
+    &quot;root&quot;: &quot;/home/braydenchaffee/Projects/CUSTODIAN&quot;
+  },
+  &quot;runtime&quot;: {
+    &quot;godot&quot;: {
+      &quot;build&quot;: &quot;arch_linux&quot;,
+      &quot;hash&quot;: &quot;a13da4feb8d8aefc283c3763d33a2f170a18d541&quot;,
+      &quot;hex&quot;: 263937,
+      &quot;major&quot;: 4,
+      &quot;minor&quot;: 7,
+      &quot;patch&quot;: 1,
+      &quot;status&quot;: &quot;stable&quot;,
+      &quot;string&quot;: &quot;4.7.1-stable (arch_linux)&quot;,
+      &quot;timestamp&quot;: 1783976428
+    },
+    &quot;physics_hz&quot;: 60,
+    &quot;renderer&quot;: &quot;vulkan&quot;
+  },
+  &quot;scenario&quot;: {
+    &quot;id&quot;: &quot;traversal/ash_bell_lift_exterior_descent&quot;,
+    &quot;path&quot;: &quot;/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/traversal/ash_bell_lift_exterior_descent/20260804T021317-0400/scenario.snapshot.json&quot;,
+    &quot;schema_version&quot;: 1,
+    &quot;sha256&quot;: &quot;917e78a482affa4c282a44aa487eb8e22ea5be38c1ce7cd51bbe34e6e1fc9399&quot;
+  }
+}</pre></section>
+</main><script>
+const videos=[...document.querySelectorAll('video')],scrub=document.getElementById('scrub');
+document.getElementById('playBoth').onclick=()=>videos.forEach(v=>v.play());
+document.getElementById('pauseBoth').onclick=()=>videos.forEach(v=>v.pause());
+scrub.oninput=()=>videos.forEach(v=>{if(Number.isFinite(v.duration))v.currentTime=v.duration*Number(scrub.value)/1000});
+</script></body></html>

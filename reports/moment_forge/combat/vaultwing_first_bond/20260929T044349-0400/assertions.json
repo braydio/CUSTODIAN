@@ -1,0 +1,185 @@
+[
+	{
+		"actual": true,
+		"expected": {
+			"role": "vaultwing",
+			"severity": "error",
+			"type": "role_exists"
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "role_exists"
+	},
+	{
+		"actual": true,
+		"expected": {
+			"field": "bond_trial_started",
+			"op": "eq",
+			"probe": "bond",
+			"severity": "error",
+			"tick": 20.0,
+			"type": "probe_compare",
+			"value": true
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": true,
+		"expected": {
+			"field": "guarded_observation_seen",
+			"op": "eq",
+			"probe": "bond",
+			"severity": "error",
+			"tick": 180.0,
+			"type": "probe_compare",
+			"value": true
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": true,
+		"expected": {
+			"field": "controlled_approach_seen",
+			"op": "eq",
+			"probe": "bond",
+			"severity": "error",
+			"tick": 205.0,
+			"type": "probe_compare",
+			"value": true
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": true,
+		"expected": {
+			"field": "bond_completed",
+			"op": "eq",
+			"probe": "bond",
+			"severity": "error",
+			"tick": 225.0,
+			"type": "probe_compare",
+			"value": true
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": 1,
+		"expected": {
+			"field": "bond_completion_count",
+			"op": "eq",
+			"probe": "bond",
+			"severity": "error",
+			"tick": 225.0,
+			"type": "probe_compare",
+			"value": 1.0
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": "bonded",
+		"expected": {
+			"field": "vaultwing_stage",
+			"op": "eq",
+			"probe": "bond",
+			"severity": "error",
+			"tick": 225.0,
+			"type": "probe_compare",
+			"value": "bonded"
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": "operator_allied",
+		"expected": {
+			"field": "vaultwing_allegiance",
+			"op": "eq",
+			"probe": "bond",
+			"severity": "error",
+			"tick": 225.0,
+			"type": "probe_compare",
+			"value": "operator_allied"
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": true,
+		"expected": {
+			"field": "bond_same_actor",
+			"op": "eq",
+			"probe": "bond",
+			"severity": "error",
+			"tick": 225.0,
+			"type": "probe_compare",
+			"value": true
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": false,
+		"expected": {
+			"field": "hostile_attack_during_trial",
+			"op": "eq",
+			"probe": "bond",
+			"severity": "error",
+			"tick": 225.0,
+			"type": "probe_compare",
+			"value": false
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": false,
+		"expected": {
+			"field": "operator_targetable_after_bond",
+			"op": "eq",
+			"probe": "bond",
+			"severity": "error",
+			"tick": 225.0,
+			"type": "probe_compare",
+			"value": false
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": false,
+		"expected": {
+			"severity": "error",
+			"type": "no_unreleased_inputs"
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "no_unreleased_inputs"
+	}
+]

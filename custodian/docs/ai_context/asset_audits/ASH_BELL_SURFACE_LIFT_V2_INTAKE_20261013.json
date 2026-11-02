@@ -1,0 +1,404 @@
+{
+  "schema": "custodian.ash_bell_surface_lift_v2_intake.v1",
+  "generated_at": "2026-10-13T15:26:17Z",
+  "workstream": "ash-bell-surface-lift-v2-asset-intake",
+  "package": {
+    "dropbox_path": "/CUSTODIAN/asset_batches/ash-bell-ritualant/CUSTODIAN_Ash_Bell_Surface_Lift_V2_Full_Resolution_Source_20261013.zip",
+    "size_bytes": 7801299,
+    "sha256": "fb283369cf3546c7615d1ea51a28c6f6fd95591d36d8c1ccafd5e4c2338bcdbc",
+    "reviewed_by": "user",
+    "reviewed_at": "2026-10-13T15:08:24Z",
+    "review_chat": "https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac57cd9-e070-83ea-b432-7bc0082aef7c",
+    "original_authoring_chat": "https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acb367f-4ca0-83e8-a226-31a3ae38da20",
+    "decision": "approved with field_arming source-work-only",
+    "dropbox_file_id": "id:8NXqdXuW6GUAAAAAAAADAA",
+    "dropbox_content_hash": "57e20f97c82063ea9ebe7bd6facd4779145e21c2d0ddf083ffee4b60c8115785"
+  },
+  "families": {
+    "ash_bell_surface_lift_ingress_props_v1": {
+      "kind": "world_prop",
+      "required_states": [
+        "lift_deck",
+        "field_projector"
+      ],
+      "status": "2/2 imported; unbound"
+    },
+    "ash_bell_surface_lift_safety_field_v1": {
+      "kind": "effect",
+      "required_states": [
+        "field_idle",
+        "field_engaged",
+        "field_arming"
+      ],
+      "status": "2/3 imported; field_arming source-pending at 6f/8f"
+    }
+  },
+  "states": [
+    {
+      "state_id": "lift_deck",
+      "family_id": "ash_bell_surface_lift_ingress_props_v1",
+      "decision": "approved_runtime",
+      "source_path": "custodian/asset_drop/source_work/ash_bell/ash_bell_surface_lift_ingress_props_v1/lift_deck_source.png",
+      "source_sha256": "5f37b0f058b7f30d384c632d06cf725fed392c3597f4aacca8e9e2ff0bd38b39",
+      "source_dimensions": [
+        1448,
+        1086
+      ],
+      "source_mode": "RGBA",
+      "source_alpha_extrema": [
+        0,
+        255
+      ],
+      "source_distinct_frame_count": 1,
+      "runtime_path": "custodian/content/sprites/environment/ash_bell_surface_lift/ash_bell_surface_lift_ingress_props_v1/runtime/body/ash_bell_surface_lift_ingress_props_v1__body__interaction__lift_deck__omni__1f__448x320.png",
+      "runtime_sha256": "d4dc3ae70bffb04b8389055bc39d83185e64fa6ee3df08031a890fb63825efdc",
+      "runtime_dimensions": [
+        448,
+        320
+      ],
+      "runtime_frame_size": [
+        448,
+        320
+      ],
+      "runtime_frames": 1,
+      "runtime_alpha_extrema": [
+        0,
+        255
+      ],
+      "godot_import_sidecar_present": true,
+      "status": "imported_unbound_runtime_unverified",
+      "runtime_frame_alpha": [
+        {
+          "frame": 0,
+          "alpha_bounds": [
+            13,
+            24,
+            435,
+            296
+          ],
+          "transparent_pixels": 58255,
+          "nontransparent_pixels": 85105,
+          "opaque_pixels": 85105
+        }
+      ]
+    },
+    {
+      "state_id": "field_projector",
+      "family_id": "ash_bell_surface_lift_ingress_props_v1",
+      "decision": "approved_runtime",
+      "source_path": "custodian/asset_drop/source_work/ash_bell/ash_bell_surface_lift_ingress_props_v1/field_projector_source.png",
+      "source_sha256": "c333d27fdd884d4686436e9874a603f5656912190588ce8f386a3aa416a53a2e",
+      "source_dimensions": [
+        1086,
+        1448
+      ],
+      "source_mode": "RGBA",
+      "source_alpha_extrema": [
+        0,
+        255
+      ],
+      "source_distinct_frame_count": 1,
+      "runtime_path": "custodian/content/sprites/environment/ash_bell_surface_lift/ash_bell_surface_lift_ingress_props_v1/runtime/body/ash_bell_surface_lift_ingress_props_v1__body__interaction__field_projector__omni__1f__64x128.png",
+      "runtime_sha256": "388836af8b858c838822f3073ffcbbecbec7161d9b6ef886002dc2db78f0b6a7",
+      "runtime_dimensions": [
+        64,
+        128
+      ],
+      "runtime_frame_size": [
+        64,
+        128
+      ],
+      "runtime_frames": 1,
+      "runtime_alpha_extrema": [
+        0,
+        255
+      ],
+      "godot_import_sidecar_present": true,
+      "status": "imported_unbound_runtime_unverified",
+      "runtime_frame_alpha": [
+        {
+          "frame": 0,
+          "alpha_bounds": [
+            2,
+            18,
+            62,
+            110
+          ],
+          "transparent_pixels": 5617,
+          "nontransparent_pixels": 2575,
+          "opaque_pixels": 2575
+        }
+      ]
+    },
+    {
+      "state_id": "field_idle",
+      "family_id": "ash_bell_surface_lift_safety_field_v1",
+      "decision": "approved_runtime",
+      "source_path": "custodian/asset_drop/source_work/ash_bell/ash_bell_surface_lift_safety_field_v1/field_idle_source.png",
+      "source_sha256": "52d04334ff21fc42f9455303159f54c95df2d2bb67dd05b4ebadea47abc80583",
+      "source_dimensions": [
+        2172,
+        724
+      ],
+      "source_mode": "RGBA",
+      "source_alpha_extrema": [
+        0,
+        252
+      ],
+      "source_distinct_frame_count": 6,
+      "runtime_path": "custodian/content/sprites/effects/ash_bell_surface_lift/runtime/ash_bell_surface_lift_safety_field_v1/ash_bell_surface_lift_safety_field_v1__fx__effect__field_idle__omni__6f__512x192.png",
+      "runtime_sha256": "c9d8e42fed0a3244be1904eb9117b189260d1e6a35410d8e3d0ecfa1db68c68c",
+      "runtime_dimensions": [
+        3072,
+        192
+      ],
+      "runtime_frame_size": [
+        512,
+        192
+      ],
+      "runtime_frames": 6,
+      "runtime_alpha_extrema": [
+        0,
+        255
+      ],
+      "godot_import_sidecar_present": true,
+      "status": "imported_unbound_runtime_unverified",
+      "runtime_frame_alpha": [
+        {
+          "frame": 0,
+          "alpha_bounds": [
+            180,
+            14,
+            341,
+            184
+          ],
+          "transparent_pixels": 80305,
+          "nontransparent_pixels": 17999,
+          "opaque_pixels": 17999
+        },
+        {
+          "frame": 1,
+          "alpha_bounds": [
+            179,
+            14,
+            341,
+            184
+          ],
+          "transparent_pixels": 76923,
+          "nontransparent_pixels": 21381,
+          "opaque_pixels": 21381
+        },
+        {
+          "frame": 2,
+          "alpha_bounds": [
+            175,
+            8,
+            337,
+            184
+          ],
+          "transparent_pixels": 74477,
+          "nontransparent_pixels": 23827,
+          "opaque_pixels": 23827
+        },
+        {
+          "frame": 3,
+          "alpha_bounds": [
+            173,
+            15,
+            335,
+            184
+          ],
+          "transparent_pixels": 74080,
+          "nontransparent_pixels": 24224,
+          "opaque_pixels": 24224
+        },
+        {
+          "frame": 4,
+          "alpha_bounds": [
+            172,
+            13,
+            333,
+            184
+          ],
+          "transparent_pixels": 75613,
+          "nontransparent_pixels": 22691,
+          "opaque_pixels": 22691
+        },
+        {
+          "frame": 5,
+          "alpha_bounds": [
+            171,
+            9,
+            333,
+            184
+          ],
+          "transparent_pixels": 76546,
+          "nontransparent_pixels": 21758,
+          "opaque_pixels": 21758
+        }
+      ]
+    },
+    {
+      "state_id": "field_engaged",
+      "family_id": "ash_bell_surface_lift_safety_field_v1",
+      "decision": "approved_runtime",
+      "source_path": "custodian/asset_drop/source_work/ash_bell/ash_bell_surface_lift_safety_field_v1/field_engaged_source.png",
+      "source_sha256": "2126c5a6f8c70712542bfd6f8e62176c3d1fc66f6f514cb248b7c1fbdabc19d9",
+      "source_dimensions": [
+        2172,
+        724
+      ],
+      "source_mode": "RGBA",
+      "source_alpha_extrema": [
+        0,
+        252
+      ],
+      "source_distinct_frame_count": 6,
+      "runtime_path": "custodian/content/sprites/effects/ash_bell_surface_lift/runtime/ash_bell_surface_lift_safety_field_v1/ash_bell_surface_lift_safety_field_v1__fx__effect__field_engaged__omni__6f__512x192.png",
+      "runtime_sha256": "32e3a5740dee73b4d27699577bb32770e66240892403c5aaea3513a36c347730",
+      "runtime_dimensions": [
+        3072,
+        192
+      ],
+      "runtime_frame_size": [
+        512,
+        192
+      ],
+      "runtime_frames": 6,
+      "runtime_alpha_extrema": [
+        0,
+        255
+      ],
+      "godot_import_sidecar_present": true,
+      "status": "imported_unbound_runtime_unverified",
+      "runtime_frame_alpha": [
+        {
+          "frame": 0,
+          "alpha_bounds": [
+            162,
+            8,
+            352,
+            184
+          ],
+          "transparent_pixels": 66788,
+          "nontransparent_pixels": 31516,
+          "opaque_pixels": 31516
+        },
+        {
+          "frame": 1,
+          "alpha_bounds": [
+            161,
+            8,
+            357,
+            184
+          ],
+          "transparent_pixels": 66808,
+          "nontransparent_pixels": 31496,
+          "opaque_pixels": 31496
+        },
+        {
+          "frame": 2,
+          "alpha_bounds": [
+            155,
+            8,
+            357,
+            184
+          ],
+          "transparent_pixels": 66529,
+          "nontransparent_pixels": 31775,
+          "opaque_pixels": 31775
+        },
+        {
+          "frame": 3,
+          "alpha_bounds": [
+            155,
+            8,
+            357,
+            184
+          ],
+          "transparent_pixels": 66609,
+          "nontransparent_pixels": 31695,
+          "opaque_pixels": 31695
+        },
+        {
+          "frame": 4,
+          "alpha_bounds": [
+            155,
+            8,
+            357,
+            184
+          ],
+          "transparent_pixels": 66563,
+          "nontransparent_pixels": 31741,
+          "opaque_pixels": 31741
+        },
+        {
+          "frame": 5,
+          "alpha_bounds": [
+            155,
+            8,
+            350,
+            184
+          ],
+          "transparent_pixels": 66819,
+          "nontransparent_pixels": 31485,
+          "opaque_pixels": 31485
+        }
+      ]
+    },
+    {
+      "state_id": "field_arming",
+      "family_id": "ash_bell_surface_lift_safety_field_v1",
+      "decision": "approved_source_work_only",
+      "source_path": "custodian/asset_drop/source_work/ash_bell/ash_bell_surface_lift_safety_field_v1/field_arming_source.png",
+      "source_sha256": "989affd1416a85738dbd4c75f7a60e2b664dd77bcfeb683bd3864b18fb4c51e4",
+      "source_dimensions": [
+        2172,
+        724
+      ],
+      "source_mode": "RGBA",
+      "source_alpha_extrema": [
+        0,
+        253
+      ],
+      "source_distinct_frame_count": 6,
+      "runtime_path": null,
+      "runtime_frames": null,
+      "runtime_target": [
+        8,
+        512,
+        192
+      ],
+      "runtime_target_fps": 12,
+      "runtime_loop": false,
+      "status": "source_pending_six_frames_of_eight"
+    }
+  ],
+  "ingest_jobs": [
+    "custodian/asset_drop/logs/job_20261013T151138Z_83e73ea6.json",
+    "custodian/asset_drop/logs/job_20261013T151356Z_92e933f5.json"
+  ],
+  "validation": {
+    "godot_import": "passed for both ingests",
+    "asset_needs_check": "passed",
+    "asset_doctor": "4 pre-existing designation-locker catalog hash mismatches",
+    "lift_scene_or_traversal_changed": false,
+    "dropbox_zip_moved_or_reorganized": false,
+    "dropbox_registry_reconciliation": "deferred; package remains direct under ash-bell-ritualant and unregistered",
+    "dropbox_lifecycle_audit": {
+      "live_scan_complete": true,
+      "package_receipt_match": "approved; exact SHA-256 plus Dropbox file ID/content hash/size/path matched",
+      "registry_status": "unregistered",
+      "path_policy": "directly under ash-bell-ritualant; one-batch-one-folder reconciliation deferred",
+      "package_moved": false,
+      "published": true,
+      "immutable_run": "/CUSTODIAN/asset_batches/_registry/lifecycle/audit-runs/20261013T153111Z.json",
+      "derived_index": "/CUSTODIAN/asset_batches/_registry/lifecycle/INDEX.json",
+      "package_count": 26,
+      "asset_v2_family_count": 90,
+      "finding_count": 24,
+      "published_package_review_status": "approved; receipt matched exact SHA-256, Dropbox file ID, Dropbox content hash, byte size and path",
+      "published_revision": "30f70182b"
+    }
+  }
+}

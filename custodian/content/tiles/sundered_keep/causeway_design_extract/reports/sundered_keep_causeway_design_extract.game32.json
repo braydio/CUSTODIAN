@@ -1,0 +1,3478 @@
+{
+  "schema": "custodian.game32.sundered_keep.causeway_design_extract.v2",
+  "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master.png",
+  "source_image_size_px": [
+    1448,
+    1086
+  ],
+  "output_root": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_design_extract",
+  "tile_size": 32,
+  "asset_count": 55,
+  "domains": [
+    "edges",
+    "floors",
+    "props",
+    "stairs",
+    "walls",
+    "water"
+  ],
+  "usage": {
+    "primary_runtime_target": "Sundered Keep causeway entrance / gatehouse approach",
+    "recommended_integration": [
+      "Register textures in the Sundered Keep asset table or JSON level asset registry.",
+      "Use floors/water as tileable base assets.",
+      "Use edges/walls/props as placed sprites or layered tilemap assets.",
+      "Use causeway_reconstruct_plan.json as a starter layout recipe."
+    ]
+  },
+  "assets": [
+    {
+      "id": "sundered_water_dark_01",
+      "texture": "water/sundered_water_dark_01.png",
+      "domain": "water",
+      "kind": "water_base",
+      "tags": [
+        "water",
+        "void",
+        "repeatable"
+      ],
+      "tilemap_role": "base_fill",
+      "tile_size": 32,
+      "source_rect_px": [
+        88,
+        460,
+        48,
+        48
+      ],
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "water_blocker",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          32,
+          32
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "terrain_blocker",
+          "water_void"
+        ]
+      },
+      "render": {
+        "recommended_layer": "TerrainBase",
+        "z_index_hint": -20,
+        "y_sort": false,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "top_left",
+        "origin_policy": "tile_top_left",
+        "size_class": "32x32"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "atlas": false,
+        "can_repeat": true,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Dark water base; cropped tighter than previous pass."
+    },
+    {
+      "id": "sundered_water_dark_ripple_01",
+      "texture": "water/sundered_water_dark_ripple_01.png",
+      "domain": "water",
+      "kind": "water_variant",
+      "tags": [
+        "water",
+        "void",
+        "ripple",
+        "repeatable"
+      ],
+      "tilemap_role": "base_variant",
+      "tile_size": 32,
+      "source_rect_px": [
+        1114,
+        613,
+        48,
+        48
+      ],
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "water_blocker",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          32,
+          32
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "terrain_blocker",
+          "water_void"
+        ]
+      },
+      "render": {
+        "recommended_layer": "TerrainBase",
+        "z_index_hint": -20,
+        "y_sort": false,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "top_left",
+        "origin_policy": "tile_top_left",
+        "size_class": "32x32"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "atlas": false,
+        "can_repeat": true,
+        "can_scatter": true,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Subtle water variant for scatter."
+    },
+    {
+      "id": "sundered_water_marker_post_01",
+      "texture": "props/sundered_water_marker_post_01.png",
+      "domain": "props",
+      "kind": "water_marker_post",
+      "tags": [
+        "water",
+        "marker",
+        "post"
+      ],
+      "tilemap_role": "water_detail",
+      "tile_size": 32,
+      "source_rect_px": [
+        88,
+        400,
+        28,
+        44
+      ],
+      "runtime_size_px": [
+        32,
+        64
+      ],
+      "footprint_tiles": [
+        1,
+        2
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "PropsStatic",
+        "z_index_hint": 10,
+        "y_sort": true,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "bottom_center",
+        "origin_policy": "anchor_to_tile",
+        "size_class": "32x64"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          64
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Small square marker/post emerging from water."
+    },
+    {
+      "id": "causeway_floor_center_01",
+      "texture": "floors/causeway_floor_center_01.png",
+      "domain": "floors",
+      "kind": "floor_center",
+      "tags": [
+        "causeway",
+        "floor",
+        "walkable",
+        "repeatable"
+      ],
+      "tilemap_role": "walkable_center",
+      "tile_size": 32,
+      "source_rect_px": [
+        690,
+        535,
+        34,
+        34
+      ],
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "FloorDetail",
+        "z_index_hint": -20,
+        "y_sort": false,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "top_left",
+        "origin_policy": "tile_top_left",
+        "size_class": "32x32"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "atlas": false,
+        "can_repeat": true,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Primary central causeway slab."
+    },
+    {
+      "id": "causeway_floor_center_worn_01",
+      "texture": "floors/causeway_floor_center_worn_01.png",
+      "domain": "floors",
+      "kind": "floor_center",
+      "tags": [
+        "causeway",
+        "floor",
+        "walkable",
+        "variant"
+      ],
+      "tilemap_role": "walkable_center_variant",
+      "tile_size": 32,
+      "source_rect_px": [
+        690,
+        637,
+        34,
+        34
+      ],
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "FloorDetail",
+        "z_index_hint": -20,
+        "y_sort": false,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "top_left",
+        "origin_policy": "tile_top_left",
+        "size_class": "32x32"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": true,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Worn center floor variation."
+    },
+    {
+      "id": "causeway_floor_center_dark_01",
+      "texture": "floors/causeway_floor_center_dark_01.png",
+      "domain": "floors",
+      "kind": "floor_center",
+      "tags": [
+        "causeway",
+        "floor",
+        "walkable",
+        "damp",
+        "variant"
+      ],
+      "tilemap_role": "walkable_center_variant",
+      "tile_size": 32,
+      "source_rect_px": [
+        724,
+        703,
+        34,
+        34
+      ],
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "FloorDetail",
+        "z_index_hint": -20,
+        "y_sort": false,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "top_left",
+        "origin_policy": "tile_top_left",
+        "size_class": "32x32"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": true,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Darker damp floor variation."
+    },
+    {
+      "id": "causeway_floor_cracked_01",
+      "texture": "floors/causeway_floor_cracked_01.png",
+      "domain": "floors",
+      "kind": "floor_center",
+      "tags": [
+        "causeway",
+        "floor",
+        "walkable",
+        "cracked",
+        "variant"
+      ],
+      "tilemap_role": "walkable_center_variant",
+      "tile_size": 32,
+      "source_rect_px": [
+        690,
+        789,
+        34,
+        34
+      ],
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "FloorDetail",
+        "z_index_hint": -20,
+        "y_sort": false,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "top_left",
+        "origin_policy": "tile_top_left",
+        "size_class": "32x32"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": true,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Cracked causeway floor variation."
+    },
+    {
+      "id": "causeway_floor_threshold_01",
+      "texture": "floors/causeway_floor_threshold_01.png",
+      "domain": "floors",
+      "kind": "threshold_floor",
+      "tags": [
+        "causeway",
+        "threshold",
+        "floor",
+        "walkable"
+      ],
+      "tilemap_role": "threshold",
+      "tile_size": 32,
+      "source_rect_px": [
+        690,
+        349,
+        34,
+        34
+      ],
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "FloorDetail",
+        "z_index_hint": -20,
+        "y_sort": false,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "top_left",
+        "origin_policy": "tile_top_left",
+        "size_class": "32x32"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Threshold slab directly below the gatehouse stairs."
+    },
+    {
+      "id": "causeway_edge_w_01",
+      "texture": "edges/causeway_edge_w_01.png",
+      "domain": "edges",
+      "kind": "edge_w",
+      "tags": [
+        "causeway",
+        "edge",
+        "west",
+        "vertical",
+        "repeatable"
+      ],
+      "tilemap_role": "left_edge",
+      "tile_size": 32,
+      "source_rect_px": [
+        618,
+        526,
+        26,
+        70
+      ],
+      "runtime_size_px": [
+        32,
+        64
+      ],
+      "footprint_tiles": [
+        1,
+        2
+      ],
+      "collision": "edge_blocker",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          32,
+          64
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "terrain_blocker"
+        ]
+      },
+      "render": {
+        "recommended_layer": "TerrainEdges",
+        "z_index_hint": -10,
+        "y_sort": false,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "top_left",
+        "origin_policy": "tile_top_left",
+        "size_class": "32x64"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          64
+        ],
+        "atlas": false,
+        "can_repeat": true,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "West vertical causeway trim, cropped narrow to avoid center floor."
+    },
+    {
+      "id": "causeway_edge_e_01",
+      "texture": "edges/causeway_edge_e_01.png",
+      "domain": "edges",
+      "kind": "edge_e",
+      "tags": [
+        "causeway",
+        "edge",
+        "east",
+        "vertical",
+        "repeatable"
+      ],
+      "tilemap_role": "right_edge",
+      "tile_size": 32,
+      "source_rect_px": [
+        806,
+        526,
+        26,
+        70
+      ],
+      "runtime_size_px": [
+        32,
+        64
+      ],
+      "footprint_tiles": [
+        1,
+        2
+      ],
+      "collision": "edge_blocker",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          32,
+          64
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "terrain_blocker"
+        ]
+      },
+      "render": {
+        "recommended_layer": "TerrainEdges",
+        "z_index_hint": -10,
+        "y_sort": false,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "top_left",
+        "origin_policy": "tile_top_left",
+        "size_class": "32x64"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          64
+        ],
+        "atlas": false,
+        "can_repeat": true,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "East vertical causeway trim, cropped narrow to avoid center floor."
+    },
+    {
+      "id": "causeway_edge_w_broken_01",
+      "texture": "edges/causeway_edge_w_broken_01.png",
+      "domain": "edges",
+      "kind": "edge_w_broken",
+      "tags": [
+        "causeway",
+        "edge",
+        "west",
+        "broken"
+      ],
+      "tilemap_role": "left_edge_broken",
+      "tile_size": 32,
+      "source_rect_px": [
+        586,
+        702,
+        36,
+        70
+      ],
+      "runtime_size_px": [
+        32,
+        64
+      ],
+      "footprint_tiles": [
+        1,
+        2
+      ],
+      "collision": "edge_blocker",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          32,
+          64
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "terrain_blocker"
+        ]
+      },
+      "render": {
+        "recommended_layer": "TerrainEdges",
+        "z_index_hint": -10,
+        "y_sort": false,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "top_left",
+        "origin_policy": "tile_top_left",
+        "size_class": "32x64"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          64
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Broken west side edge / transition."
+    },
+    {
+      "id": "causeway_edge_e_broken_01",
+      "texture": "edges/causeway_edge_e_broken_01.png",
+      "domain": "edges",
+      "kind": "edge_e_broken",
+      "tags": [
+        "causeway",
+        "edge",
+        "east",
+        "broken"
+      ],
+      "tilemap_role": "right_edge_broken",
+      "tile_size": 32,
+      "source_rect_px": [
+        826,
+        702,
+        36,
+        70
+      ],
+      "runtime_size_px": [
+        32,
+        64
+      ],
+      "footprint_tiles": [
+        1,
+        2
+      ],
+      "collision": "edge_blocker",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          32,
+          64
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "terrain_blocker"
+        ]
+      },
+      "render": {
+        "recommended_layer": "TerrainEdges",
+        "z_index_hint": -10,
+        "y_sort": false,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "top_left",
+        "origin_policy": "tile_top_left",
+        "size_class": "32x64"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          64
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Broken east side edge / transition."
+    },
+    {
+      "id": "causeway_parapet_post_01",
+      "texture": "props/causeway_parapet_post_01.png",
+      "domain": "props",
+      "kind": "post",
+      "tags": [
+        "causeway",
+        "post",
+        "parapet",
+        "blocker"
+      ],
+      "tilemap_role": "edge_post",
+      "tile_size": 32,
+      "source_rect_px": [
+        598,
+        472,
+        30,
+        34
+      ],
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          32,
+          32
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "PropsBlocking",
+        "z_index_hint": 10,
+        "y_sort": true,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "bottom_center",
+        "origin_policy": "anchor_to_tile",
+        "size_class": "32x32"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Small square parapet post."
+    },
+    {
+      "id": "causeway_buttress_w_01",
+      "texture": "walls/causeway_buttress_w_01.png",
+      "domain": "walls",
+      "kind": "buttress_w",
+      "tags": [
+        "causeway",
+        "buttress",
+        "west",
+        "wall",
+        "blocker"
+      ],
+      "tilemap_role": "side_buttress",
+      "tile_size": 32,
+      "source_rect_px": [
+        586,
+        500,
+        56,
+        88
+      ],
+      "runtime_size_px": [
+        64,
+        96
+      ],
+      "footprint_tiles": [
+        2,
+        3
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          64,
+          96
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "WallsHigh",
+        "z_index_hint": 20,
+        "y_sort": true,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "bottom_center",
+        "origin_policy": "anchor_to_tile",
+        "size_class": "64x96"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          96
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "West stacked stone buttress; tighter than debug crop."
+    },
+    {
+      "id": "causeway_buttress_e_01",
+      "texture": "walls/causeway_buttress_e_01.png",
+      "domain": "walls",
+      "kind": "buttress_e",
+      "tags": [
+        "causeway",
+        "buttress",
+        "east",
+        "wall",
+        "blocker"
+      ],
+      "tilemap_role": "side_buttress",
+      "tile_size": 32,
+      "source_rect_px": [
+        806,
+        500,
+        56,
+        88
+      ],
+      "runtime_size_px": [
+        64,
+        96
+      ],
+      "footprint_tiles": [
+        2,
+        3
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          64,
+          96
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "WallsHigh",
+        "z_index_hint": 20,
+        "y_sort": true,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "bottom_center",
+        "origin_policy": "anchor_to_tile",
+        "size_class": "64x96"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          96
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "East stacked stone buttress; tighter than debug crop."
+    },
+    {
+      "id": "causeway_buttress_w_low_01",
+      "texture": "walls/causeway_buttress_w_low_01.png",
+      "domain": "walls",
+      "kind": "buttress_w_low",
+      "tags": [
+        "causeway",
+        "buttress",
+        "west",
+        "low"
+      ],
+      "tilemap_role": "side_buttress_low",
+      "tile_size": 32,
+      "source_rect_px": [
+        586,
+        724,
+        54,
+        76
+      ],
+      "runtime_size_px": [
+        64,
+        64
+      ],
+      "footprint_tiles": [
+        2,
+        2
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          64,
+          64
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "WallsHigh",
+        "z_index_hint": 20,
+        "y_sort": true,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "bottom_center",
+        "origin_policy": "anchor_to_tile",
+        "size_class": "64x64"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          64
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Lower/broken west buttress block."
+    },
+    {
+      "id": "causeway_buttress_e_low_01",
+      "texture": "walls/causeway_buttress_e_low_01.png",
+      "domain": "walls",
+      "kind": "buttress_e_low",
+      "tags": [
+        "causeway",
+        "buttress",
+        "east",
+        "low"
+      ],
+      "tilemap_role": "side_buttress_low",
+      "tile_size": 32,
+      "source_rect_px": [
+        810,
+        724,
+        54,
+        76
+      ],
+      "runtime_size_px": [
+        64,
+        64
+      ],
+      "footprint_tiles": [
+        2,
+        2
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          64,
+          64
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "WallsHigh",
+        "z_index_hint": 20,
+        "y_sort": true,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "bottom_center",
+        "origin_policy": "anchor_to_tile",
+        "size_class": "64x64"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          64
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Lower/broken east buttress block."
+    },
+    {
+      "id": "outer_landing_floor_center_01",
+      "texture": "floors/outer_landing_floor_center_01.png",
+      "domain": "floors",
+      "kind": "landing_floor",
+      "tags": [
+        "outer_landing",
+        "floor",
+        "walkable"
+      ],
+      "tilemap_role": "landing_floor",
+      "tile_size": 32,
+      "source_rect_px": [
+        650,
+        981,
+        34,
+        34
+      ],
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "FloorDetail",
+        "z_index_hint": -20,
+        "y_sort": false,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "top_left",
+        "origin_policy": "tile_top_left",
+        "size_class": "32x32"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Primary outer landing floor."
+    },
+    {
+      "id": "outer_landing_floor_dark_01",
+      "texture": "floors/outer_landing_floor_dark_01.png",
+      "domain": "floors",
+      "kind": "landing_floor_variant",
+      "tags": [
+        "outer_landing",
+        "floor",
+        "walkable",
+        "variant"
+      ],
+      "tilemap_role": "landing_floor_variant",
+      "tile_size": 32,
+      "source_rect_px": [
+        690,
+        981,
+        34,
+        34
+      ],
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "FloorDetail",
+        "z_index_hint": -20,
+        "y_sort": false,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "top_left",
+        "origin_policy": "tile_top_left",
+        "size_class": "32x32"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": true,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Dark landing floor variation."
+    },
+    {
+      "id": "outer_landing_floor_trim_01",
+      "texture": "floors/outer_landing_floor_trim_01.png",
+      "domain": "floors",
+      "kind": "landing_trim_floor",
+      "tags": [
+        "outer_landing",
+        "floor",
+        "trim"
+      ],
+      "tilemap_role": "landing_trim",
+      "tile_size": 32,
+      "source_rect_px": [
+        702,
+        918,
+        34,
+        34
+      ],
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "FloorDetail",
+        "z_index_hint": -20,
+        "y_sort": false,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "top_left",
+        "origin_policy": "tile_top_left",
+        "size_class": "32x32"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Trimmed tile near mooring ring/landing edge."
+    },
+    {
+      "id": "outer_landing_edge_n_01",
+      "texture": "edges/outer_landing_edge_n_01.png",
+      "domain": "edges",
+      "kind": "edge_n",
+      "tags": [
+        "outer_landing",
+        "edge",
+        "north",
+        "horizontal"
+      ],
+      "tilemap_role": "landing_north_edge",
+      "tile_size": 32,
+      "source_rect_px": [
+        650,
+        882,
+        94,
+        30
+      ],
+      "runtime_size_px": [
+        96,
+        32
+      ],
+      "footprint_tiles": [
+        3,
+        1
+      ],
+      "collision": "edge_blocker",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          96,
+          32
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "terrain_blocker"
+        ]
+      },
+      "render": {
+        "recommended_layer": "TerrainEdges",
+        "z_index_hint": -10,
+        "y_sort": false,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "top_left",
+        "origin_policy": "tile_top_left",
+        "size_class": "96x32"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          96,
+          32
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "North/upper edge of lower landing."
+    },
+    {
+      "id": "outer_landing_edge_w_01",
+      "texture": "edges/outer_landing_edge_w_01.png",
+      "domain": "edges",
+      "kind": "edge_w",
+      "tags": [
+        "outer_landing",
+        "edge",
+        "west",
+        "vertical"
+      ],
+      "tilemap_role": "landing_west_edge",
+      "tile_size": 32,
+      "source_rect_px": [
+        486,
+        906,
+        30,
+        88
+      ],
+      "runtime_size_px": [
+        32,
+        96
+      ],
+      "footprint_tiles": [
+        1,
+        3
+      ],
+      "collision": "edge_blocker",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          32,
+          96
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "terrain_blocker"
+        ]
+      },
+      "render": {
+        "recommended_layer": "TerrainEdges",
+        "z_index_hint": -10,
+        "y_sort": false,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "top_left",
+        "origin_policy": "tile_top_left",
+        "size_class": "32x96"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          96
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "West vertical edge of lower landing."
+    },
+    {
+      "id": "outer_landing_edge_e_01",
+      "texture": "edges/outer_landing_edge_e_01.png",
+      "domain": "edges",
+      "kind": "edge_e",
+      "tags": [
+        "outer_landing",
+        "edge",
+        "east",
+        "vertical"
+      ],
+      "tilemap_role": "landing_east_edge",
+      "tile_size": 32,
+      "source_rect_px": [
+        930,
+        906,
+        30,
+        88
+      ],
+      "runtime_size_px": [
+        32,
+        96
+      ],
+      "footprint_tiles": [
+        1,
+        3
+      ],
+      "collision": "edge_blocker",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          32,
+          96
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "terrain_blocker"
+        ]
+      },
+      "render": {
+        "recommended_layer": "TerrainEdges",
+        "z_index_hint": -10,
+        "y_sort": false,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "top_left",
+        "origin_policy": "tile_top_left",
+        "size_class": "32x96"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          96
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "East vertical edge of lower landing."
+    },
+    {
+      "id": "outer_landing_corner_nw_01",
+      "texture": "edges/outer_landing_corner_nw_01.png",
+      "domain": "edges",
+      "kind": "corner_nw",
+      "tags": [
+        "outer_landing",
+        "corner",
+        "northwest"
+      ],
+      "tilemap_role": "landing_corner",
+      "tile_size": 32,
+      "source_rect_px": [
+        490,
+        882,
+        76,
+        72
+      ],
+      "runtime_size_px": [
+        64,
+        64
+      ],
+      "footprint_tiles": [
+        2,
+        2
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          64,
+          64
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "TerrainEdges",
+        "z_index_hint": -10,
+        "y_sort": false,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "top_left",
+        "origin_policy": "tile_top_left",
+        "size_class": "64x64"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          64
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Northwest outer landing corner, reduced from previous broad crop."
+    },
+    {
+      "id": "outer_landing_corner_ne_01",
+      "texture": "edges/outer_landing_corner_ne_01.png",
+      "domain": "edges",
+      "kind": "corner_ne",
+      "tags": [
+        "outer_landing",
+        "corner",
+        "northeast"
+      ],
+      "tilemap_role": "landing_corner",
+      "tile_size": 32,
+      "source_rect_px": [
+        880,
+        882,
+        76,
+        72
+      ],
+      "runtime_size_px": [
+        64,
+        64
+      ],
+      "footprint_tiles": [
+        2,
+        2
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          64,
+          64
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "TerrainEdges",
+        "z_index_hint": -10,
+        "y_sort": false,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "top_left",
+        "origin_policy": "tile_top_left",
+        "size_class": "64x64"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          64
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Northeast outer landing corner, reduced from previous broad crop."
+    },
+    {
+      "id": "outer_landing_side_tower_w_01",
+      "texture": "walls/outer_landing_side_tower_w_01.png",
+      "domain": "walls",
+      "kind": "side_tower_w",
+      "tags": [
+        "outer_landing",
+        "tower",
+        "west",
+        "wall"
+      ],
+      "tilemap_role": "landing_side_tower",
+      "tile_size": 32,
+      "source_rect_px": [
+        508,
+        914,
+        68,
+        92
+      ],
+      "runtime_size_px": [
+        64,
+        96
+      ],
+      "footprint_tiles": [
+        2,
+        3
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          64,
+          96
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "WallsHigh",
+        "z_index_hint": 20,
+        "y_sort": true,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "bottom_center",
+        "origin_policy": "anchor_to_tile",
+        "size_class": "64x96"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          96
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "West lower landing side tower/core structure."
+    },
+    {
+      "id": "outer_landing_side_tower_e_01",
+      "texture": "walls/outer_landing_side_tower_e_01.png",
+      "domain": "walls",
+      "kind": "side_tower_e",
+      "tags": [
+        "outer_landing",
+        "tower",
+        "east",
+        "wall"
+      ],
+      "tilemap_role": "landing_side_tower",
+      "tile_size": 32,
+      "source_rect_px": [
+        870,
+        914,
+        68,
+        92
+      ],
+      "runtime_size_px": [
+        64,
+        96
+      ],
+      "footprint_tiles": [
+        2,
+        3
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          64,
+          96
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "WallsHigh",
+        "z_index_hint": 20,
+        "y_sort": true,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "bottom_center",
+        "origin_policy": "anchor_to_tile",
+        "size_class": "64x96"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          96
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "East lower landing side tower/core structure."
+    },
+    {
+      "id": "mooring_bollards_w_01",
+      "texture": "props/mooring_bollards_w_01.png",
+      "domain": "props",
+      "kind": "bollards_w",
+      "tags": [
+        "mooring",
+        "bollards",
+        "west"
+      ],
+      "tilemap_role": "landing_side_prop",
+      "tile_size": 32,
+      "source_rect_px": [
+        438,
+        935,
+        34,
+        98
+      ],
+      "runtime_size_px": [
+        32,
+        96
+      ],
+      "footprint_tiles": [
+        1,
+        3
+      ],
+      "collision": "partial",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          20,
+          62
+        ],
+        "offset_px": [
+          5,
+          24
+        ],
+        "layers": [
+          "prop_blocker"
+        ]
+      },
+      "render": {
+        "recommended_layer": "PropsStatic",
+        "z_index_hint": 10,
+        "y_sort": true,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "bottom_center",
+        "origin_policy": "anchor_to_tile",
+        "size_class": "32x96"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          96
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "West vertical row of mooring bollards."
+    },
+    {
+      "id": "mooring_bollards_e_01",
+      "texture": "props/mooring_bollards_e_01.png",
+      "domain": "props",
+      "kind": "bollards_e",
+      "tags": [
+        "mooring",
+        "bollards",
+        "east"
+      ],
+      "tilemap_role": "landing_side_prop",
+      "tile_size": 32,
+      "source_rect_px": [
+        976,
+        935,
+        34,
+        98
+      ],
+      "runtime_size_px": [
+        32,
+        96
+      ],
+      "footprint_tiles": [
+        1,
+        3
+      ],
+      "collision": "partial",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          20,
+          62
+        ],
+        "offset_px": [
+          5,
+          24
+        ],
+        "layers": [
+          "prop_blocker"
+        ]
+      },
+      "render": {
+        "recommended_layer": "PropsStatic",
+        "z_index_hint": 10,
+        "y_sort": true,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "bottom_center",
+        "origin_policy": "anchor_to_tile",
+        "size_class": "32x96"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          96
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "East vertical row of mooring bollards."
+    },
+    {
+      "id": "mooring_ring_w_01",
+      "texture": "props/mooring_ring_w_01.png",
+      "domain": "props",
+      "kind": "mooring_ring",
+      "tags": [
+        "mooring",
+        "ring",
+        "west"
+      ],
+      "tilemap_role": "landing_detail",
+      "tile_size": 32,
+      "source_rect_px": [
+        618,
+        918,
+        44,
+        32
+      ],
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "PropsStatic",
+        "z_index_hint": 10,
+        "y_sort": true,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "center",
+        "origin_policy": "anchor_to_tile",
+        "size_class": "32x32"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "West ring/chain detail."
+    },
+    {
+      "id": "mooring_ring_e_01",
+      "texture": "props/mooring_ring_e_01.png",
+      "domain": "props",
+      "kind": "mooring_ring",
+      "tags": [
+        "mooring",
+        "ring",
+        "east"
+      ],
+      "tilemap_role": "landing_detail",
+      "tile_size": 32,
+      "source_rect_px": [
+        786,
+        918,
+        44,
+        32
+      ],
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "PropsStatic",
+        "z_index_hint": 10,
+        "y_sort": true,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "center",
+        "origin_policy": "anchor_to_tile",
+        "size_class": "32x32"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "East ring/chain detail."
+    },
+    {
+      "id": "landing_grate_01",
+      "texture": "props/landing_grate_01.png",
+      "domain": "props",
+      "kind": "grate",
+      "tags": [
+        "landing",
+        "grate",
+        "metal"
+      ],
+      "tilemap_role": "floor_prop",
+      "tile_size": 32,
+      "source_rect_px": [
+        522,
+        998,
+        56,
+        56
+      ],
+      "runtime_size_px": [
+        64,
+        64
+      ],
+      "footprint_tiles": [
+        2,
+        2
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "PropsStatic",
+        "z_index_hint": 10,
+        "y_sort": true,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "center",
+        "origin_policy": "anchor_to_tile",
+        "size_class": "64x64"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          64
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Square metal grate/hatch in landing."
+    },
+    {
+      "id": "landing_grate_alt_01",
+      "texture": "props/landing_grate_alt_01.png",
+      "domain": "props",
+      "kind": "grate",
+      "tags": [
+        "landing",
+        "grate",
+        "metal",
+        "alt"
+      ],
+      "tilemap_role": "floor_prop",
+      "tile_size": 32,
+      "source_rect_px": [
+        884,
+        998,
+        56,
+        56
+      ],
+      "runtime_size_px": [
+        64,
+        64
+      ],
+      "footprint_tiles": [
+        2,
+        2
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "PropsStatic",
+        "z_index_hint": 10,
+        "y_sort": true,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "center",
+        "origin_policy": "anchor_to_tile",
+        "size_class": "64x64"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          64
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Alternate grate/hatch on east landing."
+    },
+    {
+      "id": "gatehouse_steps_n_01",
+      "texture": "stairs/gatehouse_steps_n_01.png",
+      "domain": "stairs",
+      "kind": "stairs_n",
+      "tags": [
+        "gatehouse",
+        "stairs",
+        "north",
+        "walkable"
+      ],
+      "tilemap_role": "stairs",
+      "tile_size": 32,
+      "source_rect_px": [
+        642,
+        306,
+        130,
+        38
+      ],
+      "runtime_size_px": [
+        96,
+        32
+      ],
+      "footprint_tiles": [
+        3,
+        1
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "Traversal",
+        "z_index_hint": -10,
+        "y_sort": false,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "top_left",
+        "origin_policy": "tile_top_left",
+        "size_class": "96x32"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          96,
+          32
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Horizontal stair run at the top of causeway."
+    },
+    {
+      "id": "gatehouse_entry_floor_01",
+      "texture": "floors/gatehouse_entry_floor_01.png",
+      "domain": "floors",
+      "kind": "gatehouse_entry_floor",
+      "tags": [
+        "gatehouse",
+        "entry",
+        "floor",
+        "walkable"
+      ],
+      "tilemap_role": "gatehouse_entry",
+      "tile_size": 32,
+      "source_rect_px": [
+        690,
+        259,
+        34,
+        34
+      ],
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "FloorDetail",
+        "z_index_hint": -20,
+        "y_sort": false,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "top_left",
+        "origin_policy": "tile_top_left",
+        "size_class": "32x32"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Floor tile just above the stairs."
+    },
+    {
+      "id": "gatehouse_threshold_floor_01",
+      "texture": "floors/gatehouse_threshold_floor_01.png",
+      "domain": "floors",
+      "kind": "gatehouse_threshold_floor",
+      "tags": [
+        "gatehouse",
+        "threshold",
+        "floor",
+        "walkable"
+      ],
+      "tilemap_role": "gatehouse_threshold",
+      "tile_size": 32,
+      "source_rect_px": [
+        690,
+        349,
+        34,
+        34
+      ],
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "FloorDetail",
+        "z_index_hint": -20,
+        "y_sort": false,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "top_left",
+        "origin_policy": "tile_top_left",
+        "size_class": "32x32"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Floor tile below stairs/gatehouse threshold."
+    },
+    {
+      "id": "forecourt_floor_center_01",
+      "texture": "floors/forecourt_floor_center_01.png",
+      "domain": "floors",
+      "kind": "forecourt_floor",
+      "tags": [
+        "forecourt",
+        "floor",
+        "walkable"
+      ],
+      "tilemap_role": "forecourt_floor",
+      "tile_size": 32,
+      "source_rect_px": [
+        704,
+        178,
+        34,
+        34
+      ],
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "FloorDetail",
+        "z_index_hint": -20,
+        "y_sort": false,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "top_left",
+        "origin_policy": "tile_top_left",
+        "size_class": "32x32"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Upper forecourt floor center."
+    },
+    {
+      "id": "forecourt_floor_variant_01",
+      "texture": "floors/forecourt_floor_variant_01.png",
+      "domain": "floors",
+      "kind": "forecourt_floor_variant",
+      "tags": [
+        "forecourt",
+        "floor",
+        "walkable",
+        "variant"
+      ],
+      "tilemap_role": "forecourt_floor_variant",
+      "tile_size": 32,
+      "source_rect_px": [
+        758,
+        178,
+        34,
+        34
+      ],
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "FloorDetail",
+        "z_index_hint": -20,
+        "y_sort": false,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "top_left",
+        "origin_policy": "tile_top_left",
+        "size_class": "32x32"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": true,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Upper forecourt floor variation."
+    },
+    {
+      "id": "gatehouse_side_pillar_w_01",
+      "texture": "walls/gatehouse_side_pillar_w_01.png",
+      "domain": "walls",
+      "kind": "pillar_w",
+      "tags": [
+        "gatehouse",
+        "pillar",
+        "west",
+        "wall",
+        "blocker"
+      ],
+      "tilemap_role": "gatehouse_flank",
+      "tile_size": 32,
+      "source_rect_px": [
+        520,
+        294,
+        76,
+        112
+      ],
+      "runtime_size_px": [
+        96,
+        96
+      ],
+      "footprint_tiles": [
+        3,
+        3
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          96,
+          96
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "WallsHigh",
+        "z_index_hint": 20,
+        "y_sort": true,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "bottom_center",
+        "origin_policy": "anchor_to_tile",
+        "size_class": "96x96"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          96,
+          96
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "West gatehouse side pillar/tower, tighter crop."
+    },
+    {
+      "id": "gatehouse_side_pillar_e_01",
+      "texture": "walls/gatehouse_side_pillar_e_01.png",
+      "domain": "walls",
+      "kind": "pillar_e",
+      "tags": [
+        "gatehouse",
+        "pillar",
+        "east",
+        "wall",
+        "blocker"
+      ],
+      "tilemap_role": "gatehouse_flank",
+      "tile_size": 32,
+      "source_rect_px": [
+        852,
+        294,
+        76,
+        112
+      ],
+      "runtime_size_px": [
+        96,
+        96
+      ],
+      "footprint_tiles": [
+        3,
+        3
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          96,
+          96
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "WallsHigh",
+        "z_index_hint": 20,
+        "y_sort": true,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "bottom_center",
+        "origin_policy": "anchor_to_tile",
+        "size_class": "96x96"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          96,
+          96
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "East gatehouse side pillar/tower, tighter crop."
+    },
+    {
+      "id": "gatehouse_wall_face_01",
+      "texture": "walls/gatehouse_wall_face_01.png",
+      "domain": "walls",
+      "kind": "wall_face",
+      "tags": [
+        "gatehouse",
+        "wall",
+        "face",
+        "horizontal"
+      ],
+      "tilemap_role": "gatehouse_wall_face",
+      "tile_size": 32,
+      "source_rect_px": [
+        522,
+        250,
+        114,
+        74
+      ],
+      "runtime_size_px": [
+        96,
+        64
+      ],
+      "footprint_tiles": [
+        3,
+        2
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          96,
+          64
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "WallsHigh",
+        "z_index_hint": 20,
+        "y_sort": true,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "bottom_center",
+        "origin_policy": "anchor_to_tile",
+        "size_class": "96x64"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          96,
+          64
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "West dark gatehouse wall face."
+    },
+    {
+      "id": "gatehouse_wall_face_alt_01",
+      "texture": "walls/gatehouse_wall_face_alt_01.png",
+      "domain": "walls",
+      "kind": "wall_face_alt",
+      "tags": [
+        "gatehouse",
+        "wall",
+        "face",
+        "horizontal",
+        "alt"
+      ],
+      "tilemap_role": "gatehouse_wall_face",
+      "tile_size": 32,
+      "source_rect_px": [
+        812,
+        250,
+        114,
+        74
+      ],
+      "runtime_size_px": [
+        96,
+        64
+      ],
+      "footprint_tiles": [
+        3,
+        2
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          96,
+          64
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "WallsHigh",
+        "z_index_hint": 20,
+        "y_sort": true,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "bottom_center",
+        "origin_policy": "anchor_to_tile",
+        "size_class": "96x64"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          96,
+          64
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "East dark gatehouse wall face."
+    },
+    {
+      "id": "gatehouse_wall_socket_01",
+      "texture": "walls/gatehouse_wall_socket_01.png",
+      "domain": "walls",
+      "kind": "wall_socket",
+      "tags": [
+        "gatehouse",
+        "wall",
+        "socket",
+        "vertical"
+      ],
+      "tilemap_role": "gatehouse_socket",
+      "tile_size": 32,
+      "source_rect_px": [
+        596,
+        334,
+        38,
+        64
+      ],
+      "runtime_size_px": [
+        32,
+        64
+      ],
+      "footprint_tiles": [
+        1,
+        2
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          32,
+          64
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "WallsHigh",
+        "z_index_hint": 20,
+        "y_sort": true,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "bottom_center",
+        "origin_policy": "anchor_to_tile",
+        "size_class": "32x64"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          64
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Narrow vertical masonry/socket detail."
+    },
+    {
+      "id": "gatehouse_wall_socket_e_01",
+      "texture": "walls/gatehouse_wall_socket_e_01.png",
+      "domain": "walls",
+      "kind": "wall_socket_e",
+      "tags": [
+        "gatehouse",
+        "wall",
+        "socket",
+        "vertical",
+        "east"
+      ],
+      "tilemap_role": "gatehouse_socket",
+      "tile_size": 32,
+      "source_rect_px": [
+        812,
+        334,
+        38,
+        64
+      ],
+      "runtime_size_px": [
+        32,
+        64
+      ],
+      "footprint_tiles": [
+        1,
+        2
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          32,
+          64
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "WallsHigh",
+        "z_index_hint": 20,
+        "y_sort": true,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "bottom_center",
+        "origin_policy": "anchor_to_tile",
+        "size_class": "32x64"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          64
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Narrow east vertical masonry/socket detail."
+    },
+    {
+      "id": "rampart_corner_chunk_01",
+      "texture": "walls/rampart_corner_chunk_01.png",
+      "domain": "walls",
+      "kind": "rampart_corner",
+      "tags": [
+        "rampart",
+        "corner",
+        "wall"
+      ],
+      "tilemap_role": "rampart_corner",
+      "tile_size": 32,
+      "source_rect_px": [
+        70,
+        78,
+        92,
+        92
+      ],
+      "runtime_size_px": [
+        96,
+        96
+      ],
+      "footprint_tiles": [
+        3,
+        3
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          96,
+          96
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "WallsHigh",
+        "z_index_hint": 20,
+        "y_sort": true,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "bottom_center",
+        "origin_policy": "anchor_to_tile",
+        "size_class": "96x96"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          96,
+          96
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Upper-left rampart corner chunk."
+    },
+    {
+      "id": "rampart_crenellation_s_01",
+      "texture": "walls/rampart_crenellation_s_01.png",
+      "domain": "walls",
+      "kind": "crenellation_s",
+      "tags": [
+        "rampart",
+        "crenellation",
+        "south",
+        "horizontal"
+      ],
+      "tilemap_role": "rampart_cap",
+      "tile_size": 32,
+      "source_rect_px": [
+        174,
+        134,
+        126,
+        30
+      ],
+      "runtime_size_px": [
+        96,
+        32
+      ],
+      "footprint_tiles": [
+        3,
+        1
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          96,
+          32
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "WallsHigh",
+        "z_index_hint": 20,
+        "y_sort": true,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "bottom_left",
+        "origin_policy": "anchor_to_tile",
+        "size_class": "96x32"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          96,
+          32
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Horizontal crenellation cap row."
+    },
+    {
+      "id": "rampart_wall_horizontal_01",
+      "texture": "walls/rampart_wall_horizontal_01.png",
+      "domain": "walls",
+      "kind": "wall_horizontal",
+      "tags": [
+        "rampart",
+        "wall",
+        "horizontal"
+      ],
+      "tilemap_role": "rampart_wall_face",
+      "tile_size": 32,
+      "source_rect_px": [
+        214,
+        250,
+        126,
+        68
+      ],
+      "runtime_size_px": [
+        96,
+        64
+      ],
+      "footprint_tiles": [
+        3,
+        2
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          96,
+          64
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "WallsHigh",
+        "z_index_hint": 20,
+        "y_sort": true,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "bottom_left",
+        "origin_policy": "anchor_to_tile",
+        "size_class": "96x64"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          96,
+          64
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Horizontal wall-face segment below battlements."
+    },
+    {
+      "id": "rampart_trim_underwall_01",
+      "texture": "edges/rampart_trim_underwall_01.png",
+      "domain": "edges",
+      "kind": "underwall_trim",
+      "tags": [
+        "rampart",
+        "trim",
+        "horizontal"
+      ],
+      "tilemap_role": "rampart_underwall_trim",
+      "tile_size": 32,
+      "source_rect_px": [
+        180,
+        318,
+        126,
+        34
+      ],
+      "runtime_size_px": [
+        96,
+        32
+      ],
+      "footprint_tiles": [
+        3,
+        1
+      ],
+      "collision": "edge_blocker",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          96,
+          32
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "terrain_blocker"
+        ]
+      },
+      "render": {
+        "recommended_layer": "TerrainEdges",
+        "z_index_hint": -10,
+        "y_sort": false,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "top_left",
+        "origin_policy": "tile_top_left",
+        "size_class": "96x32"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          96,
+          32
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Thin under-wall trim line above water."
+    },
+    {
+      "id": "gothic_torch_post_01",
+      "texture": "props/gothic_torch_post_01.png",
+      "domain": "props",
+      "kind": "torch_post",
+      "tags": [
+        "forecourt",
+        "torch",
+        "post"
+      ],
+      "tilemap_role": "forecourt_prop",
+      "tile_size": 32,
+      "source_rect_px": [
+        586,
+        176,
+        32,
+        72
+      ],
+      "runtime_size_px": [
+        32,
+        64
+      ],
+      "footprint_tiles": [
+        1,
+        2
+      ],
+      "collision": "partial",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          20,
+          41
+        ],
+        "offset_px": [
+          5,
+          16
+        ],
+        "layers": [
+          "prop_blocker"
+        ]
+      },
+      "render": {
+        "recommended_layer": "PropsStatic",
+        "z_index_hint": 10,
+        "y_sort": true,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "bottom_center",
+        "origin_policy": "anchor_to_tile",
+        "size_class": "32x64"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          64
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Tall torch/post-like object in upper forecourt."
+    },
+    {
+      "id": "gothic_torch_post_alt_01",
+      "texture": "props/gothic_torch_post_alt_01.png",
+      "domain": "props",
+      "kind": "torch_post",
+      "tags": [
+        "forecourt",
+        "torch",
+        "post",
+        "alt"
+      ],
+      "tilemap_role": "forecourt_prop",
+      "tile_size": 32,
+      "source_rect_px": [
+        850,
+        176,
+        32,
+        72
+      ],
+      "runtime_size_px": [
+        32,
+        64
+      ],
+      "footprint_tiles": [
+        1,
+        2
+      ],
+      "collision": "partial",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          20,
+          41
+        ],
+        "offset_px": [
+          5,
+          16
+        ],
+        "layers": [
+          "prop_blocker"
+        ]
+      },
+      "render": {
+        "recommended_layer": "PropsStatic",
+        "z_index_hint": 10,
+        "y_sort": true,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "bottom_center",
+        "origin_policy": "anchor_to_tile",
+        "size_class": "32x64"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          64
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Alternate torch/post-like object."
+    },
+    {
+      "id": "rubble_pile_01",
+      "texture": "props/rubble_pile_01.png",
+      "domain": "props",
+      "kind": "rubble",
+      "tags": [
+        "rubble",
+        "debris",
+        "blocker"
+      ],
+      "tilemap_role": "debris",
+      "tile_size": 32,
+      "source_rect_px": [
+        230,
+        174,
+        70,
+        58
+      ],
+      "runtime_size_px": [
+        64,
+        64
+      ],
+      "footprint_tiles": [
+        2,
+        2
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          64,
+          64
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "PropsBlocking",
+        "z_index_hint": 10,
+        "y_sort": true,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "bottom_center",
+        "origin_policy": "anchor_to_tile",
+        "size_class": "64x64"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          64
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": true,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Rubble/debris pile."
+    },
+    {
+      "id": "rubble_pile_alt_01",
+      "texture": "props/rubble_pile_alt_01.png",
+      "domain": "props",
+      "kind": "rubble",
+      "tags": [
+        "rubble",
+        "debris",
+        "blocker",
+        "alt"
+      ],
+      "tilemap_role": "debris",
+      "tile_size": 32,
+      "source_rect_px": [
+        1050,
+        174,
+        70,
+        58
+      ],
+      "runtime_size_px": [
+        64,
+        64
+      ],
+      "footprint_tiles": [
+        2,
+        2
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          64,
+          64
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "PropsBlocking",
+        "z_index_hint": 10,
+        "y_sort": true,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "bottom_center",
+        "origin_policy": "anchor_to_tile",
+        "size_class": "64x64"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          64
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": true,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Alternate rubble/debris pile."
+    },
+    {
+      "id": "metal_grate_floor_01",
+      "texture": "props/metal_grate_floor_01.png",
+      "domain": "props",
+      "kind": "metal_grate_floor",
+      "tags": [
+        "metal",
+        "grate",
+        "floor",
+        "large"
+      ],
+      "tilemap_role": "large_floor_prop",
+      "tile_size": 32,
+      "source_rect_px": [
+        1018,
+        96,
+        96,
+        96
+      ],
+      "runtime_size_px": [
+        96,
+        96
+      ],
+      "footprint_tiles": [
+        3,
+        3
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "PropsStatic",
+        "z_index_hint": 10,
+        "y_sort": true,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "top_left",
+        "origin_policy": "tile_top_left",
+        "size_class": "96x96"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          96,
+          96
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Large metal grate / roof-like floor detail."
+    },
+    {
+      "id": "small_square_stone_detail_01",
+      "texture": "props/small_square_stone_detail_01.png",
+      "domain": "props",
+      "kind": "small_stone_detail",
+      "tags": [
+        "detail",
+        "stone",
+        "square"
+      ],
+      "tilemap_role": "decal_prop",
+      "tile_size": 32,
+      "source_rect_px": [
+        626,
+        468,
+        26,
+        26
+      ],
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "PropsStatic",
+        "z_index_hint": 10,
+        "y_sort": true,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "center",
+        "origin_policy": "anchor_to_tile",
+        "size_class": "32x32"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Small square detail from causeway side trim."
+    },
+    {
+      "id": "small_square_stone_detail_02",
+      "texture": "props/small_square_stone_detail_02.png",
+      "domain": "props",
+      "kind": "small_stone_detail",
+      "tags": [
+        "detail",
+        "stone",
+        "square",
+        "alt"
+      ],
+      "tilemap_role": "decal_prop",
+      "tile_size": 32,
+      "source_rect_px": [
+        804,
+        468,
+        26,
+        26
+      ],
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "PropsStatic",
+        "z_index_hint": 10,
+        "y_sort": true,
+        "texture_filter": "nearest",
+        "pixel_snap": true,
+        "anchor": "center",
+        "origin_policy": "anchor_to_tile",
+        "size_class": "32x32"
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "grid_px": 32,
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "atlas": false,
+        "can_repeat": false,
+        "can_scatter": false,
+        "runtime_canvas_multiple_of_32": true
+      },
+      "notes": "Alternate small square detail."
+    }
+  ]
+}

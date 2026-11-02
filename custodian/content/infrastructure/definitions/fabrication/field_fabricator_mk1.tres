@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="StructureDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/infrastructure/definitions/structure_definition.gd" id="1_definition"]
+
+[resource]
+script = ExtResource("1_definition")
+structure_id = &"field_fabricator_mk1"
+display_name = "Field Fabricator"
+description = "Powered compound work-order fabricator for deployable infrastructure packages."
+category = &"fabrication"
+placement_mode = &"authored_socket"
+footprint_tiles = Vector2i(4, 3)
+unique_structure = true
+recipe_id = &"field_fabricator_mk1"
+construction_time = 12.0
+minimum_power = 10.0
+standard_power = 25.0
+overdrive_power = 40.0
+overdrive_efficiency = 1.35
+default_priority = 30
+max_integrity = 320.0
+

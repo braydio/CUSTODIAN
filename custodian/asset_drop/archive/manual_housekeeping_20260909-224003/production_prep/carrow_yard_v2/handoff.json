@@ -1,0 +1,2153 @@
+{
+  "schema": "custodian.carrow_asset_v2_handoff.v1",
+  "source_root": "custodian/asset_drop/source_work/district_transfer_frame",
+  "pipeline": "Asset Pipeline V2",
+  "families": [
+    {
+      "family": "district_transfer_frame",
+      "inbox": "custodian/asset_drop/inbox/district_transfer_frame",
+      "files": {
+        "aperture_loop": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/district_transfer_frame/aperture_loop.png",
+          "inbox_name": "aperture_loop.png",
+          "sha256": "57f8aae1d585a1691d1c5d94128a095ec934d7d45f7d27cbbb94e818af2d0914",
+          "size": [
+            768,
+            160
+          ]
+        },
+        "body": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/district_transfer_frame/body.png",
+          "inbox_name": "body.png",
+          "sha256": "4bd0e1469967b1094ed669a3e2621ff18779aba1b365b28aca72b72f0bd194da",
+          "size": [
+            192,
+            256
+          ]
+        },
+        "boot": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/district_transfer_frame/boot.png",
+          "inbox_name": "boot.png",
+          "sha256": "0c61dd46e1d3485e4de716c51d94aae7aeea2fa47b0b98d35d761bab2d9135f5",
+          "size": [
+            576,
+            160
+          ]
+        },
+        "cable_feed_left": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/district_transfer_frame/cable_feed_left.png",
+          "inbox_name": "cable_feed_left.png",
+          "sha256": "b4d6a2e11be64583a90c0e70c9a6dea63016166d638fa5aa02a18d0186bac6f7",
+          "size": [
+            96,
+            128
+          ]
+        },
+        "cable_feed_right": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/district_transfer_frame/cable_feed_right.png",
+          "inbox_name": "cable_feed_right.png",
+          "sha256": "58839d9280bacca43f6cbcf6e7ba99ef57fbc3b89f80a40c64bf942103989d79",
+          "size": [
+            96,
+            128
+          ]
+        },
+        "contact_shadow": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/district_transfer_frame/contact_shadow.png",
+          "inbox_name": "contact_shadow.png",
+          "sha256": "2d545a27b83b94e9ab4018101c7b3748259bfd08893b4e544c87cd96d45fa1b0",
+          "size": [
+            192,
+            96
+          ]
+        },
+        "emissive_acquiring": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/district_transfer_frame/emissive_acquiring.png",
+          "inbox_name": "emissive_acquiring.png",
+          "sha256": "624a4aa3f3e6b526b380112d100cc9d4fb07aeb2f424bdbf392723e358b82c2b",
+          "size": [
+            192,
+            256
+          ]
+        },
+        "emissive_active": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/district_transfer_frame/emissive_active.png",
+          "inbox_name": "emissive_active.png",
+          "sha256": "78ec8ac39b96a3ada01b5c62b5f27dfcc0c18b42349237102b77945b12bd270d",
+          "size": [
+            192,
+            256
+          ]
+        },
+        "emissive_dead": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/district_transfer_frame/emissive_dead.png",
+          "inbox_name": "emissive_dead.png",
+          "sha256": "84f5e7655281a9ceffa3c7bffdc5d220e341ce5f5bc885ca9974bc45fce41cb2",
+          "size": [
+            192,
+            256
+          ]
+        },
+        "emissive_standby": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/district_transfer_frame/emissive_standby.png",
+          "inbox_name": "emissive_standby.png",
+          "sha256": "885c78e04b89b5c1a7636ba104640151014aa01a22f814bc722ea276b9a24636",
+          "size": [
+            192,
+            256
+          ]
+        },
+        "failure": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/district_transfer_frame/failure.png",
+          "inbox_name": "failure.png",
+          "sha256": "27e35f41a7e7d99b88288c035a21e1db50f395e0e3047e67a333f1fb1efb6882",
+          "size": [
+            576,
+            160
+          ]
+        },
+        "pedestal": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/district_transfer_frame/pedestal.png",
+          "inbox_name": "pedestal.png",
+          "sha256": "2a24cf031733c6b722366b41f4861cea3464944131268101707d8f6501ee95bd",
+          "size": [
+            64,
+            96
+          ]
+        },
+        "pedestal_screen_acquiring": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/district_transfer_frame/pedestal_screen_acquiring.png",
+          "inbox_name": "pedestal_screen_acquiring.png",
+          "sha256": "9731c17756b990ad3bb9ef8d83176630fb6b858477b89bd8f80991ef6f25748c",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "pedestal_screen_active": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/district_transfer_frame/pedestal_screen_active.png",
+          "inbox_name": "pedestal_screen_active.png",
+          "sha256": "9cfe9a8f1746a11829287ca310f825ab9575deaf422af0fd13796406e7036aa8",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "pedestal_screen_off": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/district_transfer_frame/pedestal_screen_off.png",
+          "inbox_name": "pedestal_screen_off.png",
+          "sha256": "26726a60af3e90a3f2f72071912dc59c944ca494f33ce2f7b216c81fc8e5ff7d",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "pedestal_screen_ready": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/district_transfer_frame/pedestal_screen_ready.png",
+          "inbox_name": "pedestal_screen_ready.png",
+          "sha256": "afbaf25aa8876f1260be1523cffec0d58814cfab54c6fde9711d13f033aa3b5a",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "route_plate": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/district_transfer_frame/route_plate.png",
+          "inbox_name": "route_plate.png",
+          "sha256": "877fedda5f8731b098bb9b899b9fdacc21b26b3d1390491d2c7c3b359cce5b71",
+          "size": [
+            96,
+            32
+          ]
+        },
+        "service_junction": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/district_transfer_frame/service_junction.png",
+          "inbox_name": "service_junction.png",
+          "sha256": "c739f9cf811d09c0e58448635c76ce3effdcd2d0608eaa030fa151d9c8dfdbc6",
+          "size": [
+            64,
+            64
+          ]
+        },
+        "threshold": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/district_transfer_frame/threshold.png",
+          "inbox_name": "threshold.png",
+          "sha256": "f1d09c306af46956907310db9e12fa75fa334996b1c7370f71c280b64a7ac385",
+          "size": [
+            160,
+            96
+          ]
+        }
+      }
+    },
+    {
+      "family": "carrow_machine_house_floor",
+      "inbox": "custodian/asset_drop/inbox/carrow_machine_house_floor",
+      "files": {
+        "access_panel_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/access_panel_01.png",
+          "inbox_name": "access_panel_01.png",
+          "sha256": "d20408dfa519ecc6f550a6e5030c54a28bf0eaeb2024f0a8d20484401e33c1e5",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "access_panel_02": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/access_panel_02.png",
+          "inbox_name": "access_panel_02.png",
+          "sha256": "50874ee9d6b89ec09f6102a034c2bf15ee1cf233b26890f866aaf99b5a96c7b4",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "brace_x_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/brace_x_01.png",
+          "inbox_name": "brace_x_01.png",
+          "sha256": "01d8210b7fdaa9fc5e5b52125c426b554a5bab352ea79732253c3068ed50ea94",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "conduit_clamp_horizontal_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/conduit_clamp_horizontal_01.png",
+          "inbox_name": "conduit_clamp_horizontal_01.png",
+          "sha256": "73121993117a05ace5e82b25168c52925b49a5edeefe81bb94fcb0694ce79844",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "conduit_clamp_horizontal_02": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/conduit_clamp_horizontal_02.png",
+          "inbox_name": "conduit_clamp_horizontal_02.png",
+          "sha256": "d936395bebff0537def8b0495c0c4dbff854e57ccaf0cf0214c1d8f560b078b0",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "conduit_corner_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/conduit_corner_01.png",
+          "inbox_name": "conduit_corner_01.png",
+          "sha256": "09848ce8ec68c6d438e7a3cf7b3a857131f63bf79475c85722b18e9bd34cb998",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "conduit_corner_02": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/conduit_corner_02.png",
+          "inbox_name": "conduit_corner_02.png",
+          "sha256": "7510047ab93903ec0f635fe951b8a46206982cd37813820017f2293926e57caf",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "conduit_cross_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/conduit_cross_01.png",
+          "inbox_name": "conduit_cross_01.png",
+          "sha256": "f51a2244ee3b6f851025074811246895817a39ac3c5c49479f65fbd1e9b7b68e",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "conduit_cross_02": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/conduit_cross_02.png",
+          "inbox_name": "conduit_cross_02.png",
+          "sha256": "4e14b7d03f567102baddc5a4bb262a0be38fe6f1b094f8c05c298214bb784e61",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "conduit_horizontal_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/conduit_horizontal_01.png",
+          "inbox_name": "conduit_horizontal_01.png",
+          "sha256": "8c0a21add678b7c69781b3dda0b45012bec67640ba43e58486579d799c0b7a90",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "conduit_horizontal_clamp_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/conduit_horizontal_clamp_01.png",
+          "inbox_name": "conduit_horizontal_clamp_01.png",
+          "sha256": "d97e524c9cbd7422005f37187b94a6f87d420eaf3edd7e919061dcbbe0a9b9f4",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "conduit_indicator_edge_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/conduit_indicator_edge_01.png",
+          "inbox_name": "conduit_indicator_edge_01.png",
+          "sha256": "4070ec95007c543975749617f9e311475edf77bba2c8c152f6426a6b90ca5798",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "conduit_indicator_edge_02": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/conduit_indicator_edge_02.png",
+          "inbox_name": "conduit_indicator_edge_02.png",
+          "sha256": "666fb2bfa6d61a91927374424bda1c9210e405d233dbfdb28306c03414a648e0",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "conduit_indicator_vertical_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/conduit_indicator_vertical_01.png",
+          "inbox_name": "conduit_indicator_vertical_01.png",
+          "sha256": "5d492c11ca0b4569bf69844908758c77161ff4b5aced44a8f5acacb3175a2567",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "conduit_indicator_vertical_02": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/conduit_indicator_vertical_02.png",
+          "inbox_name": "conduit_indicator_vertical_02.png",
+          "sha256": "1869bbbcfc93df7e775307bace8caec509cbe189a3af3e7ebf6e15af1dde0466",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "conduit_port_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/conduit_port_01.png",
+          "inbox_name": "conduit_port_01.png",
+          "sha256": "f92ebe0df034370c32d3ba2404564985a0d49f2361a7c6ccfd1cde4fd7a0c247",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "conduit_t_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/conduit_t_01.png",
+          "inbox_name": "conduit_t_01.png",
+          "sha256": "3d6d3e95d5b38f8f35bd756e89d40b2e22da188503eb1c38a082e500487027b7",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "conduit_t_02": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/conduit_t_02.png",
+          "inbox_name": "conduit_t_02.png",
+          "sha256": "ebc432a5b92cc33f0b052c51601e71e58d25a90ec8e1ea81cb2ee639aa6b9cb0",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "conduit_vertical_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/conduit_vertical_01.png",
+          "inbox_name": "conduit_vertical_01.png",
+          "sha256": "95605387834f05bc5a8ba4764b38dca5085ef3115e1e20868061bc8f2a163074",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "conduit_vertical_02": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/conduit_vertical_02.png",
+          "inbox_name": "conduit_vertical_02.png",
+          "sha256": "8e6f8ffcc921368fdf5d6d54b3df33712d73d6251ea84f1afa4ed9c9b6030fc1",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "conduit_vertical_clamp_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/conduit_vertical_clamp_01.png",
+          "inbox_name": "conduit_vertical_clamp_01.png",
+          "sha256": "166ee27960b3cc42d91212ace718e8c25841397eadd7ca68491562beb518e083",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "drain_round_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/drain_round_01.png",
+          "inbox_name": "drain_round_01.png",
+          "sha256": "aeb43f42a2a9376f9bd205cf041aaf2e351992db1ab4ab188406725fa0fb8190",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "drain_square_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/drain_square_01.png",
+          "inbox_name": "drain_square_01.png",
+          "sha256": "bdb2ea96732fb075323439fd4f7650d75077439bbed0e87014585f795884e551",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "edge_bevel_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/edge_bevel_01.png",
+          "inbox_name": "edge_bevel_01.png",
+          "sha256": "c1efe96e47f6c282760dec3ae6a0ca5e0e82f5be8668c93c607965bfe4e3930a",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "edge_plain_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/edge_plain_01.png",
+          "inbox_name": "edge_plain_01.png",
+          "sha256": "7865ad1034a76b4cdadc7679fc3163152d74e156234a6c0c5748fbfaa76e0574",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "edge_vent_corner_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/edge_vent_corner_01.png",
+          "inbox_name": "edge_vent_corner_01.png",
+          "sha256": "ced5f16b14b53c9fb77f5c455c20b54840a2a22ae5d66fd47fa471af7ef51e90",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "edge_vent_corner_02": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/edge_vent_corner_02.png",
+          "inbox_name": "edge_vent_corner_02.png",
+          "sha256": "8ed6d34f5c96ead6dee3056b28fbe0d57bc2f3754b0bf951d911206556503407",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "edge_vent_horizontal_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/edge_vent_horizontal_01.png",
+          "inbox_name": "edge_vent_horizontal_01.png",
+          "sha256": "92d93e2b03a721ba52f87ebe1767c5d1f00b77164f139aabcc98b0173c431dd6",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "edge_vent_vertical_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/edge_vent_vertical_01.png",
+          "inbox_name": "edge_vent_vertical_01.png",
+          "sha256": "2c9ee01a364ec5a0bf21e4c880538e4358dad9c49602ebca66d46a3293a95028",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "grate_grid_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/grate_grid_01.png",
+          "inbox_name": "grate_grid_01.png",
+          "sha256": "a79e1bd8ad31774f4ab329a82c2022aa96bf9729d42ea6561a3cfa944de58cdb",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "grate_honeycomb_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/grate_honeycomb_01.png",
+          "inbox_name": "grate_honeycomb_01.png",
+          "sha256": "14abfcb2dec28459e2dc296bede3eaad763ed8cb585846dca46167caab8dbe42",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "grate_horizontal_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/grate_horizontal_01.png",
+          "inbox_name": "grate_horizontal_01.png",
+          "sha256": "fdaf811151aaa4ad44245282075605468ffc8197f8b21f575074fced827224ef",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "grate_horizontal_02": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/grate_horizontal_02.png",
+          "inbox_name": "grate_horizontal_02.png",
+          "sha256": "42ee75a8c5f61875ce39c9295923a04a14cca0d469d7490cb2973b2c482385ef",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "grate_slots_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/grate_slots_01.png",
+          "inbox_name": "grate_slots_01.png",
+          "sha256": "06a479c337506d247d28954fefbe26df275631a1394e22de7d520f32ec3dd740",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "grate_slots_02": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/grate_slots_02.png",
+          "inbox_name": "grate_slots_02.png",
+          "sha256": "3ceb629daea5d704354f9ac432b620ffdc1ab947e8bcb4dde5f3a86e66b74520",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "grate_vertical_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/grate_vertical_01.png",
+          "inbox_name": "grate_vertical_01.png",
+          "sha256": "42e4be20fe122cb13cc1896417189d16154d706df04b1c8d612bfa0a8b985620",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "hatch_small_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/hatch_small_01.png",
+          "inbox_name": "hatch_small_01.png",
+          "sha256": "8a1aafab78c28af63f67e5660802e65c149674ba8865a81eca9f8b6c4f1d0db3",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "hazard_diagonal_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/hazard_diagonal_01.png",
+          "inbox_name": "hazard_diagonal_01.png",
+          "sha256": "daa6a338e0d28c28e6ad7bd7a0df914591e783635cf42f656b5f7a733cd189ca",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "hazard_diagonal_02": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/hazard_diagonal_02.png",
+          "inbox_name": "hazard_diagonal_02.png",
+          "sha256": "19107ac5c1def6ee429362b39b4e6f29c70e6f761265ce312b400f92ea07dbbd",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "indicator_panel_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/indicator_panel_01.png",
+          "inbox_name": "indicator_panel_01.png",
+          "sha256": "940483e20eca1caf796f85d221a149b9e2432b436216c486c113a2ff88be9881",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "indicator_quad_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/indicator_quad_01.png",
+          "inbox_name": "indicator_quad_01.png",
+          "sha256": "d5f1d678802ba88c5f45b7bab9e4b6c15682241fd6cbf20f14bf39189c247057",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "marking_bracket_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/marking_bracket_01.png",
+          "inbox_name": "marking_bracket_01.png",
+          "sha256": "a9953056dabffe33bc3fb3489dd192814db68cd6365c311c5bbaf8d8246c13a5",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "marking_corner_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/marking_corner_01.png",
+          "inbox_name": "marking_corner_01.png",
+          "sha256": "dc3126bbfdcc318ff4a072b645b8cf87cb29265e82cdc1928953e0f9284e842b",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "marking_cross_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/marking_cross_01.png",
+          "inbox_name": "marking_cross_01.png",
+          "sha256": "c88b0a1bccd3ddc137d447a7c83c97e5e033602eafc41198087295c4e6a811c3",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "marking_line_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/marking_line_01.png",
+          "inbox_name": "marking_line_01.png",
+          "sha256": "c7308e3132f803031bc9a72f8386777784f0d3f454d0976fff16b73de83a53d2",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "panel_bolted_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/panel_bolted_01.png",
+          "inbox_name": "panel_bolted_01.png",
+          "sha256": "c1591ba8013d904cf96eb77d060afc1d861d5cb76a70a03a47da2b4cfbc56069",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "service_panel_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/service_panel_01.png",
+          "inbox_name": "service_panel_01.png",
+          "sha256": "5258437fc217ce0c7034c3eb0674818d0a1c39d2930bbf9236567c018697eac8",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "slab_cracked_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/slab_cracked_01.png",
+          "inbox_name": "slab_cracked_01.png",
+          "sha256": "9c250d09e6be06fe252634318b05d816a3fe9accf31cc3d601b3f5f66ae90a8c",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "slab_cracked_02": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/slab_cracked_02.png",
+          "inbox_name": "slab_cracked_02.png",
+          "sha256": "f51f9310a0d1238a4f5f3eb57eed2b188351da719bf4e3ad3a21b42fbff755cd",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "slab_oil_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/slab_oil_01.png",
+          "inbox_name": "slab_oil_01.png",
+          "sha256": "946218cff1b24594de4002e6ca54700efba3faee75000a825e37c6bf5fdb8e22",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "slab_oil_02": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/slab_oil_02.png",
+          "inbox_name": "slab_oil_02.png",
+          "sha256": "bd606361ca5e07a352cee754dde7510ca55c35b9fc6cdd86c7c7ee98ac5e2f3e",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "slab_plain_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/slab_plain_01.png",
+          "inbox_name": "slab_plain_01.png",
+          "sha256": "4e147094b82ac3dae2af1a93999dd0fa5067fd8cc8ebd04d4a76f526cc42215b",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "slab_pocked_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/slab_pocked_01.png",
+          "inbox_name": "slab_pocked_01.png",
+          "sha256": "bdd982b63cb0ce64d5fac088eab605ed61bd2a65ca21f8d89abdeb5dab82f1c3",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "slab_scuffed_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/slab_scuffed_01.png",
+          "inbox_name": "slab_scuffed_01.png",
+          "sha256": "38a0d5c76c9d9ba5411fa1b9230818e283c2964b9475db3cd662271d753d9684",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "slab_worn_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/slab_worn_01.png",
+          "inbox_name": "slab_worn_01.png",
+          "sha256": "c300e97d7c34506feadda2b56852adcda954c56518fad8e89655bccca97a07ba",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "slot_small_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/slot_small_01.png",
+          "inbox_name": "slot_small_01.png",
+          "sha256": "dec0dde16da7883ce2fb635222236998ffca20e2390614c2bf3e1f0713215eda",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "socket_small_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/socket_small_01.png",
+          "inbox_name": "socket_small_01.png",
+          "sha256": "f41f453fe675be6e8f523af46595c5f119277224364d25e7e6361ba5975ab4c3",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "tread_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/tread_01.png",
+          "inbox_name": "tread_01.png",
+          "sha256": "370ea852c2a046815c942c6bfe7f86531d64cba1a697d6671fd8f56249d8dd3c",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "tread_hazard_left_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/tread_hazard_left_01.png",
+          "inbox_name": "tread_hazard_left_01.png",
+          "sha256": "b227904af68dee883d344562c16bbce3db8850d437e7e82fe0a5c2a014c34b98",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "tread_hazard_right_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/tread_hazard_right_01.png",
+          "inbox_name": "tread_hazard_right_01.png",
+          "sha256": "33ad8ec7e589d3ac34b8a5c059ff2deaec9c1e7c43423e418d0f0d73583ecd2d",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "tread_scuffed_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/tread_scuffed_01.png",
+          "inbox_name": "tread_scuffed_01.png",
+          "sha256": "4abb28d87c46ee2dcb7de476efb06570de0112c1f2cfb7c356df19ad66a76f9d",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "tread_worn_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/tread_worn_01.png",
+          "inbox_name": "tread_worn_01.png",
+          "sha256": "5d777ba3558e2c27f8592491bf548aa260900c71ef700ae70b1352bd47624f45",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "vent_square_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/vent_square_01.png",
+          "inbox_name": "vent_square_01.png",
+          "sha256": "d299eb7bba7e71ecaff37faf3b8e6fa795d58b0eb0b75125fbf7d9f10b414e50",
+          "size": [
+            32,
+            32
+          ]
+        },
+        "vent_triple_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_floor/vent_triple_01.png",
+          "inbox_name": "vent_triple_01.png",
+          "sha256": "a4f61948d39710ae447f1af09aab42948fa25329b6db81563da9b8906b9ef3bb",
+          "size": [
+            32,
+            32
+          ]
+        }
+      }
+    },
+    {
+      "family": "carrow_machine_house_walls",
+      "inbox": "custodian/asset_drop/inbox/carrow_machine_house_walls",
+      "files": {
+        "bollard_lit_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/bollard_lit_01.png",
+          "inbox_name": "bollard_lit_01.png",
+          "sha256": "e4959755347aaed49f3598c89fa3abbb7046ef1b6b448252e04ff3f0190c3844",
+          "size": [
+            32,
+            64
+          ]
+        },
+        "breach_heavy_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/breach_heavy_01.png",
+          "inbox_name": "breach_heavy_01.png",
+          "sha256": "e9c8e3bd3368e65f3d2dc56a26bd71de215793b5ed2d9e52d0f31eea87f019ec",
+          "size": [
+            128,
+            96
+          ]
+        },
+        "cap_small_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/cap_small_01.png",
+          "inbox_name": "cap_small_01.png",
+          "sha256": "5170d942a06644bac7a6ede3e0493df782448f41a42f0d3ab01b940b34cb7910",
+          "size": [
+            32,
+            64
+          ]
+        },
+        "conduit_bay_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/conduit_bay_01.png",
+          "inbox_name": "conduit_bay_01.png",
+          "sha256": "db530d6f8a2c454b4c3483377e324f390c1cadc92c04a105dce16d2c472ddd75",
+          "size": [
+            160,
+            96
+          ]
+        },
+        "control_bay_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/control_bay_01.png",
+          "inbox_name": "control_bay_01.png",
+          "sha256": "491ee398ccc3dbce94faabc1a87e8c545faca0b2ae01612772eca555ab10e399",
+          "size": [
+            128,
+            96
+          ]
+        },
+        "corner_block_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/corner_block_01.png",
+          "inbox_name": "corner_block_01.png",
+          "sha256": "08adea5563bd520990dfe0be691b35b50c3561761d0d8b867cef6745e1c70ca4",
+          "size": [
+            96,
+            128
+          ]
+        },
+        "corner_block_02": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/corner_block_02.png",
+          "inbox_name": "corner_block_02.png",
+          "sha256": "b62c7acf676a5545f6fc31b1920c4271b8ef734a56cea85f912d5e8ecf6b5a17",
+          "size": [
+            64,
+            128
+          ]
+        },
+        "cracked_pillar_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/cracked_pillar_01.png",
+          "inbox_name": "cracked_pillar_01.png",
+          "sha256": "93f2bdd0f76fcda420a2a2ac57afec65b21dd99bbd5d9a03cd9a97503a7160cf",
+          "size": [
+            64,
+            96
+          ]
+        },
+        "damaged_wall_light_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/damaged_wall_light_01.png",
+          "inbox_name": "damaged_wall_light_01.png",
+          "sha256": "6cb40b3026c06eeacc6c7be7750bb3c3afd533cb8274a898310a00aa029c1e08",
+          "size": [
+            128,
+            96
+          ]
+        },
+        "doorframe_narrow_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/doorframe_narrow_01.png",
+          "inbox_name": "doorframe_narrow_01.png",
+          "sha256": "2a44d74807cac237f4539640e96f971fe07aa6551d963903c855250a65f8fa63",
+          "size": [
+            96,
+            96
+          ]
+        },
+        "doorframe_recessed_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/doorframe_recessed_01.png",
+          "inbox_name": "doorframe_recessed_01.png",
+          "sha256": "51c47be920393d9c2208db5be20df34912ae439157a039d8bbae26bd05d9c603",
+          "size": [
+            128,
+            96
+          ]
+        },
+        "doorframe_wide_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/doorframe_wide_01.png",
+          "inbox_name": "doorframe_wide_01.png",
+          "sha256": "2f876ff5082b680d0913d4b44a81406471f378ca79b3b46cea85fd97f24d5749",
+          "size": [
+            160,
+            96
+          ]
+        },
+        "doorframe_wide_02": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/doorframe_wide_02.png",
+          "inbox_name": "doorframe_wide_02.png",
+          "sha256": "0929c6937615dfc1ef2c3aabf12d11976c77e8e7f25baaf72b9e86d54ab6e7ed",
+          "size": [
+            160,
+            96
+          ]
+        },
+        "endcap_tall_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/endcap_tall_01.png",
+          "inbox_name": "endcap_tall_01.png",
+          "sha256": "7a65f0cbfaf102915d36a9cc281f648a1640a5851d745bb918461eedc62b39a5",
+          "size": [
+            64,
+            128
+          ]
+        },
+        "fan_bay_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/fan_bay_01.png",
+          "inbox_name": "fan_bay_01.png",
+          "sha256": "38366cd18e93988bb8d2a3be22d00cc35f4797b55ea44c162b598321f4e58e32",
+          "size": [
+            160,
+            96
+          ]
+        },
+        "low_endcap_02": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/low_endcap_02.png",
+          "inbox_name": "low_endcap_02.png",
+          "sha256": "cb1b972f59cfb303c8fbe304cf61c657e75d408362d5a90190678392544cd559",
+          "size": [
+            32,
+            64
+          ]
+        },
+        "low_post_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/low_post_01.png",
+          "inbox_name": "low_post_01.png",
+          "sha256": "d3551f6a67fca4f6ed8684d2631f0c049a74a1e96a312277254f11deda09393c",
+          "size": [
+            32,
+            64
+          ]
+        },
+        "low_wall_endcap_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/low_wall_endcap_01.png",
+          "inbox_name": "low_wall_endcap_01.png",
+          "sha256": "f5efcf9fa71a79f1b7ceaacdbe9967158148aede52a8838e50847487d76c6898",
+          "size": [
+            64,
+            64
+          ]
+        },
+        "low_wall_long_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/low_wall_long_01.png",
+          "inbox_name": "low_wall_long_01.png",
+          "sha256": "2116d902586009cd1f9a0f32b6aa982b171fa9315cbe6d0560999e0f498ca950",
+          "size": [
+            160,
+            64
+          ]
+        },
+        "low_wall_long_02": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/low_wall_long_02.png",
+          "inbox_name": "low_wall_long_02.png",
+          "sha256": "b753576e9f70082817a8161cfb7e5bd4b87497bea2c31c3723fc59105c1ac8c5",
+          "size": [
+            128,
+            64
+          ]
+        },
+        "low_wall_medium_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/low_wall_medium_01.png",
+          "inbox_name": "low_wall_medium_01.png",
+          "sha256": "0c9addb03d06497137a1003fb863d1390dd97162ad6b3f6ee53e7a6f43c02ba8",
+          "size": [
+            96,
+            64
+          ]
+        },
+        "low_wall_short_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/low_wall_short_01.png",
+          "inbox_name": "low_wall_short_01.png",
+          "sha256": "70e0f4fdda11fe5d4fd8de6baa2bb2e8174a192f1fccabea0fdecdc4c24b8a23",
+          "size": [
+            64,
+            64
+          ]
+        },
+        "low_wall_short_02": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/low_wall_short_02.png",
+          "inbox_name": "low_wall_short_02.png",
+          "sha256": "2f54c761f5d216b382d67861754235c07a12bd5bd6a7679a95184a8d5ea9adf0",
+          "size": [
+            64,
+            64
+          ]
+        },
+        "low_wall_vent_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/low_wall_vent_01.png",
+          "inbox_name": "low_wall_vent_01.png",
+          "sha256": "1ecb4e87106ab97fa1963afb7e443a4b876a600e17148e8b6af4680ce4c4e275",
+          "size": [
+            64,
+            64
+          ]
+        },
+        "machine_bay_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/machine_bay_01.png",
+          "inbox_name": "machine_bay_01.png",
+          "sha256": "7cf63d0830a7d046c8965aa04638bc3bde5f7a558e36bb1a825f82fed0bf765e",
+          "size": [
+            192,
+            96
+          ]
+        },
+        "pillar_lit_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/pillar_lit_01.png",
+          "inbox_name": "pillar_lit_01.png",
+          "sha256": "5c60373736764d22b6af05b20f69a27344e104dd05b0e3dfbb210eded71ecfc2",
+          "size": [
+            64,
+            128
+          ]
+        },
+        "pillar_plain_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/pillar_plain_01.png",
+          "inbox_name": "pillar_plain_01.png",
+          "sha256": "be440fc3522fb60f04bde30e3a0239531e37a2ebd5a266b1eedadd55007359eb",
+          "size": [
+            32,
+            96
+          ]
+        },
+        "pillar_plain_02": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/pillar_plain_02.png",
+          "inbox_name": "pillar_plain_02.png",
+          "sha256": "521eea4d83e3293ec447e218361bad61793faaddce93455df29f7d19b7997ecf",
+          "size": [
+            32,
+            128
+          ]
+        },
+        "pillar_plain_03": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/pillar_plain_03.png",
+          "inbox_name": "pillar_plain_03.png",
+          "sha256": "12bf8a2f8d53f6fcca6c814b104275f35d9748325d0366a6b8d06b16be26ca3c",
+          "size": [
+            32,
+            128
+          ]
+        },
+        "pillar_return_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/pillar_return_01.png",
+          "inbox_name": "pillar_return_01.png",
+          "sha256": "247ed4ae79050aeaa78ddb935df3fe207f433376a153f317575b115e0f6738bc",
+          "size": [
+            64,
+            128
+          ]
+        },
+        "pillar_return_02": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/pillar_return_02.png",
+          "inbox_name": "pillar_return_02.png",
+          "sha256": "8f7f8c21fd59183960279715ab856efa9d9814bc33568968acaabb29de23a43b",
+          "size": [
+            64,
+            128
+          ]
+        },
+        "post_narrow_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/post_narrow_01.png",
+          "inbox_name": "post_narrow_01.png",
+          "sha256": "0bff7ba48a7c44a244cdad27bf04c0b3ae5af123743dbafde8dffd477e4904c1",
+          "size": [
+            32,
+            96
+          ]
+        },
+        "post_narrow_02": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/post_narrow_02.png",
+          "inbox_name": "post_narrow_02.png",
+          "sha256": "a3eff9c7cc0201f2f3bda4d9f1a02407985297e42adf8aa5a0cea13edab8be6c",
+          "size": [
+            32,
+            96
+          ]
+        },
+        "post_narrow_03": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/post_narrow_03.png",
+          "inbox_name": "post_narrow_03.png",
+          "sha256": "17b030212a3ed2439455bb2b289ae619398b308b490d39071fa997a918b99cdf",
+          "size": [
+            32,
+            96
+          ]
+        },
+        "recess_vent_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/recess_vent_01.png",
+          "inbox_name": "recess_vent_01.png",
+          "sha256": "f35fde280ead6b703551dfd7a31bb09b46e67e759fb3096536698c82d103d131",
+          "size": [
+            160,
+            128
+          ]
+        },
+        "recess_vent_02": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/recess_vent_02.png",
+          "inbox_name": "recess_vent_02.png",
+          "sha256": "041508cadd529dd10981dd8d42752815e6da7a4e54b5274dde06e02276ba9e1d",
+          "size": [
+            128,
+            96
+          ]
+        },
+        "rounded_pillar_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/rounded_pillar_01.png",
+          "inbox_name": "rounded_pillar_01.png",
+          "sha256": "d9d9285661b4724cf5aaed8795b306553318fc8218afb9fc77b7e3337f0a16c8",
+          "size": [
+            64,
+            96
+          ]
+        },
+        "rubble_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/rubble_01.png",
+          "inbox_name": "rubble_01.png",
+          "sha256": "3eeec6e0224209030711ffa0031098b3279b06942f4146ef8d2e61c36cc52ca3",
+          "size": [
+            32,
+            64
+          ]
+        },
+        "short_bridge_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/short_bridge_01.png",
+          "inbox_name": "short_bridge_01.png",
+          "sha256": "d8307852827b51c32aa0514f100136583f309a0acef06e478fb7bbd549c8d764",
+          "size": [
+            64,
+            64
+          ]
+        },
+        "utility_panel_small_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/utility_panel_small_01.png",
+          "inbox_name": "utility_panel_small_01.png",
+          "sha256": "80a6451a2072b37f1215931796bdf95554636c0ac594f6c2e2c15b8d1fb6ff7b",
+          "size": [
+            96,
+            96
+          ]
+        },
+        "vent_pipe_bay_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/vent_pipe_bay_01.png",
+          "inbox_name": "vent_pipe_bay_01.png",
+          "sha256": "b902109ea77ff4f68b5162c38c6457f5e3d1a224a2235bd907311f267475c16b",
+          "size": [
+            160,
+            96
+          ]
+        },
+        "vent_wall_medium_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/vent_wall_medium_01.png",
+          "inbox_name": "vent_wall_medium_01.png",
+          "sha256": "8dacadca8c73c0a49881e7b6d1c6e357fdcef006eb71f502585e0f60372b43ad",
+          "size": [
+            96,
+            96
+          ]
+        },
+        "vent_wall_wide_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/vent_wall_wide_01.png",
+          "inbox_name": "vent_wall_wide_01.png",
+          "sha256": "5eed141b40968a39781c801d91fd5511fd4a9f08eab87d8c66c5b467f7d197be",
+          "size": [
+            96,
+            96
+          ]
+        },
+        "wall_panel_long_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/wall_panel_long_01.png",
+          "inbox_name": "wall_panel_long_01.png",
+          "sha256": "ecff53f21e281111ebb9e49135ff5c8a2c2462a507964334b3053b8b5315e1de",
+          "size": [
+            128,
+            96
+          ]
+        },
+        "wall_panel_medium_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/wall_panel_medium_01.png",
+          "inbox_name": "wall_panel_medium_01.png",
+          "sha256": "b3b8391b5e397131df3eb23493a0705e28a616765956c831b7f332b08ed79510",
+          "size": [
+            64,
+            96
+          ]
+        },
+        "wall_run_breached_long_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/wall_run_breached_long_01.png",
+          "inbox_name": "wall_run_breached_long_01.png",
+          "sha256": "328cda829acbcf4fbbaeab8e89c25dcdeb0f3c02f05bd79392ac25c1ed04934a",
+          "size": [
+            128,
+            96
+          ]
+        },
+        "wall_run_conduit_long_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/wall_run_conduit_long_01.png",
+          "inbox_name": "wall_run_conduit_long_01.png",
+          "sha256": "f2dd5b418415ebcd67ebd6a6f43856cf1f195f3c78f8063a2434750f9843945a",
+          "size": [
+            256,
+            96
+          ]
+        },
+        "wall_run_panelled_long_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/wall_run_panelled_long_01.png",
+          "inbox_name": "wall_run_panelled_long_01.png",
+          "sha256": "3b6bee4023a07490e31490c4c7199f3540f5af689ac7efedc5b38c21161dd1e3",
+          "size": [
+            256,
+            96
+          ]
+        },
+        "wall_run_panelled_medium_01": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_walls/wall_run_panelled_medium_01.png",
+          "inbox_name": "wall_run_panelled_medium_01.png",
+          "sha256": "5e5f300f5da152c6690740623ec9c786e0828e40ba77f1d2493230b35c7881f5",
+          "size": [
+            128,
+            96
+          ]
+        }
+      }
+    },
+    {
+      "family": "carrow_machine_house_props",
+      "inbox": "custodian/asset_drop/inbox/carrow_machine_house_props",
+      "files": {
+        "conduit_junction": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_props/conduit_junction.png",
+          "inbox_name": "conduit_junction.png",
+          "sha256": "e35c2a42ee31d48f4b2762ea0a6c3fcf2eadd879a43103a3b1538a695270bc84",
+          "size": [
+            64,
+            64
+          ]
+        },
+        "entry": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_props/entry.png",
+          "inbox_name": "entry.png",
+          "sha256": "be69f9ed71223b3e76220d2964350bcdf052e79d0d0dfc0c427c4a43e04d2ead",
+          "size": [
+            192,
+            128
+          ]
+        },
+        "maintenance_cart": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_props/maintenance_cart.png",
+          "inbox_name": "maintenance_cart.png",
+          "sha256": "546035e0535b81c31ea0ef0a89df43af325dc5322302b305854b7ca513cd657e",
+          "size": [
+            96,
+            96
+          ]
+        },
+        "parts_locker": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_props/parts_locker.png",
+          "inbox_name": "parts_locker.png",
+          "sha256": "3ee631ea56d79fb25cf1e3e757d5ca3e78e6eba5916bf2e33721b037a40e25e8",
+          "size": [
+            64,
+            96
+          ]
+        },
+        "power_cabinet": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_props/power_cabinet.png",
+          "inbox_name": "power_cabinet.png",
+          "sha256": "fc91831cce58d26ab7284fa3c537133110e2bc03e0b7aa5dc2d498265b77979f",
+          "size": [
+            64,
+            96
+          ]
+        },
+        "relay_bank": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_props/relay_bank.png",
+          "inbox_name": "relay_bank.png",
+          "sha256": "a17a023124edb9010815b8454066f77de867ecbce14e905847497886db83fa5b",
+          "size": [
+            160,
+            96
+          ]
+        },
+        "replacement_modules": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_props/replacement_modules.png",
+          "inbox_name": "replacement_modules.png",
+          "sha256": "d17d86e19aeb94cb48fda3a066ee2727cc2f0422551d235e07594773ec1d3c6f",
+          "size": [
+            64,
+            96
+          ]
+        },
+        "service_cabinet": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_props/service_cabinet.png",
+          "inbox_name": "service_cabinet.png",
+          "sha256": "dd4078cebe7d139f93e7f6ed89a766aff5852b17f86f507414cf89910119b482",
+          "size": [
+            96,
+            64
+          ]
+        },
+        "switchgear": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_props/switchgear.png",
+          "inbox_name": "switchgear.png",
+          "sha256": "5132b7c0d31df51e08af24dc359a47b004330eac2f82c05ca513afaea818c254",
+          "size": [
+            128,
+            96
+          ]
+        },
+        "tool_board": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_props/tool_board.png",
+          "inbox_name": "tool_board.png",
+          "sha256": "5b10d070f6e27a410424078add146a704efb1d5543b234a96947917a0e3f23c4",
+          "size": [
+            96,
+            64
+          ]
+        },
+        "workbench": {
+          "prep_path": "custodian/asset_drop/production_prep/carrow_yard_v2/families/carrow_machine_house_props/workbench.png",
+          "inbox_name": "workbench.png",
+          "sha256": "4eb000f0d85191b9c7a97a40a1957d9c3888d2ce456110afdc22b3a539439fa1",
+          "size": [
+            128,
+            96
+          ]
+        }
+      }
+    }
+  ],
+  "wall_provenance": {
+    "wall_run_panelled_long_01": {
+      "source_id": "r01_c01",
+      "source_bbox": [
+        11,
+        13,
+        497,
+        186
+      ],
+      "runtime_size": [
+        256,
+        96
+      ],
+      "footprint_cells": [
+        8,
+        3
+      ]
+    },
+    "wall_run_conduit_long_01": {
+      "source_id": "r01_c02",
+      "source_bbox": [
+        511,
+        12,
+        1013,
+        185
+      ],
+      "runtime_size": [
+        256,
+        96
+      ],
+      "footprint_cells": [
+        8,
+        3
+      ]
+    },
+    "wall_run_panelled_medium_01": {
+      "source_id": "r01_c03",
+      "source_bbox": [
+        1026,
+        13,
+        1267,
+        185
+      ],
+      "runtime_size": [
+        128,
+        96
+      ],
+      "footprint_cells": [
+        4,
+        3
+      ]
+    },
+    "wall_run_breached_long_01": {
+      "source_id": "r01_c04",
+      "source_bbox": [
+        1279,
+        12,
+        1526,
+        191
+      ],
+      "runtime_size": [
+        128,
+        96
+      ],
+      "footprint_cells": [
+        4,
+        3
+      ]
+    },
+    "corner_block_01": {
+      "source_id": "r02_c01",
+      "source_bbox": [
+        18,
+        192,
+        180,
+        394
+      ],
+      "runtime_size": [
+        96,
+        128
+      ],
+      "footprint_cells": [
+        3,
+        4
+      ]
+    },
+    "corner_block_02": {
+      "source_id": "r02_c02",
+      "source_bbox": [
+        193,
+        192,
+        283,
+        390
+      ],
+      "runtime_size": [
+        64,
+        128
+      ],
+      "footprint_cells": [
+        2,
+        4
+      ]
+    },
+    "pillar_lit_01": {
+      "source_id": "r02_c03",
+      "source_bbox": [
+        316,
+        194,
+        398,
+        391
+      ],
+      "runtime_size": [
+        64,
+        128
+      ],
+      "footprint_cells": [
+        2,
+        4
+      ]
+    },
+    "pillar_plain_01": {
+      "source_id": "r02_c04",
+      "source_bbox": [
+        421,
+        199,
+        472,
+        390
+      ],
+      "runtime_size": [
+        32,
+        96
+      ],
+      "footprint_cells": [
+        1,
+        3
+      ]
+    },
+    "pillar_return_01": {
+      "source_id": "r02_c05",
+      "source_bbox": [
+        512,
+        192,
+        609,
+        390
+      ],
+      "runtime_size": [
+        64,
+        128
+      ],
+      "footprint_cells": [
+        2,
+        4
+      ]
+    },
+    "pillar_plain_02": {
+      "source_id": "r02_c06",
+      "source_bbox": [
+        630,
+        194,
+        693,
+        394
+      ],
+      "runtime_size": [
+        32,
+        128
+      ],
+      "footprint_cells": [
+        1,
+        4
+      ]
+    },
+    "pillar_plain_03": {
+      "source_id": "r02_c07",
+      "source_bbox": [
+        715,
+        199,
+        777,
+        394
+      ],
+      "runtime_size": [
+        32,
+        128
+      ],
+      "footprint_cells": [
+        1,
+        4
+      ]
+    },
+    "pillar_return_02": {
+      "source_id": "r02_c08",
+      "source_bbox": [
+        800,
+        193,
+        893,
+        390
+      ],
+      "runtime_size": [
+        64,
+        128
+      ],
+      "footprint_cells": [
+        2,
+        4
+      ]
+    },
+    "recess_vent_01": {
+      "source_id": "r02_c09",
+      "source_bbox": [
+        919,
+        192,
+        1177,
+        390
+      ],
+      "runtime_size": [
+        160,
+        128
+      ],
+      "footprint_cells": [
+        5,
+        4
+      ]
+    },
+    "recess_vent_02": {
+      "source_id": "r02_c10",
+      "source_bbox": [
+        1200,
+        202,
+        1428,
+        390
+      ],
+      "runtime_size": [
+        128,
+        96
+      ],
+      "footprint_cells": [
+        4,
+        3
+      ]
+    },
+    "endcap_tall_01": {
+      "source_id": "r02_c11",
+      "source_bbox": [
+        1445,
+        192,
+        1522,
+        390
+      ],
+      "runtime_size": [
+        64,
+        128
+      ],
+      "footprint_cells": [
+        2,
+        4
+      ]
+    },
+    "doorframe_wide_01": {
+      "source_id": "r03_c01",
+      "source_bbox": [
+        22,
+        404,
+        304,
+        572
+      ],
+      "runtime_size": [
+        160,
+        96
+      ],
+      "footprint_cells": [
+        5,
+        3
+      ]
+    },
+    "doorframe_recessed_01": {
+      "source_id": "r03_c02",
+      "source_bbox": [
+        324,
+        404,
+        525,
+        571
+      ],
+      "runtime_size": [
+        128,
+        96
+      ],
+      "footprint_cells": [
+        4,
+        3
+      ]
+    },
+    "doorframe_narrow_01": {
+      "source_id": "r03_c03",
+      "source_bbox": [
+        539,
+        404,
+        729,
+        572
+      ],
+      "runtime_size": [
+        96,
+        96
+      ],
+      "footprint_cells": [
+        3,
+        3
+      ]
+    },
+    "post_narrow_01": {
+      "source_id": "r03_c04",
+      "source_bbox": [
+        769,
+        404,
+        825,
+        570
+      ],
+      "runtime_size": [
+        32,
+        96
+      ],
+      "footprint_cells": [
+        1,
+        3
+      ]
+    },
+    "wall_panel_medium_01": {
+      "source_id": "r03_c05",
+      "source_bbox": [
+        841,
+        404,
+        964,
+        572
+      ],
+      "runtime_size": [
+        64,
+        96
+      ],
+      "footprint_cells": [
+        2,
+        3
+      ]
+    },
+    "wall_panel_long_01": {
+      "source_id": "r03_c06",
+      "source_bbox": [
+        988,
+        405,
+        1216,
+        573
+      ],
+      "runtime_size": [
+        128,
+        96
+      ],
+      "footprint_cells": [
+        4,
+        3
+      ]
+    },
+    "doorframe_wide_02": {
+      "source_id": "r03_c07",
+      "source_bbox": [
+        1233,
+        405,
+        1518,
+        572
+      ],
+      "runtime_size": [
+        160,
+        96
+      ],
+      "footprint_cells": [
+        5,
+        3
+      ]
+    },
+    "control_bay_01": {
+      "source_id": "r04_c01",
+      "source_bbox": [
+        22,
+        585,
+        275,
+        758
+      ],
+      "runtime_size": [
+        128,
+        96
+      ],
+      "footprint_cells": [
+        4,
+        3
+      ]
+    },
+    "machine_bay_01": {
+      "source_id": "r04_c02",
+      "source_bbox": [
+        293,
+        585,
+        641,
+        752
+      ],
+      "runtime_size": [
+        192,
+        96
+      ],
+      "footprint_cells": [
+        6,
+        3
+      ]
+    },
+    "conduit_bay_01": {
+      "source_id": "r04_c03",
+      "source_bbox": [
+        657,
+        585,
+        922,
+        753
+      ],
+      "runtime_size": [
+        160,
+        96
+      ],
+      "footprint_cells": [
+        5,
+        3
+      ]
+    },
+    "vent_pipe_bay_01": {
+      "source_id": "r04_c04",
+      "source_bbox": [
+        938,
+        585,
+        1197,
+        753
+      ],
+      "runtime_size": [
+        160,
+        96
+      ],
+      "footprint_cells": [
+        5,
+        3
+      ]
+    },
+    "fan_bay_01": {
+      "source_id": "r04_c05",
+      "source_bbox": [
+        1211,
+        585,
+        1511,
+        752
+      ],
+      "runtime_size": [
+        160,
+        96
+      ],
+      "footprint_cells": [
+        5,
+        3
+      ]
+    },
+    "vent_wall_wide_01": {
+      "source_id": "r05_c01",
+      "source_bbox": [
+        18,
+        768,
+        205,
+        908
+      ],
+      "runtime_size": [
+        96,
+        96
+      ],
+      "footprint_cells": [
+        3,
+        3
+      ]
+    },
+    "vent_wall_medium_01": {
+      "source_id": "r05_c02",
+      "source_bbox": [
+        224,
+        768,
+        411,
+        908
+      ],
+      "runtime_size": [
+        96,
+        96
+      ],
+      "footprint_cells": [
+        3,
+        3
+      ]
+    },
+    "utility_panel_small_01": {
+      "source_id": "r05_c03",
+      "source_bbox": [
+        425,
+        768,
+        565,
+        908
+      ],
+      "runtime_size": [
+        96,
+        96
+      ],
+      "footprint_cells": [
+        3,
+        3
+      ]
+    },
+    "damaged_wall_light_01": {
+      "source_id": "r05_c04",
+      "source_bbox": [
+        579,
+        768,
+        794,
+        909
+      ],
+      "runtime_size": [
+        128,
+        96
+      ],
+      "footprint_cells": [
+        4,
+        3
+      ]
+    },
+    "breach_heavy_01": {
+      "source_id": "r05_c05",
+      "source_bbox": [
+        809,
+        769,
+        1013,
+        912
+      ],
+      "runtime_size": [
+        128,
+        96
+      ],
+      "footprint_cells": [
+        4,
+        3
+      ]
+    },
+    "cracked_pillar_01": {
+      "source_id": "r05_c06",
+      "source_bbox": [
+        1026,
+        770,
+        1119,
+        909
+      ],
+      "runtime_size": [
+        64,
+        96
+      ],
+      "footprint_cells": [
+        2,
+        3
+      ]
+    },
+    "rounded_pillar_01": {
+      "source_id": "r05_c07",
+      "source_bbox": [
+        1132,
+        768,
+        1197,
+        910
+      ],
+      "runtime_size": [
+        64,
+        96
+      ],
+      "footprint_cells": [
+        2,
+        3
+      ]
+    },
+    "rubble_01": {
+      "source_id": "r05_c08",
+      "source_bbox": [
+        1202,
+        810,
+        1262,
+        885
+      ],
+      "runtime_size": [
+        32,
+        64
+      ],
+      "footprint_cells": [
+        1,
+        2
+      ]
+    },
+    "short_bridge_01": {
+      "source_id": "r05_c09",
+      "source_bbox": [
+        1274,
+        784,
+        1400,
+        895
+      ],
+      "runtime_size": [
+        64,
+        64
+      ],
+      "footprint_cells": [
+        2,
+        2
+      ]
+    },
+    "post_narrow_02": {
+      "source_id": "r05_c10",
+      "source_bbox": [
+        1421,
+        772,
+        1455,
+        910
+      ],
+      "runtime_size": [
+        32,
+        96
+      ],
+      "footprint_cells": [
+        1,
+        3
+      ]
+    },
+    "post_narrow_03": {
+      "source_id": "r05_c11",
+      "source_bbox": [
+        1479,
+        770,
+        1514,
+        909
+      ],
+      "runtime_size": [
+        32,
+        96
+      ],
+      "footprint_cells": [
+        1,
+        3
+      ]
+    },
+    "low_wall_long_01": {
+      "source_id": "r06_c01",
+      "source_bbox": [
+        16,
+        920,
+        317,
+        1008
+      ],
+      "runtime_size": [
+        160,
+        64
+      ],
+      "footprint_cells": [
+        5,
+        2
+      ]
+    },
+    "low_wall_medium_01": {
+      "source_id": "r06_c02",
+      "source_bbox": [
+        335,
+        920,
+        465,
+        1007
+      ],
+      "runtime_size": [
+        96,
+        64
+      ],
+      "footprint_cells": [
+        3,
+        2
+      ]
+    },
+    "low_wall_long_02": {
+      "source_id": "r06_c03",
+      "source_bbox": [
+        481,
+        922,
+        683,
+        1007
+      ],
+      "runtime_size": [
+        128,
+        64
+      ],
+      "footprint_cells": [
+        4,
+        2
+      ]
+    },
+    "low_wall_short_01": {
+      "source_id": "r06_c04",
+      "source_bbox": [
+        708,
+        922,
+        811,
+        1007
+      ],
+      "runtime_size": [
+        64,
+        64
+      ],
+      "footprint_cells": [
+        2,
+        2
+      ]
+    },
+    "low_wall_short_02": {
+      "source_id": "r06_c05",
+      "source_bbox": [
+        842,
+        921,
+        934,
+        1007
+      ],
+      "runtime_size": [
+        64,
+        64
+      ],
+      "footprint_cells": [
+        2,
+        2
+      ]
+    },
+    "low_wall_endcap_01": {
+      "source_id": "r06_c06",
+      "source_bbox": [
+        970,
+        922,
+        1078,
+        1007
+      ],
+      "runtime_size": [
+        64,
+        64
+      ],
+      "footprint_cells": [
+        2,
+        2
+      ]
+    },
+    "low_wall_vent_01": {
+      "source_id": "r06_c07",
+      "source_bbox": [
+        1109,
+        922,
+        1215,
+        1007
+      ],
+      "runtime_size": [
+        64,
+        64
+      ],
+      "footprint_cells": [
+        2,
+        2
+      ]
+    },
+    "bollard_lit_01": {
+      "source_id": "r06_c08",
+      "source_bbox": [
+        1235,
+        923,
+        1283,
+        1007
+      ],
+      "runtime_size": [
+        32,
+        64
+      ],
+      "footprint_cells": [
+        1,
+        2
+      ]
+    },
+    "low_post_01": {
+      "source_id": "r06_c09",
+      "source_bbox": [
+        1310,
+        928,
+        1366,
+        1005
+      ],
+      "runtime_size": [
+        32,
+        64
+      ],
+      "footprint_cells": [
+        1,
+        2
+      ]
+    },
+    "low_endcap_02": {
+      "source_id": "r06_c10",
+      "source_bbox": [
+        1386,
+        932,
+        1448,
+        999
+      ],
+      "runtime_size": [
+        32,
+        64
+      ],
+      "footprint_cells": [
+        1,
+        2
+      ]
+    },
+    "cap_small_01": {
+      "source_id": "r06_c11",
+      "source_bbox": [
+        1467,
+        927,
+        1518,
+        1007
+      ],
+      "runtime_size": [
+        32,
+        64
+      ],
+      "footprint_cells": [
+        1,
+        2
+      ]
+    }
+  }
+}

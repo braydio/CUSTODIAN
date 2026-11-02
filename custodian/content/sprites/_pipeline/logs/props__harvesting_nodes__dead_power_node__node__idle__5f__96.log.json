@@ -1,0 +1,9 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/props__harvesting_nodes__dead_power_node__node__idle__5f__96.json",
+	"outputs": [
+		"res://content/sprites/props/harvesting_nodes/dead_power_node/dead_power_node__node__idle__5f__96.png"
+	],
+	"post_process": [],
+	"source": "res://content/sprites/_pipeline/inbox/props__harvesting_nodes__dead_power_node__node__idle__5f__96.png",
+	"timestamp_utc": "2026-05-26 17:11:56"
+}

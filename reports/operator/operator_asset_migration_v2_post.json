@@ -1,0 +1,11 @@
+{
+  "schema": "custodian.operator_asset_migration.v2",
+  "records": [],
+  "summary": {},
+  "result": {
+    "copied": 0,
+    "removed": 0,
+    "rewritten_consumers": 0,
+    "dimension_repairs": 1
+  }
+}

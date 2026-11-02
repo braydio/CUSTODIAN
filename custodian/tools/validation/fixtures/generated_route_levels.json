@@ -1,0 +1,7 @@
+{
+  "schema": "custodian.level_registry.v1",
+  "definitions": [
+    "res://tools/validation/fixtures/generated_route_authored_level.json",
+    "res://tools/validation/fixtures/generated_route_level.json"
+  ]
+}

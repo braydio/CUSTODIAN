@@ -1,0 +1,9 @@
+{
+  "schema": "custodian.operator_directional_expansion.v1",
+  "identity": "shared/transition/dodge_chain_link_01/nw/full_body",
+  "authored_direction": "w",
+  "target_direction": "nw",
+  "reuses_authored_pixels": true,
+  "source_sha256": "f74b77c388c62a95fa7ecddef75f6359bfb2357db34415f4b0044061a4d972a1",
+  "reason": "N/NE reuse E; SE/SW reuse S; NW reuses W."
+}

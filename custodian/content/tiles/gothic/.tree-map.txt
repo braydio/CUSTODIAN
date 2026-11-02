@@ -1,0 +1,329 @@
+Directory Tree Mapping
+/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/gothic
+├── decals
+│   ├── floor
+│   │   ├── floor_detail_001.png
+│   │   ├── floor_detail_001.png.import
+│   │   ├── floor_detail_002.png
+│   │   ├── floor_detail_002.png.import
+│   │   ├── floor_detail_003.png
+│   │   ├── floor_detail_003.png.import
+│   │   ├── floor_detail_004.png
+│   │   ├── floor_detail_004.png.import
+│   │   ├── floor_detail_005.png
+│   │   ├── floor_detail_005.png.import
+│   │   ├── floor_detail_006.png
+│   │   ├── floor_detail_006.png.import
+│   │   ├── floor_detail_007.png
+│   │   ├── floor_detail_007.png.import
+│   │   ├── floor_detail_008.png
+│   │   ├── floor_detail_008.png.import
+│   │   ├── floor_detail_009.png
+│   │   ├── floor_detail_009.png.import
+│   │   ├── floor_detail_010.png
+│   │   ├── floor_detail_010.png.import
+│   │   ├── floor_detail_011.png
+│   │   ├── floor_detail_011.png.import
+│   │   ├── floor_detail_012.png
+│   │   ├── floor_detail_012.png.import
+│   │   ├── floor_detail_013.png
+│   │   ├── floor_detail_013.png.import
+│   │   ├── floor_detail_014.png
+│   │   ├── floor_detail_014.png.import
+│   │   ├── floor_detail_015.png
+│   │   ├── floor_detail_015.png.import
+│   │   ├── floor_detail_016.png
+│   │   ├── floor_detail_016.png.import
+│   │   ├── floor_detail_017.png
+│   │   ├── floor_detail_017.png.import
+│   │   ├── floor_detail_018.png
+│   │   ├── floor_detail_018.png.import
+│   │   ├── floor_detail_019.png
+│   │   ├── floor_detail_019.png.import
+│   │   ├── floor_detail_020.png
+│   │   └── floor_detail_020.png.import
+│   └── ritual
+│       ├── ritual_floor_decal_001.png
+│       ├── ritual_floor_decal_001.png.import
+│       ├── ritual_floor_decal_002.png
+│       ├── ritual_floor_decal_002.png.import
+│       ├── ritual_floor_decal_003.png
+│       ├── ritual_floor_decal_003.png.import
+│       ├── ritual_floor_decal_004.png
+│       └── ritual_floor_decal_004.png.import
+├── floor_overlay
+│   ├── gothic_floor_overlay_001.png
+│   ├── gothic_floor_overlay_001.png.import
+│   ├── gothic_floor_overlay_004.png
+│   ├── gothic_floor_overlay_004.png.import
+│   ├── gothic_floor_overlay_013.png
+│   ├── gothic_floor_overlay_013.png.import
+│   ├── gothic_floor_overlay_014.png
+│   ├── gothic_floor_overlay_014.png.import
+│   ├── gothic_floor_overlay_017.png
+│   ├── gothic_floor_overlay_017.png.import
+│   ├── gothic_floor_overlay_018.png
+│   ├── gothic_floor_overlay_018.png.import
+│   ├── gothic_floor_overlay_022.png
+│   ├── gothic_floor_overlay_022.png.import
+│   ├── gothic_floor_overlay_023.png
+│   ├── gothic_floor_overlay_023.png.import
+│   ├── gothic_floor_overlay_029.png
+│   ├── gothic_floor_overlay_029.png.import
+│   ├── gothic_floor_overlay_034.png
+│   └── gothic_floor_overlay_034.png.import
+├── floors
+│   ├── gothic_floor_broken_stone_01.game32.json
+│   ├── gothic_floor_broken_stone_01.png
+│   ├── gothic_floor_broken_stone_01.png.import
+│   ├── gothic_floor_broken_stone_02.game32.json
+│   ├── gothic_floor_broken_stone_02.png
+│   ├── gothic_floor_broken_stone_02.png.import
+│   ├── gothic_floor_broken_stone_03.game32.json
+│   ├── gothic_floor_broken_stone_03.png
+│   ├── gothic_floor_broken_stone_03.png.import
+│   ├── gothic_floor_broken_stone_04.game32.json
+│   ├── gothic_floor_broken_stone_04.png
+│   ├── gothic_floor_broken_stone_04.png.import
+│   ├── gothic_floor_broken_stone_05.game32.json
+│   ├── gothic_floor_broken_stone_05.png
+│   ├── gothic_floor_broken_stone_05.png.import
+│   ├── gothic_floor_broken_stone_06.game32.json
+│   ├── gothic_floor_broken_stone_06.png
+│   ├── gothic_floor_broken_stone_06.png.import
+│   ├── gothic_floor_broken_stone_07.game32.json
+│   ├── gothic_floor_broken_stone_07.png
+│   ├── gothic_floor_broken_stone_07.png.import
+│   ├── gothic_floor_broken_stone_08.game32.json
+│   ├── gothic_floor_broken_stone_08.png
+│   ├── gothic_floor_broken_stone_08.png.import
+│   ├── gothic_floor_broken_stone_09.game32.json
+│   ├── gothic_floor_broken_stone_09.png
+│   ├── gothic_floor_broken_stone_09.png.import
+│   ├── gothic_floor_broken_stone_10.game32.json
+│   ├── gothic_floor_broken_stone_10.png
+│   ├── gothic_floor_broken_stone_10.png.import
+│   ├── gothic_floor_dark_earth_01.game32.json
+│   ├── gothic_floor_dark_earth_01.png
+│   ├── gothic_floor_dark_earth_01.png.import
+│   ├── gothic_floor_dark_earth_02.game32.json
+│   ├── gothic_floor_dark_earth_02.png
+│   ├── gothic_floor_dark_earth_02.png.import
+│   ├── gothic_floor_dark_earth_03.game32.json
+│   ├── gothic_floor_dark_earth_03.png
+│   ├── gothic_floor_dark_earth_03.png.import
+│   ├── gothic_floor_dark_earth_04.game32.json
+│   ├── gothic_floor_dark_earth_04.png
+│   ├── gothic_floor_dark_earth_04.png.import
+│   ├── gothic_floor_dark_earth_05.game32.json
+│   ├── gothic_floor_dark_earth_05.png
+│   ├── gothic_floor_dark_earth_05.png.import
+│   ├── gothic_floor_dark_earth_06.game32.json
+│   ├── gothic_floor_dark_earth_06.png
+│   ├── gothic_floor_dark_earth_06.png.import
+│   ├── gothic_floor_detail_01.game32.json
+│   ├── gothic_floor_detail_01.png
+│   ├── gothic_floor_detail_01.png.import
+│   ├── gothic_floor_detail_02.game32.json
+│   ├── gothic_floor_detail_02.png
+│   ├── gothic_floor_detail_02.png.import
+│   ├── gothic_floor_detail_03.game32.json
+│   ├── gothic_floor_detail_03.png
+│   ├── gothic_floor_detail_03.png.import
+│   ├── gothic_floor_detail_04.game32.json
+│   ├── gothic_floor_detail_04.png
+│   ├── gothic_floor_detail_04.png.import
+│   ├── gothic_floor_detail_05.game32.json
+│   ├── gothic_floor_detail_05.png
+│   ├── gothic_floor_detail_05.png.import
+│   ├── gothic_floor_detail_06.game32.json
+│   ├── gothic_floor_detail_06.png
+│   ├── gothic_floor_detail_06.png.import
+│   ├── gothic_floor_detail_07.game32.json
+│   ├── gothic_floor_detail_07.png
+│   ├── gothic_floor_detail_07.png.import
+│   ├── gothic_floor_detail_08.game32.json
+│   ├── gothic_floor_detail_08.png
+│   ├── gothic_floor_detail_08.png.import
+│   ├── gothic_floor_detail_09.game32.json
+│   ├── gothic_floor_detail_09.png
+│   ├── gothic_floor_detail_09.png.import
+│   ├── gothic_floor_detail_10.game32.json
+│   ├── gothic_floor_detail_10.png
+│   ├── gothic_floor_detail_10.png.import
+│   ├── gothic_floor_detail_11.game32.json
+│   ├── gothic_floor_detail_11.png
+│   ├── gothic_floor_detail_11.png.import
+│   ├── gothic_floor_detail_12.game32.json
+│   ├── gothic_floor_detail_12.png
+│   ├── gothic_floor_detail_12.png.import
+│   ├── gothic_floor_detail_13.game32.json
+│   ├── gothic_floor_detail_13.png
+│   ├── gothic_floor_detail_13.png.import
+│   ├── gothic_floor_detail_14.game32.json
+│   ├── gothic_floor_detail_14.png
+│   ├── gothic_floor_detail_14.png.import
+│   ├── gothic_floor_detail_15.game32.json
+│   ├── gothic_floor_detail_15.png
+│   ├── gothic_floor_detail_15.png.import
+│   ├── gothic_floor_detail_16.game32.json
+│   ├── gothic_floor_detail_16.png
+│   ├── gothic_floor_detail_16.png.import
+│   ├── gothic_floor_detail_17.game32.json
+│   ├── gothic_floor_detail_17.png
+│   ├── gothic_floor_detail_17.png.import
+│   ├── gothic_floor_detail_18.game32.json
+│   ├── gothic_floor_detail_18.png
+│   ├── gothic_floor_detail_18.png.import
+│   ├── gothic_floor_detail_19.game32.json
+│   ├── gothic_floor_detail_19.png
+│   ├── gothic_floor_detail_19.png.import
+│   ├── gothic_floor_mud_gravel_01.game32.json
+│   ├── gothic_floor_mud_gravel_01.png
+│   ├── gothic_floor_mud_gravel_01.png.import
+│   ├── gothic_floor_mud_gravel_02.game32.json
+│   ├── gothic_floor_mud_gravel_02.png
+│   ├── gothic_floor_mud_gravel_02.png.import
+│   ├── gothic_floor_mud_gravel_03.game32.json
+│   ├── gothic_floor_mud_gravel_03.png
+│   ├── gothic_floor_mud_gravel_03.png.import
+│   ├── gothic_floor_mud_gravel_04.game32.json
+│   ├── gothic_floor_mud_gravel_04.png
+│   └── gothic_floor_mud_gravel_04.png.import
+├── gothic_master_sheet.game32.json
+├── gothic_master_sheet.png
+├── gothic_master_sheet.png.import
+├── gothic_tilesheet_manifest.game32.json
+├── _review_gothic_contact_sheet.png
+├── _review_gothic_contact_sheet.png.import
+├── wall_corner_or_end
+│   ├── gothic_wall_corner_or_end_001.png
+│   ├── gothic_wall_corner_or_end_001.png.import
+│   ├── gothic_wall_corner_or_end_002.png
+│   ├── gothic_wall_corner_or_end_002.png.import
+│   ├── gothic_wall_corner_or_end_003.png
+│   ├── gothic_wall_corner_or_end_003.png.import
+│   ├── gothic_wall_corner_or_end_004.png
+│   ├── gothic_wall_corner_or_end_004.png.import
+│   ├── gothic_wall_corner_or_end_005.png
+│   ├── gothic_wall_corner_or_end_005.png.import
+│   ├── gothic_wall_corner_or_end_006.png
+│   ├── gothic_wall_corner_or_end_006.png.import
+│   ├── gothic_wall_corner_or_end_007.png
+│   ├── gothic_wall_corner_or_end_007.png.import
+│   ├── gothic_wall_corner_or_end_008.png
+│   ├── gothic_wall_corner_or_end_008.png.import
+│   ├── gothic_wall_corner_or_end_009.png
+│   ├── gothic_wall_corner_or_end_009.png.import
+│   ├── gothic_wall_corner_or_end_010.png
+│   ├── gothic_wall_corner_or_end_010.png.import
+│   ├── gothic_wall_corner_or_end_011.png
+│   ├── gothic_wall_corner_or_end_011.png.import
+│   ├── gothic_wall_corner_or_end_012.png
+│   ├── gothic_wall_corner_or_end_012.png.import
+│   ├── gothic_wall_corner_or_end_013.png
+│   ├── gothic_wall_corner_or_end_013.png.import
+│   ├── gothic_wall_corner_or_end_014.png
+│   ├── gothic_wall_corner_or_end_014.png.import
+│   ├── gothic_wall_corner_or_end_016.png
+│   ├── gothic_wall_corner_or_end_016.png.import
+│   ├── gothic_wall_corner_or_end_017.png
+│   ├── gothic_wall_corner_or_end_017.png.import
+│   ├── gothic_wall_corner_or_end_018.png
+│   ├── gothic_wall_corner_or_end_018.png.import
+│   ├── gothic_wall_corner_or_end_019.png
+│   ├── gothic_wall_corner_or_end_019.png.import
+│   ├── gothic_wall_corner_or_end_020.png
+│   ├── gothic_wall_corner_or_end_020.png.import
+│   ├── gothic_wall_corner_or_end_022.png
+│   ├── gothic_wall_corner_or_end_022.png.import
+│   ├── gothic_wall_corner_or_end_023.png
+│   ├── gothic_wall_corner_or_end_023.png.import
+│   ├── gothic_wall_corner_or_end_024.png
+│   └── gothic_wall_corner_or_end_024.png.import
+├── wall_horizontal_or_cap
+│   ├── gothic_wall_horizontal_or_cap_001.png
+│   ├── gothic_wall_horizontal_or_cap_001.png.import
+│   ├── gothic_wall_horizontal_or_cap_002.png
+│   ├── gothic_wall_horizontal_or_cap_002.png.import
+│   ├── gothic_wall_horizontal_or_cap_003.png
+│   └── gothic_wall_horizontal_or_cap_003.png.import
+├── wall_tiles
+│   ├── wall_tile_001.png
+│   ├── wall_tile_001.png.import
+│   ├── wall_tile_002.png
+│   ├── wall_tile_002.png.import
+│   ├── wall_tile_003.png
+│   ├── wall_tile_003.png.import
+│   ├── wall_tile_004.png
+│   ├── wall_tile_004.png.import
+│   ├── wall_tile_005.png
+│   ├── wall_tile_005.png.import
+│   ├── wall_tile_006.png
+│   ├── wall_tile_006.png.import
+│   ├── wall_tile_007.png
+│   ├── wall_tile_007.png.import
+│   ├── wall_tile_008.png
+│   ├── wall_tile_008.png.import
+│   ├── wall_tile_009.png
+│   └── wall_tile_009.png.import
+├── wall_tops_edges
+│   ├── wall_top_edge_001.png
+│   ├── wall_top_edge_001.png.import
+│   ├── wall_top_edge_002.png
+│   ├── wall_top_edge_002.png.import
+│   ├── wall_top_edge_003.png
+│   ├── wall_top_edge_003.png.import
+│   ├── wall_top_edge_004.png
+│   ├── wall_top_edge_004.png.import
+│   ├── wall_top_edge_005.png
+│   ├── wall_top_edge_005.png.import
+│   ├── wall_top_edge_006.png
+│   ├── wall_top_edge_006.png.import
+│   ├── wall_top_edge_007.png
+│   ├── wall_top_edge_007.png.import
+│   ├── wall_top_edge_008.png
+│   └── wall_top_edge_008.png.import
+└── wall_vertical_slice
+    ├── gothic_wall_vertical_slice_002.png
+    ├── gothic_wall_vertical_slice_002.png.import
+    ├── gothic_wall_vertical_slice_003.png
+    ├── gothic_wall_vertical_slice_003.png.import
+    ├── gothic_wall_vertical_slice_004.png
+    ├── gothic_wall_vertical_slice_004.png.import
+    ├── gothic_wall_vertical_slice_006.png
+    ├── gothic_wall_vertical_slice_006.png.import
+    ├── gothic_wall_vertical_slice_007.png
+    ├── gothic_wall_vertical_slice_007.png.import
+    ├── gothic_wall_vertical_slice_009.png
+    ├── gothic_wall_vertical_slice_009.png.import
+    ├── gothic_wall_vertical_slice_010.png
+    ├── gothic_wall_vertical_slice_010.png.import
+    ├── gothic_wall_vertical_slice_011.png
+    ├── gothic_wall_vertical_slice_011.png.import
+    ├── gothic_wall_vertical_slice_013.png
+    ├── gothic_wall_vertical_slice_013.png.import
+    ├── gothic_wall_vertical_slice_014.png
+    ├── gothic_wall_vertical_slice_014.png.import
+    ├── gothic_wall_vertical_slice_015.png
+    ├── gothic_wall_vertical_slice_015.png.import
+    ├── gothic_wall_vertical_slice_016.png
+    ├── gothic_wall_vertical_slice_016.png.import
+    ├── gothic_wall_vertical_slice_017.png
+    ├── gothic_wall_vertical_slice_017.png.import
+    ├── gothic_wall_vertical_slice_018.png
+    ├── gothic_wall_vertical_slice_018.png.import
+    ├── gothic_wall_vertical_slice_019.png
+    ├── gothic_wall_vertical_slice_019.png.import
+    ├── gothic_wall_vertical_slice_020.png
+    ├── gothic_wall_vertical_slice_020.png.import
+    ├── gothic_wall_vertical_slice_021.png
+    ├── gothic_wall_vertical_slice_021.png.import
+    ├── gothic_wall_vertical_slice_022.png
+    ├── gothic_wall_vertical_slice_022.png.import
+    ├── gothic_wall_vertical_slice_023.png
+    ├── gothic_wall_vertical_slice_023.png.import
+    ├── gothic_wall_vertical_slice_025.png
+    ├── gothic_wall_vertical_slice_025.png.import
+    ├── gothic_wall_vertical_slice_026.png
+    └── gothic_wall_vertical_slice_026.png.import

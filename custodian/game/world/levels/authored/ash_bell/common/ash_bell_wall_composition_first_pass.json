@@ -1,0 +1,205 @@
+{
+  "schema": "custodian.authored_wall_composition.v1",
+  "district": "ash_bell_lower_quarter",
+  "cell_size": 32,
+  "notes": [
+    "First production wall composition using the corrected 14x14 wall atlas.",
+    "Broad roof/top surfaces use the corrected floor atlas, not repeated wall facade modules.",
+    "This does not change collision/navigation/WALKABLE_REGIONS."
+  ],
+  "materials": {
+    "roof_surface": {
+      "atlas": "meridian_civic_floor",
+      "coord": [
+        8,
+        0
+      ]
+    },
+    "roof_wear": {
+      "atlas": "meridian_civic_floor",
+      "coord": [
+        10,
+        0
+      ]
+    },
+    "cap_straight": {
+      "atlas": "meridian_civic_wall",
+      "coord": [
+        0,
+        0
+      ]
+    },
+    "retaining_face_plain": {
+      "atlas": "meridian_civic_wall",
+      "coord": [
+        1,
+        4
+      ]
+    }
+  },
+  "masses": [
+    {
+      "id": "direct_route_west_mass",
+      "rect": [
+        48,
+        66,
+        10,
+        18
+      ],
+      "roof_fill": [
+        8,
+        0
+      ],
+      "north_cap": {
+        "source": [
+          0,
+          0
+        ],
+        "range": {
+          "y": 66,
+          "x_start": 48,
+          "x_end_inclusive": 57
+        }
+      },
+      "south_face": {
+        "source": [
+          1,
+          4
+        ],
+        "range": {
+          "y": 83,
+          "x_start": 48,
+          "x_end_inclusive": 57
+        }
+      },
+      "special_facade_overrides": [],
+      "purpose": "Make the west flank of the failed direct Station IX route read as a continuous retaining/building mass."
+    },
+    {
+      "id": "direct_route_east_mass",
+      "rect": [
+        70,
+        68,
+        10,
+        16
+      ],
+      "roof_fill": [
+        8,
+        0
+      ],
+      "north_cap": {
+        "source": [
+          0,
+          0
+        ],
+        "range": {
+          "y": 68,
+          "x_start": 70,
+          "x_end_inclusive": 79
+        }
+      },
+      "south_face": {
+        "source": [
+          1,
+          4
+        ],
+        "range": {
+          "y": 83,
+          "x_start": 70,
+          "x_end_inclusive": 79
+        }
+      },
+      "special_facade_overrides": [],
+      "purpose": "Make the east flank of the failed direct Station IX route read as a continuous retaining/building mass."
+    },
+    {
+      "id": "evacuation_arcade_mass",
+      "rect": [
+        26,
+        55,
+        6,
+        25
+      ],
+      "roof_fill": [
+        8,
+        0
+      ],
+      "north_cap": {
+        "source": [
+          0,
+          0
+        ],
+        "range": {
+          "y": 55,
+          "x_start": 26,
+          "x_end_inclusive": 31
+        }
+      },
+      "south_face": {
+        "explicit_sources": [
+          {
+            "cell": [
+              26,
+              79
+            ],
+            "source": [
+              0,
+              1
+            ]
+          },
+          {
+            "cell": [
+              27,
+              79
+            ],
+            "source": [
+              2,
+              1
+            ]
+          },
+          {
+            "cell": [
+              28,
+              79
+            ],
+            "source": [
+              4,
+              1
+            ]
+          },
+          {
+            "cell": [
+              29,
+              79
+            ],
+            "source": [
+              5,
+              1
+            ]
+          },
+          {
+            "cell": [
+              30,
+              79
+            ],
+            "source": [
+              2,
+              1
+            ]
+          },
+          {
+            "cell": [
+              31,
+              79
+            ],
+            "source": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "purpose": "Use explicit civic arch/opening modules on the player-facing end of the evacuation arcade. These are authored specials, never autotiled."
+    }
+  ]
+}

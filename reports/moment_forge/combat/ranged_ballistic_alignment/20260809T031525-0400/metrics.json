@@ -1,0 +1,37 @@
+{
+	"action_count": 8,
+	"camera": {
+		"position": [
+			416.793762207031,
+			308.504913330078
+		]
+	},
+	"completed": true,
+	"duration_ticks": 178,
+	"event_count": 12,
+	"operator": {
+		"position": [
+			420.0,
+			360.0
+		]
+	},
+	"probe_sample_count": 6,
+	"stable": {
+		"completed_tick": 178,
+		"visible_visual_anchor_delta_px": 2.32574582099915,
+		"visible_visual_anchor_sample_count": 6
+	},
+	"target_a": {
+		"position": [
+			620.0,
+			330.0
+		]
+	},
+	"target_b": {
+		"position": [
+			220.0,
+			390.0
+		]
+	},
+	"warning_count": 0
+}

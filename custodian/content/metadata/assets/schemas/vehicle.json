@@ -1,0 +1,1 @@
+{"schema":"custodian.asset_kind.v2","kind":"vehicle","runtime_template":"{domain}/{owner}/runtime/{layer}/{filename}","filename_policy":"canonical","backend_policy":"sprite_ingest","defaults":{"domain":"sprites/vehicles","direction":"8dir","auto_mirror":true,"layer":"body","action_group":"locomotion"},"post_process":["vehicle_runtime_import"]}

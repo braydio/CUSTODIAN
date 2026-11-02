@@ -1,0 +1,51 @@
+[
+	{
+		"actual": true,
+		"expected": {
+			"role": "operator",
+			"severity": "error",
+			"type": "role_exists"
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "role_exists"
+	},
+	{
+		"actual": false,
+		"expected": {
+			"severity": "error",
+			"type": "no_unreleased_inputs"
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "no_unreleased_inputs"
+	},
+	{
+		"actual": true,
+		"expected": {
+			"path": "telemetry.json",
+			"severity": "error",
+			"type": "output_exists"
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "output_exists"
+	},
+	{
+		"actual": 0,
+		"expected": {
+			"event": "field_patch_started",
+			"op": "gte",
+			"severity": "warning",
+			"type": "event_count",
+			"value": 1.0
+		},
+		"message": "",
+		"passed": false,
+		"severity": "warning",
+		"type": "event_count"
+	}
+]

@@ -1,0 +1,32 @@
+ M AGENTS.md
+ M custodian/AGENTS.md
+ D custodian/asset_drop/source_work/awakening/creche_recovery_alcove/idle.png
+ D custodian/asset_drop/source_work/awakening/creche_recovery_alcove/wake.normalized.png
+ D custodian/asset_drop/source_work/awakening/creche_recovery_alcove/wake.png
+ D custodian/asset_drop/source_work/awakening/creche_recovery_alcove/wake.source_original.png
+ D custodian/asset_drop/source_work/awakening/gate_of_dust/awakening_creche_console_idle_source.png
+ D custodian/asset_drop/source_work/awakening/late_service/gate_structure_idle.png
+ D custodian/asset_drop/source_work/awakening/late_service/west_pylon.png
+ M custodian/docs/ai_context/CURRENT_STATE.md
+ M custodian/docs/ai_context/FILE_INDEX.md
+ M custodian/game/actors/operator/operator.tscn
+ M custodian/project.godot
+ M custodian/tools/validation/controller_input_contract_smoke.gd
+ M custodian/tools/validation/validation_manifest.json
+ M design/02_features/input/CONTROLLER_INPUT_SYSTEM.md
+?? custodian/asset_drop/inbox/awakening_creche_recovery_alcove/
+?? custodian/asset_drop/source_work/awakening/_asset_review_20260910T133256Z/
+?? custodian/asset_drop/source_work/awakening/_asset_review_latest
+?? custodian/asset_drop/source_work/awakening/_normalized_ready/awakening_creche_recovery_alcove/
+?? custodian/asset_drop/source_work/awakening/_quarantine/
+?? custodian/asset_drop/source_work/awakening/awakening_creche_recovery_alcove/
+?? custodian/asset_drop/source_work/awakening/gate_of_dust/reference/
+?? custodian/game/actors/operator/components/operator_flashlight.gd
+?? custodian/game/actors/operator/components/operator_flashlight.gd.uid
+?? custodian/game/actors/operator/components/operator_flashlight.tscn
+?? custodian/tools/validation/operator_flashlight_smoke.gd
+?? custodian/tools/validation/operator_flashlight_smoke.gd.uid
+?? design/02_features/lighting/OPERATOR_FLASHLIGHT.md
+?? reports/asset_gap_20260910-080711/
+?? reports/asset_gap_20260910-091953/
+?? reports/asset_gap_20260912-063347/

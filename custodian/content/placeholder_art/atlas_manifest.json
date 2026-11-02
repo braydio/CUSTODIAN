@@ -1,0 +1,238 @@
+{
+  "name": "custodian_placeholder_tilesheet_32",
+  "tile_width": 32,
+  "tile_height": 32,
+  "columns": 4,
+  "rows": 3,
+  "theme": "Uniform dark placeholder kit with visible PH watermark",
+  "tiles": [
+    {
+      "index": 0,
+      "id": "placeholder_wall_solid",
+      "atlas_coords": [
+        0,
+        0
+      ],
+      "pixel_coords": [
+        0,
+        0
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "group": "wall",
+      "label": "WS",
+      "description": "Full wall / solid blocker"
+    },
+    {
+      "index": 1,
+      "id": "placeholder_wall_end",
+      "atlas_coords": [
+        1,
+        0
+      ],
+      "pixel_coords": [
+        32,
+        0
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "group": "wall",
+      "label": "WE",
+      "description": "Wall end cap / terminal segment"
+    },
+    {
+      "index": 2,
+      "id": "placeholder_wall_vertical",
+      "atlas_coords": [
+        2,
+        0
+      ],
+      "pixel_coords": [
+        64,
+        0
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "group": "wall",
+      "label": "WV",
+      "description": "Vertical wall segment"
+    },
+    {
+      "index": 3,
+      "id": "placeholder_wall_corner",
+      "atlas_coords": [
+        3,
+        0
+      ],
+      "pixel_coords": [
+        96,
+        0
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "group": "wall",
+      "label": "WC",
+      "description": "Corner wall segment"
+    },
+    {
+      "index": 4,
+      "id": "placeholder_floor_walkable",
+      "atlas_coords": [
+        0,
+        1
+      ],
+      "pixel_coords": [
+        0,
+        32
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "group": "floor",
+      "label": "FW",
+      "description": "Walkable floor tile"
+    },
+    {
+      "index": 5,
+      "id": "placeholder_floor_edge",
+      "atlas_coords": [
+        1,
+        1
+      ],
+      "pixel_coords": [
+        32,
+        32
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "group": "floor",
+      "label": "FE",
+      "description": "Floor edge / transition tile"
+    },
+    {
+      "index": 6,
+      "id": "placeholder_void",
+      "atlas_coords": [
+        2,
+        1
+      ],
+      "pixel_coords": [
+        64,
+        32
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "group": "void",
+      "label": "VO",
+      "description": "Void / impassable tile"
+    },
+    {
+      "index": 7,
+      "id": "placeholder_cliff_edge",
+      "atlas_coords": [
+        3,
+        1
+      ],
+      "pixel_coords": [
+        96,
+        32
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "group": "void",
+      "label": "CE",
+      "description": "Cliff or drop edge tile"
+    },
+    {
+      "index": 8,
+      "id": "placeholder_stairs",
+      "atlas_coords": [
+        0,
+        2
+      ],
+      "pixel_coords": [
+        0,
+        64
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "group": "special",
+      "label": "ST",
+      "description": "Stair / ascent tile"
+    },
+    {
+      "index": 9,
+      "id": "placeholder_doorway",
+      "atlas_coords": [
+        1,
+        2
+      ],
+      "pixel_coords": [
+        32,
+        64
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "group": "special",
+      "label": "DR",
+      "description": "Doorway / opening tile"
+    },
+    {
+      "index": 10,
+      "id": "placeholder_obstacle",
+      "atlas_coords": [
+        2,
+        2
+      ],
+      "pixel_coords": [
+        64,
+        64
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "group": "special",
+      "label": "OB",
+      "description": "Obstacle / pillar / cover"
+    },
+    {
+      "index": 11,
+      "id": "placeholder_prop_marker",
+      "atlas_coords": [
+        3,
+        2
+      ],
+      "pixel_coords": [
+        96,
+        64
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "group": "special",
+      "label": "PM",
+      "description": "Generic prop marker tile"
+    }
+  ]
+}

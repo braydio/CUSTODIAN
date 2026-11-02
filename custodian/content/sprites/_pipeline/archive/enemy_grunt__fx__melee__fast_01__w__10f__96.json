@@ -1,0 +1,31 @@
+{
+  "source": "enemy_grunt__fx__melee__fast_01__w__10f__96.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "enemies/enemy_grunt/runtime/fx/enemy_grunt__fx__melee__fast_01__w__10f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 10
+      }
+    },
+    {
+      "path": "enemies/enemy_grunt/enemy_grunt__fx__melee__fast_01__w__10f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 10
+      }
+    }
+  ],
+  "frame_size": [
+    96,
+    96
+  ],
+  "post_process": [
+    "enemy_runtime_import"
+  ]
+}

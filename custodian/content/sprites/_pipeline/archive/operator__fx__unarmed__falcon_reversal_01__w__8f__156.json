@@ -1,0 +1,20 @@
+{
+  "source": "operator__fx__unarmed__falcon_reversal_01__w__8f__156.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "operator/runtime/overlays/unarmed/operator__fx__unarmed__falcon_reversal_01__w__8f__156.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 8
+      }
+    }
+  ],
+  "frame_size": [
+    156,
+    156
+  ],
+  "remove_superseded": true
+}

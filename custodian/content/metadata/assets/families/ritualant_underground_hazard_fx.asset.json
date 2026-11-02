@@ -1,0 +1,56 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "ritualant_underground_hazard_fx",
+  "kind": "effect",
+  "runtime": {
+    "domain": "sprites/effects",
+    "owner": "ritualant_underground_hazard",
+    "template": "{domain}/runtime/{owner}/{filename}",
+    "filename_policy": "template",
+    "filename_template": "{owner}__{layer}__{action_group}__{variant}__{direction}__{frames}f__{frame_size}.png"
+  },
+  "canvas": {
+    "width": 384,
+    "height": 128
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "thread_warning_sweep_01": {
+      "required": true,
+      "layer": "fx",
+      "action_group": "hazard",
+      "variant": "thread_warning_sweep_01",
+      "animation": true,
+      "fps": 12.0,
+      "layout": "horizontal_strip",
+      "frame_width": 384,
+      "frame_height": 96
+    },
+    "thread_activation_burst_01": {
+      "required": true,
+      "layer": "fx",
+      "action_group": "hazard",
+      "variant": "thread_activation_burst_01",
+      "animation": true,
+      "fps": 16.0,
+      "layout": "horizontal_strip",
+      "frame_width": 384,
+      "frame_height": 128
+    }
+  },
+  "aliases": {
+    "warning": "thread_warning_sweep_01",
+    "activate": "thread_activation_burst_01"
+  },
+  "consumers": [
+    {
+      "type": "scene",
+      "path": "res://game/world/events/ash_bell/forlorn_ritualant_site.tscn"
+    },
+    {
+      "type": "script",
+      "path": "res://game/world/events/ash_bell/white_thread_hazard.gd"
+    }
+  ]
+}

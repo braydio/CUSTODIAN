@@ -1,0 +1,77 @@
+# STATION CONTAINMENT CHOICE + COMPLETION
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `campaign-abandoned-station-containment-v1`
+- Status: `complete`
+- Dispatch: `auto`
+- Authoring handoff: `auto`
+- Priority: `P2`
+- Depends on: `campaign-abandoned-station-stability-v1`
+- Locks: `procgen-authored-alpine-station`
+- Kind: `implementation`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, architecture, runtime`
+- Paired review workstream: `review-campaign-abandoned-station-containment-v1`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Review rationale: `substantial engineering default`
+- Reviewed main: `6e75b57ea828f5d90679ae737052a4acdefce361`
+- Authoring chat: `not-recorded`
+- Visual review: `none`
+- Goal: Station containment choice + completion; deliver one playable, bounded event slice.
+- Completion boundary: After 3 services in time present exactly two choices: MAINTAIN CONTAINMENT / EVIDENCE PRESERVED and SHUT DOWN COUPLING / EVIDENCE INCOMPLETE. Close only with real runtime integration and focused proof, not a disconnected demo.
+- Current measured state: S1 and S2 implementations are complete on main. The project owner waived prospective independent review of S2 before reviewer claim because its archived source scope omits landed paths; this is not reviewer acceptance. No final Hold/Shutdown choice or durable in-run readback exists.
+- Evidence: landed S2 implementation and final source-bound validation report; WorldEventMemory; Reciprocal Continuity Doctrine
+- Task-specific authority: Custodian Mandate/Reciprocal Continuity, event spec §5, landed S1/S2 implementations (S2 review owner-waived before launch); `design/02_features/events/AUTHORED_HUB_CAMPAIGN_MICROEVENTS_V1.md`.
+- Work surface: `custodian/game/world/events/abandoned_station/abandoned_station_site.gd`, `custodian/tools/validation/abandoned_station_containment_smoke.gd`, and `custodian/tools/validation/validation_manifest.json`; station-local containment choices/readback, run-scoped completion, and focused completion proof.
+- Publication inputs: `design/02_features/events/AUTHORED_HUB_CAMPAIGN_MICROEVENTS_V1.md`
+- Change: After 3 services in time present exactly two choices: MAINTAIN CONTAINMENT / EVIDENCE PRESERVED and SHUT DOWN COUPLING / EVIDENCE INCOMPLETE. One choice completes event once in WorldEventMemory and shows corresponding readback; changing route/world does not silently create a campaign-wide outcome. On prior expiry decision stays unavailable and site is inspectable. No actual reciprocal Port opened.
+- Preserve: S1/S2 weather/timer and local failure; global CampaignOutcome, HubState and extraction ownership.
+- Non-goals: No new continuity physics engine, proven origin of anomalies, new CampaignOutcome schema, compulsory story lock.
+- Acceptance: Both choices independently tested; no duplicate completion across repeat interactions and run revisit; no choice following expiry; all exits/normal objectives remain available.
+- Validation: New containment resolution smoke, S1/S2 and mission/WorldEventMemory regressions; changed-file validation. Run changed-file validation and git diff --check only after focused smokes pass.
+- Task overrides: `none`
+- Deferred: Production raster Asset V2 art and unlisted expansion mechanics; no mandatory external asset package.
+
+## Dependency assumption
+Predecessor `campaign-abandoned-station-stability-v1` is archived complete. Its paired review was explicitly waived by the project owner before reviewer claim because the archived implementation Work surface omits five landed code/test paths; no reviewer verdict or acceptance exists. This waiver permits S3 to proceed and does not represent independent acceptance. Consume S2's landed event-state/runtime seams; re-read actual files at claim time and adapt private names only. Never duplicate its controller or persistence owner.
+
+## Refresh Planning Authority
+- Refresh owner: `execution-agent`
+- ChatGPT/user planning refresh required: `no`
+- Refresh planning chat: `not-recorded`
+- Refresh instruction: Read latest origin/main and predecessor review; reconcile exact runtime owners/paths without expanding user-approved scope or starting new design research.
+
+## Handoff
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: S3 runtime and focused smoke landed as source commit `ac471cb2f7a6344226bddc548f0087757e90fd0e`; source-bound changed-file validation report `/tmp/campaign-abandoned-station-containment-validation.json` SHA-256 `129862b4b78936e24d27cfe64fe82ce921413d9237584d8ee42dcfe1fe3cbe83` reports 7/7 passed, complete coverage, zero failures/timeouts/skips/infrastructure errors. Independent paired review remains a separate post-land gate.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: none
+- Root cause / contributing factors: none
+- Prevention / pipeline improvement: none
+- Tooling / docs drift discovered: S2 independent review was owner-waived before reviewer launch due to archived source-scope omissions; this is not reviewer acceptance.
+- Follow-up: none
+
+## Next Handoff
+
+- Next workstream: `review-campaign-abandoned-station-containment-v1`
+- Next packet state: `dependency-gated until this implementation archives complete`
+- Refresh owner: `execution-agent`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `not-recorded`
+- Refresh reason: `none`
+- Next action: After canonical finish archives this implementation complete, run the existing paired review through `paired_review_runner.py` in a fresh reviewer context.
+- Blockers or open questions: Implementation completion is not independent review acceptance; no other implementation packet is authorized by this handoff.

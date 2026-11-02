@@ -1,0 +1,108 @@
+# AGENT PAIRED REVIEW SAME-RUN CONTINUATION V1
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `agent-paired-review-same-run-continuation-v1`
+- Kind: `implementation`
+- Status: `complete`
+- Dispatch: `auto`
+- Authoring handoff: `auto`
+- Priority: `P0`
+- Depends on: `review-agent-paired-review-host-godot-validation-v1`
+- Locks: `paired-review-same-run-continuation`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, architecture, workflow`
+- Paired review workstream: `review-agent-paired-review-same-run-continuation-v1`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Review rationale: `resume of an already claimed review under pinned immutable source, independently authored disposition and coordinator-only receipt publication requires fresh verification`
+- Reviewed main: `4a88985f8b6d3c2f56c45b147d527c7288c57af9`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e`
+- Visual review: `none`
+- Goal: Allow an explicitly authorized, exact-claim continuation of a protected `post_exit_recovery` paired-review run without reclaiming, laundering coordinator validation into a reviewer PASS, losing old reviewer notes or bypassing post-land review gates.
+- Completion boundary: Add a guarded `paired_review_runner.py` continuation CLI keyed by exact existing review workstream and run ID; prove it does not create a new claim, does not overwrite preexisting evidence, verifies original checkout/provenance, requires a freshly reviewer-authored passing disposition after the original ephemeral review session was lost, then delegates only to the existing bounded coordinator verification and `workstream.py finish`.
+- Current measured state: `paired_review_runner.py::run` launches `codex exec --ephemeral`; no resumable original Codex session ID was stored. `post_exit_recovery` metadata retains original claim, worktree/branch, reviewed main and evidence but `main` has no continuation subcommand. The 2026-10-15 ambient recovery has a green coordinator-side eight-check canonical report, yet the original independent reviewer ended `Review blocked; no pass receipt recorded` and the review worktree's packet and summary remain uncommitted/blocked. `coordinator_finish_review` cannot replace the reviewer's independent disposition.
+- Specific protected recovery: `review-procgen-ambient-real-world-spawn-recovery-v1`; original run ID `20261015T224943Z-5a721f81880e`; claimed worktree `/home/braydenchaffee/Projects/.custodian-worktrees/review-procgen-ambient-real-world-spawn-recovery-v1-20261015T224946Z-9fd03b95314f`; reviewed implementation/main `075025f41a6a7f2b6d...` (resolve and verify FULL SHA `075025f41a6a7f6bafb6df13a816d54a23dc87af` from immutable Git); target packet `custodian/docs/ai_context/task_packets/archived/PROCGEN_AMBIENT_REAL_WORLD_SPAWN_RECOVERY_V1.md`. Exact original review authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`. All of these are audit inputs, not bypass grants.
+- Evidence: `custodian/tools/agent/paired_review_runner.py` (`run`, `parse_claim_receipt`, `coordinator_finish_review`, `landed_review_state`, `unresolved_prior_run`); `review_receipt_delta.py` (exact reviewed implementation / one-receipt delta); `workstream.py` (finish and artifact scope); `test_paired_review_runner.py`; `custodian/docs/ai_context/task_packets/REVIEW_PROCGEN_AMBIENT_REAL_WORLD_SPAWN_RECOVERY_V1.md` (Protected Post-Exit Recovery Authority); `custodian/docs/ai_context/AGENT_ORPHAN_RECOVERY_SUPERVISOR_V1.md`; the already-paired `AGENT_PAIRED_REVIEW_GODOT_CACHE_ACCESS_V1.md` and independent review.
+- Task-specific authority: Existing paired runner owns reviewer launch; dispatcher owns claim/locks; workstream.py owns finish/teardown; `review_receipt_delta.py` is the sole verifier for immutable target and appended receipt; `godot_project_lock.py` owns Godot machine-wide concurrency. Do NOT add another claim, dispatcher or review receipt authority.
+- Work surface: `custodian/tools/agent/paired_review_runner.py`; `custodian/tools/agent/test_paired_review_runner.py`; optional focused `custodian/tools/agent/paired_review_continuation.py` if an isolated helper meaningfully reduces runner risk; exact bounded lifecycle documentation in `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`. Do not modify the protected ambient review worktree/packet as part of implementing the tool.
+- Change:
+  1. Inspect the already-landed Godot cache-access fix and its review before any edits. Expose an explicit CLI such as `paired_review_runner.py review-id --continue-run <run-id> --authorize-fresh-reviewer-context`. Without BOTH flags fail closed. A `--continue-run` invocation must **never** call `dispatch claim` or `workstream.py resume`, even if the run is incomplete.
+  2. The original `--ephemeral` Codex invocation is not a persistent resumable session. State this accurately: the authorized alternative is an independent **new fresh reviewer context attached to the same preserved claim/worktree/run**, not a fictitious restoration of the original session. Require explicit operator authorization in CLI; if missing, stop.
+  3. Under the existing per-workstream `flock`, validate exact `custodian.paired_review_run.v1` metadata and prior `claim.stdout` receipt, run-id shape, workstream, original branch/worktree, same Git common directory, same exact active packet and canonical archived target path, pinned `reviewed_main` SHA and resolved target implementation commit. Reject mismatches, other-branch heads, foreign/missing/renamed worktrees, unrecognized phase, another active supervisor, and malformed/missing claim/evidence. Do not infer missing pinned authority from current `origin/main`. A dirty persistent coordination checkout is not a recovery surface; fail before Git mutation and direct the operator to a clean coordinator checkout.
+  4. Never reset/clean/stash the protected review worktree. Its originally reviewer-authored blocked packet/summary, original Codex JSONL/stderr/last message and all prior validation reports must remain byte-preserved. Append continuation-specific logs and metadata under a new exclusive-create child of the ORIGINAL run directory (e.g. `continuation-01/`), and preserve original blocked summary bytes as checksummed evidence if its historical filename is not the canonical `REVIEW_<ID>_CLAUDE_SUMMARY.md`. If a noncanonical untracked summary must be moved out of the bounded closeout surface, first make and verify a durable byte-exact copy in the same run; never delete it without verified preservation.
+  5. Show the new reviewer the exact archived implementation diff, target packet, original reviewer findings/blocked disposition, original authoring-chat backlink and coordinator's existing validated reports; require the reviewer to **independently decide** passed vs findings/blocked, verify the report's schema/coverage/checks, and author its own canonical independent review receipt, complete archived reviewer packet and exact root `REVIEW_..._CLAUDE_SUMMARY.md`. A coordinator-produced green JSON report does not imply PASS. Never edit gameplay/runtime implementation from reviewer context and retain the existing Git mutation prohibition.
+  6. A reviewer PASS must satisfy existing exact-byte `verify_review_receipt_delta`, archived packet schema, review SHA/provenance, summary backlink, allowed changed paths and green full canonical report. Only then hand off to `coordinator_finish_review`; do not call its internal finish entrypoint directly to bypass reviewer. If the reviewer produces findings/human_required/blocked, leave original claim and complete evidence protected, do not publish PASS. Any coordinator failure preserves its original worktree and resumption ledger.
+  7. Enforce exact-once review receipt and commit; retrying a completed run must independently verify already-landed receipt before returning success, not claim/append/stage again. After interruption at any step, fail closed on ambiguity and preserve all prior logs. Do not permit a second reviewer to run concurrently, even from another local process.
+- Preserve: Original review claim and remote work branch; original run ID and immutable pinned reviewed main/implementation; exact source bytes; existing coordination user's dirty/ahead checkout; old findings/logs/report; Godot machine-wide budget/lock and fresh review independence. No new Authoring chat URL invented.
+- Non-goals: No automatic claim/reclaim, no generic orphan lease release or OR1/OR2 redesign, no unconditional coordinator PASS, no timer/daemon, no touched H5/ambient generation/Asset V2 gameplay or loader files, no lowering test acceptance, no fabricated reuse of ephemeral Codex session.
+- Acceptance: (1) same exact claimed run and branch are verified before new process; (2) no new dispatcher claim; (3) original evidence checksums unchanged; (4) new fresh review writes its own disposition, not coordinator-authored PASS; (5) pinned reviewed main/target/fingerprint and report schema still verified; (6) invalid/missing evidence, wrong claim/head, conflicting processes, incomplete reviewer disposition, blocked summary or changed implementation all stop closed; (7) double invocation never duplicates receipt/commit; (8) crash at preflight, reviewer, stage, commit, fetch, sync or finish preserves recovery state and safe next action; (9) focused runner, delta, workstream, fresh-context, Godot cache/lock tests and complete changed-file validation pass; (10) no unsafe changes to another workstream or dirty persistent checkout.
+- Validation: Extend existing `test_paired_review_runner.py` with a temporary git/claim fixture and mock Codex process: wrong/missing run_id, worktree, claim, source baseline, SHA, phase, locked parallel continuation, idempotent completed state, original JSONL unchanged, wrongly named summary copy, block/finding vs authentic reviewer PASS, no new claim, failure after coordinator commit. Run `python3 -m unittest test_paired_review_runner` from `custodian/tools/agent`; run targeted `review_receipt_delta`, `workstream`, `godot_project_lock` tests and `run_validation.py --changed --json` with the unchanged Godot job lock, plus `git diff --check`.
+- Task overrides: `none`
+- Deferred: The separately audited four `awakening_designation_locker` Asset V2 catalog/runtime hash mismatches require their own source/receipt-backed publication workstream; this tool neither accepts nor repairs them.
+
+## Host validation dependency (2026-10-17)
+- The cache-access review alone does not solve Godot loopback socket failure inside restricted Codex. Host/coordinator validation must be implemented and independently accepted first via `review-agent-paired-review-host-godot-validation-v1`.
+- Fresh continuation reuses the coordinator's pinned, immutable host validation evidence, checks its digest/provenance and must still obtain a reviewer-authored verdict. Original PGA-2 and Ritualant run evidence is never rewritten or marked passed merely because a host report is green.
+- This is an execution dependency, not permission to reclaim original review branches or bypass original `run_validation.py` truth gates.
+
+## Scoped lock and protected-run recovery authority (2026-10-17)
+- The accepted host-validation review `review-agent-paired-review-host-godot-validation-v1` is the canonical dependency. An older note below that says to wait for `review-agent-paired-review-godot-cache-access-v1` is superseded: its cache-access reviewer is still independently claimed and uses the broad `agent-workflow` logical lock; that is not a failed dependency here.
+- The implementation/review pair now uses its own `paired-review-same-run-continuation` logical lock. This is a reviewed-scope correction, NOT deletion/release/override of the existing cache review claim or the dispatch assignment mutex. The cache-access reviewer is review-only: its authorized changes are its own review packet, closing summary, and target receipt. It cannot modify `paired_review_runner.py` or its tests.
+- **Mandatory fail-closed claim-time check:** inspect all remotely claimed workstreams declaring `agent-workflow` on fetched `origin/main`, and their work surfaces. If ANY is an active implementation/correction or can modify `paired_review_runner.py`, `test_paired_review_runner.py`, or the same shared execution code, stop before editing and report the exact conflict. If the only holder is the review-only cache-access reviewer, continue in the dispatcher-assigned isolated worktree without touching that claimant. Do not override `agent-workflow`, remove its branch, or modify its review receipt.
+- The freshly accepted host validator runs Godot from the coordinator and writes immutable evidence. The continuation must reuse the same authority and keep reviewer disposition independent; never treat `validation.json` as a PASS receipt.
+- The protected bunker review `review-compound-connected-bunker-blockout-review-corrections-1` has run ID `20261017T140651Z-decf3304e1aa`, reviewed main `6101a443dd9550c33456abee23625dfb580f2a0d` and implementation `a74977eaf0b721e980703f7f0b8478a17d32d731`. Its original reviewer authored a PASS target receipt but ended with findings/1 material gap; this contradictory evidence MUST NOT be interpreted as an accepted pass. Treat it as a protected source for an independently authored, consistent new disposition under exact-run continuation, or explicit nonpassing closeout.
+- Preserve the bunker run's `overwritten-implementation-summary.sha256.json` record and both original SHA-256 strings: overwritten=`091bde4cfadf155a0bfd317a3d7f8b452b7610f2a51553d932c5bd4507b6c7ee`, pinned original=`f765ae76f291405c85ab117be577a57b204dd7b79acd7cb21429a4f68cda798c`. Do not rewrite or delete either summary without independently verified byte-exact durable preservation. The Type A Walled Yard and traversal dependencies remain blocked until their own accepted independent reviews.
+
+## Publication / dependency gate
+- Both packets are already published `ready/auto`; the only required upstream acceptance is `review-agent-paired-review-host-godot-validation-v1`, now archived passed. Claim only when the dispatcher confirms the NEW scoped `paired-review-same-run-continuation` lock is free and the claim-time remote-writer conflict guard above passes. Do not change or release the old `agent-workflow` claim.
+- The protected ambient review remains separate, active and unpassed until an independently reviewer-authored receipt actually lands. Never reclaim or duplicate it.
+
+## Next Handoff
+- Next workstream: `review-agent-paired-review-same-run-continuation-v1`
+- Next packet state: `dependency-gated`
+- Refresh owner: `execution-agent`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e`
+- Refresh reason: `new scoped same-run reviewer continuation tool needs independent code/workflow review before being used for ambient protected recovery`
+- Next action: `Implement and independently review the bounded same-run continuation API; then authorize the existing ambient claimed run's exact ID and let a fresh reviewer write a real disposition. Do not release ambient claim or manufacture a pass.`
+- Blockers or open questions: `The old cache-access reviewer retains its independent claim and unresolved verdict. Only read-only reviewer overlap is allowed under the scoped lock; any concurrent runner writer fails closed. Original ephemeral reviewer context cannot be resurrected.`
+
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `The continuation CLI requires explicit fresh-context authorization, verifies the exact original claim/worktree/branch and pinned host evidence, protects prior artifacts, requires a fresh reviewer-authored outcome, and retries coordinator closeout without relaunching the reviewer. All five changed-file validation jobs and 45 focused runner tests pass.`
+
+## Execution Feedback
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: `The protected ambient run named by the packet lacks coordinator host-validation metadata and its validation report is not green; its claim stdout JSON is truncated after the verified header.`
+- Root cause / contributing factors: `The host-validation dependency was added after that older run was created; the old runner also length-limited claim stdout before structured claim-receipt.json persistence was introduced.`
+- Prevention / pipeline improvement: `New runs persist a create-only structured claim receipt. Continuation validates the legacy truncated header against metadata and Git, and fails closed when host evidence is absent or red.`
+- Tooling / docs drift discovered: `Crash-after-commit testing showed coordinator retry needed a no-reviewer replay path. Added safe exact-PASS closeout retry and documented immutable run evidence behavior.`
+- Follow-up: `none`
+- What worked: `Temporary Git/worktree fixtures exercised claim identity, evidence preservation, independent verdict and idempotent closeout.`
+
+## Implementation Validation
+- Focused tests: `45 paired-review-runner tests passed; combined focused runner, workstream and artifact suites passed before module-path-specific workflow-control rerun.`
+- Changed-file validation: `run_validation.py --changed --json passed all 5 selected jobs with complete coverage.`
+- Static checks: `py_compile, git diff --check, check_ai_context.py and task_packet_index.py passed.`
+- Protected ambient run: `20261015T224943Z-5a721f81880e remains blocked: metadata has no host_validation object and records a failed/incomplete sandbox validation.json. The new continuation command will refuse it until authoritative immutable host-validation evidence is generated and pinned.`
+
+## Independent Review
+
+### Review Receipt: review-agent-paired-review-same-run-continuation-v1
+- Schema: `custodian.paired_review.v1`
+- Review workstream: `review-agent-paired-review-same-run-continuation-v1`
+- Review target workstream: `agent-paired-review-same-run-continuation-v1`
+- Status: `passed`
+- Blocking defects: `0`
+- Material gaps: `0`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Reviewed main: `175647457545bf3dd25c03f2137ee5a3aa3c6879`
+- Reviewed implementation commit: `257b90e9bf3878e0e3dee8ce2f36cad46ef28ab4`

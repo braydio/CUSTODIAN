@@ -1,0 +1,1 @@
+{"schema":"custodian.asset_kind.v2","kind":"weapon","runtime_template":"{domain}/{owner}/runtime/{layer}/{action_group}/{filename}","filename_policy":"canonical","backend_policy":"auto","defaults":{"domain":"sprites/weapons","direction":"omni","auto_mirror":false,"layer":"weapon","action_group":"combat"},"post_process":[]}

@@ -1,0 +1,48 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/ui/loot/loot_toast_entry.gd" id="1_entry"]
+
+[node name="LootToastEntry" type="PanelContainer"]
+custom_minimum_size = Vector2(320, 52)
+mouse_filter = 2
+script = ExtResource("1_entry")
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 6
+
+[node name="HBox" type="HBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Accent" type="ColorRect" parent="Margin/HBox"]
+custom_minimum_size = Vector2(4, 0)
+layout_mode = 2
+color = Color(0.95, 0.82, 0.45, 1)
+
+[node name="Icon" type="TextureRect" parent="Margin/HBox"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+mouse_filter = 2
+
+[node name="Copy" type="VBoxContainer" parent="Margin/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="Title" type="Label" parent="Margin/HBox/Copy"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Recovered Parts"
+text_overrun_behavior = 3
+
+[node name="Detail" type="Label" parent="Margin/HBox/Copy"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "+3"
+text_overrun_behavior = 3

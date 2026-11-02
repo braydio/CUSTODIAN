@@ -1,0 +1,133 @@
+[
+	{
+		"data": {
+			"current": "accepting",
+			"previous": "wild",
+			"stable_creature_id": "vaultwing_unassigned",
+			"stage": "accepting"
+		},
+		"kind": "vaultwing_bond_stage_changed",
+		"tick": 10
+	},
+	{
+		"data": {
+			"feeder": "Operator",
+			"stable_creature_id": "vaultwing_unassigned",
+			"stage": "accepting"
+		},
+		"kind": "vaultwing_bond_trial_started",
+		"tick": 10
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"name": "begin_trial",
+				"tick": 10.0
+			},
+			"moment_tick": 10,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": true,
+				"tick": 10
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 10
+	},
+	{
+		"data": {},
+		"kind": "vaultwing_landed",
+		"tick": 106
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"name": "controlled_approach",
+				"tick": 200.0
+			},
+			"moment_tick": 200,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": true,
+				"tick": 200
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 200
+	},
+	{
+		"data": {
+			"current": "bonded",
+			"previous": "accepting",
+			"stable_creature_id": "vaultwing_unassigned",
+			"stage": "bonded"
+		},
+		"kind": "vaultwing_bond_stage_changed",
+		"tick": 220
+	},
+	{
+		"data": {
+			"bait_id": "vaultwing_bait",
+			"feed_count": 1,
+			"stable_creature_id": "vaultwing_unassigned",
+			"stage": "bonded",
+			"trial": true
+		},
+		"kind": "vaultwing_feed_accepted",
+		"tick": 220
+	},
+	{
+		"data": {
+			"species": "vaultwing_common",
+			"stable_creature_id": "vaultwing_unassigned",
+			"stage": "bonded"
+		},
+		"kind": "vaultwing_bond_completed",
+		"tick": 220
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"name": "final_feed",
+				"tick": 220.0
+			},
+			"moment_tick": 220,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": true,
+				"tick": 220
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 220
+	},
+	{
+		"data": {},
+		"kind": "vaultwing_takeoff",
+		"tick": 220
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"name": "finish",
+				"tick": 245.0
+			},
+			"moment_tick": 245,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": true,
+				"tick": 245
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 245
+	}
+]

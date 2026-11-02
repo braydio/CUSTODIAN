@@ -1,0 +1,3004 @@
+{
+  "schema": "custodian.dev_lop_gallery_manifest.v1",
+  "scope": "Asset Index (DEMO) and Animation Index (DEMO); user-approved exclusions applied",
+  "source_pack": "archive/dev/LordsOfPain",
+  "license_path": "archive/dev/LordsOfPain/Licence.txt",
+  "asset_index": "archive/dev/LordsOfPain/Asset Index (DEMO).txt",
+  "animation_index": "archive/dev/LordsOfPain/Animation Index (DEMO).txt",
+  "excluded_by_user": [
+    {
+      "semantic_id": "cursor_gauntlet",
+      "index_entry": "Cursor Gauntlet x1",
+      "reason": "no matching source files in hydrated DEMO pack; excluded by user direction"
+    },
+    {
+      "semantic_id": "rocks",
+      "index_entry": "Rocks",
+      "reason": "no matching source files in hydrated DEMO pack; excluded by user direction"
+    },
+    {
+      "semantic_id": "mushrooms",
+      "index_entry": "Mushrooms",
+      "reason": "no matching source files in hydrated DEMO pack; excluded by user direction"
+    }
+  ],
+  "included_semantics": [
+    "warrior",
+    "skeleton",
+    "highlight",
+    "loot_indicator",
+    "gold_drop",
+    "glint",
+    "ground_stone"
+  ],
+  "animation_entries": [
+    "gold_drop",
+    "skeleton_default_walk",
+    "skeleton_special_death",
+    "warrior_armed_idle",
+    "warrior_armed_walk"
+  ],
+  "states": [
+    {
+      "semantic": "glint",
+      "logical_state": "glint",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_glint",
+      "state_id": "glint",
+      "source_files": [
+        "archive/dev/LordsOfPain/vfx/glint/glint_0.png",
+        "archive/dev/LordsOfPain/vfx/glint/glint_1.png",
+        "archive/dev/LordsOfPain/vfx/glint/glint_2.png",
+        "archive/dev/LordsOfPain/vfx/glint/glint_3.png",
+        "archive/dev/LordsOfPain/vfx/glint/glint_4.png",
+        "archive/dev/LordsOfPain/vfx/glint/glint_5.png",
+        "archive/dev/LordsOfPain/vfx/glint/glint_6.png",
+        "archive/dev/LordsOfPain/vfx/glint/glint_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_glint/glint_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_glint/glint.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "omni"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/runtime/dev_lop_glint/dev_lop_glint__fx__effect__glint__omni__8f__256.png"
+    },
+    {
+      "semantic": "gold_drop",
+      "logical_state": "idle",
+      "direction": "N",
+      "animation_name": "gold_drop",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_gold_drop",
+      "state_id": "idle_n",
+      "source_files": [
+        "archive/dev/LordsOfPain/prop/gold_drop/N/gold_drop_N_90.0_0.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/N/gold_drop_N_90.0_1.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/N/gold_drop_N_90.0_2.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/N/gold_drop_N_90.0_3.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/N/gold_drop_N_90.0_4.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/N/gold_drop_N_90.0_5.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/N/gold_drop_N_90.0_6.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/N/gold_drop_N_90.0_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_gold_drop/idle_n_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_gold_drop/idle_n.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "N"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_gold_drop/runtime/body/dev_lop_gold_drop__body__pickup__idle_n__omni__8f__256.png"
+    },
+    {
+      "semantic": "gold_drop",
+      "logical_state": "idle",
+      "direction": "NNE",
+      "animation_name": "gold_drop",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_gold_drop",
+      "state_id": "idle_nne",
+      "source_files": [
+        "archive/dev/LordsOfPain/prop/gold_drop/NNE/gold_drop_NNE_67.5_0.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NNE/gold_drop_NNE_67.5_1.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NNE/gold_drop_NNE_67.5_2.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NNE/gold_drop_NNE_67.5_3.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NNE/gold_drop_NNE_67.5_4.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NNE/gold_drop_NNE_67.5_5.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NNE/gold_drop_NNE_67.5_6.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NNE/gold_drop_NNE_67.5_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_gold_drop/idle_nne_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_gold_drop/idle_nne.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "NNE"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_gold_drop/runtime/body/dev_lop_gold_drop__body__pickup__idle_nne__omni__8f__256.png"
+    },
+    {
+      "semantic": "gold_drop",
+      "logical_state": "idle",
+      "direction": "NE",
+      "animation_name": "gold_drop",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_gold_drop",
+      "state_id": "idle_ne",
+      "source_files": [
+        "archive/dev/LordsOfPain/prop/gold_drop/NE/gold_drop_NE_45.0_0.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NE/gold_drop_NE_45.0_1.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NE/gold_drop_NE_45.0_2.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NE/gold_drop_NE_45.0_3.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NE/gold_drop_NE_45.0_4.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NE/gold_drop_NE_45.0_5.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NE/gold_drop_NE_45.0_6.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NE/gold_drop_NE_45.0_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_gold_drop/idle_ne_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_gold_drop/idle_ne.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "NE"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_gold_drop/runtime/body/dev_lop_gold_drop__body__pickup__idle_ne__omni__8f__256.png"
+    },
+    {
+      "semantic": "gold_drop",
+      "logical_state": "idle",
+      "direction": "NEE",
+      "animation_name": "gold_drop",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_gold_drop",
+      "state_id": "idle_nee",
+      "source_files": [
+        "archive/dev/LordsOfPain/prop/gold_drop/NEE/gold_drop_NEE_22.5_0.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NEE/gold_drop_NEE_22.5_1.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NEE/gold_drop_NEE_22.5_2.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NEE/gold_drop_NEE_22.5_3.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NEE/gold_drop_NEE_22.5_4.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NEE/gold_drop_NEE_22.5_5.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NEE/gold_drop_NEE_22.5_6.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NEE/gold_drop_NEE_22.5_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_gold_drop/idle_nee_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_gold_drop/idle_nee.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "NEE"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_gold_drop/runtime/body/dev_lop_gold_drop__body__pickup__idle_nee__omni__8f__256.png"
+    },
+    {
+      "semantic": "gold_drop",
+      "logical_state": "idle",
+      "direction": "E",
+      "animation_name": "gold_drop",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_gold_drop",
+      "state_id": "idle_e",
+      "source_files": [
+        "archive/dev/LordsOfPain/prop/gold_drop/E/gold_drop_E_0.0_0.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/E/gold_drop_E_0.0_1.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/E/gold_drop_E_0.0_2.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/E/gold_drop_E_0.0_3.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/E/gold_drop_E_0.0_4.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/E/gold_drop_E_0.0_5.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/E/gold_drop_E_0.0_6.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/E/gold_drop_E_0.0_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_gold_drop/idle_e_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_gold_drop/idle_e.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "E"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_gold_drop/runtime/body/dev_lop_gold_drop__body__pickup__idle_e__omni__8f__256.png"
+    },
+    {
+      "semantic": "gold_drop",
+      "logical_state": "idle",
+      "direction": "SEE",
+      "animation_name": "gold_drop",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_gold_drop",
+      "state_id": "idle_see",
+      "source_files": [
+        "archive/dev/LordsOfPain/prop/gold_drop/SEE/gold_drop_SEE_337.5_0.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SEE/gold_drop_SEE_337.5_1.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SEE/gold_drop_SEE_337.5_2.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SEE/gold_drop_SEE_337.5_3.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SEE/gold_drop_SEE_337.5_4.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SEE/gold_drop_SEE_337.5_5.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SEE/gold_drop_SEE_337.5_6.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SEE/gold_drop_SEE_337.5_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_gold_drop/idle_see_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_gold_drop/idle_see.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "SEE"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_gold_drop/runtime/body/dev_lop_gold_drop__body__pickup__idle_see__omni__8f__256.png"
+    },
+    {
+      "semantic": "gold_drop",
+      "logical_state": "idle",
+      "direction": "SE",
+      "animation_name": "gold_drop",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_gold_drop",
+      "state_id": "idle_se",
+      "source_files": [
+        "archive/dev/LordsOfPain/prop/gold_drop/SE/gold_drop_SE_315.0_0.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SE/gold_drop_SE_315.0_1.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SE/gold_drop_SE_315.0_2.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SE/gold_drop_SE_315.0_3.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SE/gold_drop_SE_315.0_4.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SE/gold_drop_SE_315.0_5.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SE/gold_drop_SE_315.0_6.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SE/gold_drop_SE_315.0_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_gold_drop/idle_se_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_gold_drop/idle_se.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "SE"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_gold_drop/runtime/body/dev_lop_gold_drop__body__pickup__idle_se__omni__8f__256.png"
+    },
+    {
+      "semantic": "gold_drop",
+      "logical_state": "idle",
+      "direction": "SSE",
+      "animation_name": "gold_drop",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_gold_drop",
+      "state_id": "idle_sse",
+      "source_files": [
+        "archive/dev/LordsOfPain/prop/gold_drop/SSE/gold_drop_SSE_292.5_0.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SSE/gold_drop_SSE_292.5_1.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SSE/gold_drop_SSE_292.5_2.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SSE/gold_drop_SSE_292.5_3.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SSE/gold_drop_SSE_292.5_4.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SSE/gold_drop_SSE_292.5_5.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SSE/gold_drop_SSE_292.5_6.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SSE/gold_drop_SSE_292.5_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_gold_drop/idle_sse_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_gold_drop/idle_sse.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "SSE"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_gold_drop/runtime/body/dev_lop_gold_drop__body__pickup__idle_sse__omni__8f__256.png"
+    },
+    {
+      "semantic": "gold_drop",
+      "logical_state": "idle",
+      "direction": "S",
+      "animation_name": "gold_drop",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_gold_drop",
+      "state_id": "idle_s",
+      "source_files": [
+        "archive/dev/LordsOfPain/prop/gold_drop/S/gold_drop_S_270.0_0.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/S/gold_drop_S_270.0_1.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/S/gold_drop_S_270.0_2.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/S/gold_drop_S_270.0_3.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/S/gold_drop_S_270.0_4.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/S/gold_drop_S_270.0_5.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/S/gold_drop_S_270.0_6.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/S/gold_drop_S_270.0_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_gold_drop/idle_s_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_gold_drop/idle_s.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "S"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_gold_drop/runtime/body/dev_lop_gold_drop__body__pickup__idle_s__omni__8f__256.png"
+    },
+    {
+      "semantic": "gold_drop",
+      "logical_state": "idle",
+      "direction": "SSW",
+      "animation_name": "gold_drop",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_gold_drop",
+      "state_id": "idle_ssw",
+      "source_files": [
+        "archive/dev/LordsOfPain/prop/gold_drop/SSW/gold_drop_SSW_247.5_0.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SSW/gold_drop_SSW_247.5_1.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SSW/gold_drop_SSW_247.5_2.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SSW/gold_drop_SSW_247.5_3.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SSW/gold_drop_SSW_247.5_4.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SSW/gold_drop_SSW_247.5_5.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SSW/gold_drop_SSW_247.5_6.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SSW/gold_drop_SSW_247.5_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_gold_drop/idle_ssw_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_gold_drop/idle_ssw.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "SSW"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_gold_drop/runtime/body/dev_lop_gold_drop__body__pickup__idle_ssw__omni__8f__256.png"
+    },
+    {
+      "semantic": "gold_drop",
+      "logical_state": "idle",
+      "direction": "SW",
+      "animation_name": "gold_drop",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_gold_drop",
+      "state_id": "idle_sw",
+      "source_files": [
+        "archive/dev/LordsOfPain/prop/gold_drop/SW/gold_drop_SW_225.0_0.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SW/gold_drop_SW_225.0_1.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SW/gold_drop_SW_225.0_2.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SW/gold_drop_SW_225.0_3.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SW/gold_drop_SW_225.0_4.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SW/gold_drop_SW_225.0_5.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SW/gold_drop_SW_225.0_6.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SW/gold_drop_SW_225.0_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_gold_drop/idle_sw_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_gold_drop/idle_sw.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "SW"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_gold_drop/runtime/body/dev_lop_gold_drop__body__pickup__idle_sw__omni__8f__256.png"
+    },
+    {
+      "semantic": "gold_drop",
+      "logical_state": "idle",
+      "direction": "SWW",
+      "animation_name": "gold_drop",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_gold_drop",
+      "state_id": "idle_sww",
+      "source_files": [
+        "archive/dev/LordsOfPain/prop/gold_drop/SWW/gold_drop_SWW_202.5_0.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SWW/gold_drop_SWW_202.5_1.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SWW/gold_drop_SWW_202.5_2.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SWW/gold_drop_SWW_202.5_3.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SWW/gold_drop_SWW_202.5_4.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SWW/gold_drop_SWW_202.5_5.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SWW/gold_drop_SWW_202.5_6.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/SWW/gold_drop_SWW_202.5_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_gold_drop/idle_sww_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_gold_drop/idle_sww.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "SWW"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_gold_drop/runtime/body/dev_lop_gold_drop__body__pickup__idle_sww__omni__8f__256.png"
+    },
+    {
+      "semantic": "gold_drop",
+      "logical_state": "idle",
+      "direction": "W",
+      "animation_name": "gold_drop",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_gold_drop",
+      "state_id": "idle_w",
+      "source_files": [
+        "archive/dev/LordsOfPain/prop/gold_drop/W/gold_drop_W_180.0_0.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/W/gold_drop_W_180.0_1.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/W/gold_drop_W_180.0_2.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/W/gold_drop_W_180.0_3.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/W/gold_drop_W_180.0_4.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/W/gold_drop_W_180.0_5.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/W/gold_drop_W_180.0_6.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/W/gold_drop_W_180.0_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_gold_drop/idle_w_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_gold_drop/idle_w.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "W"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_gold_drop/runtime/body/dev_lop_gold_drop__body__pickup__idle_w__omni__8f__256.png"
+    },
+    {
+      "semantic": "gold_drop",
+      "logical_state": "idle",
+      "direction": "NWW",
+      "animation_name": "gold_drop",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_gold_drop",
+      "state_id": "idle_nww",
+      "source_files": [
+        "archive/dev/LordsOfPain/prop/gold_drop/NWW/gold_drop_NWW_157.5_0.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NWW/gold_drop_NWW_157.5_1.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NWW/gold_drop_NWW_157.5_2.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NWW/gold_drop_NWW_157.5_3.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NWW/gold_drop_NWW_157.5_4.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NWW/gold_drop_NWW_157.5_5.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NWW/gold_drop_NWW_157.5_6.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NWW/gold_drop_NWW_157.5_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_gold_drop/idle_nww_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_gold_drop/idle_nww.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "NWW"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_gold_drop/runtime/body/dev_lop_gold_drop__body__pickup__idle_nww__omni__8f__256.png"
+    },
+    {
+      "semantic": "gold_drop",
+      "logical_state": "idle",
+      "direction": "NW",
+      "animation_name": "gold_drop",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_gold_drop",
+      "state_id": "idle_nw",
+      "source_files": [
+        "archive/dev/LordsOfPain/prop/gold_drop/NW/gold_drop_NW_135.0_0.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NW/gold_drop_NW_135.0_1.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NW/gold_drop_NW_135.0_2.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NW/gold_drop_NW_135.0_3.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NW/gold_drop_NW_135.0_4.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NW/gold_drop_NW_135.0_5.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NW/gold_drop_NW_135.0_6.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NW/gold_drop_NW_135.0_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_gold_drop/idle_nw_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_gold_drop/idle_nw.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "NW"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_gold_drop/runtime/body/dev_lop_gold_drop__body__pickup__idle_nw__omni__8f__256.png"
+    },
+    {
+      "semantic": "gold_drop",
+      "logical_state": "idle",
+      "direction": "NNW",
+      "animation_name": "gold_drop",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_gold_drop",
+      "state_id": "idle_nnw",
+      "source_files": [
+        "archive/dev/LordsOfPain/prop/gold_drop/NNW/gold_drop_NNW_112.5_0.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NNW/gold_drop_NNW_112.5_1.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NNW/gold_drop_NNW_112.5_2.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NNW/gold_drop_NNW_112.5_3.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NNW/gold_drop_NNW_112.5_4.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NNW/gold_drop_NNW_112.5_5.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NNW/gold_drop_NNW_112.5_6.png",
+        "archive/dev/LordsOfPain/prop/gold_drop/NNW/gold_drop_NNW_112.5_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_gold_drop/idle_nnw_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_gold_drop/idle_nnw.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "NNW"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_gold_drop/runtime/body/dev_lop_gold_drop__body__pickup__idle_nnw__omni__8f__256.png"
+    },
+    {
+      "semantic": "ground_stone",
+      "logical_state": "ground_stone",
+      "family_id": "dev_lop_ground_stone",
+      "state_id": "ground_stone",
+      "source_files": [
+        "archive/dev/LordsOfPain/environment/ground_stone1.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_ground_stone/ground_stone_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_ground_stone/ground_stone.png",
+      "dimensions": [
+        256,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 1,
+      "animated": false,
+      "directions": [
+        "omni"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_ground_stone_ground_stone_256.png"
+    },
+    {
+      "semantic": "highlight",
+      "logical_state": "highlight_yellow",
+      "family_id": "dev_lop_highlight",
+      "state_id": "highlight_yellow",
+      "source_files": [
+        "archive/dev/LordsOfPain/user interface/highlight/highlight_yellow.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_highlight/highlight_yellow_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_highlight/highlight_yellow.png",
+      "dimensions": [
+        256,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 1,
+      "animated": false,
+      "directions": [
+        "omni"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_highlight/dev_lop_highlight_highlight_yellow_256x256.png"
+    },
+    {
+      "semantic": "loot_indicator",
+      "logical_state": "loot_indicator_yellow",
+      "family_id": "dev_lop_loot_indicator",
+      "state_id": "loot_indicator_yellow",
+      "source_files": [
+        "archive/dev/LordsOfPain/user interface/loot-indicator/loot_indicator_yellow.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_loot_indicator/loot_indicator_yellow_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_loot_indicator/loot_indicator_yellow.png",
+      "dimensions": [
+        256,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 1,
+      "animated": false,
+      "directions": [
+        "omni"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_loot_indicator/dev_lop_loot_indicator_loot_indicator_yellow_256x256.png"
+    },
+    {
+      "semantic": "skeleton",
+      "logical_state": "default_walk",
+      "direction": "N",
+      "animation_name": "skeleton_default_walk",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_skeleton",
+      "state_id": "default_walk_n",
+      "source_files": [
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_N_90.0_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_N_90.0_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_N_90.0_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_N_90.0_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_N_90.0_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_N_90.0_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_N_90.0_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_N_90.0_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_skeleton/default_walk_n_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_skeleton/default_walk_n.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "N"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_skeleton/runtime/body/actor/dev_lop_skeleton__body__actor__default_walk_n__omni__8f__256.png"
+    },
+    {
+      "semantic": "skeleton",
+      "logical_state": "default_walk",
+      "direction": "NNE",
+      "animation_name": "skeleton_default_walk",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_skeleton",
+      "state_id": "default_walk_nne",
+      "source_files": [
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNE_67.5_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNE_67.5_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNE_67.5_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNE_67.5_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNE_67.5_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNE_67.5_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNE_67.5_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNE_67.5_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_skeleton/default_walk_nne_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_skeleton/default_walk_nne.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "NNE"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_skeleton/runtime/body/actor/dev_lop_skeleton__body__actor__default_walk_nne__omni__8f__256.png"
+    },
+    {
+      "semantic": "skeleton",
+      "logical_state": "default_walk",
+      "direction": "NE",
+      "animation_name": "skeleton_default_walk",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_skeleton",
+      "state_id": "default_walk_ne",
+      "source_files": [
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NE_45.0_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NE_45.0_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NE_45.0_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NE_45.0_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NE_45.0_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NE_45.0_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NE_45.0_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NE_45.0_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_skeleton/default_walk_ne_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_skeleton/default_walk_ne.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "NE"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_skeleton/runtime/body/actor/dev_lop_skeleton__body__actor__default_walk_ne__omni__8f__256.png"
+    },
+    {
+      "semantic": "skeleton",
+      "logical_state": "default_walk",
+      "direction": "NEE",
+      "animation_name": "skeleton_default_walk",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_skeleton",
+      "state_id": "default_walk_nee",
+      "source_files": [
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NEE_22.5_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NEE_22.5_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NEE_22.5_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NEE_22.5_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NEE_22.5_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NEE_22.5_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NEE_22.5_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NEE_22.5_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_skeleton/default_walk_nee_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_skeleton/default_walk_nee.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "NEE"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_skeleton/runtime/body/actor/dev_lop_skeleton__body__actor__default_walk_nee__omni__8f__256.png"
+    },
+    {
+      "semantic": "skeleton",
+      "logical_state": "default_walk",
+      "direction": "E",
+      "animation_name": "skeleton_default_walk",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_skeleton",
+      "state_id": "default_walk_e",
+      "source_files": [
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_E_0.0_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_E_0.0_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_E_0.0_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_E_0.0_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_E_0.0_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_E_0.0_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_E_0.0_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_E_0.0_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_skeleton/default_walk_e_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_skeleton/default_walk_e.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "E"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_skeleton/runtime/body/actor/dev_lop_skeleton__body__actor__default_walk_e__omni__8f__256.png"
+    },
+    {
+      "semantic": "skeleton",
+      "logical_state": "default_walk",
+      "direction": "SEE",
+      "animation_name": "skeleton_default_walk",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_skeleton",
+      "state_id": "default_walk_see",
+      "source_files": [
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SEE_337.5_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SEE_337.5_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SEE_337.5_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SEE_337.5_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SEE_337.5_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SEE_337.5_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SEE_337.5_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SEE_337.5_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_skeleton/default_walk_see_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_skeleton/default_walk_see.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "SEE"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_skeleton/runtime/body/actor/dev_lop_skeleton__body__actor__default_walk_see__omni__8f__256.png"
+    },
+    {
+      "semantic": "skeleton",
+      "logical_state": "default_walk",
+      "direction": "SE",
+      "animation_name": "skeleton_default_walk",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_skeleton",
+      "state_id": "default_walk_se",
+      "source_files": [
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SE_315.0_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SE_315.0_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SE_315.0_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SE_315.0_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SE_315.0_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SE_315.0_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SE_315.0_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SE_315.0_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_skeleton/default_walk_se_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_skeleton/default_walk_se.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "SE"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_skeleton/runtime/body/actor/dev_lop_skeleton__body__actor__default_walk_se__omni__8f__256.png"
+    },
+    {
+      "semantic": "skeleton",
+      "logical_state": "default_walk",
+      "direction": "SSE",
+      "animation_name": "skeleton_default_walk",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_skeleton",
+      "state_id": "default_walk_sse",
+      "source_files": [
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSE_292.5_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSE_292.5_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSE_292.5_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSE_292.5_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSE_292.5_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSE_292.5_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSE_292.5_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSE_292.5_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_skeleton/default_walk_sse_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_skeleton/default_walk_sse.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "SSE"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_skeleton/runtime/body/actor/dev_lop_skeleton__body__actor__default_walk_sse__omni__8f__256.png"
+    },
+    {
+      "semantic": "skeleton",
+      "logical_state": "default_walk",
+      "direction": "S",
+      "animation_name": "skeleton_default_walk",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_skeleton",
+      "state_id": "default_walk_s",
+      "source_files": [
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_S_270.0_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_S_270.0_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_S_270.0_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_S_270.0_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_S_270.0_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_S_270.0_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_S_270.0_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_S_270.0_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_skeleton/default_walk_s_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_skeleton/default_walk_s.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "S"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_skeleton/runtime/body/actor/dev_lop_skeleton__body__actor__default_walk_s__omni__8f__256.png"
+    },
+    {
+      "semantic": "skeleton",
+      "logical_state": "default_walk",
+      "direction": "SSW",
+      "animation_name": "skeleton_default_walk",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_skeleton",
+      "state_id": "default_walk_ssw",
+      "source_files": [
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSW_247.5_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSW_247.5_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSW_247.5_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSW_247.5_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSW_247.5_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSW_247.5_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSW_247.5_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSW_247.5_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_skeleton/default_walk_ssw_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_skeleton/default_walk_ssw.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "SSW"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_skeleton/runtime/body/actor/dev_lop_skeleton__body__actor__default_walk_ssw__omni__8f__256.png"
+    },
+    {
+      "semantic": "skeleton",
+      "logical_state": "default_walk",
+      "direction": "SW",
+      "animation_name": "skeleton_default_walk",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_skeleton",
+      "state_id": "default_walk_sw",
+      "source_files": [
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SW_225.0_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SW_225.0_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SW_225.0_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SW_225.0_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SW_225.0_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SW_225.0_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SW_225.0_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SW_225.0_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_skeleton/default_walk_sw_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_skeleton/default_walk_sw.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "SW"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_skeleton/runtime/body/actor/dev_lop_skeleton__body__actor__default_walk_sw__omni__8f__256.png"
+    },
+    {
+      "semantic": "skeleton",
+      "logical_state": "default_walk",
+      "direction": "SWW",
+      "animation_name": "skeleton_default_walk",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_skeleton",
+      "state_id": "default_walk_sww",
+      "source_files": [
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SWW_202.5_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SWW_202.5_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SWW_202.5_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SWW_202.5_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SWW_202.5_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SWW_202.5_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SWW_202.5_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SWW_202.5_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_skeleton/default_walk_sww_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_skeleton/default_walk_sww.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "SWW"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_skeleton/runtime/body/actor/dev_lop_skeleton__body__actor__default_walk_sww__omni__8f__256.png"
+    },
+    {
+      "semantic": "skeleton",
+      "logical_state": "default_walk",
+      "direction": "W",
+      "animation_name": "skeleton_default_walk",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_skeleton",
+      "state_id": "default_walk_w",
+      "source_files": [
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_W_180.0_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_W_180.0_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_W_180.0_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_W_180.0_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_W_180.0_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_W_180.0_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_W_180.0_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_W_180.0_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_skeleton/default_walk_w_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_skeleton/default_walk_w.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "W"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_skeleton/runtime/body/actor/dev_lop_skeleton__body__actor__default_walk_w__omni__8f__256.png"
+    },
+    {
+      "semantic": "skeleton",
+      "logical_state": "default_walk",
+      "direction": "NWW",
+      "animation_name": "skeleton_default_walk",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_skeleton",
+      "state_id": "default_walk_nww",
+      "source_files": [
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NWW_157.5_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NWW_157.5_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NWW_157.5_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NWW_157.5_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NWW_157.5_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NWW_157.5_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NWW_157.5_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NWW_157.5_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_skeleton/default_walk_nww_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_skeleton/default_walk_nww.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "NWW"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_skeleton/runtime/body/actor/dev_lop_skeleton__body__actor__default_walk_nww__omni__8f__256.png"
+    },
+    {
+      "semantic": "skeleton",
+      "logical_state": "default_walk",
+      "direction": "NW",
+      "animation_name": "skeleton_default_walk",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_skeleton",
+      "state_id": "default_walk_nw",
+      "source_files": [
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NW_135.0_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NW_135.0_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NW_135.0_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NW_135.0_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NW_135.0_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NW_135.0_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NW_135.0_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NW_135.0_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_skeleton/default_walk_nw_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_skeleton/default_walk_nw.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "NW"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_skeleton/runtime/body/actor/dev_lop_skeleton__body__actor__default_walk_nw__omni__8f__256.png"
+    },
+    {
+      "semantic": "skeleton",
+      "logical_state": "default_walk",
+      "direction": "NNW",
+      "animation_name": "skeleton_default_walk",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_skeleton",
+      "state_id": "default_walk_nnw",
+      "source_files": [
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNW_112.5_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNW_112.5_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNW_112.5_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNW_112.5_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNW_112.5_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNW_112.5_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNW_112.5_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNW_112.5_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_skeleton/default_walk_nnw_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_skeleton/default_walk_nnw.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "NNW"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_skeleton/runtime/body/actor/dev_lop_skeleton__body__actor__default_walk_nnw__omni__8f__256.png"
+    },
+    {
+      "semantic": "skeleton",
+      "logical_state": "special_death",
+      "direction": "N",
+      "animation_name": "skeleton_special_death",
+      "fps": 8,
+      "loop": false,
+      "family_id": "dev_lop_skeleton",
+      "state_id": "special_death_n",
+      "source_files": [
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/N/skeleton_special_death_N_90.0_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/N/skeleton_special_death_N_90.0_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/N/skeleton_special_death_N_90.0_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/N/skeleton_special_death_N_90.0_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/N/skeleton_special_death_N_90.0_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/N/skeleton_special_death_N_90.0_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/N/skeleton_special_death_N_90.0_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/N/skeleton_special_death_N_90.0_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_skeleton/special_death_n_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_skeleton/special_death_n.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "N"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_skeleton/runtime/body/actor/dev_lop_skeleton__body__actor__special_death_n__omni__8f__256.png"
+    },
+    {
+      "semantic": "skeleton",
+      "logical_state": "special_death",
+      "direction": "NNE",
+      "animation_name": "skeleton_special_death",
+      "fps": 8,
+      "loop": false,
+      "family_id": "dev_lop_skeleton",
+      "state_id": "special_death_nne",
+      "source_files": [
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNE/skeleton_special_death_NNE_67.5_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNE/skeleton_special_death_NNE_67.5_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNE/skeleton_special_death_NNE_67.5_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNE/skeleton_special_death_NNE_67.5_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNE/skeleton_special_death_NNE_67.5_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNE/skeleton_special_death_NNE_67.5_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNE/skeleton_special_death_NNE_67.5_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNE/skeleton_special_death_NNE_67.5_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_skeleton/special_death_nne_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_skeleton/special_death_nne.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "NNE"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_skeleton/runtime/body/actor/dev_lop_skeleton__body__actor__special_death_nne__omni__8f__256.png"
+    },
+    {
+      "semantic": "skeleton",
+      "logical_state": "special_death",
+      "direction": "NE",
+      "animation_name": "skeleton_special_death",
+      "fps": 8,
+      "loop": false,
+      "family_id": "dev_lop_skeleton",
+      "state_id": "special_death_ne",
+      "source_files": [
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NE/skeleton_special_death_NE_45.0_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NE/skeleton_special_death_NE_45.0_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NE/skeleton_special_death_NE_45.0_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NE/skeleton_special_death_NE_45.0_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NE/skeleton_special_death_NE_45.0_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NE/skeleton_special_death_NE_45.0_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NE/skeleton_special_death_NE_45.0_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NE/skeleton_special_death_NE_45.0_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_skeleton/special_death_ne_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_skeleton/special_death_ne.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "NE"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_skeleton/runtime/body/actor/dev_lop_skeleton__body__actor__special_death_ne__omni__8f__256.png"
+    },
+    {
+      "semantic": "skeleton",
+      "logical_state": "special_death",
+      "direction": "NEE",
+      "animation_name": "skeleton_special_death",
+      "fps": 8,
+      "loop": false,
+      "family_id": "dev_lop_skeleton",
+      "state_id": "special_death_nee",
+      "source_files": [
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NEE/skeleton_special_death_NEE_22.5_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NEE/skeleton_special_death_NEE_22.5_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NEE/skeleton_special_death_NEE_22.5_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NEE/skeleton_special_death_NEE_22.5_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NEE/skeleton_special_death_NEE_22.5_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NEE/skeleton_special_death_NEE_22.5_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NEE/skeleton_special_death_NEE_22.5_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NEE/skeleton_special_death_NEE_22.5_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_skeleton/special_death_nee_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_skeleton/special_death_nee.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "NEE"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_skeleton/runtime/body/actor/dev_lop_skeleton__body__actor__special_death_nee__omni__8f__256.png"
+    },
+    {
+      "semantic": "skeleton",
+      "logical_state": "special_death",
+      "direction": "E",
+      "animation_name": "skeleton_special_death",
+      "fps": 8,
+      "loop": false,
+      "family_id": "dev_lop_skeleton",
+      "state_id": "special_death_e",
+      "source_files": [
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/E/skeleton_special_death_E_0.0_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/E/skeleton_special_death_E_0.0_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/E/skeleton_special_death_E_0.0_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/E/skeleton_special_death_E_0.0_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/E/skeleton_special_death_E_0.0_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/E/skeleton_special_death_E_0.0_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/E/skeleton_special_death_E_0.0_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/E/skeleton_special_death_E_0.0_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_skeleton/special_death_e_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_skeleton/special_death_e.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "E"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_skeleton/runtime/body/actor/dev_lop_skeleton__body__actor__special_death_e__omni__8f__256.png"
+    },
+    {
+      "semantic": "skeleton",
+      "logical_state": "special_death",
+      "direction": "SEE",
+      "animation_name": "skeleton_special_death",
+      "fps": 8,
+      "loop": false,
+      "family_id": "dev_lop_skeleton",
+      "state_id": "special_death_see",
+      "source_files": [
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SEE/skeleton_special_death_SEE_337.5_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SEE/skeleton_special_death_SEE_337.5_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SEE/skeleton_special_death_SEE_337.5_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SEE/skeleton_special_death_SEE_337.5_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SEE/skeleton_special_death_SEE_337.5_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SEE/skeleton_special_death_SEE_337.5_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SEE/skeleton_special_death_SEE_337.5_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SEE/skeleton_special_death_SEE_337.5_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_skeleton/special_death_see_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_skeleton/special_death_see.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "SEE"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_skeleton/runtime/body/actor/dev_lop_skeleton__body__actor__special_death_see__omni__8f__256.png"
+    },
+    {
+      "semantic": "skeleton",
+      "logical_state": "special_death",
+      "direction": "SE",
+      "animation_name": "skeleton_special_death",
+      "fps": 8,
+      "loop": false,
+      "family_id": "dev_lop_skeleton",
+      "state_id": "special_death_se",
+      "source_files": [
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SE/skeleton_special_death_SE_315.0_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SE/skeleton_special_death_SE_315.0_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SE/skeleton_special_death_SE_315.0_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SE/skeleton_special_death_SE_315.0_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SE/skeleton_special_death_SE_315.0_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SE/skeleton_special_death_SE_315.0_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SE/skeleton_special_death_SE_315.0_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SE/skeleton_special_death_SE_315.0_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_skeleton/special_death_se_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_skeleton/special_death_se.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "SE"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_skeleton/runtime/body/actor/dev_lop_skeleton__body__actor__special_death_se__omni__8f__256.png"
+    },
+    {
+      "semantic": "skeleton",
+      "logical_state": "special_death",
+      "direction": "SSE",
+      "animation_name": "skeleton_special_death",
+      "fps": 8,
+      "loop": false,
+      "family_id": "dev_lop_skeleton",
+      "state_id": "special_death_sse",
+      "source_files": [
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSE/skeleton_special_death_SSE_292.5_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSE/skeleton_special_death_SSE_292.5_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSE/skeleton_special_death_SSE_292.5_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSE/skeleton_special_death_SSE_292.5_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSE/skeleton_special_death_SSE_292.5_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSE/skeleton_special_death_SSE_292.5_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSE/skeleton_special_death_SSE_292.5_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSE/skeleton_special_death_SSE_292.5_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_skeleton/special_death_sse_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_skeleton/special_death_sse.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "SSE"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_skeleton/runtime/body/actor/dev_lop_skeleton__body__actor__special_death_sse__omni__8f__256.png"
+    },
+    {
+      "semantic": "skeleton",
+      "logical_state": "special_death",
+      "direction": "S",
+      "animation_name": "skeleton_special_death",
+      "fps": 8,
+      "loop": false,
+      "family_id": "dev_lop_skeleton",
+      "state_id": "special_death_s",
+      "source_files": [
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/S/skeleton_special_death_S_270.0_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/S/skeleton_special_death_S_270.0_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/S/skeleton_special_death_S_270.0_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/S/skeleton_special_death_S_270.0_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/S/skeleton_special_death_S_270.0_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/S/skeleton_special_death_S_270.0_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/S/skeleton_special_death_S_270.0_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/S/skeleton_special_death_S_270.0_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_skeleton/special_death_s_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_skeleton/special_death_s.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "S"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_skeleton/runtime/body/actor/dev_lop_skeleton__body__actor__special_death_s__omni__8f__256.png"
+    },
+    {
+      "semantic": "skeleton",
+      "logical_state": "special_death",
+      "direction": "SSW",
+      "animation_name": "skeleton_special_death",
+      "fps": 8,
+      "loop": false,
+      "family_id": "dev_lop_skeleton",
+      "state_id": "special_death_ssw",
+      "source_files": [
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSW/skeleton_special_death_SSW_247.5_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSW/skeleton_special_death_SSW_247.5_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSW/skeleton_special_death_SSW_247.5_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSW/skeleton_special_death_SSW_247.5_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSW/skeleton_special_death_SSW_247.5_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSW/skeleton_special_death_SSW_247.5_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSW/skeleton_special_death_SSW_247.5_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSW/skeleton_special_death_SSW_247.5_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_skeleton/special_death_ssw_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_skeleton/special_death_ssw.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "SSW"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_skeleton/runtime/body/actor/dev_lop_skeleton__body__actor__special_death_ssw__omni__8f__256.png"
+    },
+    {
+      "semantic": "skeleton",
+      "logical_state": "special_death",
+      "direction": "SW",
+      "animation_name": "skeleton_special_death",
+      "fps": 8,
+      "loop": false,
+      "family_id": "dev_lop_skeleton",
+      "state_id": "special_death_sw",
+      "source_files": [
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SW/skeleton_special_death_SW_225.0_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SW/skeleton_special_death_SW_225.0_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SW/skeleton_special_death_SW_225.0_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SW/skeleton_special_death_SW_225.0_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SW/skeleton_special_death_SW_225.0_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SW/skeleton_special_death_SW_225.0_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SW/skeleton_special_death_SW_225.0_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SW/skeleton_special_death_SW_225.0_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_skeleton/special_death_sw_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_skeleton/special_death_sw.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "SW"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_skeleton/runtime/body/actor/dev_lop_skeleton__body__actor__special_death_sw__omni__8f__256.png"
+    },
+    {
+      "semantic": "skeleton",
+      "logical_state": "special_death",
+      "direction": "SWW",
+      "animation_name": "skeleton_special_death",
+      "fps": 8,
+      "loop": false,
+      "family_id": "dev_lop_skeleton",
+      "state_id": "special_death_sww",
+      "source_files": [
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SWW/skeleton_special_death_SWW_202.5_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SWW/skeleton_special_death_SWW_202.5_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SWW/skeleton_special_death_SWW_202.5_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SWW/skeleton_special_death_SWW_202.5_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SWW/skeleton_special_death_SWW_202.5_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SWW/skeleton_special_death_SWW_202.5_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SWW/skeleton_special_death_SWW_202.5_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SWW/skeleton_special_death_SWW_202.5_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_skeleton/special_death_sww_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_skeleton/special_death_sww.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "SWW"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_skeleton/runtime/body/actor/dev_lop_skeleton__body__actor__special_death_sww__omni__8f__256.png"
+    },
+    {
+      "semantic": "skeleton",
+      "logical_state": "special_death",
+      "direction": "W",
+      "animation_name": "skeleton_special_death",
+      "fps": 8,
+      "loop": false,
+      "family_id": "dev_lop_skeleton",
+      "state_id": "special_death_w",
+      "source_files": [
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/W/skeleton_special_death_W_180.0_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/W/skeleton_special_death_W_180.0_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/W/skeleton_special_death_W_180.0_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/W/skeleton_special_death_W_180.0_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/W/skeleton_special_death_W_180.0_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/W/skeleton_special_death_W_180.0_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/W/skeleton_special_death_W_180.0_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/W/skeleton_special_death_W_180.0_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_skeleton/special_death_w_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_skeleton/special_death_w.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "W"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_skeleton/runtime/body/actor/dev_lop_skeleton__body__actor__special_death_w__omni__8f__256.png"
+    },
+    {
+      "semantic": "skeleton",
+      "logical_state": "special_death",
+      "direction": "NWW",
+      "animation_name": "skeleton_special_death",
+      "fps": 8,
+      "loop": false,
+      "family_id": "dev_lop_skeleton",
+      "state_id": "special_death_nww",
+      "source_files": [
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NWW/skeleton_special_death_NWW_157.5_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NWW/skeleton_special_death_NWW_157.5_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NWW/skeleton_special_death_NWW_157.5_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NWW/skeleton_special_death_NWW_157.5_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NWW/skeleton_special_death_NWW_157.5_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NWW/skeleton_special_death_NWW_157.5_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NWW/skeleton_special_death_NWW_157.5_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NWW/skeleton_special_death_NWW_157.5_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_skeleton/special_death_nww_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_skeleton/special_death_nww.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "NWW"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_skeleton/runtime/body/actor/dev_lop_skeleton__body__actor__special_death_nww__omni__8f__256.png"
+    },
+    {
+      "semantic": "skeleton",
+      "logical_state": "special_death",
+      "direction": "NW",
+      "animation_name": "skeleton_special_death",
+      "fps": 8,
+      "loop": false,
+      "family_id": "dev_lop_skeleton",
+      "state_id": "special_death_nw",
+      "source_files": [
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NW/skeleton_special_death_NW_135.0_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NW/skeleton_special_death_NW_135.0_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NW/skeleton_special_death_NW_135.0_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NW/skeleton_special_death_NW_135.0_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NW/skeleton_special_death_NW_135.0_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NW/skeleton_special_death_NW_135.0_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NW/skeleton_special_death_NW_135.0_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NW/skeleton_special_death_NW_135.0_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_skeleton/special_death_nw_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_skeleton/special_death_nw.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "NW"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_skeleton/runtime/body/actor/dev_lop_skeleton__body__actor__special_death_nw__omni__8f__256.png"
+    },
+    {
+      "semantic": "skeleton",
+      "logical_state": "special_death",
+      "direction": "NNW",
+      "animation_name": "skeleton_special_death",
+      "fps": 8,
+      "loop": false,
+      "family_id": "dev_lop_skeleton",
+      "state_id": "special_death_nnw",
+      "source_files": [
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNW/skeleton_special_death_NNW_112.5_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNW/skeleton_special_death_NNW_112.5_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNW/skeleton_special_death_NNW_112.5_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNW/skeleton_special_death_NNW_112.5_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNW/skeleton_special_death_NNW_112.5_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNW/skeleton_special_death_NNW_112.5_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNW/skeleton_special_death_NNW_112.5_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNW/skeleton_special_death_NNW_112.5_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_skeleton/special_death_nnw_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_skeleton/special_death_nnw.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "NNW"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_skeleton/runtime/body/actor/dev_lop_skeleton__body__actor__special_death_nnw__omni__8f__256.png"
+    },
+    {
+      "semantic": "warrior",
+      "logical_state": "armed_idle",
+      "direction": "N",
+      "animation_name": "warrior_armed_idle",
+      "fps": 6,
+      "loop": true,
+      "family_id": "dev_lop_warrior",
+      "state_id": "armed_idle_n",
+      "source_files": [
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/N/warrior_armed_idle_N_90.0_0.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_warrior/armed_idle_n_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_warrior/armed_idle_n.png",
+      "dimensions": [
+        256,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 1,
+      "animated": false,
+      "directions": [
+        "N"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_warrior/runtime/body/actor/dev_lop_warrior__body__actor__armed_idle_n__omni__1f__256.png"
+    },
+    {
+      "semantic": "warrior",
+      "logical_state": "armed_idle",
+      "direction": "NNE",
+      "animation_name": "warrior_armed_idle",
+      "fps": 6,
+      "loop": true,
+      "family_id": "dev_lop_warrior",
+      "state_id": "armed_idle_nne",
+      "source_files": [
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/NNE/warrior_armed_idle_NNE_67.5_0.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_warrior/armed_idle_nne_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_warrior/armed_idle_nne.png",
+      "dimensions": [
+        256,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 1,
+      "animated": false,
+      "directions": [
+        "NNE"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_warrior/runtime/body/actor/dev_lop_warrior__body__actor__armed_idle_nne__omni__1f__256.png"
+    },
+    {
+      "semantic": "warrior",
+      "logical_state": "armed_idle",
+      "direction": "NE",
+      "animation_name": "warrior_armed_idle",
+      "fps": 6,
+      "loop": true,
+      "family_id": "dev_lop_warrior",
+      "state_id": "armed_idle_ne",
+      "source_files": [
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/NE/warrior_armed_idle_NE_45.0_0.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_warrior/armed_idle_ne_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_warrior/armed_idle_ne.png",
+      "dimensions": [
+        256,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 1,
+      "animated": false,
+      "directions": [
+        "NE"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_warrior/runtime/body/actor/dev_lop_warrior__body__actor__armed_idle_ne__omni__1f__256.png"
+    },
+    {
+      "semantic": "warrior",
+      "logical_state": "armed_idle",
+      "direction": "NEE",
+      "animation_name": "warrior_armed_idle",
+      "fps": 6,
+      "loop": true,
+      "family_id": "dev_lop_warrior",
+      "state_id": "armed_idle_nee",
+      "source_files": [
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/NEE/warrior_armed_idle_NEE_22.5_0.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_warrior/armed_idle_nee_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_warrior/armed_idle_nee.png",
+      "dimensions": [
+        256,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 1,
+      "animated": false,
+      "directions": [
+        "NEE"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_warrior/runtime/body/actor/dev_lop_warrior__body__actor__armed_idle_nee__omni__1f__256.png"
+    },
+    {
+      "semantic": "warrior",
+      "logical_state": "armed_idle",
+      "direction": "E",
+      "animation_name": "warrior_armed_idle",
+      "fps": 6,
+      "loop": true,
+      "family_id": "dev_lop_warrior",
+      "state_id": "armed_idle_e",
+      "source_files": [
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/E/warrior_armed_idle_E_0.0_0.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_warrior/armed_idle_e_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_warrior/armed_idle_e.png",
+      "dimensions": [
+        256,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 1,
+      "animated": false,
+      "directions": [
+        "E"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_warrior/runtime/body/actor/dev_lop_warrior__body__actor__armed_idle_e__omni__1f__256.png"
+    },
+    {
+      "semantic": "warrior",
+      "logical_state": "armed_idle",
+      "direction": "SEE",
+      "animation_name": "warrior_armed_idle",
+      "fps": 6,
+      "loop": true,
+      "family_id": "dev_lop_warrior",
+      "state_id": "armed_idle_see",
+      "source_files": [
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/SEE/warrior_armed_idle_SEE_337.5_0.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_warrior/armed_idle_see_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_warrior/armed_idle_see.png",
+      "dimensions": [
+        256,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 1,
+      "animated": false,
+      "directions": [
+        "SEE"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_warrior/runtime/body/actor/dev_lop_warrior__body__actor__armed_idle_see__omni__1f__256.png"
+    },
+    {
+      "semantic": "warrior",
+      "logical_state": "armed_idle",
+      "direction": "SE",
+      "animation_name": "warrior_armed_idle",
+      "fps": 6,
+      "loop": true,
+      "family_id": "dev_lop_warrior",
+      "state_id": "armed_idle_se",
+      "source_files": [
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/SE/warrior_armed_idle_SE_315.0_0.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_warrior/armed_idle_se_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_warrior/armed_idle_se.png",
+      "dimensions": [
+        256,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 1,
+      "animated": false,
+      "directions": [
+        "SE"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_warrior/runtime/body/actor/dev_lop_warrior__body__actor__armed_idle_se__omni__1f__256.png"
+    },
+    {
+      "semantic": "warrior",
+      "logical_state": "armed_idle",
+      "direction": "SSE",
+      "animation_name": "warrior_armed_idle",
+      "fps": 6,
+      "loop": true,
+      "family_id": "dev_lop_warrior",
+      "state_id": "armed_idle_sse",
+      "source_files": [
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/SSE/warrior_armed_idle_SSE_292.5_0.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_warrior/armed_idle_sse_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_warrior/armed_idle_sse.png",
+      "dimensions": [
+        256,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 1,
+      "animated": false,
+      "directions": [
+        "SSE"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_warrior/runtime/body/actor/dev_lop_warrior__body__actor__armed_idle_sse__omni__1f__256.png"
+    },
+    {
+      "semantic": "warrior",
+      "logical_state": "armed_idle",
+      "direction": "S",
+      "animation_name": "warrior_armed_idle",
+      "fps": 6,
+      "loop": true,
+      "family_id": "dev_lop_warrior",
+      "state_id": "armed_idle_s",
+      "source_files": [
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/S/warrior_armed_idle_S_270.0_0.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_warrior/armed_idle_s_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_warrior/armed_idle_s.png",
+      "dimensions": [
+        256,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 1,
+      "animated": false,
+      "directions": [
+        "S"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_warrior/runtime/body/actor/dev_lop_warrior__body__actor__armed_idle_s__omni__1f__256.png"
+    },
+    {
+      "semantic": "warrior",
+      "logical_state": "armed_idle",
+      "direction": "SSW",
+      "animation_name": "warrior_armed_idle",
+      "fps": 6,
+      "loop": true,
+      "family_id": "dev_lop_warrior",
+      "state_id": "armed_idle_ssw",
+      "source_files": [
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/SSW/warrior_armed_idle_SSW_247.5_0.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_warrior/armed_idle_ssw_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_warrior/armed_idle_ssw.png",
+      "dimensions": [
+        256,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 1,
+      "animated": false,
+      "directions": [
+        "SSW"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_warrior/runtime/body/actor/dev_lop_warrior__body__actor__armed_idle_ssw__omni__1f__256.png"
+    },
+    {
+      "semantic": "warrior",
+      "logical_state": "armed_idle",
+      "direction": "SW",
+      "animation_name": "warrior_armed_idle",
+      "fps": 6,
+      "loop": true,
+      "family_id": "dev_lop_warrior",
+      "state_id": "armed_idle_sw",
+      "source_files": [
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/SW/warrior_armed_idle_SW_225.0_0.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_warrior/armed_idle_sw_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_warrior/armed_idle_sw.png",
+      "dimensions": [
+        256,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 1,
+      "animated": false,
+      "directions": [
+        "SW"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_warrior/runtime/body/actor/dev_lop_warrior__body__actor__armed_idle_sw__omni__1f__256.png"
+    },
+    {
+      "semantic": "warrior",
+      "logical_state": "armed_idle",
+      "direction": "SWW",
+      "animation_name": "warrior_armed_idle",
+      "fps": 6,
+      "loop": true,
+      "family_id": "dev_lop_warrior",
+      "state_id": "armed_idle_sww",
+      "source_files": [
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/SWW/warrior_armed_idle_SWW_202.5_0.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_warrior/armed_idle_sww_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_warrior/armed_idle_sww.png",
+      "dimensions": [
+        256,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 1,
+      "animated": false,
+      "directions": [
+        "SWW"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_warrior/runtime/body/actor/dev_lop_warrior__body__actor__armed_idle_sww__omni__1f__256.png"
+    },
+    {
+      "semantic": "warrior",
+      "logical_state": "armed_idle",
+      "direction": "W",
+      "animation_name": "warrior_armed_idle",
+      "fps": 6,
+      "loop": true,
+      "family_id": "dev_lop_warrior",
+      "state_id": "armed_idle_w",
+      "source_files": [
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/W/warrior_armed_idle_W_180.0_0.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_warrior/armed_idle_w_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_warrior/armed_idle_w.png",
+      "dimensions": [
+        256,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 1,
+      "animated": false,
+      "directions": [
+        "W"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_warrior/runtime/body/actor/dev_lop_warrior__body__actor__armed_idle_w__omni__1f__256.png"
+    },
+    {
+      "semantic": "warrior",
+      "logical_state": "armed_idle",
+      "direction": "NWW",
+      "animation_name": "warrior_armed_idle",
+      "fps": 6,
+      "loop": true,
+      "family_id": "dev_lop_warrior",
+      "state_id": "armed_idle_nww",
+      "source_files": [
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/NWW/warrior_armed_idle_NWW_157.5_0.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_warrior/armed_idle_nww_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_warrior/armed_idle_nww.png",
+      "dimensions": [
+        256,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 1,
+      "animated": false,
+      "directions": [
+        "NWW"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_warrior/runtime/body/actor/dev_lop_warrior__body__actor__armed_idle_nww__omni__1f__256.png"
+    },
+    {
+      "semantic": "warrior",
+      "logical_state": "armed_idle",
+      "direction": "NW",
+      "animation_name": "warrior_armed_idle",
+      "fps": 6,
+      "loop": true,
+      "family_id": "dev_lop_warrior",
+      "state_id": "armed_idle_nw",
+      "source_files": [
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/NW/warrior_armed_idle_NW_135.0_0.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_warrior/armed_idle_nw_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_warrior/armed_idle_nw.png",
+      "dimensions": [
+        256,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 1,
+      "animated": false,
+      "directions": [
+        "NW"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_warrior/runtime/body/actor/dev_lop_warrior__body__actor__armed_idle_nw__omni__1f__256.png"
+    },
+    {
+      "semantic": "warrior",
+      "logical_state": "armed_idle",
+      "direction": "NNW",
+      "animation_name": "warrior_armed_idle",
+      "fps": 6,
+      "loop": true,
+      "family_id": "dev_lop_warrior",
+      "state_id": "armed_idle_nnw",
+      "source_files": [
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/NNW/warrior_armed_idle_NNW_112.5_0.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_warrior/armed_idle_nnw_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_warrior/armed_idle_nnw.png",
+      "dimensions": [
+        256,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 1,
+      "animated": false,
+      "directions": [
+        "NNW"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_warrior/runtime/body/actor/dev_lop_warrior__body__actor__armed_idle_nnw__omni__1f__256.png"
+    },
+    {
+      "semantic": "warrior",
+      "logical_state": "armed_walk",
+      "direction": "N",
+      "animation_name": "warrior_armed_walk",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_warrior",
+      "state_id": "armed_walk_n",
+      "source_files": [
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/N/warrior_armed_walk_N_90.0_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/N/warrior_armed_walk_N_90.0_1.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/N/warrior_armed_walk_N_90.0_2.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/N/warrior_armed_walk_N_90.0_3.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/N/warrior_armed_walk_N_90.0_4.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/N/warrior_armed_walk_N_90.0_5.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/N/warrior_armed_walk_N_90.0_6.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/N/warrior_armed_walk_N_90.0_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_warrior/armed_walk_n_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_warrior/armed_walk_n.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "N"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_warrior/runtime/body/actor/dev_lop_warrior__body__actor__armed_walk_n__omni__8f__256.png"
+    },
+    {
+      "semantic": "warrior",
+      "logical_state": "armed_walk",
+      "direction": "NNE",
+      "animation_name": "warrior_armed_walk",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_warrior",
+      "state_id": "armed_walk_nne",
+      "source_files": [
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNE/warrior_armed_walk_NNE_67.5_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNE/warrior_armed_walk_NNE_67.5_1.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNE/warrior_armed_walk_NNE_67.5_2.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNE/warrior_armed_walk_NNE_67.5_3.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNE/warrior_armed_walk_NNE_67.5_4.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNE/warrior_armed_walk_NNE_67.5_5.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNE/warrior_armed_walk_NNE_67.5_6.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNE/warrior_armed_walk_NNE_67.5_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_warrior/armed_walk_nne_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_warrior/armed_walk_nne.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "NNE"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_warrior/runtime/body/actor/dev_lop_warrior__body__actor__armed_walk_nne__omni__8f__256.png"
+    },
+    {
+      "semantic": "warrior",
+      "logical_state": "armed_walk",
+      "direction": "NE",
+      "animation_name": "warrior_armed_walk",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_warrior",
+      "state_id": "armed_walk_ne",
+      "source_files": [
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NE/warrior_armed_walk_NE_45.0_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NE/warrior_armed_walk_NE_45.0_1.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NE/warrior_armed_walk_NE_45.0_2.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NE/warrior_armed_walk_NE_45.0_3.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NE/warrior_armed_walk_NE_45.0_4.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NE/warrior_armed_walk_NE_45.0_5.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NE/warrior_armed_walk_NE_45.0_6.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NE/warrior_armed_walk_NE_45.0_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_warrior/armed_walk_ne_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_warrior/armed_walk_ne.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "NE"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_warrior/runtime/body/actor/dev_lop_warrior__body__actor__armed_walk_ne__omni__8f__256.png"
+    },
+    {
+      "semantic": "warrior",
+      "logical_state": "armed_walk",
+      "direction": "NEE",
+      "animation_name": "warrior_armed_walk",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_warrior",
+      "state_id": "armed_walk_nee",
+      "source_files": [
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NEE/warrior_armed_walk_NEE_22.5_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NEE/warrior_armed_walk_NEE_22.5_1.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NEE/warrior_armed_walk_NEE_22.5_2.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NEE/warrior_armed_walk_NEE_22.5_3.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NEE/warrior_armed_walk_NEE_22.5_4.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NEE/warrior_armed_walk_NEE_22.5_5.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NEE/warrior_armed_walk_NEE_22.5_6.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NEE/warrior_armed_walk_NEE_22.5_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_warrior/armed_walk_nee_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_warrior/armed_walk_nee.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "NEE"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_warrior/runtime/body/actor/dev_lop_warrior__body__actor__armed_walk_nee__omni__8f__256.png"
+    },
+    {
+      "semantic": "warrior",
+      "logical_state": "armed_walk",
+      "direction": "E",
+      "animation_name": "warrior_armed_walk",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_warrior",
+      "state_id": "armed_walk_e",
+      "source_files": [
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/E/warrior_armed_walk_E_0.0_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/E/warrior_armed_walk_E_0.0_1.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/E/warrior_armed_walk_E_0.0_2.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/E/warrior_armed_walk_E_0.0_3.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/E/warrior_armed_walk_E_0.0_4.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/E/warrior_armed_walk_E_0.0_5.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/E/warrior_armed_walk_E_0.0_6.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/E/warrior_armed_walk_E_0.0_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_warrior/armed_walk_e_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_warrior/armed_walk_e.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "E"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_warrior/runtime/body/actor/dev_lop_warrior__body__actor__armed_walk_e__omni__8f__256.png"
+    },
+    {
+      "semantic": "warrior",
+      "logical_state": "armed_walk",
+      "direction": "SEE",
+      "animation_name": "warrior_armed_walk",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_warrior",
+      "state_id": "armed_walk_see",
+      "source_files": [
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SEE/warrior_armed_walk_SEE_337.5_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SEE/warrior_armed_walk_SEE_337.5_1.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SEE/warrior_armed_walk_SEE_337.5_2.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SEE/warrior_armed_walk_SEE_337.5_3.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SEE/warrior_armed_walk_SEE_337.5_4.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SEE/warrior_armed_walk_SEE_337.5_5.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SEE/warrior_armed_walk_SEE_337.5_6.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SEE/warrior_armed_walk_SEE_337.5_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_warrior/armed_walk_see_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_warrior/armed_walk_see.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "SEE"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_warrior/runtime/body/actor/dev_lop_warrior__body__actor__armed_walk_see__omni__8f__256.png"
+    },
+    {
+      "semantic": "warrior",
+      "logical_state": "armed_walk",
+      "direction": "SE",
+      "animation_name": "warrior_armed_walk",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_warrior",
+      "state_id": "armed_walk_se",
+      "source_files": [
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SE/warrior_armed_walk_SE_315.0_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SE/warrior_armed_walk_SE_315.0_1.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SE/warrior_armed_walk_SE_315.0_2.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SE/warrior_armed_walk_SE_315.0_3.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SE/warrior_armed_walk_SE_315.0_4.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SE/warrior_armed_walk_SE_315.0_5.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SE/warrior_armed_walk_SE_315.0_6.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SE/warrior_armed_walk_SE_315.0_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_warrior/armed_walk_se_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_warrior/armed_walk_se.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "SE"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_warrior/runtime/body/actor/dev_lop_warrior__body__actor__armed_walk_se__omni__8f__256.png"
+    },
+    {
+      "semantic": "warrior",
+      "logical_state": "armed_walk",
+      "direction": "SSE",
+      "animation_name": "warrior_armed_walk",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_warrior",
+      "state_id": "armed_walk_sse",
+      "source_files": [
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSE/warrior_armed_walk_SSE_292.5_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSE/warrior_armed_walk_SSE_292.5_1.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSE/warrior_armed_walk_SSE_292.5_2.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSE/warrior_armed_walk_SSE_292.5_3.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSE/warrior_armed_walk_SSE_292.5_4.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSE/warrior_armed_walk_SSE_292.5_5.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSE/warrior_armed_walk_SSE_292.5_6.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSE/warrior_armed_walk_SSE_292.5_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_warrior/armed_walk_sse_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_warrior/armed_walk_sse.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "SSE"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_warrior/runtime/body/actor/dev_lop_warrior__body__actor__armed_walk_sse__omni__8f__256.png"
+    },
+    {
+      "semantic": "warrior",
+      "logical_state": "armed_walk",
+      "direction": "S",
+      "animation_name": "warrior_armed_walk",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_warrior",
+      "state_id": "armed_walk_s",
+      "source_files": [
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/S/warrior_armed_walk_S_270.0_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/S/warrior_armed_walk_S_270.0_1.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/S/warrior_armed_walk_S_270.0_2.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/S/warrior_armed_walk_S_270.0_3.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/S/warrior_armed_walk_S_270.0_4.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/S/warrior_armed_walk_S_270.0_5.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/S/warrior_armed_walk_S_270.0_6.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/S/warrior_armed_walk_S_270.0_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_warrior/armed_walk_s_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_warrior/armed_walk_s.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "S"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_warrior/runtime/body/actor/dev_lop_warrior__body__actor__armed_walk_s__omni__8f__256.png"
+    },
+    {
+      "semantic": "warrior",
+      "logical_state": "armed_walk",
+      "direction": "SSW",
+      "animation_name": "warrior_armed_walk",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_warrior",
+      "state_id": "armed_walk_ssw",
+      "source_files": [
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSW/warrior_armed_walk_SSW_247.5_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSW/warrior_armed_walk_SSW_247.5_1.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSW/warrior_armed_walk_SSW_247.5_2.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSW/warrior_armed_walk_SSW_247.5_3.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSW/warrior_armed_walk_SSW_247.5_4.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSW/warrior_armed_walk_SSW_247.5_5.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSW/warrior_armed_walk_SSW_247.5_6.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSW/warrior_armed_walk_SSW_247.5_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_warrior/armed_walk_ssw_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_warrior/armed_walk_ssw.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "SSW"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_warrior/runtime/body/actor/dev_lop_warrior__body__actor__armed_walk_ssw__omni__8f__256.png"
+    },
+    {
+      "semantic": "warrior",
+      "logical_state": "armed_walk",
+      "direction": "SW",
+      "animation_name": "warrior_armed_walk",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_warrior",
+      "state_id": "armed_walk_sw",
+      "source_files": [
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SW/warrior_armed_walk_SW_225.0_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SW/warrior_armed_walk_SW_225.0_1.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SW/warrior_armed_walk_SW_225.0_2.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SW/warrior_armed_walk_SW_225.0_3.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SW/warrior_armed_walk_SW_225.0_4.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SW/warrior_armed_walk_SW_225.0_5.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SW/warrior_armed_walk_SW_225.0_6.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SW/warrior_armed_walk_SW_225.0_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_warrior/armed_walk_sw_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_warrior/armed_walk_sw.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "SW"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_warrior/runtime/body/actor/dev_lop_warrior__body__actor__armed_walk_sw__omni__8f__256.png"
+    },
+    {
+      "semantic": "warrior",
+      "logical_state": "armed_walk",
+      "direction": "SWW",
+      "animation_name": "warrior_armed_walk",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_warrior",
+      "state_id": "armed_walk_sww",
+      "source_files": [
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SWW/warrior_armed_walk_SWW_202.5_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SWW/warrior_armed_walk_SWW_202.5_1.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SWW/warrior_armed_walk_SWW_202.5_2.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SWW/warrior_armed_walk_SWW_202.5_3.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SWW/warrior_armed_walk_SWW_202.5_4.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SWW/warrior_armed_walk_SWW_202.5_5.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SWW/warrior_armed_walk_SWW_202.5_6.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SWW/warrior_armed_walk_SWW_202.5_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_warrior/armed_walk_sww_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_warrior/armed_walk_sww.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "SWW"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_warrior/runtime/body/actor/dev_lop_warrior__body__actor__armed_walk_sww__omni__8f__256.png"
+    },
+    {
+      "semantic": "warrior",
+      "logical_state": "armed_walk",
+      "direction": "W",
+      "animation_name": "warrior_armed_walk",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_warrior",
+      "state_id": "armed_walk_w",
+      "source_files": [
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/W/warrior_armed_walk_W_180.0_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/W/warrior_armed_walk_W_180.0_1.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/W/warrior_armed_walk_W_180.0_2.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/W/warrior_armed_walk_W_180.0_3.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/W/warrior_armed_walk_W_180.0_4.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/W/warrior_armed_walk_W_180.0_5.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/W/warrior_armed_walk_W_180.0_6.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/W/warrior_armed_walk_W_180.0_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_warrior/armed_walk_w_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_warrior/armed_walk_w.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "W"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_warrior/runtime/body/actor/dev_lop_warrior__body__actor__armed_walk_w__omni__8f__256.png"
+    },
+    {
+      "semantic": "warrior",
+      "logical_state": "armed_walk",
+      "direction": "NWW",
+      "animation_name": "warrior_armed_walk",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_warrior",
+      "state_id": "armed_walk_nww",
+      "source_files": [
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NWW/warrior_armed_walk_NWW_157.5_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NWW/warrior_armed_walk_NWW_157.5_1.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NWW/warrior_armed_walk_NWW_157.5_2.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NWW/warrior_armed_walk_NWW_157.5_3.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NWW/warrior_armed_walk_NWW_157.5_4.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NWW/warrior_armed_walk_NWW_157.5_5.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NWW/warrior_armed_walk_NWW_157.5_6.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NWW/warrior_armed_walk_NWW_157.5_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_warrior/armed_walk_nww_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_warrior/armed_walk_nww.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "NWW"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_warrior/runtime/body/actor/dev_lop_warrior__body__actor__armed_walk_nww__omni__8f__256.png"
+    },
+    {
+      "semantic": "warrior",
+      "logical_state": "armed_walk",
+      "direction": "NW",
+      "animation_name": "warrior_armed_walk",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_warrior",
+      "state_id": "armed_walk_nw",
+      "source_files": [
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NW/warrior_armed_walk_NW_135.0_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NW/warrior_armed_walk_NW_135.0_1.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NW/warrior_armed_walk_NW_135.0_2.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NW/warrior_armed_walk_NW_135.0_3.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NW/warrior_armed_walk_NW_135.0_4.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NW/warrior_armed_walk_NW_135.0_5.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NW/warrior_armed_walk_NW_135.0_6.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NW/warrior_armed_walk_NW_135.0_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_warrior/armed_walk_nw_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_warrior/armed_walk_nw.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "NW"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_warrior/runtime/body/actor/dev_lop_warrior__body__actor__armed_walk_nw__omni__8f__256.png"
+    },
+    {
+      "semantic": "warrior",
+      "logical_state": "armed_walk",
+      "direction": "NNW",
+      "animation_name": "warrior_armed_walk",
+      "fps": 8,
+      "loop": true,
+      "family_id": "dev_lop_warrior",
+      "state_id": "armed_walk_nnw",
+      "source_files": [
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNW/warrior_armed_walk_NNW_112.5_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNW/warrior_armed_walk_NNW_112.5_1.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNW/warrior_armed_walk_NNW_112.5_2.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNW/warrior_armed_walk_NNW_112.5_3.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNW/warrior_armed_walk_NNW_112.5_4.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNW/warrior_armed_walk_NNW_112.5_5.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNW/warrior_armed_walk_NNW_112.5_6.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNW/warrior_armed_walk_NNW_112.5_7.png"
+      ],
+      "source_master": "custodian/asset_drop/source_work/dev/lords_of_pain/dev_lop_warrior/armed_walk_nnw_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/dev_lop_warrior/armed_walk_nnw.png",
+      "dimensions": [
+        2048,
+        256
+      ],
+      "frame_size": [
+        256,
+        256
+      ],
+      "frame_count": 8,
+      "animated": true,
+      "directions": [
+        "NNW"
+      ],
+      "license": "archive/dev/LordsOfPain/Licence.txt",
+      "runtime_path": "res://content/sprites/dev/lords_of_pain/dev_lop_warrior/runtime/body/actor/dev_lop_warrior__body__actor__armed_walk_nnw__omni__8f__256.png"
+    }
+  ]
+}

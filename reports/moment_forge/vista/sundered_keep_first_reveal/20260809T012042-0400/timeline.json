@@ -1,0 +1,67 @@
+[
+	{
+		"data": {
+			"authored_action": {
+				"action": "capture_marker",
+				"name": "first_reveal_threshold",
+				"tick": 16.0
+			},
+			"moment_tick": 16,
+			"result": {
+				"action": "capture_marker",
+				"ok": true,
+				"tick": 16
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 16
+	},
+	{
+		"data": {
+			"from": "ARMED",
+			"to": "CAPTURING"
+		},
+		"kind": "performance_incident_state_changed",
+		"tick": 26
+	},
+	{
+		"data": {
+			"phase": "baseline",
+			"preroll_samples": 30,
+			"trigger": "automatic"
+		},
+		"kind": "performance_incident_started",
+		"tick": 26
+	},
+	{
+		"data": {
+			"application_focused": false,
+			"duration_ms": 2111.714,
+			"overlay_visible": false,
+			"phase": "baseline",
+			"reason": "focus_out",
+			"time_scale": 1.0,
+			"tree_paused": false,
+			"uptime_sec": 19.635
+		},
+		"kind": "performance_external_stall",
+		"tick": 68
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "finish",
+				"tick": 238.0
+			},
+			"moment_tick": 238,
+			"result": {
+				"action": "finish",
+				"finish": true,
+				"ok": true,
+				"tick": 238
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 238
+	}
+]

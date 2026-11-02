@@ -1,0 +1,218 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "district_transfer_frame",
+  "kind": "world_prop",
+  "runtime": {
+    "domain": "sprites/environment/structure",
+    "owner": "district_transfer_frame",
+    "template": "{domain}/{owner}/runtime/{layer}/{action_group}/{filename}",
+    "filename_policy": "template",
+    "filename_template": "{owner}__{layer}__{action_group}__{variant}__{direction}__{frames}f__{frame_width}x{frame_height}.png"
+  },
+  "canvas": {
+    "width": 192,
+    "height": 256
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "body": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "body",
+      "layout": "copy",
+      "frame_width": 192,
+      "frame_height": 256,
+      "frames": 1
+    },
+    "threshold": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "threshold",
+      "layout": "copy",
+      "frame_width": 160,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "contact_shadow": {
+      "required": true,
+      "layer": "fx",
+      "action_group": "structure",
+      "variant": "contact_shadow",
+      "layout": "copy",
+      "frame_width": 192,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "aperture_loop": {
+      "required": true,
+      "layer": "fx",
+      "action_group": "interaction",
+      "variant": "aperture_loop",
+      "layout": "horizontal_strip",
+      "animation": true,
+      "frames": 8,
+      "fps": 7,
+      "frame_width": 96,
+      "frame_height": 160
+    },
+    "boot": {
+      "required": true,
+      "layer": "fx",
+      "action_group": "interaction",
+      "variant": "boot",
+      "layout": "horizontal_strip",
+      "animation": true,
+      "frames": 6,
+      "fps": 9,
+      "frame_width": 96,
+      "frame_height": 160
+    },
+    "failure": {
+      "required": true,
+      "layer": "fx",
+      "action_group": "interaction",
+      "variant": "failure",
+      "layout": "horizontal_strip",
+      "animation": true,
+      "frames": 6,
+      "fps": 8,
+      "frame_width": 96,
+      "frame_height": 160
+    },
+    "emissive_dead": {
+      "required": true,
+      "layer": "fx",
+      "action_group": "state",
+      "variant": "emissive_dead",
+      "layout": "copy",
+      "frame_width": 192,
+      "frame_height": 256,
+      "frames": 1
+    },
+    "emissive_standby": {
+      "required": true,
+      "layer": "fx",
+      "action_group": "state",
+      "variant": "emissive_standby",
+      "layout": "copy",
+      "frame_width": 192,
+      "frame_height": 256,
+      "frames": 1
+    },
+    "emissive_acquiring": {
+      "required": true,
+      "layer": "fx",
+      "action_group": "state",
+      "variant": "emissive_acquiring",
+      "layout": "copy",
+      "frame_width": 192,
+      "frame_height": 256,
+      "frames": 1
+    },
+    "emissive_active": {
+      "required": true,
+      "layer": "fx",
+      "action_group": "state",
+      "variant": "emissive_active",
+      "layout": "copy",
+      "frame_width": 192,
+      "frame_height": 256,
+      "frames": 1
+    },
+    "pedestal": {
+      "required": true,
+      "layer": "body",
+      "action_group": "control",
+      "variant": "pedestal",
+      "layout": "copy",
+      "frame_width": 64,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "pedestal_screen_off": {
+      "required": true,
+      "layer": "fx",
+      "action_group": "control",
+      "variant": "screen_off",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "pedestal_screen_ready": {
+      "required": true,
+      "layer": "fx",
+      "action_group": "control",
+      "variant": "screen_ready",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "pedestal_screen_acquiring": {
+      "required": true,
+      "layer": "fx",
+      "action_group": "control",
+      "variant": "screen_acquiring",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "pedestal_screen_active": {
+      "required": true,
+      "layer": "fx",
+      "action_group": "control",
+      "variant": "screen_active",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "route_plate": {
+      "required": true,
+      "layer": "body",
+      "action_group": "control",
+      "variant": "route_plate",
+      "layout": "copy",
+      "frame_width": 96,
+      "frame_height": 32,
+      "frames": 1
+    },
+    "service_junction": {
+      "required": true,
+      "layer": "body",
+      "action_group": "control",
+      "variant": "service_junction",
+      "layout": "copy",
+      "frame_width": 64,
+      "frame_height": 64,
+      "frames": 1
+    },
+    "cable_feed_left": {
+      "required": true,
+      "layer": "body",
+      "action_group": "dressing",
+      "variant": "cable_feed_left",
+      "layout": "copy",
+      "frame_width": 96,
+      "frame_height": 128,
+      "frames": 1
+    },
+    "cable_feed_right": {
+      "required": true,
+      "layer": "body",
+      "action_group": "dressing",
+      "variant": "cable_feed_right",
+      "layout": "copy",
+      "frame_width": 96,
+      "frame_height": 128,
+      "frames": 1
+    }
+  },
+  "aliases": {},
+  "consumers": []
+}

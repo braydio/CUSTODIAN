@@ -1,0 +1,166 @@
+{
+  "schema": "custodian.game32.ui_domain_manifest.v1",
+  "set": "ui_black_reliquary",
+  "domain": "icon",
+  "base_path": "res://content/ui/custodian/icons",
+  "asset_count": 10,
+  "assets": [
+    {
+      "id": "icon_gate_locked",
+      "runtime_path": "res://content/ui/custodian/icons/icon_gate_locked.png",
+      "metadata_path": "res://content/ui/custodian/icons/icon_gate_locked.game32.json",
+      "size_px": [
+        126,
+        114
+      ],
+      "ui_role": "world_icon",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "gate",
+        "locked",
+        "red"
+      ]
+    },
+    {
+      "id": "icon_gate_open",
+      "runtime_path": "res://content/ui/custodian/icons/icon_gate_open.png",
+      "metadata_path": "res://content/ui/custodian/icons/icon_gate_open.game32.json",
+      "size_px": [
+        113,
+        111
+      ],
+      "ui_role": "world_icon",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "gate",
+        "open",
+        "cyan"
+      ]
+    },
+    {
+      "id": "icon_stairs_up",
+      "runtime_path": "res://content/ui/custodian/icons/icon_stairs_up.png",
+      "metadata_path": "res://content/ui/custodian/icons/icon_stairs_up.game32.json",
+      "size_px": [
+        98,
+        113
+      ],
+      "ui_role": "world_icon",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "stairs",
+        "up",
+        "green"
+      ]
+    },
+    {
+      "id": "icon_stairs_down",
+      "runtime_path": "res://content/ui/custodian/icons/icon_stairs_down.png",
+      "metadata_path": "res://content/ui/custodian/icons/icon_stairs_down.game32.json",
+      "size_px": [
+        93,
+        95
+      ],
+      "ui_role": "world_icon",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "stairs",
+        "down",
+        "purple"
+      ]
+    },
+    {
+      "id": "icon_return_mooring",
+      "runtime_path": "res://content/ui/custodian/icons/icon_return_mooring.png",
+      "metadata_path": "res://content/ui/custodian/icons/icon_return_mooring.game32.json",
+      "size_px": [
+        120,
+        99
+      ],
+      "ui_role": "world_icon",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "return",
+        "mooring",
+        "cyan"
+      ]
+    },
+    {
+      "id": "icon_key_item",
+      "runtime_path": "res://content/ui/custodian/icons/icon_key_item.png",
+      "metadata_path": "res://content/ui/custodian/icons/icon_key_item.game32.json",
+      "size_px": [
+        46,
+        109
+      ],
+      "ui_role": "world_icon",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "key",
+        "item"
+      ]
+    },
+    {
+      "id": "icon_choke_point",
+      "runtime_path": "res://content/ui/custodian/icons/icon_choke_point.png",
+      "metadata_path": "res://content/ui/custodian/icons/icon_choke_point.game32.json",
+      "size_px": [
+        108,
+        107
+      ],
+      "ui_role": "world_icon",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "choke",
+        "point"
+      ]
+    },
+    {
+      "id": "icon_hazard",
+      "runtime_path": "res://content/ui/custodian/icons/icon_hazard.png",
+      "metadata_path": "res://content/ui/custodian/icons/icon_hazard.game32.json",
+      "size_px": [
+        107,
+        108
+      ],
+      "ui_role": "world_icon",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "hazard",
+        "red"
+      ]
+    },
+    {
+      "id": "icon_objective",
+      "runtime_path": "res://content/ui/custodian/icons/icon_objective.png",
+      "metadata_path": "res://content/ui/custodian/icons/icon_objective.game32.json",
+      "size_px": [
+        102,
+        110
+      ],
+      "ui_role": "world_icon",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "objective",
+        "gold"
+      ]
+    },
+    {
+      "id": "compass_rose_small",
+      "runtime_path": "res://content/ui/custodian/icons/compass_rose_small.png",
+      "metadata_path": "res://content/ui/custodian/icons/compass_rose_small.game32.json",
+      "size_px": [
+        111,
+        127
+      ],
+      "ui_role": "map_icon",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "compass",
+        "map"
+      ]
+    }
+  ],
+  "generated_at_utc": "2026-06-02T03:47:46.726543+00:00",
+  "generator": "custodian/tools/art/extract_ui_black_reliquary_game32.py"
+}

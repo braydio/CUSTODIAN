@@ -1,0 +1,153 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260820T214204Z_ade5d5a1",
+  "timestamp": "2026-08-20T21:42:04.849940+00:00",
+  "family": "void_cliff_face",
+  "kind": "tile",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/void_cliff_face/body_01.png",
+      "sha256": "5153215101231b3dae39612dd44b3b4e9b089f3c92d859804b69d87487de948d"
+    },
+    {
+      "path": "asset_drop/inbox/void_cliff_face/body_02.png",
+      "sha256": "88581275a07d61e21f63807f3072acbbdddeaed5d2712638a9102937187bfa00"
+    },
+    {
+      "path": "asset_drop/inbox/void_cliff_face/body_cracked_01.png",
+      "sha256": "97ddb262af2906ab38736fc70ac0b167e3f781cb058ea436b3400d4e246a876f"
+    },
+    {
+      "path": "asset_drop/inbox/void_cliff_face/bottom_01.png",
+      "sha256": "88709bb7690f21a6c3a31fba724a8b2397acd7cc2ca3af7df89d9c71da26ab72"
+    },
+    {
+      "path": "asset_drop/inbox/void_cliff_face/bottom_broken_01.png",
+      "sha256": "0ff278c1369ee6aab32fa1ce4ffa1a55d3549b30e78e78a43e31fecf281d94c4"
+    },
+    {
+      "path": "asset_drop/inbox/void_cliff_face/top_01.png",
+      "sha256": "f90c8fc734ea586a0e9244e8a669f567a5b2ef8b6f76521dd0ae75627aeb737c"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "body_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "void_cliff_face",
+        "tile",
+        "body",
+        "fascia",
+        "body_01",
+        "omni"
+      ],
+      "path": "content/tiles/mountain_cliffs/void_fascia/void_cliff_face_body_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "5153215101231b3dae39612dd44b3b4e9b089f3c92d859804b69d87487de948d",
+      "operation": "create",
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "body_02",
+      "direction": "omni",
+      "semantic_identity": [
+        "void_cliff_face",
+        "tile",
+        "body",
+        "fascia",
+        "body_02",
+        "omni"
+      ],
+      "path": "content/tiles/mountain_cliffs/void_fascia/void_cliff_face_body_02_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "88581275a07d61e21f63807f3072acbbdddeaed5d2712638a9102937187bfa00",
+      "operation": "create",
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "body_cracked_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "void_cliff_face",
+        "tile",
+        "body",
+        "fascia",
+        "body_cracked_01",
+        "omni"
+      ],
+      "path": "content/tiles/mountain_cliffs/void_fascia/void_cliff_face_body_cracked_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "97ddb262af2906ab38736fc70ac0b167e3f781cb058ea436b3400d4e246a876f",
+      "operation": "create",
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "bottom_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "void_cliff_face",
+        "tile",
+        "body",
+        "fascia",
+        "bottom_01",
+        "omni"
+      ],
+      "path": "content/tiles/mountain_cliffs/void_fascia/void_cliff_face_bottom_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "88709bb7690f21a6c3a31fba724a8b2397acd7cc2ca3af7df89d9c71da26ab72",
+      "operation": "create",
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "bottom_broken_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "void_cliff_face",
+        "tile",
+        "body",
+        "fascia",
+        "bottom_broken_01",
+        "omni"
+      ],
+      "path": "content/tiles/mountain_cliffs/void_fascia/void_cliff_face_bottom_broken_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "0ff278c1369ee6aab32fa1ce4ffa1a55d3549b30e78e78a43e31fecf281d94c4",
+      "operation": "create",
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "top_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "void_cliff_face",
+        "tile",
+        "body",
+        "fascia",
+        "top_01",
+        "omni"
+      ],
+      "path": "content/tiles/mountain_cliffs/void_fascia/void_cliff_face_top_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "f90c8fc734ea586a0e9244e8a669f567a5b2ef8b6f76521dd0ae75627aeb737c",
+      "operation": "create",
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

@@ -1,0 +1,422 @@
+[
+  {
+    "input": "vw_1.png",
+    "output": "ground_idle_s_source.png",
+    "state": "ground_idle",
+    "direction": "s",
+    "frames": 6,
+    "input_sha256": "c1928a3566dbab50d6679f53b4d5bfb697adf9bd6f6d3457b527692493062983",
+    "output_sha256": "96fa92936336d510b9a127eb3cc5d1b2ec77bfd1eac702b8578d3ce96ae2958c",
+    "input_size": [
+      2172,
+      724
+    ],
+    "output_size": [
+      1536,
+      256
+    ],
+    "input_alpha_min": 0,
+    "output_alpha_min": 0,
+    "scale": 0.34523809523809523,
+    "mode": "ground"
+  },
+  {
+    "input": "vw_2.png",
+    "output": "ground_walk_s_source.png",
+    "state": "ground_walk",
+    "direction": "s",
+    "frames": 8,
+    "input_sha256": "142d9eca9eaadc28d07e79fad8888be9200870f2b65e5ce139cc56e502029960",
+    "output_sha256": "db4b9a0dc813d69e0d094737e317fd2aaa91a9adbf0671da7efc5e1a36e794d5",
+    "input_size": [
+      2172,
+      724
+    ],
+    "output_size": [
+      2048,
+      256
+    ],
+    "input_alpha_min": 0,
+    "output_alpha_min": 0,
+    "scale": 0.3319027181688126,
+    "mode": "ground"
+  },
+  {
+    "input": "vw_3.png",
+    "output": "bite_attack_s_source.png",
+    "state": "bite_attack",
+    "direction": "s",
+    "frames": 6,
+    "input_sha256": "8c43761cb82b6baf3c9e4658fbdb7e192ce203d364dcc70585b6879cbdcd19f8",
+    "output_sha256": "bd992a00058c87972cee9c0737949c48c9fa126ee9a71fe8900762ddd5753d00",
+    "input_size": [
+      2172,
+      724
+    ],
+    "output_size": [
+      1536,
+      256
+    ],
+    "input_alpha_min": 0,
+    "output_alpha_min": 0,
+    "scale": 0.3372093023255814,
+    "mode": "ground"
+  },
+  {
+    "input": "vw_4.png",
+    "output": "perch_idle_s_source.png",
+    "state": "perch_idle",
+    "direction": "s",
+    "frames": 6,
+    "input_sha256": "d31c6ea3bae852475b28ea79e6545743b1c14a39b492cd1e6b14cf1edb062780",
+    "output_sha256": "dfe2f470563aacd2ae62f12737107ba85fd3ddc577397eb7c5f546bc84fff824",
+    "input_size": [
+      2172,
+      724
+    ],
+    "output_size": [
+      1536,
+      256
+    ],
+    "input_alpha_min": 0,
+    "output_alpha_min": 0,
+    "scale": 0.3473053892215569,
+    "mode": "ground"
+  },
+  {
+    "input": "vw_5.png",
+    "output": "hurt_s_source.png",
+    "state": "hurt",
+    "direction": "s",
+    "frames": 4,
+    "input_sha256": "145d8ed511ede0e1639392baadb23a2221a332b69a73bb2c464464abf524c168",
+    "output_sha256": "a01119c6df25d37e56ffb7c9d97834b80714424c1232c07cb35b47bacbdb02a2",
+    "input_size": [
+      2172,
+      724
+    ],
+    "output_size": [
+      1024,
+      256
+    ],
+    "input_alpha_min": 0,
+    "output_alpha_min": 0,
+    "scale": 0.3473053892215569,
+    "mode": "ground"
+  },
+  {
+    "input": "vw_6.png",
+    "output": "death_s_source.png",
+    "state": "death",
+    "direction": "s",
+    "frames": 8,
+    "input_sha256": "53e45ef17eafc62dd9ce25ff2b76bb725d5ff0a10655a62c62be3d11bfa757e5",
+    "output_sha256": "ceb0f7b04d8702d09ccd2ca67fad1419f686517a861904883ded1e8af2ab0c4d",
+    "input_size": [
+      2172,
+      724
+    ],
+    "output_size": [
+      2048,
+      256
+    ],
+    "input_alpha_min": 0,
+    "output_alpha_min": 0,
+    "scale": 0.44874274661508706,
+    "mode": "ground"
+  },
+  {
+    "input": "vw_7.png",
+    "output": "glide_s_source.png",
+    "state": "glide",
+    "direction": "s",
+    "frames": 6,
+    "input_sha256": "0041ba511d7a87c7729746f9e0a9aff4e1a0432ca700e5239abe31e38ed76194",
+    "output_sha256": "23d430d1615d5a67fd1beb1ff0c768ed596c038e51034ef69e6eee1efd11f63e",
+    "input_size": [
+      2172,
+      724
+    ],
+    "output_size": [
+      1536,
+      256
+    ],
+    "input_alpha_min": 0,
+    "output_alpha_min": 0,
+    "scale": 0.46774193548387094,
+    "mode": "air"
+  },
+  {
+    "input": "vw_8.png",
+    "output": "flap_s_source.png",
+    "state": "flap",
+    "direction": "s",
+    "frames": 8,
+    "input_sha256": "e91fb58b668976a3ee66ad6f9df8e9649bc5820455324e2efb3c6ad4d1cc73a4",
+    "output_sha256": "8d620b2592deed4e7b6527b495550adc1efa4ef80ac76ad750eade26c4bdd20c",
+    "input_size": [
+      2172,
+      724
+    ],
+    "output_size": [
+      2048,
+      256
+    ],
+    "input_alpha_min": 0,
+    "output_alpha_min": 0,
+    "scale": 0.4063047285464098,
+    "mode": "air"
+  },
+  {
+    "input": "vw_9.png",
+    "output": "dive_windup_s_source.png",
+    "state": "dive_windup",
+    "direction": "s",
+    "frames": 4,
+    "input_sha256": "54cba61d1e7e0efb4737725300127fd4d52e5bf5c56e189869f16edd6f518e6c",
+    "output_sha256": "e6d22dd92ab598416ea4206d6cbd45576b5e4ae65483f4ec595273147eb4c9b2",
+    "input_size": [
+      2172,
+      724
+    ],
+    "output_size": [
+      1024,
+      256
+    ],
+    "input_alpha_min": 0,
+    "output_alpha_min": 0,
+    "scale": 0.33770014556040756,
+    "mode": "air"
+  },
+  {
+    "input": "vw_10.png",
+    "output": "dive_strike_s_source.png",
+    "state": "dive_strike",
+    "direction": "s",
+    "frames": 6,
+    "input_sha256": "6b261505b637c28ee7ccfbe01870abbed28a84a4c521d2bcbc3668aeea03a8a5",
+    "output_sha256": "8583dec387ea3dcfc9d3e9d1a7787e7db49693cf21e180e0890012b5b4da7bf6",
+    "input_size": [
+      2172,
+      724
+    ],
+    "output_size": [
+      1536,
+      256
+    ],
+    "input_alpha_min": 0,
+    "output_alpha_min": 0,
+    "scale": 0.3347763347763348,
+    "mode": "air"
+  },
+  {
+    "input": "vw_11.png",
+    "output": "climb_out_s_source.png",
+    "state": "climb_out",
+    "direction": "s",
+    "frames": 6,
+    "input_sha256": "3fb42ca09ec66f5f78d2df2cded32a04d42dadb3a1b7e37c82f7b8f115189a2f",
+    "output_sha256": "927ec0daf42ab156a8a643d890e2c9fd2b647aa384223868deecc21279656247",
+    "input_size": [
+      2172,
+      724
+    ],
+    "output_size": [
+      1536,
+      256
+    ],
+    "input_alpha_min": 0,
+    "output_alpha_min": 0,
+    "scale": 0.34678624813153963,
+    "mode": "air"
+  },
+  {
+    "input": "vw_12.png",
+    "output": "land_s_source.png",
+    "state": "land",
+    "direction": "s",
+    "frames": 8,
+    "input_sha256": "544d010fe568a0d05cd07b421aec4a796a262fe0dcdcf215f64da062c3f7eea0",
+    "output_sha256": "c69290a4020e2f6130f7118a9b73aa524c4ff627afaa847e7a0409ba80d06baa",
+    "input_size": [
+      2172,
+      724
+    ],
+    "output_size": [
+      2048,
+      256
+    ],
+    "input_alpha_min": 0,
+    "output_alpha_min": 0,
+    "scale": 0.40418118466898956,
+    "mode": "transition"
+  },
+  {
+    "input": "vw_13.png",
+    "output": "takeoff_s_source.png",
+    "state": "takeoff",
+    "direction": "s",
+    "frames": 8,
+    "input_sha256": "d761cfc0c01dc8e50c4e9fe70653072246fd620c000e091594383d193de4b9a2",
+    "output_sha256": "3e27e0df43595a0f7de16729ca49ccc6fd502439b0d601e62cb47ff2b59b404c",
+    "input_size": [
+      2172,
+      724
+    ],
+    "output_size": [
+      2048,
+      256
+    ],
+    "input_alpha_min": 0,
+    "output_alpha_min": 0,
+    "scale": 0.4352720450281426,
+    "mode": "transition"
+  },
+  {
+    "input": "vw_14.png",
+    "output": "air_stagger_s_source.png",
+    "state": "air_stagger",
+    "direction": "s",
+    "frames": 5,
+    "input_sha256": "e4febf78db5b917224e9397fafc61df1081aa959b44cb54b166e1ab790ce0dc5",
+    "output_sha256": "75a1e8cf36aec0d6d01843aa5fcf918aa201a36ba0250917d9b19977f6f93619",
+    "input_size": [
+      2172,
+      724
+    ],
+    "output_size": [
+      1280,
+      256
+    ],
+    "input_alpha_min": 0,
+    "output_alpha_min": 0,
+    "scale": 0.35968992248062015,
+    "mode": "air"
+  },
+  {
+    "input": "vw_15.png",
+    "output": "ground_idle_n_source.png",
+    "state": "ground_idle",
+    "direction": "n",
+    "frames": 6,
+    "input_sha256": "e060dd04ea97ffb000f7c0349a248ffc7d052faf40093cf8c1992f0423016ebb",
+    "output_sha256": "845d4c69a485ebb3c1c0070b13eaff580b90c0c5e6e51b2abd4da30815225563",
+    "input_size": [
+      2172,
+      724
+    ],
+    "output_size": [
+      1536,
+      256
+    ],
+    "input_alpha_min": 0,
+    "output_alpha_min": 0,
+    "scale": 0.3386861313868613,
+    "mode": "ground"
+  },
+  {
+    "input": "vw_16.png",
+    "output": "ground_walk_n_source.png",
+    "state": "ground_walk",
+    "direction": "n",
+    "frames": 8,
+    "input_sha256": "6cc21720ebd036a460a755f1a7c5a8be343b4d86ce4e8eaa584eaa5cf8076171",
+    "output_sha256": "989d417b02bd735e889658d6480c5edd916ca3734999a4822e195407f3e3f1d5",
+    "input_size": [
+      2172,
+      724
+    ],
+    "output_size": [
+      2048,
+      256
+    ],
+    "input_alpha_min": 0,
+    "output_alpha_min": 0,
+    "scale": 0.34992458521870284,
+    "mode": "ground"
+  },
+  {
+    "input": "vw_17.png",
+    "output": "bite_attack_n_source.png",
+    "state": "bite_attack",
+    "direction": "n",
+    "frames": 6,
+    "input_sha256": "1232477b70a60b3f24e9fc66a3dd38c6b949466cdb6054620cf561487b890c48",
+    "output_sha256": "083d3fed84fbde69e980286ff10bfe009b2e96208c1b6be9233c943f401c5333",
+    "input_size": [
+      2172,
+      724
+    ],
+    "output_size": [
+      1536,
+      256
+    ],
+    "input_alpha_min": 0,
+    "output_alpha_min": 0,
+    "scale": 0.35419847328244275,
+    "mode": "ground"
+  },
+  {
+    "input": "vw_18.png",
+    "output": "perch_idle_n_source.png",
+    "state": "perch_idle",
+    "direction": "n",
+    "frames": 6,
+    "input_sha256": "fcbdbfec5a68dbd56db53570d49a80f005739056862792446bb1ea180810ddda",
+    "output_sha256": "9ed31a3e20f581b7b635caeb143608c771703c789de4da4d4c37762c5c1c85f4",
+    "input_size": [
+      2172,
+      724
+    ],
+    "output_size": [
+      1536,
+      256
+    ],
+    "input_alpha_min": 0,
+    "output_alpha_min": 0,
+    "scale": 0.3386861313868613,
+    "mode": "ground"
+  },
+  {
+    "input": "vw_19.png",
+    "output": "hurt_n_source.png",
+    "state": "hurt",
+    "direction": "n",
+    "frames": 4,
+    "input_sha256": "81a2c7ebb42e91cad49f81e31857f552b8dd46c51f300f4012b4c4ea21d5b0b7",
+    "output_sha256": "7a7ca56bd92c495f0a0048722f36124a46cadba69c45e3eb73abc3eaf66c5713",
+    "input_size": [
+      2172,
+      724
+    ],
+    "output_size": [
+      1024,
+      256
+    ],
+    "input_alpha_min": 0,
+    "output_alpha_min": 0,
+    "scale": 0.3406754772393539,
+    "mode": "ground"
+  },
+  {
+    "input": "vw_20.png",
+    "output": "death_n_source.png",
+    "state": "death",
+    "direction": "n",
+    "frames": 8,
+    "input_sha256": "2374c5cb2e3f7a2bec73ae23fe324dac3167cd136b0f045fa0a2d4ca5ae1015e",
+    "output_sha256": "f1b2deb9a435f5586b8a37d16c737d0994713b5c27268487baec050b31d0eeb9",
+    "input_size": [
+      2172,
+      724
+    ],
+    "output_size": [
+      2048,
+      256
+    ],
+    "input_alpha_min": 0,
+    "output_alpha_min": 0,
+    "scale": 0.34678624813153963,
+    "mode": "ground"
+  }
+]

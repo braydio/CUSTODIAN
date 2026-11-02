@@ -1,0 +1,5633 @@
+{
+  "schema": "game32.gothic_master_manifest.v1",
+  "generated_at_utc": "2026-05-24T07:29:42.175883+00:00",
+  "total_asset_count": 618,
+  "section_count": 10,
+  "sections": {
+    "tiles": {
+      "base_path": "res://content/tiles/gothic",
+      "count": 137,
+      "manifest": "res://content/tiles/gothic/gothic_tilesheet_manifest.game32.json",
+      "assets": [
+        {
+          "id": "_review_gothic_contact_sheet",
+          "path": "tiles/gothic/_review_gothic_contact_sheet.png",
+          "subtype": "_review_gothic_contact_sheet.png",
+          "pixel_size": {
+            "w": 768,
+            "h": 2040
+          }
+        },
+        {
+          "id": "floor_detail_001",
+          "path": "tiles/gothic/decals/floor/floor_detail_001.png",
+          "subtype": "decals/floor",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_detail_002",
+          "path": "tiles/gothic/decals/floor/floor_detail_002.png",
+          "subtype": "decals/floor",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_detail_003",
+          "path": "tiles/gothic/decals/floor/floor_detail_003.png",
+          "subtype": "decals/floor",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_detail_004",
+          "path": "tiles/gothic/decals/floor/floor_detail_004.png",
+          "subtype": "decals/floor",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_detail_005",
+          "path": "tiles/gothic/decals/floor/floor_detail_005.png",
+          "subtype": "decals/floor",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_detail_006",
+          "path": "tiles/gothic/decals/floor/floor_detail_006.png",
+          "subtype": "decals/floor",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_detail_007",
+          "path": "tiles/gothic/decals/floor/floor_detail_007.png",
+          "subtype": "decals/floor",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_detail_008",
+          "path": "tiles/gothic/decals/floor/floor_detail_008.png",
+          "subtype": "decals/floor",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_detail_009",
+          "path": "tiles/gothic/decals/floor/floor_detail_009.png",
+          "subtype": "decals/floor",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_detail_010",
+          "path": "tiles/gothic/decals/floor/floor_detail_010.png",
+          "subtype": "decals/floor",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_detail_011",
+          "path": "tiles/gothic/decals/floor/floor_detail_011.png",
+          "subtype": "decals/floor",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_detail_012",
+          "path": "tiles/gothic/decals/floor/floor_detail_012.png",
+          "subtype": "decals/floor",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_detail_013",
+          "path": "tiles/gothic/decals/floor/floor_detail_013.png",
+          "subtype": "decals/floor",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_detail_014",
+          "path": "tiles/gothic/decals/floor/floor_detail_014.png",
+          "subtype": "decals/floor",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_detail_015",
+          "path": "tiles/gothic/decals/floor/floor_detail_015.png",
+          "subtype": "decals/floor",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_detail_016",
+          "path": "tiles/gothic/decals/floor/floor_detail_016.png",
+          "subtype": "decals/floor",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_detail_017",
+          "path": "tiles/gothic/decals/floor/floor_detail_017.png",
+          "subtype": "decals/floor",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_detail_018",
+          "path": "tiles/gothic/decals/floor/floor_detail_018.png",
+          "subtype": "decals/floor",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_detail_019",
+          "path": "tiles/gothic/decals/floor/floor_detail_019.png",
+          "subtype": "decals/floor",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_detail_020",
+          "path": "tiles/gothic/decals/floor/floor_detail_020.png",
+          "subtype": "decals/floor",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "ritual_floor_decal_001",
+          "path": "tiles/gothic/decals/ritual/ritual_floor_decal_001.png",
+          "subtype": "decals/ritual",
+          "pixel_size": {
+            "w": 174,
+            "h": 65
+          }
+        },
+        {
+          "id": "ritual_floor_decal_002",
+          "path": "tiles/gothic/decals/ritual/ritual_floor_decal_002.png",
+          "subtype": "decals/ritual",
+          "pixel_size": {
+            "w": 85,
+            "h": 63
+          }
+        },
+        {
+          "id": "ritual_floor_decal_003",
+          "path": "tiles/gothic/decals/ritual/ritual_floor_decal_003.png",
+          "subtype": "decals/ritual",
+          "pixel_size": {
+            "w": 49,
+            "h": 40
+          }
+        },
+        {
+          "id": "ritual_floor_decal_004",
+          "path": "tiles/gothic/decals/ritual/ritual_floor_decal_004.png",
+          "subtype": "decals/ritual",
+          "pixel_size": {
+            "w": 82,
+            "h": 58
+          }
+        },
+        {
+          "id": "gothic_floor_overlay_001",
+          "path": "tiles/gothic/floor_overlay/gothic_floor_overlay_001.png",
+          "subtype": "floor_overlay/gothic_floor_overlay_001.png",
+          "pixel_size": {
+            "w": 70,
+            "h": 71
+          }
+        },
+        {
+          "id": "gothic_floor_overlay_004",
+          "path": "tiles/gothic/floor_overlay/gothic_floor_overlay_004.png",
+          "subtype": "floor_overlay/gothic_floor_overlay_004.png",
+          "pixel_size": {
+            "w": 67,
+            "h": 71
+          }
+        },
+        {
+          "id": "gothic_floor_overlay_013",
+          "path": "tiles/gothic/floor_overlay/gothic_floor_overlay_013.png",
+          "subtype": "floor_overlay/gothic_floor_overlay_013.png",
+          "pixel_size": {
+            "w": 66,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_floor_overlay_014",
+          "path": "tiles/gothic/floor_overlay/gothic_floor_overlay_014.png",
+          "subtype": "floor_overlay/gothic_floor_overlay_014.png",
+          "pixel_size": {
+            "w": 66,
+            "h": 73
+          }
+        },
+        {
+          "id": "gothic_floor_overlay_017",
+          "path": "tiles/gothic/floor_overlay/gothic_floor_overlay_017.png",
+          "subtype": "floor_overlay/gothic_floor_overlay_017.png",
+          "pixel_size": {
+            "w": 70,
+            "h": 71
+          }
+        },
+        {
+          "id": "gothic_floor_overlay_018",
+          "path": "tiles/gothic/floor_overlay/gothic_floor_overlay_018.png",
+          "subtype": "floor_overlay/gothic_floor_overlay_018.png",
+          "pixel_size": {
+            "w": 62,
+            "h": 71
+          }
+        },
+        {
+          "id": "gothic_floor_overlay_022",
+          "path": "tiles/gothic/floor_overlay/gothic_floor_overlay_022.png",
+          "subtype": "floor_overlay/gothic_floor_overlay_022.png",
+          "pixel_size": {
+            "w": 68,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_floor_overlay_023",
+          "path": "tiles/gothic/floor_overlay/gothic_floor_overlay_023.png",
+          "subtype": "floor_overlay/gothic_floor_overlay_023.png",
+          "pixel_size": {
+            "w": 67,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_floor_overlay_029",
+          "path": "tiles/gothic/floor_overlay/gothic_floor_overlay_029.png",
+          "subtype": "floor_overlay/gothic_floor_overlay_029.png",
+          "pixel_size": {
+            "w": 73,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_floor_overlay_034",
+          "path": "tiles/gothic/floor_overlay/gothic_floor_overlay_034.png",
+          "subtype": "floor_overlay/gothic_floor_overlay_034.png",
+          "pixel_size": {
+            "w": 62,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_floor_broken_stone_01",
+          "path": "tiles/gothic/floors/gothic_floor_broken_stone_01.png",
+          "subtype": "floors/gothic_floor_broken_stone_01.png",
+          "pixel_size": {
+            "w": 69,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_floor_broken_stone_02",
+          "path": "tiles/gothic/floors/gothic_floor_broken_stone_02.png",
+          "subtype": "floors/gothic_floor_broken_stone_02.png",
+          "pixel_size": {
+            "w": 68,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_floor_broken_stone_03",
+          "path": "tiles/gothic/floors/gothic_floor_broken_stone_03.png",
+          "subtype": "floors/gothic_floor_broken_stone_03.png",
+          "pixel_size": {
+            "w": 69,
+            "h": 71
+          }
+        },
+        {
+          "id": "gothic_floor_broken_stone_04",
+          "path": "tiles/gothic/floors/gothic_floor_broken_stone_04.png",
+          "subtype": "floors/gothic_floor_broken_stone_04.png",
+          "pixel_size": {
+            "w": 68,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_floor_broken_stone_05",
+          "path": "tiles/gothic/floors/gothic_floor_broken_stone_05.png",
+          "subtype": "floors/gothic_floor_broken_stone_05.png",
+          "pixel_size": {
+            "w": 68,
+            "h": 73
+          }
+        },
+        {
+          "id": "gothic_floor_broken_stone_06",
+          "path": "tiles/gothic/floors/gothic_floor_broken_stone_06.png",
+          "subtype": "floors/gothic_floor_broken_stone_06.png",
+          "pixel_size": {
+            "w": 68,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_floor_broken_stone_07",
+          "path": "tiles/gothic/floors/gothic_floor_broken_stone_07.png",
+          "subtype": "floors/gothic_floor_broken_stone_07.png",
+          "pixel_size": {
+            "w": 66,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_floor_broken_stone_08",
+          "path": "tiles/gothic/floors/gothic_floor_broken_stone_08.png",
+          "subtype": "floors/gothic_floor_broken_stone_08.png",
+          "pixel_size": {
+            "w": 66,
+            "h": 73
+          }
+        },
+        {
+          "id": "gothic_floor_broken_stone_09",
+          "path": "tiles/gothic/floors/gothic_floor_broken_stone_09.png",
+          "subtype": "floors/gothic_floor_broken_stone_09.png",
+          "pixel_size": {
+            "w": 67,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_floor_broken_stone_10",
+          "path": "tiles/gothic/floors/gothic_floor_broken_stone_10.png",
+          "subtype": "floors/gothic_floor_broken_stone_10.png",
+          "pixel_size": {
+            "w": 65,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_floor_dark_earth_01",
+          "path": "tiles/gothic/floors/gothic_floor_dark_earth_01.png",
+          "subtype": "floors/gothic_floor_dark_earth_01.png",
+          "pixel_size": {
+            "w": 70,
+            "h": 71
+          }
+        },
+        {
+          "id": "gothic_floor_dark_earth_02",
+          "path": "tiles/gothic/floors/gothic_floor_dark_earth_02.png",
+          "subtype": "floors/gothic_floor_dark_earth_02.png",
+          "pixel_size": {
+            "w": 68,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_floor_dark_earth_03",
+          "path": "tiles/gothic/floors/gothic_floor_dark_earth_03.png",
+          "subtype": "floors/gothic_floor_dark_earth_03.png",
+          "pixel_size": {
+            "w": 67,
+            "h": 71
+          }
+        },
+        {
+          "id": "gothic_floor_dark_earth_04",
+          "path": "tiles/gothic/floors/gothic_floor_dark_earth_04.png",
+          "subtype": "floors/gothic_floor_dark_earth_04.png",
+          "pixel_size": {
+            "w": 67,
+            "h": 71
+          }
+        },
+        {
+          "id": "gothic_floor_dark_earth_05",
+          "path": "tiles/gothic/floors/gothic_floor_dark_earth_05.png",
+          "subtype": "floors/gothic_floor_dark_earth_05.png",
+          "pixel_size": {
+            "w": 68,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_floor_dark_earth_06",
+          "path": "tiles/gothic/floors/gothic_floor_dark_earth_06.png",
+          "subtype": "floors/gothic_floor_dark_earth_06.png",
+          "pixel_size": {
+            "w": 70,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_floor_detail_01",
+          "path": "tiles/gothic/floors/gothic_floor_detail_01.png",
+          "subtype": "floors/gothic_floor_detail_01.png",
+          "pixel_size": {
+            "w": 69,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_floor_detail_02",
+          "path": "tiles/gothic/floors/gothic_floor_detail_02.png",
+          "subtype": "floors/gothic_floor_detail_02.png",
+          "pixel_size": {
+            "w": 68,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_floor_detail_03",
+          "path": "tiles/gothic/floors/gothic_floor_detail_03.png",
+          "subtype": "floors/gothic_floor_detail_03.png",
+          "pixel_size": {
+            "w": 67,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_floor_detail_04",
+          "path": "tiles/gothic/floors/gothic_floor_detail_04.png",
+          "subtype": "floors/gothic_floor_detail_04.png",
+          "pixel_size": {
+            "w": 67,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_floor_detail_05",
+          "path": "tiles/gothic/floors/gothic_floor_detail_05.png",
+          "subtype": "floors/gothic_floor_detail_05.png",
+          "pixel_size": {
+            "w": 68,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_floor_detail_06",
+          "path": "tiles/gothic/floors/gothic_floor_detail_06.png",
+          "subtype": "floors/gothic_floor_detail_06.png",
+          "pixel_size": {
+            "w": 64,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_floor_detail_07",
+          "path": "tiles/gothic/floors/gothic_floor_detail_07.png",
+          "subtype": "floors/gothic_floor_detail_07.png",
+          "pixel_size": {
+            "w": 52,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_floor_detail_08",
+          "path": "tiles/gothic/floors/gothic_floor_detail_08.png",
+          "subtype": "floors/gothic_floor_detail_08.png",
+          "pixel_size": {
+            "w": 83,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_floor_detail_09",
+          "path": "tiles/gothic/floors/gothic_floor_detail_09.png",
+          "subtype": "floors/gothic_floor_detail_09.png",
+          "pixel_size": {
+            "w": 73,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_floor_detail_10",
+          "path": "tiles/gothic/floors/gothic_floor_detail_10.png",
+          "subtype": "floors/gothic_floor_detail_10.png",
+          "pixel_size": {
+            "w": 73,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_floor_detail_11",
+          "path": "tiles/gothic/floors/gothic_floor_detail_11.png",
+          "subtype": "floors/gothic_floor_detail_11.png",
+          "pixel_size": {
+            "w": 79,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_floor_detail_12",
+          "path": "tiles/gothic/floors/gothic_floor_detail_12.png",
+          "subtype": "floors/gothic_floor_detail_12.png",
+          "pixel_size": {
+            "w": 66,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_floor_detail_13",
+          "path": "tiles/gothic/floors/gothic_floor_detail_13.png",
+          "subtype": "floors/gothic_floor_detail_13.png",
+          "pixel_size": {
+            "w": 67,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_floor_detail_14",
+          "path": "tiles/gothic/floors/gothic_floor_detail_14.png",
+          "subtype": "floors/gothic_floor_detail_14.png",
+          "pixel_size": {
+            "w": 62,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_floor_detail_15",
+          "path": "tiles/gothic/floors/gothic_floor_detail_15.png",
+          "subtype": "floors/gothic_floor_detail_15.png",
+          "pixel_size": {
+            "w": 46,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_floor_detail_16",
+          "path": "tiles/gothic/floors/gothic_floor_detail_16.png",
+          "subtype": "floors/gothic_floor_detail_16.png",
+          "pixel_size": {
+            "w": 66,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_floor_detail_17",
+          "path": "tiles/gothic/floors/gothic_floor_detail_17.png",
+          "subtype": "floors/gothic_floor_detail_17.png",
+          "pixel_size": {
+            "w": 71,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_floor_detail_18",
+          "path": "tiles/gothic/floors/gothic_floor_detail_18.png",
+          "subtype": "floors/gothic_floor_detail_18.png",
+          "pixel_size": {
+            "w": 67,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_floor_detail_19",
+          "path": "tiles/gothic/floors/gothic_floor_detail_19.png",
+          "subtype": "floors/gothic_floor_detail_19.png",
+          "pixel_size": {
+            "w": 55,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_floor_mud_gravel_01",
+          "path": "tiles/gothic/floors/gothic_floor_mud_gravel_01.png",
+          "subtype": "floors/gothic_floor_mud_gravel_01.png",
+          "pixel_size": {
+            "w": 70,
+            "h": 71
+          }
+        },
+        {
+          "id": "gothic_floor_mud_gravel_02",
+          "path": "tiles/gothic/floors/gothic_floor_mud_gravel_02.png",
+          "subtype": "floors/gothic_floor_mud_gravel_02.png",
+          "pixel_size": {
+            "w": 62,
+            "h": 71
+          }
+        },
+        {
+          "id": "gothic_floor_mud_gravel_03",
+          "path": "tiles/gothic/floors/gothic_floor_mud_gravel_03.png",
+          "subtype": "floors/gothic_floor_mud_gravel_03.png",
+          "pixel_size": {
+            "w": 58,
+            "h": 71
+          }
+        },
+        {
+          "id": "gothic_floor_mud_gravel_04",
+          "path": "tiles/gothic/floors/gothic_floor_mud_gravel_04.png",
+          "subtype": "floors/gothic_floor_mud_gravel_04.png",
+          "pixel_size": {
+            "w": 65,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_wall_corner_or_end_001",
+          "path": "tiles/gothic/wall_corner_or_end/gothic_wall_corner_or_end_001.png",
+          "subtype": "wall_corner_or_end/gothic_wall_corner_or_end_001.png",
+          "pixel_size": {
+            "w": 51,
+            "h": 96
+          }
+        },
+        {
+          "id": "gothic_wall_corner_or_end_002",
+          "path": "tiles/gothic/wall_corner_or_end/gothic_wall_corner_or_end_002.png",
+          "subtype": "wall_corner_or_end/gothic_wall_corner_or_end_002.png",
+          "pixel_size": {
+            "w": 85,
+            "h": 97
+          }
+        },
+        {
+          "id": "gothic_wall_corner_or_end_003",
+          "path": "tiles/gothic/wall_corner_or_end/gothic_wall_corner_or_end_003.png",
+          "subtype": "wall_corner_or_end/gothic_wall_corner_or_end_003.png",
+          "pixel_size": {
+            "w": 88,
+            "h": 97
+          }
+        },
+        {
+          "id": "gothic_wall_corner_or_end_004",
+          "path": "tiles/gothic/wall_corner_or_end/gothic_wall_corner_or_end_004.png",
+          "subtype": "wall_corner_or_end/gothic_wall_corner_or_end_004.png",
+          "pixel_size": {
+            "w": 92,
+            "h": 97
+          }
+        },
+        {
+          "id": "gothic_wall_corner_or_end_005",
+          "path": "tiles/gothic/wall_corner_or_end/gothic_wall_corner_or_end_005.png",
+          "subtype": "wall_corner_or_end/gothic_wall_corner_or_end_005.png",
+          "pixel_size": {
+            "w": 80,
+            "h": 93
+          }
+        },
+        {
+          "id": "gothic_wall_corner_or_end_006",
+          "path": "tiles/gothic/wall_corner_or_end/gothic_wall_corner_or_end_006.png",
+          "subtype": "wall_corner_or_end/gothic_wall_corner_or_end_006.png",
+          "pixel_size": {
+            "w": 58,
+            "h": 98
+          }
+        },
+        {
+          "id": "gothic_wall_corner_or_end_007",
+          "path": "tiles/gothic/wall_corner_or_end/gothic_wall_corner_or_end_007.png",
+          "subtype": "wall_corner_or_end/gothic_wall_corner_or_end_007.png",
+          "pixel_size": {
+            "w": 70,
+            "h": 95
+          }
+        },
+        {
+          "id": "gothic_wall_corner_or_end_008",
+          "path": "tiles/gothic/wall_corner_or_end/gothic_wall_corner_or_end_008.png",
+          "subtype": "wall_corner_or_end/gothic_wall_corner_or_end_008.png",
+          "pixel_size": {
+            "w": 80,
+            "h": 99
+          }
+        },
+        {
+          "id": "gothic_wall_corner_or_end_009",
+          "path": "tiles/gothic/wall_corner_or_end/gothic_wall_corner_or_end_009.png",
+          "subtype": "wall_corner_or_end/gothic_wall_corner_or_end_009.png",
+          "pixel_size": {
+            "w": 81,
+            "h": 93
+          }
+        },
+        {
+          "id": "gothic_wall_corner_or_end_010",
+          "path": "tiles/gothic/wall_corner_or_end/gothic_wall_corner_or_end_010.png",
+          "subtype": "wall_corner_or_end/gothic_wall_corner_or_end_010.png",
+          "pixel_size": {
+            "w": 84,
+            "h": 98
+          }
+        },
+        {
+          "id": "gothic_wall_corner_or_end_011",
+          "path": "tiles/gothic/wall_corner_or_end/gothic_wall_corner_or_end_011.png",
+          "subtype": "wall_corner_or_end/gothic_wall_corner_or_end_011.png",
+          "pixel_size": {
+            "w": 63,
+            "h": 92
+          }
+        },
+        {
+          "id": "gothic_wall_corner_or_end_012",
+          "path": "tiles/gothic/wall_corner_or_end/gothic_wall_corner_or_end_012.png",
+          "subtype": "wall_corner_or_end/gothic_wall_corner_or_end_012.png",
+          "pixel_size": {
+            "w": 47,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_wall_corner_or_end_013",
+          "path": "tiles/gothic/wall_corner_or_end/gothic_wall_corner_or_end_013.png",
+          "subtype": "wall_corner_or_end/gothic_wall_corner_or_end_013.png",
+          "pixel_size": {
+            "w": 49,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_wall_corner_or_end_014",
+          "path": "tiles/gothic/wall_corner_or_end/gothic_wall_corner_or_end_014.png",
+          "subtype": "wall_corner_or_end/gothic_wall_corner_or_end_014.png",
+          "pixel_size": {
+            "w": 89,
+            "h": 93
+          }
+        },
+        {
+          "id": "gothic_wall_corner_or_end_016",
+          "path": "tiles/gothic/wall_corner_or_end/gothic_wall_corner_or_end_016.png",
+          "subtype": "wall_corner_or_end/gothic_wall_corner_or_end_016.png",
+          "pixel_size": {
+            "w": 55,
+            "h": 65
+          }
+        },
+        {
+          "id": "gothic_wall_corner_or_end_017",
+          "path": "tiles/gothic/wall_corner_or_end/gothic_wall_corner_or_end_017.png",
+          "subtype": "wall_corner_or_end/gothic_wall_corner_or_end_017.png",
+          "pixel_size": {
+            "w": 69,
+            "h": 68
+          }
+        },
+        {
+          "id": "gothic_wall_corner_or_end_018",
+          "path": "tiles/gothic/wall_corner_or_end/gothic_wall_corner_or_end_018.png",
+          "subtype": "wall_corner_or_end/gothic_wall_corner_or_end_018.png",
+          "pixel_size": {
+            "w": 54,
+            "h": 54
+          }
+        },
+        {
+          "id": "gothic_wall_corner_or_end_019",
+          "path": "tiles/gothic/wall_corner_or_end/gothic_wall_corner_or_end_019.png",
+          "subtype": "wall_corner_or_end/gothic_wall_corner_or_end_019.png",
+          "pixel_size": {
+            "w": 121,
+            "h": 109
+          }
+        },
+        {
+          "id": "gothic_wall_corner_or_end_020",
+          "path": "tiles/gothic/wall_corner_or_end/gothic_wall_corner_or_end_020.png",
+          "subtype": "wall_corner_or_end/gothic_wall_corner_or_end_020.png",
+          "pixel_size": {
+            "w": 93,
+            "h": 86
+          }
+        },
+        {
+          "id": "gothic_wall_corner_or_end_022",
+          "path": "tiles/gothic/wall_corner_or_end/gothic_wall_corner_or_end_022.png",
+          "subtype": "wall_corner_or_end/gothic_wall_corner_or_end_022.png",
+          "pixel_size": {
+            "w": 99,
+            "h": 99
+          }
+        },
+        {
+          "id": "gothic_wall_corner_or_end_023",
+          "path": "tiles/gothic/wall_corner_or_end/gothic_wall_corner_or_end_023.png",
+          "subtype": "wall_corner_or_end/gothic_wall_corner_or_end_023.png",
+          "pixel_size": {
+            "w": 109,
+            "h": 105
+          }
+        },
+        {
+          "id": "gothic_wall_corner_or_end_024",
+          "path": "tiles/gothic/wall_corner_or_end/gothic_wall_corner_or_end_024.png",
+          "subtype": "wall_corner_or_end/gothic_wall_corner_or_end_024.png",
+          "pixel_size": {
+            "w": 122,
+            "h": 106
+          }
+        },
+        {
+          "id": "gothic_wall_horizontal_or_cap_001",
+          "path": "tiles/gothic/wall_horizontal_or_cap/gothic_wall_horizontal_or_cap_001.png",
+          "subtype": "wall_horizontal_or_cap/gothic_wall_horizontal_or_cap_001.png",
+          "pixel_size": {
+            "w": 115,
+            "h": 66
+          }
+        },
+        {
+          "id": "gothic_wall_horizontal_or_cap_002",
+          "path": "tiles/gothic/wall_horizontal_or_cap/gothic_wall_horizontal_or_cap_002.png",
+          "subtype": "wall_horizontal_or_cap/gothic_wall_horizontal_or_cap_002.png",
+          "pixel_size": {
+            "w": 173,
+            "h": 63
+          }
+        },
+        {
+          "id": "gothic_wall_horizontal_or_cap_003",
+          "path": "tiles/gothic/wall_horizontal_or_cap/gothic_wall_horizontal_or_cap_003.png",
+          "subtype": "wall_horizontal_or_cap/gothic_wall_horizontal_or_cap_003.png",
+          "pixel_size": {
+            "w": 107,
+            "h": 50
+          }
+        },
+        {
+          "id": "wall_tile_001",
+          "path": "tiles/gothic/wall_tiles/wall_tile_001.png",
+          "subtype": "wall_tiles/wall_tile_001.png",
+          "pixel_size": {
+            "w": 200,
+            "h": 109
+          }
+        },
+        {
+          "id": "wall_tile_002",
+          "path": "tiles/gothic/wall_tiles/wall_tile_002.png",
+          "subtype": "wall_tiles/wall_tile_002.png",
+          "pixel_size": {
+            "w": 221,
+            "h": 111
+          }
+        },
+        {
+          "id": "wall_tile_003",
+          "path": "tiles/gothic/wall_tiles/wall_tile_003.png",
+          "subtype": "wall_tiles/wall_tile_003.png",
+          "pixel_size": {
+            "w": 16,
+            "h": 24
+          }
+        },
+        {
+          "id": "wall_tile_004",
+          "path": "tiles/gothic/wall_tiles/wall_tile_004.png",
+          "subtype": "wall_tiles/wall_tile_004.png",
+          "pixel_size": {
+            "w": 14,
+            "h": 11
+          }
+        },
+        {
+          "id": "wall_tile_005",
+          "path": "tiles/gothic/wall_tiles/wall_tile_005.png",
+          "subtype": "wall_tiles/wall_tile_005.png",
+          "pixel_size": {
+            "w": 17,
+            "h": 31
+          }
+        },
+        {
+          "id": "wall_tile_006",
+          "path": "tiles/gothic/wall_tiles/wall_tile_006.png",
+          "subtype": "wall_tiles/wall_tile_006.png",
+          "pixel_size": {
+            "w": 16,
+            "h": 42
+          }
+        },
+        {
+          "id": "wall_tile_007",
+          "path": "tiles/gothic/wall_tiles/wall_tile_007.png",
+          "subtype": "wall_tiles/wall_tile_007.png",
+          "pixel_size": {
+            "w": 12,
+            "h": 51
+          }
+        },
+        {
+          "id": "wall_tile_008",
+          "path": "tiles/gothic/wall_tiles/wall_tile_008.png",
+          "subtype": "wall_tiles/wall_tile_008.png",
+          "pixel_size": {
+            "w": 12,
+            "h": 25
+          }
+        },
+        {
+          "id": "wall_tile_009",
+          "path": "tiles/gothic/wall_tiles/wall_tile_009.png",
+          "subtype": "wall_tiles/wall_tile_009.png",
+          "pixel_size": {
+            "w": 12,
+            "h": 24
+          }
+        },
+        {
+          "id": "wall_top_edge_001",
+          "path": "tiles/gothic/wall_tops_edges/wall_top_edge_001.png",
+          "subtype": "wall_tops_edges/wall_top_edge_001.png",
+          "pixel_size": {
+            "w": 257,
+            "h": 105
+          }
+        },
+        {
+          "id": "wall_top_edge_002",
+          "path": "tiles/gothic/wall_tops_edges/wall_top_edge_002.png",
+          "subtype": "wall_tops_edges/wall_top_edge_002.png",
+          "pixel_size": {
+            "w": 76,
+            "h": 49
+          }
+        },
+        {
+          "id": "wall_top_edge_003",
+          "path": "tiles/gothic/wall_tops_edges/wall_top_edge_003.png",
+          "subtype": "wall_tops_edges/wall_top_edge_003.png",
+          "pixel_size": {
+            "w": 68,
+            "h": 49
+          }
+        },
+        {
+          "id": "wall_top_edge_004",
+          "path": "tiles/gothic/wall_tops_edges/wall_top_edge_004.png",
+          "subtype": "wall_tops_edges/wall_top_edge_004.png",
+          "pixel_size": {
+            "w": 70,
+            "h": 49
+          }
+        },
+        {
+          "id": "wall_top_edge_005",
+          "path": "tiles/gothic/wall_tops_edges/wall_top_edge_005.png",
+          "subtype": "wall_tops_edges/wall_top_edge_005.png",
+          "pixel_size": {
+            "w": 237,
+            "h": 50
+          }
+        },
+        {
+          "id": "wall_top_edge_006",
+          "path": "tiles/gothic/wall_tops_edges/wall_top_edge_006.png",
+          "subtype": "wall_tops_edges/wall_top_edge_006.png",
+          "pixel_size": {
+            "w": 131,
+            "h": 49
+          }
+        },
+        {
+          "id": "wall_top_edge_007",
+          "path": "tiles/gothic/wall_tops_edges/wall_top_edge_007.png",
+          "subtype": "wall_tops_edges/wall_top_edge_007.png",
+          "pixel_size": {
+            "w": 101,
+            "h": 41
+          }
+        },
+        {
+          "id": "wall_top_edge_008",
+          "path": "tiles/gothic/wall_tops_edges/wall_top_edge_008.png",
+          "subtype": "wall_tops_edges/wall_top_edge_008.png",
+          "pixel_size": {
+            "w": 26,
+            "h": 30
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_002",
+          "path": "tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_002.png",
+          "subtype": "wall_vertical_slice/gothic_wall_vertical_slice_002.png",
+          "pixel_size": {
+            "w": 40,
+            "h": 96
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_003",
+          "path": "tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_003.png",
+          "subtype": "wall_vertical_slice/gothic_wall_vertical_slice_003.png",
+          "pixel_size": {
+            "w": 42,
+            "h": 95
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_004",
+          "path": "tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_004.png",
+          "subtype": "wall_vertical_slice/gothic_wall_vertical_slice_004.png",
+          "pixel_size": {
+            "w": 41,
+            "h": 96
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_006",
+          "path": "tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_006.png",
+          "subtype": "wall_vertical_slice/gothic_wall_vertical_slice_006.png",
+          "pixel_size": {
+            "w": 39,
+            "h": 95
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_007",
+          "path": "tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_007.png",
+          "subtype": "wall_vertical_slice/gothic_wall_vertical_slice_007.png",
+          "pixel_size": {
+            "w": 44,
+            "h": 96
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_009",
+          "path": "tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_009.png",
+          "subtype": "wall_vertical_slice/gothic_wall_vertical_slice_009.png",
+          "pixel_size": {
+            "w": 40,
+            "h": 96
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_010",
+          "path": "tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_010.png",
+          "subtype": "wall_vertical_slice/gothic_wall_vertical_slice_010.png",
+          "pixel_size": {
+            "w": 41,
+            "h": 96
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_011",
+          "path": "tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_011.png",
+          "subtype": "wall_vertical_slice/gothic_wall_vertical_slice_011.png",
+          "pixel_size": {
+            "w": 43,
+            "h": 96
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_013",
+          "path": "tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_013.png",
+          "subtype": "wall_vertical_slice/gothic_wall_vertical_slice_013.png",
+          "pixel_size": {
+            "w": 36,
+            "h": 95
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_014",
+          "path": "tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_014.png",
+          "subtype": "wall_vertical_slice/gothic_wall_vertical_slice_014.png",
+          "pixel_size": {
+            "w": 42,
+            "h": 95
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_015",
+          "path": "tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_015.png",
+          "subtype": "wall_vertical_slice/gothic_wall_vertical_slice_015.png",
+          "pixel_size": {
+            "w": 40,
+            "h": 107
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_016",
+          "path": "tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_016.png",
+          "subtype": "wall_vertical_slice/gothic_wall_vertical_slice_016.png",
+          "pixel_size": {
+            "w": 42,
+            "h": 93
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_017",
+          "path": "tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_017.png",
+          "subtype": "wall_vertical_slice/gothic_wall_vertical_slice_017.png",
+          "pixel_size": {
+            "w": 40,
+            "h": 90
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_018",
+          "path": "tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_018.png",
+          "subtype": "wall_vertical_slice/gothic_wall_vertical_slice_018.png",
+          "pixel_size": {
+            "w": 45,
+            "h": 91
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_019",
+          "path": "tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_019.png",
+          "subtype": "wall_vertical_slice/gothic_wall_vertical_slice_019.png",
+          "pixel_size": {
+            "w": 42,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_020",
+          "path": "tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_020.png",
+          "subtype": "wall_vertical_slice/gothic_wall_vertical_slice_020.png",
+          "pixel_size": {
+            "w": 32,
+            "h": 85
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_021",
+          "path": "tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_021.png",
+          "subtype": "wall_vertical_slice/gothic_wall_vertical_slice_021.png",
+          "pixel_size": {
+            "w": 33,
+            "h": 84
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_022",
+          "path": "tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_022.png",
+          "subtype": "wall_vertical_slice/gothic_wall_vertical_slice_022.png",
+          "pixel_size": {
+            "w": 30,
+            "h": 84
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_023",
+          "path": "tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_023.png",
+          "subtype": "wall_vertical_slice/gothic_wall_vertical_slice_023.png",
+          "pixel_size": {
+            "w": 39,
+            "h": 84
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_025",
+          "path": "tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_025.png",
+          "subtype": "wall_vertical_slice/gothic_wall_vertical_slice_025.png",
+          "pixel_size": {
+            "w": 35,
+            "h": 70
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_026",
+          "path": "tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_026.png",
+          "subtype": "wall_vertical_slice/gothic_wall_vertical_slice_026.png",
+          "pixel_size": {
+            "w": 29,
+            "h": 57
+          }
+        }
+      ]
+    },
+    "tiles_interiors": {
+      "base_path": "res://content/tiles/interiors/gothic",
+      "count": 30,
+      "assets": [
+        {
+          "id": "floor_tile_001",
+          "path": "tiles/interiors/gothic/floors/floor_tile_001.png",
+          "subtype": "gothic/floors",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_tile_002",
+          "path": "tiles/interiors/gothic/floors/floor_tile_002.png",
+          "subtype": "gothic/floors",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_tile_003",
+          "path": "tiles/interiors/gothic/floors/floor_tile_003.png",
+          "subtype": "gothic/floors",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_tile_004",
+          "path": "tiles/interiors/gothic/floors/floor_tile_004.png",
+          "subtype": "gothic/floors",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_tile_005",
+          "path": "tiles/interiors/gothic/floors/floor_tile_005.png",
+          "subtype": "gothic/floors",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_tile_006",
+          "path": "tiles/interiors/gothic/floors/floor_tile_006.png",
+          "subtype": "gothic/floors",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_tile_007",
+          "path": "tiles/interiors/gothic/floors/floor_tile_007.png",
+          "subtype": "gothic/floors",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_tile_008",
+          "path": "tiles/interiors/gothic/floors/floor_tile_008.png",
+          "subtype": "gothic/floors",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_tile_009",
+          "path": "tiles/interiors/gothic/floors/floor_tile_009.png",
+          "subtype": "gothic/floors",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_tile_010",
+          "path": "tiles/interiors/gothic/floors/floor_tile_010.png",
+          "subtype": "gothic/floors",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_tile_011",
+          "path": "tiles/interiors/gothic/floors/floor_tile_011.png",
+          "subtype": "gothic/floors",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_tile_012",
+          "path": "tiles/interiors/gothic/floors/floor_tile_012.png",
+          "subtype": "gothic/floors",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_tile_013",
+          "path": "tiles/interiors/gothic/floors/floor_tile_013.png",
+          "subtype": "gothic/floors",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_tile_014",
+          "path": "tiles/interiors/gothic/floors/floor_tile_014.png",
+          "subtype": "gothic/floors",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_tile_015",
+          "path": "tiles/interiors/gothic/floors/floor_tile_015.png",
+          "subtype": "gothic/floors",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_tile_016",
+          "path": "tiles/interiors/gothic/floors/floor_tile_016.png",
+          "subtype": "gothic/floors",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_tile_017",
+          "path": "tiles/interiors/gothic/floors/floor_tile_017.png",
+          "subtype": "gothic/floors",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_tile_018",
+          "path": "tiles/interiors/gothic/floors/floor_tile_018.png",
+          "subtype": "gothic/floors",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_tile_019",
+          "path": "tiles/interiors/gothic/floors/floor_tile_019.png",
+          "subtype": "gothic/floors",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_tile_020",
+          "path": "tiles/interiors/gothic/floors/floor_tile_020.png",
+          "subtype": "gothic/floors",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_tile_021",
+          "path": "tiles/interiors/gothic/floors/floor_tile_021.png",
+          "subtype": "gothic/floors",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_tile_022",
+          "path": "tiles/interiors/gothic/floors/floor_tile_022.png",
+          "subtype": "gothic/floors",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_tile_023",
+          "path": "tiles/interiors/gothic/floors/floor_tile_023.png",
+          "subtype": "gothic/floors",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_tile_024",
+          "path": "tiles/interiors/gothic/floors/floor_tile_024.png",
+          "subtype": "gothic/floors",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_tile_025",
+          "path": "tiles/interiors/gothic/floors/floor_tile_025.png",
+          "subtype": "gothic/floors",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_tile_026",
+          "path": "tiles/interiors/gothic/floors/floor_tile_026.png",
+          "subtype": "gothic/floors",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_tile_027",
+          "path": "tiles/interiors/gothic/floors/floor_tile_027.png",
+          "subtype": "gothic/floors",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_tile_028",
+          "path": "tiles/interiors/gothic/floors/floor_tile_028.png",
+          "subtype": "gothic/floors",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_tile_029",
+          "path": "tiles/interiors/gothic/floors/floor_tile_029.png",
+          "subtype": "gothic/floors",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        },
+        {
+          "id": "floor_tile_030",
+          "path": "tiles/interiors/gothic/floors/floor_tile_030.png",
+          "subtype": "gothic/floors",
+          "pixel_size": {
+            "w": 48,
+            "h": 48
+          }
+        }
+      ]
+    },
+    "props": {
+      "base_path": "res://content/props/gothic",
+      "count": 107,
+      "assets": [
+        {
+          "id": "gothic_banner_or_hanging_cloth_001",
+          "path": "props/gothic/banner_or_hanging_cloth/gothic_banner_or_hanging_cloth_001.png",
+          "subtype": "banner_or_hanging_cloth/gothic_banner_or_hanging_cloth_001.png",
+          "pixel_size": {
+            "w": 44,
+            "h": 64
+          }
+        },
+        {
+          "id": "gothic_banner_or_hanging_cloth_002",
+          "path": "props/gothic/banner_or_hanging_cloth/gothic_banner_or_hanging_cloth_002.png",
+          "subtype": "banner_or_hanging_cloth/gothic_banner_or_hanging_cloth_002.png",
+          "pixel_size": {
+            "w": 39,
+            "h": 67
+          }
+        },
+        {
+          "id": "spike_barricade_fence_001",
+          "path": "props/gothic/barriers/spike_barricade_fence_001.png",
+          "subtype": "barriers/spike_barricade_fence_001.png",
+          "pixel_size": {
+            "w": 264,
+            "h": 84
+          }
+        },
+        {
+          "id": "spike_barricade_fence_002",
+          "path": "props/gothic/barriers/spike_barricade_fence_002.png",
+          "subtype": "barriers/spike_barricade_fence_002.png",
+          "pixel_size": {
+            "w": 260,
+            "h": 135
+          }
+        },
+        {
+          "id": "gothic_compound_dressing_01",
+          "path": "props/gothic/compound_dressing_or_barrier/gothic_compound_dressing_01.png",
+          "subtype": "compound_dressing_or_barrier/gothic_compound_dressing_01.png",
+          "pixel_size": {
+            "w": 162,
+            "h": 135
+          }
+        },
+        {
+          "id": "gothic_compound_dressing_02",
+          "path": "props/gothic/compound_dressing_or_barrier/gothic_compound_dressing_02.png",
+          "subtype": "compound_dressing_or_barrier/gothic_compound_dressing_02.png",
+          "pixel_size": {
+            "w": 117,
+            "h": 126
+          }
+        },
+        {
+          "id": "gothic_compound_dressing_03",
+          "path": "props/gothic/compound_dressing_or_barrier/gothic_compound_dressing_03.png",
+          "subtype": "compound_dressing_or_barrier/gothic_compound_dressing_03.png",
+          "pixel_size": {
+            "w": 108,
+            "h": 131
+          }
+        },
+        {
+          "id": "gothic_compound_dressing_04",
+          "path": "props/gothic/compound_dressing_or_barrier/gothic_compound_dressing_04.png",
+          "subtype": "compound_dressing_or_barrier/gothic_compound_dressing_04.png",
+          "pixel_size": {
+            "w": 92,
+            "h": 130
+          }
+        },
+        {
+          "id": "gothic_compound_dressing_05",
+          "path": "props/gothic/compound_dressing_or_barrier/gothic_compound_dressing_05.png",
+          "subtype": "compound_dressing_or_barrier/gothic_compound_dressing_05.png",
+          "pixel_size": {
+            "w": 13,
+            "h": 10
+          }
+        },
+        {
+          "id": "gothic_compound_dressing_06",
+          "path": "props/gothic/compound_dressing_or_barrier/gothic_compound_dressing_06.png",
+          "subtype": "compound_dressing_or_barrier/gothic_compound_dressing_06.png",
+          "pixel_size": {
+            "w": 153,
+            "h": 122
+          }
+        },
+        {
+          "id": "door_gate_mechanism_001",
+          "path": "props/gothic/doors_gates/door_gate_mechanism_001.png",
+          "subtype": "doors_gates/door_gate_mechanism_001.png",
+          "pixel_size": {
+            "w": 415,
+            "h": 109
+          }
+        },
+        {
+          "id": "door_gate_mechanism_002",
+          "path": "props/gothic/doors_gates/door_gate_mechanism_002.png",
+          "subtype": "doors_gates/door_gate_mechanism_002.png",
+          "pixel_size": {
+            "w": 81,
+            "h": 105
+          }
+        },
+        {
+          "id": "door_gate_mechanism_003",
+          "path": "props/gothic/doors_gates/door_gate_mechanism_003.png",
+          "subtype": "doors_gates/door_gate_mechanism_003.png",
+          "pixel_size": {
+            "w": 112,
+            "h": 122
+          }
+        },
+        {
+          "id": "door_gate_mechanism_004",
+          "path": "props/gothic/doors_gates/door_gate_mechanism_004.png",
+          "subtype": "doors_gates/door_gate_mechanism_004.png",
+          "pixel_size": {
+            "w": 191,
+            "h": 116
+          }
+        },
+        {
+          "id": "door_gate_mechanism_005",
+          "path": "props/gothic/doors_gates/door_gate_mechanism_005.png",
+          "subtype": "doors_gates/door_gate_mechanism_005.png",
+          "pixel_size": {
+            "w": 77,
+            "h": 117
+          }
+        },
+        {
+          "id": "door_gate_mechanism_006",
+          "path": "props/gothic/doors_gates/door_gate_mechanism_006.png",
+          "subtype": "doors_gates/door_gate_mechanism_006.png",
+          "pixel_size": {
+            "w": 98,
+            "h": 116
+          }
+        },
+        {
+          "id": "door_gate_mechanism_007",
+          "path": "props/gothic/doors_gates/door_gate_mechanism_007.png",
+          "subtype": "doors_gates/door_gate_mechanism_007.png",
+          "pixel_size": {
+            "w": 87,
+            "h": 90
+          }
+        },
+        {
+          "id": "door_gate_mechanism_008",
+          "path": "props/gothic/doors_gates/door_gate_mechanism_008.png",
+          "subtype": "doors_gates/door_gate_mechanism_008.png",
+          "pixel_size": {
+            "w": 103,
+            "h": 78
+          }
+        },
+        {
+          "id": "door_gate_mechanism_009",
+          "path": "props/gothic/doors_gates/door_gate_mechanism_009.png",
+          "subtype": "doors_gates/door_gate_mechanism_009.png",
+          "pixel_size": {
+            "w": 93,
+            "h": 81
+          }
+        },
+        {
+          "id": "door_gate_mechanism_010",
+          "path": "props/gothic/doors_gates/door_gate_mechanism_010.png",
+          "subtype": "doors_gates/door_gate_mechanism_010.png",
+          "pixel_size": {
+            "w": 53,
+            "h": 59
+          }
+        },
+        {
+          "id": "door_gate_mechanism_011",
+          "path": "props/gothic/doors_gates/door_gate_mechanism_011.png",
+          "subtype": "doors_gates/door_gate_mechanism_011.png",
+          "pixel_size": {
+            "w": 107,
+            "h": 100
+          }
+        },
+        {
+          "id": "door_gate_mechanism_012",
+          "path": "props/gothic/doors_gates/door_gate_mechanism_012.png",
+          "subtype": "doors_gates/door_gate_mechanism_012.png",
+          "pixel_size": {
+            "w": 157,
+            "h": 108
+          }
+        },
+        {
+          "id": "door_gate_mechanism_013",
+          "path": "props/gothic/doors_gates/door_gate_mechanism_013.png",
+          "subtype": "doors_gates/door_gate_mechanism_013.png",
+          "pixel_size": {
+            "w": 121,
+            "h": 113
+          }
+        },
+        {
+          "id": "gothic_environment_prop_001",
+          "path": "props/gothic/environment_prop/gothic_environment_prop_001.png",
+          "subtype": "environment_prop/gothic_environment_prop_001.png",
+          "pixel_size": {
+            "w": 13,
+            "h": 10
+          }
+        },
+        {
+          "id": "gothic_environment_prop_002",
+          "path": "props/gothic/environment_prop/gothic_environment_prop_002.png",
+          "subtype": "environment_prop/gothic_environment_prop_002.png",
+          "pixel_size": {
+            "w": 82,
+            "h": 65
+          }
+        },
+        {
+          "id": "gothic_environment_prop_003",
+          "path": "props/gothic/environment_prop/gothic_environment_prop_003.png",
+          "subtype": "environment_prop/gothic_environment_prop_003.png",
+          "pixel_size": {
+            "w": 75,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_environment_prop_004",
+          "path": "props/gothic/environment_prop/gothic_environment_prop_004.png",
+          "subtype": "environment_prop/gothic_environment_prop_004.png",
+          "pixel_size": {
+            "w": 53,
+            "h": 63
+          }
+        },
+        {
+          "id": "gothic_environment_prop_005",
+          "path": "props/gothic/environment_prop/gothic_environment_prop_005.png",
+          "subtype": "environment_prop/gothic_environment_prop_005.png",
+          "pixel_size": {
+            "w": 39,
+            "h": 41
+          }
+        },
+        {
+          "id": "gothic_environment_prop_006",
+          "path": "props/gothic/environment_prop/gothic_environment_prop_006.png",
+          "subtype": "environment_prop/gothic_environment_prop_006.png",
+          "pixel_size": {
+            "w": 10,
+            "h": 10
+          }
+        },
+        {
+          "id": "gothic_environment_prop_007",
+          "path": "props/gothic/environment_prop/gothic_environment_prop_007.png",
+          "subtype": "environment_prop/gothic_environment_prop_007.png",
+          "pixel_size": {
+            "w": 41,
+            "h": 51
+          }
+        },
+        {
+          "id": "gothic_environment_prop_008",
+          "path": "props/gothic/environment_prop/gothic_environment_prop_008.png",
+          "subtype": "environment_prop/gothic_environment_prop_008.png",
+          "pixel_size": {
+            "w": 70,
+            "h": 84
+          }
+        },
+        {
+          "id": "gothic_large_environment_prop_001",
+          "path": "props/gothic/large_environment_prop/gothic_large_environment_prop_001.png",
+          "subtype": "large_environment_prop/gothic_large_environment_prop_001.png",
+          "pixel_size": {
+            "w": 137,
+            "h": 86
+          }
+        },
+        {
+          "id": "gothic_large_environment_prop_002",
+          "path": "props/gothic/large_environment_prop/gothic_large_environment_prop_002.png",
+          "subtype": "large_environment_prop/gothic_large_environment_prop_002.png",
+          "pixel_size": {
+            "w": 123,
+            "h": 109
+          }
+        },
+        {
+          "id": "gothic_large_environment_prop_003",
+          "path": "props/gothic/large_environment_prop/gothic_large_environment_prop_003.png",
+          "subtype": "large_environment_prop/gothic_large_environment_prop_003.png",
+          "pixel_size": {
+            "w": 84,
+            "h": 131
+          }
+        },
+        {
+          "id": "gothic_large_environment_prop_004",
+          "path": "props/gothic/large_environment_prop/gothic_large_environment_prop_004.png",
+          "subtype": "large_environment_prop/gothic_large_environment_prop_004.png",
+          "pixel_size": {
+            "w": 133,
+            "h": 75
+          }
+        },
+        {
+          "id": "gothic_large_environment_prop_005",
+          "path": "props/gothic/large_environment_prop/gothic_large_environment_prop_005.png",
+          "subtype": "large_environment_prop/gothic_large_environment_prop_005.png",
+          "pixel_size": {
+            "w": 121,
+            "h": 74
+          }
+        },
+        {
+          "id": "gothic_large_environment_prop_006",
+          "path": "props/gothic/large_environment_prop/gothic_large_environment_prop_006.png",
+          "subtype": "large_environment_prop/gothic_large_environment_prop_006.png",
+          "pixel_size": {
+            "w": 60,
+            "h": 154
+          }
+        },
+        {
+          "id": "gothic_large_environment_prop_007",
+          "path": "props/gothic/large_environment_prop/gothic_large_environment_prop_007.png",
+          "subtype": "large_environment_prop/gothic_large_environment_prop_007.png",
+          "pixel_size": {
+            "w": 163,
+            "h": 134
+          }
+        },
+        {
+          "id": "gothic_large_environment_prop_008",
+          "path": "props/gothic/large_environment_prop/gothic_large_environment_prop_008.png",
+          "subtype": "large_environment_prop/gothic_large_environment_prop_008.png",
+          "pixel_size": {
+            "w": 43,
+            "h": 173
+          }
+        },
+        {
+          "id": "gothic_large_environment_prop_009",
+          "path": "props/gothic/large_environment_prop/gothic_large_environment_prop_009.png",
+          "subtype": "large_environment_prop/gothic_large_environment_prop_009.png",
+          "pixel_size": {
+            "w": 132,
+            "h": 132
+          }
+        },
+        {
+          "id": "gothic_large_environment_prop_010",
+          "path": "props/gothic/large_environment_prop/gothic_large_environment_prop_010.png",
+          "subtype": "large_environment_prop/gothic_large_environment_prop_010.png",
+          "pixel_size": {
+            "w": 245,
+            "h": 66
+          }
+        },
+        {
+          "id": "gothic_large_environment_prop_011",
+          "path": "props/gothic/large_environment_prop/gothic_large_environment_prop_011.png",
+          "subtype": "large_environment_prop/gothic_large_environment_prop_011.png",
+          "pixel_size": {
+            "w": 222,
+            "h": 55
+          }
+        },
+        {
+          "id": "gothic_large_environment_prop_012",
+          "path": "props/gothic/large_environment_prop/gothic_large_environment_prop_012.png",
+          "subtype": "large_environment_prop/gothic_large_environment_prop_012.png",
+          "pixel_size": {
+            "w": 113,
+            "h": 59
+          }
+        },
+        {
+          "id": "gothic_large_environment_prop_013",
+          "path": "props/gothic/large_environment_prop/gothic_large_environment_prop_013.png",
+          "subtype": "large_environment_prop/gothic_large_environment_prop_013.png",
+          "pixel_size": {
+            "w": 126,
+            "h": 32
+          }
+        },
+        {
+          "id": "light_effect_object_001",
+          "path": "props/gothic/lights_effects/light_effect_object_001.png",
+          "subtype": "lights_effects/light_effect_object_001.png",
+          "pixel_size": {
+            "w": 81,
+            "h": 12
+          }
+        },
+        {
+          "id": "light_effect_object_002",
+          "path": "props/gothic/lights_effects/light_effect_object_002.png",
+          "subtype": "lights_effects/light_effect_object_002.png",
+          "pixel_size": {
+            "w": 31,
+            "h": 12
+          }
+        },
+        {
+          "id": "light_effect_object_003",
+          "path": "props/gothic/lights_effects/light_effect_object_003.png",
+          "subtype": "lights_effects/light_effect_object_003.png",
+          "pixel_size": {
+            "w": 22,
+            "h": 12
+          }
+        },
+        {
+          "id": "light_effect_object_004",
+          "path": "props/gothic/lights_effects/light_effect_object_004.png",
+          "subtype": "lights_effects/light_effect_object_004.png",
+          "pixel_size": {
+            "w": 36,
+            "h": 10
+          }
+        },
+        {
+          "id": "light_effect_object_005",
+          "path": "props/gothic/lights_effects/light_effect_object_005.png",
+          "subtype": "lights_effects/light_effect_object_005.png",
+          "pixel_size": {
+            "w": 74,
+            "h": 69
+          }
+        },
+        {
+          "id": "light_effect_object_006",
+          "path": "props/gothic/lights_effects/light_effect_object_006.png",
+          "subtype": "lights_effects/light_effect_object_006.png",
+          "pixel_size": {
+            "w": 27,
+            "h": 68
+          }
+        },
+        {
+          "id": "light_effect_object_007",
+          "path": "props/gothic/lights_effects/light_effect_object_007.png",
+          "subtype": "lights_effects/light_effect_object_007.png",
+          "pixel_size": {
+            "w": 31,
+            "h": 65
+          }
+        },
+        {
+          "id": "light_effect_object_008",
+          "path": "props/gothic/lights_effects/light_effect_object_008.png",
+          "subtype": "lights_effects/light_effect_object_008.png",
+          "pixel_size": {
+            "w": 29,
+            "h": 60
+          }
+        },
+        {
+          "id": "light_effect_object_009",
+          "path": "props/gothic/lights_effects/light_effect_object_009.png",
+          "subtype": "lights_effects/light_effect_object_009.png",
+          "pixel_size": {
+            "w": 69,
+            "h": 70
+          }
+        },
+        {
+          "id": "light_effect_object_010",
+          "path": "props/gothic/lights_effects/light_effect_object_010.png",
+          "subtype": "lights_effects/light_effect_object_010.png",
+          "pixel_size": {
+            "w": 59,
+            "h": 122
+          }
+        },
+        {
+          "id": "light_effect_object_011",
+          "path": "props/gothic/lights_effects/light_effect_object_011.png",
+          "subtype": "lights_effects/light_effect_object_011.png",
+          "pixel_size": {
+            "w": 39,
+            "h": 86
+          }
+        },
+        {
+          "id": "light_effect_object_012",
+          "path": "props/gothic/lights_effects/light_effect_object_012.png",
+          "subtype": "lights_effects/light_effect_object_012.png",
+          "pixel_size": {
+            "w": 155,
+            "h": 127
+          }
+        },
+        {
+          "id": "light_effect_object_013",
+          "path": "props/gothic/lights_effects/light_effect_object_013.png",
+          "subtype": "lights_effects/light_effect_object_013.png",
+          "pixel_size": {
+            "w": 42,
+            "h": 31
+          }
+        },
+        {
+          "id": "gothic_storage_crates_barrels_01",
+          "path": "props/gothic/loot_cover_or_storage_prop/gothic_storage_crates_barrels_01.png",
+          "subtype": "loot_cover_or_storage_prop/gothic_storage_crates_barrels_01.png",
+          "pixel_size": {
+            "w": 123,
+            "h": 141
+          }
+        },
+        {
+          "id": "gothic_storage_crates_barrels_02",
+          "path": "props/gothic/loot_cover_or_storage_prop/gothic_storage_crates_barrels_02.png",
+          "subtype": "loot_cover_or_storage_prop/gothic_storage_crates_barrels_02.png",
+          "pixel_size": {
+            "w": 39,
+            "h": 41
+          }
+        },
+        {
+          "id": "gothic_storage_crates_barrels_03",
+          "path": "props/gothic/loot_cover_or_storage_prop/gothic_storage_crates_barrels_03.png",
+          "subtype": "loot_cover_or_storage_prop/gothic_storage_crates_barrels_03.png",
+          "pixel_size": {
+            "w": 82,
+            "h": 65
+          }
+        },
+        {
+          "id": "gothic_storage_crates_barrels_04",
+          "path": "props/gothic/loot_cover_or_storage_prop/gothic_storage_crates_barrels_04.png",
+          "subtype": "loot_cover_or_storage_prop/gothic_storage_crates_barrels_04.png",
+          "pixel_size": {
+            "w": 118,
+            "h": 94
+          }
+        },
+        {
+          "id": "gothic_storage_crates_barrels_05",
+          "path": "props/gothic/loot_cover_or_storage_prop/gothic_storage_crates_barrels_05.png",
+          "subtype": "loot_cover_or_storage_prop/gothic_storage_crates_barrels_05.png",
+          "pixel_size": {
+            "w": 119,
+            "h": 121
+          }
+        },
+        {
+          "id": "prop_001",
+          "path": "props/gothic/misc/prop_001.png",
+          "subtype": "misc/prop_001.png",
+          "pixel_size": {
+            "w": 261,
+            "h": 44
+          }
+        },
+        {
+          "id": "prop_002",
+          "path": "props/gothic/misc/prop_002.png",
+          "subtype": "misc/prop_002.png",
+          "pixel_size": {
+            "w": 36,
+            "h": 41
+          }
+        },
+        {
+          "id": "prop_003",
+          "path": "props/gothic/misc/prop_003.png",
+          "subtype": "misc/prop_003.png",
+          "pixel_size": {
+            "w": 25,
+            "h": 37
+          }
+        },
+        {
+          "id": "prop_004",
+          "path": "props/gothic/misc/prop_004.png",
+          "subtype": "misc/prop_004.png",
+          "pixel_size": {
+            "w": 28,
+            "h": 38
+          }
+        },
+        {
+          "id": "prop_005",
+          "path": "props/gothic/misc/prop_005.png",
+          "subtype": "misc/prop_005.png",
+          "pixel_size": {
+            "w": 27,
+            "h": 38
+          }
+        },
+        {
+          "id": "prop_006",
+          "path": "props/gothic/misc/prop_006.png",
+          "subtype": "misc/prop_006.png",
+          "pixel_size": {
+            "w": 73,
+            "h": 44
+          }
+        },
+        {
+          "id": "prop_007",
+          "path": "props/gothic/misc/prop_007.png",
+          "subtype": "misc/prop_007.png",
+          "pixel_size": {
+            "w": 30,
+            "h": 41
+          }
+        },
+        {
+          "id": "prop_008",
+          "path": "props/gothic/misc/prop_008.png",
+          "subtype": "misc/prop_008.png",
+          "pixel_size": {
+            "w": 140,
+            "h": 43
+          }
+        },
+        {
+          "id": "prop_009",
+          "path": "props/gothic/misc/prop_009.png",
+          "subtype": "misc/prop_009.png",
+          "pixel_size": {
+            "w": 24,
+            "h": 38
+          }
+        },
+        {
+          "id": "prop_010",
+          "path": "props/gothic/misc/prop_010.png",
+          "subtype": "misc/prop_010.png",
+          "pixel_size": {
+            "w": 23,
+            "h": 38
+          }
+        },
+        {
+          "id": "prop_011",
+          "path": "props/gothic/misc/prop_011.png",
+          "subtype": "misc/prop_011.png",
+          "pixel_size": {
+            "w": 90,
+            "h": 38
+          }
+        },
+        {
+          "id": "prop_012",
+          "path": "props/gothic/misc/prop_012.png",
+          "subtype": "misc/prop_012.png",
+          "pixel_size": {
+            "w": 422,
+            "h": 216
+          }
+        },
+        {
+          "id": "prop_013",
+          "path": "props/gothic/misc/prop_013.png",
+          "subtype": "misc/prop_013.png",
+          "pixel_size": {
+            "w": 421,
+            "h": 392
+          }
+        },
+        {
+          "id": "gothic_dead_tree_roots_01",
+          "path": "props/gothic/organic_intrusion_blocker/gothic_dead_tree_roots_01.png",
+          "subtype": "organic_intrusion_blocker/gothic_dead_tree_roots_01.png",
+          "pixel_size": {
+            "w": 183,
+            "h": 155
+          }
+        },
+        {
+          "id": "gothic_dead_tree_roots_02",
+          "path": "props/gothic/organic_intrusion_blocker/gothic_dead_tree_roots_02.png",
+          "subtype": "organic_intrusion_blocker/gothic_dead_tree_roots_02.png",
+          "pixel_size": {
+            "w": 127,
+            "h": 132
+          }
+        },
+        {
+          "id": "gothic_dead_tree_roots_03",
+          "path": "props/gothic/organic_intrusion_blocker/gothic_dead_tree_roots_03.png",
+          "subtype": "organic_intrusion_blocker/gothic_dead_tree_roots_03.png",
+          "pixel_size": {
+            "w": 101,
+            "h": 133
+          }
+        },
+        {
+          "id": "gothic_dead_tree_roots_04",
+          "path": "props/gothic/organic_intrusion_blocker/gothic_dead_tree_roots_04.png",
+          "subtype": "organic_intrusion_blocker/gothic_dead_tree_roots_04.png",
+          "pixel_size": {
+            "w": 124,
+            "h": 159
+          }
+        },
+        {
+          "id": "rock_rubble_cluster_001",
+          "path": "props/gothic/rubble/rock_rubble_cluster_001.png",
+          "subtype": "rubble/rock_rubble_cluster_001.png",
+          "pixel_size": {
+            "w": 58,
+            "h": 41
+          }
+        },
+        {
+          "id": "rock_rubble_cluster_002",
+          "path": "props/gothic/rubble/rock_rubble_cluster_002.png",
+          "subtype": "rubble/rock_rubble_cluster_002.png",
+          "pixel_size": {
+            "w": 76,
+            "h": 48
+          }
+        },
+        {
+          "id": "rock_rubble_cluster_003",
+          "path": "props/gothic/rubble/rock_rubble_cluster_003.png",
+          "subtype": "rubble/rock_rubble_cluster_003.png",
+          "pixel_size": {
+            "w": 63,
+            "h": 47
+          }
+        },
+        {
+          "id": "rock_rubble_cluster_004",
+          "path": "props/gothic/rubble/rock_rubble_cluster_004.png",
+          "subtype": "rubble/rock_rubble_cluster_004.png",
+          "pixel_size": {
+            "w": 145,
+            "h": 50
+          }
+        },
+        {
+          "id": "rock_rubble_cluster_005",
+          "path": "props/gothic/rubble/rock_rubble_cluster_005.png",
+          "subtype": "rubble/rock_rubble_cluster_005.png",
+          "pixel_size": {
+            "w": 60,
+            "h": 43
+          }
+        },
+        {
+          "id": "rock_rubble_cluster_006",
+          "path": "props/gothic/rubble/rock_rubble_cluster_006.png",
+          "subtype": "rubble/rock_rubble_cluster_006.png",
+          "pixel_size": {
+            "w": 54,
+            "h": 39
+          }
+        },
+        {
+          "id": "rock_rubble_cluster_007",
+          "path": "props/gothic/rubble/rock_rubble_cluster_007.png",
+          "subtype": "rubble/rock_rubble_cluster_007.png",
+          "pixel_size": {
+            "w": 83,
+            "h": 44
+          }
+        },
+        {
+          "id": "rock_rubble_cluster_008",
+          "path": "props/gothic/rubble/rock_rubble_cluster_008.png",
+          "subtype": "rubble/rock_rubble_cluster_008.png",
+          "pixel_size": {
+            "w": 44,
+            "h": 41
+          }
+        },
+        {
+          "id": "gothic_rubble_ruin_01",
+          "path": "props/gothic/rubble_cover_or_ruin_storytelling/gothic_rubble_ruin_01.png",
+          "subtype": "rubble_cover_or_ruin_storytelling/gothic_rubble_ruin_01.png",
+          "pixel_size": {
+            "w": 146,
+            "h": 157
+          }
+        },
+        {
+          "id": "gothic_rubble_ruin_02",
+          "path": "props/gothic/rubble_cover_or_ruin_storytelling/gothic_rubble_ruin_02.png",
+          "subtype": "rubble_cover_or_ruin_storytelling/gothic_rubble_ruin_02.png",
+          "pixel_size": {
+            "w": 100,
+            "h": 161
+          }
+        },
+        {
+          "id": "gothic_uncategorized_asset_01",
+          "path": "props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_01.png",
+          "subtype": "uncategorized_environment_asset/gothic_uncategorized_asset_01.png",
+          "pixel_size": {
+            "w": 75,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_uncategorized_asset_02",
+          "path": "props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_02.png",
+          "subtype": "uncategorized_environment_asset/gothic_uncategorized_asset_02.png",
+          "pixel_size": {
+            "w": 53,
+            "h": 63
+          }
+        },
+        {
+          "id": "gothic_uncategorized_asset_07",
+          "path": "props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_07.png",
+          "subtype": "uncategorized_environment_asset/gothic_uncategorized_asset_07.png",
+          "pixel_size": {
+            "w": 70,
+            "h": 84
+          }
+        },
+        {
+          "id": "gothic_uncategorized_asset_09",
+          "path": "props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_09.png",
+          "subtype": "uncategorized_environment_asset/gothic_uncategorized_asset_09.png",
+          "pixel_size": {
+            "w": 84,
+            "h": 131
+          }
+        },
+        {
+          "id": "gothic_uncategorized_asset_10",
+          "path": "props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_10.png",
+          "subtype": "uncategorized_environment_asset/gothic_uncategorized_asset_10.png",
+          "pixel_size": {
+            "w": 133,
+            "h": 75
+          }
+        },
+        {
+          "id": "gothic_uncategorized_asset_11",
+          "path": "props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_11.png",
+          "subtype": "uncategorized_environment_asset/gothic_uncategorized_asset_11.png",
+          "pixel_size": {
+            "w": 121,
+            "h": 74
+          }
+        },
+        {
+          "id": "gothic_uncategorized_asset_12",
+          "path": "props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_12.png",
+          "subtype": "uncategorized_environment_asset/gothic_uncategorized_asset_12.png",
+          "pixel_size": {
+            "w": 60,
+            "h": 154
+          }
+        },
+        {
+          "id": "gothic_uncategorized_asset_13",
+          "path": "props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_13.png",
+          "subtype": "uncategorized_environment_asset/gothic_uncategorized_asset_13.png",
+          "pixel_size": {
+            "w": 43,
+            "h": 173
+          }
+        },
+        {
+          "id": "gothic_uncategorized_asset_14",
+          "path": "props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_14.png",
+          "subtype": "uncategorized_environment_asset/gothic_uncategorized_asset_14.png",
+          "pixel_size": {
+            "w": 132,
+            "h": 132
+          }
+        },
+        {
+          "id": "gothic_uncategorized_asset_15",
+          "path": "props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_15.png",
+          "subtype": "uncategorized_environment_asset/gothic_uncategorized_asset_15.png",
+          "pixel_size": {
+            "w": 163,
+            "h": 134
+          }
+        },
+        {
+          "id": "gothic_uncategorized_asset_16",
+          "path": "props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_16.png",
+          "subtype": "uncategorized_environment_asset/gothic_uncategorized_asset_16.png",
+          "pixel_size": {
+            "w": 245,
+            "h": 66
+          }
+        },
+        {
+          "id": "gothic_uncategorized_asset_17",
+          "path": "props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_17.png",
+          "subtype": "uncategorized_environment_asset/gothic_uncategorized_asset_17.png",
+          "pixel_size": {
+            "w": 39,
+            "h": 67
+          }
+        },
+        {
+          "id": "gothic_uncategorized_asset_18",
+          "path": "props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_18.png",
+          "subtype": "uncategorized_environment_asset/gothic_uncategorized_asset_18.png",
+          "pixel_size": {
+            "w": 222,
+            "h": 55
+          }
+        },
+        {
+          "id": "gothic_uncategorized_asset_19",
+          "path": "props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_19.png",
+          "subtype": "uncategorized_environment_asset/gothic_uncategorized_asset_19.png",
+          "pixel_size": {
+            "w": 113,
+            "h": 59
+          }
+        },
+        {
+          "id": "dead_tree_vegetation_001",
+          "path": "props/gothic/vegetation/dead_tree_vegetation_001.png",
+          "subtype": "vegetation/dead_tree_vegetation_001.png",
+          "pixel_size": {
+            "w": 209,
+            "h": 117
+          }
+        },
+        {
+          "id": "dead_tree_vegetation_002",
+          "path": "props/gothic/vegetation/dead_tree_vegetation_002.png",
+          "subtype": "vegetation/dead_tree_vegetation_002.png",
+          "pixel_size": {
+            "w": 108,
+            "h": 60
+          }
+        },
+        {
+          "id": "dead_tree_vegetation_003",
+          "path": "props/gothic/vegetation/dead_tree_vegetation_003.png",
+          "subtype": "vegetation/dead_tree_vegetation_003.png",
+          "pixel_size": {
+            "w": 51,
+            "h": 23
+          }
+        },
+        {
+          "id": "dead_tree_vegetation_004",
+          "path": "props/gothic/vegetation/dead_tree_vegetation_004.png",
+          "subtype": "vegetation/dead_tree_vegetation_004.png",
+          "pixel_size": {
+            "w": 61,
+            "h": 33
+          }
+        }
+      ]
+    },
+    "structures": {
+      "base_path": "res://content/structures/gothic",
+      "count": 26,
+      "assets": [
+        {
+          "id": "gothic_building_or_large_gate_001",
+          "path": "structures/gothic/building_or_large_gate/gothic_building_or_large_gate_001.png",
+          "subtype": "building_or_large_gate/gothic_building_or_large_gate_001.png",
+          "pixel_size": {
+            "w": 122,
+            "h": 125
+          }
+        },
+        {
+          "id": "gothic_building_or_large_gate_002",
+          "path": "structures/gothic/building_or_large_gate/gothic_building_or_large_gate_002.png",
+          "subtype": "building_or_large_gate/gothic_building_or_large_gate_002.png",
+          "pixel_size": {
+            "w": 57,
+            "h": 152
+          }
+        },
+        {
+          "id": "gothic_building_or_large_gate_003",
+          "path": "structures/gothic/building_or_large_gate/gothic_building_or_large_gate_003.png",
+          "subtype": "building_or_large_gate/gothic_building_or_large_gate_003.png",
+          "pixel_size": {
+            "w": 46,
+            "h": 143
+          }
+        },
+        {
+          "id": "gothic_building_or_large_gate_004",
+          "path": "structures/gothic/building_or_large_gate/gothic_building_or_large_gate_004.png",
+          "subtype": "building_or_large_gate/gothic_building_or_large_gate_004.png",
+          "pixel_size": {
+            "w": 73,
+            "h": 169
+          }
+        },
+        {
+          "id": "gothic_building_or_large_gate_005",
+          "path": "structures/gothic/building_or_large_gate/gothic_building_or_large_gate_005.png",
+          "subtype": "building_or_large_gate/gothic_building_or_large_gate_005.png",
+          "pixel_size": {
+            "w": 66,
+            "h": 175
+          }
+        },
+        {
+          "id": "gothic_building_or_large_gate_006",
+          "path": "structures/gothic/building_or_large_gate/gothic_building_or_large_gate_006.png",
+          "subtype": "building_or_large_gate/gothic_building_or_large_gate_006.png",
+          "pixel_size": {
+            "w": 52,
+            "h": 144
+          }
+        },
+        {
+          "id": "gothic_building_or_large_gate_007",
+          "path": "structures/gothic/building_or_large_gate/gothic_building_or_large_gate_007.png",
+          "subtype": "building_or_large_gate/gothic_building_or_large_gate_007.png",
+          "pixel_size": {
+            "w": 183,
+            "h": 155
+          }
+        },
+        {
+          "id": "gothic_building_or_large_gate_008",
+          "path": "structures/gothic/building_or_large_gate/gothic_building_or_large_gate_008.png",
+          "subtype": "building_or_large_gate/gothic_building_or_large_gate_008.png",
+          "pixel_size": {
+            "w": 124,
+            "h": 159
+          }
+        },
+        {
+          "id": "gothic_building_or_large_gate_009",
+          "path": "structures/gothic/building_or_large_gate/gothic_building_or_large_gate_009.png",
+          "subtype": "building_or_large_gate/gothic_building_or_large_gate_009.png",
+          "pixel_size": {
+            "w": 146,
+            "h": 157
+          }
+        },
+        {
+          "id": "gothic_building_or_large_gate_010",
+          "path": "structures/gothic/building_or_large_gate/gothic_building_or_large_gate_010.png",
+          "subtype": "building_or_large_gate/gothic_building_or_large_gate_010.png",
+          "pixel_size": {
+            "w": 100,
+            "h": 161
+          }
+        },
+        {
+          "id": "gothic_building_or_large_gate_011",
+          "path": "structures/gothic/building_or_large_gate/gothic_building_or_large_gate_011.png",
+          "subtype": "building_or_large_gate/gothic_building_or_large_gate_011.png",
+          "pixel_size": {
+            "w": 127,
+            "h": 132
+          }
+        },
+        {
+          "id": "gothic_building_or_large_gate_012",
+          "path": "structures/gothic/building_or_large_gate/gothic_building_or_large_gate_012.png",
+          "subtype": "building_or_large_gate/gothic_building_or_large_gate_012.png",
+          "pixel_size": {
+            "w": 101,
+            "h": 133
+          }
+        },
+        {
+          "id": "gothic_landmark_or_building_001",
+          "path": "structures/gothic/landmark_or_building/gothic_landmark_or_building_001.png",
+          "subtype": "landmark_or_building/gothic_landmark_or_building_001.png",
+          "pixel_size": {
+            "w": 123,
+            "h": 141
+          }
+        },
+        {
+          "id": "gothic_landmark_or_building_002",
+          "path": "structures/gothic/landmark_or_building/gothic_landmark_or_building_002.png",
+          "subtype": "landmark_or_building/gothic_landmark_or_building_002.png",
+          "pixel_size": {
+            "w": 119,
+            "h": 121
+          }
+        },
+        {
+          "id": "gothic_landmark_or_building_003",
+          "path": "structures/gothic/landmark_or_building/gothic_landmark_or_building_003.png",
+          "subtype": "landmark_or_building/gothic_landmark_or_building_003.png",
+          "pixel_size": {
+            "w": 162,
+            "h": 135
+          }
+        },
+        {
+          "id": "gothic_landmark_or_building_004",
+          "path": "structures/gothic/landmark_or_building/gothic_landmark_or_building_004.png",
+          "subtype": "landmark_or_building/gothic_landmark_or_building_004.png",
+          "pixel_size": {
+            "w": 117,
+            "h": 126
+          }
+        },
+        {
+          "id": "gothic_landmark_or_building_005",
+          "path": "structures/gothic/landmark_or_building/gothic_landmark_or_building_005.png",
+          "subtype": "landmark_or_building/gothic_landmark_or_building_005.png",
+          "pixel_size": {
+            "w": 108,
+            "h": 131
+          }
+        },
+        {
+          "id": "gothic_landmark_or_building_006",
+          "path": "structures/gothic/landmark_or_building/gothic_landmark_or_building_006.png",
+          "subtype": "landmark_or_building/gothic_landmark_or_building_006.png",
+          "pixel_size": {
+            "w": 92,
+            "h": 130
+          }
+        },
+        {
+          "id": "gothic_landmark_or_building_007",
+          "path": "structures/gothic/landmark_or_building/gothic_landmark_or_building_007.png",
+          "subtype": "landmark_or_building/gothic_landmark_or_building_007.png",
+          "pixel_size": {
+            "w": 153,
+            "h": 122
+          }
+        },
+        {
+          "id": "gothic_landmark_or_building_008",
+          "path": "structures/gothic/landmark_or_building/gothic_landmark_or_building_008.png",
+          "subtype": "landmark_or_building/gothic_landmark_or_building_008.png",
+          "pixel_size": {
+            "w": 118,
+            "h": 94
+          }
+        },
+        {
+          "id": "gothic_landmark_building_01",
+          "path": "structures/gothic/large_compound_landmark/gothic_landmark_building_01.png",
+          "subtype": "large_compound_landmark/gothic_landmark_building_01.png",
+          "pixel_size": {
+            "w": 73,
+            "h": 169
+          }
+        },
+        {
+          "id": "gothic_landmark_building_02",
+          "path": "structures/gothic/large_compound_landmark/gothic_landmark_building_02.png",
+          "subtype": "large_compound_landmark/gothic_landmark_building_02.png",
+          "pixel_size": {
+            "w": 122,
+            "h": 125
+          }
+        },
+        {
+          "id": "gothic_landmark_building_03",
+          "path": "structures/gothic/large_compound_landmark/gothic_landmark_building_03.png",
+          "subtype": "large_compound_landmark/gothic_landmark_building_03.png",
+          "pixel_size": {
+            "w": 66,
+            "h": 175
+          }
+        },
+        {
+          "id": "gothic_landmark_building_04",
+          "path": "structures/gothic/large_compound_landmark/gothic_landmark_building_04.png",
+          "subtype": "large_compound_landmark/gothic_landmark_building_04.png",
+          "pixel_size": {
+            "w": 57,
+            "h": 152
+          }
+        },
+        {
+          "id": "gothic_landmark_building_05",
+          "path": "structures/gothic/large_compound_landmark/gothic_landmark_building_05.png",
+          "subtype": "large_compound_landmark/gothic_landmark_building_05.png",
+          "pixel_size": {
+            "w": 46,
+            "h": 143
+          }
+        },
+        {
+          "id": "gothic_landmark_building_06",
+          "path": "structures/gothic/large_compound_landmark/gothic_landmark_building_06.png",
+          "subtype": "large_compound_landmark/gothic_landmark_building_06.png",
+          "pixel_size": {
+            "w": 52,
+            "h": 144
+          }
+        }
+      ]
+    },
+    "doors": {
+      "base_path": "res://content/doors/gothic",
+      "count": 13,
+      "assets": [
+        {
+          "id": "gothic_gate_archway_01",
+          "path": "doors/gothic/compound_entrance_gate/gothic_gate_archway_01.png",
+          "subtype": "compound_entrance_gate/gothic_gate_archway_01.png",
+          "pixel_size": {
+            "w": 121,
+            "h": 109
+          }
+        },
+        {
+          "id": "gothic_gate_archway_02",
+          "path": "doors/gothic/compound_entrance_gate/gothic_gate_archway_02.png",
+          "subtype": "compound_entrance_gate/gothic_gate_archway_02.png",
+          "pixel_size": {
+            "w": 93,
+            "h": 86
+          }
+        },
+        {
+          "id": "gothic_gate_archway_03",
+          "path": "doors/gothic/compound_entrance_gate/gothic_gate_archway_03.png",
+          "subtype": "compound_entrance_gate/gothic_gate_archway_03.png",
+          "pixel_size": {
+            "w": 101,
+            "h": 101
+          }
+        },
+        {
+          "id": "gothic_gate_archway_04",
+          "path": "doors/gothic/compound_entrance_gate/gothic_gate_archway_04.png",
+          "subtype": "compound_entrance_gate/gothic_gate_archway_04.png",
+          "pixel_size": {
+            "w": 99,
+            "h": 99
+          }
+        },
+        {
+          "id": "gothic_gate_archway_05",
+          "path": "doors/gothic/compound_entrance_gate/gothic_gate_archway_05.png",
+          "subtype": "compound_entrance_gate/gothic_gate_archway_05.png",
+          "pixel_size": {
+            "w": 109,
+            "h": 105
+          }
+        },
+        {
+          "id": "gothic_gate_archway_06",
+          "path": "doors/gothic/compound_entrance_gate/gothic_gate_archway_06.png",
+          "subtype": "compound_entrance_gate/gothic_gate_archway_06.png",
+          "pixel_size": {
+            "w": 122,
+            "h": 106
+          }
+        },
+        {
+          "id": "gothic_gate_archway_07",
+          "path": "doors/gothic/compound_entrance_gate/gothic_gate_archway_07.png",
+          "subtype": "compound_entrance_gate/gothic_gate_archway_07.png",
+          "pixel_size": {
+            "w": 76,
+            "h": 91
+          }
+        },
+        {
+          "id": "gothic_gate_archway_08",
+          "path": "doors/gothic/compound_entrance_gate/gothic_gate_archway_08.png",
+          "subtype": "compound_entrance_gate/gothic_gate_archway_08.png",
+          "pixel_size": {
+            "w": 55,
+            "h": 65
+          }
+        },
+        {
+          "id": "gothic_small_door_insert_01",
+          "path": "doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_01.png",
+          "subtype": "small_door_or_wall_insert/gothic_small_door_insert_01.png",
+          "pixel_size": {
+            "w": 69,
+            "h": 68
+          }
+        },
+        {
+          "id": "gothic_small_door_insert_02",
+          "path": "doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_02.png",
+          "subtype": "small_door_or_wall_insert/gothic_small_door_insert_02.png",
+          "pixel_size": {
+            "w": 29,
+            "h": 57
+          }
+        },
+        {
+          "id": "gothic_small_door_insert_03",
+          "path": "doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_03.png",
+          "subtype": "small_door_or_wall_insert/gothic_small_door_insert_03.png",
+          "pixel_size": {
+            "w": 54,
+            "h": 54
+          }
+        },
+        {
+          "id": "gothic_small_door_insert_04",
+          "path": "doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_04.png",
+          "subtype": "small_door_or_wall_insert/gothic_small_door_insert_04.png",
+          "pixel_size": {
+            "w": 107,
+            "h": 50
+          }
+        },
+        {
+          "id": "gothic_small_door_insert_05",
+          "path": "doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_05.png",
+          "subtype": "small_door_or_wall_insert/gothic_small_door_insert_05.png",
+          "pixel_size": {
+            "w": 173,
+            "h": 63
+          }
+        }
+      ]
+    },
+    "walls": {
+      "base_path": "res://content/walls/gothic",
+      "count": 40,
+      "assets": [
+        {
+          "id": "gothic_wall_corner_connector_01",
+          "path": "walls/gothic/blocking_wall_corner_or_connector/gothic_wall_corner_connector_01.png",
+          "subtype": "blocking_wall_corner_or_connector/gothic_wall_corner_connector_01.png",
+          "pixel_size": {
+            "w": 58,
+            "h": 98
+          }
+        },
+        {
+          "id": "gothic_wall_corner_connector_02",
+          "path": "walls/gothic/blocking_wall_corner_or_connector/gothic_wall_corner_connector_02.png",
+          "subtype": "blocking_wall_corner_or_connector/gothic_wall_corner_connector_02.png",
+          "pixel_size": {
+            "w": 40,
+            "h": 90
+          }
+        },
+        {
+          "id": "gothic_wall_corner_connector_03",
+          "path": "walls/gothic/blocking_wall_corner_or_connector/gothic_wall_corner_connector_03.png",
+          "subtype": "blocking_wall_corner_or_connector/gothic_wall_corner_connector_03.png",
+          "pixel_size": {
+            "w": 45,
+            "h": 91
+          }
+        },
+        {
+          "id": "gothic_wall_corner_connector_04",
+          "path": "walls/gothic/blocking_wall_corner_or_connector/gothic_wall_corner_connector_04.png",
+          "subtype": "blocking_wall_corner_or_connector/gothic_wall_corner_connector_04.png",
+          "pixel_size": {
+            "w": 70,
+            "h": 95
+          }
+        },
+        {
+          "id": "gothic_wall_corner_connector_05",
+          "path": "walls/gothic/blocking_wall_corner_or_connector/gothic_wall_corner_connector_05.png",
+          "subtype": "blocking_wall_corner_or_connector/gothic_wall_corner_connector_05.png",
+          "pixel_size": {
+            "w": 79,
+            "h": 99
+          }
+        },
+        {
+          "id": "gothic_wall_corner_connector_06",
+          "path": "walls/gothic/blocking_wall_corner_or_connector/gothic_wall_corner_connector_06.png",
+          "subtype": "blocking_wall_corner_or_connector/gothic_wall_corner_connector_06.png",
+          "pixel_size": {
+            "w": 81,
+            "h": 93
+          }
+        },
+        {
+          "id": "gothic_wall_corner_connector_07",
+          "path": "walls/gothic/blocking_wall_corner_or_connector/gothic_wall_corner_connector_07.png",
+          "subtype": "blocking_wall_corner_or_connector/gothic_wall_corner_connector_07.png",
+          "pixel_size": {
+            "w": 84,
+            "h": 97
+          }
+        },
+        {
+          "id": "gothic_wall_corner_connector_08",
+          "path": "walls/gothic/blocking_wall_corner_or_connector/gothic_wall_corner_connector_08.png",
+          "subtype": "blocking_wall_corner_or_connector/gothic_wall_corner_connector_08.png",
+          "pixel_size": {
+            "w": 63,
+            "h": 92
+          }
+        },
+        {
+          "id": "gothic_wall_corner_connector_09",
+          "path": "walls/gothic/blocking_wall_corner_or_connector/gothic_wall_corner_connector_09.png",
+          "subtype": "blocking_wall_corner_or_connector/gothic_wall_corner_connector_09.png",
+          "pixel_size": {
+            "w": 89,
+            "h": 93
+          }
+        },
+        {
+          "id": "gothic_wall_corner_connector_10",
+          "path": "walls/gothic/blocking_wall_corner_or_connector/gothic_wall_corner_connector_10.png",
+          "subtype": "blocking_wall_corner_or_connector/gothic_wall_corner_connector_10.png",
+          "pixel_size": {
+            "w": 45,
+            "h": 95
+          }
+        },
+        {
+          "id": "gothic_wall_corner_connector_11",
+          "path": "walls/gothic/blocking_wall_corner_or_connector/gothic_wall_corner_connector_11.png",
+          "subtype": "blocking_wall_corner_or_connector/gothic_wall_corner_connector_11.png",
+          "pixel_size": {
+            "w": 42,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_wall_corner_connector_12",
+          "path": "walls/gothic/blocking_wall_corner_or_connector/gothic_wall_corner_connector_12.png",
+          "subtype": "blocking_wall_corner_or_connector/gothic_wall_corner_connector_12.png",
+          "pixel_size": {
+            "w": 47,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_wall_corner_connector_13",
+          "path": "walls/gothic/blocking_wall_corner_or_connector/gothic_wall_corner_connector_13.png",
+          "subtype": "blocking_wall_corner_or_connector/gothic_wall_corner_connector_13.png",
+          "pixel_size": {
+            "w": 49,
+            "h": 72
+          }
+        },
+        {
+          "id": "gothic_wall_corner_connector_14",
+          "path": "walls/gothic/blocking_wall_corner_or_connector/gothic_wall_corner_connector_14.png",
+          "subtype": "blocking_wall_corner_or_connector/gothic_wall_corner_connector_14.png",
+          "pixel_size": {
+            "w": 115,
+            "h": 66
+          }
+        },
+        {
+          "id": "gothic_wall_corner_connector_15",
+          "path": "walls/gothic/blocking_wall_corner_or_connector/gothic_wall_corner_connector_15.png",
+          "subtype": "blocking_wall_corner_or_connector/gothic_wall_corner_connector_15.png",
+          "pixel_size": {
+            "w": 32,
+            "h": 85
+          }
+        },
+        {
+          "id": "gothic_wall_corner_connector_16",
+          "path": "walls/gothic/blocking_wall_corner_or_connector/gothic_wall_corner_connector_16.png",
+          "subtype": "blocking_wall_corner_or_connector/gothic_wall_corner_connector_16.png",
+          "pixel_size": {
+            "w": 33,
+            "h": 84
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_01",
+          "path": "walls/gothic/blocking_wall_vertical_slice/gothic_wall_vertical_slice_01.png",
+          "subtype": "blocking_wall_vertical_slice/gothic_wall_vertical_slice_01.png",
+          "pixel_size": {
+            "w": 41,
+            "h": 97
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_02",
+          "path": "walls/gothic/blocking_wall_vertical_slice/gothic_wall_vertical_slice_02.png",
+          "subtype": "blocking_wall_vertical_slice/gothic_wall_vertical_slice_02.png",
+          "pixel_size": {
+            "w": 40,
+            "h": 96
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_03",
+          "path": "walls/gothic/blocking_wall_vertical_slice/gothic_wall_vertical_slice_03.png",
+          "subtype": "blocking_wall_vertical_slice/gothic_wall_vertical_slice_03.png",
+          "pixel_size": {
+            "w": 42,
+            "h": 95
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_04",
+          "path": "walls/gothic/blocking_wall_vertical_slice/gothic_wall_vertical_slice_04.png",
+          "subtype": "blocking_wall_vertical_slice/gothic_wall_vertical_slice_04.png",
+          "pixel_size": {
+            "w": 41,
+            "h": 96
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_05",
+          "path": "walls/gothic/blocking_wall_vertical_slice/gothic_wall_vertical_slice_05.png",
+          "subtype": "blocking_wall_vertical_slice/gothic_wall_vertical_slice_05.png",
+          "pixel_size": {
+            "w": 32,
+            "h": 94
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_06",
+          "path": "walls/gothic/blocking_wall_vertical_slice/gothic_wall_vertical_slice_06.png",
+          "subtype": "blocking_wall_vertical_slice/gothic_wall_vertical_slice_06.png",
+          "pixel_size": {
+            "w": 39,
+            "h": 95
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_07",
+          "path": "walls/gothic/blocking_wall_vertical_slice/gothic_wall_vertical_slice_07.png",
+          "subtype": "blocking_wall_vertical_slice/gothic_wall_vertical_slice_07.png",
+          "pixel_size": {
+            "w": 44,
+            "h": 96
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_08",
+          "path": "walls/gothic/blocking_wall_vertical_slice/gothic_wall_vertical_slice_08.png",
+          "subtype": "blocking_wall_vertical_slice/gothic_wall_vertical_slice_08.png",
+          "pixel_size": {
+            "w": 36,
+            "h": 96
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_09",
+          "path": "walls/gothic/blocking_wall_vertical_slice/gothic_wall_vertical_slice_09.png",
+          "subtype": "blocking_wall_vertical_slice/gothic_wall_vertical_slice_09.png",
+          "pixel_size": {
+            "w": 40,
+            "h": 96
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_10",
+          "path": "walls/gothic/blocking_wall_vertical_slice/gothic_wall_vertical_slice_10.png",
+          "subtype": "blocking_wall_vertical_slice/gothic_wall_vertical_slice_10.png",
+          "pixel_size": {
+            "w": 41,
+            "h": 96
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_11",
+          "path": "walls/gothic/blocking_wall_vertical_slice/gothic_wall_vertical_slice_11.png",
+          "subtype": "blocking_wall_vertical_slice/gothic_wall_vertical_slice_11.png",
+          "pixel_size": {
+            "w": 50,
+            "h": 96
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_12",
+          "path": "walls/gothic/blocking_wall_vertical_slice/gothic_wall_vertical_slice_12.png",
+          "subtype": "blocking_wall_vertical_slice/gothic_wall_vertical_slice_12.png",
+          "pixel_size": {
+            "w": 43,
+            "h": 96
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_13",
+          "path": "walls/gothic/blocking_wall_vertical_slice/gothic_wall_vertical_slice_13.png",
+          "subtype": "blocking_wall_vertical_slice/gothic_wall_vertical_slice_13.png",
+          "pixel_size": {
+            "w": 42,
+            "h": 93
+          }
+        },
+        {
+          "id": "gothic_wall_vertical_slice_14",
+          "path": "walls/gothic/blocking_wall_vertical_slice/gothic_wall_vertical_slice_14.png",
+          "subtype": "blocking_wall_vertical_slice/gothic_wall_vertical_slice_14.png",
+          "pixel_size": {
+            "w": 36,
+            "h": 95
+          }
+        },
+        {
+          "id": "gothic_wall_broken_segment_01",
+          "path": "walls/gothic/damaged_wall_or_partial_cover/gothic_wall_broken_segment_01.png",
+          "subtype": "damaged_wall_or_partial_cover/gothic_wall_broken_segment_01.png",
+          "pixel_size": {
+            "w": 35,
+            "h": 70
+          }
+        },
+        {
+          "id": "gothic_wall_broken_segment_02",
+          "path": "walls/gothic/damaged_wall_or_partial_cover/gothic_wall_broken_segment_02.png",
+          "subtype": "damaged_wall_or_partial_cover/gothic_wall_broken_segment_02.png",
+          "pixel_size": {
+            "w": 30,
+            "h": 84
+          }
+        },
+        {
+          "id": "gothic_wall_broken_segment_03",
+          "path": "walls/gothic/damaged_wall_or_partial_cover/gothic_wall_broken_segment_03.png",
+          "subtype": "damaged_wall_or_partial_cover/gothic_wall_broken_segment_03.png",
+          "pixel_size": {
+            "w": 39,
+            "h": 84
+          }
+        },
+        {
+          "id": "gothic_wall_cap_terminal_01",
+          "path": "walls/gothic/wall_cap_terminal_or_buttress/gothic_wall_cap_terminal_01.png",
+          "subtype": "wall_cap_terminal_or_buttress/gothic_wall_cap_terminal_01.png",
+          "pixel_size": {
+            "w": 42,
+            "h": 95
+          }
+        },
+        {
+          "id": "gothic_wall_cap_terminal_02",
+          "path": "walls/gothic/wall_cap_terminal_or_buttress/gothic_wall_cap_terminal_02.png",
+          "subtype": "wall_cap_terminal_or_buttress/gothic_wall_cap_terminal_02.png",
+          "pixel_size": {
+            "w": 85,
+            "h": 97
+          }
+        },
+        {
+          "id": "gothic_wall_cap_terminal_03",
+          "path": "walls/gothic/wall_cap_terminal_or_buttress/gothic_wall_cap_terminal_03.png",
+          "subtype": "wall_cap_terminal_or_buttress/gothic_wall_cap_terminal_03.png",
+          "pixel_size": {
+            "w": 88,
+            "h": 97
+          }
+        },
+        {
+          "id": "gothic_wall_cap_terminal_04",
+          "path": "walls/gothic/wall_cap_terminal_or_buttress/gothic_wall_cap_terminal_04.png",
+          "subtype": "wall_cap_terminal_or_buttress/gothic_wall_cap_terminal_04.png",
+          "pixel_size": {
+            "w": 92,
+            "h": 97
+          }
+        },
+        {
+          "id": "gothic_wall_cap_terminal_05",
+          "path": "walls/gothic/wall_cap_terminal_or_buttress/gothic_wall_cap_terminal_05.png",
+          "subtype": "wall_cap_terminal_or_buttress/gothic_wall_cap_terminal_05.png",
+          "pixel_size": {
+            "w": 40,
+            "h": 107
+          }
+        },
+        {
+          "id": "gothic_wall_cap_terminal_06",
+          "path": "walls/gothic/wall_cap_terminal_or_buttress/gothic_wall_cap_terminal_06.png",
+          "subtype": "wall_cap_terminal_or_buttress/gothic_wall_cap_terminal_06.png",
+          "pixel_size": {
+            "w": 80,
+            "h": 93
+          }
+        },
+        {
+          "id": "gothic_wall_cap_terminal_07",
+          "path": "walls/gothic/wall_cap_terminal_or_buttress/gothic_wall_cap_terminal_07.png",
+          "subtype": "wall_cap_terminal_or_buttress/gothic_wall_cap_terminal_07.png",
+          "pixel_size": {
+            "w": 41,
+            "h": 93
+          }
+        }
+      ]
+    },
+    "roads": {
+      "base_path": "res://content/tiles/roads_paths/runtime/roads/gothic",
+      "count": 92,
+      "manifest": "res://content/tiles/roads_paths/runtime/roads/gothic/manifest.json",
+      "assets": [
+        {
+          "id": "overlay_barrier_chain_01",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_barrier_chain_01.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 140,
+            "h": 53
+          }
+        },
+        {
+          "id": "overlay_barrier_chain_02",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_barrier_chain_02.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 99,
+            "h": 62
+          }
+        },
+        {
+          "id": "overlay_blood_splatter_01",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_blood_splatter_01.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 26,
+            "h": 17
+          }
+        },
+        {
+          "id": "overlay_blood_splatter_02",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_blood_splatter_02.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 81,
+            "h": 27
+          }
+        },
+        {
+          "id": "overlay_blood_splatter_03",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_blood_splatter_03.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 49,
+            "h": 27
+          }
+        },
+        {
+          "id": "overlay_blood_splatter_04",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_blood_splatter_04.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 26,
+            "h": 21
+          }
+        },
+        {
+          "id": "overlay_blood_splatter_05",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_blood_splatter_05.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 132,
+            "h": 17
+          }
+        },
+        {
+          "id": "overlay_candle_shrine_01",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_candle_shrine_01.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 74,
+            "h": 41
+          }
+        },
+        {
+          "id": "overlay_candle_shrine_02",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_candle_shrine_02.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 72,
+            "h": 36
+          }
+        },
+        {
+          "id": "overlay_candle_shrine_03",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_candle_shrine_03.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 77,
+            "h": 33
+          }
+        },
+        {
+          "id": "overlay_candle_shrine_04",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_candle_shrine_04.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 43,
+            "h": 38
+          }
+        },
+        {
+          "id": "overlay_candle_shrine_05",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_candle_shrine_05.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 36,
+            "h": 36
+          }
+        },
+        {
+          "id": "overlay_candle_shrine_06",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_candle_shrine_06.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 29,
+            "h": 33
+          }
+        },
+        {
+          "id": "overlay_candle_shrine_07",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_candle_shrine_07.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 36,
+            "h": 13
+          }
+        },
+        {
+          "id": "overlay_candle_shrine_08",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_candle_shrine_08.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 38,
+            "h": 13
+          }
+        },
+        {
+          "id": "overlay_candle_shrine_09",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_candle_shrine_09.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 12,
+            "h": 41
+          }
+        },
+        {
+          "id": "overlay_candle_shrine_10",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_candle_shrine_10.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 18,
+            "h": 47
+          }
+        },
+        {
+          "id": "overlay_crack_01",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_crack_01.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 58,
+            "h": 85
+          }
+        },
+        {
+          "id": "overlay_crack_02",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_crack_02.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 32,
+            "h": 99
+          }
+        },
+        {
+          "id": "overlay_crack_03",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_crack_03.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 38,
+            "h": 94
+          }
+        },
+        {
+          "id": "overlay_crack_04",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_crack_04.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 65,
+            "h": 95
+          }
+        },
+        {
+          "id": "overlay_gothic_corner_trim_01",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_gothic_corner_trim_01.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 32,
+            "h": 30
+          }
+        },
+        {
+          "id": "overlay_gothic_corner_trim_02",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_gothic_corner_trim_02.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 37,
+            "h": 37
+          }
+        },
+        {
+          "id": "overlay_gothic_corner_trim_03",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_gothic_corner_trim_03.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 38,
+            "h": 43
+          }
+        },
+        {
+          "id": "overlay_gothic_corner_trim_04",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_gothic_corner_trim_04.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 33,
+            "h": 34
+          }
+        },
+        {
+          "id": "overlay_gothic_corner_trim_05",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_gothic_corner_trim_05.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 24,
+            "h": 21
+          }
+        },
+        {
+          "id": "overlay_gothic_corner_trim_06",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_gothic_corner_trim_06.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 25,
+            "h": 29
+          }
+        },
+        {
+          "id": "overlay_gothic_corner_trim_07",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_gothic_corner_trim_07.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 25,
+            "h": 27
+          }
+        },
+        {
+          "id": "overlay_gothic_corner_trim_08",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_gothic_corner_trim_08.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 23,
+            "h": 22
+          }
+        },
+        {
+          "id": "overlay_gothic_corner_trim_09",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_gothic_corner_trim_09.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 24,
+            "h": 23
+          }
+        },
+        {
+          "id": "overlay_gothic_corner_trim_10",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_gothic_corner_trim_10.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 13,
+            "h": 19
+          }
+        },
+        {
+          "id": "overlay_gothic_corner_trim_11",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_gothic_corner_trim_11.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 12,
+            "h": 19
+          }
+        },
+        {
+          "id": "overlay_gothic_corner_trim_12",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_gothic_corner_trim_12.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 18,
+            "h": 24
+          }
+        },
+        {
+          "id": "overlay_hanging_banner_01",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_hanging_banner_01.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 58,
+            "h": 94
+          }
+        },
+        {
+          "id": "overlay_hanging_banner_02",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_hanging_banner_02.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 65,
+            "h": 112
+          }
+        },
+        {
+          "id": "overlay_hanging_banner_03",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_hanging_banner_03.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 63,
+            "h": 93
+          }
+        },
+        {
+          "id": "overlay_hanging_banner_04",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_hanging_banner_04.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 45,
+            "h": 91
+          }
+        },
+        {
+          "id": "overlay_hardware_plate_01",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_hardware_plate_01.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 42,
+            "h": 67
+          }
+        },
+        {
+          "id": "overlay_hardware_plate_02",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_hardware_plate_02.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 31,
+            "h": 32
+          }
+        },
+        {
+          "id": "overlay_hardware_plate_03",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_hardware_plate_03.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 32,
+            "h": 53
+          }
+        },
+        {
+          "id": "overlay_hardware_plate_04",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_hardware_plate_04.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 25,
+            "h": 32
+          }
+        },
+        {
+          "id": "overlay_puddle_stain_01",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_puddle_stain_01.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 99,
+            "h": 64
+          }
+        },
+        {
+          "id": "overlay_puddle_stain_02",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_puddle_stain_02.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 59,
+            "h": 22
+          }
+        },
+        {
+          "id": "overlay_puddle_stain_03",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_puddle_stain_03.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 44,
+            "h": 33
+          }
+        },
+        {
+          "id": "overlay_relic_symbol_01",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_relic_symbol_01.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 57,
+            "h": 34
+          }
+        },
+        {
+          "id": "overlay_relic_symbol_02",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_relic_symbol_02.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 22,
+            "h": 36
+          }
+        },
+        {
+          "id": "overlay_relic_symbol_03",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_relic_symbol_03.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 39,
+            "h": 40
+          }
+        },
+        {
+          "id": "overlay_relic_symbol_04",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_relic_symbol_04.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 27,
+            "h": 36
+          }
+        },
+        {
+          "id": "overlay_relic_symbol_05",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_relic_symbol_05.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 50,
+            "h": 30
+          }
+        },
+        {
+          "id": "overlay_relic_symbol_06",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_relic_symbol_06.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 71,
+            "h": 52
+          }
+        },
+        {
+          "id": "overlay_relic_symbol_07",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_relic_symbol_07.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 28,
+            "h": 38
+          }
+        },
+        {
+          "id": "overlay_relic_symbol_08",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_relic_symbol_08.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 75,
+            "h": 37
+          }
+        },
+        {
+          "id": "overlay_relic_symbol_09",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_relic_symbol_09.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 35,
+            "h": 46
+          }
+        },
+        {
+          "id": "overlay_rubble_debris_01",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_rubble_debris_01.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 22,
+            "h": 1212
+          }
+        },
+        {
+          "id": "overlay_rubble_debris_02",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_rubble_debris_02.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 59,
+            "h": 46
+          }
+        },
+        {
+          "id": "overlay_rubble_debris_03",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_rubble_debris_03.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 46,
+            "h": 46
+          }
+        },
+        {
+          "id": "overlay_rubble_debris_04",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_rubble_debris_04.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 26,
+            "h": 55
+          }
+        },
+        {
+          "id": "overlay_rubble_debris_05",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_rubble_debris_05.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 36,
+            "h": 49
+          }
+        },
+        {
+          "id": "overlay_rubble_debris_06",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_rubble_debris_06.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 37,
+            "h": 49
+          }
+        },
+        {
+          "id": "overlay_rune_circle_01",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_rune_circle_01.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 75,
+            "h": 84
+          }
+        },
+        {
+          "id": "overlay_rune_circle_02",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_rune_circle_02.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 78,
+            "h": 75
+          }
+        },
+        {
+          "id": "overlay_rune_circle_03",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_rune_circle_03.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 73,
+            "h": 73
+          }
+        },
+        {
+          "id": "overlay_rune_circle_04",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_rune_circle_04.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 71,
+            "h": 69
+          }
+        },
+        {
+          "id": "overlay_rune_circle_05",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_rune_circle_05.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 49,
+            "h": 68
+          }
+        },
+        {
+          "id": "overlay_rune_circle_06",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_rune_circle_06.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 51,
+            "h": 63
+          }
+        },
+        {
+          "id": "overlay_rune_circle_07",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_rune_circle_07.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 32,
+            "h": 72
+          }
+        },
+        {
+          "id": "overlay_rune_mark_01",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_rune_mark_01.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 255,
+            "h": 64
+          }
+        },
+        {
+          "id": "overlay_rune_mark_02",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_rune_mark_02.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 36,
+            "h": 18
+          }
+        },
+        {
+          "id": "overlay_rune_mark_03",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_rune_mark_03.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 43,
+            "h": 20
+          }
+        },
+        {
+          "id": "overlay_rune_mark_04",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_rune_mark_04.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 38,
+            "h": 29
+          }
+        },
+        {
+          "id": "overlay_rune_mark_05",
+          "path": "tiles/roads_paths/runtime/roads/gothic/overlays/overlay_rune_mark_05.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 31,
+            "h": 38
+          }
+        },
+        {
+          "id": "002_road_junction_t_01",
+          "path": "tiles/roads_paths/runtime/roads/gothic/pieces/002_road_junction_t_01.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 251,
+            "h": 146
+          }
+        },
+        {
+          "id": "003_road_junction_t_02",
+          "path": "tiles/roads_paths/runtime/roads/gothic/pieces/003_road_junction_t_02.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 241,
+            "h": 146
+          }
+        },
+        {
+          "id": "004_road_straight_v_large_01",
+          "path": "tiles/roads_paths/runtime/roads/gothic/pieces/004_road_straight_v_large_01.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 107,
+            "h": 308
+          }
+        },
+        {
+          "id": "005_road_straight_v_large_02",
+          "path": "tiles/roads_paths/runtime/roads/gothic/pieces/005_road_straight_v_large_02.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 85,
+            "h": 308
+          }
+        },
+        {
+          "id": "006_road_straight_v_large_03",
+          "path": "tiles/roads_paths/runtime/roads/gothic/pieces/006_road_straight_v_large_03.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 89,
+            "h": 308
+          }
+        },
+        {
+          "id": "014_road_junction_t_03",
+          "path": "tiles/roads_paths/runtime/roads/gothic/pieces/014_road_junction_t_03.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 251,
+            "h": 146
+          }
+        },
+        {
+          "id": "015_road_junction_t_04",
+          "path": "tiles/roads_paths/runtime/roads/gothic/pieces/015_road_junction_t_04.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 241,
+            "h": 146
+          }
+        },
+        {
+          "id": "021_road_intersection_large_01",
+          "path": "tiles/roads_paths/runtime/roads/gothic/pieces/021_road_intersection_large_01.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 200,
+            "h": 251
+          }
+        },
+        {
+          "id": "022_road_intersection_large_02",
+          "path": "tiles/roads_paths/runtime/roads/gothic/pieces/022_road_intersection_large_02.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 653,
+            "h": 605
+          }
+        },
+        {
+          "id": "048_road_intersection_cross_01",
+          "path": "tiles/roads_paths/runtime/roads/gothic/pieces/048_road_intersection_cross_01.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 199,
+            "h": 200
+          }
+        },
+        {
+          "id": "066_road_pad_square_01",
+          "path": "tiles/roads_paths/runtime/roads/gothic/pieces/066_road_pad_square_01.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 115,
+            "h": 101
+          }
+        },
+        {
+          "id": "067_road_tile_01",
+          "path": "tiles/roads_paths/runtime/roads/gothic/pieces/067_road_tile_01.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 50,
+            "h": 101
+          }
+        },
+        {
+          "id": "076_road_corner_or_junction_01",
+          "path": "tiles/roads_paths/runtime/roads/gothic/pieces/076_road_corner_or_junction_01.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 95,
+            "h": 181
+          }
+        },
+        {
+          "id": "077_road_corner_01",
+          "path": "tiles/roads_paths/runtime/roads/gothic/pieces/077_road_corner_01.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 88,
+            "h": 181
+          }
+        },
+        {
+          "id": "078_road_corner_02",
+          "path": "tiles/roads_paths/runtime/roads/gothic/pieces/078_road_corner_02.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 85,
+            "h": 181
+          }
+        },
+        {
+          "id": "079_road_corner_03",
+          "path": "tiles/roads_paths/runtime/roads/gothic/pieces/079_road_corner_03.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 83,
+            "h": 181
+          }
+        },
+        {
+          "id": "080_road_corner_04",
+          "path": "tiles/roads_paths/runtime/roads/gothic/pieces/080_road_corner_04.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 84,
+            "h": 181
+          }
+        },
+        {
+          "id": "081_road_straight_v_large_04",
+          "path": "tiles/roads_paths/runtime/roads/gothic/pieces/081_road_straight_v_large_04.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 80,
+            "h": 181
+          }
+        },
+        {
+          "id": "082_road_straight_v_01",
+          "path": "tiles/roads_paths/runtime/roads/gothic/pieces/082_road_straight_v_01.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 69,
+            "h": 181
+          }
+        },
+        {
+          "id": "083_road_straight_v_02",
+          "path": "tiles/roads_paths/runtime/roads/gothic/pieces/083_road_straight_v_02.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 65,
+            "h": 181
+          }
+        },
+        {
+          "id": "084_road_straight_v_03",
+          "path": "tiles/roads_paths/runtime/roads/gothic/pieces/084_road_straight_v_03.png",
+          "subtype": "runtime/roads",
+          "pixel_size": {
+            "w": 65,
+            "h": 181
+          }
+        }
+      ]
+    },
+    "road_compound": {
+      "base_path": "res://content/tiles/roads_paths/runtime/gothic_compound",
+      "count": 10,
+      "assets": [
+        {
+          "id": "road_path_001",
+          "path": "tiles/roads_paths/runtime/gothic_compound/road_path_001.png",
+          "subtype": "runtime/gothic_compound",
+          "pixel_size": {
+            "w": 48,
+            "h": 66
+          }
+        },
+        {
+          "id": "road_path_002",
+          "path": "tiles/roads_paths/runtime/gothic_compound/road_path_002.png",
+          "subtype": "runtime/gothic_compound",
+          "pixel_size": {
+            "w": 48,
+            "h": 66
+          }
+        },
+        {
+          "id": "road_path_003",
+          "path": "tiles/roads_paths/runtime/gothic_compound/road_path_003.png",
+          "subtype": "runtime/gothic_compound",
+          "pixel_size": {
+            "w": 48,
+            "h": 66
+          }
+        },
+        {
+          "id": "road_path_004",
+          "path": "tiles/roads_paths/runtime/gothic_compound/road_path_004.png",
+          "subtype": "runtime/gothic_compound",
+          "pixel_size": {
+            "w": 48,
+            "h": 66
+          }
+        },
+        {
+          "id": "road_path_005",
+          "path": "tiles/roads_paths/runtime/gothic_compound/road_path_005.png",
+          "subtype": "runtime/gothic_compound",
+          "pixel_size": {
+            "w": 48,
+            "h": 66
+          }
+        },
+        {
+          "id": "road_path_006",
+          "path": "tiles/roads_paths/runtime/gothic_compound/road_path_006.png",
+          "subtype": "runtime/gothic_compound",
+          "pixel_size": {
+            "w": 48,
+            "h": 66
+          }
+        },
+        {
+          "id": "road_path_007",
+          "path": "tiles/roads_paths/runtime/gothic_compound/road_path_007.png",
+          "subtype": "runtime/gothic_compound",
+          "pixel_size": {
+            "w": 48,
+            "h": 66
+          }
+        },
+        {
+          "id": "road_path_008",
+          "path": "tiles/roads_paths/runtime/gothic_compound/road_path_008.png",
+          "subtype": "runtime/gothic_compound",
+          "pixel_size": {
+            "w": 48,
+            "h": 66
+          }
+        },
+        {
+          "id": "road_path_009",
+          "path": "tiles/roads_paths/runtime/gothic_compound/road_path_009.png",
+          "subtype": "runtime/gothic_compound",
+          "pixel_size": {
+            "w": 48,
+            "h": 66
+          }
+        },
+        {
+          "id": "road_path_010",
+          "path": "tiles/roads_paths/runtime/gothic_compound/road_path_010.png",
+          "subtype": "runtime/gothic_compound",
+          "pixel_size": {
+            "w": 48,
+            "h": 66
+          }
+        }
+      ]
+    },
+    "animations": {
+      "base_path": "res://content/animations/gothic",
+      "count": 1,
+      "manifest": "res://content/animations/gothic/banner_flap_10f.game32.json",
+      "assets": [
+        {
+          "id": "banner_flap_10f",
+          "path": "animations/gothic/banner_flap_10f.png",
+          "subtype": "banner_flap_10f.png",
+          "pixel_size": {
+            "w": 1140,
+            "h": 130
+          }
+        }
+      ]
+    },
+    "rooms": {
+      "base_path": "res://content/procgen/special_rooms/gothic_compound",
+      "count": 162,
+      "assets": [
+        {
+          "id": "01_cover_sandbag_straight_h",
+          "path": "procgen/special_rooms/gothic_compound/01_cover_sandbag_straight_h.png",
+          "subtype": "gothic_compound/01_cover_sandbag_straight_h.png",
+          "pixel_size": {
+            "w": 209,
+            "h": 68
+          }
+        },
+        {
+          "id": "01_structure_command_keep_gothic_large",
+          "path": "procgen/special_rooms/gothic_compound/01_structure_command_keep_gothic_large.png",
+          "subtype": "gothic_compound/01_structure_command_keep_gothic_large.png",
+          "pixel_size": {
+            "w": 360,
+            "h": 318
+          }
+        },
+        {
+          "id": "01_terrain_ash_base_dark_a",
+          "path": "procgen/special_rooms/gothic_compound/01_terrain_ash_base_dark_a.png",
+          "subtype": "gothic_compound/01_terrain_ash_base_dark_a.png",
+          "pixel_size": {
+            "w": 121,
+            "h": 121
+          }
+        },
+        {
+          "id": "01_wall_straight_w_pillar_conn_e",
+          "path": "procgen/special_rooms/gothic_compound/01_wall_straight_w_pillar_conn_e.png",
+          "subtype": "gothic_compound/01_wall_straight_w_pillar_conn_e.png",
+          "pixel_size": {
+            "w": 149,
+            "h": 68
+          }
+        },
+        {
+          "id": "02_cover_sandbag_corner_curve",
+          "path": "procgen/special_rooms/gothic_compound/02_cover_sandbag_corner_curve.png",
+          "subtype": "gothic_compound/02_cover_sandbag_corner_curve.png",
+          "pixel_size": {
+            "w": 112,
+            "h": 103
+          }
+        },
+        {
+          "id": "02_structure_utility_fan_roof_block",
+          "path": "procgen/special_rooms/gothic_compound/02_structure_utility_fan_roof_block.png",
+          "subtype": "gothic_compound/02_structure_utility_fan_roof_block.png",
+          "pixel_size": {
+            "w": 228,
+            "h": 265
+          }
+        },
+        {
+          "id": "02_terrain_ash_base_dark_b",
+          "path": "procgen/special_rooms/gothic_compound/02_terrain_ash_base_dark_b.png",
+          "subtype": "gothic_compound/02_terrain_ash_base_dark_b.png",
+          "pixel_size": {
+            "w": 120,
+            "h": 121
+          }
+        },
+        {
+          "id": "02_wall_pillar_spire_single",
+          "path": "procgen/special_rooms/gothic_compound/02_wall_pillar_spire_single.png",
+          "subtype": "gothic_compound/02_wall_pillar_spire_single.png",
+          "pixel_size": {
+            "w": 14,
+            "h": 46
+          }
+        },
+        {
+          "id": "03_cover_stone_low_wall_h",
+          "path": "procgen/special_rooms/gothic_compound/03_cover_stone_low_wall_h.png",
+          "subtype": "gothic_compound/03_cover_stone_low_wall_h.png",
+          "pixel_size": {
+            "w": 171,
+            "h": 70
+          }
+        },
+        {
+          "id": "03_structure_machine_house_gothic_industrial",
+          "path": "procgen/special_rooms/gothic_compound/03_structure_machine_house_gothic_industrial.png",
+          "subtype": "gothic_compound/03_structure_machine_house_gothic_industrial.png",
+          "pixel_size": {
+            "w": 235,
+            "h": 268
+          }
+        },
+        {
+          "id": "03_terrain_ash_roots_cracked_a",
+          "path": "procgen/special_rooms/gothic_compound/03_terrain_ash_roots_cracked_a.png",
+          "subtype": "gothic_compound/03_terrain_ash_roots_cracked_a.png",
+          "pixel_size": {
+            "w": 121,
+            "h": 121
+          }
+        },
+        {
+          "id": "03_wall_corner_l_conn_s_e",
+          "path": "procgen/special_rooms/gothic_compound/03_wall_corner_l_conn_s_e.png",
+          "subtype": "gothic_compound/03_wall_corner_l_conn_s_e.png",
+          "pixel_size": {
+            "w": 40,
+            "h": 100
+          }
+        },
+        {
+          "id": "04_fence_wrought_iron_long_h",
+          "path": "procgen/special_rooms/gothic_compound/04_fence_wrought_iron_long_h.png",
+          "subtype": "gothic_compound/04_fence_wrought_iron_long_h.png",
+          "pixel_size": {
+            "w": 265,
+            "h": 126
+          }
+        },
+        {
+          "id": "04_platform_stone_plain_large",
+          "path": "procgen/special_rooms/gothic_compound/04_platform_stone_plain_large.png",
+          "subtype": "gothic_compound/04_platform_stone_plain_large.png",
+          "pixel_size": {
+            "w": 201,
+            "h": 139
+          }
+        },
+        {
+          "id": "04_terrain_ash_roots_dense_b",
+          "path": "procgen/special_rooms/gothic_compound/04_terrain_ash_roots_dense_b.png",
+          "subtype": "gothic_compound/04_terrain_ash_roots_dense_b.png",
+          "pixel_size": {
+            "w": 121,
+            "h": 121
+          }
+        },
+        {
+          "id": "04_wall_corner_l_conn_s_w",
+          "path": "procgen/special_rooms/gothic_compound/04_wall_corner_l_conn_s_w.png",
+          "subtype": "gothic_compound/04_wall_corner_l_conn_s_w.png",
+          "pixel_size": {
+            "w": 105,
+            "h": 70
+          }
+        },
+        {
+          "id": "05_fence_wrought_iron_short_h",
+          "path": "procgen/special_rooms/gothic_compound/05_fence_wrought_iron_short_h.png",
+          "subtype": "gothic_compound/05_fence_wrought_iron_short_h.png",
+          "pixel_size": {
+            "w": 124,
+            "h": 111
+          }
+        },
+        {
+          "id": "05_platform_stone_symbol_large",
+          "path": "procgen/special_rooms/gothic_compound/05_platform_stone_symbol_large.png",
+          "subtype": "gothic_compound/05_platform_stone_symbol_large.png",
+          "pixel_size": {
+            "w": 247,
+            "h": 239
+          }
+        },
+        {
+          "id": "05_terrain_rocky_ash_base_a",
+          "path": "procgen/special_rooms/gothic_compound/05_terrain_rocky_ash_base_a.png",
+          "subtype": "gothic_compound/05_terrain_rocky_ash_base_a.png",
+          "pixel_size": {
+            "w": 122,
+            "h": 121
+          }
+        },
+        {
+          "id": "05_wall_straight_short_w_pillar_conn_e",
+          "path": "procgen/special_rooms/gothic_compound/05_wall_straight_short_w_pillar_conn_e.png",
+          "subtype": "gothic_compound/05_wall_straight_short_w_pillar_conn_e.png",
+          "pixel_size": {
+            "w": 108,
+            "h": 102
+          }
+        },
+        {
+          "id": "06_platform_hazard_striped_large",
+          "path": "procgen/special_rooms/gothic_compound/06_platform_hazard_striped_large.png",
+          "subtype": "gothic_compound/06_platform_hazard_striped_large.png",
+          "pixel_size": {
+            "w": 239,
+            "h": 240
+          }
+        },
+        {
+          "id": "06_spike_barricade_h",
+          "path": "procgen/special_rooms/gothic_compound/06_spike_barricade_h.png",
+          "subtype": "gothic_compound/06_spike_barricade_h.png",
+          "pixel_size": {
+            "w": 143,
+            "h": 100
+          }
+        },
+        {
+          "id": "06_terrain_cracked_rock_base_a",
+          "path": "procgen/special_rooms/gothic_compound/06_terrain_cracked_rock_base_a.png",
+          "subtype": "gothic_compound/06_terrain_cracked_rock_base_a.png",
+          "pixel_size": {
+            "w": 121,
+            "h": 121
+          }
+        },
+        {
+          "id": "06_wall_straight_damaged_conn_w_e",
+          "path": "procgen/special_rooms/gothic_compound/06_wall_straight_damaged_conn_w_e.png",
+          "subtype": "gothic_compound/06_wall_straight_damaged_conn_w_e.png",
+          "pixel_size": {
+            "w": 105,
+            "h": 124
+          }
+        },
+        {
+          "id": "07_barrier_chain_posts_h",
+          "path": "procgen/special_rooms/gothic_compound/07_barrier_chain_posts_h.png",
+          "subtype": "gothic_compound/07_barrier_chain_posts_h.png",
+          "pixel_size": {
+            "w": 190,
+            "h": 78
+          }
+        },
+        {
+          "id": "07_gate_arch_open_gothic",
+          "path": "procgen/special_rooms/gothic_compound/07_gate_arch_open_gothic.png",
+          "subtype": "gothic_compound/07_gate_arch_open_gothic.png",
+          "pixel_size": {
+            "w": 245,
+            "h": 243
+          }
+        },
+        {
+          "id": "07_terrain_cracked_rock_base_b",
+          "path": "procgen/special_rooms/gothic_compound/07_terrain_cracked_rock_base_b.png",
+          "subtype": "gothic_compound/07_terrain_cracked_rock_base_b.png",
+          "pixel_size": {
+            "w": 121,
+            "h": 122
+          }
+        },
+        {
+          "id": "07_wall_straight_damaged_pillar_conn_w",
+          "path": "procgen/special_rooms/gothic_compound/07_wall_straight_damaged_pillar_conn_w.png",
+          "subtype": "gothic_compound/07_wall_straight_damaged_pillar_conn_w.png",
+          "pixel_size": {
+            "w": 97,
+            "h": 104
+          }
+        },
+        {
+          "id": "08_crate_single",
+          "path": "procgen/special_rooms/gothic_compound/08_crate_single.png",
+          "subtype": "gothic_compound/08_crate_single.png",
+          "pixel_size": {
+            "w": 79,
+            "h": 90
+          }
+        },
+        {
+          "id": "08_structure_dry_fountain_basin_octagonal",
+          "path": "procgen/special_rooms/gothic_compound/08_structure_dry_fountain_basin_octagonal.png",
+          "subtype": "gothic_compound/08_structure_dry_fountain_basin_octagonal.png",
+          "pixel_size": {
+            "w": 149,
+            "h": 131
+          }
+        },
+        {
+          "id": "08_terrain_rocky_dirt_scatter_a",
+          "path": "procgen/special_rooms/gothic_compound/08_terrain_rocky_dirt_scatter_a.png",
+          "subtype": "gothic_compound/08_terrain_rocky_dirt_scatter_a.png",
+          "pixel_size": {
+            "w": 121,
+            "h": 121
+          }
+        },
+        {
+          "id": "08_wall_corner_spire_conn_s_w",
+          "path": "procgen/special_rooms/gothic_compound/08_wall_corner_spire_conn_s_w.png",
+          "subtype": "gothic_compound/08_wall_corner_spire_conn_s_w.png",
+          "pixel_size": {
+            "w": 113,
+            "h": 96
+          }
+        },
+        {
+          "id": "09_bell_frame_gothic_small",
+          "path": "procgen/special_rooms/gothic_compound/09_bell_frame_gothic_small.png",
+          "subtype": "gothic_compound/09_bell_frame_gothic_small.png",
+          "pixel_size": {
+            "w": 122,
+            "h": 185
+          }
+        },
+        {
+          "id": "09_crate_stack_large",
+          "path": "procgen/special_rooms/gothic_compound/09_crate_stack_large.png",
+          "subtype": "gothic_compound/09_crate_stack_large.png",
+          "pixel_size": {
+            "w": 153,
+            "h": 161
+          }
+        },
+        {
+          "id": "09_terrain_rocky_dirt_scatter_b",
+          "path": "procgen/special_rooms/gothic_compound/09_terrain_rocky_dirt_scatter_b.png",
+          "subtype": "gothic_compound/09_terrain_rocky_dirt_scatter_b.png",
+          "pixel_size": {
+            "w": 121,
+            "h": 121
+          }
+        },
+        {
+          "id": "09_wall_corner_inner_conn_e_s",
+          "path": "procgen/special_rooms/gothic_compound/09_wall_corner_inner_conn_e_s.png",
+          "subtype": "gothic_compound/09_wall_corner_inner_conn_e_s.png",
+          "pixel_size": {
+            "w": 51,
+            "h": 25
+          }
+        },
+        {
+          "id": "10_barrel_single",
+          "path": "procgen/special_rooms/gothic_compound/10_barrel_single.png",
+          "subtype": "gothic_compound/10_barrel_single.png",
+          "pixel_size": {
+            "w": 61,
+            "h": 97
+          }
+        },
+        {
+          "id": "10_obelisk_spire_marker_tall",
+          "path": "procgen/special_rooms/gothic_compound/10_obelisk_spire_marker_tall.png",
+          "subtype": "gothic_compound/10_obelisk_spire_marker_tall.png",
+          "pixel_size": {
+            "w": 74,
+            "h": 166
+          }
+        },
+        {
+          "id": "10_terrain_rocky_dirt_scatter_c",
+          "path": "procgen/special_rooms/gothic_compound/10_terrain_rocky_dirt_scatter_c.png",
+          "subtype": "gothic_compound/10_terrain_rocky_dirt_scatter_c.png",
+          "pixel_size": {
+            "w": 121,
+            "h": 121
+          }
+        },
+        {
+          "id": "10_wall_broken_corner_rubble_conn_n_e",
+          "path": "procgen/special_rooms/gothic_compound/10_wall_broken_corner_rubble_conn_n_e.png",
+          "subtype": "gothic_compound/10_wall_broken_corner_rubble_conn_n_e.png",
+          "pixel_size": {
+            "w": 40,
+            "h": 26
+          }
+        },
+        {
+          "id": "11_barrel_stack_cluster",
+          "path": "procgen/special_rooms/gothic_compound/11_barrel_stack_cluster.png",
+          "subtype": "gothic_compound/11_barrel_stack_cluster.png",
+          "pixel_size": {
+            "w": 110,
+            "h": 143
+          }
+        },
+        {
+          "id": "11_lamp_post_amber_single",
+          "path": "procgen/special_rooms/gothic_compound/11_lamp_post_amber_single.png",
+          "subtype": "gothic_compound/11_lamp_post_amber_single.png",
+          "pixel_size": {
+            "w": 40,
+            "h": 138
+          }
+        },
+        {
+          "id": "11_terrain_rocky_dirt_scatter_d",
+          "path": "procgen/special_rooms/gothic_compound/11_terrain_rocky_dirt_scatter_d.png",
+          "subtype": "gothic_compound/11_terrain_rocky_dirt_scatter_d.png",
+          "pixel_size": {
+            "w": 121,
+            "h": 121
+          }
+        },
+        {
+          "id": "11_wall_corner_inner_conn_w_s",
+          "path": "procgen/special_rooms/gothic_compound/11_wall_corner_inner_conn_w_s.png",
+          "subtype": "gothic_compound/11_wall_corner_inner_conn_w_s.png",
+          "pixel_size": {
+            "w": 26,
+            "h": 23
+          }
+        },
+        {
+          "id": "12_doorway_gothic_small",
+          "path": "procgen/special_rooms/gothic_compound/12_doorway_gothic_small.png",
+          "subtype": "gothic_compound/12_doorway_gothic_small.png",
+          "pixel_size": {
+            "w": 98,
+            "h": 136
+          }
+        },
+        {
+          "id": "12_generator_block_industrial",
+          "path": "procgen/special_rooms/gothic_compound/12_generator_block_industrial.png",
+          "subtype": "gothic_compound/12_generator_block_industrial.png",
+          "pixel_size": {
+            "w": 154,
+            "h": 137
+          }
+        },
+        {
+          "id": "12_terrain_stone_cracked_base_a",
+          "path": "procgen/special_rooms/gothic_compound/12_terrain_stone_cracked_base_a.png",
+          "subtype": "gothic_compound/12_terrain_stone_cracked_base_a.png",
+          "pixel_size": {
+            "w": 122,
+            "h": 121
+          }
+        },
+        {
+          "id": "12_wall_corner_inner_conn_w_n",
+          "path": "procgen/special_rooms/gothic_compound/12_wall_corner_inner_conn_w_n.png",
+          "subtype": "gothic_compound/12_wall_corner_inner_conn_w_n.png",
+          "pixel_size": {
+            "w": 90,
+            "h": 100
+          }
+        },
+        {
+          "id": "13_lamp_post_amber",
+          "path": "procgen/special_rooms/gothic_compound/13_lamp_post_amber.png",
+          "subtype": "gothic_compound/13_lamp_post_amber.png",
+          "pixel_size": {
+            "w": 42,
+            "h": 165
+          }
+        },
+        {
+          "id": "13_terminal_compound_control_console",
+          "path": "procgen/special_rooms/gothic_compound/13_terminal_compound_control_console.png",
+          "subtype": "gothic_compound/13_terminal_compound_control_console.png",
+          "pixel_size": {
+            "w": 126,
+            "h": 120
+          }
+        },
+        {
+          "id": "13_terrain_stone_cracked_base_b",
+          "path": "procgen/special_rooms/gothic_compound/13_terrain_stone_cracked_base_b.png",
+          "subtype": "gothic_compound/13_terrain_stone_cracked_base_b.png",
+          "pixel_size": {
+            "w": 121,
+            "h": 121
+          }
+        },
+        {
+          "id": "13_wall_curve_corner_conn_s_w",
+          "path": "procgen/special_rooms/gothic_compound/13_wall_curve_corner_conn_s_w.png",
+          "subtype": "gothic_compound/13_wall_curve_corner_conn_s_w.png",
+          "pixel_size": {
+            "w": 52,
+            "h": 33
+          }
+        },
+        {
+          "id": "14_gate_threshold_closed_blocking",
+          "path": "procgen/special_rooms/gothic_compound/14_gate_threshold_closed_blocking.png",
+          "subtype": "gothic_compound/14_gate_threshold_closed_blocking.png",
+          "pixel_size": {
+            "w": 204,
+            "h": 135
+          }
+        },
+        {
+          "id": "14_obelisk_small_gothic",
+          "path": "procgen/special_rooms/gothic_compound/14_obelisk_small_gothic.png",
+          "subtype": "gothic_compound/14_obelisk_small_gothic.png",
+          "pixel_size": {
+            "w": 56,
+            "h": 128
+          }
+        },
+        {
+          "id": "14_terrain_stone_cracked_base_c",
+          "path": "procgen/special_rooms/gothic_compound/14_terrain_stone_cracked_base_c.png",
+          "subtype": "gothic_compound/14_terrain_stone_cracked_base_c.png",
+          "pixel_size": {
+            "w": 121,
+            "h": 121
+          }
+        },
+        {
+          "id": "14_wall_curve_corner_conn_s_e",
+          "path": "procgen/special_rooms/gothic_compound/14_wall_curve_corner_conn_s_e.png",
+          "subtype": "gothic_compound/14_wall_curve_corner_conn_s_e.png",
+          "pixel_size": {
+            "w": 60,
+            "h": 76
+          }
+        },
+        {
+          "id": "15_gate_threshold_open_walkable",
+          "path": "procgen/special_rooms/gothic_compound/15_gate_threshold_open_walkable.png",
+          "subtype": "gothic_compound/15_gate_threshold_open_walkable.png",
+          "pixel_size": {
+            "w": 192,
+            "h": 135
+          }
+        },
+        {
+          "id": "15_obelisk_large_gothic",
+          "path": "procgen/special_rooms/gothic_compound/15_obelisk_large_gothic.png",
+          "subtype": "gothic_compound/15_obelisk_large_gothic.png",
+          "pixel_size": {
+            "w": 87,
+            "h": 211
+          }
+        },
+        {
+          "id": "15_road_straight_ew_long",
+          "path": "procgen/special_rooms/gothic_compound/15_road_straight_ew_long.png",
+          "subtype": "gothic_compound/15_road_straight_ew_long.png",
+          "pixel_size": {
+            "w": 298,
+            "h": 108
+          }
+        },
+        {
+          "id": "15_wall_endcap_pillar_large",
+          "path": "procgen/special_rooms/gothic_compound/15_wall_endcap_pillar_large.png",
+          "subtype": "gothic_compound/15_wall_endcap_pillar_large.png",
+          "pixel_size": {
+            "w": 77,
+            "h": 68
+          }
+        },
+        {
+          "id": "16_banner_black_torn",
+          "path": "procgen/special_rooms/gothic_compound/16_banner_black_torn.png",
+          "subtype": "gothic_compound/16_banner_black_torn.png",
+          "pixel_size": {
+            "w": 83,
+            "h": 180
+          }
+        },
+        {
+          "id": "16_cover_low_wall_long_h",
+          "path": "procgen/special_rooms/gothic_compound/16_cover_low_wall_long_h.png",
+          "subtype": "gothic_compound/16_cover_low_wall_long_h.png",
+          "pixel_size": {
+            "w": 469,
+            "h": 75
+          }
+        },
+        {
+          "id": "16_road_straight_ns_a",
+          "path": "procgen/special_rooms/gothic_compound/16_road_straight_ns_a.png",
+          "subtype": "gothic_compound/16_road_straight_ns_a.png",
+          "pixel_size": {
+            "w": 98,
+            "h": 108
+          }
+        },
+        {
+          "id": "16_wall_endcap_pillar_block",
+          "path": "procgen/special_rooms/gothic_compound/16_wall_endcap_pillar_block.png",
+          "subtype": "gothic_compound/16_wall_endcap_pillar_block.png",
+          "pixel_size": {
+            "w": 39,
+            "h": 84
+          }
+        },
+        {
+          "id": "17_hanging_chain_hook",
+          "path": "procgen/special_rooms/gothic_compound/17_hanging_chain_hook.png",
+          "subtype": "gothic_compound/17_hanging_chain_hook.png",
+          "pixel_size": {
+            "w": 82,
+            "h": 154
+          }
+        },
+        {
+          "id": "17_road_straight_ns_b",
+          "path": "procgen/special_rooms/gothic_compound/17_road_straight_ns_b.png",
+          "subtype": "gothic_compound/17_road_straight_ns_b.png",
+          "pixel_size": {
+            "w": 100,
+            "h": 108
+          }
+        },
+        {
+          "id": "17_wall_cross_junction_conn_n_e_s_w_a",
+          "path": "procgen/special_rooms/gothic_compound/17_wall_cross_junction_conn_n_e_s_w_a.png",
+          "subtype": "gothic_compound/17_wall_cross_junction_conn_n_e_s_w_a.png",
+          "pixel_size": {
+            "w": 36,
+            "h": 18
+          }
+        },
+        {
+          "id": "18_funerary_marker_stone",
+          "path": "procgen/special_rooms/gothic_compound/18_funerary_marker_stone.png",
+          "subtype": "gothic_compound/18_funerary_marker_stone.png",
+          "pixel_size": {
+            "w": 66,
+            "h": 101
+          }
+        },
+        {
+          "id": "18_road_end_s_rounded",
+          "path": "procgen/special_rooms/gothic_compound/18_road_end_s_rounded.png",
+          "subtype": "gothic_compound/18_road_end_s_rounded.png",
+          "pixel_size": {
+            "w": 104,
+            "h": 108
+          }
+        },
+        {
+          "id": "18_wall_cross_junction_conn_n_e_s_w_b",
+          "path": "procgen/special_rooms/gothic_compound/18_wall_cross_junction_conn_n_e_s_w_b.png",
+          "subtype": "gothic_compound/18_wall_cross_junction_conn_n_e_s_w_b.png",
+          "pixel_size": {
+            "w": 131,
+            "h": 124
+          }
+        },
+        {
+          "id": "19_road_corner_or_end_sw",
+          "path": "procgen/special_rooms/gothic_compound/19_road_corner_or_end_sw.png",
+          "subtype": "gothic_compound/19_road_corner_or_end_sw.png",
+          "pixel_size": {
+            "w": 103,
+            "h": 108
+          }
+        },
+        {
+          "id": "19_rubble_pile_small",
+          "path": "procgen/special_rooms/gothic_compound/19_rubble_pile_small.png",
+          "subtype": "gothic_compound/19_rubble_pile_small.png",
+          "pixel_size": {
+            "w": 104,
+            "h": 63
+          }
+        },
+        {
+          "id": "19_wall_cross_junction_conn_n_e_s_w_c",
+          "path": "procgen/special_rooms/gothic_compound/19_wall_cross_junction_conn_n_e_s_w_c.png",
+          "subtype": "gothic_compound/19_wall_cross_junction_conn_n_e_s_w_c.png",
+          "pixel_size": {
+            "w": 87,
+            "h": 119
+          }
+        },
+        {
+          "id": "20_road_corner_or_end_se",
+          "path": "procgen/special_rooms/gothic_compound/20_road_corner_or_end_se.png",
+          "subtype": "gothic_compound/20_road_corner_or_end_se.png",
+          "pixel_size": {
+            "w": 101,
+            "h": 108
+          }
+        },
+        {
+          "id": "20_rubble_pile_medium",
+          "path": "procgen/special_rooms/gothic_compound/20_rubble_pile_medium.png",
+          "subtype": "gothic_compound/20_rubble_pile_medium.png",
+          "pixel_size": {
+            "w": 155,
+            "h": 120
+          }
+        },
+        {
+          "id": "20_wall_cross_junction_conn_n_e_s_w_d",
+          "path": "procgen/special_rooms/gothic_compound/20_wall_cross_junction_conn_n_e_s_w_d.png",
+          "subtype": "gothic_compound/20_wall_cross_junction_conn_n_e_s_w_d.png",
+          "pixel_size": {
+            "w": 62,
+            "h": 27
+          }
+        },
+        {
+          "id": "21_road_straight_ns_cracked",
+          "path": "procgen/special_rooms/gothic_compound/21_road_straight_ns_cracked.png",
+          "subtype": "gothic_compound/21_road_straight_ns_cracked.png",
+          "pixel_size": {
+            "w": 93,
+            "h": 108
+          }
+        },
+        {
+          "id": "21_rubble_pile_large",
+          "path": "procgen/special_rooms/gothic_compound/21_rubble_pile_large.png",
+          "subtype": "gothic_compound/21_rubble_pile_large.png",
+          "pixel_size": {
+            "w": 190,
+            "h": 156
+          }
+        },
+        {
+          "id": "21_wall_straight_vertical_conn_n_s_large",
+          "path": "procgen/special_rooms/gothic_compound/21_wall_straight_vertical_conn_n_s_large.png",
+          "subtype": "gothic_compound/21_wall_straight_vertical_conn_n_s_large.png",
+          "pixel_size": {
+            "w": 49,
+            "h": 25
+          }
+        },
+        {
+          "id": "22_road_t_junction_s_a",
+          "path": "procgen/special_rooms/gothic_compound/22_road_t_junction_s_a.png",
+          "subtype": "gothic_compound/22_road_t_junction_s_a.png",
+          "pixel_size": {
+            "w": 139,
+            "h": 127
+          }
+        },
+        {
+          "id": "22_ruin_column_rubble_large",
+          "path": "procgen/special_rooms/gothic_compound/22_ruin_column_rubble_large.png",
+          "subtype": "gothic_compound/22_ruin_column_rubble_large.png",
+          "pixel_size": {
+            "w": 218,
+            "h": 179
+          }
+        },
+        {
+          "id": "22_wall_pillar_thin_large",
+          "path": "procgen/special_rooms/gothic_compound/22_wall_pillar_thin_large.png",
+          "subtype": "gothic_compound/22_wall_pillar_thin_large.png",
+          "pixel_size": {
+            "w": 34,
+            "h": 22
+          }
+        },
+        {
+          "id": "23_dead_shrub_small",
+          "path": "procgen/special_rooms/gothic_compound/23_dead_shrub_small.png",
+          "subtype": "gothic_compound/23_dead_shrub_small.png",
+          "pixel_size": {
+            "w": 69,
+            "h": 93
+          }
+        },
+        {
+          "id": "23_road_t_junction_s_b",
+          "path": "procgen/special_rooms/gothic_compound/23_road_t_junction_s_b.png",
+          "subtype": "gothic_compound/23_road_t_junction_s_b.png",
+          "pixel_size": {
+            "w": 132,
+            "h": 128
+          }
+        },
+        {
+          "id": "23_wall_pillar_thin_small",
+          "path": "procgen/special_rooms/gothic_compound/23_wall_pillar_thin_small.png",
+          "subtype": "gothic_compound/23_wall_pillar_thin_small.png",
+          "pixel_size": {
+            "w": 26,
+            "h": 23
+          }
+        },
+        {
+          "id": "24_dead_tree_stump",
+          "path": "procgen/special_rooms/gothic_compound/24_dead_tree_stump.png",
+          "subtype": "gothic_compound/24_dead_tree_stump.png",
+          "pixel_size": {
+            "w": 136,
+            "h": 112
+          }
+        },
+        {
+          "id": "24_road_t_junction_s_c",
+          "path": "procgen/special_rooms/gothic_compound/24_road_t_junction_s_c.png",
+          "subtype": "gothic_compound/24_road_t_junction_s_c.png",
+          "pixel_size": {
+            "w": 98,
+            "h": 128
+          }
+        },
+        {
+          "id": "24_wall_straight_short_pillar_conn_w",
+          "path": "procgen/special_rooms/gothic_compound/24_wall_straight_short_pillar_conn_w.png",
+          "subtype": "gothic_compound/24_wall_straight_short_pillar_conn_w.png",
+          "pixel_size": {
+            "w": 42,
+            "h": 24
+          }
+        },
+        {
+          "id": "25_dead_tree_large",
+          "path": "procgen/special_rooms/gothic_compound/25_dead_tree_large.png",
+          "subtype": "gothic_compound/25_dead_tree_large.png",
+          "pixel_size": {
+            "w": 181,
+            "h": 195
+          }
+        },
+        {
+          "id": "25_road_t_junction_s_d",
+          "path": "procgen/special_rooms/gothic_compound/25_road_t_junction_s_d.png",
+          "subtype": "gothic_compound/25_road_t_junction_s_d.png",
+          "pixel_size": {
+            "w": 99,
+            "h": 128
+          }
+        },
+        {
+          "id": "25_wall_straight_conn_e_w_left_pillar",
+          "path": "procgen/special_rooms/gothic_compound/25_wall_straight_conn_e_w_left_pillar.png",
+          "subtype": "gothic_compound/25_wall_straight_conn_e_w_left_pillar.png",
+          "pixel_size": {
+            "w": 56,
+            "h": 95
+          }
+        },
+        {
+          "id": "26_ground_cracked_stone_patch_a",
+          "path": "procgen/special_rooms/gothic_compound/26_ground_cracked_stone_patch_a.png",
+          "subtype": "gothic_compound/26_ground_cracked_stone_patch_a.png",
+          "pixel_size": {
+            "w": 142,
+            "h": 117
+          }
+        },
+        {
+          "id": "26_road_corner_inner_ne",
+          "path": "procgen/special_rooms/gothic_compound/26_road_corner_inner_ne.png",
+          "subtype": "gothic_compound/26_road_corner_inner_ne.png",
+          "pixel_size": {
+            "w": 138,
+            "h": 129
+          }
+        },
+        {
+          "id": "26_wall_broken_rubble_conn_w_e_left_pillar",
+          "path": "procgen/special_rooms/gothic_compound/26_wall_broken_rubble_conn_w_e_left_pillar.png",
+          "subtype": "gothic_compound/26_wall_broken_rubble_conn_w_e_left_pillar.png",
+          "pixel_size": {
+            "w": 135,
+            "h": 97
+          }
+        },
+        {
+          "id": "27_ground_cracked_stone_patch_b",
+          "path": "procgen/special_rooms/gothic_compound/27_ground_cracked_stone_patch_b.png",
+          "subtype": "gothic_compound/27_ground_cracked_stone_patch_b.png",
+          "pixel_size": {
+            "w": 159,
+            "h": 142
+          }
+        },
+        {
+          "id": "27_road_corner_inner_nw",
+          "path": "procgen/special_rooms/gothic_compound/27_road_corner_inner_nw.png",
+          "subtype": "gothic_compound/27_road_corner_inner_nw.png",
+          "pixel_size": {
+            "w": 138,
+            "h": 124
+          }
+        },
+        {
+          "id": "27_wall_straight_conn_w_e_right_pillar",
+          "path": "procgen/special_rooms/gothic_compound/27_wall_straight_conn_w_e_right_pillar.png",
+          "subtype": "gothic_compound/27_wall_straight_conn_w_e_right_pillar.png",
+          "pixel_size": {
+            "w": 77,
+            "h": 100
+          }
+        },
+        {
+          "id": "28_ground_ash_gravel_patch",
+          "path": "procgen/special_rooms/gothic_compound/28_ground_ash_gravel_patch.png",
+          "subtype": "gothic_compound/28_ground_ash_gravel_patch.png",
+          "pixel_size": {
+            "w": 147,
+            "h": 120
+          }
+        },
+        {
+          "id": "28_road_t_junction_s_cracked",
+          "path": "procgen/special_rooms/gothic_compound/28_road_t_junction_s_cracked.png",
+          "subtype": "gothic_compound/28_road_t_junction_s_cracked.png",
+          "pixel_size": {
+            "w": 103,
+            "h": 129
+          }
+        },
+        {
+          "id": "28_wall_straight_damaged_center_conn_w_e",
+          "path": "procgen/special_rooms/gothic_compound/28_wall_straight_damaged_center_conn_w_e.png",
+          "subtype": "gothic_compound/28_wall_straight_damaged_center_conn_w_e.png",
+          "pixel_size": {
+            "w": 103,
+            "h": 86
+          }
+        },
+        {
+          "id": "29_ground_rocky_patch_large",
+          "path": "procgen/special_rooms/gothic_compound/29_ground_rocky_patch_large.png",
+          "subtype": "gothic_compound/29_ground_rocky_patch_large.png",
+          "pixel_size": {
+            "w": 192,
+            "h": 123
+          }
+        },
+        {
+          "id": "29_road_cross_intersection",
+          "path": "procgen/special_rooms/gothic_compound/29_road_cross_intersection.png",
+          "subtype": "gothic_compound/29_road_cross_intersection.png",
+          "pixel_size": {
+            "w": 169,
+            "h": 166
+          }
+        },
+        {
+          "id": "29_wall_broken_spire_rubble_conn_s_w",
+          "path": "procgen/special_rooms/gothic_compound/29_wall_broken_spire_rubble_conn_s_w.png",
+          "subtype": "gothic_compound/29_wall_broken_spire_rubble_conn_s_w.png",
+          "pixel_size": {
+            "w": 111,
+            "h": 95
+          }
+        },
+        {
+          "id": "30_ground_dark_ash_patch",
+          "path": "procgen/special_rooms/gothic_compound/30_ground_dark_ash_patch.png",
+          "subtype": "gothic_compound/30_ground_dark_ash_patch.png",
+          "pixel_size": {
+            "w": 165,
+            "h": 115
+          }
+        },
+        {
+          "id": "30_terrain_stone_broken_patch_a",
+          "path": "procgen/special_rooms/gothic_compound/30_terrain_stone_broken_patch_a.png",
+          "subtype": "gothic_compound/30_terrain_stone_broken_patch_a.png",
+          "pixel_size": {
+            "w": 127,
+            "h": 93
+          }
+        },
+        {
+          "id": "30_wall_broken_rubble_gap",
+          "path": "procgen/special_rooms/gothic_compound/30_wall_broken_rubble_gap.png",
+          "subtype": "gothic_compound/30_wall_broken_rubble_gap.png",
+          "pixel_size": {
+            "w": 65,
+            "h": 103
+          }
+        },
+        {
+          "id": "31_ground_brown_rubble_patch",
+          "path": "procgen/special_rooms/gothic_compound/31_ground_brown_rubble_patch.png",
+          "subtype": "gothic_compound/31_ground_brown_rubble_patch.png",
+          "pixel_size": {
+            "w": 174,
+            "h": 126
+          }
+        },
+        {
+          "id": "31_terrain_stone_broken_patch_b",
+          "path": "procgen/special_rooms/gothic_compound/31_terrain_stone_broken_patch_b.png",
+          "subtype": "gothic_compound/31_terrain_stone_broken_patch_b.png",
+          "pixel_size": {
+            "w": 136,
+            "h": 93
+          }
+        },
+        {
+          "id": "31_wall_straight_pillar_right_conn_w",
+          "path": "procgen/special_rooms/gothic_compound/31_wall_straight_pillar_right_conn_w.png",
+          "subtype": "gothic_compound/31_wall_straight_pillar_right_conn_w.png",
+          "pixel_size": {
+            "w": 113,
+            "h": 117
+          }
+        },
+        {
+          "id": "32_resource_node_ruin_scrap_gothic",
+          "path": "procgen/special_rooms/gothic_compound/32_resource_node_ruin_scrap_gothic.png",
+          "subtype": "gothic_compound/32_resource_node_ruin_scrap_gothic.png",
+          "pixel_size": {
+            "w": 201,
+            "h": 153
+          }
+        },
+        {
+          "id": "32_terrain_stone_broken_patch_c",
+          "path": "procgen/special_rooms/gothic_compound/32_terrain_stone_broken_patch_c.png",
+          "subtype": "gothic_compound/32_terrain_stone_broken_patch_c.png",
+          "pixel_size": {
+            "w": 123,
+            "h": 93
+          }
+        },
+        {
+          "id": "32_tower_square_keep",
+          "path": "procgen/special_rooms/gothic_compound/32_tower_square_keep.png",
+          "subtype": "gothic_compound/32_tower_square_keep.png",
+          "pixel_size": {
+            "w": 141,
+            "h": 179
+          }
+        },
+        {
+          "id": "33_resource_node_blackwood_deadfall_gothic",
+          "path": "procgen/special_rooms/gothic_compound/33_resource_node_blackwood_deadfall_gothic.png",
+          "subtype": "gothic_compound/33_resource_node_blackwood_deadfall_gothic.png",
+          "pixel_size": {
+            "w": 253,
+            "h": 151
+          }
+        },
+        {
+          "id": "33_terrain_stone_to_rubble_edge_e",
+          "path": "procgen/special_rooms/gothic_compound/33_terrain_stone_to_rubble_edge_e.png",
+          "subtype": "gothic_compound/33_terrain_stone_to_rubble_edge_e.png",
+          "pixel_size": {
+            "w": 141,
+            "h": 94
+          }
+        },
+        {
+          "id": "33_tower_round_octagonal",
+          "path": "procgen/special_rooms/gothic_compound/33_tower_round_octagonal.png",
+          "subtype": "gothic_compound/33_tower_round_octagonal.png",
+          "pixel_size": {
+            "w": 126,
+            "h": 93
+          }
+        },
+        {
+          "id": "34_marker_hidden_spawn_x_plain",
+          "path": "procgen/special_rooms/gothic_compound/34_marker_hidden_spawn_x_plain.png",
+          "subtype": "gothic_compound/34_marker_hidden_spawn_x_plain.png",
+          "pixel_size": {
+            "w": 134,
+            "h": 117
+          }
+        },
+        {
+          "id": "34_terrain_stone_to_rubble_edge_w",
+          "path": "procgen/special_rooms/gothic_compound/34_terrain_stone_to_rubble_edge_w.png",
+          "subtype": "gothic_compound/34_terrain_stone_to_rubble_edge_w.png",
+          "pixel_size": {
+            "w": 132,
+            "h": 95
+          }
+        },
+        {
+          "id": "34_tower_watch_spire",
+          "path": "procgen/special_rooms/gothic_compound/34_tower_watch_spire.png",
+          "subtype": "gothic_compound/34_tower_watch_spire.png",
+          "pixel_size": {
+            "w": 88,
+            "h": 112
+          }
+        },
+        {
+          "id": "35_gatehouse_main_closed_large",
+          "path": "procgen/special_rooms/gothic_compound/35_gatehouse_main_closed_large.png",
+          "subtype": "gothic_compound/35_gatehouse_main_closed_large.png",
+          "pixel_size": {
+            "w": 341,
+            "h": 195
+          }
+        },
+        {
+          "id": "35_marker_hidden_spawn_x_amber",
+          "path": "procgen/special_rooms/gothic_compound/35_marker_hidden_spawn_x_amber.png",
+          "subtype": "gothic_compound/35_marker_hidden_spawn_x_amber.png",
+          "pixel_size": {
+            "w": 143,
+            "h": 119
+          }
+        },
+        {
+          "id": "35_terrain_stone_rubble_cap_s",
+          "path": "procgen/special_rooms/gothic_compound/35_terrain_stone_rubble_cap_s.png",
+          "subtype": "gothic_compound/35_terrain_stone_rubble_cap_s.png",
+          "pixel_size": {
+            "w": 126,
+            "h": 102
+          }
+        },
+        {
+          "id": "36_gatehouse_main_open_large",
+          "path": "procgen/special_rooms/gothic_compound/36_gatehouse_main_open_large.png",
+          "subtype": "gothic_compound/36_gatehouse_main_open_large.png",
+          "pixel_size": {
+            "w": 321,
+            "h": 225
+          }
+        },
+        {
+          "id": "36_marker_hidden_spawn_rocky_x",
+          "path": "procgen/special_rooms/gothic_compound/36_marker_hidden_spawn_rocky_x.png",
+          "subtype": "gothic_compound/36_marker_hidden_spawn_rocky_x.png",
+          "pixel_size": {
+            "w": 145,
+            "h": 124
+          }
+        },
+        {
+          "id": "36_road_straight_ns_dirt_edge_a",
+          "path": "procgen/special_rooms/gothic_compound/36_road_straight_ns_dirt_edge_a.png",
+          "subtype": "gothic_compound/36_road_straight_ns_dirt_edge_a.png",
+          "pixel_size": {
+            "w": 102,
+            "h": 104
+          }
+        },
+        {
+          "id": "37_gate_heavy_closed_blocking",
+          "path": "procgen/special_rooms/gothic_compound/37_gate_heavy_closed_blocking.png",
+          "subtype": "gothic_compound/37_gate_heavy_closed_blocking.png",
+          "pixel_size": {
+            "w": 150,
+            "h": 115
+          }
+        },
+        {
+          "id": "37_marker_hidden_spawn_ring_amber",
+          "path": "procgen/special_rooms/gothic_compound/37_marker_hidden_spawn_ring_amber.png",
+          "subtype": "gothic_compound/37_marker_hidden_spawn_ring_amber.png",
+          "pixel_size": {
+            "w": 142,
+            "h": 111
+          }
+        },
+        {
+          "id": "37_road_straight_ns_dirt_edge_b",
+          "path": "procgen/special_rooms/gothic_compound/37_road_straight_ns_dirt_edge_b.png",
+          "subtype": "gothic_compound/37_road_straight_ns_dirt_edge_b.png",
+          "pixel_size": {
+            "w": 103,
+            "h": 104
+          }
+        },
+        {
+          "id": "38_gate_portcullis_spiked",
+          "path": "procgen/special_rooms/gothic_compound/38_gate_portcullis_spiked.png",
+          "subtype": "gothic_compound/38_gate_portcullis_spiked.png",
+          "pixel_size": {
+            "w": 166,
+            "h": 110
+          }
+        },
+        {
+          "id": "38_marker_hidden_spawn_stone_ring",
+          "path": "procgen/special_rooms/gothic_compound/38_marker_hidden_spawn_stone_ring.png",
+          "subtype": "gothic_compound/38_marker_hidden_spawn_stone_ring.png",
+          "pixel_size": {
+            "w": 153,
+            "h": 119
+          }
+        },
+        {
+          "id": "38_road_curve_dirt_transition_sw_a",
+          "path": "procgen/special_rooms/gothic_compound/38_road_curve_dirt_transition_sw_a.png",
+          "subtype": "gothic_compound/38_road_curve_dirt_transition_sw_a.png",
+          "pixel_size": {
+            "w": 110,
+            "h": 103
+          }
+        },
+        {
+          "id": "39_gate_open_arch_frame",
+          "path": "procgen/special_rooms/gothic_compound/39_gate_open_arch_frame.png",
+          "subtype": "gothic_compound/39_gate_open_arch_frame.png",
+          "pixel_size": {
+            "w": 167,
+            "h": 114
+          }
+        },
+        {
+          "id": "39_marker_hidden_spawn_ember_star",
+          "path": "procgen/special_rooms/gothic_compound/39_marker_hidden_spawn_ember_star.png",
+          "subtype": "gothic_compound/39_marker_hidden_spawn_ember_star.png",
+          "pixel_size": {
+            "w": 146,
+            "h": 117
+          }
+        },
+        {
+          "id": "39_road_curve_dirt_transition_sw_b",
+          "path": "procgen/special_rooms/gothic_compound/39_road_curve_dirt_transition_sw_b.png",
+          "subtype": "gothic_compound/39_road_curve_dirt_transition_sw_b.png",
+          "pixel_size": {
+            "w": 107,
+            "h": 103
+          }
+        },
+        {
+          "id": "40_gate_fence_portcullis_small",
+          "path": "procgen/special_rooms/gothic_compound/40_gate_fence_portcullis_small.png",
+          "subtype": "gothic_compound/40_gate_fence_portcullis_small.png",
+          "pixel_size": {
+            "w": 138,
+            "h": 106
+          }
+        },
+        {
+          "id": "40_road_curve_dirt_transition_ne_a",
+          "path": "procgen/special_rooms/gothic_compound/40_road_curve_dirt_transition_ne_a.png",
+          "subtype": "gothic_compound/40_road_curve_dirt_transition_ne_a.png",
+          "pixel_size": {
+            "w": 103,
+            "h": 103
+          }
+        },
+        {
+          "id": "41_gate_chain_posts",
+          "path": "procgen/special_rooms/gothic_compound/41_gate_chain_posts.png",
+          "subtype": "gothic_compound/41_gate_chain_posts.png",
+          "pixel_size": {
+            "w": 138,
+            "h": 81
+          }
+        },
+        {
+          "id": "41_road_curve_dirt_transition_ne_b",
+          "path": "procgen/special_rooms/gothic_compound/41_road_curve_dirt_transition_ne_b.png",
+          "subtype": "gothic_compound/41_road_curve_dirt_transition_ne_b.png",
+          "pixel_size": {
+            "w": 94,
+            "h": 103
+          }
+        },
+        {
+          "id": "42_collapsed_spire_ruin_large",
+          "path": "procgen/special_rooms/gothic_compound/42_collapsed_spire_ruin_large.png",
+          "subtype": "gothic_compound/42_collapsed_spire_ruin_large.png",
+          "pixel_size": {
+            "w": 222,
+            "h": 231
+          }
+        },
+        {
+          "id": "42_road_curve_dirt_transition_ne_c",
+          "path": "procgen/special_rooms/gothic_compound/42_road_curve_dirt_transition_ne_c.png",
+          "subtype": "gothic_compound/42_road_curve_dirt_transition_ne_c.png",
+          "pixel_size": {
+            "w": 94,
+            "h": 103
+          }
+        },
+        {
+          "id": "43_pylon_dead_light",
+          "path": "procgen/special_rooms/gothic_compound/43_pylon_dead_light.png",
+          "subtype": "gothic_compound/43_pylon_dead_light.png",
+          "pixel_size": {
+            "w": 30,
+            "h": 91
+          }
+        },
+        {
+          "id": "43_terrain_ash_roots_patch_a",
+          "path": "procgen/special_rooms/gothic_compound/43_terrain_ash_roots_patch_a.png",
+          "subtype": "gothic_compound/43_terrain_ash_roots_patch_a.png",
+          "pixel_size": {
+            "w": 102,
+            "h": 111
+          }
+        },
+        {
+          "id": "44_terrain_ash_roots_patch_b",
+          "path": "procgen/special_rooms/gothic_compound/44_terrain_ash_roots_patch_b.png",
+          "subtype": "gothic_compound/44_terrain_ash_roots_patch_b.png",
+          "pixel_size": {
+            "w": 103,
+            "h": 112
+          }
+        },
+        {
+          "id": "44_threshold_stone_small",
+          "path": "procgen/special_rooms/gothic_compound/44_threshold_stone_small.png",
+          "subtype": "gothic_compound/44_threshold_stone_small.png",
+          "pixel_size": {
+            "w": 80,
+            "h": 54
+          }
+        },
+        {
+          "id": "45_terrain_ash_roots_patch_c",
+          "path": "procgen/special_rooms/gothic_compound/45_terrain_ash_roots_patch_c.png",
+          "subtype": "gothic_compound/45_terrain_ash_roots_patch_c.png",
+          "pixel_size": {
+            "w": 114,
+            "h": 112
+          }
+        },
+        {
+          "id": "46_terrain_ash_sparse_pebble_patch",
+          "path": "procgen/special_rooms/gothic_compound/46_terrain_ash_sparse_pebble_patch.png",
+          "subtype": "gothic_compound/46_terrain_ash_sparse_pebble_patch.png",
+          "pixel_size": {
+            "w": 108,
+            "h": 112
+          }
+        },
+        {
+          "id": "47_path_worn_dirt_vertical_a",
+          "path": "procgen/special_rooms/gothic_compound/47_path_worn_dirt_vertical_a.png",
+          "subtype": "gothic_compound/47_path_worn_dirt_vertical_a.png",
+          "pixel_size": {
+            "w": 118,
+            "h": 112
+          }
+        },
+        {
+          "id": "48_path_worn_dirt_vertical_b",
+          "path": "procgen/special_rooms/gothic_compound/48_path_worn_dirt_vertical_b.png",
+          "subtype": "gothic_compound/48_path_worn_dirt_vertical_b.png",
+          "pixel_size": {
+            "w": 125,
+            "h": 112
+          }
+        },
+        {
+          "id": "49_path_worn_dirt_vertical_c",
+          "path": "procgen/special_rooms/gothic_compound/49_path_worn_dirt_vertical_c.png",
+          "subtype": "gothic_compound/49_path_worn_dirt_vertical_c.png",
+          "pixel_size": {
+            "w": 115,
+            "h": 112
+          }
+        },
+        {
+          "id": "50_grate_square_metal",
+          "path": "procgen/special_rooms/gothic_compound/50_grate_square_metal.png",
+          "subtype": "gothic_compound/50_grate_square_metal.png",
+          "pixel_size": {
+            "w": 113,
+            "h": 112
+          }
+        },
+        {
+          "id": "51_grate_round_metal",
+          "path": "procgen/special_rooms/gothic_compound/51_grate_round_metal.png",
+          "subtype": "gothic_compound/51_grate_round_metal.png",
+          "pixel_size": {
+            "w": 107,
+            "h": 111
+          }
+        },
+        {
+          "id": "52_floor_sigil_stone_square",
+          "path": "procgen/special_rooms/gothic_compound/52_floor_sigil_stone_square.png",
+          "subtype": "gothic_compound/52_floor_sigil_stone_square.png",
+          "pixel_size": {
+            "w": 148,
+            "h": 133
+          }
+        },
+        {
+          "id": "53_decal_light_pool_amber",
+          "path": "procgen/special_rooms/gothic_compound/53_decal_light_pool_amber.png",
+          "subtype": "gothic_compound/53_decal_light_pool_amber.png",
+          "pixel_size": {
+            "w": 135,
+            "h": 134
+          }
+        },
+        {
+          "id": "54_decal_shadow_smoke_dark",
+          "path": "procgen/special_rooms/gothic_compound/54_decal_shadow_smoke_dark.png",
+          "subtype": "gothic_compound/54_decal_shadow_smoke_dark.png",
+          "pixel_size": {
+            "w": 118,
+            "h": 131
+          }
+        },
+        {
+          "id": "Floors_Ground",
+          "path": "procgen/special_rooms/gothic_compound/Floors_Ground.png",
+          "subtype": "gothic_compound/Floors_Ground.png",
+          "pixel_size": {
+            "w": 1254,
+            "h": 1254
+          }
+        },
+        {
+          "id": "Floors_Ground_cut",
+          "path": "procgen/special_rooms/gothic_compound/Floors_Ground_cut.png",
+          "subtype": "gothic_compound/Floors_Ground_cut.png",
+          "pixel_size": {
+            "w": 1203,
+            "h": 1184
+          }
+        },
+        {
+          "id": "Ground_and_Props",
+          "path": "procgen/special_rooms/gothic_compound/Ground_and_Props.png",
+          "subtype": "gothic_compound/Ground_and_Props.png",
+          "pixel_size": {
+            "w": 1254,
+            "h": 1254
+          }
+        },
+        {
+          "id": "Ground_and_Props_cut",
+          "path": "procgen/special_rooms/gothic_compound/Ground_and_Props_cut.png",
+          "subtype": "gothic_compound/Ground_and_Props_cut.png",
+          "pixel_size": {
+            "w": 1220,
+            "h": 1181
+          }
+        },
+        {
+          "id": "Large_Props",
+          "path": "procgen/special_rooms/gothic_compound/Large_Props.png",
+          "subtype": "gothic_compound/Large_Props.png",
+          "pixel_size": {
+            "w": 1254,
+            "h": 1254
+          }
+        },
+        {
+          "id": "Large_Props_cut",
+          "path": "procgen/special_rooms/gothic_compound/Large_Props_cut.png",
+          "subtype": "gothic_compound/Large_Props_cut.png",
+          "pixel_size": {
+            "w": 1254,
+            "h": 1254
+          }
+        },
+        {
+          "id": "Walls_Gates",
+          "path": "procgen/special_rooms/gothic_compound/Walls_Gates.png",
+          "subtype": "gothic_compound/Walls_Gates.png",
+          "pixel_size": {
+            "w": 1254,
+            "h": 1254
+          }
+        },
+        {
+          "id": "Walls_Gates_Master",
+          "path": "procgen/special_rooms/gothic_compound/Walls_Gates_Master.png",
+          "subtype": "gothic_compound/Walls_Gates_Master.png",
+          "pixel_size": {
+            "w": 1212,
+            "h": 1158
+          }
+        },
+        {
+          "id": "event_room_ritual_chamber",
+          "path": "procgen/special_rooms/gothic_compound/rooms/event_room_ritual_chamber.png",
+          "subtype": "gothic_compound/rooms",
+          "pixel_size": {
+            "w": 548,
+            "h": 239
+          }
+        }
+      ]
+    }
+  }
+}

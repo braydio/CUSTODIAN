@@ -1,0 +1,17 @@
+{
+  "schema": "custodian.doc_drift_review.v1",
+  "subject": "ui_black_reliquary_kit",
+  "status": "needs_doc_update_if_accepted",
+  "runtime_outputs": {
+    "ui_assets": "custodian/content/ui/custodian/",
+    "metadata_authority": "custodian/content/metadata/game32/ui_black_reliquary.game32.json",
+    "master_sheet": "custodian/content/masters/ui/ui_black_reliquary_components.png"
+  },
+  "recommended_doc_updates": [
+    "custodian/docs/ai_context/CURRENT_STATE.md",
+    "custodian/docs/ai_context/CONTEXT.md",
+    "custodian/docs/ai_context/FILE_INDEX.md"
+  ],
+  "note": "If the UI kit is wired into active Godot HUD scenes, update active AI context docs.",
+  "generated_at_utc": "2026-06-02T03:47:46.727754+00:00"
+}

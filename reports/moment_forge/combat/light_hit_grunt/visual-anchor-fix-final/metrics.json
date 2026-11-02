@@ -1,0 +1,75 @@
+{
+  "action_count": 5,
+  "camera": {
+    "position": [
+      420.241394042969,
+      308.044952392578
+    ]
+  },
+  "completed": true,
+  "duration_ticks": 118,
+  "event_count": 5,
+  "media": {
+    "audio": {
+      "available": true,
+      "channels": 2,
+      "duration_sec": 2.033333333333333,
+      "frames": 97600,
+      "noise_floor_dbfs": -27.04351479587883,
+      "onset_ms": null,
+      "onset_threshold_dbfs": -15.043514795878831,
+      "peak_dbfs": -16.270469398587103,
+      "peak_time_ms": 1061.1666666666667,
+      "rms_dbfs": -26.958464070463357,
+      "sample_rate": 48000,
+      "sample_width": 2
+    },
+    "baseline_audio": {
+      "available": true,
+      "channels": 2,
+      "duration_sec": 2.033333333333333,
+      "frames": 97600,
+      "noise_floor_dbfs": -27.04351479587883,
+      "onset_ms": null,
+      "onset_threshold_dbfs": -15.043514795878831,
+      "peak_dbfs": -16.270469398587103,
+      "peak_time_ms": 1061.1666666666667,
+      "rms_dbfs": -26.958464070463357,
+      "sample_rate": 48000,
+      "sample_width": 2
+    },
+    "visual_diff": {
+      "changed_pixel_bbox": null,
+      "changed_pixel_ratio": 0.004182219328703704,
+      "different": false,
+      "luminance_delta": -0.0020742910879647525,
+      "luminance_mean_baseline": 62.84837112991898,
+      "luminance_mean_current": 62.846296838831016,
+      "mean_absolute_channel_delta": 0.12895284770447532
+    }
+  },
+  "operator": {
+    "position": [
+      420.0,
+      360.0
+    ]
+  },
+  "probe_sample_count": 11,
+  "stable": {
+    "completed_tick": 118,
+    "visible_visual_anchor_delta_px": 0.0,
+    "visible_visual_anchor_sample_count": 7
+  },
+  "stable_fingerprint": {
+    "algorithm": "sha256",
+    "schema": "custodian.moment_forge.stable_fingerprint.v1",
+    "value": "210d948083742d7f0b7b6ccc2ba1942d46dfb4ed5d1edba720cea7d1f614fc11"
+  },
+  "target": {
+    "position": [
+      474.0,
+      360.0
+    ]
+  },
+  "warning_count": 0
+}

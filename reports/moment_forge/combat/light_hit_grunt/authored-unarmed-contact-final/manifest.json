@@ -1,0 +1,160 @@
+{
+  "artifacts": {
+    "assertions": "assertions.json",
+    "audio": "audio_mix.wav",
+    "contact_sheet": "current_contact_sheet.png",
+    "metrics": "metrics.json",
+    "probes": "probes.json",
+    "report": "index.html",
+    "telemetry": "telemetry.json",
+    "timeline": "timeline.json",
+    "video": "current.mp4",
+    "visual_diff": "visual_diff.png"
+  },
+  "baseline": {
+    "status": "compatible"
+  },
+  "baseline_compatibility": {
+    "contact_sheet_ticks": [
+      0,
+      24,
+      30,
+      34,
+      40,
+      72
+    ],
+    "end_tick": 119,
+    "fps": 60,
+    "height": 720,
+    "metrics_schema_major": 1,
+    "scenario_id": "combat/light_hit_grunt",
+    "scenario_schema_version": 1,
+    "scenario_sha256": "96b3f759ccf2b41b548259ed4fddec6e20389910497307cd287ef5258262111a",
+    "start_tick": 0,
+    "width": 1280
+  },
+  "capture": {
+    "audio_requested": true,
+    "fps": 60,
+    "height": 720,
+    "mode": "full",
+    "synchronization": "verified",
+    "width": 1280
+  },
+  "generated_at": "2026-07-31T01:46:52.698358-04:00",
+  "media": {
+    "audio_metrics": {
+      "available": true,
+      "channels": 2,
+      "duration_sec": 2.033333333333333,
+      "frames": 97600,
+      "noise_floor_dbfs": -27.04351479587883,
+      "onset_ms": null,
+      "onset_threshold_dbfs": -15.043514795878831,
+      "peak_dbfs": -16.270469398587103,
+      "peak_time_ms": 1061.1666666666667,
+      "rms_dbfs": -26.958464070463357,
+      "sample_rate": 48000,
+      "sample_width": 2
+    },
+    "audio_state": {
+      "available": true,
+      "canonical_available": true,
+      "conversion": "ffmpeg",
+      "requested": true
+    },
+    "ffmpeg_available": true,
+    "visual_diff": {
+      "changed_pixel_bbox": null,
+      "changed_pixel_ratio": 0.006462131076388889,
+      "different": false,
+      "luminance_delta": -0.02626283998842638,
+      "luminance_mean_baseline": 62.890787760416664,
+      "luminance_mean_current": 62.86452492042824,
+      "mean_absolute_channel_delta": 0.2165798008294753
+    }
+  },
+  "repository": {
+    "branch": "main",
+    "changed_files": [
+      "M custodian/content/levels/sundered_keep/sundered_keep_approach_outskirts.json",
+      " D custodian/content/procgen/special_rooms/ash_bell_forlorn_ritualant_room.json",
+      " M custodian/content/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__collapsed_lift__idle__s__1f__256.png",
+      " M custodian/content/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__collapsed_lift__idle__s__1f__256.png.import",
+      " M custodian/content/sprites/world/ingress/ash_bell/ash_bell__underground_ingress_fx__shaft_dust__loop__omni__8f__256.png",
+      " M custodian/content/sprites/world/ingress/ash_bell/ash_bell__underground_ingress_fx__shaft_dust__loop__omni__8f__256.png.import",
+      " M custodian/content/sprites/world/ingress/ash_bell/ash_bell__underground_ingress_fx__warning_lamp__loop__omni__4f__64.png.import",
+      " M custodian/content/sprites/world/ingress/ash_bell/ash_bell__underground_lift__descent__s__12f__256.png.import",
+      " M custodian/docs/ai_context/CURRENT_STATE.md",
+      " M custodian/docs/ai_context/FILE_INDEX.md",
+      " M custodian/docs/ai_context/VALIDATION_RECIPES.md",
+      " M custodian/docs/ai_context/task_packets/SUNDERED_KEEP_AUTHORED_INGRESS.md",
+      " M custodian/game/actors/operator/operator.gd",
+      " M custodian/game/world/approaches/sundered_keep/sundered_keep_approach.gd",
+      " M custodian/game/world/approaches/sundered_keep/sundered_keep_vista_controller.gd",
+      " M custodian/game/world/approaches/sundered_keep/sundered_keep_vista_debug_probe.gd",
+      " M custodian/game/world/procgen/ingress/world_ingress_site.gd",
+      " M custodian/game/world/routes/route_traversal_manager.gd",
+      " M custodian/game/world/routes/transitions/playable_blackout_bridge_2d.gd",
+      " M custodian/scenes/debug/level_collision_poi_mapper.gd",
+      " M custodian/scenes/debug/sundered_keep_underlay_gameplay_tile_mapper.tscn",
+      " M custodian/tools/validation/operator_modular_fast_attack_smoke.gd",
+      " M custodian/tools/validation/sundered_keep_approach_render_smoke.gd",
+      " M custodian/tools/validation/sundered_keep_approach_smoke.gd",
+      " M custodian/tools/validation/sundered_keep_playable_blackout_transition_smoke.gd",
+      " M custodian/tools/validation/sundered_keep_vista_polish_smoke.gd",
+      " M design/05_levels/SUNDERED_KEEP_VISTA_APPROACH.md",
+      "?? custodian/content/sprites/effects/combat/unarmed/",
+      "?? custodian/content/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__collapsed_lift__idle__s__1f__source_1024.png",
+      "?? custodian/content/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__collapsed_lift__idle__s__1f__source_1024.png.import",
+      "?? custodian/content/sprites/world/ingress/ash_bell/ash_bell__underground_ingress_fx__warning_lamp__loop__omni__8f__64.aseprite",
+      "?? custodian/content/sprites/world/ingress/ash_bell/ash_bell__underground_ingress_fx__warning_lamp__loop__omni__8f__64.png",
+      "?? custodian/content/sprites/world/ingress/ash_bell/ash_bell__underground_ingress_fx__warning_lamp__loop__omni__8f__64.png.import",
+      "?? custodian/game/actors/effects/unarmed_fast_contact.tscn",
+      "?? custodian/game/actors/effects/unarmed_fast_contact_frames.tres",
+      "?? custodian/tools/aseprite/build_ash_bell_warning_lamp_8f.lua",
+      "?? custodian/tools/validation/sundered_keep_approach_control_return_smoke.gd",
+      "?? custodian/tools/validation/sundered_keep_approach_control_return_smoke.gd.uid",
+      "?? reports/moment_forge/combat/light_hit_grunt/authored-unarmed-contact-after/",
+      "?? reports/moment_forge/combat/light_hit_grunt/authored-unarmed-contact-final/"
+    ],
+    "commit": "32db01a85fcfe98aade9428e0695f872200e1400",
+    "dirty": true,
+    "root": "/home/braydenchaffee/Projects/CUSTODIAN"
+  },
+  "run_id": "authored-unarmed-contact-final",
+  "runtime": {
+    "godot": {
+      "build": "arch_linux",
+      "hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+      "hex": 263937,
+      "major": 4,
+      "minor": 7,
+      "patch": 1,
+      "status": "stable",
+      "string": "4.7.1-stable (arch_linux)",
+      "timestamp": 1783976428
+    },
+    "physics_hz": 60,
+    "renderer": "vulkan"
+  },
+  "scenario": {
+    "id": "combat/light_hit_grunt",
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/authored-unarmed-contact-final/scenario.snapshot.json",
+    "schema_version": 1,
+    "sha256": "96b3f759ccf2b41b548259ed4fddec6e20389910497307cd287ef5258262111a"
+  },
+  "schema": "custodian.moment_forge.run_manifest.v1",
+  "stable_assertions_passed": true,
+  "stable_fingerprint": {
+    "algorithm": "sha256",
+    "schema": "custodian.moment_forge.stable_fingerprint.v1",
+    "value": "210d948083742d7f0b7b6ccc2ba1942d46dfb4ed5d1edba720cea7d1f614fc11"
+  },
+  "status": "passed",
+  "tools": {
+    "ffmpeg": "/usr/bin/ffmpeg",
+    "pillow": "12.3.0",
+    "python": "3.14.6"
+  }
+}

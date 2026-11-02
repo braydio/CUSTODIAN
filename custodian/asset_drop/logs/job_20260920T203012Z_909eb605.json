@@ -1,0 +1,67 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260920T203012Z_909eb605",
+  "timestamp": "2026-09-20T20:30:12.011675+00:00",
+  "family": "road_of_witnesses_archive_ruin_west_environment",
+  "kind": "backdrop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/road_of_witnesses_archive_ruin_west_environment/foreground.png",
+      "sha256": "97dbb49d7fc00c7eb269b513c810558aff0763643a737e17f723fca2796f148b"
+    },
+    {
+      "path": "asset_drop/inbox/road_of_witnesses_archive_ruin_west_environment/underlay.png",
+      "sha256": "f718aadfde457077a67c844f14836896c14a74a67d1aaae9b42f7b27706e719f"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "foreground",
+      "direction": "omni",
+      "semantic_identity": [
+        "road_of_witnesses_archive_ruin_west",
+        "backdrop",
+        "foreground",
+        "display",
+        "foreground",
+        "omni"
+      ],
+      "path": "content/levels/hub/road_of_witnesses/archive_ruin_west/road_of_witnesses_archive_ruin_west_foreground_896x896.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "97dbb49d7fc00c7eb269b513c810558aff0763643a737e17f723fca2796f148b",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "underlay",
+      "direction": "omni",
+      "semantic_identity": [
+        "road_of_witnesses_archive_ruin_west",
+        "backdrop",
+        "underlay",
+        "display",
+        "underlay",
+        "omni"
+      ],
+      "path": "content/levels/hub/road_of_witnesses/archive_ruin_west/road_of_witnesses_archive_ruin_west_underlay_896x896.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "f718aadfde457077a67c844f14836896c14a74a67d1aaae9b42f7b27706e719f",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

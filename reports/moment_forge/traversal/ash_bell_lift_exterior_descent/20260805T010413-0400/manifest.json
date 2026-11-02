@@ -1,0 +1,163 @@
+{
+  "artifacts": {
+    "assertions": "assertions.json",
+    "audio": null,
+    "contact_sheet": null,
+    "metrics": "metrics.json",
+    "probes": "probes.json",
+    "report": "index.html",
+    "telemetry": "telemetry.json",
+    "timeline": "timeline.json",
+    "video": null,
+    "visual_diff": null
+  },
+  "baseline": {
+    "status": "not_requested"
+  },
+  "baseline_compatibility": {
+    "contact_sheet_ticks": [
+      0,
+      19,
+      28,
+      38,
+      70,
+      120
+    ],
+    "end_tick": 131,
+    "fps": 60,
+    "height": 720,
+    "metrics_schema_major": 1,
+    "scenario_id": "traversal/ash_bell_lift_exterior_descent",
+    "scenario_schema_version": 1,
+    "scenario_sha256": "917e78a482affa4c282a44aa487eb8e22ea5be38c1ce7cd51bbe34e6e1fc9399",
+    "start_tick": 0,
+    "width": 1280
+  },
+  "capture": {
+    "audio_requested": false,
+    "fps": 60,
+    "height": 720,
+    "mode": "none",
+    "synchronization": "not_requested",
+    "width": 1280
+  },
+  "generated_at": "2026-08-05T01:04:14.514952-04:00",
+  "media": {
+    "audio_metrics": {
+      "available": false
+    },
+    "audio_state": {
+      "available": false,
+      "conversion": "source_missing",
+      "requested": false
+    },
+    "ffmpeg_available": true,
+    "visual_diff": null
+  },
+  "repository": {
+    "branch": "main",
+    "changed_files": [
+      "M custodian/assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__foreground_occluder__idle__s__1f__256x256.png",
+      " M custodian/assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_chain__idle__s__1f__64x256.png",
+      " M custodian/assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_platform__idle__s__1f__128x128.png",
+      " M custodian/content/routes/ash_bell/forlorn_ritualant_underground_route.json",
+      " M custodian/content/sprites/_pipeline/archive/operator__modular_lower_body__melee_1h__chain_03__e__10f__156x96.json",
+      " M custodian/content/sprites/_pipeline/archive/operator__modular_upper_body__melee_1h__chain_03__e__10f__156x96.json",
+      " M custodian/content/sprites/_pipeline/archive/operator__modular_weapon_vigil_dagger__melee_1h__chain_03__e__10f__156x96.json",
+      " M custodian/content/sprites/_pipeline/archive/operator__modular_weapon_vigil_dagger__melee_1h__chain_03__e__10f__156x96.png",
+      " M custodian/content/sprites/_pipeline/logs/operator__modular_lower_body__melee_1h__chain_03__e__10f__156x96.log.json",
+      " M custodian/content/sprites/_pipeline/logs/operator__modular_upper_body__melee_1h__chain_03__e__10f__156x96.log.json",
+      " M custodian/content/sprites/_pipeline/logs/operator__modular_weapon_vigil_dagger__melee_1h__chain_03__e__10f__156x96.log.json",
+      " M custodian/content/sprites/_pipeline/normalized/operator__modular_weapon_vigil_dagger__melee_1h__chain_03__e__10f__156x96.png",
+      " D custodian/content/sprites/operator/new_operator/modular/chain_03/operator__modular_upper_body__melee_1h__chain_03__e__11f__156x96.png",
+      " D custodian/content/sprites/operator/new_operator/modular/chain_03/operator__modular_upper_body__melee_1h__chain_03__e__11f__156x96.png.import",
+      " D custodian/content/sprites/operator/new_operator/modular/chain_03/operator__modular_upper_body__melee_1h__chain_03__e__8f__156x96.png",
+      " D custodian/content/sprites/operator/new_operator/modular/chain_03/operator__modular_upper_body__melee_1h__chain_03__e__8f__156x96.png.import",
+      " D custodian/content/sprites/operator/new_operator/modular/chain_03/operator__modular_upper_body__melee_1h__chain_03__w__8f__156x96.png",
+      " D custodian/content/sprites/operator/new_operator/modular/chain_03/operator__modular_upper_body__melee_1h__chain_03__w__8f__156x96.png.import",
+      " M custodian/content/sprites/operator/new_operator/modular/chain_03/operator__modular_weapon_vigil_dagger__melee_1h__chain_03__e__10f__156x96.png",
+      " D custodian/content/sprites/operator/new_operator/modular/chain_03/operator__modular_weapon_vigil_dagger__melee_1h__chain_03__e__11f__156x96.png",
+      " D custodian/content/sprites/operator/new_operator/modular/chain_03/operator__modular_weapon_vigil_dagger__melee_1h__chain_03__e__11f__156x96.png.import",
+      " M custodian/content/sprites/operator/new_operator/modular/chain_03/operator__modular_weapon_vigil_dagger__melee_1h__chain_03__w__10f__156x96.png",
+      " M custodian/content/sprites/operator/new_operator/modular/chain_attack/operator__full_body_source__melee_1h__chain_03__e__9f__156x96.aseprite",
+      " M custodian/content/sprites/operator/runtime/weapon/melee_1h/vigil_pattern_dagger/operator__weapon__vigil_pattern_dagger__chain_03__e__10f__156x96.png",
+      " M custodian/content/sprites/operator/runtime/weapon/melee_1h/vigil_pattern_dagger/operator__weapon__vigil_pattern_dagger__chain_03__w__10f__156x96.png",
+      " M custodian/content/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__mountain_cliff_mass__768x512.png",
+      " M custodian/docs/ai_context/CURRENT_STATE.md",
+      " M custodian/docs/ai_context/FILE_INDEX.md",
+      " M custodian/docs/ai_context/VALIDATION_RECIPES.md",
+      " M custodian/game/world/approaches/ash_bell/ash_bell_lift_ingress_presentation.gd",
+      " M custodian/game/world/approaches/ash_bell/ash_bell_lift_ingress_presentation.tscn",
+      " M custodian/game/world/approaches/ash_bell/ash_bell_lift_ingress_site.gd",
+      " M custodian/game/world/levels/world_ingress_spawner.gd",
+      " M custodian/game/world/procgen/foliage/procgen_foliage_spawner.gd",
+      " M custodian/game/world/procgen/proc_gen_map.tscn",
+      " M custodian/game/world/procgen/proc_gen_tilemap.gd",
+      " M custodian/game/world/vistas/sundered_keep/sundered_keep_procgen_vista_presentation.gd",
+      " M custodian/tools/validation/ash_bell_lift_ingress_presentation_smoke.gd",
+      " M custodian/tools/validation/elevated_world_seed_review.gd",
+      " M design/02_features/procgen/STARTER_MAP_PROCGEN.md",
+      " M design/05_levels/ASH_BELL_LIFT_INGRESS_PRESENTATION.md",
+      "?? custodian/assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_platform_back__idle__s__1f__128x128.png",
+      "?? custodian/assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_platform_back__idle__s__1f__128x128.png.import",
+      "?? custodian/assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_platform_back__vibrate__s__4f__128x128.png",
+      "?? custodian/assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_platform_back__vibrate__s__4f__128x128.png.import",
+      "?? custodian/assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_platform_front_lip__idle__s__1f__128x128.png",
+      "?? custodian/assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_platform_front_lip__idle__s__1f__128x128.png.import",
+      "?? custodian/assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_platform_front_lip__vibrate__s__4f__128x128.png",
+      "?? custodian/assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_platform_front_lip__vibrate__s__4f__128x128.png.import",
+      "?? custodian/assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__support_timber__idle__s__1f__64x256.png",
+      "?? custodian/assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__support_timber__idle__s__1f__64x256.png.import",
+      "?? custodian/content/sprites/_pipeline/archive/operator__modular_fx__melee_1h__chain_03__e__10f__156x96.json",
+      "?? custodian/content/sprites/_pipeline/archive/operator__modular_fx__melee_1h__chain_03__e__10f__156x96.png",
+      "?? custodian/content/sprites/_pipeline/archive/operator__modular_fx__melee_1h__chain_03__e__10f__156x96.png.import",
+      "?? custodian/content/sprites/_pipeline/logs/operator__modular_fx__melee_1h__chain_03__e__10f__156x96.log.json",
+      "?? custodian/content/sprites/_pipeline/normalized/operator__modular_fx__melee_1h__chain_03__e__10f__156x96.png",
+      "?? custodian/content/sprites/_pipeline/normalized/operator__modular_fx__melee_1h__chain_03__e__10f__156x96.png.import",
+      "?? custodian/content/sprites/operator/runtime/modular_fx/",
+      "?? custodian/tools/validation/ash_bell_sundered_keep_two_ingress_renderer_smoke.gd",
+      "?? reports/moment_forge/traversal/ash_bell_lift_exterior_descent/20260804T003731-0400/",
+      "?? reports/moment_forge/traversal/ash_bell_lift_exterior_descent/20260804T021317-0400/",
+      "?? reports/moment_forge/traversal/ash_bell_lift_exterior_descent/20260805T010413-0400/",
+      "?? reports/operator_ingest/operator_animation_contract_report_20260805_005650.json"
+    ],
+    "commit": "567b1b947ca33bb386f6a6ca5e09fbe4da606b83",
+    "dirty": true,
+    "root": "/home/braydenchaffee/Projects/CUSTODIAN"
+  },
+  "run_id": "20260805T010413-0400",
+  "runtime": {
+    "godot": {
+      "build": "arch_linux",
+      "hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+      "hex": 263937,
+      "major": 4,
+      "minor": 7,
+      "patch": 1,
+      "status": "stable",
+      "string": "4.7.1-stable (arch_linux)",
+      "timestamp": 1783976428
+    },
+    "physics_hz": 60,
+    "renderer": "vulkan"
+  },
+  "scenario": {
+    "id": "traversal/ash_bell_lift_exterior_descent",
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/traversal/ash_bell_lift_exterior_descent/20260805T010413-0400/scenario.snapshot.json",
+    "schema_version": 1,
+    "sha256": "917e78a482affa4c282a44aa487eb8e22ea5be38c1ce7cd51bbe34e6e1fc9399"
+  },
+  "schema": "custodian.moment_forge.run_manifest.v1",
+  "stable_assertions_passed": true,
+  "stable_fingerprint": {
+    "algorithm": "sha256",
+    "schema": "custodian.moment_forge.stable_fingerprint.v1",
+    "value": "a735f8950a5ebb4ff612ac82956c2275d9ae324218dc00f9c79b7a36c4a6bcde"
+  },
+  "status": "passed",
+  "tools": {
+    "ffmpeg": "/usr/bin/ffmpeg",
+    "pillow": "12.3.0",
+    "python": "3.14.6"
+  }
+}

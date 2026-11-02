@@ -1,0 +1,19 @@
+{
+  "source": "operator__fx__full__dodge_01__n__9f__96.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "operator/runtime/overlays/full/operator__fx__full__dodge_01__n__9f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 9
+      }
+    }
+  ],
+  "frame_size": [
+    96,
+    96
+  ]
+}

@@ -1,0 +1,15 @@
+
+PROCGEN DEPTH UNIVERSAL
+───────────────────────
+Required art      4 / 4 ready
+Recommended       0 / 0 ready
+Optional          0 / 0 ready
+Inbox             0 files waiting
+
+READY
+  ✓ civic_foundation_breach_v1 OMNI
+  ✓ fractured_ravine_v1 OMNI
+  ✓ service_infrastructure_field_v1 OMNI
+  ✓ talus_and_rubble_shelf_v1 OMNI
+
+Next: asset request procgen_depth_universal

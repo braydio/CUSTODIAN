@@ -1,0 +1,44 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260825T132222Z_08710fc3",
+  "timestamp": "2026-08-25T13:22:22.239314+00:00",
+  "family": "station_ix_sync_core",
+  "kind": "world_prop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/station_ix_sync_core/idle.png",
+      "sha256": "7adfedfe87abe1d9e0a885dc62c0433e9bbf7217f4acd275fe56fd5e51ae0d1b"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "idle",
+      "direction": "omni",
+      "semantic_identity": [
+        "station_ix_sync_core",
+        "world_prop",
+        "body",
+        "interaction",
+        "idle",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/ash_bell/station_ix/station_ix_sync_core/runtime/body/station_ix_sync_core__body__interaction__idle__omni__1f__384x320.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "7adfedfe87abe1d9e0a885dc62c0433e9bbf7217f4acd275fe56fd5e51ae0d1b",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": false,
+    "ok": null
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

@@ -1,0 +1,32 @@
+{
+  "source": "enemy_savage__body__locomotion__idle_01__s__9f__95.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "enemies/enemy_savage/runtime/body/enemy_savage__body__locomotion__idle_01__s__9f__95.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 9
+      }
+    },
+    {
+      "path": "enemies/enemy_savage/enemy_savage__body__locomotion__idle_01__s__9f__95.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 9
+      }
+    }
+  ],
+  "frame_size": [
+    95,
+    95
+  ],
+  "remove_superseded": true,
+  "post_process": [
+    "enemy_runtime_import"
+  ]
+}

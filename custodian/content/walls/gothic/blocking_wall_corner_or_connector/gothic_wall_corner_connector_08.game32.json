@@ -1,0 +1,72 @@
+{
+  "schema": "game32.asset.v2",
+  "id": "gothic_wall_corner_connector_08",
+  "display_name": "Wall Corner Connector 08",
+  "source": {
+    "sheet": "gothic_tilesheet.png",
+    "visual_index": 68,
+    "row_index": 3,
+    "col_index": 7,
+    "bbox_px": {
+      "x": 553,
+      "y": 313,
+      "w": 63,
+      "h": 92
+    }
+  },
+  "file": {
+    "path": "custodian/content/walls/gothic/blocking_wall_corner_or_connector/gothic_wall_corner_connector_08.png",
+    "pixel_size": {
+      "w": 63,
+      "h": 92
+    }
+  },
+  "classification": {
+    "asset_type": "walls",
+    "semantic_role": "blocking_wall_corner_or_connector",
+    "placement_layer": "wall",
+    "tags": [
+      "blocking",
+      "compound",
+      "connector",
+      "corner",
+      "gothic",
+      "wall"
+    ]
+  },
+  "placement": {
+    "tile_size": 32,
+    "footprint_tiles": {
+      "w": 2,
+      "h": 3
+    },
+    "origin_mode": "bottom_center",
+    "pivot_px": {
+      "x": 31,
+      "y": 91
+    },
+    "snap": "tile",
+    "allow_mirror_x": true,
+    "allow_rotation": false,
+    "y_sort": true
+  },
+  "collision": {
+    "blocks_movement": true,
+    "blocks_sight": true,
+    "cover_value": 2,
+    "collision_shape": "footprint"
+  },
+  "procgen": {
+    "uses": [
+      "wall_corner",
+      "compound_turn",
+      "interior_turn",
+      "wall_connector"
+    ],
+    "weight": 45,
+    "can_spawn_indoor": true,
+    "can_spawn_outdoor": true,
+    "supports_gothic_compound": true,
+    "review_status": "semantic_band_assigned"
+  }
+}

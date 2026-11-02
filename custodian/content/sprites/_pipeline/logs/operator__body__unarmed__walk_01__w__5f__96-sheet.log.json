@@ -1,0 +1,11 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__body__unarmed__walk_01__w__5f__96-sheet.json",
+	"outputs": [
+		"res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__walk_01__w__5f__96.png"
+	],
+	"post_process": [
+		"operator_curated_resources"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/operator__body__unarmed__walk_01__w__5f__96-sheet.png",
+	"timestamp_utc": "2026-05-02 11:52:09"
+}

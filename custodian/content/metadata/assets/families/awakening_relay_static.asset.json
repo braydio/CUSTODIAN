@@ -1,0 +1,36 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "awakening_relay_static",
+  "kind": "effect",
+  "priority": "P2",
+  "runtime": {
+    "domain": "sprites/effects/awakening",
+    "owner": "awakening_relay_static"
+  },
+  "canvas": {
+    "width": 64,
+    "height": 64
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "pulse": {
+      "required": false,
+      "recommended": true,
+      "layer": "fx",
+      "action_group": "effect",
+      "variant": "pulse",
+      "animation": true,
+      "layout": "horizontal_strip",
+      "frames": 8,
+      "fps": 10
+    }
+  },
+  "aliases": {},
+  "consumers": [
+    {
+      "type": "scene",
+      "path": "res://scenes/awakening_first_return.tscn"
+    }
+  ]
+}

@@ -1,0 +1,829 @@
+=== gothic_compound_assets.gd ===
+extends RefCounted
+class_name GothicCompoundAssets
+
+const ROOT := "res://content/procgen/special_rooms/gothic_compound/"
+
+const TERRAIN := {
+	"ash_a": ROOT + "01_terrain_ash_base_dark_a.png",
+	"ash_b": ROOT + "02_terrain_ash_base_dark_b.png",
+	"ash_roots": ROOT + "03_terrain_ash_roots_cracked_a.png",
+	"rocky_ash": ROOT + "05_terrain_rocky_ash_base_a.png",
+	"cracked_rock_a": ROOT + "06_terrain_cracked_rock_base_a.png",
+	"cracked_rock_b": ROOT + "07_terrain_cracked_rock_base_b.png",
+	"stone_a": ROOT + "12_terrain_stone_cracked_base_a.png",
+	"stone_b": ROOT + "13_terrain_stone_cracked_base_b.png",
+	"stone_c": ROOT + "14_terrain_stone_cracked_base_c.png",
+}
+
+const ROADS := {
+	"ew": ROOT + "15_road_straight_ew_long.png",
+	"ns_a": ROOT + "16_road_straight_ns_a.png",
+	"ns_b": ROOT + "17_road_straight_ns_b.png",
+	"ns_cracked": ROOT + "21_road_straight_ns_cracked.png",
+	"cross": ROOT + "29_road_cross_intersection.png",
+	"dirt_ns_a": ROOT + "36_road_straight_ns_dirt_edge_a.png",
+	"dirt_ns_b": ROOT + "37_road_straight_ns_dirt_edge_b.png",
+}
+
+const WALLS := {
+	"h_a": ROOT + "01_wall_straight_w_pillar_conn_e.png",
+	"h_b": ROOT + "25_wall_straight_conn_e_w_left_pillar.png",
+	"h_damaged": ROOT + "06_wall_straight_damaged_conn_w_e.png",
+	"h_broken": ROOT + "26_wall_broken_rubble_conn_w_e_left_pillar.png",
+	"v_a": ROOT + "21_wall_straight_vertical_conn_n_s_large.png",
+	"pillar": ROOT + "02_wall_pillar_spire_single.png",
+	"corner_se": ROOT + "03_wall_corner_l_conn_s_e.png",
+	"corner_sw": ROOT + "04_wall_corner_l_conn_s_w.png",
+	"corner_spire_sw": ROOT + "08_wall_corner_spire_conn_s_w.png",
+}
+
+const GATES := {
+	"gatehouse_open": ROOT + "36_gatehouse_main_open_large.png",
+	"open_arch": ROOT + "39_gate_open_arch_frame.png",
+	"threshold_open": ROOT + "15_gate_threshold_open_walkable.png",
+}
+
+const STRUCTURES := {
+	"command_keep": ROOT + "01_structure_command_keep_gothic_large.png",
+	"utility_fan": ROOT + "02_structure_utility_fan_roof_block.png",
+	"machine_house": ROOT + "03_structure_machine_house_gothic_industrial.png",
+	"fountain": ROOT + "08_structure_dry_fountain_basin_octagonal.png",
+	"bell_frame": ROOT + "09_bell_frame_gothic_small.png",
+	"terminal": ROOT + "13_terminal_compound_control_console.png",
+}
+
+const PROPS := {
+	"sandbag_h": ROOT + "01_cover_sandbag_straight_h.png",
+	"stone_cover_h": ROOT + "03_cover_stone_low_wall_h.png",
+	"fence_long_h": ROOT + "04_fence_wrought_iron_long_h.png",
+	"spike_h": ROOT + "06_spike_barricade_h.png",
+	"banner": ROOT + "16_banner_black_torn.png",
+	"rubble_s": ROOT + "19_rubble_pile_small.png",
+	"rubble_m": ROOT + "20_rubble_pile_medium.png",
+	"dead_shrub": ROOT + "23_dead_shrub_small.png",
+	"dead_tree": ROOT + "25_dead_tree_large.png",
+	"collapsed_spire": ROOT + "42_collapsed_spire_ruin_large.png",
+}
+
+const RESOURCES := {
+	"ruin_scrap": ROOT + "32_resource_node_ruin_scrap_gothic.png",
+	"blackwood": ROOT + "33_resource_node_blackwood_deadfall_gothic.png",
+}
+
+const MARKERS := {
+	"spawn_plain": ROOT + "34_marker_hidden_spawn_x_plain.png",
+	"spawn_amber": ROOT + "35_marker_hidden_spawn_x_amber.png",
+	"spawn_stone": ROOT + "38_marker_hidden_spawn_stone_ring.png",
+	"spawn_ember": ROOT + "39_marker_hidden_spawn_ember_star.png",
+}
+
+const DECALS := {
+	"grate_square": ROOT + "50_grate_square_metal.png",
+	"grate_round": ROOT + "51_grate_round_metal.png",
+	"floor_sigil": ROOT + "52_floor_sigil_stone_square.png",
+	"light_pool": ROOT + "53_decal_light_pool_amber.png",
+	"shadow": ROOT + "54_decal_shadow_smoke_dark.png",
+}
+
+
+
+=== gothic_compound_config.gd ===
+extends Resource
+class_name GothicCompoundConfig
+
+@export var enabled: bool = true
+@export var tile_size: int = 32
+@export var min_size: Vector2i = Vector2i(34, 26)
+@export var max_size: Vector2i = Vector2i(46, 34)
+@export var margin_from_map_edge: int = 6
+@export var max_placement_attempts: int = 40
+@export var gate_width_tiles: int = 5
+@export var outer_margin_fill: int = 5
+@export var wall_pillar_stride: int = 5
+@export_range(0.0, 1.0, 0.01) var wall_damage_chance: float = 0.10
+@export_range(0, 8, 1) var exterior_resource_count: int = 2
+@export_range(0, 12, 1) var enemy_marker_count: int = 4
+@export_range(0.0, 1.0, 0.01) var decorative_scatter_chance: float = 0.08
+@export_range(0.0, 1.0, 0.01) var exterior_scatter_chance: float = 0.06
+@export var debug_mark_required_paths: bool = false
+
+
+
+=== gothic_compound_generator.gd ===
+extends RefCounted
+class_name GothicCompoundGenerator
+
+const GothicCompoundAssetsScript := preload("res://game/world/procgen/gothic_compound/gothic_compound_assets.gd")
+const GothicCompoundConfigScript := preload("res://game/world/procgen/gothic_compound/gothic_compound_config.gd")
+const GothicCompoundResultScript := preload("res://game/world/procgen/gothic_compound/gothic_compound_result.gd")
+const GothicCompoundValidatorScript := preload("res://game/world/procgen/gothic_compound/gothic_compound_validator.gd")
+
+var cfg = null
+var rng := RandomNumberGenerator.new()
+
+
+func _init(config = null) -> void:
+	cfg = config if config != null else GothicCompoundConfigScript.new()
+
+
+func generate(ctx: Object):
+	var result = GothicCompoundResultScript.new()
+	if not cfg.enabled:
+		result.errors.append("Gothic compound generation disabled.")
+		return result
+	var validator := GothicCompoundValidatorScript.new()
+	rng.seed = _compound_seed(int(ctx.get("world_seed")))
+	for attempt in range(cfg.max_placement_attempts):
+		var rect := _find_candidate_rect(ctx)
+		if rect.size == Vector2i.ZERO:
+			continue
+		result = _generate_at_rect(ctx, rect, false)
+		if validator.call("validate", ctx, result):
+			result.ok = true
+			return result
+	result = _generate_at_rect(ctx, _fallback_rect(ctx), true)
+	result.used_fallback = true
+	result.ok = validator.call("validate", ctx, result)
+	if not result.ok:
+		result.errors.append("Fallback gothic compound failed validation.")
+	return result
+
+
+func _compound_seed(world_seed: int) -> int:
+	return hash("%d:gothic_compound_v1" % world_seed)
+
+
+func _find_candidate_rect(ctx: Object) -> Rect2i:
+	var map_size: Vector2i = ctx.get("map_size")
+	var width := rng.randi_range(cfg.min_size.x, cfg.max_size.x)
+	var height := rng.randi_range(cfg.min_size.y, cfg.max_size.y)
+	var min_x: int = cfg.margin_from_map_edge
+	var min_y: int = cfg.margin_from_map_edge
+	var max_x: int = map_size.x - width - cfg.margin_from_map_edge
+	var max_y: int = map_size.y - height - cfg.margin_from_map_edge
+	if max_x <= min_x or max_y <= min_y:
+		return Rect2i()
+	var rect := Rect2i(
+		Vector2i(rng.randi_range(min_x, max_x), rng.randi_range(min_y, max_y)),
+		Vector2i(width, height)
+	)
+	if _rect_has_conflicts(ctx, rect.grow(cfg.outer_margin_fill)):
+		return Rect2i()
+	return rect
+
+
+func _fallback_rect(ctx: Object) -> Rect2i:
+	var map_size: Vector2i = ctx.get("map_size")
+	var size := Vector2i(
+		mini(cfg.min_size.x, map_size.x - cfg.margin_from_map_edge * 2),
+		mini(cfg.min_size.y, map_size.y - cfg.margin_from_map_edge * 2)
+	)
+	var pos := Vector2i(
+		int((map_size.x - size.x) / 2),
+		maxi(cfg.margin_from_map_edge, int((map_size.y - size.y) / 2))
+	)
+	return Rect2i(pos, size)
+
+
+func _rect_has_conflicts(ctx: Object, rect: Rect2i) -> bool:
+	for y in range(rect.position.y, rect.end.y):
+		for x in range(rect.position.x, rect.end.x):
+			var cell := Vector2i(x, y)
+			if not _in_map(ctx, cell):
+				return true
+			if ctx.call("is_reserved", cell):
+				return true
+	return false
+
+
+func _generate_at_rect(ctx: Object, rect: Rect2i, fallback: bool):
+	var result = GothicCompoundResultScript.new()
+	result.rect = rect
+	result.used_fallback = fallback
+	_reserve_and_clear(ctx, rect)
+	_fill_base_terrain(ctx, rect)
+	_build_perimeter(ctx, result, rect)
+	_place_gate(ctx, result, rect)
+	_carve_approach_road(ctx, result)
+	_carve_internal_road(ctx, result, rect)
+	_place_required_structures(ctx, result)
+	_place_utility_structures(ctx, result, rect)
+	_place_defenses(ctx, result, rect)
+	_place_exterior_resources(ctx, result, rect)
+	_place_scatter_and_decals(ctx, result, rect)
+	_place_spawn_markers(ctx, result, rect)
+	return result
+
+
+func _reserve_and_clear(ctx: Object, rect: Rect2i) -> void:
+	var grown := rect.grow(cfg.outer_margin_fill)
+	for y in range(grown.position.y, grown.end.y):
+		for x in range(grown.position.x, grown.end.x):
+			var cell := Vector2i(x, y)
+			if not _in_map(ctx, cell):
+				continue
+			ctx.call("clear_cell", cell)
+			ctx.call("reserve_cell", cell)
+
+
+func _fill_base_terrain(ctx: Object, rect: Rect2i) -> void:
+	var outer := rect.grow(cfg.outer_margin_fill)
+	for y in range(outer.position.y, outer.end.y):
+		for x in range(outer.position.x, outer.end.x):
+			var cell := Vector2i(x, y)
+			if not _in_map(ctx, cell):
+				continue
+			var asset: String = _pick_inside_ground(cell) if rect.has_point(cell) else _pick_exterior_ground(cell)
+			ctx.call("set_floor", cell, asset)
+			ctx.call("mark_walkable", cell, true)
+
+
+func _build_perimeter(ctx: Object, result, rect: Rect2i) -> void:
+	var x0 := rect.position.x
+	var y0 := rect.position.y
+	var x1 := rect.end.x - 1
+	var y1 := rect.end.y - 1
+	var gate_center_x := x0 + int(rect.size.x / 2)
+	var gate_half := int(cfg.gate_width_tiles / 2)
+	for x in range(x0, x1 + 1):
+		_place_wall_cell(ctx, result, Vector2i(x, y0), "h")
+		if abs(x - gate_center_x) > gate_half:
+			_place_wall_cell(ctx, result, Vector2i(x, y1), "h")
+	for y in range(y0, y1 + 1):
+		_place_wall_cell(ctx, result, Vector2i(x0, y), "v")
+		_place_wall_cell(ctx, result, Vector2i(x1, y), "v")
+	_place_corner(ctx, result, Vector2i(x0, y0), "nw")
+	_place_corner(ctx, result, Vector2i(x1, y0), "ne")
+	_place_corner(ctx, result, Vector2i(x0, y1), "sw")
+	_place_corner(ctx, result, Vector2i(x1, y1), "se")
+	_place_wall_pillars(ctx, result, rect)
+
+
+func _place_wall_cell(ctx: Object, result, cell: Vector2i, orientation: String) -> void:
+	var asset: String = GothicCompoundAssetsScript.WALLS["v_a"] if orientation == "v" else GothicCompoundAssetsScript.WALLS["h_a"]
+	if orientation == "h":
+		var roll := rng.randf()
+		if roll < cfg.wall_damage_chance:
+			asset = GothicCompoundAssetsScript.WALLS["h_damaged"]
+		elif roll < cfg.wall_damage_chance + 0.04:
+			asset = GothicCompoundAssetsScript.WALLS["h_broken"]
+	ctx.call("set_wall", cell, asset, true)
+	ctx.call("mark_blocked", cell, true)
+	result.placed_walls.append(cell)
+
+
+func _place_corner(ctx: Object, result, cell: Vector2i, kind: String) -> void:
+	var asset: String = GothicCompoundAssetsScript.WALLS["pillar"]
+	match kind:
+		"sw":
+			asset = GothicCompoundAssetsScript.WALLS["corner_sw"]
+		"se", "ne":
+			asset = GothicCompoundAssetsScript.WALLS["corner_se"]
+		"nw":
+			asset = GothicCompoundAssetsScript.WALLS["corner_spire_sw"]
+	ctx.call("set_wall", cell, asset, true)
+	ctx.call("mark_blocked", cell, true)
+	result.placed_walls.append(cell)
+
+
+func _place_wall_pillars(ctx: Object, result, rect: Rect2i) -> void:
+	var x0 := rect.position.x
+	var y0 := rect.position.y
+	var x1 := rect.end.x - 1
+	var y1 := rect.end.y - 1
+	for x in range(x0 + cfg.wall_pillar_stride, x1, cfg.wall_pillar_stride):
+		_place_pillar(ctx, result, Vector2i(x, y0))
+		if abs(x - (x0 + int(rect.size.x / 2))) > cfg.gate_width_tiles:
+			_place_pillar(ctx, result, Vector2i(x, y1))
+	for y in range(y0 + cfg.wall_pillar_stride, y1, cfg.wall_pillar_stride):
+		_place_pillar(ctx, result, Vector2i(x0, y))
+		_place_pillar(ctx, result, Vector2i(x1, y))
+
+
+func _place_pillar(ctx: Object, result, cell: Vector2i) -> void:
+	ctx.call("set_wall", cell, GothicCompoundAssetsScript.WALLS["pillar"], true)
+	ctx.call("mark_blocked", cell, true)
+	result.placed_walls.append(cell)
+
+
+func _place_gate(ctx: Object, result, rect: Rect2i) -> void:
+	var gate_center := Vector2i(rect.position.x + int(rect.size.x / 2), rect.end.y - 1)
+	result.gate_cell = gate_center
+	var gate_half := int(cfg.gate_width_tiles / 2)
+	for dx in range(-gate_half, gate_half + 1):
+		var cell := gate_center + Vector2i(dx, 0)
+		ctx.call("clear_cell", cell)
+		ctx.call("set_road", cell, GothicCompoundAssetsScript.GATES["threshold_open"])
+		ctx.call("mark_blocked", cell, false)
+		ctx.call("mark_walkable", cell, true)
+		result.required_walkable[cell] = true
+	ctx.call("spawn_prop", gate_center + Vector2i(-2, -2), GothicCompoundAssetsScript.GATES["gatehouse_open"], false, Vector2i(5, 4))
+
+
+func _carve_approach_road(ctx: Object, result) -> void:
+	var map_size: Vector2i = ctx.get("map_size")
+	var start := Vector2i(result.gate_cell.x, map_size.y - 2)
+	var end_cell: Vector2i = result.gate_cell + Vector2i(0, 1)
+	var path := _orthogonal_path(start, end_cell, false)
+	for cell in path:
+		if not _in_map(ctx, cell):
+			continue
+		ctx.call("set_road", cell, _pick_ns_road())
+		ctx.call("mark_walkable", cell, true)
+		ctx.call("mark_blocked", cell, false)
+	result.approach_path = path
+	result.mark_required_path(path)
+
+
+func _carve_internal_road(ctx: Object, result, rect: Rect2i) -> void:
+	var yard_center := Vector2i(rect.position.x + int(rect.size.x / 2), rect.position.y + int(rect.size.y / 2))
+	var keep_cell := Vector2i(rect.position.x + int(rect.size.x / 2), rect.position.y + 9)
+	result.command_keep_cell = keep_cell
+	var path := _orthogonal_path(result.gate_cell + Vector2i(0, -1), keep_cell, true)
+	for cell in path:
+		if not rect.has_point(cell):
+			continue
+		var asset: String = GothicCompoundAssetsScript.ROADS["cross"] if cell == yard_center else GothicCompoundAssetsScript.ROADS["ns_a"]
+		ctx.call("set_road", cell, asset)
+		ctx.call("mark_walkable", cell, true)
+		ctx.call("mark_blocked", cell, false)
+	for cell in _orthogonal_path(Vector2i(rect.position.x + 7, yard_center.y), Vector2i(rect.end.x - 8, yard_center.y), false):
+		ctx.call("set_road", cell, GothicCompoundAssetsScript.ROADS["ew"])
+		ctx.call("mark_walkable", cell, true)
+		ctx.call("mark_blocked", cell, false)
+	result.internal_path = path
+	result.mark_required_path(path)
+	ctx.call("spawn_prop", yard_center + Vector2i(-1, -1), GothicCompoundAssetsScript.STRUCTURES["fountain"], false, Vector2i(3, 3))
+
+
+func _place_required_structures(ctx: Object, result) -> void:
+	var keep_size := Vector2i(9, 7)
+	var keep_pos: Vector2i = result.command_keep_cell - Vector2i(int(keep_size.x / 2), keep_size.y)
+	_place_blocking_structure_checked(ctx, result, keep_pos, keep_size, GothicCompoundAssetsScript.STRUCTURES["command_keep"], true, "command_keep")
+	var terminal_pos: Vector2i = result.command_keep_cell + Vector2i(6, 1)
+	result.terminal_cell = terminal_pos
+	_place_blocking_structure_checked(ctx, result, terminal_pos, Vector2i(2, 2), GothicCompoundAssetsScript.STRUCTURES["terminal"], true, "terminal")
+
+
+func _place_utility_structures(ctx: Object, result, rect: Rect2i) -> void:
+	var candidates := [
+		{"cell": Vector2i(rect.position.x + 5, rect.position.y + int(rect.size.y / 2) - 3), "size": Vector2i(5, 5), "asset": GothicCompoundAssetsScript.STRUCTURES["utility_fan"], "label": "utility_fan"},
+		{"cell": Vector2i(rect.end.x - 10, rect.position.y + int(rect.size.y / 2) - 3), "size": Vector2i(5, 5), "asset": GothicCompoundAssetsScript.STRUCTURES["machine_house"], "label": "machine_house"},
+		{"cell": Vector2i(rect.position.x + 6, rect.end.y - 9), "size": Vector2i(3, 4), "asset": GothicCompoundAssetsScript.STRUCTURES["bell_frame"], "label": "bell_frame"},
+	]
+	for entry in candidates:
+		_place_blocking_structure_checked(ctx, result, entry["cell"], entry["size"], entry["asset"], true, entry["label"])
+
+
+func _place_defenses(ctx: Object, result, rect: Rect2i) -> void:
+	var gate: Vector2i = result.gate_cell
+	var placements := [
+		{"cell": gate + Vector2i(-6, -3), "asset": GothicCompoundAssetsScript.PROPS["sandbag_h"], "size": Vector2i(3, 1), "blocks": true},
+		{"cell": gate + Vector2i(3, -3), "asset": GothicCompoundAssetsScript.PROPS["sandbag_h"], "size": Vector2i(3, 1), "blocks": true},
+		{"cell": gate + Vector2i(-8, -6), "asset": GothicCompoundAssetsScript.PROPS["spike_h"], "size": Vector2i(3, 1), "blocks": true},
+		{"cell": gate + Vector2i(5, -6), "asset": GothicCompoundAssetsScript.PROPS["spike_h"], "size": Vector2i(3, 1), "blocks": true},
+		{"cell": Vector2i(rect.position.x + 3, rect.position.y + int(rect.size.y / 2)), "asset": GothicCompoundAssetsScript.PROPS["fence_long_h"], "size": Vector2i(4, 1), "blocks": true},
+		{"cell": Vector2i(rect.end.x - 7, rect.position.y + int(rect.size.y / 2)), "asset": GothicCompoundAssetsScript.PROPS["fence_long_h"], "size": Vector2i(4, 1), "blocks": true},
+	]
+	for placement in placements:
+		_place_prop_checked(ctx, result, placement["cell"], placement["size"], placement["asset"], placement["blocks"])
+
+
+func _place_exterior_resources(ctx: Object, result, rect: Rect2i) -> void:
+	var positions := [
+		Vector2i(rect.position.x - 4, rect.position.y + int(rect.size.y / 2)),
+		Vector2i(rect.end.x + 2, rect.position.y + int(rect.size.y / 2)),
+		Vector2i(rect.position.x + 4, rect.end.y + 4),
+	]
+	var assets := [
+		GothicCompoundAssetsScript.RESOURCES["ruin_scrap"],
+		GothicCompoundAssetsScript.RESOURCES["blackwood"],
+		GothicCompoundAssetsScript.RESOURCES["ruin_scrap"],
+	]
+	for i in range(mini(cfg.exterior_resource_count, positions.size())):
+		var pos: Vector2i = positions[i]
+		if _in_map(ctx, pos) and not ctx.call("is_blocked", pos):
+			ctx.call("spawn_prop", pos, assets[i], false, Vector2i(2, 2))
+			ctx.call("mark_walkable", pos, true)
+			result.placed_resources.append(pos)
+
+
+func _place_scatter_and_decals(ctx: Object, result, rect: Rect2i) -> void:
+	var outer := rect.grow(cfg.outer_margin_fill)
+	for y in range(outer.position.y, outer.end.y):
+		for x in range(outer.position.x, outer.end.x):
+			var cell := Vector2i(x, y)
+			if not _in_map(ctx, cell) or result.required_walkable.has(cell) or ctx.call("is_blocked", cell):
+				continue
+			var chance: float = cfg.decorative_scatter_chance if rect.has_point(cell) else cfg.exterior_scatter_chance
+			if rng.randf() > chance:
+				continue
+			if rect.has_point(cell):
+				_place_inside_decal(ctx, cell)
+			else:
+				_place_exterior_scatter(ctx, result, cell)
+
+
+func _place_inside_decal(ctx: Object, cell: Vector2i) -> void:
+	var roll := rng.randf()
+	var asset: String = GothicCompoundAssetsScript.DECALS["shadow"]
+	if roll < 0.35:
+		asset = GothicCompoundAssetsScript.DECALS["grate_square"]
+	elif roll < 0.55:
+		asset = GothicCompoundAssetsScript.DECALS["grate_round"]
+	elif roll < 0.70:
+		asset = GothicCompoundAssetsScript.DECALS["floor_sigil"]
+	elif roll < 0.85:
+		asset = GothicCompoundAssetsScript.DECALS["light_pool"]
+	ctx.call("set_decal", cell, asset)
+
+
+func _place_exterior_scatter(ctx: Object, result, cell: Vector2i) -> void:
+	var roll := rng.randf()
+	var asset: String = GothicCompoundAssetsScript.PROPS["rubble_s"]
+	var size := Vector2i.ONE
+	var blocks := false
+	if roll < 0.22:
+		asset = GothicCompoundAssetsScript.PROPS["rubble_s"]
+	elif roll < 0.40:
+		asset = GothicCompoundAssetsScript.PROPS["rubble_m"]
+		size = Vector2i(2, 2)
+	elif roll < 0.52:
+		asset = GothicCompoundAssetsScript.PROPS["dead_shrub"]
+	elif roll < 0.62:
+		asset = GothicCompoundAssetsScript.PROPS["dead_tree"]
+		size = Vector2i(3, 3)
+		blocks = true
+	elif roll < 0.72:
+		asset = GothicCompoundAssetsScript.PROPS["collapsed_spire"]
+		size = Vector2i(3, 3)
+		blocks = true
+	else:
+		asset = GothicCompoundAssetsScript.PROPS["banner"]
+		blocks = true
+	_place_prop_checked(ctx, result, cell, size, asset, blocks)
+
+
+func _place_spawn_markers(ctx: Object, result, rect: Rect2i) -> void:
+	var marker_cells := [
+		Vector2i(result.gate_cell.x, result.gate_cell.y + 8),
+		Vector2i(rect.position.x - 5, rect.position.y + int(rect.size.y / 2)),
+		Vector2i(rect.end.x + 4, rect.position.y + int(rect.size.y / 2)),
+		Vector2i(rect.position.x + int(rect.size.x / 2), rect.position.y - 5),
+	]
+	var marker_assets := [
+		GothicCompoundAssetsScript.MARKERS["spawn_plain"],
+		GothicCompoundAssetsScript.MARKERS["spawn_amber"],
+		GothicCompoundAssetsScript.MARKERS["spawn_stone"],
+		GothicCompoundAssetsScript.MARKERS["spawn_ember"],
+	]
+	for i in range(mini(cfg.enemy_marker_count, marker_cells.size())):
+		var cell: Vector2i = marker_cells[i]
+		if _in_map(ctx, cell) and not ctx.call("is_blocked", cell):
+			ctx.call("spawn_marker", cell, marker_assets[i], "enemy_spawn")
+			result.placed_markers.append(cell)
+
+
+func _place_blocking_structure_checked(ctx: Object, result, pos: Vector2i, size: Vector2i, asset: String, blocks: bool, label: String) -> bool:
+	if not _can_place_rect(ctx, result, pos, size, true):
+		result.errors.append("Could not place required structure: %s" % label)
+		return false
+	ctx.call("spawn_prop", pos, asset, blocks, size)
+	for y in range(pos.y, pos.y + size.y):
+		for x in range(pos.x, pos.x + size.x):
+			var cell := Vector2i(x, y)
+			if blocks:
+				ctx.call("mark_blocked", cell, true)
+			result.placed_structures.append(cell)
+	return true
+
+
+func _place_prop_checked(ctx: Object, result, pos: Vector2i, size: Vector2i, asset: String, blocks: bool) -> bool:
+	if not _can_place_rect(ctx, result, pos, size, true):
+		return false
+	ctx.call("spawn_prop", pos, asset, blocks, size)
+	for y in range(pos.y, pos.y + size.y):
+		for x in range(pos.x, pos.x + size.x):
+			var cell := Vector2i(x, y)
+			result.placed_props.append(cell)
+			if blocks:
+				ctx.call("mark_blocked", cell, true)
+	return true
+
+
+func _can_place_rect(ctx: Object, result, pos: Vector2i, size: Vector2i, respect_required_path: bool) -> bool:
+	for y in range(pos.y, pos.y + size.y):
+		for x in range(pos.x, pos.x + size.x):
+			var cell := Vector2i(x, y)
+			if not _in_map(ctx, cell):
+				return false
+			if respect_required_path and result.required_walkable.has(cell):
+				return false
+			if ctx.call("is_blocked", cell):
+				return false
+	return true
+
+
+func _orthogonal_path(start: Vector2i, end: Vector2i, vertical_first: bool) -> Array[Vector2i]:
+	var path: Array[Vector2i] = []
+	var current := start
+	if vertical_first:
+		while current.y != end.y:
+			path.append(current)
+			current.y += _signi(end.y - current.y)
+		while current.x != end.x:
+			path.append(current)
+			current.x += _signi(end.x - current.x)
+	else:
+		while current.x != end.x:
+			path.append(current)
+			current.x += _signi(end.x - current.x)
+		while current.y != end.y:
+			path.append(current)
+			current.y += _signi(end.y - current.y)
+	path.append(end)
+	return path
+
+
+func _pick_inside_ground(cell: Vector2i) -> String:
+	var roll := _stable_noise01(cell, 11)
+	if roll < 0.55:
+		return GothicCompoundAssetsScript.TERRAIN["stone_a"]
+	if roll < 0.78:
+		return GothicCompoundAssetsScript.TERRAIN["stone_b"]
+	if roll < 0.90:
+		return GothicCompoundAssetsScript.TERRAIN["stone_c"]
+	if roll < 0.96:
+		return GothicCompoundAssetsScript.TERRAIN["cracked_rock_a"]
+	return GothicCompoundAssetsScript.TERRAIN["ash_a"]
+
+
+func _pick_exterior_ground(cell: Vector2i) -> String:
+	var roll := _stable_noise01(cell, 17)
+	if roll < 0.45:
+		return GothicCompoundAssetsScript.TERRAIN["ash_a"]
+	if roll < 0.70:
+		return GothicCompoundAssetsScript.TERRAIN["ash_b"]
+	if roll < 0.84:
+		return GothicCompoundAssetsScript.TERRAIN["rocky_ash"]
+	if roll < 0.94:
+		return GothicCompoundAssetsScript.TERRAIN["ash_roots"]
+	return GothicCompoundAssetsScript.TERRAIN["cracked_rock_b"]
+
+
+func _pick_ns_road() -> String:
+	var roll := rng.randf()
+	if roll < 0.60:
+		return GothicCompoundAssetsScript.ROADS["ns_a"]
+	if roll < 0.82:
+		return GothicCompoundAssetsScript.ROADS["ns_b"]
+	if roll < 0.92:
+		return GothicCompoundAssetsScript.ROADS["ns_cracked"]
+	if roll < 0.96:
+		return GothicCompoundAssetsScript.ROADS["dirt_ns_a"]
+	return GothicCompoundAssetsScript.ROADS["dirt_ns_b"]
+
+
+func _stable_noise01(cell: Vector2i, salt: int) -> float:
+	var hashed := hash("%d:%d:%d" % [cell.x, cell.y, salt])
+	return float(abs(hashed % 10000)) / 10000.0
+
+
+func _in_map(ctx: Object, cell: Vector2i) -> bool:
+	var map_size: Vector2i = ctx.get("map_size")
+	return cell.x >= 0 and cell.y >= 0 and cell.x < map_size.x and cell.y < map_size.y
+
+
+func _signi(value: int) -> int:
+	if value < 0:
+		return -1
+	if value > 0:
+		return 1
+	return 0
+
+
+
+=== gothic_compound_result.gd ===
+extends RefCounted
+class_name GothicCompoundResult
+
+var ok: bool = false
+var used_fallback: bool = false
+var rect: Rect2i = Rect2i()
+var gate_cell: Vector2i = Vector2i.ZERO
+var command_keep_cell: Vector2i = Vector2i.ZERO
+var terminal_cell: Vector2i = Vector2i.ZERO
+var approach_path: Array[Vector2i] = []
+var internal_path: Array[Vector2i] = []
+var required_walkable: Dictionary = {}
+var placed_walls: Array[Vector2i] = []
+var placed_structures: Array[Vector2i] = []
+var placed_props: Array[Vector2i] = []
+var placed_resources: Array[Vector2i] = []
+var placed_markers: Array[Vector2i] = []
+var errors: Array[String] = []
+
+
+func mark_required_path(path: Array[Vector2i]) -> void:
+	for cell in path:
+		required_walkable[cell] = true
+
+
+
+=== gothic_compound_sprite_context.gd ===
+extends Node2D
+class_name GothicCompoundSpriteContext
+
+@export var tile_size: int = 32
+@export var map_size: Vector2i = Vector2i(80, 60)
+@export var world_seed: int = 12345
+
+var blocked: Dictionary = {}
+var reserved: Dictionary = {}
+var walkable: Dictionary = {}
+var _layers: Dictionary = {}
+
+
+func _ready() -> void:
+	_ensure_layers()
+
+
+func grid_to_world(cell: Vector2i) -> Vector2:
+	return Vector2(float(cell.x * tile_size), float(cell.y * tile_size))
+
+
+func clear_cell(cell: Vector2i) -> void:
+	blocked.erase(cell)
+	walkable.erase(cell)
+	for layer_name in ["TerrainLayer", "RoadLayer", "WallLayer", "PropLayer", "DecalLayer", "MarkerLayer"]:
+		var layer := _get_layer(layer_name)
+		var node_name := _cell_node_name(cell)
+		var child := layer.get_node_or_null(NodePath(node_name))
+		if child != null:
+			child.queue_free()
+
+
+func reserve_cell(cell: Vector2i) -> void:
+	reserved[cell] = true
+
+
+func is_reserved(cell: Vector2i) -> bool:
+	return reserved.has(cell)
+
+
+func is_blocked(cell: Vector2i) -> bool:
+	return bool(blocked.get(cell, false))
+
+
+func mark_blocked(cell: Vector2i, value: bool = true) -> void:
+	if value:
+		blocked[cell] = true
+	else:
+		blocked.erase(cell)
+
+
+func mark_walkable(cell: Vector2i, value: bool = true) -> void:
+	if value:
+		walkable[cell] = true
+	else:
+		walkable.erase(cell)
+
+
+func is_walkable(cell: Vector2i) -> bool:
+	return bool(walkable.get(cell, false))
+
+
+func set_floor(cell: Vector2i, asset_path: String) -> void:
+	_spawn_sprite(_get_layer("TerrainLayer"), cell, asset_path, false, Vector2i.ONE, 0)
+
+
+func set_road(cell: Vector2i, asset_path: String) -> void:
+	_spawn_sprite(_get_layer("RoadLayer"), cell, asset_path, false, Vector2i.ONE, 4)
+
+
+func set_wall(cell: Vector2i, asset_path: String, blocks_cell: bool = true) -> void:
+	_spawn_sprite(_get_layer("WallLayer"), cell, asset_path, blocks_cell, Vector2i.ONE, 20)
+	if blocks_cell:
+		mark_blocked(cell, true)
+
+
+func set_decal(cell: Vector2i, asset_path: String) -> void:
+	_spawn_sprite(_get_layer("DecalLayer"), cell, asset_path, false, Vector2i.ONE, 8)
+
+
+func spawn_prop(cell: Vector2i, asset_path: String, blocks_cells: bool = false, size: Vector2i = Vector2i.ONE) -> void:
+	_spawn_sprite(_get_layer("PropLayer"), cell, asset_path, blocks_cells, size, 30)
+	if blocks_cells:
+		for y in range(cell.y, cell.y + size.y):
+			for x in range(cell.x, cell.x + size.x):
+				mark_blocked(Vector2i(x, y), true)
+
+
+func spawn_marker(cell: Vector2i, asset_path: String, marker_type: String) -> void:
+	var sprite := _spawn_sprite(_get_layer("MarkerLayer"), cell, asset_path, false, Vector2i.ONE, 40)
+	sprite.visible = false
+	sprite.set_meta("marker_type", marker_type)
+
+
+func _ensure_layers() -> void:
+	for layer_name in ["TerrainLayer", "RoadLayer", "WallLayer", "PropLayer", "DecalLayer", "MarkerLayer"]:
+		_get_layer(layer_name)
+
+
+func _get_layer(layer_name: String) -> Node2D:
+	if _layers.has(layer_name) and is_instance_valid(_layers[layer_name]):
+		return _layers[layer_name]
+	var layer := get_node_or_null(NodePath(layer_name)) as Node2D
+	if layer == null:
+		layer = Node2D.new()
+		layer.name = layer_name
+		add_child(layer)
+	_layers[layer_name] = layer
+	return layer
+
+
+func _spawn_sprite(parent: Node2D, cell: Vector2i, asset_path: String, blocks_cells: bool, size: Vector2i, z: int) -> Sprite2D:
+	var sprite := Sprite2D.new()
+	sprite.name = _cell_node_name(cell)
+	sprite.texture = load(asset_path) as Texture2D if ResourceLoader.exists(asset_path) else null
+	sprite.centered = true
+	sprite.position = grid_to_world(cell) + Vector2(float(size.x) * tile_size, float(size.y) * tile_size) * 0.5
+	sprite.z_index = z
+	parent.add_child(sprite)
+	if blocks_cells:
+		_add_collision_rect(sprite, size)
+	return sprite
+
+
+func _add_collision_rect(parent: Node2D, size: Vector2i) -> void:
+	var body := StaticBody2D.new()
+	body.name = "Collision"
+	body.collision_layer = 1
+	body.collision_mask = 1
+	var shape := CollisionShape2D.new()
+	var rect := RectangleShape2D.new()
+	rect.size = Vector2(float(size.x * tile_size), float(size.y * tile_size))
+	shape.shape = rect
+	body.add_child(shape)
+	parent.add_child(body)
+
+
+func _cell_node_name(cell: Vector2i) -> String:
+	return "Cell_%d_%d" % [cell.x, cell.y]
+
+
+
+=== gothic_compound_validator.gd ===
+extends RefCounted
+class_name GothicCompoundValidator
+
+
+static func validate(ctx: Object, result) -> bool:
+	result.errors.clear()
+	_require(result.rect.size != Vector2i.ZERO, result, "No compound rect.")
+	_require(result.gate_cell != Vector2i.ZERO, result, "No gate cell.")
+	_require(result.command_keep_cell != Vector2i.ZERO, result, "No command keep cell.")
+	_require(result.terminal_cell != Vector2i.ZERO, result, "No terminal cell.")
+	_require(result.placed_walls.size() >= 20, result, "Too few wall cells.")
+	_require(result.approach_path.size() >= 4, result, "No approach path.")
+	_require(result.internal_path.size() >= 4, result, "No internal path.")
+	_require(result.placed_resources.size() >= 1, result, "No resource nodes.")
+	if not result.errors.is_empty():
+		return false
+	_validate_required_walkable(ctx, result)
+	_validate_gate_passage(ctx, result)
+	_validate_path(ctx, result, result.approach_path, "approach")
+	_validate_path(ctx, result, result.internal_path, "internal")
+	return result.errors.is_empty()
+
+
+static func _require(condition: bool, result, message: String) -> void:
+	if not condition:
+		result.errors.append(message)
+
+
+static func _validate_required_walkable(ctx: Object, result) -> void:
+	for cell in result.required_walkable.keys():
+		if ctx.call("is_blocked", cell):
+			result.errors.append("Required path cell is blocked: %s" % str(cell))
+
+
+static func _validate_gate_passage(ctx: Object, result) -> void:
+	if ctx.call("is_blocked", result.gate_cell):
+		result.errors.append("Gate cell is blocked: %s" % str(result.gate_cell))
+	if not ctx.call("is_walkable", result.gate_cell):
+		result.errors.append("Gate cell is not walkable: %s" % str(result.gate_cell))
+
+
+static func _validate_path(ctx: Object, result, path: Array[Vector2i], label: String) -> void:
+	for cell in path:
+		if ctx.call("is_blocked", cell):
+			result.errors.append("%s path blocked at %s" % [label, str(cell)])
+			return
+		if not ctx.call("is_walkable", cell):
+			result.errors.append("%s path not walkable at %s" % [label, str(cell)])
+			return
+
+
+

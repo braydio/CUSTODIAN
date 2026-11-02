@@ -1,0 +1,12 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/enemy_grunt__fx__melee__fast_01__se__10f__96.json",
+	"outputs": [
+		"res://content/sprites/enemies/enemy_grunt/runtime/fx/enemy_grunt__fx__melee__fast_01__se__10f__96.png",
+		"res://content/sprites/enemies/enemy_grunt/enemy_grunt__fx__melee__fast_01__se__10f__96.png"
+	],
+	"post_process": [
+		"enemy_runtime_import"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/enemy_grunt__fx__melee__fast_01__se__10f__96.png",
+	"timestamp_utc": "2026-05-24 10:39:02"
+}

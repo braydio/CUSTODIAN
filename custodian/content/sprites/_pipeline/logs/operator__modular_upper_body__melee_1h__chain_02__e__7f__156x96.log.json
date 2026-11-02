@@ -1,0 +1,12 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__modular_upper_body__melee_1h__chain_02__e__7f__156x96.json",
+	"outputs": [
+		"res://content/sprites/operator/new_operator/modular/chain_02/operator__modular_upper_body__melee_1h__chain_02__e__7f__156x96.png",
+		"res://content/sprites/operator/new_operator/modular/chain_02/operator__modular_upper_body__melee_1h__chain_02__w__7f__156x96.png"
+	],
+	"post_process": [
+		"operator_modular_runtime"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/operator__modular_upper_body__melee_1h__chain_02__e__7f__156x96.png",
+	"timestamp_utc": "2026-07-26 14:23:09"
+}

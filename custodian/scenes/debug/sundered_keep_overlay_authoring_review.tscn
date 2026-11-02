@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://cl1fu6hi51n06"]
+
+[ext_resource type="Script" uid="uid://c8mj2rsvswcu1" path="res://scenes/debug/sundered_keep_overlay_authoring_review.gd" id="1_script"]
+
+[node name="GameRoot" type="Node2D" unique_id=1247941530]
+script = ExtResource("1_script")
+
+[node name="World" type="Node2D" parent="." unique_id=77842895]
+
+[node name="Camera2D" type="Camera2D" parent="World" unique_id=385833609]
+position = Vector2(1792, 1280)
+zoom = Vector2(0.3, 0.3)
+
+[node name="ReviewNote" type="Label" parent="World" unique_id=78098809]
+z_index = 200
+offset_left = -560.0
+offset_top = -480.0
+offset_right = 560.0
+offset_bottom = -430.0
+text = "Sundered Keep overlay authoring review"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2

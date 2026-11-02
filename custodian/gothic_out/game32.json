@@ -1,0 +1,126 @@
+{
+  "schema": "game32.manifest.v2",
+  "source": {
+    "master_sheet": "gothic_master_sheet.png",
+    "image_size_px": {
+      "w": 6144,
+      "h": 9981
+    }
+  },
+  "extraction": {
+    "tile_size_px": 32,
+    "merge_px": 2,
+    "pad_px": 1,
+    "min_area_px": 12,
+    "min_size_px": 3,
+    "alpha_threshold": 0,
+    "dark_bg_threshold": 10,
+    "white_bg_threshold": 245,
+    "min_color_delta": 6,
+    "dedupe": "normalized_rgba_sha256"
+  },
+  "summary": {
+    "components_detected": 1,
+    "assets_total_manifested": 1,
+    "assets_exported_unique": 1,
+    "duplicates_skipped": 0
+  },
+  "assets": [
+    {
+      "schema": "game32.asset.v2",
+      "id": "gothic_structures_architecture_large_static_structure_0001",
+      "source": {
+        "master_sheet": "gothic_master_sheet.png",
+        "original_path": "res://content/structures/gothic/architecture/gothic_structures_architecture_large_static_structure_0001.png",
+        "section": "structures",
+        "subtype": "architecture",
+        "source_rect_px": {
+          "x": 0,
+          "y": 0,
+          "w": 6144,
+          "h": 9954
+        }
+      },
+      "file": {
+        "exported": true,
+        "path": "gothic_out/structures/architecture/gothic_structures_architecture_large_static_structure_0001.png",
+        "duplicate_of": null,
+        "sha256_normalized_rgba": "c0351876a5bcfd4ff2ba2521869d290e081387ac858fd008ce9377f93fe8eb7e",
+        "size_px": {
+          "w": 6144,
+          "h": 9954
+        }
+      },
+      "classification": {
+        "asset_type": "structures",
+        "semantic_role": "large_static_structure",
+        "placement_layer": "structure",
+        "tags": [
+          "architecture",
+          "gothic",
+          "structure"
+        ],
+        "review_status": "needs_game32_enrichment",
+        "confidence": "heuristic"
+      },
+      "placement": {
+        "footprint_tiles": {
+          "w": 192,
+          "h": 312
+        },
+        "anchor": "bottom_center",
+        "placement_layer": "structure",
+        "snap_to_grid": true,
+        "tile_size_px": 32,
+        "pivot_px": {
+          "x": 3072,
+          "y": 9953
+        }
+      },
+      "collision": {
+        "blocks_movement": true,
+        "blocks_projectiles": true,
+        "blocks_vision": true,
+        "collision_shape": "aabb",
+        "collision_rect_px": {
+          "x": 0,
+          "y": 0,
+          "w": 6144,
+          "h": 9954
+        },
+        "review_status": "heuristic_needs_review"
+      },
+      "procgen": {
+        "uses": [
+          "room_feature",
+          "landmark",
+          "needs_review"
+        ],
+        "spawn_weight": 1.0,
+        "can_rotate": false,
+        "can_flip_x": false,
+        "can_stack": false,
+        "biomes": [
+          "gothic"
+        ],
+        "rooms": [
+          "needs_review"
+        ],
+        "constraints": {
+          "requires_floor": false,
+          "requires_wall": false,
+          "avoid_overlap": true
+        }
+      },
+      "visual": {
+        "average_rgb": {
+          "r": 38,
+          "g": 39,
+          "b": 37
+        },
+        "average_luminance": 38.87,
+        "average_chroma": 3.212
+      }
+    }
+  ]
+}

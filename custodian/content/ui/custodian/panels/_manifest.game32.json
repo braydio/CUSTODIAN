@@ -1,0 +1,43 @@
+{
+  "schema": "custodian.game32.ui_domain_manifest.v1",
+  "set": "ui_black_reliquary",
+  "domain": "panel",
+  "base_path": "res://content/ui/custodian/panels",
+  "asset_count": 2,
+  "assets": [
+    {
+      "id": "ui_panel_9slice_dark_gold",
+      "runtime_path": "res://content/ui/black_reliquary/panels/ui_panel_9slice_dark_gold.png",
+      "metadata_path": "res://content/ui/black_reliquary/panels/ui_panel_9slice_dark_gold.game32.json",
+      "size_px": [
+        294,
+        295
+      ],
+      "ui_role": "nine_patch_panel",
+      "godot_node_hint": "NinePatchRect",
+      "tags": [
+        "panel",
+        "ninepatch",
+        "dark_gold"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_deep",
+      "runtime_path": "res://content/ui/black_reliquary/panels/ui_panel_9slice_deep.png",
+      "metadata_path": "res://content/ui/black_reliquary/panels/ui_panel_9slice_deep.game32.json",
+      "size_px": [
+        290,
+        296
+      ],
+      "ui_role": "nine_patch_panel",
+      "godot_node_hint": "NinePatchRect",
+      "tags": [
+        "panel",
+        "ninepatch",
+        "deep"
+      ]
+    }
+  ],
+  "generated_at_utc": "2026-06-02T03:47:46.727041+00:00",
+  "generator": "custodian/tools/art/extract_ui_black_reliquary_game32.py"
+}

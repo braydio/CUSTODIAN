@@ -1,0 +1,63 @@
+{
+  "$schema": "https://repomix.com/schemas/latest/schema.json",
+  "output": {
+    "filePath": ".ai/custodian-procgen.xml",
+    "style": "xml",
+    "compress": true,
+    "fileSummary": true,
+    "directoryStructure": true,
+    "files": true,
+    "removeEmptyLines": true,
+    "git": {
+      "sortByChanges": true,
+      "includeDiffs": false,
+      "includeLogs": false
+    }
+  },
+  "include": [
+    "AGENTS.md",
+    "AGENTS_ADDENDUM.md",
+    "custodian/AGENTS.md",
+
+    "custodian/game/world/**/*.gd",
+    "custodian/game/world/**/*.tscn",
+    "custodian/game/world/**/*.tres",
+
+    "custodian/game/enemies/procgen/**/*.gd",
+    "custodian/game/enemies/procgen/**/*.gdshader",
+
+    "custodian/content/procgen/**/*.json",
+    "custodian/content/tiles/**/*.json",
+    "custodian/content/tiles/**/*.tres",
+    "custodian/content/resources/**/*.json",
+
+    "custodian/docs/**/*PROCGEN*.md",
+    "custodian/docs/**/*procgen*.md",
+    "custodian/docs/**/*TERRAIN*.md",
+    "custodian/docs/**/*terrain*.md",
+    "custodian/docs/**/*SPATIAL*.md",
+    "custodian/docs/**/*spatial*.md"
+  ],
+  "ignore": {
+    "useGitignore": true,
+    "useDotIgnore": true,
+    "useDefaultPatterns": true,
+    "customPatterns": [
+      "custodian/addons/**",
+      "custodian/docs/archive/**",
+      "custodian/content/_aseprite/**",
+      "**/*.png",
+      "**/*.png.import",
+      "**/*.aseprite",
+      "**/*.ase",
+      "**/*.uid",
+      ".ai/**"
+    ]
+  },
+  "security": {
+    "enableSecurityCheck": true
+  },
+  "tokenCount": {
+    "encoding": "o200k_base"
+  }
+}

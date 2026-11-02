@@ -1,0 +1,125 @@
+{
+	"failures": [],
+	"records": [
+		{
+			"id": "operator_aim",
+			"role": "operator",
+			"tick": 30,
+			"values": {
+				"_primary_ranged_action_direction": [
+					0.988936364650726,
+					-0.148340448737144
+				],
+				"aim_direction": [
+					0.988936364650726,
+					-0.148340448737144
+				],
+				"global_position": [
+					420.0,
+					360.0
+				],
+				"visible_visual_anchor_delta_px": 0.0
+			}
+		},
+		{
+			"id": "operator_aim",
+			"role": "operator",
+			"tick": 68,
+			"values": {
+				"_primary_ranged_action_direction": [
+					0.988936364650726,
+					-0.148340448737144
+				],
+				"aim_direction": [
+					0.988936364650726,
+					-0.148340448737144
+				],
+				"global_position": [
+					420.0,
+					360.0
+				],
+				"visible_visual_anchor_delta_px": 2.32417941093445
+			}
+		},
+		{
+			"id": "operator_aim",
+			"role": "operator",
+			"tick": 72,
+			"values": {
+				"_primary_ranged_action_direction": [
+					0.988936364650726,
+					-0.148340448737144
+				],
+				"aim_direction": [
+					-0.988936364650726,
+					0.148340448737144
+				],
+				"global_position": [
+					420.0,
+					360.0
+				],
+				"visible_visual_anchor_delta_px": 1.0
+			}
+		},
+		{
+			"id": "operator_aim",
+			"role": "operator",
+			"tick": 82,
+			"values": {
+				"_primary_ranged_action_direction": [
+					0.988936364650726,
+					-0.148340448737144
+				],
+				"aim_direction": [
+					-0.988936364650726,
+					0.148340448737144
+				],
+				"global_position": [
+					420.0,
+					360.0
+				],
+				"visible_visual_anchor_delta_px": 2.0
+			}
+		},
+		{
+			"id": "operator_aim",
+			"role": "operator",
+			"tick": 110,
+			"values": {
+				"_primary_ranged_action_direction": [
+					-0.988936364650726,
+					0.148340448737144
+				],
+				"aim_direction": [
+					-0.988936364650726,
+					0.148340448737144
+				],
+				"global_position": [
+					420.0,
+					360.0
+				],
+				"visible_visual_anchor_delta_px": 0.0
+			}
+		},
+		{
+			"id": "operator_aim",
+			"role": "operator",
+			"tick": 160,
+			"values": {
+				"_primary_ranged_action_direction": [
+					-0.988936364650726,
+					0.148340448737144
+				],
+				"aim_direction": [
+					-0.988936364650726,
+					0.148340448737144
+				],
+				"global_position": [
+					420.0,
+					360.0
+				],
+				"visible_visual_anchor_delta_px": 0.0
+			}
+		}
+	]
+}

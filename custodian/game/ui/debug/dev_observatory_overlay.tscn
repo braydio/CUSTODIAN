@@ -1,0 +1,29 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/ui/debug/dev_observatory_overlay.gd" id="1_overlay"]
+
+[node name="DevObservatoryOverlay" type="CanvasLayer"]
+layer = 20
+script = ExtResource("1_overlay")
+
+[node name="Panel" type="PanelContainer" parent="."]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 500.0
+offset_bottom = 680.0
+
+[node name="MarginContainer" type="MarginContainer" parent="Panel"]
+offset_right = 480.0
+offset_bottom = 660.0
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="Label" type="RichTextLabel" parent="Panel/MarginContainer"]
+bbcode_enabled = true
+fit_content = false
+scroll_active = true
+size_flags_horizontal = 3
+size_flags_vertical = 3
+

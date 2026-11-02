@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Moment Forge — combat/light_hit_grunt</title>
+<style>
+:root{color-scheme:dark;--bg:#090d13;--panel:#111925;--line:#2d425a;--text:#dce8f2;--muted:#8ca0b4;--cyan:#66d9ef;--red:#ff6b72;--green:#72d69b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,sans-serif}main{max-width:1600px;margin:auto;padding:24px}code{color:var(--cyan)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.panel{background:var(--panel);border:1px solid var(--line);padding:16px;border-radius:8px;overflow:auto;margin-bottom:16px}video,img{width:100%;height:auto;background:#000}table{width:100%;border-collapse:collapse}th,td{padding:7px 9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.pass{color:var(--green)}.fail{color:var(--red)}.muted{color:var(--muted)}button,input{margin:4px}@media(max-width:900px){.grid{grid-template-columns:1fr}}
+</style></head><body><main>
+<h1>CUSTODIAN Moment Forge</h1>
+<p><code>combat/light_hit_grunt</code> — Operator fast strike against a stationary grunt.</p>
+<p>Status: <b>passed</b> · fingerprint <code>483340fa2dc781bc</code></p>
+<section class="panel"><button id="playBoth">Play both</button><button id="pauseBoth">Pause</button><label>Scrub <input id="scrub" type="range" min="0" max="1000" value="0"></label>
+<div class="grid"><div><h2>Baseline</h2><video controls loop src='baseline.mp4'></video></div><div><h2>Current</h2><video controls loop src='current.mp4'></video></div></div></section>
+<div class="grid"><section class="panel"><h2>Baseline contact sheet</h2><img src='baseline_contact_sheet.png' alt='baseline_contact_sheet.png'></section><section class="panel"><h2>Current contact sheet</h2><img src='current_contact_sheet.png' alt='current_contact_sheet.png'></section></div>
+<section class="panel"><h2>Visual difference (advisory)</h2><img src='visual_diff.png' alt='visual_diff.png'></section>
+<section class="panel"><h2>Assertions</h2><ul><li class='pass'><b>role_exists</b> [error]: </li>
+<li class='pass'><b>no_unreleased_inputs</b> [error]: </li>
+<li class='pass'><b>output_exists</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>warning_count</b> [warning]: </li></ul></section>
+<section class="panel"><h2>Metric deltas</h2><table><thead><tr><th>Metric</th><th>Baseline</th><th>Current</th><th>Delta</th></tr></thead><tbody><tr><td>completed_tick</td><td>118</td><td>148</td><td>30</td></tr>
+<tr><td>visible_visual_anchor_delta_px</td><td>0.0</td><td>0.0</td><td>0.0</td></tr>
+<tr><td>visible_visual_anchor_sample_count</td><td>7</td><td>8</td><td>1</td></tr></tbody></table></section>
+<section class="panel"><h2>Tick-enriched timeline</h2><table><thead><tr><th>Tick</th><th>Kind</th><th>Evidence</th></tr></thead><tbody><tr><td>2</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;input_tap&quot;, &quot;hold_ticks&quot;: 1.0, &quot;name&quot;: &quot;toggle_unarmed&quot;, &quot;tick&quot;: 2.0}, &quot;moment_tick&quot;: 2, &quot;result&quot;: {&quot;action&quot;: &quot;input_tap&quot;, &quot;ok&quot;: true, &quot;tick&quot;: 2}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 2}</code></td></tr>
+<tr><td>50</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;aim_at_role&quot;, &quot;role&quot;: &quot;operator&quot;, &quot;target_role&quot;: &quot;target&quot;, &quot;tick&quot;: 50.0}, &quot;moment_tick&quot;: 50, &quot;result&quot;: {&quot;action&quot;: &quot;aim_at_role&quot;, &quot;ok&quot;: true, &quot;tick&quot;: 50}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 50}</code></td></tr>
+<tr><td>55</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;input_press&quot;, &quot;name&quot;: &quot;aim_right&quot;, &quot;tick&quot;: 55.0}, &quot;moment_tick&quot;: 55, &quot;result&quot;: {&quot;action&quot;: &quot;input_press&quot;, &quot;ok&quot;: true, &quot;tick&quot;: 55}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 55}</code></td></tr>
+<tr><td>60</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;input_tap&quot;, &quot;hold_ticks&quot;: 1.0, &quot;name&quot;: &quot;attack_primary&quot;, &quot;tick&quot;: 60.0}, &quot;moment_tick&quot;: 60, &quot;result&quot;: {&quot;action&quot;: &quot;input_tap&quot;, &quot;ok&quot;: true, &quot;tick&quot;: 60}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 60}</code></td></tr>
+<tr><td>72</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;capture_marker&quot;, &quot;name&quot;: &quot;expected_contact&quot;, &quot;tick&quot;: 72.0}, &quot;moment_tick&quot;: 72, &quot;result&quot;: {&quot;action&quot;: &quot;capture_marker&quot;, &quot;ok&quot;: true, &quot;tick&quot;: 72}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 72}</code></td></tr>
+<tr><td>78</td><td>enemy_assault_state_changed</td><td><code>{&quot;data&quot;: {&quot;attack_objective&quot;: &quot;breach_command&quot;, &quot;enemy&quot;: &quot;GRUNT&quot;, &quot;from&quot;: &quot;staging&quot;, &quot;health&quot;: 68.0, &quot;max_health&quot;: 78.0, &quot;position&quot;: &quot;(458.0, 360.0)&quot;, &quot;target&quot;: &quot;&quot;, &quot;to&quot;: &quot;commit&quot;}, &quot;kind&quot;: &quot;enemy_assault_state_changed&quot;, &quot;tick&quot;: 78}</code></td></tr>
+<tr><td>78</td><td>player_reclaim_rejected</td><td><code>{&quot;data&quot;: {&quot;amount&quot;: 10.0, &quot;kind&quot;: &quot;rejected&quot;, &quot;reason&quot;: &quot;no_recoverable_room&quot;}, &quot;kind&quot;: &quot;player_reclaim_rejected&quot;, &quot;tick&quot;: 78}</code></td></tr>
+<tr><td>78</td><td>material_contact</td><td><code>{&quot;data&quot;: {&quot;attack_kind&quot;: &quot;fast&quot;, &quot;bullet_impact_fx&quot;: &quot;default&quot;, &quot;contact_kind&quot;: &quot;melee_impact&quot;, &quot;damage&quot;: 10.0, &quot;footstep_noise_mult&quot;: 1.0, &quot;material_id&quot;: &quot;unknown&quot;, &quot;melee_impact_fx&quot;: &quot;default&quot;, &quot;position&quot;: &quot;(444.0, 360.0)&quot;, &quot;target&quot;: &quot;EnemyGrunt1&quot;, &quot;weapon&quot;: &quot;unarmed_fast_1&quot;}, &quot;kind&quot;: &quot;material_contact&quot;, &quot;tick&quot;: 78}</code></td></tr>
+<tr><td>80</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;input_release&quot;, &quot;name&quot;: &quot;aim_right&quot;, &quot;tick&quot;: 80.0}, &quot;moment_tick&quot;: 80, &quot;result&quot;: {&quot;action&quot;: &quot;input_release&quot;, &quot;ok&quot;: true, &quot;tick&quot;: 80}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 80}</code></td></tr>
+<tr><td>148</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;finish&quot;, &quot;tick&quot;: 148.0}, &quot;moment_tick&quot;: 148, &quot;result&quot;: {&quot;action&quot;: &quot;finish&quot;, &quot;finish&quot;: true, &quot;ok&quot;: true, &quot;tick&quot;: 148}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 148}</code></td></tr></tbody></table></section>
+<section class="panel"><h2>Provenance</h2><pre>{
+  &quot;capture&quot;: {
+    &quot;audio_requested&quot;: true,
+    &quot;fps&quot;: 60,
+    &quot;height&quot;: 720,
+    &quot;mode&quot;: &quot;full&quot;,
+    &quot;synchronization&quot;: &quot;verified&quot;,
+    &quot;width&quot;: 1280
+  },
+  &quot;repository&quot;: {
+    &quot;branch&quot;: &quot;main&quot;,
+    &quot;changed_files&quot;: [
+      &quot;M custodian/content/levels/sundered_keep/sundered_keep_approach_outskirts.json&quot;,
+      &quot; D custodian/content/procgen/special_rooms/ash_bell_forlorn_ritualant_room.json&quot;,
+      &quot; M custodian/content/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__collapsed_lift__idle__s__1f__256.png&quot;,
+      &quot; M custodian/content/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__collapsed_lift__idle__s__1f__256.png.import&quot;,
+      &quot; M custodian/content/sprites/world/ingress/ash_bell/ash_bell__underground_ingress_fx__shaft_dust__loop__omni__8f__256.png&quot;,
+      &quot; M custodian/content/sprites/world/ingress/ash_bell/ash_bell__underground_ingress_fx__shaft_dust__loop__omni__8f__256.png.import&quot;,
+      &quot; M custodian/content/sprites/world/ingress/ash_bell/ash_bell__underground_ingress_fx__warning_lamp__loop__omni__4f__64.png.import&quot;,
+      &quot; M custodian/content/sprites/world/ingress/ash_bell/ash_bell__underground_lift__descent__s__12f__256.png.import&quot;,
+      &quot; M custodian/docs/ai_context/CURRENT_STATE.md&quot;,
+      &quot; M custodian/docs/ai_context/FILE_INDEX.md&quot;,
+      &quot; M custodian/docs/ai_context/VALIDATION_RECIPES.md&quot;,
+      &quot; M custodian/docs/ai_context/task_packets/SUNDERED_KEEP_AUTHORED_INGRESS.md&quot;,
+      &quot; M custodian/game/actors/operator/operator.gd&quot;,
+      &quot; M custodian/game/world/approaches/sundered_keep/sundered_keep_approach.gd&quot;,
+      &quot; M custodian/game/world/approaches/sundered_keep/sundered_keep_vista_controller.gd&quot;,
+      &quot; M custodian/game/world/approaches/sundered_keep/sundered_keep_vista_debug_probe.gd&quot;,
+      &quot; M custodian/game/world/procgen/ingress/world_ingress_site.gd&quot;,
+      &quot; M custodian/game/world/routes/route_traversal_manager.gd&quot;,
+      &quot; M custodian/game/world/routes/transitions/playable_blackout_bridge_2d.gd&quot;,
+      &quot; M custodian/scenes/debug/level_collision_poi_mapper.gd&quot;,
+      &quot; M custodian/scenes/debug/sundered_keep_underlay_gameplay_tile_mapper.tscn&quot;,
+      &quot; M custodian/tools/iteration/scenarios/combat/light_hit_grunt.json&quot;,
+      &quot; M custodian/tools/validation/operator_modular_fast_attack_smoke.gd&quot;,
+      &quot; M custodian/tools/validation/sundered_keep_approach_render_smoke.gd&quot;,
+      &quot; M custodian/tools/validation/sundered_keep_approach_smoke.gd&quot;,
+      &quot; M custodian/tools/validation/sundered_keep_playable_blackout_transition_smoke.gd&quot;,
+      &quot; M custodian/tools/validation/sundered_keep_vista_polish_smoke.gd&quot;,
+      &quot; M design/05_levels/SUNDERED_KEEP_VISTA_APPROACH.md&quot;,
+      &quot;?? custodian/content/sprites/effects/combat/unarmed/&quot;,
+      &quot;?? custodian/content/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__collapsed_lift__idle__s__1f__source_1024.png&quot;,
+      &quot;?? custodian/content/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__collapsed_lift__idle__s__1f__source_1024.png.import&quot;,
+      &quot;?? custodian/content/sprites/world/ingress/ash_bell/ash_bell__underground_ingress_fx__warning_lamp__loop__omni__8f__64.aseprite&quot;,
+      &quot;?? custodian/content/sprites/world/ingress/ash_bell/ash_bell__underground_ingress_fx__warning_lamp__loop__omni__8f__64.png&quot;,
+      &quot;?? custodian/content/sprites/world/ingress/ash_bell/ash_bell__underground_ingress_fx__warning_lamp__loop__omni__8f__64.png.import&quot;,
+      &quot;?? custodian/game/actors/effects/unarmed_fast_contact.tscn&quot;,
+      &quot;?? custodian/game/actors/effects/unarmed_fast_contact_frames.tres&quot;,
+      &quot;?? custodian/tools/aseprite/build_ash_bell_warning_lamp_8f.lua&quot;,
+      &quot;?? custodian/tools/validation/sundered_keep_approach_control_return_smoke.gd&quot;,
+      &quot;?? custodian/tools/validation/sundered_keep_approach_control_return_smoke.gd.uid&quot;,
+      &quot;?? reports/moment_forge/combat/light_hit_grunt/authored-unarmed-contact-after/&quot;,
+      &quot;?? reports/moment_forge/combat/light_hit_grunt/authored-unarmed-contact-confirmed-v2/&quot;,
+      &quot;?? reports/moment_forge/combat/light_hit_grunt/authored-unarmed-contact-confirmed-v3/&quot;,
+      &quot;?? reports/moment_forge/combat/light_hit_grunt/authored-unarmed-contact-confirmed/&quot;,
+      &quot;?? reports/moment_forge/combat/light_hit_grunt/authored-unarmed-contact-final/&quot;,
+      &quot;?? reports/moment_forge/combat/light_hit_grunt/authored-unarmed-contact-pass/&quot;
+    ],
+    &quot;commit&quot;: &quot;32db01a85fcfe98aade9428e0695f872200e1400&quot;,
+    &quot;dirty&quot;: true,
+    &quot;root&quot;: &quot;/home/braydenchaffee/Projects/CUSTODIAN&quot;
+  },
+  &quot;runtime&quot;: {
+    &quot;godot&quot;: {
+      &quot;build&quot;: &quot;arch_linux&quot;,
+      &quot;hash&quot;: &quot;a13da4feb8d8aefc283c3763d33a2f170a18d541&quot;,
+      &quot;hex&quot;: 263937,
+      &quot;major&quot;: 4,
+      &quot;minor&quot;: 7,
+      &quot;patch&quot;: 1,
+      &quot;status&quot;: &quot;stable&quot;,
+      &quot;string&quot;: &quot;4.7.1-stable (arch_linux)&quot;,
+      &quot;timestamp&quot;: 1783976428
+    },
+    &quot;physics_hz&quot;: 60,
+    &quot;renderer&quot;: &quot;vulkan&quot;
+  },
+  &quot;scenario&quot;: {
+    &quot;id&quot;: &quot;combat/light_hit_grunt&quot;,
+    &quot;path&quot;: &quot;/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/authored-unarmed-contact-pass/scenario.snapshot.json&quot;,
+    &quot;schema_version&quot;: 1,
+    &quot;sha256&quot;: &quot;e7e779625b7b9e4d706c419b249d1441bf8b6e1b4ee30cfb6709092f9a0bed0f&quot;
+  }
+}</pre></section>
+</main><script>
+const videos=[...document.querySelectorAll('video')],scrub=document.getElementById('scrub');
+document.getElementById('playBoth').onclick=()=>videos.forEach(v=>v.play());
+document.getElementById('pauseBoth').onclick=()=>videos.forEach(v=>v.pause());
+scrub.oninput=()=>videos.forEach(v=>{if(Number.isFinite(v.duration))v.currentTime=v.duration*Number(scrub.value)/1000});
+</script></body></html>

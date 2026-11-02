@@ -1,0 +1,82 @@
+{
+  "schema": "game32.asset.v2",
+  "id": "gothic_large_environment_prop_009",
+  "display_name": "Gothic Large Environment Prop 009",
+  "source": {
+    "master_sheet": null,
+    "original_path": "res://content/props/gothic/large_environment_prop/gothic_large_environment_prop_009.png",
+    "section": "props",
+    "subtype": "props",
+    "source_rect_px": {
+      "x": 0,
+      "y": 0,
+      "w": 132,
+      "h": 132
+    },
+    "review_source": "human_llm_compact_review",
+    "review_status": "reviewed"
+  },
+  "file": {
+    "path": "res://content/props/gothic/large_environment_prop/gothic_large_environment_prop_009.png",
+    "pixel_size": {
+      "w": 132,
+      "h": 132
+    }
+  },
+  "classification": {
+    "asset_type": "props",
+    "semantic_role": "cyan_power_core_machine_prop",
+    "placement_layer": "prop",
+    "tags": [
+      "gothic",
+      "prop",
+      "environment",
+      "machine",
+      "power_core",
+      "cyan_glow",
+      "industrial",
+      "vault",
+      "interactable_candidate",
+      "tech"
+    ],
+    "review_status": "reviewed"
+  },
+  "placement": {
+    "tile_size": 32,
+    "footprint_tiles": {
+      "w": 5,
+      "h": 5
+    },
+    "origin_mode": "bottom_center",
+    "snap": "tile",
+    "allow_mirror_x": false,
+    "allow_rotation": false,
+    "y_sort": true,
+    "pivot_px": {
+      "x": 66,
+      "y": 132
+    },
+    "review_status": "reviewed"
+  },
+  "collision": {
+    "blocks_movement": true,
+    "blocks_sight": false,
+    "cover_value": 1,
+    "review_status": "reviewed",
+    "collision_shape": "footprint"
+  },
+  "procgen": {
+    "uses": [
+      "machine_room_dressing",
+      "vault_machine",
+      "power_room_dressing",
+      "high_value_dressing"
+    ],
+    "weight": 6,
+    "can_spawn_indoor": true,
+    "can_spawn_outdoor": false,
+    "review_status": "reviewed",
+    "supports_gothic_compound": true
+  },
+  "master_index": 16
+}

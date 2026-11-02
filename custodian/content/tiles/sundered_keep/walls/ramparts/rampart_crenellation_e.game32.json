@@ -1,0 +1,134 @@
+{
+  "schema": "game32.asset.v1",
+  "asset_id": "sundered_keep/rampart_crenellation_e",
+  "name": "rampart_crenellation_e",
+  "filename": "rampart_crenellation_e.png",
+  "set": "sundered_keep",
+  "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
+  "created_utc": "2026-05-30T07:30:01+00:00",
+  "source": {
+    "sheet_key": "ramparts",
+    "sheet_file": "sundered_ramparts.png",
+    "sheet_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/sundered_ramparts.png",
+    "sheet_sha256": "301dcfeadd86fb0b3d1dd835b439a707c74918de478d2bcadf914afd78e30a47",
+    "sheet_asset_index": 5,
+    "sheet_bbox_px": [
+      362,
+      362,
+      362,
+      362
+    ],
+    "source_crop_bbox_px": [
+      0,
+      0,
+      362,
+      362
+    ],
+    "detected_background_colors_rgb": [],
+    "extraction_method": {
+      "background": "none",
+      "component_join_radius_px": 18,
+      "crop_padding_px": 8,
+      "min_component_area_px": 900,
+      "type": "grid_full_cell"
+    },
+    "cell_grid": {
+      "rows": 3,
+      "cols": 4,
+      "row": 1,
+      "col": 1,
+      "cell_box_px": [
+        362,
+        362,
+        724,
+        724
+      ]
+    }
+  },
+  "runtime": {
+    "base_tile_px": 32,
+    "path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_crenellation_e.png",
+    "metadata_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_crenellation_e.game32.json",
+    "domain": "ramparts",
+    "kind": "wall",
+    "subkind": "rampart_module",
+    "canvas_px": [
+      224,
+      64
+    ],
+    "canvas_tiles": [
+      1,
+      1
+    ],
+    "content_bbox_px": [
+      0,
+      0,
+      224,
+      64
+    ],
+    "scale_from_source_crop": 1.0,
+    "paste_offset_px": [
+      0,
+      0
+    ],
+    "anchor": "bottom_center",
+    "pivot_px": [
+      112,
+      64
+    ],
+    "pivot_normalized": [
+      0.5,
+      1.0
+    ],
+    "y_sort": true,
+    "draw_order": "architecture",
+    "godot_import_hints": {
+      "filter": false,
+      "mipmaps": false,
+      "repeat": false,
+      "compress_mode": "lossless",
+      "pixel_snap": true
+    },
+    "sha256": "a6def03365a90c90f488f1296af4ec38719d452ac73b938164263c620c7a7477",
+    "file_size": 24576
+  },
+  "gameplay": {
+    "walkable": false,
+    "interactable": false,
+    "traversal": null,
+    "direction": "e",
+    "state": null,
+    "tags": [
+      "rampart",
+      "ramparts",
+      "solid",
+      "sundered_keep",
+      "vertical_sprite",
+      "wall"
+    ]
+  },
+  "collision": {
+    "kind": "solid_base_cell",
+    "blocks_movement": true,
+    "blocks_projectiles": true,
+    "footprint_tiles_wh": [
+      1,
+      1
+    ],
+    "footprint_cells": [
+      {
+        "x": 0,
+        "y": 0
+      }
+    ],
+    "origin_tile": {
+      "x": 0,
+      "y": 0,
+      "anchor": "bottom_center"
+    }
+  },
+  "editor": {
+    "display_name": "Rampart Crenellation E",
+    "notes": "Generated from Sundered Keep master sheet; adjust footprint/collision after in-editor placement review if needed."
+  }
+}

@@ -1,0 +1,16 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/enemy_grunt__body__melee__falcon_reversal_victim_01__w__8f__156.json",
+	"outputs": [
+		"res://content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__falcon_reversal_victim_01__w__8f__156.png",
+		"res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__falcon_reversal_victim_01__w__8f__156.png",
+		"res://content/sprites/enemies/enemy_grunt/enemy_grunt__body__melee__falcon_reversal_victim_01__w__8f__156.png",
+		"res://content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__falcon_reversal_victim_01__e__8f__156.png",
+		"res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__falcon_reversal_victim_01__e__8f__156.png",
+		"res://content/sprites/enemies/enemy_grunt/enemy_grunt__body__melee__falcon_reversal_victim_01__e__8f__156.png"
+	],
+	"post_process": [
+		"enemy_runtime_import"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/enemy_grunt__body__melee__falcon_reversal_victim_01__w__8f__156.png",
+	"timestamp_utc": "2026-08-11 13:29:47"
+}

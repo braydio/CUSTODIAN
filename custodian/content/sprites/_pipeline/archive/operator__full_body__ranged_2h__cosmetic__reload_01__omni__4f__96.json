@@ -1,0 +1,23 @@
+{
+  "source": "operator__full_body__ranged_2h__cosmetic__reload_01__omni__4f__96.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "operator/source/animations/ranged_2h/cosmetic/reload_01/operator__full_body__ranged_2h__cosmetic__reload_01__omni__4f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 4
+      }
+    }
+  ],
+  "post_process": [
+    "operator_runtime_build"
+  ],
+  "frame_size": [
+    96,
+    96
+  ],
+  "remove_superseded": true
+}

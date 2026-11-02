@@ -1,0 +1,34 @@
+{
+	"schema": "custodian.sundered_keep_procgen_frontage_review.v1",
+	"seeds": [
+		{
+			"authored_pocket": false,
+			"gate_anchor": [
+				131,
+				18
+			],
+			"grammar_id": "curved_frontage_v1",
+			"ok": true,
+			"outputs": {
+				"first_reveal": "res://../reports/sundered_keep_route_correction/seed_0001_first_reveal.png",
+				"frontage_apex": "res://../reports/sundered_keep_route_correction/seed_0001_frontage_apex.png",
+				"gate_approach": "res://../reports/sundered_keep_route_correction/seed_0001_gate_approach.png",
+				"world_overview": "res://../reports/sundered_keep_route_correction/seed_0001_world_overview.png"
+			},
+			"overlook_anchor": [
+				116,
+				38
+			],
+			"rectangular_authored_footprint": false,
+			"seed": 1,
+			"viewport": [
+				2560,
+				1440
+			]
+		}
+	],
+	"viewport": [
+		2560,
+		1440
+	]
+}

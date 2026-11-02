@@ -1,0 +1,55 @@
+[
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"name": "begin_lift_descent",
+				"tick": 20.0
+			},
+			"moment_tick": 20,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": true,
+				"tick": 20
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 20
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"name": "reset_lift_exterior",
+				"tick": 96.0
+			},
+			"moment_tick": 96,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": true,
+				"tick": 96
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 96
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "finish",
+				"tick": 130.0
+			},
+			"moment_tick": 130,
+			"result": {
+				"action": "finish",
+				"finish": true,
+				"ok": true,
+				"tick": 130
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 130
+	}
+]

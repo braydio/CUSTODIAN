@@ -1,0 +1,136 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260920T102429Z_d939bdc0",
+  "timestamp": "2026-09-20T10:24:29.135972+00:00",
+  "family": "awakening_ambulatory_fixtures",
+  "kind": "world_prop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/awakening_ambulatory_fixtures/broken_mirror_panel.png",
+      "sha256": "99cd1950e2bf0b6edd16af1492c102a6a897793326fb1343d904f38422323efc"
+    },
+    {
+      "path": "asset_drop/inbox/awakening_ambulatory_fixtures/hidden_reliquary_panel.png",
+      "sha256": "e61afa689c262b42fabb3d7c4254edd1e98fd3f7d5591ff7ef2b53d67407c601"
+    },
+    {
+      "path": "asset_drop/inbox/awakening_ambulatory_fixtures/inspection_niche_medica.png",
+      "sha256": "9ebfb200dc50af022bcd72de98acad1519d51c59e923fb5f77c17aab62a55702"
+    },
+    {
+      "path": "asset_drop/inbox/awakening_ambulatory_fixtures/inspection_niche_vestment.png",
+      "sha256": "56f070457186a446fe5e1c792e6cace5271bc939c92f1fa103922855d9ec0f40"
+    },
+    {
+      "path": "asset_drop/inbox/awakening_ambulatory_fixtures/service_basin_a.png",
+      "sha256": "7258a942cb7b0203eb3588297135057f467410c1158fe6d7928ad173c94819f7"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "broken_mirror_panel",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_ambulatory_fixtures",
+        "world_prop",
+        "body",
+        "fixture",
+        "broken_mirror_panel",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/awakening/awakening_ambulatory_fixtures/runtime/body/awakening_ambulatory_fixtures__body__fixture__broken_mirror_panel__omni__1f__128x192.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "99cd1950e2bf0b6edd16af1492c102a6a897793326fb1343d904f38422323efc",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "hidden_reliquary_panel",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_ambulatory_fixtures",
+        "world_prop",
+        "body",
+        "fixture",
+        "hidden_reliquary_panel",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/awakening/awakening_ambulatory_fixtures/runtime/body/awakening_ambulatory_fixtures__body__fixture__hidden_reliquary_panel__omni__1f__128.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "e61afa689c262b42fabb3d7c4254edd1e98fd3f7d5591ff7ef2b53d67407c601",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "inspection_niche_medica",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_ambulatory_fixtures",
+        "world_prop",
+        "body",
+        "fixture",
+        "inspection_niche_medica",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/awakening/awakening_ambulatory_fixtures/runtime/body/awakening_ambulatory_fixtures__body__fixture__inspection_niche_medica__omni__1f__160x192.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "9ebfb200dc50af022bcd72de98acad1519d51c59e923fb5f77c17aab62a55702",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "inspection_niche_vestment",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_ambulatory_fixtures",
+        "world_prop",
+        "body",
+        "fixture",
+        "inspection_niche_vestment",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/awakening/awakening_ambulatory_fixtures/runtime/body/awakening_ambulatory_fixtures__body__fixture__inspection_niche_vestment__omni__1f__160x192.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "56f070457186a446fe5e1c792e6cace5271bc939c92f1fa103922855d9ec0f40",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "service_basin_a",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_ambulatory_fixtures",
+        "world_prop",
+        "body",
+        "fixture",
+        "service_basin_a",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/awakening/awakening_ambulatory_fixtures/runtime/body/awakening_ambulatory_fixtures__body__fixture__service_basin_a__omni__1f__128.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "7258a942cb7b0203eb3588297135057f467410c1158fe6d7928ad173c94819f7",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

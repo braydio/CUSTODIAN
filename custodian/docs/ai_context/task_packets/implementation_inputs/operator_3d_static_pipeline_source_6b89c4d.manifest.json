@@ -1,0 +1,62 @@
+{
+  "archive_bytes": 37634,
+  "archive_sha256": "7250ad2e3a3b40faf2dc205c3137d750eecf1112cd505884e2f7085fec9af8cb",
+  "files": [
+    {
+      "path": "asset_pipeline/README.md",
+      "sha256": "396a5ba5efe3966ab08986f445d62a9e0b51d28d5e80b4daf9c8d2cd0efea8ae",
+      "size_bytes": 6729
+    },
+    {
+      "path": "asset_pipeline/asset_pipeline_lib.py",
+      "sha256": "a1a83ae9d6b47217a61686567d4ad55885b1dc0e37d6aa3055670a60af2bbf80",
+      "size_bytes": 14619
+    },
+    {
+      "path": "asset_pipeline/run_asset.py",
+      "sha256": "79bb36a156e31ac97d7c619e80e467123e6488971e0a30f79559bb43b4dfd8e7",
+      "size_bytes": 23133
+    },
+    {
+      "path": "asset_pipeline/blender_render.py",
+      "sha256": "a1c4748a3c0d9251b9322606e9bba4274f060b9ed438a6790a3bb644cabb4cc4",
+      "size_bytes": 4533
+    },
+    {
+      "path": "asset_pipeline/evidence_render.py",
+      "sha256": "0022df403c482bcc7c393f615bdd42a4d7f7020b69c48964526b12892e85376b",
+      "size_bytes": 7380
+    },
+    {
+      "path": "asset_pipeline/build_evidence.py",
+      "sha256": "69bba6e8eae046d6f31813372c8309f599d6fad71553c332042e004dcd6d782f",
+      "size_bytes": 9436
+    },
+    {
+      "path": "asset_pipeline/meshopt_decode.mjs",
+      "sha256": "2d83a537c57e135164445e2076eaf814d9ca88437980def8226e2bda81b07ec9",
+      "size_bytes": 2161
+    },
+    {
+      "path": "asset_pipeline/meshopt_decoder.mjs",
+      "sha256": "01f48524f4bac6141eaba07e94cc36e7ee56f311796fa6117c159842941b0468",
+      "size_bytes": 24850
+    },
+    {
+      "path": "asset_pipeline/meshy_container.py",
+      "sha256": "e82f16f11965d30cd77b86049d61bbcb3f87b8b6617400275aed702e1caa9ad5",
+      "size_bytes": 1657
+    },
+    {
+      "path": "rig_diag/render_rigged.py",
+      "sha256": "d7852a3478ed4100d1c42dae399eb79eb3444d1ff398578d77b1f2b7f22c47b9",
+      "size_bytes": 4663
+    }
+  ],
+  "legacy_container_notice": "meshy_container.py is included for audit only; do not port it into live default tooling.",
+  "meshoptimizer_notice": "meshopt_decoder.mjs header identifies meshoptimizer 0.18 and MIT; live migration must carry the upstream license notice if retaining this decoder.",
+  "schema": "custodian.operator_3d_static_pipeline_reference.v1",
+  "scope": "read-only source reference for migration; excludes model binaries and generated review outputs",
+  "source_branch": "agent/operator-3d-master-modeling-proof-v1-iter005",
+  "source_commit": "6b89c4d503bb2d73d2783443d4280f313c681bfa"
+}

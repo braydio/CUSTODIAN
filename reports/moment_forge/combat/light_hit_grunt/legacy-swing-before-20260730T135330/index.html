@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Moment Forge — combat/light_hit_grunt</title>
+<style>
+:root{color-scheme:dark;--bg:#090d13;--panel:#111925;--line:#2d425a;--text:#dce8f2;--muted:#8ca0b4;--cyan:#66d9ef;--red:#ff6b72;--green:#72d69b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,sans-serif}main{max-width:1600px;margin:auto;padding:24px}code{color:var(--cyan)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.panel{background:var(--panel);border:1px solid var(--line);padding:16px;border-radius:8px;overflow:auto;margin-bottom:16px}video,img{width:100%;height:auto;background:#000}table{width:100%;border-collapse:collapse}th,td{padding:7px 9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.pass{color:var(--green)}.fail{color:var(--red)}.muted{color:var(--muted)}button,input{margin:4px}@media(max-width:900px){.grid{grid-template-columns:1fr}}
+</style></head><body><main>
+<h1>CUSTODIAN Moment Forge</h1>
+<p><code>combat/light_hit_grunt</code> — Operator fast strike against a stationary grunt.</p>
+<p>Status: <b>passed</b> · fingerprint <code>29342117e6355e35</code></p>
+<section class="panel"><button id="playBoth">Play both</button><button id="pauseBoth">Pause</button><label>Scrub <input id="scrub" type="range" min="0" max="1000" value="0"></label>
+<div class="grid"><div><h2>Baseline</h2><p class='muted'>Unavailable.</p></div><div><h2>Current</h2><video controls loop src='current.mp4'></video></div></div></section>
+<div class="grid"><section class="panel"><h2>Baseline contact sheet</h2><p class='muted'>Unavailable.</p></section><section class="panel"><h2>Current contact sheet</h2><img src='current_contact_sheet.png' alt='current_contact_sheet.png'></section></div>
+<section class="panel"><h2>Visual difference (advisory)</h2><p class='muted'>Unavailable.</p></section>
+<section class="panel"><h2>Assertions</h2><ul><li class='pass'><b>role_exists</b> [error]: </li>
+<li class='pass'><b>no_unreleased_inputs</b> [error]: </li>
+<li class='pass'><b>output_exists</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>warning_count</b> [warning]: </li></ul></section>
+<section class="panel"><h2>Metric deltas</h2><table><thead><tr><th>Metric</th><th>Baseline</th><th>Current</th><th>Delta</th></tr></thead><tbody><tr><td>completed_tick</td><td>None</td><td>118</td><td>None</td></tr>
+<tr><td>visible_visual_anchor_delta_px</td><td>None</td><td>0.0</td><td>None</td></tr>
+<tr><td>visible_visual_anchor_sample_count</td><td>None</td><td>7</td><td>None</td></tr></tbody></table></section>
+<section class="panel"><h2>Tick-enriched timeline</h2><table><thead><tr><th>Tick</th><th>Kind</th><th>Evidence</th></tr></thead><tbody><tr><td>2</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;input_tap&quot;, &quot;hold_ticks&quot;: 1.0, &quot;name&quot;: &quot;toggle_unarmed&quot;, &quot;tick&quot;: 2.0}, &quot;moment_tick&quot;: 2, &quot;result&quot;: {&quot;action&quot;: &quot;input_tap&quot;, &quot;ok&quot;: true, &quot;tick&quot;: 2}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 2}</code></td></tr>
+<tr><td>20</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;aim_at_role&quot;, &quot;role&quot;: &quot;operator&quot;, &quot;target_role&quot;: &quot;target&quot;, &quot;tick&quot;: 20.0}, &quot;moment_tick&quot;: 20, &quot;result&quot;: {&quot;action&quot;: &quot;aim_at_role&quot;, &quot;ok&quot;: true, &quot;tick&quot;: 20}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 20}</code></td></tr>
+<tr><td>30</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;input_tap&quot;, &quot;hold_ticks&quot;: 1.0, &quot;name&quot;: &quot;attack_primary&quot;, &quot;tick&quot;: 30.0}, &quot;moment_tick&quot;: 30, &quot;result&quot;: {&quot;action&quot;: &quot;input_tap&quot;, &quot;ok&quot;: true, &quot;tick&quot;: 30}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 30}</code></td></tr>
+<tr><td>34</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;capture_marker&quot;, &quot;name&quot;: &quot;expected_contact&quot;, &quot;tick&quot;: 34.0}, &quot;moment_tick&quot;: 34, &quot;result&quot;: {&quot;action&quot;: &quot;capture_marker&quot;, &quot;ok&quot;: true, &quot;tick&quot;: 34}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 34}</code></td></tr>
+<tr><td>48</td><td>enemy_assault_state_changed</td><td><code>{&quot;data&quot;: {&quot;attack_objective&quot;: &quot;breach_command&quot;, &quot;enemy&quot;: &quot;GRUNT&quot;, &quot;from&quot;: &quot;staging&quot;, &quot;health&quot;: 68.0, &quot;max_health&quot;: 78.0, &quot;position&quot;: &quot;(474.0, 360.0)&quot;, &quot;target&quot;: &quot;&quot;, &quot;to&quot;: &quot;commit&quot;}, &quot;kind&quot;: &quot;enemy_assault_state_changed&quot;, &quot;tick&quot;: 48}</code></td></tr>
+<tr><td>48</td><td>player_reclaim_rejected</td><td><code>{&quot;data&quot;: {&quot;amount&quot;: 10.0, &quot;kind&quot;: &quot;rejected&quot;, &quot;reason&quot;: &quot;no_recoverable_room&quot;}, &quot;kind&quot;: &quot;player_reclaim_rejected&quot;, &quot;tick&quot;: 48}</code></td></tr>
+<tr><td>48</td><td>material_contact</td><td><code>{&quot;data&quot;: {&quot;attack_kind&quot;: &quot;fast&quot;, &quot;bullet_impact_fx&quot;: &quot;default&quot;, &quot;contact_kind&quot;: &quot;melee_impact&quot;, &quot;damage&quot;: 10.0, &quot;footstep_noise_mult&quot;: 1.0, &quot;material_id&quot;: &quot;unknown&quot;, &quot;melee_impact_fx&quot;: &quot;default&quot;, &quot;position&quot;: &quot;(460.0, 360.0)&quot;, &quot;target&quot;: &quot;EnemyGrunt1&quot;, &quot;weapon&quot;: &quot;unarmed_fast_1&quot;}, &quot;kind&quot;: &quot;material_contact&quot;, &quot;tick&quot;: 48}</code></td></tr>
+<tr><td>118</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;finish&quot;, &quot;tick&quot;: 118.0}, &quot;moment_tick&quot;: 118, &quot;result&quot;: {&quot;action&quot;: &quot;finish&quot;, &quot;finish&quot;: true, &quot;ok&quot;: true, &quot;tick&quot;: 118}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 118}</code></td></tr></tbody></table></section>
+<section class="panel"><h2>Provenance</h2><pre>{
+  &quot;capture&quot;: {
+    &quot;audio_requested&quot;: true,
+    &quot;fps&quot;: 60,
+    &quot;height&quot;: 720,
+    &quot;mode&quot;: &quot;full&quot;,
+    &quot;synchronization&quot;: &quot;verified&quot;,
+    &quot;width&quot;: 1280
+  },
+  &quot;repository&quot;: {
+    &quot;branch&quot;: &quot;main&quot;,
+    &quot;changed_files&quot;: [
+      &quot;D custodian/content/levels/sundered_keep/gatehouse_siege_config.json&quot;,
+      &quot; M custodian/content/levels/sundered_keep/sundered_keep_front_gate_large.json&quot;,
+      &quot; D custodian/content/levels/sundered_keep/sundered_keep_underlay_gameplay_tiles.json&quot;,
+      &quot; M custodian/docs/ai_context/CURRENT_STATE.md&quot;,
+      &quot; M custodian/docs/ai_context/FILE_INDEX.md&quot;,
+      &quot; M custodian/docs/ai_context/VALIDATION_RECIPES.md&quot;,
+      &quot; M custodian/game/world/sundered_keep/sundered_keep_map.gd&quot;,
+      &quot; D custodian/scenes/debug/sundered_keep_approach_collision_mapper.gd&quot;,
+      &quot; D custodian/scenes/debug/sundered_keep_approach_collision_mapper.gd.uid&quot;,
+      &quot; D custodian/scenes/debug/sundered_keep_approach_collision_mapper.tscn&quot;,
+      &quot; D custodian/scenes/debug/sundered_keep_approach_collision_mapper_overlay.gd&quot;,
+      &quot; D custodian/scenes/debug/sundered_keep_approach_collision_mapper_overlay.gd.uid&quot;,
+      &quot; D custodian/scenes/debug/sundered_keep_underlay_collision_mapper.gd&quot;,
+      &quot; D custodian/scenes/debug/sundered_keep_underlay_collision_mapper.gd.uid&quot;,
+      &quot; D custodian/scenes/debug/sundered_keep_underlay_collision_mapper.tscn&quot;,
+      &quot; D custodian/scenes/debug/sundered_keep_underlay_collision_mapper_overlay.gd&quot;,
+      &quot; D custodian/scenes/debug/sundered_keep_underlay_collision_mapper_overlay.gd.uid&quot;,
+      &quot; D custodian/scenes/debug/sundered_keep_underlay_gameplay_tile_mapper.gd&quot;,
+      &quot; D custodian/scenes/debug/sundered_keep_underlay_gameplay_tile_mapper.gd.uid&quot;,
+      &quot; D custodian/scenes/debug/sundered_keep_underlay_gameplay_tile_mapper.tscn&quot;,
+      &quot; D custodian/scenes/debug/sundered_keep_underlay_gameplay_tile_mapper_overlay.gd&quot;,
+      &quot; D custodian/scenes/debug/sundered_keep_underlay_gameplay_tile_mapper_overlay.gd.uid&quot;,
+      &quot; M custodian/tools/iteration/scenarios/vista/sundered_keep_first_reveal.json&quot;,
+      &quot; D custodian/tools/levels/generate_sundered_keep_front_gate_layout.py&quot;,
+      &quot; D custodian/tools/validation/sundered_keep_approach_collision_mapper_smoke.gd&quot;,
+      &quot; D custodian/tools/validation/sundered_keep_approach_collision_mapper_smoke.gd.uid&quot;,
+      &quot; M custodian/tools/validation/sundered_keep_large_layout_smoke.gd&quot;,
+      &quot; M custodian/tools/validation/sundered_keep_layout_smoke.gd&quot;,
+      &quot; D custodian/tools/validation/sundered_keep_underlay_collision_mapper_smoke.gd&quot;,
+      &quot; D custodian/tools/validation/sundered_keep_underlay_collision_mapper_smoke.gd.uid&quot;,
+      &quot; D custodian/tools/validation/sundered_keep_underlay_gameplay_tile_mapper_smoke.gd&quot;,
+      &quot; D custodian/tools/validation/sundered_keep_underlay_gameplay_tile_mapper_smoke.gd.uid&quot;,
+      &quot; M design/02_features/world_expansion/THE_SUNDERED_KEEP_LEVEL_SET.md&quot;,
+      &quot; M design/05_levels/MAP_DESIGN.md&quot;,
+      &quot; M design/05_levels/SUNDERED_KEEP_LARGE_FRONT_GATE.md&quot;,
+      &quot; M design/05_levels/SUNDERED_KEEP_PROCGEN_FRONTAGE.md&quot;,
+      &quot; M design/05_levels/SUNDERED_KEEP_VISTA_APPROACH.md&quot;,
+      &quot;?? custodian/docs/ai_context/task_packets/SUNDERED_KEEP_MAPPER_CONSOLIDATION.md&quot;,
+      &quot;?? custodian/scenes/debug/sundered_keep_mapper.gd&quot;,
+      &quot;?? custodian/scenes/debug/sundered_keep_mapper.gd.uid&quot;,
+      &quot;?? custodian/scenes/debug/sundered_keep_mapper.tscn&quot;,
+      &quot;?? custodian/scenes/debug/sundered_keep_mapper_overlay.gd&quot;,
+      &quot;?? custodian/scenes/debug/sundered_keep_mapper_overlay.gd.uid&quot;,
+      &quot;?? custodian/tools/validation/sundered_keep_mapper_smoke.gd&quot;,
+      &quot;?? custodian/tools/validation/sundered_keep_mapper_smoke.gd.uid&quot;,
+      &quot;?? fix_operator_visual_anchor.patch&quot;,
+      &quot;?? reports/moment_forge/combat/heavy_hit_grunt/visual-anchor-probe-smoke/&quot;,
+      &quot;?? reports/moment_forge/combat/light_hit_grunt/20260729T173311-0400/&quot;,
+      &quot;?? reports/moment_forge/combat/light_hit_grunt/20260729T230358-0400/&quot;,
+      &quot;?? reports/moment_forge/combat/light_hit_grunt/20260729T230428-0400/&quot;,
+      &quot;?? reports/moment_forge/combat/light_hit_grunt/20260729T230737-0400/&quot;,
+      &quot;?? reports/moment_forge/combat/light_hit_grunt/legacy-swing-before-20260730T135330/&quot;,
+      &quot;?? reports/moment_forge/combat/light_hit_grunt/visual-anchor-fix-final/&quot;,
+      &quot;?? reports/moment_forge/combat/light_hit_grunt/visual-anchor-fix-regression-2/&quot;,
+      &quot;?? reports/moment_forge/combat/light_hit_grunt/visual-anchor-fix-regression/&quot;,
+      &quot;?? reports/moment_forge/combat/light_hit_grunt/visual-anchor-fix/&quot;,
+      &quot;?? reports/moment_forge/combat/light_hit_grunt/visual-anchor-metric-smoke/&quot;,
+      &quot;?? reports/moment_forge/combat/light_hit_grunt/visual-anchor-probe-smoke/&quot;,
+      &quot;?? reports/moment_forge/vista/sundered_keep_first_reveal/procgen-frontage-v1/&quot;,
+      &quot;?? reports/sundered_keep_procgen_frontage/&quot;
+    ],
+    &quot;commit&quot;: &quot;437f130342a0aead7f073ce79d6b7b3d82f0162c&quot;,
+    &quot;dirty&quot;: true,
+    &quot;root&quot;: &quot;/home/braydenchaffee/Projects/CUSTODIAN&quot;
+  },
+  &quot;runtime&quot;: {
+    &quot;godot&quot;: {
+      &quot;build&quot;: &quot;arch_linux&quot;,
+      &quot;hash&quot;: &quot;a13da4feb8d8aefc283c3763d33a2f170a18d541&quot;,
+      &quot;hex&quot;: 263937,
+      &quot;major&quot;: 4,
+      &quot;minor&quot;: 7,
+      &quot;patch&quot;: 1,
+      &quot;status&quot;: &quot;stable&quot;,
+      &quot;string&quot;: &quot;4.7.1-stable (arch_linux)&quot;,
+      &quot;timestamp&quot;: 1783976428
+    },
+    &quot;physics_hz&quot;: 60,
+    &quot;renderer&quot;: &quot;vulkan&quot;
+  },
+  &quot;scenario&quot;: {
+    &quot;id&quot;: &quot;combat/light_hit_grunt&quot;,
+    &quot;path&quot;: &quot;/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/legacy-swing-before-20260730T135330/scenario.snapshot.json&quot;,
+    &quot;schema_version&quot;: 1,
+    &quot;sha256&quot;: &quot;96b3f759ccf2b41b548259ed4fddec6e20389910497307cd287ef5258262111a&quot;
+  }
+}</pre></section>
+</main><script>
+const videos=[...document.querySelectorAll('video')],scrub=document.getElementById('scrub');
+document.getElementById('playBoth').onclick=()=>videos.forEach(v=>v.play());
+document.getElementById('pauseBoth').onclick=()=>videos.forEach(v=>v.pause());
+scrub.oninput=()=>videos.forEach(v=>{if(Number.isFinite(v.duration))v.currentTime=v.duration*Number(scrub.value)/1000});
+</script></body></html>

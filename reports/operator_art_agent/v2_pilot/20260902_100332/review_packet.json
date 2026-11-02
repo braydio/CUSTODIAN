@@ -1,0 +1,801 @@
+{
+  "schema": "custodian.operator_art_review_packet.v2",
+  "task": "Operator Art Agent V2 semantic far-leg pilot",
+  "constraints": [],
+  "artifacts": {
+    "strip": "edited_strip.png",
+    "contact_sheet": "edited_contact_sheet.png",
+    "animation": "edited_animation.gif",
+    "silhouette": "edited_silhouette.png",
+    "onion_skin": "edited_onion_skin.png",
+    "before_after": "before_after.png",
+    "diff": "diff.png",
+    "mask_overlay": "mask_overlay.png"
+  },
+  "metrics": "edited_metrics.json",
+  "qa": "edited_qa.json",
+  "references": [
+    {
+      "identity": {
+        "owner": "operator",
+        "layer": "lower_body",
+        "profile": "melee_1h",
+        "group": "locomotion",
+        "action": "walk_01",
+        "direction": "e"
+      },
+      "path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/source/animations/melee_1h/locomotion/walk_01/operator__lower_body__melee_1h__locomotion__walk_01__e__8f__96.png",
+      "role": "target_layer",
+      "authority": "canonical_source",
+      "reason": "Workbench semantic binding"
+    },
+    {
+      "identity": {
+        "owner": "operator",
+        "layer": "upper_body",
+        "profile": "melee_1h",
+        "group": "locomotion",
+        "action": "walk_01",
+        "direction": "e"
+      },
+      "path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/source/animations/melee_1h/locomotion/walk_01/operator__upper_body__melee_1h__locomotion__walk_01__e__8f__96.png",
+      "role": "target_layer",
+      "authority": "canonical_source",
+      "reason": "Workbench semantic binding"
+    },
+    {
+      "identity": {
+        "owner": "operator",
+        "layer": "weapon",
+        "profile": "melee_1h_dagger",
+        "group": "locomotion",
+        "action": "walk_01",
+        "direction": "e"
+      },
+      "path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/source/animations/melee_1h_dagger/locomotion/walk_01/operator__weapon__melee_1h_dagger__locomotion__walk_01__e__8f__96.png",
+      "role": "target_layer",
+      "authority": "canonical_source",
+      "reason": "Workbench semantic binding"
+    },
+    {
+      "identity": {
+        "owner": "operator",
+        "layer": "lower_body",
+        "profile": "melee_1h",
+        "group": "locomotion",
+        "action": "walk_01",
+        "direction": "e"
+      },
+      "path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/source/animations/melee_1h/posture/idle_ready_01/operator__lower_body__melee_1h__posture__idle_ready_01__e__5f__128x96.png",
+      "role": "posture_reference",
+      "authority": "canonical_source",
+      "reason": "same-direction idle-ready posture for lower_body"
+    },
+    {
+      "identity": {
+        "owner": "operator",
+        "layer": "lower_body",
+        "profile": "melee_1h",
+        "group": "locomotion",
+        "action": "walk_01",
+        "direction": "e"
+      },
+      "path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/source/animations/melee_1h/locomotion/run_01/operator__lower_body__melee_1h__locomotion__run_01__e__6f__96.png",
+      "role": "locomotion_sibling",
+      "authority": "canonical_source",
+      "reason": "run_01 sibling of walk_01 for lower_body"
+    },
+    {
+      "identity": {
+        "owner": "operator",
+        "layer": "lower_body",
+        "profile": "melee_1h",
+        "group": "locomotion",
+        "action": "walk_01",
+        "direction": "e"
+      },
+      "path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/runtime/animations/melee_1h/locomotion/walk_01/operator__lower_body__melee_1h__locomotion__walk_01__e__8f__96.png",
+      "role": "runtime_composite",
+      "authority": "runtime_reference",
+      "reason": "current runtime composite for lower_body"
+    },
+    {
+      "identity": {
+        "owner": "operator",
+        "layer": "upper_body",
+        "profile": "melee_1h",
+        "group": "locomotion",
+        "action": "walk_01",
+        "direction": "e"
+      },
+      "path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/source/animations/melee_1h/posture/idle_ready_01/operator__upper_body__melee_1h__posture__idle_ready_01__e__5f__128x96.png",
+      "role": "posture_reference",
+      "authority": "canonical_source",
+      "reason": "same-direction idle-ready posture for upper_body"
+    },
+    {
+      "identity": {
+        "owner": "operator",
+        "layer": "upper_body",
+        "profile": "melee_1h",
+        "group": "locomotion",
+        "action": "walk_01",
+        "direction": "e"
+      },
+      "path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/source/animations/melee_1h/locomotion/run_01/operator__upper_body__melee_1h__locomotion__run_01__e__6f__96.png",
+      "role": "locomotion_sibling",
+      "authority": "canonical_source",
+      "reason": "run_01 sibling of walk_01 for upper_body"
+    },
+    {
+      "identity": {
+        "owner": "operator",
+        "layer": "upper_body",
+        "profile": "melee_1h",
+        "group": "locomotion",
+        "action": "walk_01",
+        "direction": "e"
+      },
+      "path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/runtime/animations/melee_1h/locomotion/walk_01/operator__upper_body__melee_1h__locomotion__walk_01__e__8f__96.png",
+      "role": "runtime_composite",
+      "authority": "runtime_reference",
+      "reason": "current runtime composite for upper_body"
+    },
+    {
+      "identity": {
+        "owner": "operator",
+        "layer": "weapon",
+        "profile": "melee_1h_dagger",
+        "group": "locomotion",
+        "action": "walk_01",
+        "direction": "e"
+      },
+      "path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/source/animations/melee_1h_dagger/posture/idle_ready_01/operator__weapon__melee_1h_dagger__posture__idle_ready_01__e__5f__128x96.png",
+      "role": "posture_reference",
+      "authority": "canonical_source",
+      "reason": "same-direction idle-ready posture for weapon"
+    },
+    {
+      "identity": {
+        "owner": "operator",
+        "layer": "weapon",
+        "profile": "melee_1h_dagger",
+        "group": "locomotion",
+        "action": "walk_01",
+        "direction": "e"
+      },
+      "path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/source/animations/melee_1h_dagger/locomotion/run_01/operator__weapon__melee_1h_dagger__locomotion__run_01__e__6f__96.png",
+      "role": "locomotion_sibling",
+      "authority": "canonical_source",
+      "reason": "run_01 sibling of walk_01 for weapon"
+    },
+    {
+      "identity": {
+        "owner": "operator",
+        "layer": "weapon",
+        "profile": "melee_1h_dagger",
+        "group": "locomotion",
+        "action": "walk_01",
+        "direction": "e"
+      },
+      "path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/runtime/animations/melee_1h_dagger/locomotion/walk_01/operator__weapon__melee_1h_dagger__locomotion__walk_01__e__8f__96.png",
+      "role": "runtime_composite",
+      "authority": "runtime_reference",
+      "reason": "current runtime composite for weapon"
+    }
+  ],
+  "open_findings": [
+    {
+      "severity": "advisory",
+      "class": "pixel_art",
+      "issue": "semi-transparent pixels present"
+    }
+  ],
+  "masks": [
+    {
+      "mask_id": "near_leg_f4_0c27f425d6",
+      "frame": 4,
+      "layer": "lower_body",
+      "part": "near_leg",
+      "spans": [
+        {
+          "y": 56,
+          "x0": 32,
+          "x1": 56
+        },
+        {
+          "y": 57,
+          "x0": 32,
+          "x1": 56
+        },
+        {
+          "y": 58,
+          "x0": 32,
+          "x1": 56
+        },
+        {
+          "y": 59,
+          "x0": 32,
+          "x1": 56
+        },
+        {
+          "y": 60,
+          "x0": 32,
+          "x1": 56
+        },
+        {
+          "y": 61,
+          "x0": 32,
+          "x1": 56
+        },
+        {
+          "y": 62,
+          "x0": 32,
+          "x1": 56
+        },
+        {
+          "y": 63,
+          "x0": 32,
+          "x1": 56
+        },
+        {
+          "y": 64,
+          "x0": 32,
+          "x1": 56
+        },
+        {
+          "y": 65,
+          "x0": 32,
+          "x1": 56
+        },
+        {
+          "y": 66,
+          "x0": 32,
+          "x1": 56
+        },
+        {
+          "y": 67,
+          "x0": 32,
+          "x1": 56
+        },
+        {
+          "y": 68,
+          "x0": 32,
+          "x1": 56
+        },
+        {
+          "y": 69,
+          "x0": 32,
+          "x1": 56
+        },
+        {
+          "y": 70,
+          "x0": 32,
+          "x1": 56
+        },
+        {
+          "y": 71,
+          "x0": 32,
+          "x1": 56
+        },
+        {
+          "y": 72,
+          "x0": 32,
+          "x1": 56
+        },
+        {
+          "y": 73,
+          "x0": 32,
+          "x1": 56
+        },
+        {
+          "y": 74,
+          "x0": 32,
+          "x1": 56
+        },
+        {
+          "y": 75,
+          "x0": 32,
+          "x1": 56
+        },
+        {
+          "y": 76,
+          "x0": 32,
+          "x1": 56
+        },
+        {
+          "y": 77,
+          "x0": 32,
+          "x1": 56
+        },
+        {
+          "y": 78,
+          "x0": 32,
+          "x1": 56
+        },
+        {
+          "y": 79,
+          "x0": 32,
+          "x1": 56
+        },
+        {
+          "y": 80,
+          "x0": 32,
+          "x1": 56
+        },
+        {
+          "y": 81,
+          "x0": 32,
+          "x1": 56
+        },
+        {
+          "y": 82,
+          "x0": 32,
+          "x1": 56
+        },
+        {
+          "y": 83,
+          "x0": 32,
+          "x1": 56
+        },
+        {
+          "y": 84,
+          "x0": 32,
+          "x1": 56
+        }
+      ],
+      "bounds": [
+        32,
+        56,
+        25,
+        29
+      ],
+      "source_workbench_sha256": "d23082c8b827c81df1ce97221183dc747e787132dfdae562fe1a17ea626707bb",
+      "source_cel_fingerprint": "aaffba4e550fb89cf3b513e352a474272f6efe16e2a08ea139e14a1c0a8a9608",
+      "provenance": "pilot_fixture",
+      "confidence": 0.5,
+      "status": "CURRENT",
+      "parents": []
+    },
+    {
+      "mask_id": "far_leg_f4_0eab5d2d5f",
+      "frame": 4,
+      "layer": "lower_body",
+      "part": "far_leg",
+      "spans": [
+        {
+          "y": 56,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 57,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 58,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 59,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 60,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 61,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 62,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 63,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 64,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 65,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 66,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 67,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 68,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 69,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 70,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 71,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 72,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 73,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 74,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 75,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 76,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 77,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 78,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 79,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 80,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 81,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 82,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 83,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 84,
+          "x0": 8,
+          "x1": 32
+        }
+      ],
+      "bounds": [
+        8,
+        56,
+        25,
+        29
+      ],
+      "source_workbench_sha256": "d23082c8b827c81df1ce97221183dc747e787132dfdae562fe1a17ea626707bb",
+      "source_cel_fingerprint": "aaffba4e550fb89cf3b513e352a474272f6efe16e2a08ea139e14a1c0a8a9608",
+      "provenance": "pilot_fixture",
+      "confidence": 0.5,
+      "status": "CURRENT",
+      "parents": []
+    }
+  ],
+  "mask_status_summary": {
+    "total": 2,
+    "current": 2,
+    "stale": 0
+  },
+  "drafts": [
+    {
+      "draft_id": "__ART_DRAFT__far_leg__f004__db82b3b1",
+      "kind": "shift",
+      "part": "far_leg",
+      "source_mask_id": "far_leg_f4_0eab5d2d5f",
+      "destination_mask_id": null,
+      "source_layer": "lower_body",
+      "source_frame": 4,
+      "destination_layer": "lower_body",
+      "destination_frame": 4,
+      "source_spans": [
+        {
+          "y": 56,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 57,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 58,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 59,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 60,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 61,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 62,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 63,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 64,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 65,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 66,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 67,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 68,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 69,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 70,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 71,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 72,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 73,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 74,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 75,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 76,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 77,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 78,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 79,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 80,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 81,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 82,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 83,
+          "x0": 8,
+          "x1": 32
+        },
+        {
+          "y": 84,
+          "x0": 8,
+          "x1": 32
+        }
+      ],
+      "destination_spans": null,
+      "source_mask_fingerprint": "0eab5d2d5f4f680528f8e7917dd035ee3db85374a2d1d2bebe7dae3d15c80116",
+      "source_cel_fingerprint": "aaffba4e550fb89cf3b513e352a474272f6efe16e2a08ea139e14a1c0a8a9608",
+      "destination_cel_fingerprint": "aaffba4e550fb89cf3b513e352a474272f6efe16e2a08ea139e14a1c0a8a9608",
+      "draft_cel_fingerprint": "bfc58ad334188226aabab69c5a636f86196ac5cbf1ef54773ce5b2a237423d54",
+      "dx": 2,
+      "dy": -1,
+      "axis_x": null,
+      "created_operation_key": "pilot-20260902_100332-draft",
+      "created_workbench_sha256": "533ef6a65176e9233ac1808d548928f2be0eefc58312b2568116c754b595ce51",
+      "status": "BAKED",
+      "created_utc": "2026-09-02T10:03:34.696438+00:00",
+      "needs_gap_repair": false,
+      "gap_repair_note": "pilot bounded far-leg cleanup applied and reviewed",
+      "advisory_note": ""
+    }
+  ],
+  "draft_status_summary": {
+    "total": 1,
+    "active": 0,
+    "baked": 1,
+    "discarded": 0,
+    "stale": 0,
+    "needs_gap_repair": 0
+  },
+  "landmarks": "landmarks.json",
+  "landmark_status_summary": {
+    "total": 80,
+    "current": 80,
+    "stale": 0
+  },
+  "workbench_sha256": "1a908bf04d89faadc70e2d7d45bfc64409d426243189872ffe43680a87f1ccf1",
+  "operation_journal_summary": {
+    "count": 3,
+    "types": [
+      "draft_shift_part",
+      "bake_draft",
+      "paint_pixels"
+    ]
+  },
+  "resolved_references": [],
+  "transition_comparison": null,
+  "edit_scope": null,
+  "palette_regions": [],
+  "recolor_plans": [],
+  "identity": {
+    "profile": "melee_1h",
+    "group": "locomotion",
+    "action": "walk_01",
+    "direction": "e"
+  },
+  "weapon": "vigil_pattern_dagger",
+  "selected_frame": 4,
+  "semantic_part": "far_leg",
+  "edit_plan": {
+    "selected_frame": 4,
+    "part": "far_leg",
+    "mask_id": "far_leg_f4_0eab5d2d5f",
+    "dx": 2,
+    "dy": -1,
+    "reason": "tightest mid-cycle lower-body silhouette selected as deterministic crossover proxy; bounded integer shift makes the far-leg lead visibly without transform filtering"
+  },
+  "cleanup_operations": [
+    {
+      "type": "paint_pixels",
+      "frame": 4,
+      "layer": "lower_body",
+      "pixels": [
+        {
+          "x": 16,
+          "y": 56,
+          "rgba": [
+            24,
+            19,
+            14,
+            255
+          ]
+        }
+      ]
+    }
+  ],
+  "baseline_artifacts": {
+    "strip": "baseline_strip.png",
+    "contact_sheet": "baseline_contact_sheet.png",
+    "animation": "baseline_animation.gif",
+    "silhouette": "baseline_silhouette.png"
+  },
+  "draft_artifacts": {
+    "strip": "draft_strip.png",
+    "contact_sheet": "draft_contact_sheet.png",
+    "animation": "draft_animation.gif",
+    "silhouette": "draft_silhouette.png",
+    "onion_skin": "draft_onion_skin.png"
+  },
+  "edited_artifacts": {
+    "strip": "edited_strip.png",
+    "contact_sheet": "edited_contact_sheet.png",
+    "animation": "edited_animation.gif",
+    "silhouette": "edited_silhouette.png",
+    "onion_skin": "edited_onion_skin.png",
+    "before_after": "before_after.png",
+    "diff": "diff.png",
+    "mask_overlay": "mask_overlay.png"
+  },
+  "pre_existing_findings": [
+    {
+      "severity": "advisory",
+      "class": "pixel_art",
+      "issue": "semi-transparent pixels present"
+    }
+  ],
+  "new_findings": []
+}

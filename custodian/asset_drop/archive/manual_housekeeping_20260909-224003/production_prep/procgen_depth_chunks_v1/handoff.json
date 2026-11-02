@@ -1,0 +1,474 @@
+{
+  "schema": "custodian.procgen_depth_chunk_v2_handoff.v1",
+  "pipeline": "Asset Pipeline V2",
+  "families": {
+    "procgen_depth_universal": {
+      "contract": "contracts/procgen_depth_universal.asset.json",
+      "inbox": "custodian/asset_drop/inbox/procgen_depth_universal",
+      "states": {
+        "civic_foundation_breach_v1": {
+          "prep_path": "custodian/asset_drop/production_prep/procgen_depth_chunks_v1/families/procgen_depth_universal/civic_foundation_breach_v1.png",
+          "inbox_name": "civic_foundation_breach_v1.png",
+          "target_size": [
+            896,
+            576
+          ],
+          "sha256": "408c694897cba68eb4417643278f3a6c41914b6d0dfd8ff5a285f3dd7eae27f6"
+        },
+        "fractured_ravine_v1": {
+          "prep_path": "custodian/asset_drop/production_prep/procgen_depth_chunks_v1/families/procgen_depth_universal/fractured_ravine_v1.png",
+          "inbox_name": "fractured_ravine_v1.png",
+          "target_size": [
+            896,
+            576
+          ],
+          "sha256": "85adb0ca2a7d3219d1118c5447d113a70578cb95dcd6a88da41fabbad32abfac"
+        },
+        "service_infrastructure_field_v1": {
+          "prep_path": "custodian/asset_drop/production_prep/procgen_depth_chunks_v1/families/procgen_depth_universal/service_infrastructure_field_v1.png",
+          "inbox_name": "service_infrastructure_field_v1.png",
+          "target_size": [
+            640,
+            448
+          ],
+          "sha256": "2c2ba287979da527afb50a2aff85aef7e944fa833b9923f53ce0307846238f28"
+        },
+        "talus_and_rubble_shelf_v1": {
+          "prep_path": "custodian/asset_drop/production_prep/procgen_depth_chunks_v1/families/procgen_depth_universal/talus_and_rubble_shelf_v1.png",
+          "inbox_name": "talus_and_rubble_shelf_v1.png",
+          "target_size": [
+            640,
+            448
+          ],
+          "sha256": "24a681903fad3588c4fa98fc6ef1fdd697e39fc3e47bbdd3384d7c33a355783b"
+        }
+      }
+    },
+    "procgen_depth_scrubland": {
+      "contract": "contracts/procgen_depth_scrubland.asset.json",
+      "inbox": "custodian/asset_drop/inbox/procgen_depth_scrubland",
+      "states": {
+        "dry_basin_v1": {
+          "prep_path": "custodian/asset_drop/production_prep/procgen_depth_chunks_v1/families/procgen_depth_scrubland/dry_basin_v1.png",
+          "inbox_name": "dry_basin_v1.png",
+          "target_size": [
+            896,
+            576
+          ],
+          "sha256": "a42f01a6cb6fdc7a1315a73964c67fa4953787c59a8f08d61941a2c9cbcb3e90"
+        },
+        "wash_channel_v1": {
+          "prep_path": "custodian/asset_drop/production_prep/procgen_depth_chunks_v1/families/procgen_depth_scrubland/wash_channel_v1.png",
+          "inbox_name": "wash_channel_v1.png",
+          "target_size": [
+            640,
+            448
+          ],
+          "sha256": "d1b4aa2a3f5607f29f1a234da9e5c030da5a0d0c490c4d42b0ace2e74940f7ee"
+        },
+        "service_scar_v1": {
+          "prep_path": "custodian/asset_drop/production_prep/procgen_depth_chunks_v1/families/procgen_depth_scrubland/service_scar_v1.png",
+          "inbox_name": "service_scar_v1.png",
+          "target_size": [
+            640,
+            448
+          ],
+          "sha256": "02bab8352aab343c225421222bab8a0e0407b0bcb56142657af7851b15284c93"
+        }
+      }
+    },
+    "procgen_depth_woodland": {
+      "contract": "contracts/procgen_depth_woodland.asset.json",
+      "inbox": "custodian/asset_drop/inbox/procgen_depth_woodland",
+      "states": {
+        "canopy_basin_v1": {
+          "prep_path": "custodian/asset_drop/production_prep/procgen_depth_chunks_v1/families/procgen_depth_woodland/canopy_basin_v1.png",
+          "inbox_name": "canopy_basin_v1.png",
+          "target_size": [
+            896,
+            576
+          ],
+          "sha256": "197e5a22d9e18572fda02945d1b3d57757b16f42eaf7f336099e854d23149020"
+        },
+        "ravine_v1": {
+          "prep_path": "custodian/asset_drop/production_prep/procgen_depth_chunks_v1/families/procgen_depth_woodland/ravine_v1.png",
+          "inbox_name": "ravine_v1.png",
+          "target_size": [
+            896,
+            576
+          ],
+          "sha256": "ea4deffc34fecfa90e3b98148dd2ef5a77043256ccfa37fd5eb3f3f686bee78f"
+        }
+      }
+    }
+  },
+  "stamp_profiles": {
+    "civic_foundation_breach_v1": {
+      "family_id": "procgen_depth_universal",
+      "required_biome": "",
+      "size_class": "large",
+      "canvas_px": [
+        896,
+        576
+      ],
+      "weight": 3,
+      "min_region_cells": 12,
+      "allow_flip_h": true,
+      "depth_band": "BACK",
+      "placement_domain": "CHASM",
+      "allowed_region_kinds": [
+        "depth_south_edge"
+      ],
+      "terrain_contact_edge": "north",
+      "terrain_overlap_rows": 4,
+      "pivot_px": [
+        0,
+        128
+      ],
+      "footprint_size_cells": [
+        28,
+        14
+      ],
+      "chasm_core_rect": [
+        6,
+        1,
+        16,
+        9
+      ],
+      "claims_dressing_clearance": false,
+      "tags": [
+        "universal",
+        "constructed_edge",
+        "foundation",
+        "civic",
+        "large_void"
+      ]
+    },
+    "fractured_ravine_v1": {
+      "family_id": "procgen_depth_universal",
+      "required_biome": "",
+      "size_class": "large",
+      "canvas_px": [
+        896,
+        576
+      ],
+      "weight": 4,
+      "min_region_cells": 12,
+      "allow_flip_h": true,
+      "depth_band": "BACK",
+      "placement_domain": "CHASM",
+      "allowed_region_kinds": [
+        "depth_south_edge"
+      ],
+      "terrain_contact_edge": "north",
+      "terrain_overlap_rows": 4,
+      "pivot_px": [
+        0,
+        128
+      ],
+      "footprint_size_cells": [
+        28,
+        14
+      ],
+      "chasm_core_rect": [
+        6,
+        1,
+        16,
+        9
+      ],
+      "claims_dressing_clearance": false,
+      "tags": [
+        "universal",
+        "ravine",
+        "natural",
+        "structural_decay",
+        "large_gap"
+      ]
+    },
+    "service_infrastructure_field_v1": {
+      "family_id": "procgen_depth_universal",
+      "required_biome": "",
+      "size_class": "medium",
+      "canvas_px": [
+        640,
+        448
+      ],
+      "weight": 6,
+      "min_region_cells": 8,
+      "allow_flip_h": true,
+      "depth_band": "BACK",
+      "placement_domain": "CHASM",
+      "allowed_region_kinds": [
+        "depth_south_edge"
+      ],
+      "terrain_contact_edge": "north",
+      "terrain_overlap_rows": 3,
+      "pivot_px": [
+        0,
+        96
+      ],
+      "footprint_size_cells": [
+        20,
+        11
+      ],
+      "chasm_core_rect": [
+        4,
+        1,
+        12,
+        7
+      ],
+      "claims_dressing_clearance": false,
+      "tags": [
+        "universal",
+        "infrastructure",
+        "utility",
+        "constructed",
+        "service"
+      ]
+    },
+    "talus_and_rubble_shelf_v1": {
+      "family_id": "procgen_depth_universal",
+      "required_biome": "",
+      "size_class": "medium",
+      "canvas_px": [
+        640,
+        448
+      ],
+      "weight": 10,
+      "min_region_cells": 8,
+      "allow_flip_h": true,
+      "depth_band": "BACK",
+      "placement_domain": "CHASM",
+      "allowed_region_kinds": [
+        "depth_south_edge"
+      ],
+      "terrain_contact_edge": "north",
+      "terrain_overlap_rows": 3,
+      "pivot_px": [
+        0,
+        96
+      ],
+      "footprint_size_cells": [
+        20,
+        11
+      ],
+      "chasm_core_rect": [
+        4,
+        1,
+        12,
+        7
+      ],
+      "claims_dressing_clearance": false,
+      "tags": [
+        "universal",
+        "neutral",
+        "rubble",
+        "talus",
+        "fallback"
+      ]
+    },
+    "dry_basin_v1": {
+      "family_id": "procgen_depth_scrubland",
+      "required_biome": "scrubland",
+      "size_class": "large",
+      "canvas_px": [
+        896,
+        576
+      ],
+      "weight": 10,
+      "min_region_cells": 12,
+      "allow_flip_h": true,
+      "depth_band": "BACK",
+      "placement_domain": "CHASM",
+      "allowed_region_kinds": [
+        "depth_south_edge"
+      ],
+      "terrain_contact_edge": "north",
+      "terrain_overlap_rows": 4,
+      "pivot_px": [
+        0,
+        128
+      ],
+      "footprint_size_cells": [
+        28,
+        14
+      ],
+      "chasm_core_rect": [
+        6,
+        1,
+        16,
+        9
+      ],
+      "claims_dressing_clearance": false,
+      "tags": [
+        "scrubland",
+        "basin",
+        "large_void",
+        "dry"
+      ]
+    },
+    "wash_channel_v1": {
+      "family_id": "procgen_depth_scrubland",
+      "required_biome": "scrubland",
+      "size_class": "medium",
+      "canvas_px": [
+        640,
+        448
+      ],
+      "weight": 7,
+      "min_region_cells": 8,
+      "allow_flip_h": true,
+      "depth_band": "BACK",
+      "placement_domain": "CHASM",
+      "allowed_region_kinds": [
+        "depth_south_edge"
+      ],
+      "terrain_contact_edge": "north",
+      "terrain_overlap_rows": 3,
+      "pivot_px": [
+        0,
+        96
+      ],
+      "footprint_size_cells": [
+        20,
+        11
+      ],
+      "chasm_core_rect": [
+        4,
+        1,
+        12,
+        7
+      ],
+      "claims_dressing_clearance": false,
+      "tags": [
+        "scrubland",
+        "wash",
+        "drainage",
+        "erosion",
+        "linear"
+      ]
+    },
+    "service_scar_v1": {
+      "family_id": "procgen_depth_scrubland",
+      "required_biome": "scrubland",
+      "size_class": "medium",
+      "canvas_px": [
+        640,
+        448
+      ],
+      "weight": 5,
+      "min_region_cells": 8,
+      "allow_flip_h": true,
+      "depth_band": "BACK",
+      "placement_domain": "CHASM",
+      "allowed_region_kinds": [
+        "depth_south_edge"
+      ],
+      "terrain_contact_edge": "north",
+      "terrain_overlap_rows": 3,
+      "pivot_px": [
+        0,
+        96
+      ],
+      "footprint_size_cells": [
+        20,
+        11
+      ],
+      "chasm_core_rect": [
+        4,
+        1,
+        12,
+        7
+      ],
+      "claims_dressing_clearance": false,
+      "tags": [
+        "scrubland",
+        "infrastructure",
+        "service_scar",
+        "reclaimed"
+      ]
+    },
+    "canopy_basin_v1": {
+      "family_id": "procgen_depth_woodland",
+      "required_biome": "woodland",
+      "size_class": "large",
+      "canvas_px": [
+        896,
+        576
+      ],
+      "weight": 10,
+      "min_region_cells": 12,
+      "allow_flip_h": true,
+      "depth_band": "BACK",
+      "placement_domain": "CHASM",
+      "allowed_region_kinds": [
+        "depth_south_edge"
+      ],
+      "terrain_contact_edge": "north",
+      "terrain_overlap_rows": 4,
+      "pivot_px": [
+        0,
+        128
+      ],
+      "footprint_size_cells": [
+        28,
+        14
+      ],
+      "chasm_core_rect": [
+        6,
+        1,
+        16,
+        9
+      ],
+      "claims_dressing_clearance": false,
+      "tags": [
+        "woodland",
+        "canopy",
+        "basin",
+        "large_void",
+        "vegetation"
+      ]
+    },
+    "ravine_v1": {
+      "family_id": "procgen_depth_woodland",
+      "required_biome": "woodland",
+      "size_class": "large",
+      "canvas_px": [
+        896,
+        576
+      ],
+      "weight": 4,
+      "min_region_cells": 12,
+      "allow_flip_h": true,
+      "depth_band": "BACK",
+      "placement_domain": "CHASM",
+      "allowed_region_kinds": [
+        "depth_south_edge"
+      ],
+      "terrain_contact_edge": "north",
+      "terrain_overlap_rows": 4,
+      "pivot_px": [
+        0,
+        128
+      ],
+      "footprint_size_cells": [
+        28,
+        14
+      ],
+      "chasm_core_rect": [
+        6,
+        1,
+        16,
+        9
+      ],
+      "claims_dressing_clearance": false,
+      "tags": [
+        "woodland",
+        "ravine",
+        "hero_depth",
+        "water",
+        "structural_decay"
+      ]
+    }
+  }
+}

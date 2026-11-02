@@ -1,0 +1,97 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "awakening_interact_support",
+  "kind": "world_prop",
+  "priority": "P1",
+  "runtime": {
+    "domain": "sprites/environment/props/awakening",
+    "owner": "awakening_interact_support"
+  },
+  "canvas": {
+    "width": 64,
+    "height": 64
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "floor_pad_01": {
+      "layer": "body",
+      "action_group": "affordance",
+      "variant": "floor_pad_01",
+      "layout": "copy",
+      "required": true,
+      "frame_width": 64,
+      "frame_height": 64
+    },
+    "floor_pad_02": {
+      "layer": "body",
+      "action_group": "affordance",
+      "variant": "floor_pad_02",
+      "layout": "copy",
+      "recommended": true,
+      "frame_width": 64,
+      "frame_height": 64
+    },
+    "beacon_cyan": {
+      "layer": "body",
+      "action_group": "affordance",
+      "variant": "beacon_cyan",
+      "layout": "copy",
+      "required": true,
+      "frame_width": 64,
+      "frame_height": 64
+    },
+    "beacon_amber": {
+      "layer": "body",
+      "action_group": "affordance",
+      "variant": "beacon_amber",
+      "layout": "copy",
+      "required": true,
+      "frame_width": 64,
+      "frame_height": 64
+    },
+    "cable_bundle": {
+      "layer": "body",
+      "action_group": "affordance",
+      "variant": "cable_bundle",
+      "layout": "copy",
+      "recommended": true,
+      "frame_width": 64,
+      "frame_height": 64
+    },
+    "service_crate": {
+      "layer": "body",
+      "action_group": "affordance",
+      "variant": "service_crate",
+      "layout": "copy",
+      "recommended": true,
+      "frame_width": 64,
+      "frame_height": 64
+    },
+    "wall_backplate": {
+      "layer": "body",
+      "action_group": "affordance",
+      "variant": "wall_backplate",
+      "layout": "copy",
+      "required": true,
+      "frame_width": 128,
+      "frame_height": 128
+    },
+    "status_pole": {
+      "layer": "body",
+      "action_group": "affordance",
+      "variant": "status_pole",
+      "layout": "copy",
+      "recommended": true,
+      "frame_width": 64,
+      "frame_height": 96
+    }
+  },
+  "aliases": {},
+  "consumers": [
+    {
+      "type": "scene",
+      "path": "res://scenes/awakening_first_return.tscn"
+    }
+  ]
+}

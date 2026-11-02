@@ -1,0 +1,37 @@
+{
+  "schema": "custodian.game32.domain_manifest.v1",
+  "set": "sundered_keep",
+  "domain": "return_mooring",
+  "base_path": "res://content/props/sundered_keep/return_mooring",
+  "generated_at_utc": "2026-05-30T08:55:36.772839+00:00",
+  "generator": "custodian/tools/art/extract_return_mooring_game32.py",
+  "asset_count": 2,
+  "assets": [
+    {
+      "id": "prop_return_beacon_01",
+      "runtime_path": "res://content/props/sundered_keep/return_mooring/prop_return_beacon_01.png",
+      "metadata_path": "res://content/props/sundered_keep/return_mooring/prop_return_beacon_01.game32.json",
+      "size_px": [
+        32,
+        64
+      ],
+      "layer": "PropsBlocking",
+      "walkable": false,
+      "blocks_movement": true,
+      "interactable": false
+    },
+    {
+      "id": "prop_return_console_ruined_01",
+      "runtime_path": "res://content/props/sundered_keep/return_mooring/prop_return_console_ruined_01.png",
+      "metadata_path": "res://content/props/sundered_keep/return_mooring/prop_return_console_ruined_01.game32.json",
+      "size_px": [
+        64,
+        32
+      ],
+      "layer": "PropsBlocking",
+      "walkable": false,
+      "blocks_movement": true,
+      "interactable": true
+    }
+  ]
+}

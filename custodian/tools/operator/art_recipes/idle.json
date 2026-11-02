@@ -1,0 +1,1 @@
+{"schema":"custodian.operator_animation_recipe.v1","kind":"idle","loop":true,"required_landmarks":["head_center","hip_center"],"qa":["registration","silhouette","loop"],"constraints":["preserve frame count and timing","keep baseline and proportions stable"]}

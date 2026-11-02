@@ -1,0 +1,34 @@
+index	relative_path	width	height	mode	sha256_12	alpha_min	alpha_max	transparent_pct	partial_alpha_pct	inferred_frames	inferred_frame_width	inferred_frame_height	family	state	contract_relation	flags
+1	awakening_creche_console/idle_source_v1.png	1254	1254	RGBA	c49f68404e57	0	255	32.968	66.985				awakening_creche_console	idle	PROPORTIONAL SOURCE	HIGH PARTIAL-ALPHA COVERAGE
+2	awakening_creche_console_activation_fx/activate_source_v1.png	3544	443	RGBA	47052f62b704	0	253	40.564	59.436	8	443	443	awakening_creche_console_activation_fx	activate	PROPORTIONAL SOURCE	
+3	awakening_creche_fixtures/alcove_broken_source_v1.png	1024	1536	RGBA	763b6222ec19	0	254	61.024	38.976				awakening_creche_fixtures	alcove_broken	PROPORTIONAL SOURCE	
+4	awakening_creche_fixtures/alcove_closed_source_v1.png	1024	1536	RGBA	7600d67bab24	0	254	62.272	37.728				awakening_creche_fixtures	alcove_closed	PROPORTIONAL SOURCE	
+5	awakening_creche_recovery_alcove/idle_source_v1.png	192	256	RGBA	f83a724282c7	0	255	60.055	38.666				awakening_creche_recovery_alcove	idle	EXACT TARGET	
+6	awakening_creche_recovery_alcove/wake_source_v1.png	2172	724	RGBA	c0acf228e594	0	255	47.916	51.967	3	724	724	awakening_creche_recovery_alcove	wake	NORMALIZE -> 1536×256	FRAME COUNT? inferred 3, contract 8
+7	awakening_custodian_approach_environment/foreground_source_v1.png	1366	1152	RGBA	e73cf84fffbc	0	255	37.213	62.767				awakening_custodian_approach_environment	foreground	PROPORTIONAL SOURCE	
+8	awakening_custodian_approach_environment/underlay_source_v1.png	1366	1152	RGB	85e7b7eb6499								awakening_custodian_approach_environment	underlay	PROPORTIONAL SOURCE	OPAQUE
+9	awakening_designation_locker/authorize_open.png	1024	160	RGBA	08b63c2aa7f6	0	255	60.309	0.0				awakening_designation_locker	authorize_open	EXACT TARGET	
+10	awakening_designation_locker/closed.png	1122	1402	RGBA	d1d0e03b8d7d	0	255	61.999	37.958				awakening_designation_locker	closed	PROPORTIONAL SOURCE	
+11	awakening_designation_locker/closed_pixel_128x160.png	128	160	RGBA	9217b77aa801	0	255	58.945	0.0				awakening_designation_locker	closed	EXACT TARGET	
+12	awakening_designation_locker/empty.png	128	160	RGBA	d652e1b36c77	0	255	57.163	0.0				awakening_designation_locker	empty	EXACT TARGET	
+13	awakening_designation_locker/open-loaded.png	128	160	RGBA	400cc018e3b1	0	255	58.843	0.0				awakening_designation_locker	open_loaded	EXACT TARGET	
+14	awakening_designation_locker/source/awakening_designation_locker_authorize_open_8f.png	2048	1024	RGBA	d1a0d265d769	0	255	74.035	25.962	8	256	1024	awakening_designation_locker			UNRESOLVED STATE
+15	awakening_designation_locker/source/closed_source.png	1122	1402	RGBA	d1d0e03b8d7d	0	255	61.999	37.958				awakening_designation_locker	closed	PROPORTIONAL SOURCE	
+16	awakening_designation_locker/source/empty_source.png	1122	1402	RGBA	883ff8ec94d9	0	255	58.561	41.367				awakening_designation_locker	empty	PROPORTIONAL SOURCE	
+17	awakening_designation_locker/source/open_loaded_source.png	1122	1402	RGBA	b40e07fa7eaa	0	255	61.778	38.154				awakening_designation_locker	open_loaded	PROPORTIONAL SOURCE	
+18	awakening_gate_plaza_environment/foreground_source_v1.png	1774	887	RGBA	78148ae1fb38	0	255	50.911	49.028	2	887	887	awakening_gate_plaza_environment	foreground	PROPORTIONAL SOURCE	
+19	awakening_gate_plaza_environment/underlay_source_v1.png	1774	887	RGB	a87f87a3594c					2	887	887	awakening_gate_plaza_environment	underlay	PROPORTIONAL SOURCE	OPAQUE
+20	creche_recovery_alcove.png	1086	1448	RGBA	9fe6d79f210b	0	255	61.48	38.495							UNRESOLVED FAMILY
+21	dust_lung_lift/idle.png	192	256	RGBA	c3375f18514a	0	255	57.513	40.202				awakening_dust_lung_lift	idle	EXACT TARGET	
+22	gate_of_dust/_superseded_derivatives_v1/body_idle_sealed_v1.png	768	512	RGBA	a44e97e53d8a	0	255	50.658	49.003				gate_of_dust			UNRESOLVED STATE
+23	gate_of_dust/_superseded_derivatives_v1/east_pylon_v1.png	256	512	RGBA	b506b18ff2e9	0	255	53.204	46.079	2	256	256	gate_of_dust			UNRESOLVED STATE
+24	gate_of_dust/_superseded_derivatives_v1/sealed_aperture_v1.png	512	512	RGBA	ae4c5a78003c	0	255	33.462	66.176				gate_of_dust			HIGH PARTIAL-ALPHA COVERAGE | UNRESOLVED STATE
+25	gate_of_dust/body_idle_sealed_source_v2.png	1536	1024	RGBA	f9b548d36895	0	254	55.479	44.521				gate_of_dust	body_idle_sealed	PROPORTIONAL SOURCE	
+26	gate_of_dust/east_pylon_source_v1.png	887	1774	RGBA	4e24c724d8ce	0	255	41.127	58.849	2	887	887	gate_of_dust	east_pylon	PROPORTIONAL SOURCE	
+27	gate_of_dust/rest_threshold_source_v1.png	1122	1402	RGBA	0ae0faac9be7	0	255	60.728	39.235				gate_of_dust	rest_threshold	PROPORTIONAL SOURCE	
+28	gate_of_dust/sealed_aperture_source_v1.png	1254	1254	RGBA	6b4a6592416f	0	255	33.058	66.915				gate_of_dust	sealed_aperture	PROPORTIONAL SOURCE	HIGH PARTIAL-ALPHA COVERAGE
+29	gate_of_dust/west_pylon_source_v1.png	887	1774	RGBA	0db6ee3c0380	0	255	51.297	48.676	2	887	887	gate_of_dust	west_pylon	PROPORTIONAL SOURCE	
+30	late_service/late_service_foreground.png	1201	1310	RGBA	cc3aaa4b843c	0	255	42.992	56.985				awakening_late_service_environment	foreground	PROPORTIONAL SOURCE	
+31	late_service/late_service_underlay.png	1201	1310	RGB	25ae6cb3acb7								awakening_late_service_environment	underlay	PROPORTIONAL SOURCE	OPAQUE
+32	undergate/undergate_foreground_source_v1.png	1076	1461	RGBA	4b5b8eddb8f6	0	255	41.772	58.205				awakening_undergate_environment	foreground	PROPORTIONAL SOURCE	
+33	undergate/undergate_underlay_source_v1.png	1076	1461	RGB	405b3580465e								awakening_undergate_environment	underlay	PROPORTIONAL SOURCE	OPAQUE

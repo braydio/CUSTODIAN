@@ -1,0 +1,67 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260910T084715Z_16338cfc",
+  "timestamp": "2026-09-10T08:47:15.848527+00:00",
+  "family": "awakening_gate_plaza_environment",
+  "kind": "backdrop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/awakening_gate_plaza_environment/foreground.png",
+      "sha256": "24444a6282742d5085b1770e149938bc600e504721ce2348bfd41121a347b6a3"
+    },
+    {
+      "path": "asset_drop/inbox/awakening_gate_plaza_environment/underlay.png",
+      "sha256": "001bea56db0971acba79ae5b8a7850866aa21767eab2528713eba376afd6b8f2"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "foreground",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_gate_plaza",
+        "backdrop",
+        "foreground",
+        "display",
+        "foreground",
+        "omni"
+      ],
+      "path": "content/levels/awakening/07_gate_of_dust/awakening_gate_plaza_foreground_1536x768.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "24444a6282742d5085b1770e149938bc600e504721ce2348bfd41121a347b6a3",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "underlay",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_gate_plaza",
+        "backdrop",
+        "background",
+        "display",
+        "underlay",
+        "omni"
+      ],
+      "path": "content/levels/awakening/07_gate_of_dust/awakening_gate_plaza_underlay_1536x768.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "001bea56db0971acba79ae5b8a7850866aa21767eab2528713eba376afd6b8f2",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": false,
+    "ok": null
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

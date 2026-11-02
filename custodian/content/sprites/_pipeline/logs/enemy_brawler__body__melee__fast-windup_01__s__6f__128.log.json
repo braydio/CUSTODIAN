@@ -1,0 +1,12 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/enemy_brawler__body__melee__fast-windup_01__s__6f__128.json",
+	"outputs": [
+		"res://content/sprites/enemies/enemy_brawler/runtime/body/enemy_brawler__body__melee__fast-windup_01__s__6f__128.png",
+		"res://content/sprites/enemies/enemy_brawler/enemy_brawler__body__melee__fast-windup_01__s__6f__128.png"
+	],
+	"post_process": [
+		"enemy_runtime_import"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/enemy_brawler__body__melee__fast-windup_01__s__6f__128.png",
+	"timestamp_utc": "2026-05-22 21:46:45"
+}

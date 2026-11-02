@@ -1,0 +1,198 @@
+{
+	"actions": [
+		{
+			"action": "fixture_command",
+			"ok": true,
+			"response": true,
+			"tick": 18
+		},
+		{
+			"action": "finish",
+			"finish": true,
+			"ok": true,
+			"tick": 130
+		}
+	],
+	"assertions": [
+		{
+			"actual": true,
+			"expected": {
+				"role": "presentation",
+				"severity": "error",
+				"type": "role_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "role_exists"
+		},
+		{
+			"actual": 0,
+			"expected": {
+				"field": "persistent_tiles",
+				"op": "eq",
+				"probe": "threadway_state",
+				"severity": "error",
+				"tick": 0.0,
+				"type": "probe_compare",
+				"value": 0.0
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1,
+			"expected": {
+				"field": "reveal_count",
+				"op": "eq",
+				"probe": "threadway_state",
+				"severity": "error",
+				"tick": 20.0,
+				"type": "probe_compare",
+				"value": 1.0
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"field": "blocker_active",
+				"op": "eq",
+				"probe": "threadway_state",
+				"severity": "error",
+				"tick": 20.0,
+				"type": "probe_compare",
+				"value": true
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 18,
+			"expected": {
+				"field": "persistent_tiles",
+				"op": "eq",
+				"probe": "threadway_state",
+				"severity": "error",
+				"tick": 110.0,
+				"type": "probe_compare",
+				"value": 18.0
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": false,
+			"expected": {
+				"field": "blocker_active",
+				"op": "eq",
+				"probe": "threadway_state",
+				"severity": "error",
+				"tick": 110.0,
+				"type": "probe_compare",
+				"value": false
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": false,
+			"expected": {
+				"severity": "error",
+				"type": "no_unreleased_inputs"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "no_unreleased_inputs"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"path": "telemetry.json",
+				"severity": "error",
+				"type": "output_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "output_exists"
+		}
+	],
+	"capture_failures": [],
+	"capture_mode": "full",
+	"completed": true,
+	"completed_tick": 130,
+	"failures": [],
+	"keyframes": [
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/traversal/ash_bell_threadway_resolve/20260810T143736-0400/keyframes/tick_000000.png",
+			"render_frame": 6,
+			"sha256": "8504a3fa7add2b684f27c6a2abb522150c8d2f171eeca526050eb31fd2588408",
+			"tick": 0
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/traversal/ash_bell_threadway_resolve/20260810T143736-0400/keyframes/tick_000018.png",
+			"render_frame": 24,
+			"sha256": "d779fdfa56d028cbe88a6d2cfd8fa9eba5254eda89c6dfbf321fc339e743adf2",
+			"tick": 18
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/traversal/ash_bell_threadway_resolve/20260810T143736-0400/keyframes/tick_000030.png",
+			"render_frame": 36,
+			"sha256": "a7ebaffe02bd47d901669de2b59d781efe2dd2a393a1b208c5f90edae6fe0971",
+			"tick": 30
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/traversal/ash_bell_threadway_resolve/20260810T143736-0400/keyframes/tick_000046.png",
+			"render_frame": 52,
+			"sha256": "b8c97e3e5fa8eab0717771db86b438a4a9d1bcff945fc348ce5af5ee58fd7252",
+			"tick": 46
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/traversal/ash_bell_threadway_resolve/20260810T143736-0400/keyframes/tick_000068.png",
+			"render_frame": 74,
+			"sha256": "9ead831fafc0aa75a078cdfe4174418a75f997aa1f6f9704cf6da6c4b014e997",
+			"tick": 68
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/traversal/ash_bell_threadway_resolve/20260810T143736-0400/keyframes/tick_000110.png",
+			"render_frame": 116,
+			"sha256": "9ead831fafc0aa75a078cdfe4174418a75f997aa1f6f9704cf6da6c4b014e997",
+			"tick": 110
+		}
+	],
+	"markers": [],
+	"passed": true,
+	"probe_failures": [],
+	"runtime": {
+		"godot": {
+			"build": "arch_linux",
+			"hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+			"hex": 263937,
+			"major": 4,
+			"minor": 7,
+			"patch": 1,
+			"status": "stable",
+			"string": "4.7.1-stable (arch_linux)",
+			"timestamp": 1783976428
+		},
+		"physics_hz": 60,
+		"renderer": "vulkan"
+	},
+	"scenario_id": "traversal/ash_bell_threadway_resolve",
+	"scenario_path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/traversal/ash_bell_threadway_resolve/20260810T143736-0400/scenario.snapshot.json",
+	"schema": "custodian.moment_forge.run_result.v1",
+	"seed": 1138
+}

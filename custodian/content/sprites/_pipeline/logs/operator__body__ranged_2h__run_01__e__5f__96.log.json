@@ -1,0 +1,9 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__body__ranged_2h__run_01__e__5f__96.json",
+	"outputs": [
+		"res://content/sprites/operator/runtime/body/ranged_2h/operator__body__ranged_2h__run_01__e__5f__96.png"
+	],
+	"post_process": [],
+	"source": "res://content/sprites/_pipeline/inbox/operator__body__ranged_2h__run_01__e__5f__96.png",
+	"timestamp_utc": "2026-05-12 11:29:26"
+}

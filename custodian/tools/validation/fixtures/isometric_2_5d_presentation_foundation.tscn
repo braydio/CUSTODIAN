@@ -1,0 +1,28 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/world/presentation/isometric_2_5d/isometric_visual_anchor_2d.gd" id="1"]
+[ext_resource type="Script" path="res://game/world/common/roof_occluder_2d.gd" id="2"]
+
+[node name="Fixture" type="Node2D"]
+y_sort_enabled = true
+
+[node name="RearAnchor" type="Node2D" parent="."]
+position = Vector2(100, 100)
+script = ExtResource("1")
+
+[node name="VisualRoot" type="Node2D" parent="RearAnchor"]
+
+[node name="Sprite" type="Polygon2D" parent="RearAnchor/VisualRoot"]
+polygon = PackedVector2Array(-20, -40, 20, -40, 20, 0, -20, 0)
+
+[node name="FrontAnchor" type="Node2D" parent="."]
+position = Vector2(100, 130)
+script = ExtResource("1")
+
+[node name="VisualRoot" type="Node2D" parent="FrontAnchor"]
+
+[node name="Sprite" type="Polygon2D" parent="FrontAnchor/VisualRoot"]
+polygon = PackedVector2Array(-20, -40, 20, -40, 20, 0, -20, 0)
+
+[node name="Roof" type="Area2D" parent="."]
+script = ExtResource("2")

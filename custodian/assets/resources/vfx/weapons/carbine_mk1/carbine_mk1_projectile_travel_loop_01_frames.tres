@@ -1,0 +1,32 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://qql3rqoiw0pl"]
+
+[ext_resource type="Texture2D" uid="uid://b2bdhdvc6gfwv" path="res://content/sprites/effects/weapons/carbine_mk1/carbine_mk1_projectile_travel_loop_01.png" id="1_travel"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_travel_0"]
+atlas = ExtResource("1_travel")
+region = Rect2(0, 0, 48, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_travel_1"]
+atlas = ExtResource("1_travel")
+region = Rect2(48, 0, 48, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_travel_2"]
+atlas = ExtResource("1_travel")
+region = Rect2(96, 0, 48, 16)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_travel_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_travel_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_travel_2")
+}],
+"loop": 1,
+"name": &"travel",
+"speed": 24.0
+}]

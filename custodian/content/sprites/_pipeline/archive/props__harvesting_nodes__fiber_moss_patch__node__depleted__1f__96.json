@@ -1,0 +1,19 @@
+{
+  "source": "props__harvesting_nodes__fiber_moss_patch__node__depleted__1f__96.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "props/harvesting_nodes/fiber_moss_patch/fiber_moss_patch__node__depleted__1f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 1
+      }
+    }
+  ],
+  "frame_size": [
+    96,
+    96
+  ]
+}

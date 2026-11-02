@@ -1,0 +1,94 @@
+{
+  "source": "custodian/asset_drop/source_work/underlays/drowned_basilica_underlay",
+  "destination": "custodian/asset_drop/inbox/drowned_basilica_underlay",
+  "target_size": [
+    1536,
+    1024
+  ],
+  "files": [
+    {
+      "source": "far_depth_a_master_1536x1024.png",
+      "output": "far_depth_a.png",
+      "original_size": [
+        1448,
+        1086
+      ],
+      "output_size": [
+        1536,
+        1024
+      ],
+      "source_sha256": "322d13f6365356fd401296c9742fd043be4e066022649103bfe4056ad57f7fb4",
+      "resample": "cover_fit_center_crop"
+    },
+    {
+      "source": "far_depth_b_master_1536x1024.png",
+      "output": "far_depth_b.png",
+      "original_size": [
+        1448,
+        1086
+      ],
+      "output_size": [
+        1536,
+        1024
+      ],
+      "source_sha256": "32058255d754ccd9fd5100fac8c65d248dd4b9510fef73a21825360af5c51799",
+      "resample": "cover_fit_center_crop"
+    },
+    {
+      "source": "drowned_basilica_ruin_field_a_1536x1024.png",
+      "output": "ruin_field_a.png",
+      "original_size": [
+        1448,
+        1086
+      ],
+      "output_size": [
+        1536,
+        1024
+      ],
+      "source_sha256": "8593001fc1bb7b84ddcdf5b0410665d87b3b89aab856d62eb5f689379f76a5fc",
+      "resample": "cover_fit_center_crop"
+    },
+    {
+      "source": "drowned_basilica_ruin_field_b_1536x1024.png",
+      "output": "ruin_field_b.png",
+      "original_size": [
+        1448,
+        1086
+      ],
+      "output_size": [
+        1536,
+        1024
+      ],
+      "source_sha256": "99b8fa516fa227404f85f8c97485280f5a62be2a1c4d361654e98c4e7c72e809",
+      "resample": "cover_fit_center_crop"
+    },
+    {
+      "source": "drowned_basilica_near_wall_a_1536x1024.png",
+      "output": "near_wall_a.png",
+      "original_size": [
+        1448,
+        1086
+      ],
+      "output_size": [
+        1536,
+        1024
+      ],
+      "source_sha256": "3e1173ba87bc087191395b86a7d5d5d5a6408764b139e22c0c37eb901f61ad7c",
+      "resample": "cover_fit_center_crop"
+    },
+    {
+      "source": "drowned_basilica_near_wall_b_1536x1024.png",
+      "output": "near_wall_b.png",
+      "original_size": [
+        1448,
+        1086
+      ],
+      "output_size": [
+        1536,
+        1024
+      ],
+      "source_sha256": "f5b9993cf1979ba6ff91129d6a09e0d98ff708c30f696ad570f0c334e1902dff",
+      "resample": "cover_fit_center_crop"
+    }
+  ]
+}

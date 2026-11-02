@@ -1,0 +1,123 @@
+{
+	"actions": [
+		{
+			"action": "capture_marker",
+			"ok": true,
+			"tick": 16
+		},
+		{
+			"action": "finish",
+			"finish": true,
+			"ok": true,
+			"tick": 238
+		}
+	],
+	"assertions": [
+		{
+			"actual": true,
+			"expected": {
+				"role": "approach",
+				"severity": "error",
+				"type": "role_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "role_exists"
+		},
+		{
+			"actual": false,
+			"expected": {
+				"severity": "error",
+				"type": "no_unreleased_inputs"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "no_unreleased_inputs"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"path": "telemetry.json",
+				"severity": "error",
+				"type": "output_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "output_exists"
+		}
+	],
+	"capture_failures": [],
+	"capture_mode": "full",
+	"completed": true,
+	"completed_tick": 238,
+	"failures": [],
+	"keyframes": [
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/vista/sundered_keep_first_reveal/20260810T140539-0400/keyframes/tick_000000.png",
+			"render_frame": 6,
+			"sha256": "311b04e9aa925961763b649bff2e8ff900319103ff1575954ef0ee1f90e00fdf",
+			"tick": 0
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/vista/sundered_keep_first_reveal/20260810T140539-0400/keyframes/tick_000036.png",
+			"render_frame": 42,
+			"sha256": "c901a389a966d6c61eed6dc46086dc61182bfe365345f36530e6564a89202357",
+			"tick": 36
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/vista/sundered_keep_first_reveal/20260810T140539-0400/keyframes/tick_000072.png",
+			"render_frame": 78,
+			"sha256": "0d2812a5215d724cf526e50b5624dd6178ce218aa7b27064eaa2cb112f66d4e8",
+			"tick": 72
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/vista/sundered_keep_first_reveal/20260810T140539-0400/keyframes/tick_000108.png",
+			"render_frame": 114,
+			"sha256": "e15ab71934789892a334f8530a34139282fa705e9741f3ded493934779a1861e",
+			"tick": 108
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/vista/sundered_keep_first_reveal/20260810T140539-0400/keyframes/tick_000156.png",
+			"render_frame": 162,
+			"sha256": "8484a63c90aee7912af5f216baed7ba5b51d2073123b6191de66b18ff1eb8696",
+			"tick": 156
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/vista/sundered_keep_first_reveal/20260810T140539-0400/keyframes/tick_000228.png",
+			"render_frame": 234,
+			"sha256": "06a839dfa0f2dee9cdf1bd9fc2e96869b92312eddc80431c8be6afb5f72795e2",
+			"tick": 228
+		}
+	],
+	"markers": [
+		{
+			"data": {},
+			"name": "first_reveal_threshold",
+			"tick": 16
+		}
+	],
+	"passed": true,
+	"probe_failures": [],
+	"runtime": {
+		"godot": {
+			"build": "arch_linux",
+			"hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+			"hex": 263937,
+			"major": 4,
+			"minor": 7,
+			"patch": 1,
+			"status": "stable",
+			"string": "4.7.1-stable (arch_linux)",
+			"timestamp": 1783976428
+		},
+		"physics_hz": 60,
+		"renderer": "vulkan"
+	},
+	"scenario_id": "vista/sundered_keep_first_reveal",
+	"scenario_path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/vista/sundered_keep_first_reveal/20260810T140539-0400/scenario.snapshot.json",
+	"schema": "custodian.moment_forge.run_result.v1",
+	"seed": 104729
+}

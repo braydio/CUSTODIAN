@@ -1,0 +1,44 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260907T020741Z_5d9c582c",
+  "timestamp": "2026-09-07T02:07:41.438142+00:00",
+  "family": "awakening_dust_lung_environment",
+  "kind": "backdrop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/awakening_dust_lung_environment/underlay.png",
+      "sha256": "63d31f9cfef83cc42844d12f4e61b1787bd9906b520207f65d613e1fd50e3759"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "underlay",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_dust_lung",
+        "backdrop",
+        "background",
+        "display",
+        "underlay",
+        "omni"
+      ],
+      "path": "content/levels/awakening/05_dust_lung/awakening_dust_lung_underlay_1216x1216.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "63d31f9cfef83cc42844d12f4e61b1787bd9906b520207f65d613e1fd50e3759",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

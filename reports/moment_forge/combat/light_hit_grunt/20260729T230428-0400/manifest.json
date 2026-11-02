@@ -1,0 +1,143 @@
+{
+  "artifacts": {
+    "assertions": "assertions.json",
+    "audio": null,
+    "contact_sheet": null,
+    "metrics": "metrics.json",
+    "probes": "probes.json",
+    "report": "index.html",
+    "telemetry": "telemetry.json",
+    "timeline": "timeline.json",
+    "video": null,
+    "visual_diff": null
+  },
+  "baseline": {
+    "status": "not_requested"
+  },
+  "baseline_compatibility": {
+    "contact_sheet_ticks": [
+      0,
+      24,
+      30,
+      34,
+      40,
+      72
+    ],
+    "end_tick": 119,
+    "fps": 60,
+    "height": 720,
+    "metrics_schema_major": 1,
+    "scenario_id": "combat/light_hit_grunt",
+    "scenario_schema_version": 1,
+    "scenario_sha256": "96b3f759ccf2b41b548259ed4fddec6e20389910497307cd287ef5258262111a",
+    "start_tick": 0,
+    "width": 1280
+  },
+  "capture": {
+    "audio_requested": true,
+    "fps": 60,
+    "height": 720,
+    "mode": "none",
+    "synchronization": "not_requested",
+    "width": 1280
+  },
+  "generated_at": "2026-07-29T23:04:30.770739-04:00",
+  "media": {
+    "audio_metrics": {
+      "available": false
+    },
+    "audio_state": {
+      "available": false,
+      "conversion": "source_missing",
+      "requested": true
+    },
+    "ffmpeg_available": true,
+    "visual_diff": null
+  },
+  "repository": {
+    "branch": "main",
+    "changed_files": [
+      "M custodian/content/ui/inventory/README.md",
+      " M custodian/docs/ai_context/CURRENT_STATE.md",
+      " M custodian/docs/ai_context/FILE_INDEX.md",
+      " M custodian/docs/ai_context/VALIDATION_RECIPES.md",
+      " M custodian/docs/ai_context/task_packets/MOMENT_FORGE_V1.md",
+      " M custodian/game/actors/enemies/enemy.gd",
+      " M custodian/game/actors/operator/operator.gd",
+      " M custodian/game/actors/operator/operator.tscn",
+      " M custodian/game/actors/projectiles/bullet.gd",
+      " M custodian/game/systems/core/systems/inventory_manager.gd",
+      " M custodian/game/ui/inventory/inventory_asset_catalog.gd",
+      " M custodian/game/ui/inventory/inventory_item_catalog.gd",
+      " M custodian/game/ui/inventory/inventory_ui.gd",
+      " M custodian/tools/iteration/godot/moment_probe_collector.gd",
+      " M custodian/tools/iteration/godot/moment_runner.gd",
+      " M custodian/tools/iteration/run_moment.py",
+      " M custodian/tools/iteration/scenarios/combat/heavy_hit_grunt.json",
+      " M custodian/tools/iteration/scenarios/combat/light_hit_grunt.json",
+      " M design/02_features/combat_feel/COMBAT_RESOURCE_AND_READABILITY_SYSTEM.md",
+      "?? custodian/content/items/relics/",
+      "?? custodian/content/sprites/effects/combat/status/",
+      "?? custodian/content/ui/inventory/runtime/icons/relics/",
+      "?? custodian/game/systems/combat/engagement_tracker.gd",
+      "?? custodian/game/systems/combat/engagement_tracker.gd.uid",
+      "?? custodian/game/vfx/initiative_claimed_vfx.gd",
+      "?? custodian/game/vfx/initiative_claimed_vfx.gd.uid",
+      "?? custodian/game/vfx/initiative_claimed_vfx.tscn",
+      "?? custodian/tools/validation/initiative_vanguard_seal_smoke.gd",
+      "?? custodian/tools/validation/initiative_vanguard_seal_smoke.gd.uid",
+      "?? custodian/tools/validation/operator_visual_anchor_smoke.gd",
+      "?? custodian/tools/validation/operator_visual_anchor_smoke.gd.uid",
+      "?? design/02_features/combat_feel/FIRST_STRIKE_AND_INITIATIVE.md",
+      "?? fix_operator_visual_anchor.patch",
+      "?? reports/moment_forge/combat/heavy_hit_grunt/visual-anchor-probe-smoke/",
+      "?? reports/moment_forge/combat/light_hit_grunt/20260729T173311-0400/",
+      "?? reports/moment_forge/combat/light_hit_grunt/20260729T230358-0400/",
+      "?? reports/moment_forge/combat/light_hit_grunt/20260729T230428-0400/",
+      "?? reports/moment_forge/combat/light_hit_grunt/visual-anchor-fix-final/",
+      "?? reports/moment_forge/combat/light_hit_grunt/visual-anchor-fix-regression-2/",
+      "?? reports/moment_forge/combat/light_hit_grunt/visual-anchor-fix-regression/",
+      "?? reports/moment_forge/combat/light_hit_grunt/visual-anchor-fix/",
+      "?? reports/moment_forge/combat/light_hit_grunt/visual-anchor-metric-smoke/",
+      "?? reports/moment_forge/combat/light_hit_grunt/visual-anchor-probe-smoke/"
+    ],
+    "commit": "aa80639d67d6535233756e5a35b82e1a3d524c03",
+    "dirty": true,
+    "root": "/home/braydenchaffee/Projects/CUSTODIAN"
+  },
+  "run_id": "20260729T230428-0400",
+  "runtime": {
+    "godot": {
+      "build": "arch_linux",
+      "hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+      "hex": 263937,
+      "major": 4,
+      "minor": 7,
+      "patch": 1,
+      "status": "stable",
+      "string": "4.7.1-stable (arch_linux)",
+      "timestamp": 1783976428
+    },
+    "physics_hz": 60,
+    "renderer": "vulkan"
+  },
+  "scenario": {
+    "id": "combat/light_hit_grunt",
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/20260729T230428-0400/scenario.snapshot.json",
+    "schema_version": 1,
+    "sha256": "96b3f759ccf2b41b548259ed4fddec6e20389910497307cd287ef5258262111a"
+  },
+  "schema": "custodian.moment_forge.run_manifest.v1",
+  "stable_assertions_passed": true,
+  "stable_fingerprint": {
+    "algorithm": "sha256",
+    "schema": "custodian.moment_forge.stable_fingerprint.v1",
+    "value": "157a52e6b5a4dc05da1c44957080300efbe5cf8cfee37496857fe623fa44ac81"
+  },
+  "status": "partial_media",
+  "tools": {
+    "ffmpeg": "/usr/bin/ffmpeg",
+    "pillow": "12.3.0",
+    "python": "3.14.6"
+  }
+}

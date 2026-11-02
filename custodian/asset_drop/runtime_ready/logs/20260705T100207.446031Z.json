@@ -1,0 +1,53 @@
+{
+  "job_id": "20260705T100207.446031Z",
+  "project_dir": "/home/braydenchaffee/Projects/CUSTODIAN/custodian",
+  "drop_dir": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/asset_drop/runtime_ready",
+  "replace": false,
+  "summary": {
+    "total": 4,
+    "accepted": 4,
+    "copied": 4,
+    "replaced": 0,
+    "duplicates": 0,
+    "planned": 0,
+    "rejected": 0
+  },
+  "results": [
+    {
+      "source": "weapons/p9_custodian_sidearm/runtime/icon/p9_custodian_sidearm__icon__inventory__default__omni__1f__128.png",
+      "targets": [
+        "weapons/p9_custodian_sidearm/runtime/icon/p9_custodian_sidearm__icon__inventory__default__omni__1f__128.png"
+      ],
+      "status": "copied",
+      "detail": "copied to runtime content",
+      "sha256": "9e59234356307e78632e78464803cebcef4188f2169f3cc1c5f92bfba9a4fd05"
+    },
+    {
+      "source": "weapons/p9_custodian_sidearm/runtime/portrait/p9_custodian_sidearm__icon__hud__default__omni__1f__64.png",
+      "targets": [
+        "weapons/p9_custodian_sidearm/runtime/portrait/p9_custodian_sidearm__icon__hud__default__omni__1f__64.png"
+      ],
+      "status": "copied",
+      "detail": "copied to runtime content",
+      "sha256": "61a6e6953f821c002d4d8c18642fd25b1cb42093a4411d3572c95e4237d45481"
+    },
+    {
+      "source": "weapons/p9_custodian_sidearm/runtime/portrait/p9_custodian_sidearm__item_card__inventory__default__omni__1f__256.png",
+      "targets": [
+        "weapons/p9_custodian_sidearm/runtime/portrait/p9_custodian_sidearm__item_card__inventory__default__omni__1f__256.png"
+      ],
+      "status": "copied",
+      "detail": "copied to runtime content",
+      "sha256": "a3705b3d5a85c4ea380902abbe1a206e38c3003252251373f966c76b8105c090"
+    },
+    {
+      "source": "weapons/p9_custodian_sidearm/runtime/portrait/p9_custodian_sidearm__portrait__inventory__default__omni__1f__512.png",
+      "targets": [
+        "weapons/p9_custodian_sidearm/runtime/portrait/p9_custodian_sidearm__portrait__inventory__default__omni__1f__512.png"
+      ],
+      "status": "copied",
+      "detail": "copied to runtime content",
+      "sha256": "448fc4bef7e6bbff73f7a577ff9b9f8bd56f91ff56a344e90902f5d98e16ec9e"
+    }
+  ]
+}

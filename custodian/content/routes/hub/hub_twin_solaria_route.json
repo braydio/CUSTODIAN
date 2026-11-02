@@ -1,0 +1,41 @@
+{
+  "schema": "custodian.route_definition.v1",
+  "route_id": "hub_twin_solaria",
+  "display_name": "Hub Crown Transfer / Twin Solaria",
+  "world_context": "hub",
+  "default_profile": "production",
+  "tags": ["authored", "hub", "twin_solaria"],
+  "nodes": [
+    {"node_id": "twin_solaria", "level_id": "hub_twin_solaria"}
+  ],
+  "edges": [
+    {
+      "edge_id": "crown_transfer_to_twin_solaria",
+      "from_node_id": "@world_origin",
+      "exit_id": "enter",
+      "to_node_id": "twin_solaria",
+      "target_spawn_id": "Spawn_CrownCauseway",
+      "direction": "forward",
+      "transition_style": "fade"
+    },
+    {
+      "edge_id": "twin_solaria_return_to_hub",
+      "from_node_id": "twin_solaria",
+      "exit_id": "return_hub",
+      "to_node_id": "@world_origin",
+      "target_spawn_id": "",
+      "direction": "exfil",
+      "transition_style": "fade"
+    }
+  ],
+  "profiles": [
+    {
+      "profile_id": "production",
+      "entry_edge_id": "crown_transfer_to_twin_solaria",
+      "enabled_edge_ids": [
+        "crown_transfer_to_twin_solaria",
+        "twin_solaria_return_to_hub"
+      ]
+    }
+  ]
+}

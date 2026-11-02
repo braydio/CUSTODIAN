@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>CUSTODIAN Atlas Coordinate Maker</title>
+<style>
+  :root { color-scheme: dark; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #111317; color: #e8edf2; height: 100vh; overflow: hidden; }
+  #app { display: grid; grid-template-columns: 330px 1fr; height: 100vh; }
+  #side { padding: 14px; border-right: 1px solid #303640; overflow: auto; background: #171a20; }
+  h1 { margin: 0 0 12px; font-size: 16px; }
+  h2 { margin: 18px 0 8px; font-size: 13px; color: #bcc6d2; }
+  label { display:block; font-size: 11px; color:#aab4c0; margin: 8px 0 3px; }
+  input, select, button, textarea { width:100%; background:#222731; border:1px solid #3a424f; color:#eef3f7; padding:7px 8px; border-radius:5px; font: inherit; }
+  button { cursor:pointer; }
+  button:hover { background:#2b323e; }
+  .row { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
+  .row3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:7px; }
+  .muted { color:#8e99a6; font-size:11px; line-height:1.45; }
+  .good { color:#91d39f; }
+  .warn { color:#e5bd72; }
+  #stageWrap { position:relative; overflow:hidden; background:#0d0f12; }
+  #canvas { display:block; width:100%; height:100%; cursor:crosshair; }
+  #status { position:absolute; left:10px; bottom:10px; padding:5px 8px; border-radius:4px; background:rgba(0,0,0,.72); color:#d7dee7; font-size:11px; pointer-events:none; }
+  #regionList { max-height:260px; overflow:auto; border:1px solid #303640; border-radius:5px; }
+  .region { padding:7px; border-bottom:1px solid #282e37; cursor:pointer; font-size:11px; }
+  .region:last-child { border-bottom:0; }
+  .region.sel { background:#303846; }
+  .region b { color:#fff; }
+  kbd { padding:1px 4px; border:1px solid #4b5461; background:#20252d; border-radius:3px; font-size:10px; }
+</style>
+</head>
+<body>
+<div id="app">
+  <aside id="side">
+    <h1>CUSTODIAN Atlas Coordinate Maker</h1>
+    <div class="muted">Local-only source annotation. Drag boxes over the source art, name them, export deterministic pixel coordinates. Nothing is uploaded.</div>
+
+    <h2>Source</h2>
+    <input id="imageInput" type="file" accept="image/png,image/webp,image/jpeg" />
+    <div id="sourceInfo" class="muted" style="margin-top:6px">No image loaded.</div>
+
+    <h2>Selection</h2>
+    <label>Label</label>
+    <input id="labelInput" placeholder="wall_face_clean_01" />
+    <label>Category</label>
+    <select id="categoryInput">
+      <option value="prop">prop</option>
+      <option value="wall_face">wall_face</option>
+      <option value="wall_top">wall_top</option>
+      <option value="wall_base">wall_base</option>
+      <option value="wall_edge">wall_edge</option>
+      <option value="wall_corner">wall_corner</option>
+      <option value="wall_facade">wall_facade</option>
+      <option value="opening">opening</option>
+      <option value="damage">damage</option>
+      <option value="debris_transition">debris_transition</option>
+      <option value="floor_overlay">floor_overlay</option>
+      <option value="manual">manual</option>
+    </select>
+
+    <div class="row3">
+      <div><label>X</label><input id="xInput" type="number" step="1" /></div>
+      <div><label>Y</label><input id="yInput" type="number" step="1" /></div>
+      <div><label>Snap</label><input id="snapInput" type="number" min="1" step="1" value="1" /></div>
+    </div>
+    <div class="row">
+      <div><label>W</label><input id="wInput" type="number" min="1" step="1" /></div>
+      <div><label>H</label><input id="hInput" type="number" min="1" step="1" /></div>
+    </div>
+
+    <div class="row" style="margin-top:9px">
+      <button id="saveBtn">Add / Update</button>
+      <button id="deleteBtn">Delete selected</button>
+    </div>
+    <div class="row" style="margin-top:7px">
+      <button id="cell32Btn">Make 32×32 at cursor</button>
+      <button id="clearBtn">Clear draft</button>
+    </div>
+
+    <h2>Regions <span id="countText" class="muted"></span></h2>
+    <div id="regionList"></div>
+
+    <h2>Import / Export</h2>
+    <div class="row">
+      <button id="exportBtn">Export JSON</button>
+      <button id="overlayBtn">Export overlay PNG</button>
+    </div>
+    <label style="margin-top:8px">Import prior JSON</label>
+    <input id="jsonInput" type="file" accept="application/json,.json" />
+    <button id="copyBtn" style="margin-top:7px">Copy selected coords</button>
+
+    <h2>Controls</h2>
+    <div class="muted">
+      <kbd>LMB drag</kbd> draw/select region<br>
+      <kbd>Wheel</kbd> zoom at cursor<br>
+      <kbd>Space + drag</kbd> pan<br>
+      <kbd>MMB drag</kbd> pan<br>
+      <kbd>Enter</kbd> add/update<br>
+      <kbd>Delete</kbd> delete selected<br>
+      <kbd>Esc</kbd> cancel draft<br><br>
+      Set <b>Snap = 32</b> when marking fixed wall cells. Leave <b>Snap = 1</b> for native props or irregular facade pieces.
+    </div>
+  </aside>
+  <main id="stageWrap">
+    <canvas id="canvas"></canvas>
+    <div id="status">x: -, y: -, zoom: 1.00×</div>
+  </main>
+</div>
+<script>
+(() => {
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  const wrap = document.getElementById('stageWrap');
+  const imageInput = document.getElementById('imageInput');
+  const jsonInput = document.getElementById('jsonInput');
+  const sourceInfo = document.getElementById('sourceInfo');
+  const status = document.getElementById('status');
+  const regionList = document.getElementById('regionList');
+  const countText = document.getElementById('countText');
+  const labelInput = document.getElementById('labelInput');
+  const categoryInput = document.getElementById('categoryInput');
+  const xInput = document.getElementById('xInput');
+  const yInput = document.getElementById('yInput');
+  const wInput = document.getElementById('wInput');
+  const hInput = document.getElementById('hInput');
+  const snapInput = document.getElementById('snapInput');
+
+  const state = {
+    img: null, filename: '', regions: [], selected: -1,
+    draft: null, zoom: 1, panX: 0, panY: 0,
+    dragging: false, panning: false, space: false,
+    start: null, lastMouseImage: {x:0,y:0}
+  };
+
+  function resize() {
+    const r = wrap.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.floor(r.width * dpr);
+    canvas.height = Math.floor(r.height * dpr);
+    canvas.style.width = r.width + 'px';
+    canvas.style.height = r.height + 'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    draw();
+  }
+  window.addEventListener('resize', resize);
+
+  function snap(v) {
+    const s = Math.max(1, parseInt(snapInput.value || '1', 10));
+    return Math.round(v / s) * s;
+  }
+  function screenToImage(clientX, clientY) {
+    const r = canvas.getBoundingClientRect();
+    return {
+      x: (clientX - r.left - state.panX) / state.zoom,
+      y: (clientY - r.top - state.panY) / state.zoom,
+    };
+  }
+  function normalizeRect(a,b) {
+    let x0 = snap(Math.min(a.x,b.x)); let y0 = snap(Math.min(a.y,b.y));
+    let x1 = snap(Math.max(a.x,b.x)); let y1 = snap(Math.max(a.y,b.y));
+    if (state.img) {
+      x0 = Math.max(0,Math.min(state.img.width,x0)); y0 = Math.max(0,Math.min(state.img.height,y0));
+      x1 = Math.max(0,Math.min(state.img.width,x1)); y1 = Math.max(0,Math.min(state.img.height,y1));
+    }
+    return {x:Math.round(x0),y:Math.round(y0),w:Math.max(1,Math.round(x1-x0)),h:Math.max(1,Math.round(y1-y0))};
+  }
+  function syncInputsFromRect(r) {
+    if (!r) return;
+    xInput.value=r.x; yInput.value=r.y; wInput.value=r.w; hInput.value=r.h;
+  }
+  function rectFromInputs() {
+    return {x:+xInput.value||0,y:+yInput.value||0,w:Math.max(1,+wInput.value||1),h:Math.max(1,+hInput.value||1)};
+  }
+  function activeRect() {
+    if (state.draft) return state.draft;
+    if (state.selected >= 0) return state.regions[state.selected].rect;
+    return null;
+  }
+  function fitImage() {
+    if (!state.img) return;
+    const r=wrap.getBoundingClientRect();
+    state.zoom=Math.min((r.width-40)/state.img.width,(r.height-40)/state.img.height,1.5);
+    state.panX=(r.width-state.img.width*state.zoom)/2;
+    state.panY=(r.height-state.img.height*state.zoom)/2;
+  }
+  function drawChecker(w,h) {
+    const s=16;
+    for(let y=0;y<h;y+=s) for(let x=0;x<w;x+=s) {
+      ctx.fillStyle=((x/s+y/s)%2)?'#3a3d43':'#24272c'; ctx.fillRect(x,y,s,s);
+    }
+  }
+  function draw() {
+    const r=canvas.getBoundingClientRect();
+    ctx.save(); ctx.setTransform(1,0,0,1,0,0); ctx.clearRect(0,0,r.width,r.height); ctx.restore();
+    if (!state.img) return;
+    ctx.save(); ctx.translate(state.panX,state.panY); ctx.scale(state.zoom,state.zoom);
+    drawChecker(state.img.width,state.img.height); ctx.imageSmoothingEnabled=false; ctx.drawImage(state.img,0,0);
+    state.regions.forEach((reg,i) => drawRegion(reg.rect, reg.label || reg.id, i===state.selected, false, i+1));
+    if (state.draft) drawRegion(state.draft,'draft',true,true,null);
+    ctx.restore();
+  }
+  function drawRegion(rect,label,selected,draft,num) {
+    ctx.save();
+    ctx.lineWidth=(selected?2:1)/state.zoom;
+    ctx.strokeStyle=draft?'#fff36b':selected?'#6ee7ff':'#ff5d73';
+    ctx.fillStyle=draft?'rgba(255,243,107,.12)':selected?'rgba(110,231,255,.12)':'rgba(255,93,115,.08)';
+    ctx.fillRect(rect.x,rect.y,rect.w,rect.h); ctx.strokeRect(rect.x+.5/state.zoom,rect.y+.5/state.zoom,rect.w-1/state.zoom,rect.h-1/state.zoom);
+    const text=(num?num+'. ':'')+label+' ['+rect.x+','+rect.y+' '+rect.w+'×'+rect.h+']';
+    ctx.font=(12/state.zoom)+'px monospace';
+    const m=ctx.measureText(text); const th=16/state.zoom;
+    ctx.fillStyle='rgba(0,0,0,.8)'; ctx.fillRect(rect.x,Math.max(0,rect.y-th),m.width+6/state.zoom,th);
+    ctx.fillStyle='#fff'; ctx.fillText(text,rect.x+3/state.zoom,Math.max(11/state.zoom,rect.y-4/state.zoom));
+    ctx.restore();
+  }
+
+  function updateList() {
+    countText.textContent='('+state.regions.length+')'; regionList.innerHTML='';
+    state.regions.forEach((reg,i)=>{
+      const el=document.createElement('div'); el.className='region'+(i===state.selected?' sel':'');
+      el.innerHTML=`<b>${i+1}. ${escapeHtml(reg.label||reg.id)}</b><br>${escapeHtml(reg.category)} • ${reg.rect.x},${reg.rect.y} ${reg.rect.w}×${reg.rect.h}`;
+      el.onclick=()=>selectRegion(i); regionList.appendChild(el);
+    }); draw();
+  }
+  function escapeHtml(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+  function selectRegion(i) {
+    state.selected=i; state.draft=null; const reg=state.regions[i];
+    labelInput.value=reg.label; categoryInput.value=reg.category; syncInputsFromRect(reg.rect); updateList();
+  }
+  function autoLabel(cat) {
+    let n=1; const re=new RegExp('^'+cat.replace(/[.*+?^${}()|[\\]\\]/g,'\\$&')+'_([0-9]+)$');
+    state.regions.forEach(r=>{const m=(r.label||'').match(re); if(m)n=Math.max(n,+m[1]+1);});
+    return `${cat}_${String(n).padStart(2,'0')}`;
+  }
+  function saveRegion() {
+    if (!state.img) return;
+    const rect=rectFromInputs(); const cat=categoryInput.value; const label=(labelInput.value.trim()||autoLabel(cat));
+    const item={id:label,label,category:cat,rect};
+    if(state.selected>=0) state.regions[state.selected]=item; else {state.regions.push(item); state.selected=state.regions.length-1;}
+    state.draft=null; labelInput.value=label; updateList();
+  }
+  function deleteSelected() {
+    if(state.selected<0)return; state.regions.splice(state.selected,1); state.selected=-1; state.draft=null; updateList();
+  }
+  function exportJson() {
+    if(!state.img)return;
+    const payload={
+      schema:'custodian.atlas_coordinates.v1',
+      source:{filename:state.filename,width:state.img.width,height:state.img.height},
+      authored_cell_px:32,
+      regions:state.regions.map((r,i)=>({
+        index:i+1,id:r.id,label:r.label,category:r.category,
+        rect_px:[r.rect.x,r.rect.y,r.rect.w,r.rect.h],
+        cell_rect:(r.rect.x%32===0&&r.rect.y%32===0&&r.rect.w%32===0&&r.rect.h%32===0)?[r.rect.x/32,r.rect.y/32,r.rect.w/32,r.rect.h/32]:null
+      }))
+    };
+    download(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}), stem(state.filename)+'__coords.json');
+  }
+  function exportOverlay() {
+    if(!state.img)return;
+    const c=document.createElement('canvas'); c.width=state.img.width; c.height=state.img.height; const x=c.getContext('2d');
+    x.imageSmoothingEnabled=false; x.drawImage(state.img,0,0); x.font='14px monospace';
+    state.regions.forEach((reg,i)=>{const r=reg.rect; x.strokeStyle='#ff4f6d';x.lineWidth=2;x.strokeRect(r.x,r.y,r.w,r.h); const t=`${i+1} ${reg.label} [${r.x},${r.y} ${r.w}x${r.h}]`; const m=x.measureText(t);x.fillStyle='rgba(0,0,0,.82)';x.fillRect(r.x,Math.max(0,r.y-18),m.width+6,18);x.fillStyle='#fff';x.fillText(t,r.x+3,Math.max(14,r.y-4));});
+    c.toBlob(b=>download(b,stem(state.filename)+'__coords_overlay.png'),'image/png');
+  }
+  function download(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
+  function stem(n){return (n||'atlas').replace(/\.[^.]+$/,'');}
+
+  imageInput.onchange=()=>{
+    const f=imageInput.files[0]; if(!f)return; state.filename=f.name;
+    const url=URL.createObjectURL(f); const im=new Image(); im.onload=()=>{state.img=im; state.regions=[]; state.selected=-1; state.draft=null; fitImage(); sourceInfo.innerHTML=`<span class="good">${escapeHtml(f.name)}</span><br>${im.width}×${im.height}px RGBA/source`; updateList(); URL.revokeObjectURL(url);}; im.src=url;
+  };
+  jsonInput.onchange=async()=>{
+    const f=jsonInput.files[0]; if(!f)return; const j=JSON.parse(await f.text());
+    if(j.source && state.img && (j.source.width!==state.img.width||j.source.height!==state.img.height)) alert('Warning: imported coordinate JSON dimensions differ from loaded image.');
+    state.regions=(j.regions||[]).map(r=>{const a=r.rect_px||[0,0,1,1];return {id:r.id||r.label,label:r.label||r.id,category:r.category||'manual',rect:{x:a[0],y:a[1],w:a[2],h:a[3]}}}); state.selected=-1; updateList();
+  };
+
+  canvas.addEventListener('mousedown',e=>{
+    if(!state.img)return; const p=screenToImage(e.clientX,e.clientY); state.lastMouseImage=p;
+    if(e.button===1 || state.space){state.panning=true;state.start={x:e.clientX,y:e.clientY,panX:state.panX,panY:state.panY};return;}
+    if(e.button!==0)return;
+    // Select existing rect if click is inside one; otherwise start a draft drag.
+    for(let i=state.regions.length-1;i>=0;i--){const r=state.regions[i].rect;if(p.x>=r.x&&p.x<=r.x+r.w&&p.y>=r.y&&p.y<=r.y+r.h){selectRegion(i);return;}}
+    state.selected=-1; state.dragging=true; state.start=p; state.draft={x:snap(p.x),y:snap(p.y),w:1,h:1}; syncInputsFromRect(state.draft); updateList();
+  });
+  canvas.addEventListener('mousemove',e=>{
+    if(!state.img)return; const p=screenToImage(e.clientX,e.clientY); state.lastMouseImage=p;
+    status.textContent=`x: ${Math.floor(p.x)}, y: ${Math.floor(p.y)}, zoom: ${state.zoom.toFixed(2)}×`;
+    if(state.panning){state.panX=state.start.panX+(e.clientX-state.start.x);state.panY=state.start.panY+(e.clientY-state.start.y);draw();return;}
+    if(state.dragging){state.draft=normalizeRect(state.start,p);syncInputsFromRect(state.draft);draw();}
+  });
+  window.addEventListener('mouseup',()=>{state.dragging=false;state.panning=false;});
+  canvas.addEventListener('wheel',e=>{
+    if(!state.img)return;e.preventDefault(); const before=screenToImage(e.clientX,e.clientY); const factor=e.deltaY<0?1.15:1/1.15; state.zoom=Math.min(12,Math.max(.08,state.zoom*factor)); const r=canvas.getBoundingClientRect(); state.panX=e.clientX-r.left-before.x*state.zoom;state.panY=e.clientY-r.top-before.y*state.zoom;draw();
+  },{passive:false});
+  window.addEventListener('keydown',e=>{if(e.code==='Space'){state.space=true;e.preventDefault();} if(e.key==='Enter'){saveRegion();e.preventDefault();} if(e.key==='Delete'){deleteSelected();e.preventDefault();} if(e.key==='Escape'){state.draft=null;draw();}});
+  window.addEventListener('keyup',e=>{if(e.code==='Space')state.space=false;});
+
+  ['xInput','yInput','wInput','hInput'].forEach(id=>document.getElementById(id).addEventListener('input',()=>{const r=rectFromInputs(); if(state.draft)state.draft=r; else if(state.selected>=0)state.regions[state.selected].rect=r; draw();}));
+  document.getElementById('saveBtn').onclick=saveRegion;
+  document.getElementById('deleteBtn').onclick=deleteSelected;
+  document.getElementById('clearBtn').onclick=()=>{state.draft=null;draw();};
+  document.getElementById('exportBtn').onclick=exportJson;
+  document.getElementById('overlayBtn').onclick=exportOverlay;
+  document.getElementById('copyBtn').onclick=async()=>{const r=activeRect();if(!r)return;const text=`[${r.x}, ${r.y}, ${r.w}, ${r.h}]`;await navigator.clipboard.writeText(text);};
+  document.getElementById('cell32Btn').onclick=()=>{if(!state.img)return; const p=state.lastMouseImage; const x=Math.floor(p.x/32)*32,y=Math.floor(p.y/32)*32;state.draft={x,y,w:32,h:32};syncInputsFromRect(state.draft);draw();};
+
+  resize();
+})();
+</script>
+</body>
+</html>

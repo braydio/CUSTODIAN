@@ -1,0 +1,238 @@
+[
+  {
+    "id": "ambient_baby_opossum",
+    "kind": "ambient_creature"
+  },
+  {
+    "id": "ash_bell_overlap",
+    "kind": "tile"
+  },
+  {
+    "id": "awakening_ambulatory_environment",
+    "kind": "backdrop"
+  },
+  {
+    "id": "awakening_ambulatory_fixtures",
+    "kind": "world_prop"
+  },
+  {
+    "id": "awakening_approach_fixtures",
+    "kind": "world_prop"
+  },
+  {
+    "id": "awakening_attestation_environment",
+    "kind": "backdrop"
+  },
+  {
+    "id": "awakening_attestation_fixtures",
+    "kind": "world_prop"
+  },
+  {
+    "id": "awakening_authority_inlay",
+    "kind": "tile"
+  },
+  {
+    "id": "awakening_creche_console",
+    "kind": "world_prop"
+  },
+  {
+    "id": "awakening_creche_console_activation_fx",
+    "kind": "effect"
+  },
+  {
+    "id": "awakening_creche_environment",
+    "kind": "backdrop"
+  },
+  {
+    "id": "awakening_creche_fixtures",
+    "kind": "world_prop"
+  },
+  {
+    "id": "awakening_creche_recovery_alcove",
+    "kind": "world_prop"
+  },
+  {
+    "id": "awakening_custodian_approach_environment",
+    "kind": "backdrop"
+  },
+  {
+    "id": "awakening_designation_locker",
+    "kind": "world_prop"
+  },
+  {
+    "id": "awakening_dust_lung_environment",
+    "kind": "backdrop"
+  },
+  {
+    "id": "awakening_dust_lung_lift",
+    "kind": "world_prop"
+  },
+  {
+    "id": "awakening_dust_lung_structures",
+    "kind": "world_prop"
+  },
+  {
+    "id": "awakening_dust_motes",
+    "kind": "effect"
+  },
+  {
+    "id": "awakening_falling_ash",
+    "kind": "effect"
+  },
+  {
+    "id": "awakening_gate_plaza_environment",
+    "kind": "backdrop"
+  },
+  {
+    "id": "awakening_gate_wind_dust",
+    "kind": "effect"
+  },
+  {
+    "id": "awakening_institutional_decal",
+    "kind": "tile"
+  },
+  {
+    "id": "awakening_late_service_environment",
+    "kind": "backdrop"
+  },
+  {
+    "id": "awakening_late_service_fixtures",
+    "kind": "world_prop"
+  },
+  {
+    "id": "awakening_late_service_relay_lamp",
+    "kind": "world_prop"
+  },
+  {
+    "id": "awakening_locker_reliquary_environment",
+    "kind": "backdrop"
+  },
+  {
+    "id": "awakening_relay_static",
+    "kind": "effect"
+  },
+  {
+    "id": "awakening_reliquary_fixtures",
+    "kind": "world_prop"
+  },
+  {
+    "id": "awakening_ruin_decal",
+    "kind": "tile"
+  },
+  {
+    "id": "awakening_undergate_environment",
+    "kind": "backdrop"
+  },
+  {
+    "id": "awakening_undergate_machinery",
+    "kind": "world_prop"
+  },
+  {
+    "id": "awakening_water_shimmer",
+    "kind": "effect"
+  },
+  {
+    "id": "carrow_machine_house_floor",
+    "kind": "tile"
+  },
+  {
+    "id": "carrow_machine_house_props",
+    "kind": "world_prop"
+  },
+  {
+    "id": "carrow_machine_house_walls",
+    "kind": "world_prop"
+  },
+  {
+    "id": "district_transfer_frame",
+    "kind": "world_prop"
+  },
+  {
+    "id": "drowned_basilica_underlay",
+    "kind": "backdrop"
+  },
+  {
+    "id": "enemy_forlorn_ritualant",
+    "kind": "enemy"
+  },
+  {
+    "id": "enemy_grunt",
+    "kind": "enemy"
+  },
+  {
+    "id": "field_fabricator_mk1",
+    "kind": "world_prop"
+  },
+  {
+    "id": "gate_of_dust",
+    "kind": "world_prop"
+  },
+  {
+    "id": "meridian_answer_pedestal",
+    "kind": "world_prop"
+  },
+  {
+    "id": "meridian_civic_floor",
+    "kind": "tile"
+  },
+  {
+    "id": "meridian_civic_props",
+    "kind": "tile"
+  },
+  {
+    "id": "meridian_civic_relay",
+    "kind": "world_prop"
+  },
+  {
+    "id": "meridian_civic_wall",
+    "kind": "tile"
+  },
+  {
+    "id": "meridian_transit_descent",
+    "kind": "world_prop"
+  },
+  {
+    "id": "procgen_depth_chunks",
+    "kind": "backdrop"
+  },
+  {
+    "id": "procgen_depth_scrubland",
+    "kind": "backdrop"
+  },
+  {
+    "id": "procgen_depth_universal",
+    "kind": "backdrop"
+  },
+  {
+    "id": "procgen_depth_woodland",
+    "kind": "backdrop"
+  },
+  {
+    "id": "pursuit_frame",
+    "kind": "enemy"
+  },
+  {
+    "id": "ritualant_underground_environment",
+    "kind": "backdrop"
+  },
+  {
+    "id": "ritualant_underground_hazard_fx",
+    "kind": "effect"
+  },
+  {
+    "id": "station_ix_district",
+    "kind": "backdrop"
+  },
+  {
+    "id": "station_ix_receiver",
+    "kind": "world_prop"
+  },
+  {
+    "id": "station_ix_sync_core",
+    "kind": "world_prop"
+  },
+  {
+    "id": "void_cliff_face",
+    "kind": "tile"
+  }
+]

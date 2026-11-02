@@ -1,0 +1,65 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "awakening_institutional_decal",
+  "kind": "tile",
+  "priority": "P2",
+  "runtime": {
+    "domain": "tiles/awakening/institutional_decals",
+    "owner": "awakening_institutional_decal"
+  },
+  "canvas": {
+    "width": 64,
+    "height": 64
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "designation_seal": {
+      "required": false,
+      "recommended": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "designation_seal",
+      "layout": "copy"
+    },
+    "warning_plate": {
+      "required": false,
+      "recommended": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "warning_plate",
+      "layout": "copy"
+    },
+    "service_marker": {
+      "required": false,
+      "recommended": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "service_marker",
+      "layout": "copy"
+    },
+    "route_marker": {
+      "required": false,
+      "recommended": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "route_marker",
+      "layout": "copy"
+    },
+    "attestation_marker": {
+      "required": false,
+      "recommended": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "attestation_marker",
+      "layout": "copy"
+    }
+  },
+  "aliases": {},
+  "consumers": [
+    {
+      "type": "scene",
+      "path": "res://scenes/awakening_first_return.tscn"
+    }
+  ]
+}

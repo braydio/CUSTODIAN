@@ -1,0 +1,70 @@
+# ============================================================
+# CUSTODIAN Repomix ignore
+# Goal: keep AI packets code/design-focused, not asset-dump-focused
+# ============================================================
+
+# Godot generated/cache/import files
+custodian/.godot/
+custodian/.import/
+**/*.import
+**/*.uid
+**/*.tmp
+**/*.bak
+**/*.log
+
+# Binary/image/audio/source art
+**/*.png
+**/*.jpg
+**/*.jpeg
+**/*.webp
+**/*.gif
+**/*.ase
+**/*.aseprite
+**/*.kra
+**/*.psd
+**/*.ogg
+**/*.wav
+**/*.mp3
+**/*.mp4
+**/*.blend
+**/*.ttf
+**/*.otf
+
+# Aseprite source workspace
+custodian/content/_aseprite/**
+
+# Massive sprite/art folders
+custodian/content/sprites/**
+custodian/content/reference/**
+custodian/content/images/**
+custodian/content/props/ruins/extracted/**
+custodian/content/props/ruins/source/**
+custodian/content/props/ruins/overlays/**
+
+# Third-party/reference asset packs
+custodian/content/sprites/additional-charsets/**
+custodian/assets/tiles/**
+
+# Addons: exclude by default. Include explicitly when working on addons.
+custodian/addons/**
+
+# LimboAI binaries are especially pointless in model context
+custodian/addons/limboai/bin/**
+
+# Generated/wip asset sheets
+custodian/assets/tiles/walls/generated/**
+custodian/content/tiles/generated/**
+custodian/content/props/generated/**
+custodian/content/sprites/dev/active_wip/**
+
+# Build/dependency/cache junk
+node_modules/
+.venv/
+venv/
+__pycache__/
+.cache/
+dist/
+build/
+
+# AI outputs
+.ai/

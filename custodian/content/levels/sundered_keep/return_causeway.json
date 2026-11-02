@@ -1,0 +1,15 @@
+{
+  "schema": "custodian.level_definition.v1",
+  "level_id": "sundered_keep_return_causeway",
+  "display_name": "Sundered Keep — Return Causeway",
+  "route_scene_path": "res://game/world/sundered_keep/return_causeway/ReturnCausewayApproach.tscn",
+  "target_scene_path": "res://game/world/sundered_keep/return_causeway/ReturnCausewayApproach.tscn",
+  "world_context": "campaign_region",
+  "presentation_profile": "gameplay",
+  "spawns": ["OperatorSpawn", "KeepReturnSpawn"],
+  "lifecycle": {
+    "cache_policy": "keep_during_route",
+    "state_policy": "session"
+  },
+  "tags": ["authored", "route_node", "sundered_keep"]
+}

@@ -1,0 +1,41 @@
+{
+  "schema": "custodian.game32.asset.v1",
+  "id": "return_mooring_floor_ring_s",
+  "name": "return_mooring_floor_ring_s",
+  "set": "sundered_keep",
+  "domain": "return_mooring_floor",
+  "asset_class": "tile",
+  "generated_at_utc": "2026-05-30T08:55:36.697195+00:00",
+  "generator": "custodian/tools/art/extract_return_mooring_game32.py",
+  "source": {
+    "sheet_path": "res://content/masters/sundered_keep/return_mooring_tilesheet.png",
+    "crop_box_px": [
+      862,
+      72,
+      1055,
+      271
+    ]
+  },
+  "runtime_path": "res://content/tiles/sundered_keep/return_mooring/floors/return_mooring_floor_ring_s.png",
+  "size_px": [
+    32,
+    32
+  ],
+  "tile_size_px": 32,
+  "anchor": "top_left",
+  "layer": "FloorDetail",
+  "gameplay": {
+    "walkable": true,
+    "blocks_movement": false,
+    "blocks_projectile": false,
+    "interactable": false,
+    "non_blocking_overlay": false,
+    "animated_optional": false
+  },
+  "import": {
+    "filter": "nearest",
+    "mipmaps": false,
+    "repeat": false
+  },
+  "notes": ""
+}

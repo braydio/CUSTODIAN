@@ -1,0 +1,18 @@
+extends SceneTree
+
+const LEVEL_SCENE := preload("{{PRODUCTION_SCENE_PATH}}")
+
+
+func _init() -> void:
+	var level := LEVEL_SCENE.instantiate()
+	root.add_child(level)
+	var errors: Array[String] = []
+	if level.find_child("Operator", true, false) != null: errors.append("production level owns an Operator")
+	if level.get_node_or_null("Collision/PathBoundaryCollision") == null: errors.append("boundary root missing")
+	if not level.has_method("has_spawn") or not bool(level.call("has_spawn", &"{{SPAWN_ID}}")): errors.append("named spawn missing")
+	if errors.is_empty():
+		print("[{{CLASS_NAME}}Smoke] PASS")
+		quit(0)
+	else:
+		for error in errors: push_error(error)
+		quit(1)

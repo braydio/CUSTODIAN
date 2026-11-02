@@ -1,0 +1,11 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__modular_upper_body__ranged_2h__fire_01__n__5f__96.json",
+	"outputs": [
+		"res://content/sprites/operator/new_operator/modular/ranged/operator__modular_upper_body__ranged_2h__fire_01__n__5f__96.png"
+	],
+	"post_process": [
+		"operator_modular_runtime"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/operator__modular_upper_body__ranged_2h__fire_01__n__5f__96.png",
+	"timestamp_utc": "2026-07-13 08:35:37"
+}

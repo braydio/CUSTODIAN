@@ -1,0 +1,70 @@
+{
+	"failures": [],
+	"records": [
+		{
+			"id": "lift_state",
+			"role": "fixture",
+			"tick": 0,
+			"values": {
+				"lift_position": [
+					0.0,
+					0.0
+				],
+				"puppet_active": false,
+				"shaft_visible": false
+			}
+		},
+		{
+			"id": "lift_state",
+			"role": "fixture",
+			"tick": 28,
+			"values": {
+				"lift_position": [
+					0.0,
+					11.3519802093506
+				],
+				"puppet_active": true,
+				"shaft_visible": true
+			}
+		},
+		{
+			"id": "lift_state",
+			"role": "fixture",
+			"tick": 38,
+			"values": {
+				"lift_position": [
+					0.0,
+					44.236499786377
+				],
+				"puppet_active": true,
+				"shaft_visible": true
+			}
+		},
+		{
+			"id": "lift_state",
+			"role": "fixture",
+			"tick": 70,
+			"values": {
+				"lift_position": [
+					0.0,
+					112.348365783691
+				],
+				"puppet_active": true,
+				"shaft_visible": true
+			}
+		},
+		{
+			"id": "lift_state",
+			"role": "fixture",
+			"tick": 120,
+			"values": {
+				"lift_position": [
+					0.0,
+					0.0
+				],
+				"puppet_active": false,
+				"shaft_visible": false
+			}
+		}
+	]
+}

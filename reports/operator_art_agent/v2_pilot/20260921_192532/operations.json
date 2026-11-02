@@ -1,0 +1,419 @@
+{
+  "operations": [
+    {
+      "arguments": {
+        "destination_frame": 4,
+        "draft_id": "__ART_DRAFT__far_leg__f004__f91dc023",
+        "dx": 2,
+        "dy": -1,
+        "layer": "lower_body",
+        "source_frame": 4,
+        "spans": [
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 56
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 57
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 58
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 59
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 60
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 61
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 62
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 63
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 64
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 65
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 66
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 67
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 68
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 69
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 70
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 71
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 72
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 73
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 74
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 75
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 76
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 77
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 78
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 79
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 80
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 81
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 82
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 83
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 84
+          }
+        ],
+        "type": "draft_shift_part"
+      },
+      "backup": "/home/braydenchaffee/Projects/CUSTODIAN/.ai/operator_art_agent/melee_1h/locomotion/walk_01/e/e30c87ba2a44/backups/000001.aseprite",
+      "operation_id": 1,
+      "operation_key": "pilot-20260921_192532-draft",
+      "response": {
+        "_transport": "headless",
+        "changed": true,
+        "changed_bbox": [
+          10,
+          55,
+          25,
+          13
+        ],
+        "changed_pixels": 209,
+        "draft_id": "__ART_DRAFT__far_leg__f004__f91dc023",
+        "ok": true,
+        "operation": "draft_shift_part",
+        "operation_key": "pilot-20260921_192532-draft",
+        "request_id": "000001",
+        "schema": "custodian.operator_art_agent.response.v2",
+        "warnings": []
+      },
+      "status": "APPLIED",
+      "timestamp_utc": "2026-09-21T19:25:34.331102+00:00",
+      "transport": "headless",
+      "type": "draft_shift_part",
+      "workbench_sha256_after": "e7a617700abc9fc722abdc180d0d069fd8e96c2173d83955c155c6a962f5dbe9",
+      "workbench_sha256_before": "d23082c8b827c81df1ce97221183dc747e787132dfdae562fe1a17ea626707bb"
+    },
+    {
+      "arguments": {
+        "clear_spans": [
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 56
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 57
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 58
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 59
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 60
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 61
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 62
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 63
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 64
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 65
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 66
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 67
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 68
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 69
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 70
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 71
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 72
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 73
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 74
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 75
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 76
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 77
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 78
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 79
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 80
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 81
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 82
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 83
+          },
+          {
+            "x0": 8,
+            "x1": 32,
+            "y": 84
+          }
+        ],
+        "draft_id": "__ART_DRAFT__far_leg__f004__f91dc023",
+        "frame": 4,
+        "layer": "lower_body",
+        "type": "bake_draft"
+      },
+      "backup": "/home/braydenchaffee/Projects/CUSTODIAN/.ai/operator_art_agent/melee_1h/locomotion/walk_01/e/e30c87ba2a44/backups/000002.aseprite",
+      "operation_id": 2,
+      "operation_key": "pilot-20260921_192532-bake",
+      "response": {
+        "_transport": "headless",
+        "changed": true,
+        "changed_bbox": [
+          10,
+          55,
+          25,
+          13
+        ],
+        "changed_pixels": 209,
+        "draft_id": "__ART_DRAFT__far_leg__f004__f91dc023",
+        "needs_gap_repair": true,
+        "ok": true,
+        "operation": "bake_draft",
+        "operation_key": "pilot-20260921_192532-bake",
+        "request_id": "000002",
+        "schema": "custodian.operator_art_agent.response.v2",
+        "warnings": []
+      },
+      "status": "APPLIED",
+      "timestamp_utc": "2026-09-21T19:25:34.995831+00:00",
+      "transport": "headless",
+      "type": "bake_draft",
+      "workbench_sha256_after": "371d958a5ac700b08c7035cd63a5c68d3dcf7ce7dc377a28ed8cd6f7d05e6198",
+      "workbench_sha256_before": "e7a617700abc9fc722abdc180d0d069fd8e96c2173d83955c155c6a962f5dbe9"
+    },
+    {
+      "arguments": {
+        "frame": 4,
+        "layer": "lower_body",
+        "pixels": [
+          {
+            "rgba": [
+              24,
+              19,
+              14,
+              255
+            ],
+            "x": 16,
+            "y": 56
+          }
+        ],
+        "type": "paint_pixels"
+      },
+      "backup": "/home/braydenchaffee/Projects/CUSTODIAN/.ai/operator_art_agent/melee_1h/locomotion/walk_01/e/e30c87ba2a44/backups/000003.aseprite",
+      "operation_id": 3,
+      "operation_key": "pilot-20260921_192532-gap-repair",
+      "response": {
+        "_transport": "headless",
+        "changed": true,
+        "changed_bbox": [
+          16,
+          56,
+          1,
+          1
+        ],
+        "changed_pixels": 1,
+        "frame": 4,
+        "layer": "lower_body",
+        "ok": true,
+        "operation": "paint_pixels",
+        "operation_key": "pilot-20260921_192532-gap-repair",
+        "request_id": "000003",
+        "schema": "custodian.operator_art_agent.response.v2",
+        "warnings": []
+      },
+      "status": "APPLIED",
+      "timestamp_utc": "2026-09-21T19:25:35.040120+00:00",
+      "transport": "headless",
+      "type": "paint_pixels",
+      "workbench_sha256_after": "d0b6710bd8250aaefc376d32172e38ec859e18837bc9755d5bb82c2cd7361e8c",
+      "workbench_sha256_before": "371d958a5ac700b08c7035cd63a5c68d3dcf7ce7dc377a28ed8cd6f7d05e6198"
+    }
+  ]
+}

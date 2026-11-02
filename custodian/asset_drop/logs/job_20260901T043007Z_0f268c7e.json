@@ -1,0 +1,532 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260901T043007Z_0f268c7e",
+  "timestamp": "2026-09-01T04:30:07.609658+00:00",
+  "family": "pursuit_frame",
+  "kind": "enemy",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/pursuit_frame/checkpoint_halt_01__s.png",
+      "sha256": "e2c1296198f404ca0212e4ad363a8cbb50e7cb5b5e53f81df489e11b953d8448"
+    },
+    {
+      "path": "asset_drop/inbox/pursuit_frame/death_shutdown_01__s.png",
+      "sha256": "4c928ee9257785d33aaaa94d363619614ff9a812071fbc40462536115eb3ea7c"
+    },
+    {
+      "path": "asset_drop/inbox/pursuit_frame/flinch_01__s.png",
+      "sha256": "e1b1121cc161d80d2df4cc18f79e3ee168f85f6c3c9f36acf024fd2e4bce8f2f"
+    },
+    {
+      "path": "asset_drop/inbox/pursuit_frame/idle_ready_01__e.png",
+      "sha256": "579a7f6ba2551a38bff0118fb566be8ed03a07555dda757cb356595a9683f322"
+    },
+    {
+      "path": "asset_drop/inbox/pursuit_frame/idle_ready_01__n.png",
+      "sha256": "dfcf13186fee4aa02442729dc218b7f199e13ad9e1533cd73539fa659cb606a1"
+    },
+    {
+      "path": "asset_drop/inbox/pursuit_frame/idle_ready_01__s.png",
+      "sha256": "ca6cc2d42e55541b1907ae80b61dce1a6bfb4891cb969b9f5b5a56690149da5c"
+    },
+    {
+      "path": "asset_drop/inbox/pursuit_frame/intercept_burst_01__e.png",
+      "sha256": "a04d6766da6316dd0d1127c4660c46b81fd5b9f0e00cbee87614a3382b6e3e58"
+    },
+    {
+      "path": "asset_drop/inbox/pursuit_frame/intercept_recover_01__e.png",
+      "sha256": "fc854d74254372af6f702ed3083174469812a6a85b0b6221e63ac31795fafb44"
+    },
+    {
+      "path": "asset_drop/inbox/pursuit_frame/intercept_windup_01__e.png",
+      "sha256": "98486930c1199f32e82df109480993ad6eb63530c0121c0e7ecb1bb56fa5c7b9"
+    },
+    {
+      "path": "asset_drop/inbox/pursuit_frame/investigate_scan_01__s.png",
+      "sha256": "8db236aa429f8766fe0672dc6e3971f8ce0aa21b3d403428826e65e9769a3f8d"
+    },
+    {
+      "path": "asset_drop/inbox/pursuit_frame/melee_brace_01__e.png",
+      "sha256": "6a72f0ef8beb83dce865cc46a4b88b0d0e36ecb9f59cde590f1bd5ca8c4b9c3d"
+    },
+    {
+      "path": "asset_drop/inbox/pursuit_frame/notice_01__s.png",
+      "sha256": "abe79f0aebef34956ab35dfde796027a557c48df24418c0f3df2f20e3ad889ab"
+    },
+    {
+      "path": "asset_drop/inbox/pursuit_frame/patrol_scan_01__s.png",
+      "sha256": "1e1eb33368328c6f43542f916dfa389cf9550d302fa8aafd4545bac4434c160a"
+    },
+    {
+      "path": "asset_drop/inbox/pursuit_frame/patrol_walk_01__s.png",
+      "sha256": "b69093920246f11848b172b7d1041de6f9a2fab899cd14ffe1e04265abbb3944"
+    },
+    {
+      "path": "asset_drop/inbox/pursuit_frame/pursuit_run_01__s.png",
+      "sha256": "ba510f1125804b34bac20b8283081d1649b0e0878bc30f26a89bb3727f47111d"
+    },
+    {
+      "path": "asset_drop/inbox/pursuit_frame/return_to_route_01__s.png",
+      "sha256": "12eac42c2c747034d73ca699676219513afcb7df9993cd0bfdcfca6dcf9965ac"
+    },
+    {
+      "path": "asset_drop/inbox/pursuit_frame/search_sweep_01__s.png",
+      "sha256": "45968637bbf5af406308f6914967a1b90b30b233f22e416002c0fd146eb446cd"
+    },
+    {
+      "path": "asset_drop/inbox/pursuit_frame/stagger_01__s.png",
+      "sha256": "417241f6758ae7ba6ddc9d5e4e519cacfeb4da651e83803eaef4c12fcadcf0a1"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "checkpoint_halt_01",
+      "direction": "s",
+      "semantic_identity": [
+        "pursuit_frame",
+        "enemy",
+        "body",
+        "activity",
+        "checkpoint_halt_01",
+        "s"
+      ],
+      "path": "content/sprites/enemies/pursuit_frame/runtime/body/activity/pursuit_frame__body__activity__checkpoint_halt_01__s__4f__96.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "e2c1296198f404ca0212e4ad363a8cbb50e7cb5b5e53f81df489e11b953d8448",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "death_shutdown_01",
+      "direction": "s",
+      "semantic_identity": [
+        "pursuit_frame",
+        "enemy",
+        "body",
+        "death",
+        "death_shutdown_01",
+        "s"
+      ],
+      "path": "content/sprites/enemies/pursuit_frame/runtime/body/death/pursuit_frame__body__death__death_shutdown_01__s__8f__96.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "4c928ee9257785d33aaaa94d363619614ff9a812071fbc40462536115eb3ea7c",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "flinch_01",
+      "direction": "s",
+      "semantic_identity": [
+        "pursuit_frame",
+        "enemy",
+        "body",
+        "reaction",
+        "flinch_01",
+        "s"
+      ],
+      "path": "content/sprites/enemies/pursuit_frame/runtime/body/reaction/pursuit_frame__body__reaction__flinch_01__s__4f__96.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "e1b1121cc161d80d2df4cc18f79e3ee168f85f6c3c9f36acf024fd2e4bce8f2f",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "idle_ready_01",
+      "direction": "e",
+      "semantic_identity": [
+        "pursuit_frame",
+        "enemy",
+        "body",
+        "posture",
+        "idle_ready_01",
+        "e"
+      ],
+      "path": "content/sprites/enemies/pursuit_frame/runtime/body/posture/pursuit_frame__body__posture__idle_ready_01__e__4f__96.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "579a7f6ba2551a38bff0118fb566be8ed03a07555dda757cb356595a9683f322",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "idle_ready_01",
+      "direction": "w",
+      "semantic_identity": [
+        "pursuit_frame",
+        "enemy",
+        "body",
+        "posture",
+        "idle_ready_01",
+        "w"
+      ],
+      "path": "content/sprites/enemies/pursuit_frame/runtime/body/posture/pursuit_frame__body__posture__idle_ready_01__w__4f__96.png",
+      "provenance": "mirrored",
+      "source_asset": "idle_ready_01::e",
+      "sha256": "2f6377093040dec7bfb94295d99a1f6365ff9a56b969bfe8644b6613f0ef5832",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "idle_ready_01",
+      "direction": "n",
+      "semantic_identity": [
+        "pursuit_frame",
+        "enemy",
+        "body",
+        "posture",
+        "idle_ready_01",
+        "n"
+      ],
+      "path": "content/sprites/enemies/pursuit_frame/runtime/body/posture/pursuit_frame__body__posture__idle_ready_01__n__4f__96.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "dfcf13186fee4aa02442729dc218b7f199e13ad9e1533cd73539fa659cb606a1",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "idle_ready_01",
+      "direction": "s",
+      "semantic_identity": [
+        "pursuit_frame",
+        "enemy",
+        "body",
+        "posture",
+        "idle_ready_01",
+        "s"
+      ],
+      "path": "content/sprites/enemies/pursuit_frame/runtime/body/posture/pursuit_frame__body__posture__idle_ready_01__s__4f__96.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "ca6cc2d42e55541b1907ae80b61dce1a6bfb4891cb969b9f5b5a56690149da5c",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "intercept_burst_01",
+      "direction": "e",
+      "semantic_identity": [
+        "pursuit_frame",
+        "enemy",
+        "body",
+        "combat",
+        "intercept_burst_01",
+        "e"
+      ],
+      "path": "content/sprites/enemies/pursuit_frame/runtime/body/combat/pursuit_frame__body__combat__intercept_burst_01__e__4f__96.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "a04d6766da6316dd0d1127c4660c46b81fd5b9f0e00cbee87614a3382b6e3e58",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "intercept_burst_01",
+      "direction": "w",
+      "semantic_identity": [
+        "pursuit_frame",
+        "enemy",
+        "body",
+        "combat",
+        "intercept_burst_01",
+        "w"
+      ],
+      "path": "content/sprites/enemies/pursuit_frame/runtime/body/combat/pursuit_frame__body__combat__intercept_burst_01__w__4f__96.png",
+      "provenance": "mirrored",
+      "source_asset": "intercept_burst_01::e",
+      "sha256": "b55a2301286e2434e019f1cee8c20f6377be49d23c43e021d12ed8f5824585df",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "intercept_recover_01",
+      "direction": "e",
+      "semantic_identity": [
+        "pursuit_frame",
+        "enemy",
+        "body",
+        "combat",
+        "intercept_recover_01",
+        "e"
+      ],
+      "path": "content/sprites/enemies/pursuit_frame/runtime/body/combat/pursuit_frame__body__combat__intercept_recover_01__e__5f__96.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "fc854d74254372af6f702ed3083174469812a6a85b0b6221e63ac31795fafb44",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "intercept_recover_01",
+      "direction": "w",
+      "semantic_identity": [
+        "pursuit_frame",
+        "enemy",
+        "body",
+        "combat",
+        "intercept_recover_01",
+        "w"
+      ],
+      "path": "content/sprites/enemies/pursuit_frame/runtime/body/combat/pursuit_frame__body__combat__intercept_recover_01__w__5f__96.png",
+      "provenance": "mirrored",
+      "source_asset": "intercept_recover_01::e",
+      "sha256": "29e711220a4342c5c99730e7906d7717bc35924e0b44768f0416365d43575e40",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "intercept_windup_01",
+      "direction": "e",
+      "semantic_identity": [
+        "pursuit_frame",
+        "enemy",
+        "body",
+        "combat",
+        "intercept_windup_01",
+        "e"
+      ],
+      "path": "content/sprites/enemies/pursuit_frame/runtime/body/combat/pursuit_frame__body__combat__intercept_windup_01__e__4f__96.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "98486930c1199f32e82df109480993ad6eb63530c0121c0e7ecb1bb56fa5c7b9",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "intercept_windup_01",
+      "direction": "w",
+      "semantic_identity": [
+        "pursuit_frame",
+        "enemy",
+        "body",
+        "combat",
+        "intercept_windup_01",
+        "w"
+      ],
+      "path": "content/sprites/enemies/pursuit_frame/runtime/body/combat/pursuit_frame__body__combat__intercept_windup_01__w__4f__96.png",
+      "provenance": "mirrored",
+      "source_asset": "intercept_windup_01::e",
+      "sha256": "30d8357616705ea1b7498e2b32e751f80b0af2c4dbd07dbd5803d59ee4754de2",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "investigate_scan_01",
+      "direction": "s",
+      "semantic_identity": [
+        "pursuit_frame",
+        "enemy",
+        "body",
+        "activity",
+        "investigate_scan_01",
+        "s"
+      ],
+      "path": "content/sprites/enemies/pursuit_frame/runtime/body/activity/pursuit_frame__body__activity__investigate_scan_01__s__6f__96.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "8db236aa429f8766fe0672dc6e3971f8ce0aa21b3d403428826e65e9769a3f8d",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "melee_brace_01",
+      "direction": "e",
+      "semantic_identity": [
+        "pursuit_frame",
+        "enemy",
+        "body",
+        "combat",
+        "melee_brace_01",
+        "e"
+      ],
+      "path": "content/sprites/enemies/pursuit_frame/runtime/body/combat/pursuit_frame__body__combat__melee_brace_01__e__6f__96.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "6a72f0ef8beb83dce865cc46a4b88b0d0e36ecb9f59cde590f1bd5ca8c4b9c3d",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "melee_brace_01",
+      "direction": "w",
+      "semantic_identity": [
+        "pursuit_frame",
+        "enemy",
+        "body",
+        "combat",
+        "melee_brace_01",
+        "w"
+      ],
+      "path": "content/sprites/enemies/pursuit_frame/runtime/body/combat/pursuit_frame__body__combat__melee_brace_01__w__6f__96.png",
+      "provenance": "mirrored",
+      "source_asset": "melee_brace_01::e",
+      "sha256": "abc61fa1743e0ff5a14c65439a49e459ad0f04db224713983901ee3e60c68a95",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "notice_01",
+      "direction": "s",
+      "semantic_identity": [
+        "pursuit_frame",
+        "enemy",
+        "body",
+        "combat",
+        "notice_01",
+        "s"
+      ],
+      "path": "content/sprites/enemies/pursuit_frame/runtime/body/combat/pursuit_frame__body__combat__notice_01__s__4f__96.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "abe79f0aebef34956ab35dfde796027a557c48df24418c0f3df2f20e3ad889ab",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "patrol_scan_01",
+      "direction": "s",
+      "semantic_identity": [
+        "pursuit_frame",
+        "enemy",
+        "body",
+        "activity",
+        "patrol_scan_01",
+        "s"
+      ],
+      "path": "content/sprites/enemies/pursuit_frame/runtime/body/activity/pursuit_frame__body__activity__patrol_scan_01__s__6f__96.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "1e1eb33368328c6f43542f916dfa389cf9550d302fa8aafd4545bac4434c160a",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "patrol_walk_01",
+      "direction": "s",
+      "semantic_identity": [
+        "pursuit_frame",
+        "enemy",
+        "body",
+        "locomotion",
+        "patrol_walk_01",
+        "s"
+      ],
+      "path": "content/sprites/enemies/pursuit_frame/runtime/body/locomotion/pursuit_frame__body__locomotion__patrol_walk_01__s__8f__96.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "b69093920246f11848b172b7d1041de6f9a2fab899cd14ffe1e04265abbb3944",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "pursuit_run_01",
+      "direction": "s",
+      "semantic_identity": [
+        "pursuit_frame",
+        "enemy",
+        "body",
+        "locomotion",
+        "pursuit_run_01",
+        "s"
+      ],
+      "path": "content/sprites/enemies/pursuit_frame/runtime/body/locomotion/pursuit_frame__body__locomotion__pursuit_run_01__s__8f__96.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "ba510f1125804b34bac20b8283081d1649b0e0878bc30f26a89bb3727f47111d",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "return_to_route_01",
+      "direction": "s",
+      "semantic_identity": [
+        "pursuit_frame",
+        "enemy",
+        "body",
+        "activity",
+        "return_to_route_01",
+        "s"
+      ],
+      "path": "content/sprites/enemies/pursuit_frame/runtime/body/activity/pursuit_frame__body__activity__return_to_route_01__s__6f__96.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "12eac42c2c747034d73ca699676219513afcb7df9993cd0bfdcfca6dcf9965ac",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "search_sweep_01",
+      "direction": "s",
+      "semantic_identity": [
+        "pursuit_frame",
+        "enemy",
+        "body",
+        "activity",
+        "search_sweep_01",
+        "s"
+      ],
+      "path": "content/sprites/enemies/pursuit_frame/runtime/body/activity/pursuit_frame__body__activity__search_sweep_01__s__6f__96.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "45968637bbf5af406308f6914967a1b90b30b233f22e416002c0fd146eb446cd",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "stagger_01",
+      "direction": "s",
+      "semantic_identity": [
+        "pursuit_frame",
+        "enemy",
+        "body",
+        "reaction",
+        "stagger_01",
+        "s"
+      ],
+      "path": "content/sprites/enemies/pursuit_frame/runtime/body/reaction/pursuit_frame__body__reaction__stagger_01__s__6f__96.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "417241f6758ae7ba6ddc9d5e4e519cacfeb4da651e83803eaef4c12fcadcf0a1",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    }
+  ],
+  "backends": [
+    "sprite_ingest"
+  ],
+  "post_process_hooks": [
+    "enemy_runtime_import"
+  ],
+  "godot_import": {
+    "attempted": false,
+    "ok": null
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

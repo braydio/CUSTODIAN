@@ -1,0 +1,67 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260831T055617Z_2342599f",
+  "timestamp": "2026-08-31T05:56:17.216879+00:00",
+  "family": "ritualant_underground_hazard_fx",
+  "kind": "effect",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/ritualant_underground_hazard_fx/thread_activation_burst_01.png",
+      "sha256": "ee953ec081f64fb1e1397e0b40b621dc5318bcd5a9090487f8f4f62a96c6d775"
+    },
+    {
+      "path": "asset_drop/inbox/ritualant_underground_hazard_fx/thread_warning_sweep_01.png",
+      "sha256": "2a350fcc9c1ea1c34765fa8ba2640c2a3cffea8556c189bb500c8e68529b4206"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "thread_activation_burst_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "ritualant_underground_hazard",
+        "effect",
+        "fx",
+        "hazard",
+        "thread_activation_burst_01",
+        "omni"
+      ],
+      "path": "content/sprites/effects/runtime/ritualant_underground_hazard/ritualant_underground_hazard__fx__hazard__thread_activation_burst_01__omni__10f__384x128.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "4c89233728ea478cb5dacae79ff6956594ab3bca5bbe94ef7ac19a5056a89710",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "thread_warning_sweep_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "ritualant_underground_hazard",
+        "effect",
+        "fx",
+        "hazard",
+        "thread_warning_sweep_01",
+        "omni"
+      ],
+      "path": "content/sprites/effects/runtime/ritualant_underground_hazard/ritualant_underground_hazard__fx__hazard__thread_warning_sweep_01__omni__8f__384x96.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "477b4f965f8df41cb49379bceee79751884b205e98a67907e2ecbae836109fb7",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    }
+  ],
+  "backends": [
+    "sprite_ingest"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

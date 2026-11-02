@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "custodian.operator_3d_animation_plan.v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "command", "plan_id", "batch_id", "input_manifest_sha256", "master_reference", "retarget_policy", "rendering_contract", "candidate_state", "validation", "estimate", "jobs"],
+  "properties": {
+    "schema": {"const": "custodian.operator_3d_animation_plan.v1"}, "command": {"const": "plan"},
+    "plan_id": {"$ref": "#/$defs/sha256"}, "batch_id": {"type": "string"}, "input_manifest_sha256": {"$ref": "#/$defs/sha256"},
+    "master_reference": {"type": "object"}, "retarget_policy": {"type": "object"}, "rendering_contract": {"type": "object"},
+    "candidate_state": {"const": "candidate_unapproved"},
+    "validation": {"type": "object", "required": ["valid", "errors", "warnings", "dependencies"], "properties": {"valid": {"type": "boolean"}, "errors": {"type": "array"}, "warnings": {"type": "array"}, "dependencies": {"type": "array"}}},
+    "estimate": {"type": "object", "required": ["animation_count", "sampled_frames_total", "directional_frame_renders_total", "estimated_pixel_work_total", "estimated_work_state", "directions", "full_body_only", "expected_frame_dimensions"], "properties": {
+      "animation_count": {"type": "integer", "minimum": 0}, "sampled_frames_total": {"type": ["integer", "null"]}, "directional_frame_renders_total": {"type": ["integer", "null"]}, "estimated_pixel_work_total": {"type": ["integer", "null"]}, "estimated_work_state": {"enum": ["known_from_declared_ranges", "incomplete_source_timing"]}, "directions": {"const": ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]}, "full_body_only": {"const": true}, "expected_frame_dimensions": {"const": [128, 128, "RGBA"]}
+    }},
+    "jobs": {"type": "array", "items": {"type": "object", "required": ["job_id", "animation_id", "semantic_output", "output_path", "source_state", "master_state", "sampled_frames_per_direction", "direction_count", "directional_frame_renders", "output_dimensions", "diagnostic_dimensions", "estimated_pixel_work", "status", "execution_nodes"], "properties": {
+      "job_id": {"type": "string", "pattern": "^op3d-[a-f0-9]{24}$"}, "animation_id": {"type": "string"}, "semantic_output": {"type": "object"}, "output_path": {"type": "string"}, "source_state": {"enum": ["available", "unavailable"]}, "master_state": {"enum": ["available", "unavailable"]}, "sampled_frames_per_direction": {"type": ["integer", "null"]}, "direction_count": {"const": 8}, "directional_frame_renders": {"type": ["integer", "null"]}, "output_dimensions": {"const": [128, 128, "RGBA"]}, "diagnostic_dimensions": {"type": ["array", "null"]}, "estimated_pixel_work": {"type": ["integer", "null"]}, "status": {"enum": ["blocked_by_declared_inputs", "candidate_plan_only"]}, "execution_nodes": {"type": "array"}
+    }}}
+  },
+  "$defs": {"sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}
+}

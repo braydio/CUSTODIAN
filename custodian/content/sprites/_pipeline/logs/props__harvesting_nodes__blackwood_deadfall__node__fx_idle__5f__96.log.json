@@ -1,0 +1,9 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/props__harvesting_nodes__blackwood_deadfall__node__fx_idle__5f__96.json",
+	"outputs": [
+		"res://content/sprites/effects/harvesting_nodes/blackwood_deadfall/props__harvesting_nodes__blackwood_deadfall__node__fx_idle__5f__96.png"
+	],
+	"post_process": [],
+	"source": "res://content/sprites/_pipeline/inbox/props__harvesting_nodes__blackwood_deadfall__node__fx_idle__5f__96.png",
+	"timestamp_utc": "2026-05-17 05:38:47"
+}

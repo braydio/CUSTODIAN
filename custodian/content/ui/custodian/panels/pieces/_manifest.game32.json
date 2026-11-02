@@ -1,0 +1,299 @@
+{
+  "schema": "custodian.game32.ui_domain_manifest.v1",
+  "set": "ui_black_reliquary",
+  "domain": "panel_piece",
+  "base_path": "res://content/ui/custodian/panels/pieces",
+  "asset_count": 18,
+  "assets": [
+    {
+      "id": "ui_panel_9slice_dark_gold_piece_tl",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_tl.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_tl.game32.json",
+      "size_px": [
+        75,
+        77
+      ],
+      "ui_role": "nine_slice_piece",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "dark_gold",
+        "corner"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_dark_gold_piece_t",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_t.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_t.game32.json",
+      "size_px": [
+        144,
+        77
+      ],
+      "ui_role": "nine_slice_piece",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "dark_gold",
+        "edge"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_dark_gold_piece_tr",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_tr.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_tr.game32.json",
+      "size_px": [
+        75,
+        77
+      ],
+      "ui_role": "nine_slice_piece",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "dark_gold",
+        "corner"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_dark_gold_piece_l",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_l.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_l.game32.json",
+      "size_px": [
+        75,
+        143
+      ],
+      "ui_role": "nine_slice_piece",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "dark_gold",
+        "edge"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_dark_gold_piece_c",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_c.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_c.game32.json",
+      "size_px": [
+        144,
+        143
+      ],
+      "ui_role": "nine_slice_piece",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "dark_gold",
+        "center"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_dark_gold_piece_r",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_r.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_r.game32.json",
+      "size_px": [
+        75,
+        143
+      ],
+      "ui_role": "nine_slice_piece",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "dark_gold",
+        "edge"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_dark_gold_piece_bl",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_bl.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_bl.game32.json",
+      "size_px": [
+        75,
+        75
+      ],
+      "ui_role": "nine_slice_piece",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "dark_gold",
+        "corner"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_dark_gold_piece_b",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_b.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_b.game32.json",
+      "size_px": [
+        144,
+        75
+      ],
+      "ui_role": "nine_slice_piece",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "dark_gold",
+        "edge"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_dark_gold_piece_br",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_br.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_br.game32.json",
+      "size_px": [
+        75,
+        75
+      ],
+      "ui_role": "nine_slice_piece",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "dark_gold",
+        "corner"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_deep_piece_tl",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_tl.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_tl.game32.json",
+      "size_px": [
+        73,
+        77
+      ],
+      "ui_role": "nine_slice_piece",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "deep",
+        "corner"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_deep_piece_t",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_t.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_t.game32.json",
+      "size_px": [
+        146,
+        78
+      ],
+      "ui_role": "nine_slice_piece",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "deep",
+        "edge"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_deep_piece_tr",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_tr.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_tr.game32.json",
+      "size_px": [
+        71,
+        77
+      ],
+      "ui_role": "nine_slice_piece",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "deep",
+        "corner"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_deep_piece_l",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_l.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_l.game32.json",
+      "size_px": [
+        72,
+        143
+      ],
+      "ui_role": "nine_slice_piece",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "deep",
+        "edge"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_deep_piece_c",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_c.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_c.game32.json",
+      "size_px": [
+        146,
+        143
+      ],
+      "ui_role": "nine_slice_piece",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "deep",
+        "center"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_deep_piece_r",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_r.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_r.game32.json",
+      "size_px": [
+        70,
+        143
+      ],
+      "ui_role": "nine_slice_piece",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "deep",
+        "edge"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_deep_piece_bl",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_bl.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_bl.game32.json",
+      "size_px": [
+        73,
+        75
+      ],
+      "ui_role": "nine_slice_piece",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "deep",
+        "corner"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_deep_piece_b",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_b.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_b.game32.json",
+      "size_px": [
+        146,
+        75
+      ],
+      "ui_role": "nine_slice_piece",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "deep",
+        "edge"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_deep_piece_br",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_br.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_br.game32.json",
+      "size_px": [
+        71,
+        75
+      ],
+      "ui_role": "nine_slice_piece",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "deep",
+        "corner"
+      ]
+    }
+  ],
+  "generated_at_utc": "2026-06-02T03:47:46.727159+00:00",
+  "generator": "custodian/tools/art/extract_ui_black_reliquary_game32.py"
+}

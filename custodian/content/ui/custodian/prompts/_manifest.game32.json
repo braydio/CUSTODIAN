@@ -1,0 +1,101 @@
+{
+  "schema": "custodian.game32.ui_domain_manifest.v1",
+  "set": "ui_black_reliquary",
+  "domain": "prompt",
+  "base_path": "res://content/ui/custodian/prompts",
+  "asset_count": 6,
+  "assets": [
+    {
+      "id": "plaque_header_small",
+      "runtime_path": "res://content/ui/custodian/prompts/plaque_header_small.png",
+      "metadata_path": "res://content/ui/custodian/prompts/plaque_header_small.game32.json",
+      "size_px": [
+        199,
+        60
+      ],
+      "ui_role": "header_plaque",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "plaque",
+        "header"
+      ]
+    },
+    {
+      "id": "plaque_body_small",
+      "runtime_path": "res://content/ui/custodian/prompts/plaque_body_small.png",
+      "metadata_path": "res://content/ui/custodian/prompts/plaque_body_small.game32.json",
+      "size_px": [
+        237,
+        234
+      ],
+      "ui_role": "body_panel",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "plaque",
+        "body"
+      ]
+    },
+    {
+      "id": "input_key_badge",
+      "runtime_path": "res://content/ui/custodian/prompts/input_key_badge.png",
+      "metadata_path": "res://content/ui/custodian/prompts/input_key_badge.game32.json",
+      "size_px": [
+        75,
+        78
+      ],
+      "ui_role": "input_badge",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "input",
+        "badge"
+      ]
+    },
+    {
+      "id": "lock_badge_small",
+      "runtime_path": "res://content/ui/custodian/prompts/lock_badge_small.png",
+      "metadata_path": "res://content/ui/custodian/prompts/lock_badge_small.game32.json",
+      "size_px": [
+        79,
+        78
+      ],
+      "ui_role": "lock_badge",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "lock",
+        "badge"
+      ]
+    },
+    {
+      "id": "status_badge_ready",
+      "runtime_path": "res://content/ui/custodian/prompts/status_badge_ready.png",
+      "metadata_path": "res://content/ui/custodian/prompts/status_badge_ready.game32.json",
+      "size_px": [
+        141,
+        60
+      ],
+      "ui_role": "status_badge",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "ready",
+        "green"
+      ]
+    },
+    {
+      "id": "status_badge_active",
+      "runtime_path": "res://content/ui/custodian/prompts/status_badge_active.png",
+      "metadata_path": "res://content/ui/custodian/prompts/status_badge_active.game32.json",
+      "size_px": [
+        152,
+        61
+      ],
+      "ui_role": "status_badge",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "active",
+        "cyan"
+      ]
+    }
+  ],
+  "generated_at_utc": "2026-06-02T03:47:46.727298+00:00",
+  "generator": "custodian/tools/art/extract_ui_black_reliquary_game32.py"
+}

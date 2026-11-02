@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Moment Forge — combat/vaultwing_first_bond</title>
+<style>
+:root{color-scheme:dark;--bg:#090d13;--panel:#111925;--line:#2d425a;--text:#dce8f2;--muted:#8ca0b4;--cyan:#66d9ef;--red:#ff6b72;--green:#72d69b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,sans-serif}main{max-width:1600px;margin:auto;padding:24px}code{color:var(--cyan)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.panel{background:var(--panel);border:1px solid var(--line);padding:16px;border-radius:8px;overflow:auto;margin-bottom:16px}video,img{width:100%;height:auto;background:#000}table{width:100%;border-collapse:collapse}th,td{padding:7px 9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.pass{color:var(--green)}.fail{color:var(--red)}.muted{color:var(--muted)}button,input{margin:4px}@media(max-width:900px){.grid{grid-template-columns:1fr}}
+</style></head><body><main>
+<h1>CUSTODIAN Moment Forge</h1>
+<p><code>combat/vaultwing_first_bond</code> — An ACCEPTING wild Vaultwing voluntarily lands, observes, accepts a controlled approach and completes a final feed without replacing the actor.</p>
+<p>Status: <b>passed</b> · fingerprint <code>155d7a9140e8aab7</code></p>
+<section class="panel"><button id="playBoth">Play both</button><button id="pauseBoth">Pause</button><label>Scrub <input id="scrub" type="range" min="0" max="1000" value="0"></label>
+<div class="grid"><div><h2>Baseline</h2><p class='muted'>Unavailable.</p></div><div><h2>Current</h2><p class='muted'>Unavailable.</p></div></div></section>
+<div class="grid"><section class="panel"><h2>Baseline contact sheet</h2><p class='muted'>Unavailable.</p></section><section class="panel"><h2>Current contact sheet</h2><img src='current_contact_sheet.png' alt='current_contact_sheet.png'></section></div>
+<section class="panel"><h2>Visual difference (advisory)</h2><p class='muted'>Unavailable.</p></section>
+<section class="panel"><h2>Assertions</h2><ul><li class='pass'><b>role_exists</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>no_unreleased_inputs</b> [error]: </li></ul></section>
+<section class="panel"><h2>Metric deltas</h2><table><thead><tr><th>Metric</th><th>Baseline</th><th>Current</th><th>Delta</th></tr></thead><tbody><tr><td>completed_tick</td><td>None</td><td>250</td><td>None</td></tr>
+<tr><td>visible_visual_anchor_delta_px</td><td>None</td><td>None</td><td>None</td></tr>
+<tr><td>visible_visual_anchor_sample_count</td><td>None</td><td>0</td><td>None</td></tr></tbody></table></section>
+<section class="panel"><h2>Tick-enriched timeline</h2><table><thead><tr><th>Tick</th><th>Kind</th><th>Evidence</th></tr></thead><tbody><tr><td>10</td><td>vaultwing_bond_stage_changed</td><td><code>{&quot;data&quot;: {&quot;current&quot;: &quot;accepting&quot;, &quot;previous&quot;: &quot;wild&quot;, &quot;stable_creature_id&quot;: &quot;vaultwing_unassigned&quot;, &quot;stage&quot;: &quot;accepting&quot;}, &quot;kind&quot;: &quot;vaultwing_bond_stage_changed&quot;, &quot;tick&quot;: 10}</code></td></tr>
+<tr><td>10</td><td>vaultwing_bond_trial_started</td><td><code>{&quot;data&quot;: {&quot;feeder&quot;: &quot;Operator&quot;, &quot;stable_creature_id&quot;: &quot;vaultwing_unassigned&quot;, &quot;stage&quot;: &quot;accepting&quot;}, &quot;kind&quot;: &quot;vaultwing_bond_trial_started&quot;, &quot;tick&quot;: 10}</code></td></tr>
+<tr><td>10</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;fixture_command&quot;, &quot;name&quot;: &quot;begin_trial&quot;, &quot;tick&quot;: 10.0}, &quot;moment_tick&quot;: 10, &quot;result&quot;: {&quot;action&quot;: &quot;fixture_command&quot;, &quot;ok&quot;: true, &quot;response&quot;: true, &quot;tick&quot;: 10}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 10}</code></td></tr>
+<tr><td>106</td><td>vaultwing_landed</td><td><code>{&quot;data&quot;: {}, &quot;kind&quot;: &quot;vaultwing_landed&quot;, &quot;tick&quot;: 106}</code></td></tr>
+<tr><td>200</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;fixture_command&quot;, &quot;name&quot;: &quot;controlled_approach&quot;, &quot;tick&quot;: 200.0}, &quot;moment_tick&quot;: 200, &quot;result&quot;: {&quot;action&quot;: &quot;fixture_command&quot;, &quot;ok&quot;: true, &quot;response&quot;: true, &quot;tick&quot;: 200}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 200}</code></td></tr>
+<tr><td>220</td><td>vaultwing_bond_stage_changed</td><td><code>{&quot;data&quot;: {&quot;current&quot;: &quot;bonded&quot;, &quot;previous&quot;: &quot;accepting&quot;, &quot;stable_creature_id&quot;: &quot;vaultwing_unassigned&quot;, &quot;stage&quot;: &quot;bonded&quot;}, &quot;kind&quot;: &quot;vaultwing_bond_stage_changed&quot;, &quot;tick&quot;: 220}</code></td></tr>
+<tr><td>220</td><td>vaultwing_feed_accepted</td><td><code>{&quot;data&quot;: {&quot;bait_id&quot;: &quot;vaultwing_bait&quot;, &quot;feed_count&quot;: 1, &quot;stable_creature_id&quot;: &quot;vaultwing_unassigned&quot;, &quot;stage&quot;: &quot;bonded&quot;, &quot;trial&quot;: true}, &quot;kind&quot;: &quot;vaultwing_feed_accepted&quot;, &quot;tick&quot;: 220}</code></td></tr>
+<tr><td>220</td><td>vaultwing_bond_completed</td><td><code>{&quot;data&quot;: {&quot;species&quot;: &quot;vaultwing_common&quot;, &quot;stable_creature_id&quot;: &quot;vaultwing_unassigned&quot;, &quot;stage&quot;: &quot;bonded&quot;}, &quot;kind&quot;: &quot;vaultwing_bond_completed&quot;, &quot;tick&quot;: 220}</code></td></tr>
+<tr><td>220</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;fixture_command&quot;, &quot;name&quot;: &quot;final_feed&quot;, &quot;tick&quot;: 220.0}, &quot;moment_tick&quot;: 220, &quot;result&quot;: {&quot;action&quot;: &quot;fixture_command&quot;, &quot;ok&quot;: true, &quot;response&quot;: true, &quot;tick&quot;: 220}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 220}</code></td></tr>
+<tr><td>220</td><td>vaultwing_takeoff</td><td><code>{&quot;data&quot;: {}, &quot;kind&quot;: &quot;vaultwing_takeoff&quot;, &quot;tick&quot;: 220}</code></td></tr>
+<tr><td>245</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;fixture_command&quot;, &quot;name&quot;: &quot;finish&quot;, &quot;tick&quot;: 245.0}, &quot;moment_tick&quot;: 245, &quot;result&quot;: {&quot;action&quot;: &quot;fixture_command&quot;, &quot;ok&quot;: true, &quot;response&quot;: true, &quot;tick&quot;: 245}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 245}</code></td></tr></tbody></table></section>
+<section class="panel"><h2>Provenance</h2><pre>{
+  &quot;capture&quot;: {
+    &quot;audio_requested&quot;: false,
+    &quot;fps&quot;: 60,
+    &quot;height&quot;: 720,
+    &quot;mode&quot;: &quot;evidence&quot;,
+    &quot;synchronization&quot;: &quot;not_requested&quot;,
+    &quot;width&quot;: 1280
+  },
+  &quot;repository&quot;: {
+    &quot;branch&quot;: &quot;agent/vaultwing-bond-greet-final-ingest&quot;,
+    &quot;changed_files&quot;: [
+      &quot;M REQUIRED_ASSETS.md&quot;,
+      &quot; M custodian/asset_drop/source_work/fauna/ambient_vaultwing_common/README.md&quot;,
+      &quot; M custodian/content/metadata/assets/generated/asset_catalog.generated.json&quot;,
+      &quot; M custodian/content/metadata/assets/required_assets.registry.json&quot;,
+      &quot; M custodian/docs/ai_context/CURRENT_STATE.md&quot;,
+      &quot; M custodian/docs/ai_context/FILE_INDEX.md&quot;,
+      &quot; M custodian/docs/ai_context/task_packets/VAULTWING_BOND_GREET_FINAL_INGEST.md&quot;,
+      &quot; M custodian/tools/assets/stage_vaultwing_bonding_source_work.py&quot;,
+      &quot; M custodian/tools/assets/test_stage_vaultwing_bonding_source_work.py&quot;,
+      &quot; M design/02_features/ambient/VAULTWING_SLICE_B_BONDING.md&quot;,
+      &quot; M design/02_features/ambient/VAULTWING_SYSTEM.md&quot;,
+      &quot;?? custodian/asset_drop/archive/job_20260929T021512Z_0f9a3903/&quot;,
+      &quot;?? custodian/asset_drop/archive/job_20260929T022104Z_8cbf250d/&quot;,
+      &quot;?? custodian/asset_drop/archive/job_20260929T083640Z_f3510309/&quot;,
+      &quot;?? custodian/asset_drop/logs/job_20260929T021512Z_0f9a3903.json&quot;,
+      &quot;?? custodian/asset_drop/logs/job_20260929T022104Z_8cbf250d.json&quot;,
+      &quot;?? custodian/asset_drop/logs/job_20260929T083640Z_f3510309.json&quot;,
+      &quot;?? custodian/asset_drop/source_work/fauna/ambient_vaultwing_common/bond_greet_e_source.png&quot;,
+      &quot;?? custodian/asset_drop/source_work/fauna/ambient_vaultwing_common/bond_greet_n_source.png&quot;,
+      &quot;?? custodian/asset_drop/source_work/fauna/ambient_vaultwing_common/bond_greet_s_source.png&quot;,
+      &quot;?? custodian/asset_drop/source_work/fauna/ambient_vaultwing_common/bond_greet_w_source.png&quot;,
+      &quot;?? custodian/asset_drop/source_work/fauna/ambient_vaultwing_common/feed_accept_e_source.png&quot;,
+      &quot;?? custodian/asset_drop/source_work/fauna/ambient_vaultwing_common/feed_accept_n_source.png&quot;,
+      &quot;?? custodian/asset_drop/source_work/fauna/ambient_vaultwing_common/feed_accept_s_source.png&quot;,
+      &quot;?? custodian/asset_drop/source_work/fauna/ambient_vaultwing_common/inspect_bait_s_source.png&quot;,
+      &quot;?? custodian/asset_drop/source_work/fauna/ambient_vaultwing_common/notice_bait_e_source.png&quot;,
+      &quot;?? custodian/asset_drop/source_work/fauna/ambient_vaultwing_common/watch_player_e_source.png&quot;,
+      &quot;?? custodian/asset_drop/source_work/fauna/ambient_vaultwing_common/watch_player_n_source.png&quot;,
+      &quot;?? custodian/asset_drop/source_work/fauna/ambient_vaultwing_common/watch_player_s_source.png&quot;,
+      &quot;?? custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__bond_greet__e__8f__256.png&quot;,
+      &quot;?? custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__bond_greet__e__8f__256.png.import&quot;,
+      &quot;?? custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__bond_greet__n__8f__256.png&quot;,
+      &quot;?? custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__bond_greet__n__8f__256.png.import&quot;,
+      &quot;?? custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__bond_greet__s__8f__256.png&quot;,
+      &quot;?? custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__bond_greet__s__8f__256.png.import&quot;,
+      &quot;?? custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__bond_greet__w__8f__256.png&quot;,
+      &quot;?? custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__bond_greet__w__8f__256.png.import&quot;,
+      &quot;?? custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__feed_accept__e__6f__256.png&quot;,
+      &quot;?? custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__feed_accept__e__6f__256.png.import&quot;,
+      &quot;?? custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__feed_accept__n__6f__256.png&quot;,
+      &quot;?? custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__feed_accept__n__6f__256.png.import&quot;,
+      &quot;?? custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__feed_accept__s__6f__256.png&quot;,
+      &quot;?? custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__feed_accept__s__6f__256.png.import&quot;,
+      &quot;?? custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__feed_accept__w__6f__256.png&quot;,
+      &quot;?? custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__feed_accept__w__6f__256.png.import&quot;,
+      &quot;?? custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__inspect_bait__s__5f__256.png&quot;,
+      &quot;?? custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__inspect_bait__s__5f__256.png.import&quot;,
+      &quot;?? custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__notice_bait__e__4f__256.png&quot;,
+      &quot;?? custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__notice_bait__e__4f__256.png.import&quot;,
+      &quot;?? custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__notice_bait__w__4f__256.png&quot;,
+      &quot;?? custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__notice_bait__w__4f__256.png.import&quot;,
+      &quot;?? custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__watch_player__e__6f__256.png&quot;,
+      &quot;?? custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__watch_player__e__6f__256.png.import&quot;,
+      &quot;?? custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__watch_player__n__6f__256.png&quot;,
+      &quot;?? custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__watch_player__n__6f__256.png.import&quot;,
+      &quot;?? custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__watch_player__s__6f__256.png&quot;,
+      &quot;?? custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__watch_player__s__6f__256.png.import&quot;,
+      &quot;?? custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__watch_player__w__6f__256.png&quot;,
+      &quot;?? custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__watch_player__w__6f__256.png.import&quot;
+    ],
+    &quot;commit&quot;: &quot;206fe5405920db2792780a7ca53804a76a10a0c5&quot;,
+    &quot;dirty&quot;: true,
+    &quot;root&quot;: &quot;/home/braydenchaffee/Projects/.custodian-worktrees/vaultwing-bond-greet-final-ingest-20260929T025940&quot;
+  },
+  &quot;runtime&quot;: {
+    &quot;godot&quot;: {
+      &quot;build&quot;: &quot;arch_linux&quot;,
+      &quot;hash&quot;: &quot;ed1daf0bf001b61586d9930840f2f1394092c079&quot;,
+      &quot;hex&quot;: 263938,
+      &quot;major&quot;: 4,
+      &quot;minor&quot;: 7,
+      &quot;patch&quot;: 2,
+      &quot;status&quot;: &quot;stable&quot;,
+      &quot;string&quot;: &quot;4.7.2-stable (arch_linux)&quot;,
+      &quot;timestamp&quot;: 1786929518
+    },
+    &quot;physics_hz&quot;: 60,
+    &quot;renderer&quot;: &quot;vulkan&quot;
+  },
+  &quot;scenario&quot;: {
+    &quot;id&quot;: &quot;combat/vaultwing_first_bond&quot;,
+    &quot;path&quot;: &quot;/home/braydenchaffee/Projects/.custodian-worktrees/vaultwing-bond-greet-final-ingest-20260929T025940/reports/moment_forge/combat/vaultwing_first_bond/20260929T044349-0400/scenario.snapshot.json&quot;,
+    &quot;schema_version&quot;: 1,
+    &quot;sha256&quot;: &quot;0f21d57164365a23aeaea91540499b99852393ec8e868c7e335cbd2372266786&quot;
+  }
+}</pre></section>
+</main><script>
+const videos=[...document.querySelectorAll('video')],scrub=document.getElementById('scrub');
+document.getElementById('playBoth').onclick=()=>videos.forEach(v=>v.play());
+document.getElementById('pauseBoth').onclick=()=>videos.forEach(v=>v.pause());
+scrub.oninput=()=>videos.forEach(v=>{if(Number.isFinite(v.duration))v.currentTime=v.duration*Number(scrub.value)/1000});
+</script></body></html>

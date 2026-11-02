@@ -1,0 +1,1148 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260907T033543Z_642e8b78",
+  "timestamp": "2026-09-07T03:35:43.357730+00:00",
+  "family": "carrow_machine_house_walls",
+  "kind": "world_prop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/bollard_lit_01.png",
+      "sha256": "e4959755347aaed49f3598c89fa3abbb7046ef1b6b448252e04ff3f0190c3844"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/breach_heavy_01.png",
+      "sha256": "e9c8e3bd3368e65f3d2dc56a26bd71de215793b5ed2d9e52d0f31eea87f019ec"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/cap_small_01.png",
+      "sha256": "5170d942a06644bac7a6ede3e0493df782448f41a42f0d3ab01b940b34cb7910"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/conduit_bay_01.png",
+      "sha256": "db530d6f8a2c454b4c3483377e324f390c1cadc92c04a105dce16d2c472ddd75"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/control_bay_01.png",
+      "sha256": "491ee398ccc3dbce94faabc1a87e8c545faca0b2ae01612772eca555ab10e399"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/corner_block_01.png",
+      "sha256": "08adea5563bd520990dfe0be691b35b50c3561761d0d8b867cef6745e1c70ca4"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/corner_block_02.png",
+      "sha256": "b62c7acf676a5545f6fc31b1920c4271b8ef734a56cea85f912d5e8ecf6b5a17"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/cracked_pillar_01.png",
+      "sha256": "93f2bdd0f76fcda420a2a2ac57afec65b21dd99bbd5d9a03cd9a97503a7160cf"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/damaged_wall_light_01.png",
+      "sha256": "6cb40b3026c06eeacc6c7be7750bb3c3afd533cb8274a898310a00aa029c1e08"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/doorframe_narrow_01.png",
+      "sha256": "2a44d74807cac237f4539640e96f971fe07aa6551d963903c855250a65f8fa63"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/doorframe_recessed_01.png",
+      "sha256": "51c47be920393d9c2208db5be20df34912ae439157a039d8bbae26bd05d9c603"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/doorframe_wide_01.png",
+      "sha256": "2f876ff5082b680d0913d4b44a81406471f378ca79b3b46cea85fd97f24d5749"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/doorframe_wide_02.png",
+      "sha256": "0929c6937615dfc1ef2c3aabf12d11976c77e8e7f25baaf72b9e86d54ab6e7ed"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/endcap_tall_01.png",
+      "sha256": "7a65f0cbfaf102915d36a9cc281f648a1640a5851d745bb918461eedc62b39a5"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/fan_bay_01.png",
+      "sha256": "38366cd18e93988bb8d2a3be22d00cc35f4797b55ea44c162b598321f4e58e32"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/low_endcap_02.png",
+      "sha256": "cb1b972f59cfb303c8fbe304cf61c657e75d408362d5a90190678392544cd559"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/low_post_01.png",
+      "sha256": "d3551f6a67fca4f6ed8684d2631f0c049a74a1e96a312277254f11deda09393c"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/low_wall_endcap_01.png",
+      "sha256": "f5efcf9fa71a79f1b7ceaacdbe9967158148aede52a8838e50847487d76c6898"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/low_wall_long_01.png",
+      "sha256": "2116d902586009cd1f9a0f32b6aa982b171fa9315cbe6d0560999e0f498ca950"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/low_wall_long_02.png",
+      "sha256": "b753576e9f70082817a8161cfb7e5bd4b87497bea2c31c3723fc59105c1ac8c5"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/low_wall_medium_01.png",
+      "sha256": "0c9addb03d06497137a1003fb863d1390dd97162ad6b3f6ee53e7a6f43c02ba8"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/low_wall_short_01.png",
+      "sha256": "70e0f4fdda11fe5d4fd8de6baa2bb2e8174a192f1fccabea0fdecdc4c24b8a23"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/low_wall_short_02.png",
+      "sha256": "2f54c761f5d216b382d67861754235c07a12bd5bd6a7679a95184a8d5ea9adf0"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/low_wall_vent_01.png",
+      "sha256": "1ecb4e87106ab97fa1963afb7e443a4b876a600e17148e8b6af4680ce4c4e275"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/machine_bay_01.png",
+      "sha256": "7cf63d0830a7d046c8965aa04638bc3bde5f7a558e36bb1a825f82fed0bf765e"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/pillar_lit_01.png",
+      "sha256": "5c60373736764d22b6af05b20f69a27344e104dd05b0e3dfbb210eded71ecfc2"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/pillar_plain_01.png",
+      "sha256": "be440fc3522fb60f04bde30e3a0239531e37a2ebd5a266b1eedadd55007359eb"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/pillar_plain_02.png",
+      "sha256": "521eea4d83e3293ec447e218361bad61793faaddce93455df29f7d19b7997ecf"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/pillar_plain_03.png",
+      "sha256": "12bf8a2f8d53f6fcca6c814b104275f35d9748325d0366a6b8d06b16be26ca3c"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/pillar_return_01.png",
+      "sha256": "247ed4ae79050aeaa78ddb935df3fe207f433376a153f317575b115e0f6738bc"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/pillar_return_02.png",
+      "sha256": "8f7f8c21fd59183960279715ab856efa9d9814bc33568968acaabb29de23a43b"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/post_narrow_01.png",
+      "sha256": "0bff7ba48a7c44a244cdad27bf04c0b3ae5af123743dbafde8dffd477e4904c1"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/post_narrow_02.png",
+      "sha256": "a3eff9c7cc0201f2f3bda4d9f1a02407985297e42adf8aa5a0cea13edab8be6c"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/post_narrow_03.png",
+      "sha256": "17b030212a3ed2439455bb2b289ae619398b308b490d39071fa997a918b99cdf"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/recess_vent_01.png",
+      "sha256": "f35fde280ead6b703551dfd7a31bb09b46e67e759fb3096536698c82d103d131"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/recess_vent_02.png",
+      "sha256": "041508cadd529dd10981dd8d42752815e6da7a4e54b5274dde06e02276ba9e1d"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/rounded_pillar_01.png",
+      "sha256": "d9d9285661b4724cf5aaed8795b306553318fc8218afb9fc77b7e3337f0a16c8"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/rubble_01.png",
+      "sha256": "3eeec6e0224209030711ffa0031098b3279b06942f4146ef8d2e61c36cc52ca3"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/short_bridge_01.png",
+      "sha256": "d8307852827b51c32aa0514f100136583f309a0acef06e478fb7bbd549c8d764"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/utility_panel_small_01.png",
+      "sha256": "80a6451a2072b37f1215931796bdf95554636c0ac594f6c2e2c15b8d1fb6ff7b"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/vent_pipe_bay_01.png",
+      "sha256": "b902109ea77ff4f68b5162c38c6457f5e3d1a224a2235bd907311f267475c16b"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/vent_wall_medium_01.png",
+      "sha256": "8dacadca8c73c0a49881e7b6d1c6e357fdcef006eb71f502585e0f60372b43ad"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/vent_wall_wide_01.png",
+      "sha256": "5eed141b40968a39781c801d91fd5511fd4a9f08eab87d8c66c5b467f7d197be"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/wall_panel_long_01.png",
+      "sha256": "ecff53f21e281111ebb9e49135ff5c8a2c2462a507964334b3053b8b5315e1de"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/wall_panel_medium_01.png",
+      "sha256": "b3b8391b5e397131df3eb23493a0705e28a616765956c831b7f332b08ed79510"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/wall_run_breached_long_01.png",
+      "sha256": "328cda829acbcf4fbbaeab8e89c25dcdeb0f3c02f05bd79392ac25c1ed04934a"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/wall_run_conduit_long_01.png",
+      "sha256": "f2dd5b418415ebcd67ebd6a6f43856cf1f195f3c78f8063a2434750f9843945a"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/wall_run_panelled_long_01.png",
+      "sha256": "3b6bee4023a07490e31490c4c7199f3540f5af689ac7efedc5b38c21161dd1e3"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_walls/wall_run_panelled_medium_01.png",
+      "sha256": "5e5f300f5da152c6690740623ec9c786e0828e40ba77f1d2493230b35c7881f5"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "bollard_lit_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "bollard_lit_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_bollard_lit_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "e4959755347aaed49f3598c89fa3abbb7046ef1b6b448252e04ff3f0190c3844",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "breach_heavy_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "breach_heavy_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_breach_heavy_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "e9c8e3bd3368e65f3d2dc56a26bd71de215793b5ed2d9e52d0f31eea87f019ec",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "cap_small_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "cap_small_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_cap_small_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "5170d942a06644bac7a6ede3e0493df782448f41a42f0d3ab01b940b34cb7910",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "conduit_bay_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "conduit_bay_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_conduit_bay_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "db530d6f8a2c454b4c3483377e324f390c1cadc92c04a105dce16d2c472ddd75",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "control_bay_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "control_bay_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_control_bay_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "491ee398ccc3dbce94faabc1a87e8c545faca0b2ae01612772eca555ab10e399",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "corner_block_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "corner_block_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_corner_block_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "08adea5563bd520990dfe0be691b35b50c3561761d0d8b867cef6745e1c70ca4",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "corner_block_02",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "corner_block_02",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_corner_block_02.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "b62c7acf676a5545f6fc31b1920c4271b8ef734a56cea85f912d5e8ecf6b5a17",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "cracked_pillar_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "cracked_pillar_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_cracked_pillar_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "93f2bdd0f76fcda420a2a2ac57afec65b21dd99bbd5d9a03cd9a97503a7160cf",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "damaged_wall_light_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "damaged_wall_light_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_damaged_wall_light_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "6cb40b3026c06eeacc6c7be7750bb3c3afd533cb8274a898310a00aa029c1e08",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "doorframe_narrow_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "doorframe_narrow_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_doorframe_narrow_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "2a44d74807cac237f4539640e96f971fe07aa6551d963903c855250a65f8fa63",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "doorframe_recessed_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "doorframe_recessed_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_doorframe_recessed_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "51c47be920393d9c2208db5be20df34912ae439157a039d8bbae26bd05d9c603",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "doorframe_wide_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "doorframe_wide_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_doorframe_wide_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "2f876ff5082b680d0913d4b44a81406471f378ca79b3b46cea85fd97f24d5749",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "doorframe_wide_02",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "doorframe_wide_02",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_doorframe_wide_02.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "0929c6937615dfc1ef2c3aabf12d11976c77e8e7f25baaf72b9e86d54ab6e7ed",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "endcap_tall_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "endcap_tall_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_endcap_tall_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "7a65f0cbfaf102915d36a9cc281f648a1640a5851d745bb918461eedc62b39a5",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "fan_bay_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "fan_bay_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_fan_bay_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "38366cd18e93988bb8d2a3be22d00cc35f4797b55ea44c162b598321f4e58e32",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "low_endcap_02",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "low_endcap_02",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_low_endcap_02.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "cb1b972f59cfb303c8fbe304cf61c657e75d408362d5a90190678392544cd559",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "low_post_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "low_post_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_low_post_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "d3551f6a67fca4f6ed8684d2631f0c049a74a1e96a312277254f11deda09393c",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "low_wall_endcap_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "low_wall_endcap_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_low_wall_endcap_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "f5efcf9fa71a79f1b7ceaacdbe9967158148aede52a8838e50847487d76c6898",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "low_wall_long_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "low_wall_long_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_low_wall_long_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "2116d902586009cd1f9a0f32b6aa982b171fa9315cbe6d0560999e0f498ca950",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "low_wall_long_02",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "low_wall_long_02",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_low_wall_long_02.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "b753576e9f70082817a8161cfb7e5bd4b87497bea2c31c3723fc59105c1ac8c5",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "low_wall_medium_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "low_wall_medium_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_low_wall_medium_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "0c9addb03d06497137a1003fb863d1390dd97162ad6b3f6ee53e7a6f43c02ba8",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "low_wall_short_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "low_wall_short_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_low_wall_short_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "70e0f4fdda11fe5d4fd8de6baa2bb2e8174a192f1fccabea0fdecdc4c24b8a23",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "low_wall_short_02",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "low_wall_short_02",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_low_wall_short_02.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "2f54c761f5d216b382d67861754235c07a12bd5bd6a7679a95184a8d5ea9adf0",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "low_wall_vent_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "low_wall_vent_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_low_wall_vent_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "1ecb4e87106ab97fa1963afb7e443a4b876a600e17148e8b6af4680ce4c4e275",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "machine_bay_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "machine_bay_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_machine_bay_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "7cf63d0830a7d046c8965aa04638bc3bde5f7a558e36bb1a825f82fed0bf765e",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "pillar_lit_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "pillar_lit_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_pillar_lit_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "5c60373736764d22b6af05b20f69a27344e104dd05b0e3dfbb210eded71ecfc2",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "pillar_plain_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "pillar_plain_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_pillar_plain_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "be440fc3522fb60f04bde30e3a0239531e37a2ebd5a266b1eedadd55007359eb",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "pillar_plain_02",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "pillar_plain_02",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_pillar_plain_02.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "521eea4d83e3293ec447e218361bad61793faaddce93455df29f7d19b7997ecf",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "pillar_plain_03",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "pillar_plain_03",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_pillar_plain_03.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "12bf8a2f8d53f6fcca6c814b104275f35d9748325d0366a6b8d06b16be26ca3c",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "pillar_return_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "pillar_return_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_pillar_return_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "247ed4ae79050aeaa78ddb935df3fe207f433376a153f317575b115e0f6738bc",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "pillar_return_02",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "pillar_return_02",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_pillar_return_02.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "8f7f8c21fd59183960279715ab856efa9d9814bc33568968acaabb29de23a43b",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "post_narrow_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "post_narrow_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_post_narrow_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "0bff7ba48a7c44a244cdad27bf04c0b3ae5af123743dbafde8dffd477e4904c1",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "post_narrow_02",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "post_narrow_02",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_post_narrow_02.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "a3eff9c7cc0201f2f3bda4d9f1a02407985297e42adf8aa5a0cea13edab8be6c",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "post_narrow_03",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "post_narrow_03",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_post_narrow_03.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "17b030212a3ed2439455bb2b289ae619398b308b490d39071fa997a918b99cdf",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "recess_vent_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "recess_vent_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_recess_vent_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "f35fde280ead6b703551dfd7a31bb09b46e67e759fb3096536698c82d103d131",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "recess_vent_02",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "recess_vent_02",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_recess_vent_02.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "041508cadd529dd10981dd8d42752815e6da7a4e54b5274dde06e02276ba9e1d",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "rounded_pillar_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "rounded_pillar_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_rounded_pillar_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "d9d9285661b4724cf5aaed8795b306553318fc8218afb9fc77b7e3337f0a16c8",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "rubble_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "rubble_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_rubble_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "3eeec6e0224209030711ffa0031098b3279b06942f4146ef8d2e61c36cc52ca3",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "short_bridge_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "short_bridge_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_short_bridge_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "d8307852827b51c32aa0514f100136583f309a0acef06e478fb7bbd549c8d764",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "utility_panel_small_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "utility_panel_small_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_utility_panel_small_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "80a6451a2072b37f1215931796bdf95554636c0ac594f6c2e2c15b8d1fb6ff7b",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "vent_pipe_bay_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "vent_pipe_bay_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_vent_pipe_bay_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "b902109ea77ff4f68b5162c38c6457f5e3d1a224a2235bd907311f267475c16b",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "vent_wall_medium_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "vent_wall_medium_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_vent_wall_medium_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "8dacadca8c73c0a49881e7b6d1c6e357fdcef006eb71f502585e0f60372b43ad",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "vent_wall_wide_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "vent_wall_wide_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_vent_wall_wide_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "5eed141b40968a39781c801d91fd5511fd4a9f08eab87d8c66c5b467f7d197be",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "wall_panel_long_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "wall_panel_long_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_wall_panel_long_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "ecff53f21e281111ebb9e49135ff5c8a2c2462a507964334b3053b8b5315e1de",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "wall_panel_medium_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "wall_panel_medium_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_wall_panel_medium_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "b3b8391b5e397131df3eb23493a0705e28a616765956c831b7f332b08ed79510",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "wall_run_breached_long_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "wall_run_breached_long_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_wall_run_breached_long_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "328cda829acbcf4fbbaeab8e89c25dcdeb0f3c02f05bd79392ac25c1ed04934a",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "wall_run_conduit_long_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "wall_run_conduit_long_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_wall_run_conduit_long_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "f2dd5b418415ebcd67ebd6a6f43856cf1f195f3c78f8063a2434750f9843945a",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "wall_run_panelled_long_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "wall_run_panelled_long_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_wall_run_panelled_long_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "3b6bee4023a07490e31490c4c7199f3540f5af689ac7efedc5b38c21161dd1e3",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "wall_run_panelled_medium_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_walls",
+        "world_prop",
+        "body",
+        "structure",
+        "wall_run_panelled_medium_01",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_wall_run_panelled_medium_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "5e5f300f5da152c6690740623ec9c786e0828e40ba77f1d2493230b35c7881f5",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

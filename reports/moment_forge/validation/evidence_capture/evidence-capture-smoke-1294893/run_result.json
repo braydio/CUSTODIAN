@@ -1,0 +1,89 @@
+{
+	"actions": [
+		{
+			"action": "finish",
+			"finish": true,
+			"ok": true,
+			"tick": 18
+		}
+	],
+	"assertions": [
+		{
+			"actual": true,
+			"expected": {
+				"role": "fixture",
+				"severity": "error",
+				"type": "role_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "role_exists"
+		},
+		{
+			"actual": false,
+			"expected": {
+				"severity": "error",
+				"type": "no_unreleased_inputs"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "no_unreleased_inputs"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"path": "telemetry.json",
+				"severity": "error",
+				"type": "output_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "output_exists"
+		}
+	],
+	"capture_failures": [
+		"tick 1 produced an empty viewport image",
+		"tick 4 produced an empty viewport image",
+		"tick 7 produced an empty viewport image",
+		"tick 10 produced an empty viewport image",
+		"tick 13 produced an empty viewport image",
+		"tick 16 produced an empty viewport image"
+	],
+	"capture_mode": "evidence",
+	"completed": false,
+	"completed_tick": 18,
+	"failures": [
+		"required keyframe capture failed at tick 1",
+		"required keyframe capture failed at tick 4",
+		"required keyframe capture failed at tick 7",
+		"required keyframe capture failed at tick 10",
+		"required keyframe capture failed at tick 13",
+		"required keyframe capture failed at tick 16"
+	],
+	"keyframes": [],
+	"markers": [],
+	"passed": false,
+	"probe_failures": [],
+	"runtime": {
+		"godot": {
+			"build": "arch_linux",
+			"hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+			"hex": 263938,
+			"major": 4,
+			"minor": 7,
+			"patch": 2,
+			"status": "stable",
+			"string": "4.7.2-stable (arch_linux)",
+			"timestamp": 1786929518
+		},
+		"physics_hz": 60,
+		"renderer": "vulkan"
+	},
+	"scenario_id": "validation/evidence_capture",
+	"scenario_path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/validation/evidence_capture/evidence-capture-smoke-1294893/scenario.snapshot.json",
+	"schema": "custodian.moment_forge.run_result.v1",
+	"seed": 104729
+}

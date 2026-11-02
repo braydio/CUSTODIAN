@@ -1,0 +1,19 @@
+{
+  "items": [
+    {
+      "id": "vanguard_seal",
+      "display_name": "Vanguard Seal",
+      "type": "combat_relic",
+      "stackable": false,
+      "tags": ["custodian", "combat", "initiative"],
+      "description": "A field-worn Custodian seal keyed to decisive entry. Claim initiative, then press the opening without being struck.",
+      "mechanical_effects": {
+        "trigger": "first_direct_operator_hit_per_engagement",
+        "direct_damage_multiplier": 1.08,
+        "stagger_damage_multiplier": 1.15,
+        "duration_sec": 8.0,
+        "break_on_direct_damage": true
+      }
+    }
+  ]
+}

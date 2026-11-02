@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "id": "validation/evidence_capture",
+  "description": "Tiny rendered fixture proving sparse evidence keyframes cannot wedge on an unscheduled post-draw signal.",
+  "scene": "res://tools/validation/fixtures/moment_forge_probe.tscn",
+  "seed": 104729,
+  "duration_ticks": 20,
+  "simulation": {"physics_hz": 60, "warmup_ticks": 1, "max_wall_seconds": 5, "pause_during_setup": true},
+  "capture": {"width": 1280, "height": 720, "fps": 60, "audio": false, "start_tick": 0, "end_tick": 19, "contact_sheet_ticks": [1, 4, 7, 10, 13, 16], "required_keyframes": true, "background": "opaque"},
+  "setup": {"remove_nodes": [], "roles": {"fixture": {"node_path": "."}}, "spawns": [], "properties": [], "processing": [], "fixture": {"id": "evidence_capture", "config": {}}},
+  "timeline": [
+    {"tick": 18, "action": "finish"}
+  ],
+  "probes": [],
+  "assertions": [
+    {"type": "role_exists", "role": "fixture", "severity": "error"},
+    {"type": "no_unreleased_inputs", "severity": "error"},
+    {"type": "output_exists", "path": "telemetry.json", "severity": "error"}
+  ],
+  "stable_fingerprint": {"event_payload_fields": {}, "counters": [], "probes": [], "position_quantum_px": 0.25, "float_quantum": 0.0001},
+  "tags": ["validation", "moment", "capture"]
+}

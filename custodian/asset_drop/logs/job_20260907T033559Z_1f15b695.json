@@ -1,0 +1,274 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260907T033559Z_1f15b695",
+  "timestamp": "2026-09-07T03:35:59.819114+00:00",
+  "family": "carrow_machine_house_props",
+  "kind": "world_prop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_props/conduit_junction.png",
+      "sha256": "e35c2a42ee31d48f4b2762ea0a6c3fcf2eadd879a43103a3b1538a695270bc84"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_props/entry.png",
+      "sha256": "be69f9ed71223b3e76220d2964350bcdf052e79d0d0dfc0c427c4a43e04d2ead"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_props/maintenance_cart.png",
+      "sha256": "546035e0535b81c31ea0ef0a89df43af325dc5322302b305854b7ca513cd657e"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_props/parts_locker.png",
+      "sha256": "3ee631ea56d79fb25cf1e3e757d5ca3e78e6eba5916bf2e33721b037a40e25e8"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_props/power_cabinet.png",
+      "sha256": "fc91831cce58d26ab7284fa3c537133110e2bc03e0b7aa5dc2d498265b77979f"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_props/relay_bank.png",
+      "sha256": "a17a023124edb9010815b8454066f77de867ecbce14e905847497886db83fa5b"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_props/replacement_modules.png",
+      "sha256": "d17d86e19aeb94cb48fda3a066ee2727cc2f0422551d235e07594773ec1d3c6f"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_props/service_cabinet.png",
+      "sha256": "dd4078cebe7d139f93e7f6ed89a766aff5852b17f86f507414cf89910119b482"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_props/switchgear.png",
+      "sha256": "5132b7c0d31df51e08af24dc359a47b004330eac2f82c05ca513afaea818c254"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_props/tool_board.png",
+      "sha256": "5b10d070f6e27a410424078add146a704efb1d5543b234a96947917a0e3f23c4"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_props/workbench.png",
+      "sha256": "4eb000f0d85191b9c7a97a40a1957d9c3888d2ce456110afdc22b3a539439fa1"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "conduit_junction",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_props",
+        "world_prop",
+        "body",
+        "structure",
+        "conduit_junction",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/props/carrow_machine_house_conduit_junction.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "e35c2a42ee31d48f4b2762ea0a6c3fcf2eadd879a43103a3b1538a695270bc84",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "entry",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_props",
+        "world_prop",
+        "body",
+        "structure",
+        "entry",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/props/carrow_machine_house_entry.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "be69f9ed71223b3e76220d2964350bcdf052e79d0d0dfc0c427c4a43e04d2ead",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "maintenance_cart",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_props",
+        "world_prop",
+        "body",
+        "structure",
+        "maintenance_cart",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/props/carrow_machine_house_maintenance_cart.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "546035e0535b81c31ea0ef0a89df43af325dc5322302b305854b7ca513cd657e",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "parts_locker",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_props",
+        "world_prop",
+        "body",
+        "structure",
+        "parts_locker",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/props/carrow_machine_house_parts_locker.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "3ee631ea56d79fb25cf1e3e757d5ca3e78e6eba5916bf2e33721b037a40e25e8",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "power_cabinet",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_props",
+        "world_prop",
+        "body",
+        "structure",
+        "power_cabinet",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/props/carrow_machine_house_power_cabinet.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "fc91831cce58d26ab7284fa3c537133110e2bc03e0b7aa5dc2d498265b77979f",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "relay_bank",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_props",
+        "world_prop",
+        "body",
+        "structure",
+        "relay_bank",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/props/carrow_machine_house_relay_bank.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "a17a023124edb9010815b8454066f77de867ecbce14e905847497886db83fa5b",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "replacement_modules",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_props",
+        "world_prop",
+        "body",
+        "structure",
+        "replacement_modules",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/props/carrow_machine_house_replacement_modules.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "d17d86e19aeb94cb48fda3a066ee2727cc2f0422551d235e07594773ec1d3c6f",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "service_cabinet",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_props",
+        "world_prop",
+        "body",
+        "structure",
+        "service_cabinet",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/props/carrow_machine_house_service_cabinet.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "dd4078cebe7d139f93e7f6ed89a766aff5852b17f86f507414cf89910119b482",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "switchgear",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_props",
+        "world_prop",
+        "body",
+        "structure",
+        "switchgear",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/props/carrow_machine_house_switchgear.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "5132b7c0d31df51e08af24dc359a47b004330eac2f82c05ca513afaea818c254",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "tool_board",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_props",
+        "world_prop",
+        "body",
+        "structure",
+        "tool_board",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/props/carrow_machine_house_tool_board.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "5b10d070f6e27a410424078add146a704efb1d5543b234a96947917a0e3f23c4",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "workbench",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_props",
+        "world_prop",
+        "body",
+        "structure",
+        "workbench",
+        "omni"
+      ],
+      "path": "content/sprites/environment/structure/carrow_machine_house/runtime/props/carrow_machine_house_workbench.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "4eb000f0d85191b9c7a97a40a1957d9c3888d2ce456110afdc22b3a539439fa1",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

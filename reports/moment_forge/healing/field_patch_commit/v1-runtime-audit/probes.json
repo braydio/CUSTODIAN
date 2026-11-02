@@ -1,0 +1,65 @@
+{
+	"failures": [],
+	"records": [
+		{
+			"id": "operator_health",
+			"role": "operator",
+			"tick": 0,
+			"values": {
+				"global_position": [
+					640.0,
+					380.0
+				],
+				"health": 45.0
+			}
+		},
+		{
+			"id": "operator_health",
+			"role": "operator",
+			"tick": 12,
+			"values": {
+				"global_position": [
+					640.0,
+					380.0
+				],
+				"health": 45.0
+			}
+		},
+		{
+			"id": "operator_health",
+			"role": "operator",
+			"tick": 60,
+			"values": {
+				"global_position": [
+					640.0,
+					380.0
+				],
+				"health": 45.0
+			}
+		},
+		{
+			"id": "operator_health",
+			"role": "operator",
+			"tick": 90,
+			"values": {
+				"global_position": [
+					640.0,
+					380.0
+				],
+				"health": 45.0
+			}
+		},
+		{
+			"id": "operator_health",
+			"role": "operator",
+			"tick": 148,
+			"values": {
+				"global_position": [
+					640.0,
+					380.0
+				],
+				"health": 45.0
+			}
+		}
+	]
+}

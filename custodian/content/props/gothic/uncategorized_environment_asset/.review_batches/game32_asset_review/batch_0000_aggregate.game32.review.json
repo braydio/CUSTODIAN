@@ -1,0 +1,1563 @@
+{
+  "schema": "game32.aggregate_review.v2",
+  "id": "gothic_tiles_review_batch_0000",
+  "created_utc": "2026-05-27T07:56:20+00:00",
+  "instructions": {
+    "edit_this_file": true,
+    "source_of_truth": "entries[].asset is the full manifest that will be written to each .game32.json sidecar.",
+    "workflow": [
+      "Review the contact sheet image.",
+      "Edit each entry.review.action if needed.",
+      "Edit each entry.review.target_png if moving/renaming the PNG.",
+      "Edit each entry.asset directly. It contains the full game32.asset.v2 manifest.",
+      "Save/overwrite this aggregate JSON.",
+      "Run corrections/apply or return to terminal and press Enter."
+    ],
+    "valid_actions": {
+      "keep": "Write edited entry.asset to the sidecar manifest. Do not move PNG.",
+      "move": "Move/rename PNG to review.target_png, then write edited entry.asset to target manifest.",
+      "skip": "Do nothing to this entry.",
+      "delete": "Move PNG, manifest, and optionally import sidecar to trash directory."
+    },
+    "compact_corrections": {
+      "preferred": "Use game32.review_corrections.v1 to edit only changed fields.",
+      "commands": [
+        "game32_review.py corrections --aggregate <aggregate.json> --corrections <corrections.json>",
+        "game32_review.py apply --aggregate <aggregate.json>"
+      ]
+    },
+    "required_asset_blocks": [
+      "schema",
+      "id",
+      "display_name",
+      "source",
+      "file",
+      "classification",
+      "placement",
+      "collision",
+      "procgen",
+      "master_index"
+    ],
+    "path_rule": "review.target_png and asset.file.path may be res://, project-relative, or absolute. Project-relative is recommended."
+  },
+  "project_root": "/home/braydenchaffee/Projects/CUSTODIAN",
+  "scan_root": "custodian/content/props/gothic/uncategorized_environment_asset",
+  "contact_sheet": "custodian/content/props/gothic/uncategorized_environment_asset/.review_batches/game32_asset_review/batch_0000_contact.png",
+  "batch_number": 0,
+  "asset_count": 14,
+  "entries": [
+    {
+      "batch_index": 0,
+      "current": {
+        "png": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_01.png",
+        "manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_01.game32.json",
+        "canonical_manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_01.game32.json",
+        "filename": "gothic_uncategorized_asset_01.png",
+        "parent_dir": "custodian/content/props/gothic/uncategorized_environment_asset",
+        "exists": true
+      },
+      "review": {
+        "action": "move",
+        "target_png": "custodian/content/props/gothic/forest_intrusion/gothic_dead_root_stump_01.png",
+        "target_manifest": "custodian/content/props/gothic/forest_intrusion/gothic_dead_root_stump_01.game32.json",
+        "delete_import": true,
+        "notes": ""
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "gothic_forest_intrusion_dead_root_stump_01",
+        "display_name": "Gothic Dead Root Stump 01",
+        "source": {
+          "sheet": "gothic_tilesheet.png",
+          "visual_index": 116,
+          "row_index": 8,
+          "col_index": 0,
+          "bbox_px": {
+            "x": 142,
+            "y": 784,
+            "w": 75,
+            "h": 72
+          },
+          "master_sheet": null,
+          "original_path": "res://content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_01.png",
+          "section": "props",
+          "subtype": "props",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 75,
+            "h": 72
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_01.png",
+          "pixel_size": {
+            "w": 75,
+            "h": 72
+          }
+        },
+        "classification": {
+          "asset_type": "props",
+          "semantic_role": "dead_root_stump_prop",
+          "placement_layer": "prop",
+          "tags": [
+            "gothic",
+            "manual_review",
+            "root",
+            "stump",
+            "deadwood",
+            "organic",
+            "forest_intrusion",
+            "ruin_dressing",
+            "obstacle"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 3,
+            "h": 3
+          },
+          "origin_mode": "bottom_center",
+          "pivot_px": {
+            "x": 37,
+            "y": 71
+          },
+          "snap": "tile_or_free",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": true,
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": true,
+          "blocks_sight": false,
+          "cover_value": 1,
+          "collision_shape": "footprint",
+          "review_status": "reviewed"
+        },
+        "procgen": {
+          "uses": [
+            "environment_dressing",
+            "forest_intrusion",
+            "ruined_compound_dressing",
+            "organic_obstacle"
+          ],
+          "weight": 12,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": true,
+          "supports_gothic_compound": true,
+          "review_status": "reviewed"
+        },
+        "master_index": 1
+      }
+    },
+    {
+      "batch_index": 1,
+      "current": {
+        "png": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_02.png",
+        "manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_02.game32.json",
+        "canonical_manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_02.game32.json",
+        "filename": "gothic_uncategorized_asset_02.png",
+        "parent_dir": "custodian/content/props/gothic/uncategorized_environment_asset",
+        "exists": true
+      },
+      "review": {
+        "action": "move",
+        "target_png": "custodian/content/props/gothic/forest_intrusion/gothic_dead_bramble_shrub_01.png",
+        "target_manifest": "custodian/content/props/gothic/forest_intrusion/gothic_dead_bramble_shrub_01.game32.json",
+        "delete_import": true,
+        "notes": ""
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "gothic_forest_intrusion_dead_bramble_shrub_01",
+        "display_name": "Gothic Dead Bramble Shrub 01",
+        "source": {
+          "sheet": "gothic_tilesheet.png",
+          "visual_index": 117,
+          "row_index": 8,
+          "col_index": 1,
+          "bbox_px": {
+            "x": 232,
+            "y": 788,
+            "w": 53,
+            "h": 63
+          },
+          "master_sheet": null,
+          "original_path": "res://content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_02.png",
+          "section": "props",
+          "subtype": "props",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 53,
+            "h": 63
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_02.png",
+          "pixel_size": {
+            "w": 53,
+            "h": 63
+          }
+        },
+        "classification": {
+          "asset_type": "props",
+          "semantic_role": "dead_bramble_shrub_prop",
+          "placement_layer": "prop",
+          "tags": [
+            "gothic",
+            "manual_review",
+            "bramble",
+            "deadwood",
+            "shrub",
+            "organic",
+            "forest_intrusion",
+            "small_dressing"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 2,
+            "h": 2
+          },
+          "origin_mode": "bottom_center",
+          "pivot_px": {
+            "x": 26,
+            "y": 62
+          },
+          "snap": "tile_or_free",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": true,
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": false,
+          "blocks_sight": false,
+          "cover_value": 0,
+          "collision_shape": "none",
+          "review_status": "reviewed"
+        },
+        "procgen": {
+          "uses": [
+            "environment_dressing",
+            "forest_intrusion",
+            "small_ruin_dressing"
+          ],
+          "weight": 18,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": true,
+          "supports_gothic_compound": true,
+          "review_status": "reviewed"
+        },
+        "master_index": 2
+      }
+    },
+    {
+      "batch_index": 2,
+      "current": {
+        "png": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_07.png",
+        "manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_07.game32.json",
+        "canonical_manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_07.game32.json",
+        "filename": "gothic_uncategorized_asset_07.png",
+        "parent_dir": "custodian/content/props/gothic/uncategorized_environment_asset",
+        "exists": true
+      },
+      "review": {
+        "action": "move",
+        "target_png": "custodian/content/props/gothic/storage/gothic_barrel_stack_01.png",
+        "target_manifest": "custodian/content/props/gothic/storage/gothic_barrel_stack_01.game32.json",
+        "delete_import": true,
+        "notes": ""
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "gothic_storage_barrel_stack_01",
+        "display_name": "Gothic Barrel Stack 01",
+        "source": {
+          "sheet": "gothic_tilesheet.png",
+          "visual_index": 122,
+          "row_index": 10,
+          "col_index": 3,
+          "bbox_px": {
+            "x": 281,
+            "y": 889,
+            "w": 70,
+            "h": 84
+          },
+          "master_sheet": null,
+          "original_path": "res://content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_07.png",
+          "section": "props",
+          "subtype": "props",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 70,
+            "h": 84
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_07.png",
+          "pixel_size": {
+            "w": 70,
+            "h": 84
+          }
+        },
+        "classification": {
+          "asset_type": "props",
+          "semantic_role": "barrel_stack_storage_prop",
+          "placement_layer": "prop",
+          "tags": [
+            "gothic",
+            "manual_review",
+            "barrel",
+            "storage",
+            "stack",
+            "loot_cover",
+            "vault",
+            "storage_room"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 3,
+            "h": 3
+          },
+          "origin_mode": "bottom_center",
+          "pivot_px": {
+            "x": 35,
+            "y": 83
+          },
+          "snap": "tile_or_free",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": true,
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": true,
+          "blocks_sight": false,
+          "cover_value": 1,
+          "collision_shape": "footprint",
+          "review_status": "reviewed"
+        },
+        "procgen": {
+          "uses": [
+            "storage_room_dressing",
+            "vault_dressing",
+            "loot_cover",
+            "compound_storage_prop"
+          ],
+          "weight": 14,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": true,
+          "supports_gothic_compound": true,
+          "review_status": "reviewed"
+        },
+        "master_index": 3
+      }
+    },
+    {
+      "batch_index": 3,
+      "current": {
+        "png": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_09.png",
+        "manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_09.game32.json",
+        "canonical_manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_09.game32.json",
+        "filename": "gothic_uncategorized_asset_09.png",
+        "parent_dir": "custodian/content/props/gothic/uncategorized_environment_asset",
+        "exists": true
+      },
+      "review": {
+        "action": "move",
+        "target_png": "custodian/content/props/gothic/barricades/gothic_curved_sandbag_barricade_01.png",
+        "target_manifest": "custodian/content/props/gothic/barricades/gothic_curved_sandbag_barricade_01.game32.json",
+        "delete_import": true,
+        "notes": ""
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "gothic_barricades_curved_sandbag_barricade_01",
+        "display_name": "Gothic Curved Sandbag Barricade 01",
+        "source": {
+          "sheet": "gothic_tilesheet.png",
+          "visual_index": 124,
+          "row_index": 10,
+          "col_index": 5,
+          "bbox_px": {
+            "x": 528,
+            "y": 871,
+            "w": 84,
+            "h": 131
+          },
+          "master_sheet": null,
+          "original_path": "res://content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_09.png",
+          "section": "props",
+          "subtype": "props",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 84,
+            "h": 131
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_09.png",
+          "pixel_size": {
+            "w": 84,
+            "h": 131
+          }
+        },
+        "classification": {
+          "asset_type": "props",
+          "semantic_role": "curved_sandbag_barricade_prop",
+          "placement_layer": "prop",
+          "tags": [
+            "gothic",
+            "manual_review",
+            "sandbag",
+            "barricade",
+            "cover",
+            "defensive",
+            "curved",
+            "military"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 3,
+            "h": 5
+          },
+          "origin_mode": "bottom_center",
+          "pivot_px": {
+            "x": 42,
+            "y": 130
+          },
+          "snap": "tile_or_free",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": true,
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": true,
+          "blocks_sight": false,
+          "cover_value": 2,
+          "collision_shape": "footprint",
+          "review_status": "reviewed"
+        },
+        "procgen": {
+          "uses": [
+            "cover_prop",
+            "defensive_barricade",
+            "compound_defense",
+            "combat_cover"
+          ],
+          "weight": 16,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": true,
+          "supports_gothic_compound": true,
+          "review_status": "reviewed"
+        },
+        "master_index": 4
+      }
+    },
+    {
+      "batch_index": 4,
+      "current": {
+        "png": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_10.png",
+        "manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_10.game32.json",
+        "canonical_manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_10.game32.json",
+        "filename": "gothic_uncategorized_asset_10.png",
+        "parent_dir": "custodian/content/props/gothic/uncategorized_environment_asset",
+        "exists": true
+      },
+      "review": {
+        "action": "move",
+        "target_png": "custodian/content/props/gothic/fences/gothic_spiked_fence_barricade_01.png",
+        "target_manifest": "custodian/content/props/gothic/fences/gothic_spiked_fence_barricade_01.game32.json",
+        "delete_import": true,
+        "notes": ""
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "gothic_fences_spiked_fence_barricade_01",
+        "display_name": "Gothic Spiked Fence Barricade 01",
+        "source": {
+          "sheet": "gothic_tilesheet.png",
+          "visual_index": 125,
+          "row_index": 10,
+          "col_index": 6,
+          "bbox_px": {
+            "x": 630,
+            "y": 894,
+            "w": 133,
+            "h": 75
+          },
+          "master_sheet": null,
+          "original_path": "res://content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_10.png",
+          "section": "props",
+          "subtype": "props",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 133,
+            "h": 75
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_10.png",
+          "pixel_size": {
+            "w": 133,
+            "h": 75
+          }
+        },
+        "classification": {
+          "asset_type": "props",
+          "semantic_role": "spiked_gothic_fence_barricade_prop",
+          "placement_layer": "prop",
+          "tags": [
+            "gothic",
+            "manual_review",
+            "fence",
+            "spikes",
+            "barricade",
+            "iron",
+            "defensive",
+            "restricted_area"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 5,
+            "h": 3
+          },
+          "origin_mode": "bottom_center",
+          "pivot_px": {
+            "x": 66,
+            "y": 74
+          },
+          "snap": "tile_or_free",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": true,
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": true,
+          "blocks_sight": false,
+          "cover_value": 1,
+          "collision_shape": "footprint",
+          "review_status": "reviewed"
+        },
+        "procgen": {
+          "uses": [
+            "barrier_prop",
+            "compound_defense",
+            "gothic_fence",
+            "restricted_area_marker"
+          ],
+          "weight": 10,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": true,
+          "supports_gothic_compound": true,
+          "review_status": "reviewed"
+        },
+        "master_index": 5
+      }
+    },
+    {
+      "batch_index": 5,
+      "current": {
+        "png": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_11.png",
+        "manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_11.game32.json",
+        "canonical_manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_11.game32.json",
+        "filename": "gothic_uncategorized_asset_11.png",
+        "parent_dir": "custodian/content/props/gothic/uncategorized_environment_asset",
+        "exists": true
+      },
+      "review": {
+        "action": "move",
+        "target_png": "custodian/content/props/gothic/fences/gothic_iron_fence_segment_01.png",
+        "target_manifest": "custodian/content/props/gothic/fences/gothic_iron_fence_segment_01.game32.json",
+        "delete_import": true,
+        "notes": ""
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "gothic_fences_iron_fence_segment_01",
+        "display_name": "Gothic Iron Fence Segment 01",
+        "source": {
+          "sheet": "gothic_tilesheet.png",
+          "visual_index": 126,
+          "row_index": 10,
+          "col_index": 7,
+          "bbox_px": {
+            "x": 791,
+            "y": 893,
+            "w": 121,
+            "h": 74
+          },
+          "master_sheet": null,
+          "original_path": "res://content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_11.png",
+          "section": "props",
+          "subtype": "props",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 121,
+            "h": 74
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_11.png",
+          "pixel_size": {
+            "w": 121,
+            "h": 74
+          }
+        },
+        "classification": {
+          "asset_type": "props",
+          "semantic_role": "iron_fence_segment_prop",
+          "placement_layer": "prop",
+          "tags": [
+            "gothic",
+            "manual_review",
+            "fence",
+            "iron",
+            "barrier",
+            "railing",
+            "straight_segment"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 4,
+            "h": 3
+          },
+          "origin_mode": "bottom_center",
+          "pivot_px": {
+            "x": 60,
+            "y": 73
+          },
+          "snap": "tile_or_free",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": true,
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": true,
+          "blocks_sight": false,
+          "cover_value": 1,
+          "collision_shape": "footprint",
+          "review_status": "reviewed"
+        },
+        "procgen": {
+          "uses": [
+            "barrier_prop",
+            "gothic_fence",
+            "compound_boundary",
+            "restricted_area_marker"
+          ],
+          "weight": 12,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": true,
+          "supports_gothic_compound": true,
+          "review_status": "reviewed"
+        },
+        "master_index": 6
+      }
+    },
+    {
+      "batch_index": 6,
+      "current": {
+        "png": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_12.png",
+        "manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_12.game32.json",
+        "canonical_manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_12.game32.json",
+        "filename": "gothic_uncategorized_asset_12.png",
+        "parent_dir": "custodian/content/props/gothic/uncategorized_environment_asset",
+        "exists": true
+      },
+      "review": {
+        "action": "move",
+        "target_png": "custodian/content/props/gothic/wall_dressing/gothic_tattered_black_banner_01.png",
+        "target_manifest": "custodian/content/props/gothic/wall_dressing/gothic_tattered_black_banner_01.game32.json",
+        "delete_import": true,
+        "notes": ""
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "gothic_wall_dressing_tattered_black_banner_01",
+        "display_name": "Gothic Tattered Black Banner 01",
+        "source": {
+          "sheet": "gothic_tilesheet.png",
+          "visual_index": 127,
+          "row_index": 10,
+          "col_index": 8,
+          "bbox_px": {
+            "x": 1031,
+            "y": 864,
+            "w": 60,
+            "h": 154
+          },
+          "master_sheet": null,
+          "original_path": "res://content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_12.png",
+          "section": "props",
+          "subtype": "props",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 60,
+            "h": 154
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_12.png",
+          "pixel_size": {
+            "w": 60,
+            "h": 154
+          }
+        },
+        "classification": {
+          "asset_type": "props",
+          "semantic_role": "tattered_hanging_banner_prop",
+          "placement_layer": "prop",
+          "tags": [
+            "gothic",
+            "manual_review",
+            "banner",
+            "cloth",
+            "tattered",
+            "hanging",
+            "wall_dressing",
+            "faction_dressing"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 2,
+            "h": 5
+          },
+          "origin_mode": "bottom_center",
+          "pivot_px": {
+            "x": 30,
+            "y": 153
+          },
+          "snap": "tile_or_free",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": true,
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": false,
+          "blocks_sight": false,
+          "cover_value": 0,
+          "collision_shape": "none",
+          "review_status": "reviewed"
+        },
+        "procgen": {
+          "uses": [
+            "wall_dressing",
+            "gothic_dressing",
+            "faction_dressing",
+            "atmospheric_prop"
+          ],
+          "weight": 12,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": true,
+          "supports_gothic_compound": true,
+          "review_status": "reviewed"
+        },
+        "master_index": 7
+      }
+    },
+    {
+      "batch_index": 7,
+      "current": {
+        "png": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_13.png",
+        "manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_13.game32.json",
+        "canonical_manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_13.game32.json",
+        "filename": "gothic_uncategorized_asset_13.png",
+        "parent_dir": "custodian/content/props/gothic/uncategorized_environment_asset",
+        "exists": true
+      },
+      "review": {
+        "action": "move",
+        "target_png": "custodian/content/props/gothic/wall_dressing/gothic_hanging_chain_hook_01.png",
+        "target_manifest": "custodian/content/props/gothic/wall_dressing/gothic_hanging_chain_hook_01.game32.json",
+        "delete_import": true,
+        "notes": ""
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "gothic_wall_dressing_hanging_chain_hook_01",
+        "display_name": "Gothic Hanging Chain Hook 01",
+        "source": {
+          "sheet": "gothic_tilesheet.png",
+          "visual_index": 128,
+          "row_index": 11,
+          "col_index": 0,
+          "bbox_px": {
+            "x": 938,
+            "y": 885,
+            "w": 43,
+            "h": 173
+          },
+          "master_sheet": null,
+          "original_path": "res://content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_13.png",
+          "section": "props",
+          "subtype": "props",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 43,
+            "h": 173
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_13.png",
+          "pixel_size": {
+            "w": 43,
+            "h": 173
+          }
+        },
+        "classification": {
+          "asset_type": "props",
+          "semantic_role": "hanging_chain_hook_prop",
+          "placement_layer": "prop",
+          "tags": [
+            "gothic",
+            "manual_review",
+            "chain",
+            "hook",
+            "hanging",
+            "metal",
+            "wall_dressing",
+            "vault_dressing"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 2,
+            "h": 6
+          },
+          "origin_mode": "bottom_center",
+          "pivot_px": {
+            "x": 21,
+            "y": 172
+          },
+          "snap": "tile_or_free",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": true,
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": false,
+          "blocks_sight": false,
+          "cover_value": 0,
+          "collision_shape": "none",
+          "review_status": "reviewed"
+        },
+        "procgen": {
+          "uses": [
+            "wall_dressing",
+            "vault_dressing",
+            "dungeon_dressing",
+            "industrial_gothic_dressing"
+          ],
+          "weight": 12,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": true,
+          "supports_gothic_compound": true,
+          "review_status": "reviewed"
+        },
+        "master_index": 8
+      }
+    },
+    {
+      "batch_index": 8,
+      "current": {
+        "png": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_14.png",
+        "manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_14.game32.json",
+        "canonical_manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_14.game32.json",
+        "filename": "gothic_uncategorized_asset_14.png",
+        "parent_dir": "custodian/content/props/gothic/uncategorized_environment_asset",
+        "exists": true
+      },
+      "review": {
+        "action": "move",
+        "target_png": "custodian/content/props/gothic/machines/gothic_cyan_power_core_machine_01.png",
+        "target_manifest": "custodian/content/props/gothic/machines/gothic_cyan_power_core_machine_01.game32.json",
+        "delete_import": true,
+        "notes": ""
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "gothic_machines_cyan_power_core_machine_01",
+        "display_name": "Gothic Cyan Power Core Machine 01",
+        "source": {
+          "sheet": "gothic_tilesheet.png",
+          "visual_index": 129,
+          "row_index": 11,
+          "col_index": 1,
+          "bbox_px": {
+            "x": 1121,
+            "y": 898,
+            "w": 132,
+            "h": 132
+          },
+          "master_sheet": null,
+          "original_path": "res://content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_14.png",
+          "section": "props",
+          "subtype": "props",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 132,
+            "h": 132
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_14.png",
+          "pixel_size": {
+            "w": 132,
+            "h": 132
+          }
+        },
+        "classification": {
+          "asset_type": "props",
+          "semantic_role": "cyan_power_core_machine_prop",
+          "placement_layer": "prop",
+          "tags": [
+            "gothic",
+            "manual_review",
+            "machine",
+            "power_core",
+            "cyan_glow",
+            "industrial",
+            "vault",
+            "interactable_candidate",
+            "tech"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 5,
+            "h": 5
+          },
+          "origin_mode": "bottom_center",
+          "pivot_px": {
+            "x": 66,
+            "y": 131
+          },
+          "snap": "tile_or_free",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": true,
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": true,
+          "blocks_sight": false,
+          "cover_value": 1,
+          "collision_shape": "footprint",
+          "review_status": "reviewed"
+        },
+        "procgen": {
+          "uses": [
+            "machine_room_dressing",
+            "vault_machine",
+            "power_room_dressing",
+            "high_value_dressing"
+          ],
+          "weight": 6,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": false,
+          "supports_gothic_compound": true,
+          "review_status": "reviewed"
+        },
+        "master_index": 9
+      }
+    },
+    {
+      "batch_index": 9,
+      "current": {
+        "png": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_15.png",
+        "manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_15.game32.json",
+        "canonical_manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_15.game32.json",
+        "filename": "gothic_uncategorized_asset_15.png",
+        "parent_dir": "custodian/content/props/gothic/uncategorized_environment_asset",
+        "exists": true
+      },
+      "review": {
+        "action": "move",
+        "target_png": "custodian/content/props/gothic/rubble/gothic_twisted_root_machine_wreck_01.png",
+        "target_manifest": "custodian/content/props/gothic/rubble/gothic_twisted_root_machine_wreck_01.game32.json",
+        "delete_import": true,
+        "notes": ""
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "gothic_rubble_twisted_root_machine_wreck_01",
+        "display_name": "Gothic Twisted Root Machine Wreck 01",
+        "source": {
+          "sheet": "gothic_tilesheet.png",
+          "visual_index": 130,
+          "row_index": 11,
+          "col_index": 2,
+          "bbox_px": {
+            "x": 1273,
+            "y": 893,
+            "w": 163,
+            "h": 134
+          },
+          "master_sheet": null,
+          "original_path": "res://content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_15.png",
+          "section": "props",
+          "subtype": "props",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 163,
+            "h": 134
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_15.png",
+          "pixel_size": {
+            "w": 163,
+            "h": 134
+          }
+        },
+        "classification": {
+          "asset_type": "props",
+          "semantic_role": "twisted_root_machine_wreck_prop",
+          "placement_layer": "prop",
+          "tags": [
+            "gothic",
+            "manual_review",
+            "wreck",
+            "rubble",
+            "machine",
+            "roots",
+            "debris",
+            "salvage",
+            "forest_intrusion"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 6,
+            "h": 5
+          },
+          "origin_mode": "bottom_center",
+          "pivot_px": {
+            "x": 81,
+            "y": 133
+          },
+          "snap": "tile_or_free",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": true,
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": true,
+          "blocks_sight": false,
+          "cover_value": 2,
+          "collision_shape": "footprint",
+          "review_status": "reviewed"
+        },
+        "procgen": {
+          "uses": [
+            "large_rubble_prop",
+            "salvage_dressing",
+            "forest_intrusion",
+            "blocked_route_dressing"
+          ],
+          "weight": 8,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": true,
+          "supports_gothic_compound": true,
+          "review_status": "reviewed"
+        },
+        "master_index": 10
+      }
+    },
+    {
+      "batch_index": 10,
+      "current": {
+        "png": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_16.png",
+        "manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_16.game32.json",
+        "canonical_manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_16.game32.json",
+        "filename": "gothic_uncategorized_asset_16.png",
+        "parent_dir": "custodian/content/props/gothic/uncategorized_environment_asset",
+        "exists": true
+      },
+      "review": {
+        "action": "move",
+        "target_png": "custodian/content/props/gothic/barricades/gothic_straight_sandbag_barricade_01.png",
+        "target_manifest": "custodian/content/props/gothic/barricades/gothic_straight_sandbag_barricade_01.game32.json",
+        "delete_import": true,
+        "notes": ""
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "gothic_barricades_straight_sandbag_barricade_01",
+        "display_name": "Gothic Straight Sandbag Barricade 01",
+        "source": {
+          "sheet": "gothic_tilesheet.png",
+          "visual_index": 131,
+          "row_index": 12,
+          "col_index": 0,
+          "bbox_px": {
+            "x": 9,
+            "y": 995,
+            "w": 245,
+            "h": 66
+          },
+          "master_sheet": null,
+          "original_path": "res://content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_16.png",
+          "section": "props",
+          "subtype": "props",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 245,
+            "h": 66
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_16.png",
+          "pixel_size": {
+            "w": 245,
+            "h": 66
+          }
+        },
+        "classification": {
+          "asset_type": "props",
+          "semantic_role": "straight_sandbag_barricade_prop",
+          "placement_layer": "prop",
+          "tags": [
+            "gothic",
+            "manual_review",
+            "sandbag",
+            "barricade",
+            "cover",
+            "defensive",
+            "straight_segment",
+            "military"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 8,
+            "h": 3
+          },
+          "origin_mode": "bottom_center",
+          "pivot_px": {
+            "x": 122,
+            "y": 65
+          },
+          "snap": "tile_or_free",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": true,
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": true,
+          "blocks_sight": false,
+          "cover_value": 2,
+          "collision_shape": "footprint",
+          "review_status": "reviewed"
+        },
+        "procgen": {
+          "uses": [
+            "cover_prop",
+            "defensive_barricade",
+            "compound_defense",
+            "combat_cover"
+          ],
+          "weight": 18,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": true,
+          "supports_gothic_compound": true,
+          "review_status": "reviewed"
+        },
+        "master_index": 11
+      }
+    },
+    {
+      "batch_index": 11,
+      "current": {
+        "png": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_17.png",
+        "manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_17.game32.json",
+        "canonical_manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_17.game32.json",
+        "filename": "gothic_uncategorized_asset_17.png",
+        "parent_dir": "custodian/content/props/gothic/uncategorized_environment_asset",
+        "exists": true
+      },
+      "review": {
+        "action": "move",
+        "target_png": "custodian/content/props/gothic/architectural/gothic_small_stone_pillar_01.png",
+        "target_manifest": "custodian/content/props/gothic/architectural/gothic_small_stone_pillar_01.game32.json",
+        "delete_import": true,
+        "notes": ""
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "gothic_architectural_small_stone_pillar_01",
+        "display_name": "Gothic Small Stone Pillar 01",
+        "source": {
+          "sheet": "gothic_tilesheet.png",
+          "visual_index": 132,
+          "row_index": 12,
+          "col_index": 1,
+          "bbox_px": {
+            "x": 277,
+            "y": 999,
+            "w": 39,
+            "h": 67
+          },
+          "master_sheet": null,
+          "original_path": "res://content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_17.png",
+          "section": "props",
+          "subtype": "props",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 39,
+            "h": 67
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_17.png",
+          "pixel_size": {
+            "w": 39,
+            "h": 67
+          }
+        },
+        "classification": {
+          "asset_type": "props",
+          "semantic_role": "small_gothic_stone_pillar_prop",
+          "placement_layer": "prop",
+          "tags": [
+            "gothic",
+            "manual_review",
+            "pillar",
+            "stone",
+            "marker",
+            "architectural",
+            "small_obstacle"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 2,
+            "h": 3
+          },
+          "origin_mode": "bottom_center",
+          "pivot_px": {
+            "x": 19,
+            "y": 66
+          },
+          "snap": "tile_or_free",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": true,
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": true,
+          "blocks_sight": false,
+          "cover_value": 1,
+          "collision_shape": "footprint",
+          "review_status": "reviewed"
+        },
+        "procgen": {
+          "uses": [
+            "architectural_dressing",
+            "vault_dressing",
+            "compound_dressing",
+            "small_cover_prop"
+          ],
+          "weight": 10,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": true,
+          "supports_gothic_compound": true,
+          "review_status": "reviewed"
+        },
+        "master_index": 12
+      }
+    },
+    {
+      "batch_index": 12,
+      "current": {
+        "png": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_18.png",
+        "manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_18.game32.json",
+        "canonical_manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_18.game32.json",
+        "filename": "gothic_uncategorized_asset_18.png",
+        "parent_dir": "custodian/content/props/gothic/uncategorized_environment_asset",
+        "exists": true
+      },
+      "review": {
+        "action": "move",
+        "target_png": "custodian/content/props/gothic/barricades/gothic_long_sandbag_barricade_01.png",
+        "target_manifest": "custodian/content/props/gothic/barricades/gothic_long_sandbag_barricade_01.game32.json",
+        "delete_import": true,
+        "notes": ""
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "gothic_barricades_long_sandbag_barricade_01",
+        "display_name": "Gothic Long Sandbag Barricade 01",
+        "source": {
+          "sheet": "gothic_tilesheet.png",
+          "visual_index": 133,
+          "row_index": 12,
+          "col_index": 2,
+          "bbox_px": {
+            "x": 376,
+            "y": 1011,
+            "w": 222,
+            "h": 55
+          },
+          "master_sheet": null,
+          "original_path": "res://content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_18.png",
+          "section": "props",
+          "subtype": "props",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 222,
+            "h": 55
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_18.png",
+          "pixel_size": {
+            "w": 222,
+            "h": 55
+          }
+        },
+        "classification": {
+          "asset_type": "props",
+          "semantic_role": "long_sandbag_barricade_prop",
+          "placement_layer": "prop",
+          "tags": [
+            "gothic",
+            "manual_review",
+            "sandbag",
+            "barricade",
+            "cover",
+            "defensive",
+            "long_segment",
+            "military"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 7,
+            "h": 2
+          },
+          "origin_mode": "bottom_center",
+          "pivot_px": {
+            "x": 111,
+            "y": 54
+          },
+          "snap": "tile_or_free",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": true,
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": true,
+          "blocks_sight": false,
+          "cover_value": 2,
+          "collision_shape": "footprint",
+          "review_status": "reviewed"
+        },
+        "procgen": {
+          "uses": [
+            "cover_prop",
+            "defensive_barricade",
+            "compound_defense",
+            "combat_cover"
+          ],
+          "weight": 16,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": true,
+          "supports_gothic_compound": true,
+          "review_status": "reviewed"
+        },
+        "master_index": 13
+      }
+    },
+    {
+      "batch_index": 13,
+      "current": {
+        "png": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_19.png",
+        "manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_19.game32.json",
+        "canonical_manifest": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_19.game32.json",
+        "filename": "gothic_uncategorized_asset_19.png",
+        "parent_dir": "custodian/content/props/gothic/uncategorized_environment_asset",
+        "exists": true
+      },
+      "review": {
+        "action": "move",
+        "target_png": "custodian/content/props/gothic/machines/gothic_broken_control_machine_wreck_01.png",
+        "target_manifest": "custodian/content/props/gothic/machines/gothic_broken_control_machine_wreck_01.game32.json",
+        "delete_import": true,
+        "notes": ""
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "gothic_machines_broken_control_machine_wreck_01",
+        "display_name": "Gothic Broken Control Machine Wreck 01",
+        "source": {
+          "sheet": "gothic_tilesheet.png",
+          "visual_index": 134,
+          "row_index": 12,
+          "col_index": 3,
+          "bbox_px": {
+            "x": 612,
+            "y": 1001,
+            "w": 113,
+            "h": 59
+          },
+          "master_sheet": null,
+          "original_path": "res://content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_19.png",
+          "section": "props",
+          "subtype": "props",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 113,
+            "h": 59
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_19.png",
+          "pixel_size": {
+            "w": 113,
+            "h": 59
+          }
+        },
+        "classification": {
+          "asset_type": "props",
+          "semantic_role": "broken_control_machine_wreck_prop",
+          "placement_layer": "prop",
+          "tags": [
+            "gothic",
+            "manual_review",
+            "machine",
+            "wreck",
+            "control_panel",
+            "debris",
+            "salvage",
+            "industrial",
+            "tech"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 4,
+            "h": 2
+          },
+          "origin_mode": "bottom_center",
+          "pivot_px": {
+            "x": 56,
+            "y": 58
+          },
+          "snap": "tile_or_free",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": true,
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": true,
+          "blocks_sight": false,
+          "cover_value": 1,
+          "collision_shape": "footprint",
+          "review_status": "reviewed"
+        },
+        "procgen": {
+          "uses": [
+            "machine_room_dressing",
+            "salvage_dressing",
+            "industrial_rubble",
+            "compound_tech_dressing"
+          ],
+          "weight": 8,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": true,
+          "supports_gothic_compound": true,
+          "review_status": "reviewed"
+        },
+        "master_index": 14
+      }
+    }
+  ]
+}

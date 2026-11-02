@@ -1,0 +1,668 @@
+{
+  "schema": "custodian.lower_quarter_gothic_scifi_v2_extract.v1",
+  "source": {
+    "filename": "a_clean_transparent_png_sprite_sheet_tileset_ima.png",
+    "size": [
+      1536,
+      1024
+    ],
+    "note": "Reviewed combined generated source. Individual assets selected manually by spatial role."
+  },
+  "runtime_contract": {
+    "source_alpha_cleanup": "alpha <= 16 forced to 0",
+    "runtime_scale": 0.5,
+    "runtime_alpha": "binary 0/255 after cutoff 16",
+    "palette_colors": 48,
+    "collision": "visual-only; existing authored gameplay geometry remains authority"
+  },
+  "props": [
+    {
+      "variant_key": "service_pylon_tall_01",
+      "runtime_family": "lower_quarter_service_pylon",
+      "source_rect_px": [
+        21,
+        12,
+        70,
+        201
+      ],
+      "source_extract_size": [
+        94,
+        232
+      ],
+      "runtime_size": [
+        47,
+        116
+      ],
+      "runtime_path": "res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_service_pylon/service_pylon_tall_01.png"
+    },
+    {
+      "variant_key": "utility_lamp_post_01",
+      "runtime_family": "lower_quarter_utility_lamp",
+      "source_rect_px": [
+        221,
+        15,
+        43,
+        198
+      ],
+      "source_extract_size": [
+        75,
+        222
+      ],
+      "runtime_size": [
+        38,
+        111
+      ],
+      "runtime_path": "res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_utility_lamp/utility_lamp_post_01.png"
+    },
+    {
+      "variant_key": "utility_lamp_post_02",
+      "runtime_family": "lower_quarter_utility_lamp",
+      "source_rect_px": [
+        307,
+        18,
+        43,
+        187
+      ],
+      "source_extract_size": [
+        61,
+        204
+      ],
+      "runtime_size": [
+        30,
+        102
+      ],
+      "runtime_path": "res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_utility_lamp/utility_lamp_post_02.png"
+    },
+    {
+      "variant_key": "containment_pylon_01",
+      "runtime_family": "lower_quarter_containment_pylon",
+      "source_rect_px": [
+        466,
+        34,
+        53,
+        179
+      ],
+      "source_extract_size": [
+        85,
+        201
+      ],
+      "runtime_size": [
+        42,
+        100
+      ],
+      "runtime_path": "res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_containment_pylon/containment_pylon_01.png"
+    },
+    {
+      "variant_key": "control_terminal_01",
+      "runtime_family": "lower_quarter_control_terminal",
+      "source_rect_px": [
+        382,
+        256,
+        64,
+        108
+      ],
+      "source_extract_size": [
+        85,
+        140
+      ],
+      "runtime_size": [
+        42,
+        70
+      ],
+      "runtime_path": "res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_control_terminal/control_terminal_01.png"
+    },
+    {
+      "variant_key": "service_post_short_01",
+      "runtime_family": "lower_quarter_service_post",
+      "source_rect_px": [
+        249,
+        289,
+        28,
+        81
+      ],
+      "source_extract_size": [
+        52,
+        97
+      ],
+      "runtime_size": [
+        26,
+        48
+      ],
+      "runtime_path": "res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_service_post/service_post_short_01.png"
+    },
+    {
+      "variant_key": "railing_straight_01",
+      "runtime_family": "lower_quarter_railing",
+      "source_rect_px": [
+        20,
+        404,
+        158,
+        81
+      ],
+      "source_extract_size": [
+        175,
+        106
+      ],
+      "runtime_size": [
+        88,
+        53
+      ],
+      "runtime_path": "res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_railing/railing_straight_01.png"
+    },
+    {
+      "variant_key": "railing_broken_01",
+      "runtime_family": "lower_quarter_railing",
+      "source_rect_px": [
+        393,
+        391,
+        103,
+        93
+      ],
+      "source_extract_size": [
+        119,
+        125
+      ],
+      "runtime_size": [
+        60,
+        62
+      ],
+      "runtime_path": "res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_railing/railing_broken_01.png"
+    },
+    {
+      "variant_key": "chain_sag_01",
+      "runtime_family": "lower_quarter_chain",
+      "source_rect_px": [
+        554,
+        392,
+        130,
+        88
+      ],
+      "source_extract_size": [
+        148,
+        109
+      ],
+      "runtime_size": [
+        74,
+        54
+      ],
+      "runtime_path": "res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_chain/chain_sag_01.png"
+    },
+    {
+      "variant_key": "black_banner_01",
+      "runtime_family": "lower_quarter_black_banner",
+      "source_rect_px": [
+        17,
+        500,
+        75,
+        178
+      ],
+      "source_extract_size": [
+        107,
+        203
+      ],
+      "runtime_size": [
+        54,
+        102
+      ],
+      "runtime_path": "res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_black_banner/black_banner_01.png"
+    },
+    {
+      "variant_key": "candelabrum_blue_01",
+      "runtime_family": "lower_quarter_candelabrum",
+      "source_rect_px": [
+        291,
+        506,
+        80,
+        172
+      ],
+      "source_extract_size": [
+        112,
+        204
+      ],
+      "runtime_size": [
+        56,
+        102
+      ],
+      "runtime_path": "res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_candelabrum/candelabrum_blue_01.png"
+    },
+    {
+      "variant_key": "votive_blue_small_01",
+      "runtime_family": "lower_quarter_votive",
+      "source_rect_px": [
+        629,
+        559,
+        54,
+        70
+      ],
+      "source_extract_size": [
+        70,
+        87
+      ],
+      "runtime_size": [
+        35,
+        44
+      ],
+      "runtime_path": "res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_votive/votive_blue_small_01.png"
+    },
+    {
+      "variant_key": "votive_blue_large_01",
+      "runtime_family": "lower_quarter_votive",
+      "source_rect_px": [
+        627,
+        284,
+        60,
+        85
+      ],
+      "source_extract_size": [
+        84,
+        117
+      ],
+      "runtime_size": [
+        42,
+        58
+      ],
+      "runtime_path": "res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_votive/votive_blue_large_01.png"
+    },
+    {
+      "variant_key": "equipment_case_01",
+      "runtime_family": "lower_quarter_equipment_case",
+      "source_rect_px": [
+        458,
+        697,
+        119,
+        87
+      ],
+      "source_extract_size": [
+        142,
+        119
+      ],
+      "runtime_size": [
+        71,
+        60
+      ],
+      "runtime_path": "res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_equipment_case/equipment_case_01.png"
+    },
+    {
+      "variant_key": "equipment_case_long_01",
+      "runtime_family": "lower_quarter_equipment_case",
+      "source_rect_px": [
+        145,
+        706,
+        110,
+        73
+      ],
+      "source_extract_size": [
+        127,
+        90
+      ],
+      "runtime_size": [
+        64,
+        45
+      ],
+      "runtime_path": "res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_equipment_case/equipment_case_long_01.png"
+    },
+    {
+      "variant_key": "rubble_small_01",
+      "runtime_family": "lower_quarter_rubble",
+      "source_rect_px": [
+        16,
+        814,
+        75,
+        58
+      ],
+      "source_extract_size": [
+        93,
+        74
+      ],
+      "runtime_size": [
+        46,
+        37
+      ],
+      "runtime_path": "res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_rubble/rubble_small_01.png"
+    },
+    {
+      "variant_key": "rubble_medium_01",
+      "runtime_family": "lower_quarter_rubble",
+      "source_rect_px": [
+        110,
+        821,
+        74,
+        80
+      ],
+      "source_extract_size": [
+        92,
+        97
+      ],
+      "runtime_size": [
+        46,
+        48
+      ],
+      "runtime_path": "res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_rubble/rubble_medium_01.png"
+    },
+    {
+      "variant_key": "paving_break_01",
+      "runtime_family": "lower_quarter_paving_break",
+      "source_rect_px": [
+        113,
+        922,
+        78,
+        58
+      ],
+      "source_extract_size": [
+        110,
+        82
+      ],
+      "runtime_size": [
+        55,
+        41
+      ],
+      "runtime_path": "res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_paving_break/paving_break_01.png"
+    },
+    {
+      "variant_key": "civic_column_broken_01",
+      "runtime_family": "lower_quarter_civic_column",
+      "source_rect_px": [
+        547,
+        841,
+        47,
+        132
+      ],
+      "source_extract_size": [
+        63,
+        149
+      ],
+      "runtime_size": [
+        32,
+        74
+      ],
+      "runtime_path": "res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_civic_column/civic_column_broken_01.png"
+    },
+    {
+      "variant_key": "arch_fragment_01",
+      "runtime_family": "lower_quarter_arch_fragment",
+      "source_rect_px": [
+        669,
+        871,
+        75,
+        50
+      ],
+      "source_extract_size": [
+        93,
+        67
+      ],
+      "runtime_size": [
+        46,
+        34
+      ],
+      "runtime_path": "res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_arch_fragment/arch_fragment_01.png"
+    }
+  ],
+  "walls": [
+    {
+      "variant_key": "gothic_scifi_wall_face_01",
+      "runtime_family": "lower_quarter_wall_face",
+      "source_rect_px": [
+        793,
+        33,
+        98,
+        157
+      ],
+      "source_extract_size": [
+        123,
+        189
+      ],
+      "runtime_size": [
+        62,
+        94
+      ],
+      "runtime_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_wall_face/gothic_scifi_wall_face_01.png"
+    },
+    {
+      "variant_key": "gothic_scifi_wall_face_cyan_01",
+      "runtime_family": "lower_quarter_wall_face",
+      "source_rect_px": [
+        905,
+        33,
+        108,
+        157
+      ],
+      "source_extract_size": [
+        140,
+        189
+      ],
+      "runtime_size": [
+        70,
+        94
+      ],
+      "runtime_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_wall_face/gothic_scifi_wall_face_cyan_01.png"
+    },
+    {
+      "variant_key": "gothic_scifi_wall_face_damaged_01",
+      "runtime_family": "lower_quarter_wall_face",
+      "source_rect_px": [
+        1026,
+        33,
+        106,
+        157
+      ],
+      "source_extract_size": [
+        136,
+        189
+      ],
+      "runtime_size": [
+        68,
+        94
+      ],
+      "runtime_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_wall_face/gothic_scifi_wall_face_damaged_01.png"
+    },
+    {
+      "variant_key": "gothic_scifi_retaining_face_01",
+      "runtime_family": "lower_quarter_retaining_face",
+      "source_rect_px": [
+        792,
+        218,
+        99,
+        153
+      ],
+      "source_extract_size": [
+        123,
+        185
+      ],
+      "runtime_size": [
+        62,
+        92
+      ],
+      "runtime_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_retaining_face/gothic_scifi_retaining_face_01.png"
+    },
+    {
+      "variant_key": "gothic_scifi_corner_outer_01",
+      "runtime_family": "lower_quarter_corner",
+      "source_rect_px": [
+        793,
+        414,
+        96,
+        106
+      ],
+      "source_extract_size": [
+        114,
+        131
+      ],
+      "runtime_size": [
+        57,
+        66
+      ],
+      "runtime_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_corner/gothic_scifi_corner_outer_01.png"
+    },
+    {
+      "variant_key": "gothic_scifi_corner_inner_01",
+      "runtime_family": "lower_quarter_corner",
+      "source_rect_px": [
+        1030,
+        389,
+        90,
+        132
+      ],
+      "source_extract_size": [
+        122,
+        157
+      ],
+      "runtime_size": [
+        61,
+        78
+      ],
+      "runtime_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_corner/gothic_scifi_corner_inner_01.png"
+    },
+    {
+      "variant_key": "gothic_scifi_endcap_broken_01",
+      "runtime_family": "lower_quarter_endcap",
+      "source_rect_px": [
+        1263,
+        388,
+        111,
+        130
+      ],
+      "source_extract_size": [
+        128,
+        155
+      ],
+      "runtime_size": [
+        64,
+        78
+      ],
+      "runtime_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_endcap/gothic_scifi_endcap_broken_01.png"
+    },
+    {
+      "variant_key": "gothic_scifi_cap_straight_01",
+      "runtime_family": "lower_quarter_cap",
+      "source_rect_px": [
+        793,
+        541,
+        140,
+        39
+      ],
+      "source_extract_size": [
+        164,
+        57
+      ],
+      "runtime_size": [
+        82,
+        28
+      ],
+      "runtime_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_cap/gothic_scifi_cap_straight_01.png"
+    },
+    {
+      "variant_key": "gothic_scifi_base_straight_01",
+      "runtime_family": "lower_quarter_base",
+      "source_rect_px": [
+        793,
+        605,
+        136,
+        36
+      ],
+      "source_extract_size": [
+        168,
+        61
+      ],
+      "runtime_size": [
+        84,
+        30
+      ],
+      "runtime_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_base/gothic_scifi_base_straight_01.png"
+    },
+    {
+      "variant_key": "gothic_scifi_buttress_01",
+      "runtime_family": "lower_quarter_buttress",
+      "source_rect_px": [
+        1262,
+        691,
+        33,
+        96
+      ],
+      "source_extract_size": [
+        51,
+        113
+      ],
+      "runtime_size": [
+        26,
+        56
+      ],
+      "runtime_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_buttress/gothic_scifi_buttress_01.png"
+    },
+    {
+      "variant_key": "gothic_scifi_arch_narrow_01",
+      "runtime_family": "lower_quarter_arch",
+      "source_rect_px": [
+        912,
+        656,
+        90,
+        131
+      ],
+      "source_extract_size": [
+        122,
+        155
+      ],
+      "runtime_size": [
+        61,
+        78
+      ],
+      "runtime_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_arch/gothic_scifi_arch_narrow_01.png"
+    },
+    {
+      "variant_key": "gothic_scifi_facade_recess_01",
+      "runtime_family": "lower_quarter_facade",
+      "source_rect_px": [
+        792,
+        804,
+        121,
+        176
+      ],
+      "source_extract_size": [
+        153,
+        208
+      ],
+      "runtime_size": [
+        76,
+        104
+      ],
+      "runtime_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_facade/gothic_scifi_facade_recess_01.png"
+    },
+    {
+      "variant_key": "gothic_scifi_cliff_wall_transition_01",
+      "runtime_family": "lower_quarter_transition",
+      "source_rect_px": [
+        910,
+        388,
+        97,
+        137
+      ],
+      "source_extract_size": [
+        129,
+        169
+      ],
+      "runtime_size": [
+        64,
+        84
+      ],
+      "runtime_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_transition/gothic_scifi_cliff_wall_transition_01.png"
+    },
+    {
+      "variant_key": "gothic_scifi_gate_01",
+      "runtime_family": "lower_quarter_gate",
+      "source_rect_px": [
+        1113,
+        803,
+        136,
+        177
+      ],
+      "source_extract_size": [
+        168,
+        209
+      ],
+      "runtime_size": [
+        84,
+        104
+      ],
+      "runtime_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_gate/gothic_scifi_gate_01.png"
+    }
+  ]
+}

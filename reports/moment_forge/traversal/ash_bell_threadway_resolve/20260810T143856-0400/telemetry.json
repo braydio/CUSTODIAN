@@ -1,0 +1,1799 @@
+{
+	"counters": {},
+	"engine": {
+		"frames_per_second": 26.0,
+		"time_scale": 1.0,
+		"version": {
+			"build": "arch_linux",
+			"hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+			"hex": 263937,
+			"major": 4,
+			"minor": 7,
+			"patch": 1,
+			"status": "stable",
+			"string": "4.7.1-stable (arch_linux)",
+			"timestamp": 1783976428
+		}
+	},
+	"events": [
+		{
+			"data": {},
+			"kind": "observatory_cleared",
+			"time_msec": 2298,
+			"uptime_sec": 0.662
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "fixture_command",
+					"name": "acquire_white_thread_knot",
+					"tick": 18.0
+				},
+				"moment_tick": 18,
+				"result": {
+					"action": "fixture_command",
+					"ok": true,
+					"response": true,
+					"tick": 18
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 3163,
+			"uptime_sec": 1.527
+		},
+		{
+			"data": {
+				"from": "ARMED",
+				"to": "CAPTURING"
+			},
+			"kind": "performance_incident_state_changed",
+			"time_msec": 3470,
+			"uptime_sec": 1.834
+		},
+		{
+			"data": {
+				"phase": "baseline",
+				"preroll_samples": 30,
+				"trigger": "automatic"
+			},
+			"kind": "performance_incident_started",
+			"time_msec": 3471,
+			"uptime_sec": 1.835
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "finish",
+					"tick": 130.0
+				},
+				"moment_tick": 130,
+				"result": {
+					"action": "finish",
+					"finish": true,
+					"ok": true,
+					"tick": 130
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 7469,
+			"uptime_sec": 5.833
+		},
+		{
+			"data": {
+				"from": "CAPTURING",
+				"to": "DEGRADED_LATCHED"
+			},
+			"kind": "performance_incident_state_changed",
+			"time_msec": 7469,
+			"uptime_sec": 5.833
+		},
+		{
+			"data": {
+				"reason": "manual",
+				"samples": 132,
+				"worst_frames": 20
+			},
+			"kind": "performance_incident_stopped",
+			"time_msec": 7469,
+			"uptime_sec": 5.833
+		}
+	],
+	"export_path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/traversal/ash_bell_threadway_resolve/20260810T143856-0400/telemetry.json",
+	"exported_at": "2026-08-10 14:39:03",
+	"gauges": {
+		"active_combat_audio": 0,
+		"active_enemies": 0,
+		"active_projectiles": 0,
+		"active_vfx": 0,
+		"ambient_critters": 0,
+		"collision_shape_count": 6,
+		"collision_shape_count_enemies": 0,
+		"collision_shape_count_foliage": 0,
+		"collision_shape_count_peak": 6,
+		"collision_shape_count_projectiles": 0,
+		"collision_shape_count_ruin_props": 0,
+		"collision_shape_count_runtime_walls": 0,
+		"corpse_enemies": 0,
+		"director_behavior_agents": 0,
+		"enemy_tier_active": 0,
+		"enemy_tier_active_physics_enabled": 0,
+		"enemy_tier_background": 0,
+		"enemy_tier_background_physics_enabled": 0,
+		"enemy_tier_dormant": 0,
+		"enemy_tier_dormant_physics_enabled": 0,
+		"enemy_tier_nearby": 0,
+		"enemy_tier_nearby_physics_enabled": 0,
+		"fps": 26.0,
+		"heat_player_presence_cells": 0,
+		"heatmap_cells": 0,
+		"heatmap_samples": 0,
+		"legacy_combat_agents": 0,
+		"living_enemies": 0,
+		"loaded_procgen_root_count": 0,
+		"loaded_world_branch_count": 0,
+		"node_class_histogram": {
+			"AnimatedSprite2D": 4,
+			"AnimationPlayer": 1,
+			"Area2D": 1,
+			"AudioStreamPlayer": 1,
+			"Button": 2,
+			"CanvasLayer": 4,
+			"CollisionPolygon2D": 2,
+			"CollisionShape2D": 4,
+			"ColorRect": 1,
+			"Control": 2,
+			"HBoxContainer": 2,
+			"Label": 2,
+			"LineEdit": 2,
+			"MarginContainer": 2,
+			"Marker2D": 5,
+			"Node": 27,
+			"Node2D": 9,
+			"Panel": 4,
+			"Polygon2D": 9,
+			"RichTextLabel": 3,
+			"Sprite2D": 27,
+			"StaticBody2D": 2,
+			"VBoxContainer": 2,
+			"Window": 1
+		},
+		"node_count": 119,
+		"node_count_collision": 9,
+		"node_count_peak": 119,
+		"node_count_procgen": 0,
+		"node_count_props": 0,
+		"node_count_ui": 26,
+		"node_count_vfx": 0,
+		"node_count_world": 0,
+		"observatory_full_tree_scan_count": 1,
+		"observatory_scan_usec": 859,
+		"performance_draw_calls": 23,
+		"performance_frame_ms_average": 38.5518486716531,
+		"performance_frame_ms_current": 40.2690010070801,
+		"performance_frame_ms_p95": 43.951000213623,
+		"performance_frame_ms_p99": 57.1069984436035,
+		"performance_frame_ms_worst": 86.314,
+		"performance_frame_sample_count": 132,
+		"performance_hitch_count": 132,
+		"performance_incident_auto_trigger_count": 1,
+		"performance_incident_external_stall_count": 0,
+		"performance_incident_manual_trigger_count": 0,
+		"performance_incident_rearm_progress_sec": 0.0,
+		"performance_incident_state": "DEGRADED_LATCHED",
+		"performance_physics_ms": 0.227,
+		"performance_process_ms": 8.236,
+		"performance_rendered_objects": 24,
+		"performance_severe_hitch_count": 2,
+		"physics_body_count": 2,
+		"physics_body_count_foliage": 0,
+		"physics_body_count_peak": 2,
+		"physics_body_count_ruin_props": 0,
+		"physics_body_count_runtime_walls": 0,
+		"physics_process_enabled_node_count": 0,
+		"process_enabled_node_count": 12,
+		"procgen_reveal_queue": 0,
+		"render_atmosphere_enabled": false,
+		"render_directional_light_enabled": false,
+		"render_isolation_mode": "lighting_reduced",
+		"render_point_light_count": 0,
+		"top_level_subtree_counts": {
+			"ARRNManager": 1,
+			"AshBellThreadwayMoment": 64,
+			"BuildInventory": 1,
+			"CognitiveState": 1,
+			"CommandRegistry": 1,
+			"DebugBus": 1,
+			"DebugConsoleLayer": 8,
+			"DebugCore": 1,
+			"DebugSnapshotCollector": 1,
+			"DevConsole": 12,
+			"DevMode": 3,
+			"DevObservatory": 1,
+			"DevObservatoryOverlay": 4,
+			"EnemyEngagementCoordinator": 1,
+			"FabPipeline": 1,
+			"GameConsoleManager": 1,
+			"GameState": 1,
+			"GameStats": 1,
+			"InfrastructureRegistry": 1,
+			"InventoryManager": 1,
+			"MaterialIntelligence": 1,
+			"MusicManager": 2,
+			"NoiseEventBus": 1,
+			"ResourceLedger": 1,
+			"SectorHeatmap": 1,
+			"SimulationInterestManager": 1,
+			"VaultManager": 1,
+			"WorldEventMemory": 1,
+			"WorldHistory": 1,
+			"WorldStateGraph": 1,
+			"_mcp_game_helper": 1,
+			"root": 1
+		},
+		"uptime_sec": 5.83
+	},
+	"heatmap": {
+		"cell_count": 0,
+		"cell_size_px": 64.0,
+		"cells": {},
+		"event_type_counts": {},
+		"schema": "custodian.sector_heatmap.v1",
+		"total_samples": 0
+	},
+	"material_intelligence": {
+		"contact_counts_by_kind": {},
+		"contact_counts_by_material": {},
+		"default_cell_size_px": 64.0,
+		"material_counts": {},
+		"override_cell_count": 0,
+		"schema": "custodian.material_intelligence.summary.v1",
+		"total_contacts": 0
+	},
+	"metadata": {
+		"project_name": "CUSTODIAN",
+		"project_version": ""
+	},
+	"performance": {
+		"frame_ms_average": 38.5518486716531,
+		"frame_ms_current": 40.2690010070801,
+		"frame_ms_p95": 43.951000213623,
+		"frame_ms_p99": 57.1069984436035,
+		"frame_ms_worst": 86.314,
+		"hitch_count": 132,
+		"incident_active": false,
+		"incident_phase": "baseline",
+		"incident_sample_count": 132,
+		"sample_capacity": 600,
+		"sample_count": 132,
+		"severe_hitch_count": 2
+	},
+	"performance_incident": {
+		"aggregate_spans": {},
+		"deltas": {
+			"active_audio_delta": 0,
+			"active_audio_players_delta": 0,
+			"active_vfx_delta": 0,
+			"corpse_enemies_delta": 0,
+			"draw_calls_delta": 18,
+			"living_enemies_delta": 0,
+			"node_count_delta": 19,
+			"rendered_objects_delta": 18
+		},
+		"end_snapshot": {
+			"application_focused": true,
+			"gauges": {
+				"heat_player_presence_cells": 0,
+				"performance_incident_state": "CAPTURING"
+			},
+			"overlay_visible": false,
+			"time_scale": 1.0,
+			"tree_paused": false,
+			"uptime_sec": 5.833
+		},
+		"ended_uptime_sec": 5.833,
+		"external_stalls": [],
+		"lifetime_deltas": {
+			"active_audio_delta": 0,
+			"active_audio_players_delta": 0,
+			"active_vfx_delta": 0,
+			"corpse_enemies_delta": 0,
+			"draw_calls_delta": 18,
+			"living_enemies_delta": 0,
+			"node_count_delta": 19,
+			"rendered_objects_delta": 18
+		},
+		"likely_owner": {
+			"classification": "unclassified — inspect worst-frame spans",
+			"evidence": []
+		},
+		"phase_snapshots": [
+			{
+				"deltas": {},
+				"gauges": {
+					"heat_player_presence_cells": 0,
+					"performance_incident_state": "CAPTURING"
+				},
+				"phase": "baseline",
+				"uptime_sec": 1.835
+			}
+		],
+		"phase_summaries": {
+			"baseline": {
+				"average_ms": 0.0,
+				"p95_ms": 0.0,
+				"p99_ms": 0.0,
+				"physics_ms": 47.6489999999998,
+				"process_ms": 1782.62699999999,
+				"unaccounted_ms": 0.0
+			}
+		},
+		"samples_dropped": 0,
+		"samples_retained": 132,
+		"schema": "custodian.dev_observatory.performance_incident.v1",
+		"start_snapshot": {
+			"application_focused": true,
+			"gauges": {
+				"heat_player_presence_cells": 0,
+				"performance_incident_state": "CAPTURING"
+			},
+			"overlay_visible": false,
+			"time_scale": 1.0,
+			"tree_paused": false,
+			"uptime_sec": 1.834
+		},
+		"started_uptime_sec": 1.834,
+		"state": "DEGRADED_LATCHED",
+		"summary": {
+			"frame_ms_average": 38.5518486716531,
+			"frame_ms_p95": 43.951000213623,
+			"frame_ms_p99": 57.1069984436035,
+			"frame_ms_worst": 86.3140029907227,
+			"hitch_count": 132,
+			"sample_count": 132,
+			"severe_hitch_count": 2
+		},
+		"top_spans": [],
+		"trigger": "automatic",
+		"worst_frames": [
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 5,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 106,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 0.333,
+				"process_ms": 51.198,
+				"recent_transition_events": [
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 3470,
+						"uptime_sec": 1.834
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "acquire_white_thread_knot",
+								"tick": 18.0
+							},
+							"moment_tick": 18,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": true,
+								"tick": 18
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 3163,
+						"uptime_sec": 1.527
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 2298,
+						"uptime_sec": 0.662
+					}
+				],
+				"rendered_objects": 6,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 34.783,
+				"uptime_sec": 0.749,
+				"wall_frame_ms": 86.314
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 23,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 125,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 0.236,
+				"process_ms": 7.454,
+				"recent_transition_events": [
+					{
+						"data": {
+							"phase": "baseline",
+							"preroll_samples": 30,
+							"trigger": "automatic"
+						},
+						"kind": "performance_incident_started",
+						"time_msec": 3471,
+						"uptime_sec": 1.835
+					},
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 3470,
+						"uptime_sec": 1.834
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "acquire_white_thread_knot",
+								"tick": 18.0
+							},
+							"moment_tick": 18,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": true,
+								"tick": 18
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 3163,
+						"uptime_sec": 1.527
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 2298,
+						"uptime_sec": 0.662
+					}
+				],
+				"rendered_objects": 24,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 49.417,
+				"uptime_sec": 5.112,
+				"wall_frame_ms": 57.107
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 23,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 125,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 0.236,
+				"process_ms": 7.454,
+				"recent_transition_events": [
+					{
+						"data": {
+							"phase": "baseline",
+							"preroll_samples": 30,
+							"trigger": "automatic"
+						},
+						"kind": "performance_incident_started",
+						"time_msec": 3471,
+						"uptime_sec": 1.835
+					},
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 3470,
+						"uptime_sec": 1.834
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "acquire_white_thread_knot",
+								"tick": 18.0
+							},
+							"moment_tick": 18,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": true,
+								"tick": 18
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 3163,
+						"uptime_sec": 1.527
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 2298,
+						"uptime_sec": 0.662
+					}
+				],
+				"rendered_objects": 24,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 39.016,
+				"uptime_sec": 5.055,
+				"wall_frame_ms": 46.706
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 5,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 106,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 0.333,
+				"process_ms": 51.198,
+				"recent_transition_events": [
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 3470,
+						"uptime_sec": 1.834
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "acquire_white_thread_knot",
+								"tick": 18.0
+							},
+							"moment_tick": 18,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": true,
+								"tick": 18
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 3163,
+						"uptime_sec": 1.527
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 2298,
+						"uptime_sec": 0.662
+					}
+				],
+				"rendered_objects": 6,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 0.0,
+				"uptime_sec": 1.048,
+				"wall_frame_ms": 44.716
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 23,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 125,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 0.227,
+				"process_ms": 8.236,
+				"recent_transition_events": [
+					{
+						"data": {
+							"phase": "baseline",
+							"preroll_samples": 30,
+							"trigger": "automatic"
+						},
+						"kind": "performance_incident_started",
+						"time_msec": 3471,
+						"uptime_sec": 1.835
+					},
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 3470,
+						"uptime_sec": 1.834
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "acquire_white_thread_knot",
+								"tick": 18.0
+							},
+							"moment_tick": 18,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": true,
+								"tick": 18
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 3163,
+						"uptime_sec": 1.527
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 2298,
+						"uptime_sec": 0.662
+					}
+				],
+				"rendered_objects": 24,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 35.776,
+				"uptime_sec": 5.75,
+				"wall_frame_ms": 44.239
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 24,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 146,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 0.285,
+				"process_ms": 7.646,
+				"recent_transition_events": [
+					{
+						"data": {
+							"phase": "baseline",
+							"preroll_samples": 30,
+							"trigger": "automatic"
+						},
+						"kind": "performance_incident_started",
+						"time_msec": 3471,
+						"uptime_sec": 1.835
+					},
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 3470,
+						"uptime_sec": 1.834
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "acquire_white_thread_knot",
+								"tick": 18.0
+							},
+							"moment_tick": 18,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": true,
+								"tick": 18
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 3163,
+						"uptime_sec": 1.527
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 2298,
+						"uptime_sec": 0.662
+					}
+				],
+				"rendered_objects": 26,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 36.195,
+				"uptime_sec": 3.493,
+				"wall_frame_ms": 44.126
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 24,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 150,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 0.682,
+				"process_ms": 7.639,
+				"recent_transition_events": [
+					{
+						"data": {
+							"phase": "baseline",
+							"preroll_samples": 30,
+							"trigger": "automatic"
+						},
+						"kind": "performance_incident_started",
+						"time_msec": 3471,
+						"uptime_sec": 1.835
+					},
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 3470,
+						"uptime_sec": 1.834
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "acquire_white_thread_knot",
+								"tick": 18.0
+							},
+							"moment_tick": 18,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": true,
+								"tick": 18
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 3163,
+						"uptime_sec": 1.527
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 2298,
+						"uptime_sec": 0.662
+					}
+				],
+				"rendered_objects": 30,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 35.63,
+				"uptime_sec": 2.669,
+				"wall_frame_ms": 43.951
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 23,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 125,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 0.227,
+				"process_ms": 8.236,
+				"recent_transition_events": [
+					{
+						"data": {
+							"phase": "baseline",
+							"preroll_samples": 30,
+							"trigger": "automatic"
+						},
+						"kind": "performance_incident_started",
+						"time_msec": 3471,
+						"uptime_sec": 1.835
+					},
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 3470,
+						"uptime_sec": 1.834
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "acquire_white_thread_knot",
+								"tick": 18.0
+							},
+							"moment_tick": 18,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": true,
+								"tick": 18
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 3163,
+						"uptime_sec": 1.527
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 2298,
+						"uptime_sec": 0.662
+					}
+				],
+				"rendered_objects": 24,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 35.473,
+				"uptime_sec": 5.544,
+				"wall_frame_ms": 43.936
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 23,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 125,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 0.227,
+				"process_ms": 8.236,
+				"recent_transition_events": [
+					{
+						"data": {
+							"phase": "baseline",
+							"preroll_samples": 30,
+							"trigger": "automatic"
+						},
+						"kind": "performance_incident_started",
+						"time_msec": 3471,
+						"uptime_sec": 1.835
+					},
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 3470,
+						"uptime_sec": 1.834
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "acquire_white_thread_knot",
+								"tick": 18.0
+							},
+							"moment_tick": 18,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": true,
+								"tick": 18
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 3163,
+						"uptime_sec": 1.527
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 2298,
+						"uptime_sec": 0.662
+					}
+				],
+				"rendered_objects": 24,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 34.981,
+				"uptime_sec": 5.706,
+				"wall_frame_ms": 43.444
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 21,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 148,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 0.297,
+				"process_ms": 7.194,
+				"recent_transition_events": [
+					{
+						"data": {
+							"phase": "baseline",
+							"preroll_samples": 30,
+							"trigger": "automatic"
+						},
+						"kind": "performance_incident_started",
+						"time_msec": 3471,
+						"uptime_sec": 1.835
+					},
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 3470,
+						"uptime_sec": 1.834
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "acquire_white_thread_knot",
+								"tick": 18.0
+							},
+							"moment_tick": 18,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": true,
+								"tick": 18
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 3163,
+						"uptime_sec": 1.527
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 2298,
+						"uptime_sec": 0.662
+					}
+				],
+				"rendered_objects": 25,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 35.801,
+				"uptime_sec": 2.065,
+				"wall_frame_ms": 43.292
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 23,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 125,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 0.236,
+				"process_ms": 7.454,
+				"recent_transition_events": [
+					{
+						"data": {
+							"phase": "baseline",
+							"preroll_samples": 30,
+							"trigger": "automatic"
+						},
+						"kind": "performance_incident_started",
+						"time_msec": 3471,
+						"uptime_sec": 1.835
+					},
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 3470,
+						"uptime_sec": 1.834
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "acquire_white_thread_knot",
+								"tick": 18.0
+							},
+							"moment_tick": 18,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": true,
+								"tick": 18
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 3163,
+						"uptime_sec": 1.527
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 2298,
+						"uptime_sec": 0.662
+					}
+				],
+				"rendered_objects": 24,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 35.6,
+				"uptime_sec": 5.008,
+				"wall_frame_ms": 43.29
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 23,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 125,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 0.227,
+				"process_ms": 8.236,
+				"recent_transition_events": [
+					{
+						"data": {
+							"phase": "baseline",
+							"preroll_samples": 30,
+							"trigger": "automatic"
+						},
+						"kind": "performance_incident_started",
+						"time_msec": 3471,
+						"uptime_sec": 1.835
+					},
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 3470,
+						"uptime_sec": 1.834
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "acquire_white_thread_knot",
+								"tick": 18.0
+							},
+							"moment_tick": 18,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": true,
+								"tick": 18
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 3163,
+						"uptime_sec": 1.527
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 2298,
+						"uptime_sec": 0.662
+					}
+				],
+				"rendered_objects": 24,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 34.357,
+				"uptime_sec": 5.5,
+				"wall_frame_ms": 42.82
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 12,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 145,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 0.297,
+				"process_ms": 7.194,
+				"recent_transition_events": [
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 3470,
+						"uptime_sec": 1.834
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "acquire_white_thread_knot",
+								"tick": 18.0
+							},
+							"moment_tick": 18,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": true,
+								"tick": 18
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 3163,
+						"uptime_sec": 1.527
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 2298,
+						"uptime_sec": 0.662
+					}
+				],
+				"rendered_objects": 13,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 34.799,
+				"uptime_sec": 1.605,
+				"wall_frame_ms": 42.29
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 5,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 106,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 0.333,
+				"process_ms": 51.198,
+				"recent_transition_events": [
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 3470,
+						"uptime_sec": 1.834
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "acquire_white_thread_knot",
+								"tick": 18.0
+							},
+							"moment_tick": 18,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": true,
+								"tick": 18
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 3163,
+						"uptime_sec": 1.527
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 2298,
+						"uptime_sec": 0.662
+					}
+				],
+				"rendered_objects": 6,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 0.0,
+				"uptime_sec": 0.932,
+				"wall_frame_ms": 42.188
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 23,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 125,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 0.227,
+				"process_ms": 8.236,
+				"recent_transition_events": [
+					{
+						"data": {
+							"phase": "baseline",
+							"preroll_samples": 30,
+							"trigger": "automatic"
+						},
+						"kind": "performance_incident_started",
+						"time_msec": 3471,
+						"uptime_sec": 1.835
+					},
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 3470,
+						"uptime_sec": 1.834
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "acquire_white_thread_knot",
+								"tick": 18.0
+							},
+							"moment_tick": 18,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": true,
+								"tick": 18
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 3163,
+						"uptime_sec": 1.527
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 2298,
+						"uptime_sec": 0.662
+					}
+				],
+				"rendered_objects": 24,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 33.531,
+				"uptime_sec": 5.457,
+				"wall_frame_ms": 41.994
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 15,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 146,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 0.297,
+				"process_ms": 7.194,
+				"recent_transition_events": [
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 3470,
+						"uptime_sec": 1.834
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "acquire_white_thread_knot",
+								"tick": 18.0
+							},
+							"moment_tick": 18,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": true,
+								"tick": 18
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 3163,
+						"uptime_sec": 1.527
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 2298,
+						"uptime_sec": 0.662
+					}
+				],
+				"rendered_objects": 17,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 34.269,
+				"uptime_sec": 1.756,
+				"wall_frame_ms": 41.76
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 15,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 146,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 0.297,
+				"process_ms": 7.194,
+				"recent_transition_events": [
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 3470,
+						"uptime_sec": 1.834
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "acquire_white_thread_knot",
+								"tick": 18.0
+							},
+							"moment_tick": 18,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": true,
+								"tick": 18
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 3163,
+						"uptime_sec": 1.527
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 2298,
+						"uptime_sec": 0.662
+					}
+				],
+				"rendered_objects": 17,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 33.455,
+				"uptime_sec": 1.797,
+				"wall_frame_ms": 40.946
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 23,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 125,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 0.236,
+				"process_ms": 7.454,
+				"recent_transition_events": [
+					{
+						"data": {
+							"phase": "baseline",
+							"preroll_samples": 30,
+							"trigger": "automatic"
+						},
+						"kind": "performance_incident_started",
+						"time_msec": 3471,
+						"uptime_sec": 1.835
+					},
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 3470,
+						"uptime_sec": 1.834
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "acquire_white_thread_knot",
+								"tick": 18.0
+							},
+							"moment_tick": 18,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": true,
+								"tick": 18
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 3163,
+						"uptime_sec": 1.527
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 2298,
+						"uptime_sec": 0.662
+					}
+				],
+				"rendered_objects": 24,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 33.213,
+				"uptime_sec": 5.339,
+				"wall_frame_ms": 40.903
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 21,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 148,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 0.297,
+				"process_ms": 7.194,
+				"recent_transition_events": [
+					{
+						"data": {
+							"phase": "baseline",
+							"preroll_samples": 30,
+							"trigger": "automatic"
+						},
+						"kind": "performance_incident_started",
+						"time_msec": 3471,
+						"uptime_sec": 1.835
+					},
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 3470,
+						"uptime_sec": 1.834
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "acquire_white_thread_knot",
+								"tick": 18.0
+							},
+							"moment_tick": 18,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": true,
+								"tick": 18
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 3163,
+						"uptime_sec": 1.527
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 2298,
+						"uptime_sec": 0.662
+					}
+				],
+				"rendered_objects": 25,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 32.927,
+				"uptime_sec": 2.105,
+				"wall_frame_ms": 40.418
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 23,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 125,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 0.227,
+				"process_ms": 8.236,
+				"recent_transition_events": [
+					{
+						"data": {
+							"phase": "baseline",
+							"preroll_samples": 30,
+							"trigger": "automatic"
+						},
+						"kind": "performance_incident_started",
+						"time_msec": 3471,
+						"uptime_sec": 1.835
+					},
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 3470,
+						"uptime_sec": 1.834
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "acquire_white_thread_knot",
+								"tick": 18.0
+							},
+							"moment_tick": 18,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": true,
+								"tick": 18
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 3163,
+						"uptime_sec": 1.527
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 2298,
+						"uptime_sec": 0.662
+					}
+				],
+				"rendered_objects": 24,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 31.806,
+				"uptime_sec": 5.79,
+				"wall_frame_ms": 40.269
+			}
+		]
+	},
+	"scene": {
+		"name": "AshBellThreadwayMoment",
+		"path": "res://tools/validation/fixtures/ash_bell_threadway_moment.tscn"
+	},
+	"schema": "custodian.dev_observatory.session.v1",
+	"session": {
+		"boot_time_msec": 1636,
+		"counter_count": 0,
+		"dropped_event_count": 0,
+		"event_buffer_saturated": false,
+		"event_capacity": 300,
+		"event_count": 7,
+		"gauge_count": 72,
+		"observatory_enabled": false,
+		"total_events_logged": 7,
+		"uptime_sec": 5.834,
+		"warning_count": 0
+	},
+	"warnings": []
+}

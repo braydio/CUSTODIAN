@@ -1,0 +1,13 @@
+{
+  "items": [
+    {
+      "item_id": "p9_sidearm",
+      "display_name": "P-9 Field Sidearm",
+      "description": "A compact Custodian service pistol. Standard issue for long deployments and uncertain resupply.",
+      "type": "equipment",
+      "category": "equipment",
+      "rarity": "equipment",
+      "provenance": "CUSTODIAN CRÈCHE / SUNDERED KEEP"
+    }
+  ]
+}

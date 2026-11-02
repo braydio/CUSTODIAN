@@ -1,0 +1,23 @@
+{
+  "source": "operator__cape__unarmed__dodge_fast_attack_01__w__11f__96.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "operator/new_operator/modular/dodge/operator__cape__unarmed__dodge_fast_attack_01__w__11f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 11
+      }
+    }
+  ],
+  "frame_size": [
+    96,
+    96
+  ],
+  "remove_superseded": true,
+  "post_process": [
+    "operator_modular_runtime"
+  ]
+}

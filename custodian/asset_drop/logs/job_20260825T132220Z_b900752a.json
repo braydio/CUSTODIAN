@@ -1,0 +1,44 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260825T132220Z_b900752a",
+  "timestamp": "2026-08-25T13:22:20.623452+00:00",
+  "family": "station_ix_receiver",
+  "kind": "world_prop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/station_ix_receiver/active.png",
+      "sha256": "155ffe0353e7912954b4348300cbc5ac85d7d973cf797d827bece4fe9732d23e"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "active",
+      "direction": "omni",
+      "semantic_identity": [
+        "station_ix_receiver",
+        "world_prop",
+        "body",
+        "interaction",
+        "active",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/ash_bell/station_ix/station_ix_receiver/runtime/body/station_ix_receiver__body__interaction__active__omni__8f__96.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "2f891359dbde6ac670cd7b9cc55ec8fbe14da98dea7f724da083ea5ae927cabc",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    }
+  ],
+  "backends": [
+    "sprite_ingest"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": false,
+    "ok": null
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

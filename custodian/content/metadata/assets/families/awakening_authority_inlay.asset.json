@@ -1,0 +1,91 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "awakening_authority_inlay",
+  "kind": "tile",
+  "priority": "P1",
+  "runtime": {
+    "domain": "tiles/awakening/authority_inlay",
+    "owner": "awakening_authority_inlay"
+  },
+  "canvas": {
+    "width": 32,
+    "height": 32
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "straight": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "straight",
+      "layout": "copy"
+    },
+    "corner": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "corner",
+      "layout": "copy"
+    },
+    "t_junction": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "t_junction",
+      "layout": "copy"
+    },
+    "cross": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "cross",
+      "layout": "copy"
+    },
+    "ring_node": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "ring_node",
+      "layout": "copy"
+    },
+    "threshold": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "threshold",
+      "layout": "copy"
+    },
+    "route_circle": {
+      "required": false,
+      "recommended": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "route_circle",
+      "layout": "copy"
+    },
+    "civic_spear": {
+      "required": false,
+      "recommended": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "civic_spear",
+      "layout": "copy"
+    },
+    "attestation_mark": {
+      "required": false,
+      "recommended": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "attestation_mark",
+      "layout": "copy"
+    }
+  },
+  "aliases": {},
+  "consumers": [
+    {
+      "type": "scene",
+      "path": "res://scenes/awakening_first_return.tscn"
+    }
+  ]
+}

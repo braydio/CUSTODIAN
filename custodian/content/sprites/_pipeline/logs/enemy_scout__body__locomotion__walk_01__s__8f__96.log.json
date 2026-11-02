@@ -1,0 +1,12 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/enemy_scout__body__locomotion__walk_01__s__8f__96.json",
+	"outputs": [
+		"res://content/sprites/enemies/enemy_scout/runtime/body/enemy_scout__body__locomotion__walk_01__s__8f__96.png",
+		"res://content/sprites/enemies/enemy_scout/enemy_scout__body__locomotion__walk_01__s__8f__96.png"
+	],
+	"post_process": [
+		"enemy_runtime_import"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/enemy_scout__body__locomotion__walk_01__s__8f__96.png",
+	"timestamp_utc": "2026-05-24 07:30:01"
+}

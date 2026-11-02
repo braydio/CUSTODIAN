@@ -1,0 +1,11 @@
+{
+  "schema": "game32.sundered_keep.placeholder_manifest.v1",
+  "name": "Sundered Keep Placeholder Readability Kit",
+  "count": 4,
+  "assets": [
+    "PLACEHOLDER_sundered_keep_labyrinth_void_edge",
+    "PLACEHOLDER_sundered_keep_labyrinth_wall_corner",
+    "PLACEHOLDER_sundered_keep_labyrinth_wall_pier",
+    "PLACEHOLDER_sundered_keep_labyrinth_wall_straight_s"
+  ]
+}

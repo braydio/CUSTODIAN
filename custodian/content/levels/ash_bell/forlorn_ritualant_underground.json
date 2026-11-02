@@ -1,0 +1,15 @@
+{
+  "schema": "custodian.level_definition.v1",
+  "level_id": "forlorn_ritualant_underground",
+  "display_name": "Forlorn Ritualant — Underground",
+  "route_scene_path": "res://game/world/levels/authored/ash_bell/forlorn_ritualant_underground/forlorn_ritualant_underground.tscn",
+  "target_scene_path": "res://game/world/levels/authored/ash_bell/forlorn_ritualant_underground/forlorn_ritualant_underground.tscn",
+  "world_context": "campaign_region",
+  "presentation_profile": "gameplay",
+  "spawns": ["Spawn_DescentLanding"],
+  "lifecycle": {
+    "cache_policy": "snapshot_and_unload",
+    "state_policy": "session"
+  },
+  "tags": ["authored", "route_node", "ash_bell", "underground", "ritual_site"]
+}

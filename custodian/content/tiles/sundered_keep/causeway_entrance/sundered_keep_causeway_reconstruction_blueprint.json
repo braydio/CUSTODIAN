@@ -1,0 +1,445 @@
+{
+  "name": "sundered_keep_causeway_entrance_reference_rebuild",
+  "runtime_tile_px": 32,
+  "suggested_map_size_tiles": [
+    50,
+    37
+  ],
+  "coordinate_system": "tile_xy_top_left",
+  "layers": [
+    {
+      "name": "water_base",
+      "z_index": 0,
+      "ops": [
+        {
+          "op": "fill_rect",
+          "asset": "ocean_dark_water_01",
+          "rect": [
+            0,
+            10,
+            50,
+            27
+          ]
+        },
+        {
+          "op": "scatter",
+          "assets": [
+            "ocean_dark_water_01",
+            "ocean_dark_water_02",
+            "ocean_current_streak_01"
+          ],
+          "rect": [
+            0,
+            10,
+            50,
+            27
+          ],
+          "density": 0.12
+        }
+      ]
+    },
+    {
+      "name": "cliffs_and_foam",
+      "z_index": 5,
+      "ops": [
+        {
+          "op": "stamp_rect",
+          "asset": "cliff_face_dark_01",
+          "rect": [
+            10,
+            9,
+            7,
+            28
+          ]
+        },
+        {
+          "op": "stamp_rect",
+          "asset": "cliff_face_dark_02",
+          "rect": [
+            33,
+            9,
+            7,
+            28
+          ]
+        },
+        {
+          "op": "stamp",
+          "asset": "cliff_rock_cluster_01",
+          "xy": [
+            12,
+            16
+          ]
+        },
+        {
+          "op": "stamp",
+          "asset": "cliff_rock_cluster_02",
+          "xy": [
+            34,
+            15
+          ]
+        },
+        {
+          "op": "stamp",
+          "asset": "ocean_foam_edge_left_01",
+          "xy": [
+            13,
+            15
+          ]
+        },
+        {
+          "op": "stamp",
+          "asset": "ocean_foam_edge_right_01",
+          "xy": [
+            34,
+            15
+          ]
+        },
+        {
+          "op": "stamp",
+          "asset": "ocean_foam_edge_bottom_left_01",
+          "xy": [
+            15,
+            30
+          ]
+        },
+        {
+          "op": "stamp",
+          "asset": "ocean_foam_edge_bottom_right_01",
+          "xy": [
+            32,
+            30
+          ]
+        }
+      ]
+    },
+    {
+      "name": "causeway_floor",
+      "z_index": 10,
+      "ops": [
+        {
+          "op": "fill_rect",
+          "asset": "causeway_floor_center_01",
+          "rect": [
+            20,
+            10,
+            10,
+            27
+          ]
+        },
+        {
+          "op": "scatter",
+          "assets": [
+            "causeway_floor_center_02",
+            "causeway_floor_center_03",
+            "causeway_floor_cracked_01",
+            "causeway_floor_mossy_01",
+            "causeway_floor_puddle_02"
+          ],
+          "rect": [
+            20,
+            10,
+            10,
+            27
+          ],
+          "density": 0.28
+        },
+        {
+          "op": "stamp",
+          "asset": "causeway_floor_puddle_01",
+          "xy": [
+            25,
+            11
+          ]
+        },
+        {
+          "op": "stamp",
+          "asset": "causeway_floor_grate_01",
+          "xy": [
+            17,
+            10
+          ]
+        },
+        {
+          "op": "stamp",
+          "asset": "causeway_floor_grate_02",
+          "xy": [
+            29,
+            14
+          ]
+        }
+      ]
+    },
+    {
+      "name": "causeway_edges",
+      "z_index": 20,
+      "ops": [
+        {
+          "op": "stamp_column",
+          "asset": "causeway_edge_left_vertical_01",
+          "xy": [
+            19,
+            12
+          ],
+          "count": 12,
+          "step": [
+            0,
+            2
+          ]
+        },
+        {
+          "op": "stamp_column",
+          "asset": "causeway_edge_right_vertical_01",
+          "xy": [
+            30,
+            12
+          ],
+          "count": 12,
+          "step": [
+            0,
+            2
+          ]
+        },
+        {
+          "op": "stamp",
+          "asset": "causeway_diagonal_wall_left_01",
+          "xy": [
+            17,
+            12
+          ]
+        },
+        {
+          "op": "stamp",
+          "asset": "causeway_diagonal_wall_right_01",
+          "xy": [
+            31,
+            12
+          ]
+        },
+        {
+          "op": "stamp",
+          "asset": "causeway_corner_block_left_01",
+          "xy": [
+            17,
+            19
+          ]
+        },
+        {
+          "op": "stamp",
+          "asset": "causeway_corner_block_right_01",
+          "xy": [
+            31,
+            19
+          ]
+        },
+        {
+          "op": "stamp",
+          "asset": "causeway_parapet_post_01",
+          "xy": [
+            19,
+            22
+          ]
+        },
+        {
+          "op": "stamp",
+          "asset": "causeway_parapet_post_02",
+          "xy": [
+            30,
+            22
+          ]
+        }
+      ]
+    },
+    {
+      "name": "gatehouse_and_walls",
+      "z_index": 40,
+      "ops": [
+        {
+          "op": "stamp",
+          "asset": "gatehouse_main_portcullis_01",
+          "xy": [
+            22,
+            3
+          ]
+        },
+        {
+          "op": "stamp",
+          "asset": "gatehouse_roof_peak_01",
+          "xy": [
+            22,
+            0
+          ]
+        },
+        {
+          "op": "stamp",
+          "asset": "gatehouse_steps_front_01",
+          "xy": [
+            21,
+            9
+          ]
+        },
+        {
+          "op": "stamp",
+          "asset": "gothic_side_door_left_01",
+          "xy": [
+            16,
+            5
+          ]
+        },
+        {
+          "op": "stamp",
+          "asset": "gothic_side_door_right_01",
+          "xy": [
+            29,
+            5
+          ]
+        },
+        {
+          "op": "stamp",
+          "asset": "keep_buttress_vertical_01",
+          "xy": [
+            15,
+            4
+          ]
+        },
+        {
+          "op": "stamp",
+          "asset": "keep_buttress_vertical_02",
+          "xy": [
+            33,
+            4
+          ]
+        },
+        {
+          "op": "stamp_rect",
+          "asset": "keep_wall_face_01",
+          "rect": [
+            0,
+            4,
+            15,
+            6
+          ]
+        },
+        {
+          "op": "stamp_rect",
+          "asset": "keep_wall_face_02",
+          "rect": [
+            35,
+            4,
+            15,
+            6
+          ]
+        }
+      ]
+    },
+    {
+      "name": "bastions",
+      "z_index": 50,
+      "ops": [
+        {
+          "op": "stamp",
+          "asset": "side_bastion_left_01",
+          "xy": [
+            16,
+            19
+          ]
+        },
+        {
+          "op": "stamp",
+          "asset": "side_bastion_right_01",
+          "xy": [
+            29,
+            19
+          ]
+        },
+        {
+          "op": "stamp",
+          "asset": "lower_guard_post_left_01",
+          "xy": [
+            17,
+            30
+          ]
+        },
+        {
+          "op": "stamp",
+          "asset": "lower_guard_post_right_01",
+          "xy": [
+            30,
+            30
+          ]
+        }
+      ]
+    },
+    {
+      "name": "props",
+      "z_index": 70,
+      "ops": [
+        {
+          "op": "stamp",
+          "asset": "brazier_lit_01",
+          "xy": [
+            21,
+            22
+          ]
+        },
+        {
+          "op": "stamp",
+          "asset": "brazier_lit_02",
+          "xy": [
+            28,
+            22
+          ]
+        },
+        {
+          "op": "stamp",
+          "asset": "gate_sconce_left_01",
+          "xy": [
+            21,
+            6
+          ]
+        },
+        {
+          "op": "stamp",
+          "asset": "gate_sconce_right_01",
+          "xy": [
+            28,
+            6
+          ]
+        },
+        {
+          "op": "stamp",
+          "asset": "banner_red_vertical_01",
+          "xy": [
+            18,
+            5
+          ]
+        },
+        {
+          "op": "stamp",
+          "asset": "banner_red_vertical_02",
+          "xy": [
+            32,
+            5
+          ]
+        },
+        {
+          "op": "stamp",
+          "asset": "banner_red_small_01",
+          "xy": [
+            18,
+            21
+          ]
+        },
+        {
+          "op": "stamp",
+          "asset": "shield_wall_crest_01",
+          "xy": [
+            44,
+            4
+          ]
+        }
+      ]
+    }
+  ],
+  "asset_manifest": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/sundered_keep_causeway_assets_manifest.json",
+  "output_root": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance"
+}

@@ -1,0 +1,27 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="PackedScene" path="res://game/world/levels/authored/hub/twin_solaria/twin_solaria.tscn" id="1_level"]
+[ext_resource type="PackedScene" path="res://game/actors/operator/operator.tscn" id="2_operator"]
+[ext_resource type="Script" path="res://game/world/camera.gd" id="3_camera"]
+[ext_resource type="Script" path="res://game/systems/core/player_controller.gd" id="4_controller"]
+[ext_resource type="Script" path="res://game/world/levels/level_playtest_bootstrap.gd" id="5_bootstrap"]
+
+[node name="GameRoot" type="Node2D"]
+[node name="World" type="Node2D" parent="."]
+[node name="Level" parent="World" instance=ExtResource("1_level")]
+[node name="Operator" parent="World" instance=ExtResource("2_operator")]
+position = Vector2(-91.5, 660)
+[node name="PlayerController" type="Node" parent="World"]
+script = ExtResource("4_controller")
+operator_path = NodePath("../Operator")
+[node name="Camera2D" type="Camera2D" parent="World"]
+script = ExtResource("3_camera")
+base_zoom = Vector2(1, 1)
+auto_zoom_enabled = false
+threat_framing_enabled = false
+[node name="PlaytestBootstrap" type="Node" parent="."]
+script = ExtResource("5_bootstrap")
+level_path = NodePath("../World/Level")
+operator_path = NodePath("../World/Operator")
+spawn_id = &"Spawn_CrownCauseway"
+profile = "movement"

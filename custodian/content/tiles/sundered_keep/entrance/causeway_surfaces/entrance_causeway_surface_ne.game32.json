@@ -1,0 +1,62 @@
+{
+  "schema": "custodian.game32.asset.v1",
+  "id": "entrance_causeway_surface_ne",
+  "name": "entrance_causeway_surface_ne",
+  "asset_class": "directional_tile",
+  "domain": "directional_edges",
+  "generated_at_utc": "2026-06-02T03:41:06.723325+00:00",
+  "generator": "custodian/tools/art/slice_128_directional_tiles.py",
+  "source": {
+    "source_path": "res://content/tiles/sundered_keep/floors/causeway_source.png",
+    "source_size_px": [
+      128,
+      128
+    ],
+    "grid_cell": [
+      3,
+      0
+    ],
+    "crop_box_px": [
+      96,
+      0,
+      128,
+      32
+    ]
+  },
+  "runtime_path": "res://content/tiles/sundered_keep/entrance/causeway_surfaces/entrance_causeway_surface_ne.png",
+  "size_px": [
+    32,
+    32
+  ],
+  "tile_size_px": 32,
+  "game32": {
+    "logical_footprint_cells": [
+      1,
+      1
+    ],
+    "anchor": "top_left",
+    "pivot": "top_left",
+    "placement_rule": "snap_to_grid32",
+    "orientation": "ne",
+    "z_layer": "ground",
+    "z_index": 0,
+    "y_sort": false,
+    "walkable": true,
+    "blocks_movement": false,
+    "blocks_projectiles": false,
+    "blocks_vision": false,
+    "collision": {
+      "enabled": false,
+      "profile": "none",
+      "shape": "none"
+    },
+    "navigation": {
+      "can_pathfind": true,
+      "cost": 1.0
+    },
+    "render": {
+      "import_filter": "nearest_or_disabled_in_godot",
+      "mipmaps": false
+    }
+  }
+}

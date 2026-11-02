@@ -1,0 +1,12 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__lower_body__melee_1h__transition__idle_fast_transition_01__e__3f__156x96.json",
+	"outputs": [
+		"res://content/sprites/operator/source/animations/melee_1h/transition/idle_fast_transition_01/operator__lower_body__melee_1h__transition__idle_fast_transition_01__e__3f__156x96.png",
+		"res://content/sprites/operator/source/animations/melee_1h/transition/idle_fast_transition_01/operator__lower_body__melee_1h__transition__idle_fast_transition_01__w__3f__156x96.png"
+	],
+	"post_process": [
+		"operator_runtime_build"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/operator__lower_body__melee_1h__transition__idle_fast_transition_01__e__3f__156x96.png",
+	"timestamp_utc": "2026-09-08 07:09:58"
+}

@@ -1,0 +1,12 @@
+{
+  "schema": "custodian.level_definition.v1",
+  "level_id": "ash_bell_lower_quarter",
+  "display_name": "Ash-Bell — Lower Quarter",
+  "route_scene_path": "res://game/world/levels/authored/ash_bell/lower_quarter/lower_quarter.tscn",
+  "target_scene_path": "res://game/world/levels/authored/ash_bell/lower_quarter/lower_quarter.tscn",
+  "world_context": "campaign_region",
+  "presentation_profile": "gameplay",
+  "spawns": ["Spawn_FromWorld", "Spawn_FromWestGate", "Spawn_FromStationIX"],
+  "lifecycle": {"cache_policy": "snapshot_and_unload", "state_policy": "session"},
+  "tags": ["authored", "playable_map", "route_node", "ash_bell", "lower_quarter"]
+}

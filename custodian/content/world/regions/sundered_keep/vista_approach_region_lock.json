@@ -1,0 +1,22 @@
+{
+  "region_id": "sundered_keep_vista_approach",
+  "region_kind": "authored_vista_approach",
+  "world_profile": "res://content/procgen/world_profiles/sundered_keep_vista_approach.json",
+  "locked_band": "vista_threshold",
+  "allowed_styles": [
+    "wind_cut_stair",
+    "ridge_trail",
+    "collapsed_keep_exterior",
+    "ruined_observatory"
+  ],
+  "blocked_story_rooms": [
+    "ash_bell_forlorn_ritualant",
+    "forlorn_ritualant_site",
+    "generic_harvest_site"
+  ],
+  "hud_mode": "vista_approach",
+  "minimap_mode": "authored_approach_only",
+  "allow_harvest_nodes": false,
+  "allow_procgen_foliage": false,
+  "allow_procgen_health_bars": false
+}

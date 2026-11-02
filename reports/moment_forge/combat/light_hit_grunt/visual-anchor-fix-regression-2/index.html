@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Moment Forge — combat/light_hit_grunt</title>
+<style>
+:root{color-scheme:dark;--bg:#090d13;--panel:#111925;--line:#2d425a;--text:#dce8f2;--muted:#8ca0b4;--cyan:#66d9ef;--red:#ff6b72;--green:#72d69b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,sans-serif}main{max-width:1600px;margin:auto;padding:24px}code{color:var(--cyan)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.panel{background:var(--panel);border:1px solid var(--line);padding:16px;border-radius:8px;overflow:auto;margin-bottom:16px}video,img{width:100%;height:auto;background:#000}table{width:100%;border-collapse:collapse}th,td{padding:7px 9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.pass{color:var(--green)}.fail{color:var(--red)}.muted{color:var(--muted)}button,input{margin:4px}@media(max-width:900px){.grid{grid-template-columns:1fr}}
+</style></head><body><main>
+<h1>CUSTODIAN Moment Forge</h1>
+<p><code>combat/light_hit_grunt</code> — Operator fast strike against a stationary grunt.</p>
+<p>Status: <b>passed</b> · fingerprint <code>c8c5837fedebc4e9</code></p>
+<section class="panel"><button id="playBoth">Play both</button><button id="pauseBoth">Pause</button><label>Scrub <input id="scrub" type="range" min="0" max="1000" value="0"></label>
+<div class="grid"><div><h2>Baseline</h2><video controls loop src='baseline.mp4'></video></div><div><h2>Current</h2><video controls loop src='current.mp4'></video></div></div></section>
+<div class="grid"><section class="panel"><h2>Baseline contact sheet</h2><img src='baseline_contact_sheet.png' alt='baseline_contact_sheet.png'></section><section class="panel"><h2>Current contact sheet</h2><img src='current_contact_sheet.png' alt='current_contact_sheet.png'></section></div>
+<section class="panel"><h2>Visual difference (advisory)</h2><img src='visual_diff.png' alt='visual_diff.png'></section>
+<section class="panel"><h2>Assertions</h2><ul><li class='pass'><b>role_exists</b> [error]: </li>
+<li class='pass'><b>no_unreleased_inputs</b> [error]: </li>
+<li class='pass'><b>output_exists</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>warning_count</b> [warning]: </li></ul></section>
+<section class="panel"><h2>Metric deltas</h2><table><thead><tr><th>Metric</th><th>Baseline</th><th>Current</th><th>Delta</th></tr></thead><tbody></tbody></table></section>
+<section class="panel"><h2>Tick-enriched timeline</h2><table><thead><tr><th>Tick</th><th>Kind</th><th>Evidence</th></tr></thead><tbody><tr><td>2</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;input_tap&quot;, &quot;hold_ticks&quot;: 1.0, &quot;name&quot;: &quot;toggle_unarmed&quot;, &quot;tick&quot;: 2.0}, &quot;moment_tick&quot;: 2, &quot;result&quot;: {&quot;action&quot;: &quot;input_tap&quot;, &quot;ok&quot;: true, &quot;tick&quot;: 2}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 2}</code></td></tr>
+<tr><td>20</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;aim_at_role&quot;, &quot;role&quot;: &quot;operator&quot;, &quot;target_role&quot;: &quot;target&quot;, &quot;tick&quot;: 20.0}, &quot;moment_tick&quot;: 20, &quot;result&quot;: {&quot;action&quot;: &quot;aim_at_role&quot;, &quot;ok&quot;: true, &quot;tick&quot;: 20}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 20}</code></td></tr>
+<tr><td>30</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;input_tap&quot;, &quot;hold_ticks&quot;: 1.0, &quot;name&quot;: &quot;attack_primary&quot;, &quot;tick&quot;: 30.0}, &quot;moment_tick&quot;: 30, &quot;result&quot;: {&quot;action&quot;: &quot;input_tap&quot;, &quot;ok&quot;: true, &quot;tick&quot;: 30}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 30}</code></td></tr>
+<tr><td>34</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;capture_marker&quot;, &quot;name&quot;: &quot;expected_contact&quot;, &quot;tick&quot;: 34.0}, &quot;moment_tick&quot;: 34, &quot;result&quot;: {&quot;action&quot;: &quot;capture_marker&quot;, &quot;ok&quot;: true, &quot;tick&quot;: 34}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 34}</code></td></tr>
+<tr><td>118</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;finish&quot;, &quot;tick&quot;: 118.0}, &quot;moment_tick&quot;: 118, &quot;result&quot;: {&quot;action&quot;: &quot;finish&quot;, &quot;finish&quot;: true, &quot;ok&quot;: true, &quot;tick&quot;: 118}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 118}</code></td></tr></tbody></table></section>
+<section class="panel"><h2>Provenance</h2><pre>{
+  &quot;capture&quot;: {
+    &quot;audio_requested&quot;: true,
+    &quot;fps&quot;: 60,
+    &quot;height&quot;: 720,
+    &quot;mode&quot;: &quot;full&quot;,
+    &quot;synchronization&quot;: &quot;verified&quot;,
+    &quot;width&quot;: 1280
+  },
+  &quot;repository&quot;: {
+    &quot;branch&quot;: &quot;main&quot;,
+    &quot;changed_files&quot;: [
+      &quot;M custodian/docs/ai_context/VALIDATION_RECIPES.md&quot;,
+      &quot; M custodian/game/actors/operator/operator.tscn&quot;,
+      &quot; M custodian/tools/iteration/godot/moment_probe_collector.gd&quot;,
+      &quot; M custodian/tools/iteration/run_moment.py&quot;,
+      &quot; M custodian/tools/iteration/scenarios/combat/heavy_hit_grunt.json&quot;,
+      &quot; M custodian/tools/iteration/scenarios/combat/light_hit_grunt.json&quot;,
+      &quot;?? custodian/tools/validation/operator_visual_anchor_smoke.gd&quot;,
+      &quot;?? custodian/tools/validation/operator_visual_anchor_smoke.gd.uid&quot;,
+      &quot;?? fix_operator_visual_anchor.patch&quot;,
+      &quot;?? reports/moment_forge/combat/light_hit_grunt/20260729T173311-0400/&quot;,
+      &quot;?? reports/moment_forge/combat/light_hit_grunt/visual-anchor-fix-regression-2/&quot;,
+      &quot;?? reports/moment_forge/combat/light_hit_grunt/visual-anchor-fix-regression/&quot;,
+      &quot;?? reports/moment_forge/combat/light_hit_grunt/visual-anchor-fix/&quot;,
+      &quot;?? reports/moment_forge/combat/light_hit_grunt/visual-anchor-probe-smoke/&quot;
+    ],
+    &quot;commit&quot;: &quot;aa80639d67d6535233756e5a35b82e1a3d524c03&quot;,
+    &quot;dirty&quot;: true,
+    &quot;root&quot;: &quot;/home/braydenchaffee/Projects/CUSTODIAN&quot;
+  },
+  &quot;runtime&quot;: {
+    &quot;godot&quot;: {
+      &quot;build&quot;: &quot;arch_linux&quot;,
+      &quot;hash&quot;: &quot;a13da4feb8d8aefc283c3763d33a2f170a18d541&quot;,
+      &quot;hex&quot;: 263937,
+      &quot;major&quot;: 4,
+      &quot;minor&quot;: 7,
+      &quot;patch&quot;: 1,
+      &quot;status&quot;: &quot;stable&quot;,
+      &quot;string&quot;: &quot;4.7.1-stable (arch_linux)&quot;,
+      &quot;timestamp&quot;: 1783976428
+    },
+    &quot;physics_hz&quot;: 60,
+    &quot;renderer&quot;: &quot;vulkan&quot;
+  },
+  &quot;scenario&quot;: {
+    &quot;id&quot;: &quot;combat/light_hit_grunt&quot;,
+    &quot;path&quot;: &quot;/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/visual-anchor-fix-regression-2/scenario.snapshot.json&quot;,
+    &quot;schema_version&quot;: 1,
+    &quot;sha256&quot;: &quot;96b3f759ccf2b41b548259ed4fddec6e20389910497307cd287ef5258262111a&quot;
+  }
+}</pre></section>
+</main><script>
+const videos=[...document.querySelectorAll('video')],scrub=document.getElementById('scrub');
+document.getElementById('playBoth').onclick=()=>videos.forEach(v=>v.play());
+document.getElementById('pauseBoth').onclick=()=>videos.forEach(v=>v.pause());
+scrub.oninput=()=>videos.forEach(v=>{if(Number.isFinite(v.duration))v.currentTime=v.duration*Number(scrub.value)/1000});
+</script></body></html>

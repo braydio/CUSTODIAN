@@ -1,0 +1,80 @@
+{
+  "schema": "game32.asset.v2",
+  "id": "gothic_environment_prop_002",
+  "display_name": "Gothic Environment Prop 002",
+  "source": {
+    "master_sheet": null,
+    "original_path": "res://content/props/gothic/environment_prop/gothic_environment_prop_002.png",
+    "section": "props",
+    "subtype": "props",
+    "source_rect_px": {
+      "x": 0,
+      "y": 0,
+      "w": 82,
+      "h": 65
+    },
+    "review_source": "human_llm_compact_review",
+    "review_status": "reviewed"
+  },
+  "file": {
+    "path": "res://content/props/gothic/environment_prop/gothic_environment_prop_002.png",
+    "pixel_size": {
+      "w": 82,
+      "h": 65
+    }
+  },
+  "classification": {
+    "asset_type": "props",
+    "semantic_role": "stone_rubble_pile_prop",
+    "placement_layer": "prop",
+    "tags": [
+      "gothic",
+      "prop",
+      "environment",
+      "rubble",
+      "stone",
+      "debris",
+      "small_obstacle",
+      "cover"
+    ],
+    "review_status": "reviewed"
+  },
+  "placement": {
+    "tile_size": 32,
+    "footprint_tiles": {
+      "w": 3,
+      "h": 3
+    },
+    "origin_mode": "bottom_center",
+    "snap": "tile",
+    "allow_mirror_x": false,
+    "allow_rotation": false,
+    "y_sort": true,
+    "pivot_px": {
+      "x": 41,
+      "y": 65
+    },
+    "review_status": "reviewed"
+  },
+  "collision": {
+    "blocks_movement": true,
+    "blocks_sight": false,
+    "cover_value": 1,
+    "review_status": "reviewed",
+    "collision_shape": "footprint"
+  },
+  "procgen": {
+    "uses": [
+      "rubble_prop",
+      "small_cover_prop",
+      "damaged_room_dressing",
+      "compound_dressing"
+    ],
+    "weight": 14,
+    "can_spawn_indoor": true,
+    "can_spawn_outdoor": true,
+    "review_status": "reviewed",
+    "supports_gothic_compound": true
+  },
+  "master_index": 1
+}

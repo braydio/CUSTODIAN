@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "id": "procgen/archive_resolve_shader_review",
+  "description": "Production procgen Archive Resolve veil on a real renderer: unresolved cover, active dissolve, settlement, pause freeze, reduced-effects comparison, actor-over-veil, and one unload/reacquisition.",
+  "scene": "res://scenes/debug/archive_resolve_moment.tscn",
+  "seed": 424242,
+  "duration_ticks": 520,
+  "simulation": {"physics_hz": 60, "warmup_ticks": 2, "max_wall_seconds": 240, "pause_during_setup": true},
+  "capture": {"width": 1280, "height": 720, "fps": 60, "audio": false, "start_tick": 0, "end_tick": 519, "contact_sheet_ticks": [3, 32, 36, 42, 208, 303], "required_keyframes": true, "background": "opaque"},
+  "setup": {
+    "remove_nodes": [],
+    "roles": {"fixture": {"node_path": "."}},
+    "spawns": [],
+    "properties": [],
+    "processing": [],
+    "fixture": {"id": "archive_resolve", "config": {}}
+  },
+  "timeline": [
+    {"tick": 30, "action": "fixture_command", "name": "step_east"},
+    {"tick": 120, "action": "fixture_command", "name": "pause_tree"},
+    {"tick": 150, "action": "fixture_command", "name": "resume_tree"},
+    {"tick": 200, "action": "fixture_command", "name": "reduced_on"},
+    {"tick": 205, "action": "fixture_command", "name": "step_north"},
+    {"tick": 260, "action": "fixture_command", "name": "reduced_off"},
+    {"tick": 290, "action": "fixture_command", "name": "unload_adjacent_west_chunk"},
+    {"tick": 300, "action": "fixture_command", "name": "step_west"},
+    {"tick": 500, "action": "finish"}
+  ],
+  "probes": [{"id": "veil", "role": "fixture", "fields": ["requested", "ready_count", "resolving", "settled", "active_instances", "presentation_time", "reduced_effects", "tree_paused", "shader_enabled", "shared_material_count", "actor_above_veil", "reacquisitions", "operator_chunk_x", "operator_chunk_y"], "ticks": [0, 29, 31, 36, 44, 100, 119, 121, 135, 149, 152, 199, 206, 212, 259, 299, 301, 310, 330, 499], "required": true}],
+  "assertions": [
+    {"type": "role_exists", "role": "fixture", "severity": "error"},
+    {"type": "no_unreleased_inputs", "severity": "error"},
+    {"type": "output_exists", "path": "telemetry.json", "severity": "error"}
+  ],
+  "stable_fingerprint": {"event_payload_fields": {}, "counters": [], "probes": ["veil"], "position_quantum_px": 0.25, "float_quantum": 0.0001},
+  "tags": ["procgen", "archive_resolve", "visual_review", "shader"]
+}

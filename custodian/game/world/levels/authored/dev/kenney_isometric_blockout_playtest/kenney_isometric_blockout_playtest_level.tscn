@@ -1,0 +1,49 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/world/levels/authored/dev/kenney_isometric_blockout_playtest/kenney_isometric_blockout_playtest_level.gd" id="1_level"]
+
+[node name="KenneyIsometricBlockoutPlaytestLevel" type="Node2D"]
+script = ExtResource("1_level")
+camera_bounds = Rect2(-2600, -4300, 5200, 4650)
+draw_placeholder_grid = false
+placeholder_canvas_size = Vector2(5200, 4650)
+
+[node name="SharedSpatialSample" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="AnchorMarkers" type="Node2D" parent="SharedSpatialSample"]
+unique_name_in_owner = true
+
+[node name="NativePresentation" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="KenneyPresentation" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="Collision" type="Node2D" parent="."]
+
+[node name="PathBoundaryCollision" type="StaticBody2D" parent="Collision"]
+collision_layer = 1
+collision_mask = 1
+
+[node name="Markers" type="Node2D" parent="."]
+
+[node name="Spawn_Main" type="Marker2D" parent="Markers"]
+unique_name_in_owner = true
+
+[node name="Spawn_SouthReach" type="Marker2D" parent="Markers"]
+
+[node name="AdjudicationDais" type="Marker2D" parent="Markers"]
+
+[node name="NavigationRoot" type="Node2D" parent="."]
+
+[node name="PlaytestUI" type="CanvasLayer" parent="."]
+
+[node name="ModeLabel" type="Label" parent="PlaytestUI"]
+unique_name_in_owner = true
+offset_left = 264.0
+offset_top = 24.0
+offset_right = 1650.0
+offset_bottom = 56.0
+theme_override_font_sizes/font_size = 18
+text = "K3D-1P · KENNEY · 1 NATIVE · 2 KENNEY · TAB TOGGLE · COLLISION: ENVELOPE ONLY"

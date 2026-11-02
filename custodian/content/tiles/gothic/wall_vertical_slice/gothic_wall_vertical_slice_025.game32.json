@@ -1,0 +1,83 @@
+{
+  "schema": "game32.asset.v2",
+  "id": "gothic_wall_vertical_slice_025",
+  "display_name": "Gothic Wall Vertical Slice 025",
+  "source": {
+    "master_sheet": null,
+    "original_path": "res://content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_025.png",
+    "section": "tiles",
+    "subtype": "wall_vertical_slice",
+    "source_rect_px": {
+      "x": 0,
+      "y": 0,
+      "w": 35,
+      "h": 70
+    },
+    "review_source": "human_llm_compact_review",
+    "review_status": "reviewed"
+  },
+  "file": {
+    "path": "res://content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_025.png",
+    "pixel_size": {
+      "w": 35,
+      "h": 70
+    }
+  },
+  "classification": {
+    "asset_type": "walls",
+    "semantic_role": "gothic_fenced_vertical_wall_slice",
+    "placement_layer": "wall",
+    "tags": [
+      "gothic",
+      "wall",
+      "blocking",
+      "vertical_slice",
+      "stone",
+      "modular_wall",
+      "y_sort",
+      "fence_top",
+      "iron_spikes",
+      "narrow_wall",
+      "accent_piece"
+    ],
+    "review_status": "reviewed"
+  },
+  "placement": {
+    "tile_size": 32,
+    "footprint_tiles": {
+      "w": 2,
+      "h": 3
+    },
+    "origin_mode": "bottom_center",
+    "snap": "tile",
+    "allow_mirror_x": false,
+    "allow_rotation": false,
+    "y_sort": true,
+    "pivot_px": {
+      "x": 17,
+      "y": 70
+    },
+    "review_status": "reviewed"
+  },
+  "collision": {
+    "blocks_movement": true,
+    "blocks_sight": true,
+    "cover_value": 2,
+    "review_status": "reviewed",
+    "collision_shape": "footprint"
+  },
+  "procgen": {
+    "uses": [
+      "compound_wall",
+      "vertical_wall",
+      "fence_wall",
+      "restricted_boundary"
+    ],
+    "weight": 10,
+    "can_spawn_indoor": true,
+    "can_spawn_outdoor": true,
+    "review_status": "reviewed",
+    "supports_gothic_compound": true
+  },
+  "master_index": 15
+}

@@ -1,0 +1,107 @@
+{
+  "schema": "custodian.game32.asset.v1",
+  "id": "sundered_keep/floors/gatehouse_floor_dark_01",
+  "name": "gatehouse_floor_dark_01",
+  "filename": "gatehouse_floor_dark_01.png",
+  "description": "Dark gatehouse interior floor tile for the Sundered Keep entry chamber.",
+  "asset_class": "floor_tile",
+  "domain": "floors",
+  "domain_home": "res://content/tiles/sundered_keep/floors",
+  "runtime_path": "res://content/tiles/sundered_keep/floors/gatehouse_floor_dark_01.png",
+  "source": {
+    "master_sheet": "sundered_keep_entrance_gatehouse.png",
+    "master_sheet_path": "res://content/masters/sundered_keep/sundered_keep_entrance_gatehouse.png",
+    "crop_box_px": [
+      690,
+      307,
+      879,
+      453
+    ],
+    "source_crop_size_px": [
+      189,
+      146
+    ],
+    "normalization": {
+      "output_size_px": [
+        32,
+        32
+      ],
+      "background_cleanup": "border_connected_checkerboard_to_alpha",
+      "overlay_alpha_rebuild": false
+    }
+  },
+  "image": {
+    "runtime_canvas_px": [
+      32,
+      32
+    ],
+    "format": "png_rgba",
+    "sha256": "2c25929c6441a735addee4348ab88e37ac1128f130eb13aa2430f8f10a222fc7",
+    "file_sha256": "8c161dfcae32a7f898652a2e21ab2601bfe1de0b316cf6a2afc1548876510469",
+    "background": "transparent"
+  },
+  "game32": {
+    "tile_size_px": 32,
+    "runtime_canvas_px": [
+      32,
+      32
+    ],
+    "logical_footprint_cells": [
+      1,
+      1
+    ],
+    "logical_footprint_px": [
+      32,
+      32
+    ],
+    "anchor": "top_left",
+    "pivot": "top_left",
+    "placement_rule": "snap_to_grid32",
+    "orientation": null,
+    "variant_group": "gatehouse_floor_dark",
+    "z_layer": "ground",
+    "z_index": 0,
+    "y_sort": false,
+    "walkable": true,
+    "blocks_movement": false,
+    "blocks_projectiles": false,
+    "blocks_vision": false,
+    "fall_hazard": false,
+    "water_hazard": false,
+    "traversal": "walkable",
+    "collision": {
+      "enabled": false,
+      "profile": "none",
+      "shape": "none",
+      "rect_px": null,
+      "applies_to": "none"
+    },
+    "navigation": {
+      "can_pathfind": true,
+      "cost": 1.0,
+      "avoidance": "normal"
+    },
+    "combat": {
+      "cover_profile": "none",
+      "line_of_sight_profile": "transparent",
+      "projectile_profile": "passable"
+    },
+    "render": {
+      "allowed_layers": [
+        "ground",
+        "floor"
+      ],
+      "import_filter": "nearest_or_disabled_in_godot",
+      "mipmaps": false,
+      "shadow_policy": "baked_in_source",
+      "occluder_recommended": false
+    },
+    "tags": [
+      "sundered_keep",
+      "gatehouse",
+      "floor",
+      "stone",
+      "dark"
+    ]
+  }
+}

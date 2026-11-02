@@ -1,0 +1,11 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__full_body__ranged_2h__cosmetic__reload_01__omni__4f__96.json",
+	"outputs": [
+		"res://content/sprites/operator/source/animations/ranged_2h/cosmetic/reload_01/operator__full_body__ranged_2h__cosmetic__reload_01__omni__4f__96.png"
+	],
+	"post_process": [
+		"operator_runtime_build"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/operator__full_body__ranged_2h__cosmetic__reload_01__omni__4f__96.png",
+	"timestamp_utc": "2026-09-20 10:25:15"
+}

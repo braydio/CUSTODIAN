@@ -1,0 +1,244 @@
+{
+	"counters": {},
+	"engine": {
+		"frames_per_second": 13.0,
+		"time_scale": 1.0,
+		"version": {
+			"build": "arch_linux",
+			"hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+			"hex": 263937,
+			"major": 4,
+			"minor": 7,
+			"patch": 1,
+			"status": "stable",
+			"string": "4.7.1-stable (arch_linux)",
+			"timestamp": 1783976428
+		}
+	},
+	"events": [
+		{
+			"data": {},
+			"kind": "observatory_cleared",
+			"time_msec": 2197,
+			"uptime_sec": 0.646
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "fixture_command",
+					"name": "begin_lift_descent",
+					"tick": 20.0
+				},
+				"moment_tick": 20,
+				"result": {
+					"action": "fixture_command",
+					"ok": true,
+					"response": true,
+					"tick": 20
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 4117,
+			"uptime_sec": 2.566
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "fixture_command",
+					"name": "reset_lift_exterior",
+					"tick": 96.0
+				},
+				"moment_tick": 96,
+				"result": {
+					"action": "fixture_command",
+					"ok": true,
+					"response": true,
+					"tick": 96
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 9937,
+			"uptime_sec": 8.386
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "finish",
+					"tick": 130.0
+				},
+				"moment_tick": 130,
+				"result": {
+					"action": "finish",
+					"finish": true,
+					"ok": true,
+					"tick": 130
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 12524,
+			"uptime_sec": 10.973
+		}
+	],
+	"export_path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/traversal/ash_bell_lift_exterior_descent/20260804T021317-0400/telemetry.json",
+	"exported_at": "2026-08-04 02:13:29",
+	"gauges": {
+		"active_enemies": 0,
+		"active_projectiles": 0,
+		"ambient_critters": 0,
+		"collision_shape_count": 6,
+		"collision_shape_count_enemies": 0,
+		"collision_shape_count_foliage": 0,
+		"collision_shape_count_peak": 6,
+		"collision_shape_count_projectiles": 0,
+		"collision_shape_count_ruin_props": 0,
+		"collision_shape_count_runtime_walls": 0,
+		"director_behavior_agents": 0,
+		"fps": 13.0,
+		"heat_player_presence_cells": 0,
+		"heatmap_cells": 0,
+		"heatmap_samples": 0,
+		"legacy_combat_agents": 0,
+		"loaded_procgen_root_count": 0,
+		"loaded_world_branch_count": 0,
+		"node_class_histogram": {
+			"AnimatedSprite2D": 5,
+			"AnimationPlayer": 1,
+			"Area2D": 1,
+			"AudioStreamPlayer": 1,
+			"Button": 2,
+			"Camera2D": 1,
+			"CanvasLayer": 4,
+			"CollisionPolygon2D": 2,
+			"CollisionShape2D": 4,
+			"ColorRect": 1,
+			"Control": 2,
+			"HBoxContainer": 2,
+			"Label": 2,
+			"LineEdit": 2,
+			"MarginContainer": 2,
+			"Marker2D": 5,
+			"Node": 26,
+			"Node2D": 6,
+			"Panel": 4,
+			"Polygon2D": 9,
+			"RichTextLabel": 3,
+			"Sprite2D": 9,
+			"StaticBody2D": 2,
+			"VBoxContainer": 2,
+			"Window": 1
+		},
+		"node_count": 99,
+		"node_count_collision": 9,
+		"node_count_peak": 99,
+		"node_count_procgen": 0,
+		"node_count_props": 0,
+		"node_count_ui": 26,
+		"node_count_vfx": 0,
+		"node_count_world": 0,
+		"observatory_full_tree_scan_count": 1,
+		"observatory_scan_usec": 751,
+		"performance_draw_calls": 18,
+		"performance_frame_ms_average": 0.0,
+		"performance_frame_ms_current": 0.0,
+		"performance_frame_ms_p95": 0.0,
+		"performance_frame_ms_p99": 0.0,
+		"performance_frame_ms_worst": 0.0,
+		"performance_frame_sample_count": 0,
+		"performance_hitch_count": 0,
+		"performance_rendered_objects": 20,
+		"performance_severe_hitch_count": 0,
+		"physics_body_count": 2,
+		"physics_body_count_foliage": 0,
+		"physics_body_count_peak": 2,
+		"physics_body_count_ruin_props": 0,
+		"physics_body_count_runtime_walls": 0,
+		"physics_process_enabled_node_count": 0,
+		"process_enabled_node_count": 12,
+		"procgen_reveal_queue": 0,
+		"top_level_subtree_counts": {
+			"ARRNManager": 1,
+			"AshBellLiftMoment": 45,
+			"BuildInventory": 1,
+			"CognitiveState": 1,
+			"CommandRegistry": 1,
+			"DebugBus": 1,
+			"DebugConsoleLayer": 8,
+			"DebugCore": 1,
+			"DebugSnapshotCollector": 1,
+			"DevConsole": 12,
+			"DevMode": 3,
+			"DevObservatory": 1,
+			"DevObservatoryOverlay": 4,
+			"FabPipeline": 1,
+			"GameConsoleManager": 1,
+			"GameState": 1,
+			"GameStats": 1,
+			"InfrastructureRegistry": 1,
+			"InventoryManager": 1,
+			"MaterialIntelligence": 1,
+			"MusicManager": 2,
+			"NoiseEventBus": 1,
+			"ResourceLedger": 1,
+			"SectorHeatmap": 1,
+			"SimulationInterestManager": 1,
+			"VaultManager": 1,
+			"WorldEventMemory": 1,
+			"WorldHistory": 1,
+			"WorldStateGraph": 1,
+			"_mcp_game_helper": 1,
+			"root": 1
+		},
+		"uptime_sec": 10.97
+	},
+	"heatmap": {
+		"cell_count": 0,
+		"cell_size_px": 64.0,
+		"cells": {},
+		"event_type_counts": {},
+		"schema": "custodian.sector_heatmap.v1",
+		"total_samples": 0
+	},
+	"material_intelligence": {
+		"contact_counts_by_kind": {},
+		"contact_counts_by_material": {},
+		"default_cell_size_px": 64.0,
+		"material_counts": {},
+		"override_cell_count": 0,
+		"schema": "custodian.material_intelligence.summary.v1",
+		"total_contacts": 0
+	},
+	"metadata": {
+		"project_name": "CUSTODIAN",
+		"project_version": ""
+	},
+	"performance": {
+		"frame_ms_average": 0.0,
+		"frame_ms_current": 0.0,
+		"frame_ms_p95": 0.0,
+		"frame_ms_p99": 0.0,
+		"frame_ms_worst": 0.0,
+		"hitch_count": 0,
+		"sample_capacity": 600,
+		"sample_count": 0,
+		"severe_hitch_count": 0
+	},
+	"scene": {
+		"name": "AshBellLiftMoment",
+		"path": "res://tools/validation/fixtures/ash_bell_lift_moment.tscn"
+	},
+	"schema": "custodian.dev_observatory.session.v1",
+	"session": {
+		"boot_time_msec": 1551,
+		"counter_count": 0,
+		"dropped_event_count": 0,
+		"event_buffer_saturated": false,
+		"event_capacity": 300,
+		"event_count": 4,
+		"gauge_count": 49,
+		"observatory_enabled": false,
+		"total_events_logged": 4,
+		"uptime_sec": 10.974,
+		"warning_count": 0
+	},
+	"warnings": []
+}

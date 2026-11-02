@@ -1,0 +1,135 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "gate_of_dust",
+  "kind": "world_prop",
+  "priority": "P0",
+  "runtime": {
+    "domain": "sprites/environment/props/awakening",
+    "owner": "gate_of_dust"
+  },
+  "canvas": {
+    "width": 768,
+    "height": 512
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "body_idle_sealed": {
+      "required": true,
+      "layer": "body",
+      "action_group": "state",
+      "variant": "idle_sealed",
+      "layout": "copy",
+      "frame_width": 768,
+      "frame_height": 512
+    },
+    "west_pylon": {
+      "required": true,
+      "layer": "body",
+      "action_group": "component",
+      "variant": "west_pylon",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 512
+    },
+    "east_pylon": {
+      "required": true,
+      "layer": "body",
+      "action_group": "component",
+      "variant": "east_pylon",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 512
+    },
+    "sealed_aperture": {
+      "required": true,
+      "layer": "body",
+      "action_group": "component",
+      "variant": "sealed_aperture",
+      "layout": "copy",
+      "frame_width": 512,
+      "frame_height": 512
+    },
+    "rest_threshold": {
+      "required": true,
+      "layer": "body",
+      "action_group": "component",
+      "variant": "rest_threshold",
+      "layout": "copy",
+      "frame_width": 128,
+      "frame_height": 160
+    },
+    "authority_wake": {
+      "required": false,
+      "recommended": false,
+      "layer": "fx",
+      "action_group": "continuity",
+      "variant": "authority_wake",
+      "animation": true,
+      "layout": "horizontal_strip",
+      "frames": 8,
+      "fps": 8,
+      "frame_width": 768,
+      "frame_height": 512
+    },
+    "route_acquire": {
+      "required": false,
+      "recommended": false,
+      "layer": "fx",
+      "action_group": "continuity",
+      "variant": "route_acquire",
+      "animation": true,
+      "layout": "horizontal_strip",
+      "frames": 8,
+      "fps": 8,
+      "frame_width": 768,
+      "frame_height": 512
+    },
+    "aperture_resolve": {
+      "required": false,
+      "recommended": false,
+      "layer": "fx",
+      "action_group": "continuity",
+      "variant": "aperture_resolve",
+      "animation": true,
+      "layout": "horizontal_strip",
+      "frames": 12,
+      "fps": 8,
+      "frame_width": 768,
+      "frame_height": 512
+    },
+    "continuity_stable": {
+      "required": false,
+      "recommended": false,
+      "layer": "fx",
+      "action_group": "continuity",
+      "variant": "continuity_stable",
+      "animation": true,
+      "layout": "horizontal_strip",
+      "frames": 8,
+      "fps": 8,
+      "frame_width": 768,
+      "frame_height": 512
+    },
+    "shutdown": {
+      "required": false,
+      "recommended": false,
+      "layer": "fx",
+      "action_group": "continuity",
+      "variant": "shutdown",
+      "animation": true,
+      "layout": "horizontal_strip",
+      "frames": 8,
+      "fps": 8,
+      "frame_width": 768,
+      "frame_height": 512
+    }
+  },
+  "aliases": {},
+  "consumers": [
+    {
+      "type": "scene",
+      "path": "res://scenes/awakening_first_return.tscn"
+    }
+  ]
+}

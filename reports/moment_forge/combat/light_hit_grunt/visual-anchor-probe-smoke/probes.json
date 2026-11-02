@@ -1,0 +1,117 @@
+{
+	"failures": [],
+	"records": [
+		{
+			"id": "operator_state",
+			"role": "operator",
+			"tick": 0,
+			"values": {
+				"global_position": [
+					420.0,
+					360.0
+				],
+				"visible_visual_anchor_delta_px": 0.0,
+				"visible_visual_anchor_nodes": [
+					"ModularLowerBodySprite",
+					"ModularUpperBodySprite",
+					"ModularSidearmSprite"
+				]
+			}
+		},
+		{
+			"id": "target_state",
+			"role": "target",
+			"tick": 0,
+			"values": {
+				"global_position": [
+					474.0,
+					360.0
+				]
+			}
+		},
+		{
+			"id": "operator_state",
+			"role": "operator",
+			"tick": 30,
+			"values": {
+				"global_position": [
+					420.0,
+					360.0
+				],
+				"visible_visual_anchor_delta_px": 0.0,
+				"visible_visual_anchor_nodes": [
+					"ModularLowerBodySprite",
+					"ModularUpperBodySprite",
+					"ModularHeadSprite"
+				]
+			}
+		},
+		{
+			"id": "target_state",
+			"role": "target",
+			"tick": 34,
+			"values": {
+				"global_position": [
+					474.0,
+					360.0
+				]
+			}
+		},
+		{
+			"id": "operator_state",
+			"role": "operator",
+			"tick": 72,
+			"values": {
+				"global_position": [
+					420.0,
+					360.0
+				],
+				"visible_visual_anchor_delta_px": 0.0,
+				"visible_visual_anchor_nodes": [
+					"ModularLowerBodySprite",
+					"ModularUpperBodySprite",
+					"ModularHeadSprite"
+				]
+			}
+		},
+		{
+			"id": "target_state",
+			"role": "target",
+			"tick": 72,
+			"values": {
+				"global_position": [
+					474.0,
+					360.0
+				]
+			}
+		},
+		{
+			"id": "operator_state",
+			"role": "operator",
+			"tick": 118,
+			"values": {
+				"global_position": [
+					420.0,
+					360.0
+				],
+				"visible_visual_anchor_delta_px": 0.0,
+				"visible_visual_anchor_nodes": [
+					"ModularLowerBodySprite",
+					"ModularUpperBodySprite",
+					"ModularHeadSprite"
+				]
+			}
+		},
+		{
+			"id": "target_state",
+			"role": "target",
+			"tick": 118,
+			"values": {
+				"global_position": [
+					474.0,
+					360.0
+				]
+			}
+		}
+	]
+}

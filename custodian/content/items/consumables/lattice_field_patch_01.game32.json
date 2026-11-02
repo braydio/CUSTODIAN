@@ -1,0 +1,8 @@
+{
+	"item_id": "lattice_field_patch",
+	"display_name": "Lattice Field Patch",
+	"category": "consumable",
+	"restore_fraction": 0.35,
+	"use_duration": 1.25,
+	"max_stack_carried": 2
+}

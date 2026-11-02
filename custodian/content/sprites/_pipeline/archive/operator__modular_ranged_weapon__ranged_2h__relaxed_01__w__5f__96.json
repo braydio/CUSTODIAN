@@ -1,0 +1,19 @@
+{
+  "source": "operator__modular_ranged_weapon__ranged_2h__relaxed_01__w__5f__96.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "operator/runtime/modular_ranged_weapon/operator__modular_ranged_weapon__ranged_2h__relaxed_01__w__5f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 5
+      }
+    }
+  ],
+  "frame_size": [
+    96,
+    96
+  ]
+}

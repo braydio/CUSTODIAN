@@ -1,0 +1,9 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/props__harvesting_nodes__ruptured_capacitor_bank__node__idle__5f__96.json",
+	"outputs": [
+		"res://content/sprites/props/harvesting_nodes/ruptured_capacitor_bank/ruptured_capacitor_bank__node__idle__5f__96.png"
+	],
+	"post_process": [],
+	"source": "res://content/sprites/_pipeline/inbox/props__harvesting_nodes__ruptured_capacitor_bank__node__idle__5f__96.png",
+	"timestamp_utc": "2026-05-19 10:16:16"
+}

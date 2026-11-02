@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "profiles": {
+    "light_scout_utility": {
+      "max_health": 100.0
+    }
+  }
+}

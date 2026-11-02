@@ -1,0 +1,107 @@
+{
+  "schema": "custodian.game32.asset.v1",
+  "id": "sundered_keep/overlays/entrance_causeway_shadow_01",
+  "name": "entrance_causeway_shadow_01",
+  "filename": "entrance_causeway_shadow_01.png",
+  "description": "Soft non-blocking entrance shadow overlay for grounding causeway/gate elements.",
+  "asset_class": "overlay_tile",
+  "domain": "overlays",
+  "domain_home": "res://content/tiles/sundered_keep/overlays",
+  "runtime_path": "res://content/tiles/sundered_keep/overlays/entrance_causeway_shadow_01.png",
+  "source": {
+    "master_sheet": "sundered_keep_entrance_gatehouse.png",
+    "master_sheet_path": "res://content/masters/sundered_keep/sundered_keep_entrance_gatehouse.png",
+    "crop_box_px": [
+      260,
+      292,
+      456,
+      456
+    ],
+    "source_crop_size_px": [
+      196,
+      164
+    ],
+    "normalization": {
+      "output_size_px": [
+        32,
+        32
+      ],
+      "background_cleanup": "border_connected_checkerboard_to_alpha",
+      "overlay_alpha_rebuild": true
+    }
+  },
+  "image": {
+    "runtime_canvas_px": [
+      32,
+      32
+    ],
+    "format": "png_rgba",
+    "sha256": "4cacdbe62cb7e8e12e9eeaa1277ce2d46233a9ee4576c7b8a577a19291968607",
+    "file_sha256": "7cc3dc3b16b7b69847bd42ab0d707b40f1626c0da7413a3dd7198ccdf6de2b0b",
+    "background": "transparent"
+  },
+  "game32": {
+    "tile_size_px": 32,
+    "runtime_canvas_px": [
+      32,
+      32
+    ],
+    "logical_footprint_cells": [
+      1,
+      1
+    ],
+    "logical_footprint_px": [
+      32,
+      32
+    ],
+    "anchor": "top_left",
+    "pivot": "top_left",
+    "placement_rule": "snap_to_grid32",
+    "orientation": null,
+    "variant_group": "entrance_causeway_shadow",
+    "z_layer": "overlay",
+    "z_index": 45,
+    "y_sort": false,
+    "walkable": true,
+    "blocks_movement": false,
+    "blocks_projectiles": false,
+    "blocks_vision": false,
+    "fall_hazard": false,
+    "water_hazard": false,
+    "traversal": "overlay",
+    "collision": {
+      "enabled": false,
+      "profile": "none",
+      "shape": "none",
+      "rect_px": null,
+      "applies_to": "none"
+    },
+    "navigation": {
+      "can_pathfind": true,
+      "cost": 1.0,
+      "avoidance": "normal"
+    },
+    "combat": {
+      "cover_profile": "none",
+      "line_of_sight_profile": "transparent",
+      "projectile_profile": "passable"
+    },
+    "render": {
+      "allowed_layers": [
+        "overlay",
+        "decals"
+      ],
+      "import_filter": "nearest_or_disabled_in_godot",
+      "mipmaps": false,
+      "shadow_policy": "baked_in_source",
+      "occluder_recommended": false
+    },
+    "tags": [
+      "sundered_keep",
+      "entrance",
+      "causeway",
+      "shadow",
+      "overlay"
+    ]
+  }
+}

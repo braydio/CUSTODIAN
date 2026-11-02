@@ -1,0 +1,11 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__cape__unarmed__dodge_fast_attack_01__w__11f__96.json",
+	"outputs": [
+		"res://content/sprites/operator/new_operator/modular/dodge/operator__cape__unarmed__dodge_fast_attack_01__w__11f__96.png"
+	],
+	"post_process": [
+		"operator_modular_runtime"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/operator__cape__unarmed__dodge_fast_attack_01__w__11f__96.png",
+	"timestamp_utc": "2026-07-18 12:42:58"
+}

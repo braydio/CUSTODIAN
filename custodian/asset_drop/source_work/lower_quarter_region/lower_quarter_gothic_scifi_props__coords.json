@@ -1,0 +1,897 @@
+{
+  "schema": "custodian.auto_source_coordinates.v1",
+  "source": {
+    "filename": "grimy_sci_fi_industrial_prop_collection.png",
+    "size": [
+      1448,
+      1086
+    ]
+  },
+  "detector": {
+    "alpha_threshold": 10,
+    "connectivity": 4,
+    "min_area": 100,
+    "padding_px": 0,
+    "row_band_px": 95,
+    "resizing": "none"
+  },
+  "asset_count": 73,
+  "regions": [
+    {
+      "index": 1,
+      "id": "prop_asset_001",
+      "category": "unclassified",
+      "rect_px": [
+        6,
+        10,
+        194,
+        170
+      ],
+      "opaque_component_area": 19706
+    },
+    {
+      "index": 2,
+      "id": "prop_asset_002",
+      "category": "unclassified",
+      "rect_px": [
+        203,
+        5,
+        212,
+        159
+      ],
+      "opaque_component_area": 20307
+    },
+    {
+      "index": 3,
+      "id": "prop_asset_003",
+      "category": "unclassified",
+      "rect_px": [
+        434,
+        4,
+        215,
+        177
+      ],
+      "opaque_component_area": 19561
+    },
+    {
+      "index": 4,
+      "id": "prop_asset_004",
+      "category": "unclassified",
+      "rect_px": [
+        650,
+        0,
+        221,
+        175
+      ],
+      "opaque_component_area": 18711
+    },
+    {
+      "index": 5,
+      "id": "prop_asset_005",
+      "category": "unclassified",
+      "rect_px": [
+        866,
+        12,
+        247,
+        176
+      ],
+      "opaque_component_area": 25887
+    },
+    {
+      "index": 6,
+      "id": "prop_asset_006",
+      "category": "unclassified",
+      "rect_px": [
+        1126,
+        5,
+        102,
+        97
+      ],
+      "opaque_component_area": 7050
+    },
+    {
+      "index": 7,
+      "id": "prop_asset_007",
+      "category": "unclassified",
+      "rect_px": [
+        1250,
+        9,
+        187,
+        242
+      ],
+      "opaque_component_area": 26634
+    },
+    {
+      "index": 8,
+      "id": "prop_asset_008",
+      "category": "unclassified",
+      "rect_px": [
+        345,
+        138,
+        25,
+        14
+      ],
+      "opaque_component_area": 185
+    },
+    {
+      "index": 9,
+      "id": "prop_asset_009",
+      "category": "unclassified",
+      "rect_px": [
+        1100,
+        82,
+        155,
+        147
+      ],
+      "opaque_component_area": 13023
+    },
+    {
+      "index": 10,
+      "id": "prop_asset_010",
+      "category": "unclassified",
+      "rect_px": [
+        1227,
+        144,
+        78,
+        71
+      ],
+      "opaque_component_area": 4100
+    },
+    {
+      "index": 11,
+      "id": "prop_asset_011",
+      "category": "unclassified",
+      "rect_px": [
+        11,
+        178,
+        85,
+        230
+      ],
+      "opaque_component_area": 11402
+    },
+    {
+      "index": 12,
+      "id": "prop_asset_012",
+      "category": "unclassified",
+      "rect_px": [
+        116,
+        197,
+        95,
+        200
+      ],
+      "opaque_component_area": 7353
+    },
+    {
+      "index": 13,
+      "id": "prop_asset_013",
+      "category": "unclassified",
+      "rect_px": [
+        228,
+        170,
+        68,
+        241
+      ],
+      "opaque_component_area": 9711
+    },
+    {
+      "index": 14,
+      "id": "prop_asset_014",
+      "category": "unclassified",
+      "rect_px": [
+        316,
+        169,
+        84,
+        276
+      ],
+      "opaque_component_area": 12357
+    },
+    {
+      "index": 15,
+      "id": "prop_asset_015",
+      "category": "unclassified",
+      "rect_px": [
+        429,
+        179,
+        53,
+        252
+      ],
+      "opaque_component_area": 6279
+    },
+    {
+      "index": 16,
+      "id": "prop_asset_016",
+      "category": "unclassified",
+      "rect_px": [
+        508,
+        182,
+        133,
+        245
+      ],
+      "opaque_component_area": 14110
+    },
+    {
+      "index": 17,
+      "id": "prop_asset_017",
+      "category": "unclassified",
+      "rect_px": [
+        659,
+        182,
+        162,
+        207
+      ],
+      "opaque_component_area": 24048
+    },
+    {
+      "index": 18,
+      "id": "prop_asset_018",
+      "category": "unclassified",
+      "rect_px": [
+        827,
+        185,
+        117,
+        197
+      ],
+      "opaque_component_area": 19428
+    },
+    {
+      "index": 19,
+      "id": "prop_asset_019",
+      "category": "unclassified",
+      "rect_px": [
+        962,
+        188,
+        81,
+        195
+      ],
+      "opaque_component_area": 14105
+    },
+    {
+      "index": 20,
+      "id": "prop_asset_020",
+      "category": "unclassified",
+      "rect_px": [
+        1060,
+        223,
+        88,
+        153
+      ],
+      "opaque_component_area": 11914
+    },
+    {
+      "index": 21,
+      "id": "prop_asset_021",
+      "category": "unclassified",
+      "rect_px": [
+        1163,
+        224,
+        154,
+        161
+      ],
+      "opaque_component_area": 16705
+    },
+    {
+      "index": 22,
+      "id": "prop_asset_022",
+      "category": "unclassified",
+      "rect_px": [
+        1319,
+        255,
+        114,
+        114
+      ],
+      "opaque_component_area": 9330
+    },
+    {
+      "index": 23,
+      "id": "prop_asset_023",
+      "category": "unclassified",
+      "rect_px": [
+        1232,
+        372,
+        204,
+        94
+      ],
+      "opaque_component_area": 11732
+    },
+    {
+      "index": 24,
+      "id": "prop_asset_024",
+      "category": "unclassified",
+      "rect_px": [
+        10,
+        417,
+        142,
+        162
+      ],
+      "opaque_component_area": 16452
+    },
+    {
+      "index": 25,
+      "id": "prop_asset_025",
+      "category": "unclassified",
+      "rect_px": [
+        178,
+        410,
+        64,
+        181
+      ],
+      "opaque_component_area": 7845
+    },
+    {
+      "index": 26,
+      "id": "prop_asset_026",
+      "category": "unclassified",
+      "rect_px": [
+        461,
+        442,
+        104,
+        110
+      ],
+      "opaque_component_area": 9656
+    },
+    {
+      "index": 27,
+      "id": "prop_asset_027",
+      "category": "unclassified",
+      "rect_px": [
+        600,
+        419,
+        46,
+        123
+      ],
+      "opaque_component_area": 4852
+    },
+    {
+      "index": 28,
+      "id": "prop_asset_028",
+      "category": "unclassified",
+      "rect_px": [
+        661,
+        396,
+        84,
+        164
+      ],
+      "opaque_component_area": 10705
+    },
+    {
+      "index": 29,
+      "id": "prop_asset_029",
+      "category": "unclassified",
+      "rect_px": [
+        765,
+        383,
+        91,
+        180
+      ],
+      "opaque_component_area": 13118
+    },
+    {
+      "index": 30,
+      "id": "prop_asset_030",
+      "category": "unclassified",
+      "rect_px": [
+        872,
+        389,
+        55,
+        142
+      ],
+      "opaque_component_area": 6854
+    },
+    {
+      "index": 31,
+      "id": "prop_asset_031",
+      "category": "unclassified",
+      "rect_px": [
+        947,
+        413,
+        42,
+        129
+      ],
+      "opaque_component_area": 5098
+    },
+    {
+      "index": 32,
+      "id": "prop_asset_032",
+      "category": "unclassified",
+      "rect_px": [
+        996,
+        444,
+        37,
+        109
+      ],
+      "opaque_component_area": 3691
+    },
+    {
+      "index": 33,
+      "id": "prop_asset_033",
+      "category": "unclassified",
+      "rect_px": [
+        1070,
+        389,
+        142,
+        129
+      ],
+      "opaque_component_area": 12708
+    },
+    {
+      "index": 34,
+      "id": "prop_asset_034",
+      "category": "unclassified",
+      "rect_px": [
+        241,
+        453,
+        230,
+        149
+      ],
+      "opaque_component_area": 16838
+    },
+    {
+      "index": 35,
+      "id": "prop_asset_035",
+      "category": "unclassified",
+      "rect_px": [
+        855,
+        550,
+        134,
+        69
+      ],
+      "opaque_component_area": 5145
+    },
+    {
+      "index": 36,
+      "id": "prop_asset_036",
+      "category": "unclassified",
+      "rect_px": [
+        1016,
+        513,
+        204,
+        116
+      ],
+      "opaque_component_area": 13871
+    },
+    {
+      "index": 37,
+      "id": "prop_asset_037",
+      "category": "unclassified",
+      "rect_px": [
+        1241,
+        462,
+        186,
+        174
+      ],
+      "opaque_component_area": 21575
+    },
+    {
+      "index": 38,
+      "id": "prop_asset_038",
+      "category": "unclassified",
+      "rect_px": [
+        7,
+        586,
+        218,
+        118
+      ],
+      "opaque_component_area": 13282
+    },
+    {
+      "index": 39,
+      "id": "prop_asset_039",
+      "category": "unclassified",
+      "rect_px": [
+        510,
+        563,
+        135,
+        177
+      ],
+      "opaque_component_area": 14250
+    },
+    {
+      "index": 40,
+      "id": "prop_asset_040",
+      "category": "unclassified",
+      "rect_px": [
+        656,
+        571,
+        77,
+        141
+      ],
+      "opaque_component_area": 5428
+    },
+    {
+      "index": 41,
+      "id": "prop_asset_041",
+      "category": "unclassified",
+      "rect_px": [
+        752,
+        574,
+        99,
+        100
+      ],
+      "opaque_component_area": 8402
+    },
+    {
+      "index": 42,
+      "id": "prop_asset_042",
+      "category": "unclassified",
+      "rect_px": [
+        848,
+        626,
+        149,
+        142
+      ],
+      "opaque_component_area": 12285
+    },
+    {
+      "index": 43,
+      "id": "prop_asset_043",
+      "category": "unclassified",
+      "rect_px": [
+        12,
+        696,
+        130,
+        222
+      ],
+      "opaque_component_area": 18909
+    },
+    {
+      "index": 44,
+      "id": "prop_asset_044",
+      "category": "unclassified",
+      "rect_px": [
+        155,
+        663,
+        100,
+        227
+      ],
+      "opaque_component_area": 11732
+    },
+    {
+      "index": 45,
+      "id": "prop_asset_045",
+      "category": "unclassified",
+      "rect_px": [
+        272,
+        585,
+        249,
+        255
+      ],
+      "opaque_component_area": 43042
+    },
+    {
+      "index": 46,
+      "id": "prop_asset_046",
+      "category": "unclassified",
+      "rect_px": [
+        603,
+        730,
+        120,
+        137
+      ],
+      "opaque_component_area": 8010
+    },
+    {
+      "index": 47,
+      "id": "prop_asset_047",
+      "category": "unclassified",
+      "rect_px": [
+        724,
+        677,
+        143,
+        138
+      ],
+      "opaque_component_area": 12752
+    },
+    {
+      "index": 48,
+      "id": "prop_asset_048",
+      "category": "unclassified",
+      "rect_px": [
+        1008,
+        601,
+        261,
+        245
+      ],
+      "opaque_component_area": 34249
+    },
+    {
+      "index": 49,
+      "id": "prop_asset_049",
+      "category": "unclassified",
+      "rect_px": [
+        1269,
+        659,
+        63,
+        222
+      ],
+      "opaque_component_area": 6991
+    },
+    {
+      "index": 50,
+      "id": "prop_asset_050",
+      "category": "unclassified",
+      "rect_px": [
+        1354,
+        642,
+        81,
+        166
+      ],
+      "opaque_component_area": 9929
+    },
+    {
+      "index": 51,
+      "id": "prop_asset_051",
+      "category": "unclassified",
+      "rect_px": [
+        243,
+        816,
+        288,
+        134
+      ],
+      "opaque_component_area": 19988
+    },
+    {
+      "index": 52,
+      "id": "prop_asset_052",
+      "category": "unclassified",
+      "rect_px": [
+        542,
+        775,
+        67,
+        149
+      ],
+      "opaque_component_area": 6517
+    },
+    {
+      "index": 53,
+      "id": "prop_asset_053",
+      "category": "unclassified",
+      "rect_px": [
+        858,
+        765,
+        265,
+        109
+      ],
+      "opaque_component_area": 10937
+    },
+    {
+      "index": 54,
+      "id": "prop_asset_054",
+      "category": "unclassified",
+      "rect_px": [
+        14,
+        924,
+        131,
+        138
+      ],
+      "opaque_component_area": 11575
+    },
+    {
+      "index": 55,
+      "id": "prop_asset_055",
+      "category": "unclassified",
+      "rect_px": [
+        633,
+        882,
+        30,
+        76
+      ],
+      "opaque_component_area": 1468
+    },
+    {
+      "index": 56,
+      "id": "prop_asset_056",
+      "category": "unclassified",
+      "rect_px": [
+        689,
+        874,
+        26,
+        81
+      ],
+      "opaque_component_area": 1370
+    },
+    {
+      "index": 57,
+      "id": "prop_asset_057",
+      "category": "unclassified",
+      "rect_px": [
+        723,
+        863,
+        25,
+        95
+      ],
+      "opaque_component_area": 1421
+    },
+    {
+      "index": 58,
+      "id": "prop_asset_058",
+      "category": "unclassified",
+      "rect_px": [
+        755,
+        878,
+        28,
+        91
+      ],
+      "opaque_component_area": 1585
+    },
+    {
+      "index": 59,
+      "id": "prop_asset_059",
+      "category": "unclassified",
+      "rect_px": [
+        789,
+        889,
+        32,
+        102
+      ],
+      "opaque_component_area": 1993
+    },
+    {
+      "index": 60,
+      "id": "prop_asset_060",
+      "category": "unclassified",
+      "rect_px": [
+        831,
+        859,
+        89,
+        209
+      ],
+      "opaque_component_area": 5871
+    },
+    {
+      "index": 61,
+      "id": "prop_asset_061",
+      "category": "unclassified",
+      "rect_px": [
+        918,
+        867,
+        83,
+        197
+      ],
+      "opaque_component_area": 13416
+    },
+    {
+      "index": 62,
+      "id": "prop_asset_062",
+      "category": "unclassified",
+      "rect_px": [
+        1004,
+        867,
+        66,
+        196
+      ],
+      "opaque_component_area": 6746
+    },
+    {
+      "index": 63,
+      "id": "prop_asset_063",
+      "category": "unclassified",
+      "rect_px": [
+        1081,
+        892,
+        75,
+        183
+      ],
+      "opaque_component_area": 6692
+    },
+    {
+      "index": 64,
+      "id": "prop_asset_064",
+      "category": "unclassified",
+      "rect_px": [
+        1159,
+        865,
+        101,
+        111
+      ],
+      "opaque_component_area": 7165
+    },
+    {
+      "index": 65,
+      "id": "prop_asset_065",
+      "category": "unclassified",
+      "rect_px": [
+        1325,
+        815,
+        112,
+        255
+      ],
+      "opaque_component_area": 19830
+    },
+    {
+      "index": 66,
+      "id": "prop_asset_066",
+      "category": "unclassified",
+      "rect_px": [
+        154,
+        938,
+        125,
+        142
+      ],
+      "opaque_component_area": 12314
+    },
+    {
+      "index": 67,
+      "id": "prop_asset_067",
+      "category": "unclassified",
+      "rect_px": [
+        295,
+        943,
+        102,
+        129
+      ],
+      "opaque_component_area": 9158
+    },
+    {
+      "index": 68,
+      "id": "prop_asset_068",
+      "category": "unclassified",
+      "rect_px": [
+        407,
+        957,
+        79,
+        115
+      ],
+      "opaque_component_area": 7164
+    },
+    {
+      "index": 69,
+      "id": "prop_asset_069",
+      "category": "unclassified",
+      "rect_px": [
+        514,
+        944,
+        66,
+        123
+      ],
+      "opaque_component_area": 6454
+    },
+    {
+      "index": 70,
+      "id": "prop_asset_070",
+      "category": "unclassified",
+      "rect_px": [
+        586,
+        958,
+        198,
+        118
+      ],
+      "opaque_component_area": 15289
+    },
+    {
+      "index": 71,
+      "id": "prop_asset_071",
+      "category": "unclassified",
+      "rect_px": [
+        785,
+        1047,
+        32,
+        24
+      ],
+      "opaque_component_area": 542
+    },
+    {
+      "index": 72,
+      "id": "prop_asset_072",
+      "category": "unclassified",
+      "rect_px": [
+        828,
+        987,
+        39,
+        91
+      ],
+      "opaque_component_area": 2462
+    },
+    {
+      "index": 73,
+      "id": "prop_asset_073",
+      "category": "unclassified",
+      "rect_px": [
+        1155,
+        967,
+        160,
+        115
+      ],
+      "opaque_component_area": 9634
+    }
+  ]
+}

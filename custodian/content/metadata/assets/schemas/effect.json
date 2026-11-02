@@ -1,0 +1,1 @@
+{"schema":"custodian.asset_kind.v2","kind":"effect","runtime_template":"{domain}/runtime/{owner}/{filename}","filename_policy":"canonical","backend_policy":"auto","defaults":{"domain":"sprites/effects","direction":"omni","auto_mirror":false,"layer":"fx","action_group":"effect"},"post_process":[]}

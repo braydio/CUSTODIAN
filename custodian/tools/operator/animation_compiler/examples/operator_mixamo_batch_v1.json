@@ -1,0 +1,561 @@
+{
+  "schema": "custodian.operator_3d_animation_batch.v1",
+  "batch_id": "operator_mixamo_candidate_set_001",
+  "master_reference": {
+    "availability": "unavailable",
+    "master_id": null,
+    "contract_path": null,
+    "contract_sha256": null
+  },
+  "rendering_contract": {
+    "contract_id": "operator_full_body_8dir_128_v1",
+    "contract_path": "custodian/tools/operator/animation_compiler/contracts/full_body_8dir_128_v1.json",
+    "contract_sha256": "f2b8e10d4f4033f2d24a7ea908f75b68992acd0118266a4bc61e7ebdf06a6fe3",
+    "profile_sha256": "f2b8e10d4f4033f2d24a7ea908f75b68992acd0118266a4bc61e7ebdf06a6fe3",
+    "directions": [
+      "N",
+      "NE",
+      "E",
+      "SE",
+      "S",
+      "SW",
+      "W",
+      "NW"
+    ],
+    "width": 128,
+    "height": 128,
+    "channels": "RGBA",
+    "elevation_degrees": 45,
+    "pixels_per_meter": 50,
+    "root_pixel": [
+      64,
+      106
+    ],
+    "scale_policy": "fixed_from_master",
+    "registration_policy": "fixed_root_all_frames",
+    "mirroring": false,
+    "diagnostic_size_px": null,
+    "candidate_state": "candidate_unapproved"
+  },
+  "retarget_policy": {
+    "policy_id": "mixamo_humanoid_conservative",
+    "version": "1.0",
+    "config_path": "custodian/tools/operator/animation_compiler/contracts/retarget_policy_v1.json",
+    "config_sha256": "def6cec3e281926d9b9d84a37c1ddc8c99c007edbefc85ab167e3c61e08f0074"
+  },
+  "output_root": "operator_3d_animation_candidates/operator_mixamo_candidate_set_001",
+  "animations": [
+    {
+      "animation_id": "neutral_idle",
+      "source": {
+        "availability": "unavailable",
+        "original_filename": null,
+        "relative_path": null,
+        "sha256": null,
+        "import_metadata": null
+      },
+      "semantic": {
+        "profile": "unarmed",
+        "group": "posture",
+        "action": "idle_neutral",
+        "output_layer": "full_body"
+      },
+      "output_path": "unarmed/posture/idle_neutral/full_body",
+      "source_action": {
+        "identity": null,
+        "inspection_proof_path": null,
+        "inspection_proof_sha256": null
+      },
+      "source_skeleton": {
+        "identity": null,
+        "signature_sha256": null,
+        "compatibility_proof_id": null
+      },
+      "authored_timing": {
+        "availability": "unavailable",
+        "duration_seconds": null,
+        "fps": null,
+        "frame_start": null,
+        "frame_end": null
+      },
+      "playback": {
+        "classification": "loop",
+        "character_local_impact_direction": null
+      },
+      "root_motion": {
+        "source_state": "unknown",
+        "policy": "extract_to_metadata",
+        "trajectory_retention": "preserve_original_separately",
+        "pose_root_translation": "removed",
+        "godot_application": "trajectory_once_separately",
+        "source_trajectory_sha256": null
+      },
+      "foot_contact": {
+        "policy": "not_assessed",
+        "evidence_path": null,
+        "evidence_sha256": null
+      },
+      "sampling": {
+        "mode": "source_frame_stride",
+        "stride": 1,
+        "loop_endpoint_policy": "include_authored_terminal"
+      },
+      "runtime_timing_authority": {
+        "status": "unavailable",
+        "authority_id": null,
+        "authority_sha256": null,
+        "fps": null,
+        "loop": null,
+        "authority_path": null
+      }
+    },
+    {
+      "animation_id": "breathing_idle",
+      "source": {
+        "availability": "unavailable",
+        "original_filename": null,
+        "relative_path": null,
+        "sha256": null,
+        "import_metadata": null
+      },
+      "semantic": {
+        "profile": "unarmed",
+        "group": "posture",
+        "action": "idle_breathing",
+        "output_layer": "full_body"
+      },
+      "output_path": "unarmed/posture/idle_breathing/full_body",
+      "source_action": {
+        "identity": null,
+        "inspection_proof_path": null,
+        "inspection_proof_sha256": null
+      },
+      "source_skeleton": {
+        "identity": null,
+        "signature_sha256": null,
+        "compatibility_proof_id": null
+      },
+      "authored_timing": {
+        "availability": "unavailable",
+        "duration_seconds": null,
+        "fps": null,
+        "frame_start": null,
+        "frame_end": null
+      },
+      "playback": {
+        "classification": "loop",
+        "character_local_impact_direction": null
+      },
+      "root_motion": {
+        "source_state": "unknown",
+        "policy": "extract_to_metadata",
+        "trajectory_retention": "preserve_original_separately",
+        "pose_root_translation": "removed",
+        "godot_application": "trajectory_once_separately",
+        "source_trajectory_sha256": null
+      },
+      "foot_contact": {
+        "policy": "not_assessed",
+        "evidence_path": null,
+        "evidence_sha256": null
+      },
+      "sampling": {
+        "mode": "source_frame_stride",
+        "stride": 1,
+        "loop_endpoint_policy": "include_authored_terminal"
+      },
+      "runtime_timing_authority": {
+        "status": "unavailable",
+        "authority_id": null,
+        "authority_sha256": null,
+        "fps": null,
+        "loop": null,
+        "authority_path": null
+      }
+    },
+    {
+      "animation_id": "walking",
+      "source": {
+        "availability": "unavailable",
+        "original_filename": null,
+        "relative_path": null,
+        "sha256": null,
+        "import_metadata": null
+      },
+      "semantic": {
+        "profile": "unarmed",
+        "group": "locomotion",
+        "action": "walk",
+        "output_layer": "full_body"
+      },
+      "output_path": "unarmed/locomotion/walk/full_body",
+      "source_action": {
+        "identity": null,
+        "inspection_proof_path": null,
+        "inspection_proof_sha256": null
+      },
+      "source_skeleton": {
+        "identity": null,
+        "signature_sha256": null,
+        "compatibility_proof_id": null
+      },
+      "authored_timing": {
+        "availability": "unavailable",
+        "duration_seconds": null,
+        "fps": null,
+        "frame_start": null,
+        "frame_end": null
+      },
+      "playback": {
+        "classification": "loop",
+        "character_local_impact_direction": null
+      },
+      "root_motion": {
+        "source_state": "unknown",
+        "policy": "extract_to_metadata",
+        "trajectory_retention": "preserve_original_separately",
+        "pose_root_translation": "removed",
+        "godot_application": "trajectory_once_separately",
+        "source_trajectory_sha256": null
+      },
+      "foot_contact": {
+        "policy": "not_assessed",
+        "evidence_path": null,
+        "evidence_sha256": null
+      },
+      "sampling": {
+        "mode": "source_frame_stride",
+        "stride": 1,
+        "loop_endpoint_policy": "include_authored_terminal"
+      },
+      "runtime_timing_authority": {
+        "status": "unavailable",
+        "authority_id": null,
+        "authority_sha256": null,
+        "fps": null,
+        "loop": null,
+        "authority_path": null
+      }
+    },
+    {
+      "animation_id": "running_slide",
+      "source": {
+        "availability": "unavailable",
+        "original_filename": null,
+        "relative_path": null,
+        "sha256": null,
+        "import_metadata": null
+      },
+      "semantic": {
+        "profile": "unarmed",
+        "group": "locomotion",
+        "action": "run_slide",
+        "output_layer": "full_body"
+      },
+      "output_path": "unarmed/locomotion/run_slide/full_body",
+      "source_action": {
+        "identity": null,
+        "inspection_proof_path": null,
+        "inspection_proof_sha256": null
+      },
+      "source_skeleton": {
+        "identity": null,
+        "signature_sha256": null,
+        "compatibility_proof_id": null
+      },
+      "authored_timing": {
+        "availability": "unavailable",
+        "duration_seconds": null,
+        "fps": null,
+        "frame_start": null,
+        "frame_end": null
+      },
+      "playback": {
+        "classification": "one_shot",
+        "character_local_impact_direction": null
+      },
+      "root_motion": {
+        "source_state": "unknown",
+        "policy": "extract_to_metadata",
+        "trajectory_retention": "preserve_original_separately",
+        "pose_root_translation": "removed",
+        "godot_application": "trajectory_once_separately",
+        "source_trajectory_sha256": null
+      },
+      "foot_contact": {
+        "policy": "not_assessed",
+        "evidence_path": null,
+        "evidence_sha256": null
+      },
+      "sampling": {
+        "mode": "source_frame_stride",
+        "stride": 1,
+        "loop_endpoint_policy": "include_authored_terminal"
+      },
+      "runtime_timing_authority": {
+        "status": "unavailable",
+        "authority_id": null,
+        "authority_sha256": null,
+        "fps": null,
+        "loop": null,
+        "authority_path": null
+      }
+    },
+    {
+      "animation_id": "react_small_front",
+      "source": {
+        "availability": "unavailable",
+        "original_filename": null,
+        "relative_path": null,
+        "sha256": null,
+        "import_metadata": null
+      },
+      "semantic": {
+        "profile": "unarmed",
+        "group": "reaction",
+        "action": "react_small_front",
+        "output_layer": "full_body"
+      },
+      "output_path": "unarmed/reaction/react_small_front/full_body",
+      "source_action": {
+        "identity": null,
+        "inspection_proof_path": null,
+        "inspection_proof_sha256": null
+      },
+      "source_skeleton": {
+        "identity": null,
+        "signature_sha256": null,
+        "compatibility_proof_id": null
+      },
+      "authored_timing": {
+        "availability": "unavailable",
+        "duration_seconds": null,
+        "fps": null,
+        "frame_start": null,
+        "frame_end": null
+      },
+      "playback": {
+        "classification": "one_shot",
+        "character_local_impact_direction": "front"
+      },
+      "root_motion": {
+        "source_state": "unknown",
+        "policy": "extract_to_metadata",
+        "trajectory_retention": "preserve_original_separately",
+        "pose_root_translation": "removed",
+        "godot_application": "trajectory_once_separately",
+        "source_trajectory_sha256": null
+      },
+      "foot_contact": {
+        "policy": "not_assessed",
+        "evidence_path": null,
+        "evidence_sha256": null
+      },
+      "sampling": {
+        "mode": "source_frame_stride",
+        "stride": 1,
+        "loop_endpoint_policy": "include_authored_terminal"
+      },
+      "runtime_timing_authority": {
+        "status": "unavailable",
+        "authority_id": null,
+        "authority_sha256": null,
+        "fps": null,
+        "loop": null,
+        "authority_path": null
+      }
+    },
+    {
+      "animation_id": "react_small_back",
+      "source": {
+        "availability": "unavailable",
+        "original_filename": null,
+        "relative_path": null,
+        "sha256": null,
+        "import_metadata": null
+      },
+      "semantic": {
+        "profile": "unarmed",
+        "group": "reaction",
+        "action": "react_small_back",
+        "output_layer": "full_body"
+      },
+      "output_path": "unarmed/reaction/react_small_back/full_body",
+      "source_action": {
+        "identity": null,
+        "inspection_proof_path": null,
+        "inspection_proof_sha256": null
+      },
+      "source_skeleton": {
+        "identity": null,
+        "signature_sha256": null,
+        "compatibility_proof_id": null
+      },
+      "authored_timing": {
+        "availability": "unavailable",
+        "duration_seconds": null,
+        "fps": null,
+        "frame_start": null,
+        "frame_end": null
+      },
+      "playback": {
+        "classification": "one_shot",
+        "character_local_impact_direction": "back"
+      },
+      "root_motion": {
+        "source_state": "unknown",
+        "policy": "extract_to_metadata",
+        "trajectory_retention": "preserve_original_separately",
+        "pose_root_translation": "removed",
+        "godot_application": "trajectory_once_separately",
+        "source_trajectory_sha256": null
+      },
+      "foot_contact": {
+        "policy": "not_assessed",
+        "evidence_path": null,
+        "evidence_sha256": null
+      },
+      "sampling": {
+        "mode": "source_frame_stride",
+        "stride": 1,
+        "loop_endpoint_policy": "include_authored_terminal"
+      },
+      "runtime_timing_authority": {
+        "status": "unavailable",
+        "authority_id": null,
+        "authority_sha256": null,
+        "fps": null,
+        "loop": null,
+        "authority_path": null
+      }
+    },
+    {
+      "animation_id": "react_large_front",
+      "source": {
+        "availability": "unavailable",
+        "original_filename": null,
+        "relative_path": null,
+        "sha256": null,
+        "import_metadata": null
+      },
+      "semantic": {
+        "profile": "unarmed",
+        "group": "reaction",
+        "action": "react_large_front",
+        "output_layer": "full_body"
+      },
+      "output_path": "unarmed/reaction/react_large_front/full_body",
+      "source_action": {
+        "identity": null,
+        "inspection_proof_path": null,
+        "inspection_proof_sha256": null
+      },
+      "source_skeleton": {
+        "identity": null,
+        "signature_sha256": null,
+        "compatibility_proof_id": null
+      },
+      "authored_timing": {
+        "availability": "unavailable",
+        "duration_seconds": null,
+        "fps": null,
+        "frame_start": null,
+        "frame_end": null
+      },
+      "playback": {
+        "classification": "one_shot",
+        "character_local_impact_direction": "front"
+      },
+      "root_motion": {
+        "source_state": "unknown",
+        "policy": "extract_to_metadata",
+        "trajectory_retention": "preserve_original_separately",
+        "pose_root_translation": "removed",
+        "godot_application": "trajectory_once_separately",
+        "source_trajectory_sha256": null
+      },
+      "foot_contact": {
+        "policy": "not_assessed",
+        "evidence_path": null,
+        "evidence_sha256": null
+      },
+      "sampling": {
+        "mode": "source_frame_stride",
+        "stride": 1,
+        "loop_endpoint_policy": "include_authored_terminal"
+      },
+      "runtime_timing_authority": {
+        "status": "unavailable",
+        "authority_id": null,
+        "authority_sha256": null,
+        "fps": null,
+        "loop": null,
+        "authority_path": null
+      }
+    },
+    {
+      "animation_id": "react_large_left",
+      "source": {
+        "availability": "unavailable",
+        "original_filename": null,
+        "relative_path": null,
+        "sha256": null,
+        "import_metadata": null
+      },
+      "semantic": {
+        "profile": "unarmed",
+        "group": "reaction",
+        "action": "react_large_left",
+        "output_layer": "full_body"
+      },
+      "output_path": "unarmed/reaction/react_large_left/full_body",
+      "source_action": {
+        "identity": null,
+        "inspection_proof_path": null,
+        "inspection_proof_sha256": null
+      },
+      "source_skeleton": {
+        "identity": null,
+        "signature_sha256": null,
+        "compatibility_proof_id": null
+      },
+      "authored_timing": {
+        "availability": "unavailable",
+        "duration_seconds": null,
+        "fps": null,
+        "frame_start": null,
+        "frame_end": null
+      },
+      "playback": {
+        "classification": "one_shot",
+        "character_local_impact_direction": "left"
+      },
+      "root_motion": {
+        "source_state": "unknown",
+        "policy": "extract_to_metadata",
+        "trajectory_retention": "preserve_original_separately",
+        "pose_root_translation": "removed",
+        "godot_application": "trajectory_once_separately",
+        "source_trajectory_sha256": null
+      },
+      "foot_contact": {
+        "policy": "not_assessed",
+        "evidence_path": null,
+        "evidence_sha256": null
+      },
+      "sampling": {
+        "mode": "source_frame_stride",
+        "stride": 1,
+        "loop_endpoint_policy": "include_authored_terminal"
+      },
+      "runtime_timing_authority": {
+        "status": "unavailable",
+        "authority_id": null,
+        "authority_sha256": null,
+        "fps": null,
+        "loop": null,
+        "authority_path": null
+      }
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "schema": "game32.asset.v2",
+  "id": "stolen_resource_bundle_scrap_01",
+  "display_name": "Stolen Resource Bundle Scrap 01",
+  "source": {
+    "master_sheet": "custodian/props/gothic/vault_propsheet_01.png",
+    "sheet_cell": {
+      "row": 0,
+      "col": 1,
+      "rows": 2,
+      "cols": 2
+    }
+  },
+  "file": {
+    "path": "custodian/content/sprites/items/stolen_resources/stolen_resource_bundle_scrap_01.png",
+    "pixel_size": {
+      "w": 64,
+      "h": 64
+    }
+  },
+  "classification": {
+    "asset_type": "sprites",
+    "semantic_role": "stolen_resource_pickup_sprite",
+    "placement_layer": "item",
+    "tags": [
+      "vault",
+      "gothic",
+      "item",
+      "pickup",
+      "scrap",
+      "stolen_resources",
+      "bundle"
+    ]
+  },
+  "placement": {
+    "tile_size": 32,
+    "footprint_tiles": {
+      "w": 1,
+      "h": 1
+    },
+    "origin_mode": "bottom_center",
+    "pivot_px": {
+      "x": 32,
+      "y": 63
+    },
+    "snap": "tile_or_free",
+    "allow_mirror_x": false,
+    "allow_rotation": false,
+    "y_sort": true
+  },
+  "collision": {
+    "blocks_movement": false,
+    "blocks_sight": false,
+    "cover_value": 0,
+    "collision_shape": "none"
+  },
+  "runtime": {
+    "status": "extracted_from_source_sheet",
+    "notes": "Generated extraction from vault propsheet source. Review collision and footprint before production placement."
+  }
+}

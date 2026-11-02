@@ -1,0 +1,31 @@
+{
+  "source": "enemy_marine__body__unarmed__idle_01__w__4f__96.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "enemies/enemy_marine/runtime/body/enemy_marine__body__unarmed__idle_01__w__4f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 4
+      }
+    },
+    {
+      "path": "enemies/enemy_marine/enemy_marine__body__unarmed__idle_01__w__4f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 4
+      }
+    }
+  ],
+  "frame_size": [
+    96,
+    96
+  ],
+  "post_process": [
+    "enemy_runtime_import"
+  ]
+}

@@ -1,0 +1,186 @@
+{
+	"actions": [
+		{
+			"action": "input_tap",
+			"ok": true,
+			"tick": 2
+		},
+		{
+			"action": "aim_at_role",
+			"ok": true,
+			"tick": 42
+		},
+		{
+			"action": "input_press",
+			"ok": true,
+			"tick": 48
+		},
+		{
+			"action": "input_release",
+			"ok": true,
+			"tick": 67
+		},
+		{
+			"action": "input_tap",
+			"ok": true,
+			"tick": 92
+		},
+		{
+			"action": "capture_marker",
+			"ok": true,
+			"tick": 106
+		},
+		{
+			"action": "aim_at_role",
+			"ok": true,
+			"tick": 172
+		},
+		{
+			"action": "input_tap",
+			"ok": true,
+			"tick": 182
+		},
+		{
+			"action": "finish",
+			"finish": true,
+			"ok": true,
+			"tick": 358
+		}
+	],
+	"assertions": [
+		{
+			"actual": true,
+			"expected": {
+				"role": "aimed_target",
+				"severity": "error",
+				"type": "role_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "role_exists"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"role": "near_off_aim",
+				"severity": "error",
+				"type": "role_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "role_exists"
+		},
+		{
+			"actual": false,
+			"expected": {
+				"severity": "error",
+				"type": "no_unreleased_inputs"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "no_unreleased_inputs"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"path": "telemetry.json",
+				"severity": "error",
+				"type": "output_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "output_exists"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 76.0,
+				"type": "probe_compare",
+				"value": 1.0
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		}
+	],
+	"capture_failures": [],
+	"capture_mode": "full",
+	"completed": true,
+	"completed_tick": 358,
+	"failures": [],
+	"keyframes": [
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/melee_soft_target_spacing/20260809T153415-0400/keyframes/tick_000000.png",
+			"render_frame": 4,
+			"sha256": "3a9e1420d4941505ed9cd4ef211af67a54189cf3a9d52ac2a379a6aed88795f1",
+			"tick": 0
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/melee_soft_target_spacing/20260809T153415-0400/keyframes/tick_000055.png",
+			"render_frame": 59,
+			"sha256": "f8d658499dc3176fda6641aeff68d82b2a296ddfd92103a821b356a8fa23ffd8",
+			"tick": 55
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/melee_soft_target_spacing/20260809T153415-0400/keyframes/tick_000075.png",
+			"render_frame": 79,
+			"sha256": "06a7e7d12dc4a1bf39e6fa7938cdfb122823366b60fda8c517fd2949b1531b54",
+			"tick": 75
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/melee_soft_target_spacing/20260809T153415-0400/keyframes/tick_000106.png",
+			"render_frame": 110,
+			"sha256": "fe8ce584a7a3663df28972f6b5e09f834c67647d2cb2403f4cc95b1c6548b982",
+			"tick": 106
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/melee_soft_target_spacing/20260809T153415-0400/keyframes/tick_000190.png",
+			"render_frame": 194,
+			"sha256": "80977e789132d0e49b9942fde2d11dfcfb50c0223308c0003c6d12c5e57edd01",
+			"tick": 190
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/melee_soft_target_spacing/20260809T153415-0400/keyframes/tick_000240.png",
+			"render_frame": 244,
+			"sha256": "1e2c3f5b4a169fbf2578bbc584e00a27b322936e73e8b7a111e777b09dcfd656",
+			"tick": 240
+		}
+	],
+	"markers": [
+		{
+			"data": {},
+			"name": "assisted_contact",
+			"tick": 106
+		}
+	],
+	"passed": true,
+	"probe_failures": [],
+	"runtime": {
+		"godot": {
+			"build": "arch_linux",
+			"hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+			"hex": 263937,
+			"major": 4,
+			"minor": 7,
+			"patch": 1,
+			"status": "stable",
+			"string": "4.7.1-stable (arch_linux)",
+			"timestamp": 1783976428
+		},
+		"physics_hz": 60,
+		"renderer": "vulkan"
+	},
+	"scenario_id": "combat/melee_soft_target_spacing",
+	"scenario_path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/melee_soft_target_spacing/20260809T153415-0400/scenario.snapshot.json",
+	"schema": "custodian.moment_forge.run_result.v1",
+	"seed": 104729
+}

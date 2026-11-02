@@ -1,0 +1,1 @@
+{"schema":"custodian.asset_kind.v2","kind":"tile","runtime_template":"{domain}/{filename}","filename_policy":"template","filename_template":"{owner}_{variant}_{frame_width}.png","backend_policy":"runtime_ready","defaults":{"domain":"tiles","direction":"omni","auto_mirror":false,"layer":"body","action_group":"tile"},"post_process":[]}

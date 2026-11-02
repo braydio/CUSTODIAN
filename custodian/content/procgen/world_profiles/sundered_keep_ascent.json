@@ -1,0 +1,47 @@
+{
+  "id": "sundered_keep_ascent",
+  "origin_cell": [0, 0],
+  "blend_width_tiles": 32,
+  "bands": [
+	{
+	  "id": "labyrinth_lowlands",
+	  "distance_min": 0,
+	  "distance_max": 120,
+	  "height_bias": 0,
+	  "ascent_gain": 0,
+	  "style_weights": {"cave_corridor": 0.65, "ruined_room": 0.25, "shore_cut": 0.1},
+	  "faction_presence": {"iconoclast": 0.05, "cult_mechanist": 0.08, "scavenger": 0.12},
+	  "story_room_chance": 0.04
+	},
+	{
+	  "id": "broken_foothills",
+	  "distance_min": 120,
+	  "distance_max": 240,
+	  "height_bias": 2,
+	  "ascent_gain": 3,
+	  "style_weights": {"cave_corridor": 0.25, "ravine_path": 0.25, "switchback": 0.25, "ruined_terrace": 0.25},
+	  "faction_presence": {"iconoclast": 0.15, "cult_mechanist": 0.2, "scavenger": 0.25},
+	  "story_room_chance": 0.1
+	},
+	{
+	  "id": "slog_ascent",
+	  "distance_min": 240,
+	  "distance_max": 480,
+	  "height_bias": 5,
+	  "ascent_gain": 6,
+	  "style_weights": {"switchback": 0.35, "ridge_trail": 0.3, "collapsed_keep_exterior": 0.2, "faction_worksite": 0.15},
+	  "faction_presence": {"iconoclast": 0.3, "cult_mechanist": 0.35, "scavenger": 0.25},
+	  "story_room_chance": 0.18
+	},
+	{
+	  "id": "upper_exhaustion",
+	  "distance_min": 480,
+	  "distance_max": 99999,
+	  "height_bias": 9,
+	  "ascent_gain": 9,
+	  "style_weights": {"ridge_trail": 0.3, "wind_cut_stair": 0.25, "ruined_observatory": 0.2, "faction_encampment": 0.25},
+	  "faction_presence": {"iconoclast": 0.35, "cult_mechanist": 0.45, "scavenger": 0.2},
+	  "story_room_chance": 0.24
+	}
+  ]
+}

@@ -1,0 +1,11 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__body__full__dodge_chain_link_01__s__4f__96.json",
+	"outputs": [
+		"res://content/sprites/operator/runtime/actions/dodge_chain/body/operator__body__full__dodge_chain_link_01__s__4f__96.png"
+	],
+	"post_process": [
+		"operator_curated_resources"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/operator__body__full__dodge_chain_link_01__s__4f__96.png",
+	"timestamp_utc": "2026-07-23 06:29:21"
+}

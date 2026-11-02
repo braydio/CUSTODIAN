@@ -1,0 +1,977 @@
+{
+  "camera_reveal_zoom_scale": 2.25,
+  "coverage_grid_px": 16.0,
+  "default_camera_zoom": "(1.89, 1.89)",
+  "excluded_generic_zone_indices": [
+    5
+  ],
+  "generic_perimeter_family_zone_indices": [
+    1,
+    2,
+    3,
+    4,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "samples": [
+    {
+      "camera_center_world": "(0.0, 160.0)",
+      "camera_zoom": "(1.89, 1.89)",
+      "id": "wake",
+      "plate_covered_grid_cells": 968,
+      "uncovered_visible_area_px2": 22528,
+      "uncovered_visible_bounds_world": {
+        "height": 32.0,
+        "width": 704.0,
+        "x": -352.0,
+        "y": 320.0
+      },
+      "uncovered_visible_grid_cells": 88,
+      "visible_world_rect": {
+        "height": 380.952392578125,
+        "width": 677.248657226562,
+        "x": -338.624328613281,
+        "y": -30.4761962890625
+      }
+    },
+    {
+      "camera_center_world": "(0.0, -32.0)",
+      "camera_zoom": "(1.89, 1.89)",
+      "id": "zone01_center",
+      "plate_covered_grid_cells": 1056,
+      "uncovered_visible_area_px2": 0,
+      "uncovered_visible_bounds_world": {
+        "height": 0.0,
+        "width": 0.0,
+        "x": 0.0,
+        "y": 0.0
+      },
+      "uncovered_visible_grid_cells": 0,
+      "visible_world_rect": {
+        "height": 380.952392578125,
+        "width": 677.248657226562,
+        "x": -338.624328613281,
+        "y": -222.476196289062
+      }
+    },
+    {
+      "camera_center_world": "(0.0, 160.0)",
+      "camera_zoom": "(1.89, 1.89)",
+      "id": "zone01_entry",
+      "plate_covered_grid_cells": 968,
+      "uncovered_visible_area_px2": 22528,
+      "uncovered_visible_bounds_world": {
+        "height": 32.0,
+        "width": 704.0,
+        "x": -352.0,
+        "y": 320.0
+      },
+      "uncovered_visible_grid_cells": 88,
+      "visible_world_rect": {
+        "height": 380.952392578125,
+        "width": 677.248657226562,
+        "x": -338.624328613281,
+        "y": -30.4761962890625
+      }
+    },
+    {
+      "camera_center_world": "(0.0, -320.0)",
+      "camera_zoom": "(1.89, 1.89)",
+      "id": "zone01_exit",
+      "plate_covered_grid_cells": 1056,
+      "uncovered_visible_area_px2": 0,
+      "uncovered_visible_bounds_world": {
+        "height": 0.0,
+        "width": 0.0,
+        "x": 0.0,
+        "y": 0.0
+      },
+      "uncovered_visible_grid_cells": 0,
+      "visible_world_rect": {
+        "height": 380.952392578125,
+        "width": 677.248657226562,
+        "x": -338.624328613281,
+        "y": -510.476196289062
+      }
+    },
+    {
+      "camera_center_world": "(0.0, -864.0)",
+      "camera_zoom": "(1.89, 1.89)",
+      "id": "zone02_center",
+      "plate_covered_grid_cells": 1056,
+      "uncovered_visible_area_px2": 0,
+      "uncovered_visible_bounds_world": {
+        "height": 0.0,
+        "width": 0.0,
+        "x": 0.0,
+        "y": 0.0
+      },
+      "uncovered_visible_grid_cells": 0,
+      "visible_world_rect": {
+        "height": 380.952392578125,
+        "width": 677.248657226562,
+        "x": -338.624328613281,
+        "y": -1054.47619628906
+      }
+    },
+    {
+      "camera_center_world": "(0.0, -480.0)",
+      "camera_zoom": "(1.89, 1.89)",
+      "id": "zone02_entry",
+      "plate_covered_grid_cells": 1056,
+      "uncovered_visible_area_px2": 0,
+      "uncovered_visible_bounds_world": {
+        "height": 0.0,
+        "width": 0.0,
+        "x": 0.0,
+        "y": 0.0
+      },
+      "uncovered_visible_grid_cells": 0,
+      "visible_world_rect": {
+        "height": 380.952392578125,
+        "width": 677.248657226562,
+        "x": -338.624328613281,
+        "y": -670.476196289062
+      }
+    },
+    {
+      "camera_center_world": "(0.0, -1248.0)",
+      "camera_zoom": "(1.89, 1.89)",
+      "id": "zone02_exit",
+      "plate_covered_grid_cells": 1056,
+      "uncovered_visible_area_px2": 0,
+      "uncovered_visible_bounds_world": {
+        "height": 0.0,
+        "width": 0.0,
+        "x": 0.0,
+        "y": 0.0
+      },
+      "uncovered_visible_grid_cells": 0,
+      "visible_world_rect": {
+        "height": 380.952392578125,
+        "width": 677.248657226562,
+        "x": -338.624328613281,
+        "y": -1438.47619628906
+      }
+    },
+    {
+      "camera_center_world": "(0.0, -1744.0)",
+      "camera_zoom": "(1.89, 1.89)",
+      "id": "zone03_center",
+      "plate_covered_grid_cells": 1056,
+      "uncovered_visible_area_px2": 0,
+      "uncovered_visible_bounds_world": {
+        "height": 0.0,
+        "width": 0.0,
+        "x": 0.0,
+        "y": 0.0
+      },
+      "uncovered_visible_grid_cells": 0,
+      "visible_world_rect": {
+        "height": 380.952392578125,
+        "width": 677.248657226562,
+        "x": -338.624328613281,
+        "y": -1934.47619628906
+      }
+    },
+    {
+      "camera_center_world": "(0.0, -1344.0)",
+      "camera_zoom": "(1.89, 1.89)",
+      "id": "zone03_entry",
+      "plate_covered_grid_cells": 1056,
+      "uncovered_visible_area_px2": 0,
+      "uncovered_visible_bounds_world": {
+        "height": 0.0,
+        "width": 0.0,
+        "x": 0.0,
+        "y": 0.0
+      },
+      "uncovered_visible_grid_cells": 0,
+      "visible_world_rect": {
+        "height": 380.952392578125,
+        "width": 677.248657226562,
+        "x": -338.624328613281,
+        "y": -1534.47619628906
+      }
+    },
+    {
+      "camera_center_world": "(352.0, -1984.0)",
+      "camera_zoom": "(1.89, 1.89)",
+      "id": "zone03_exit",
+      "plate_covered_grid_cells": 1056,
+      "uncovered_visible_area_px2": 0,
+      "uncovered_visible_bounds_world": {
+        "height": 0.0,
+        "width": 0.0,
+        "x": 0.0,
+        "y": 0.0
+      },
+      "uncovered_visible_grid_cells": 0,
+      "visible_world_rect": {
+        "height": 380.952392578125,
+        "width": 677.248657226562,
+        "x": 13.3756713867188,
+        "y": -2174.47607421875
+      }
+    },
+    {
+      "camera_center_world": "(704.0, -1984.0)",
+      "camera_zoom": "(1.89, 1.89)",
+      "id": "zone04_center",
+      "plate_covered_grid_cells": 1056,
+      "uncovered_visible_area_px2": 0,
+      "uncovered_visible_bounds_world": {
+        "height": 0.0,
+        "width": 0.0,
+        "x": 0.0,
+        "y": 0.0
+      },
+      "uncovered_visible_grid_cells": 0,
+      "visible_world_rect": {
+        "height": 380.952392578125,
+        "width": 677.248657226562,
+        "x": 365.375671386719,
+        "y": -2174.47607421875
+      }
+    },
+    {
+      "camera_center_world": "(416.0, -1984.0)",
+      "camera_zoom": "(1.89, 1.89)",
+      "id": "zone04_entry",
+      "plate_covered_grid_cells": 1056,
+      "uncovered_visible_area_px2": 0,
+      "uncovered_visible_bounds_world": {
+        "height": 0.0,
+        "width": 0.0,
+        "x": 0.0,
+        "y": 0.0
+      },
+      "uncovered_visible_grid_cells": 0,
+      "visible_world_rect": {
+        "height": 380.952392578125,
+        "width": 677.248657226562,
+        "x": 77.3756713867188,
+        "y": -2174.47607421875
+      }
+    },
+    {
+      "camera_center_world": "(704.0, -2272.0)",
+      "camera_zoom": "(1.89, 1.89)",
+      "id": "zone04_exit",
+      "plate_covered_grid_cells": 1056,
+      "uncovered_visible_area_px2": 0,
+      "uncovered_visible_bounds_world": {
+        "height": 0.0,
+        "width": 0.0,
+        "x": 0.0,
+        "y": 0.0
+      },
+      "uncovered_visible_grid_cells": 0,
+      "visible_world_rect": {
+        "height": 380.952392578125,
+        "width": 677.248657226562,
+        "x": 365.375671386719,
+        "y": -2462.47607421875
+      }
+    },
+    {
+      "camera_center_world": "(0.0, -3200.0)",
+      "camera_zoom": "(1.89, 1.89)",
+      "id": "zone05_center",
+      "plate_covered_grid_cells": 1056,
+      "uncovered_visible_area_px2": 0,
+      "uncovered_visible_bounds_world": {
+        "height": 0.0,
+        "width": 0.0,
+        "x": 0.0,
+        "y": 0.0
+      },
+      "uncovered_visible_grid_cells": 0,
+      "visible_world_rect": {
+        "height": 380.952392578125,
+        "width": 677.248657226562,
+        "x": -338.624328613281,
+        "y": -3390.47607421875
+      }
+    },
+    {
+      "camera_center_world": "(0.0, -2656.0)",
+      "camera_zoom": "(1.89, 1.89)",
+      "id": "zone05_entry",
+      "plate_covered_grid_cells": 1056,
+      "uncovered_visible_area_px2": 0,
+      "uncovered_visible_bounds_world": {
+        "height": 0.0,
+        "width": 0.0,
+        "x": 0.0,
+        "y": 0.0
+      },
+      "uncovered_visible_grid_cells": 0,
+      "visible_world_rect": {
+        "height": 380.952392578125,
+        "width": 677.248657226562,
+        "x": -338.624328613281,
+        "y": -2846.47607421875
+      }
+    },
+    {
+      "camera_center_world": "(0.0, -3744.0)",
+      "camera_zoom": "(1.89, 1.89)",
+      "id": "zone05_exit",
+      "plate_covered_grid_cells": 792,
+      "uncovered_visible_area_px2": 67584,
+      "uncovered_visible_bounds_world": {
+        "height": 96.0,
+        "width": 704.0,
+        "x": -352.0,
+        "y": -3712.0
+      },
+      "uncovered_visible_grid_cells": 264,
+      "visible_world_rect": {
+        "height": 380.952392578125,
+        "width": 677.248657226562,
+        "x": -338.624328613281,
+        "y": -3934.47607421875
+      }
+    },
+    {
+      "camera_center_world": "(0.0, -4320.0)",
+      "camera_zoom": "(1.89, 1.89)",
+      "id": "zone06_center",
+      "plate_covered_grid_cells": 1056,
+      "uncovered_visible_area_px2": 0,
+      "uncovered_visible_bounds_world": {
+        "height": 0.0,
+        "width": 0.0,
+        "x": 0.0,
+        "y": 0.0
+      },
+      "uncovered_visible_grid_cells": 0,
+      "visible_world_rect": {
+        "height": 380.952392578125,
+        "width": 677.248657226562,
+        "x": -338.624328613281,
+        "y": -4510.47607421875
+      }
+    },
+    {
+      "camera_center_world": "(0.0, -3776.0)",
+      "camera_zoom": "(1.89, 1.89)",
+      "id": "zone06_entry",
+      "plate_covered_grid_cells": 792,
+      "uncovered_visible_area_px2": 67584,
+      "uncovered_visible_bounds_world": {
+        "height": 96.0,
+        "width": 704.0,
+        "x": -352.0,
+        "y": -3712.0
+      },
+      "uncovered_visible_grid_cells": 264,
+      "visible_world_rect": {
+        "height": 380.952392578125,
+        "width": 677.248657226562,
+        "x": -338.624328613281,
+        "y": -3966.47607421875
+      }
+    },
+    {
+      "camera_center_world": "(0.0, -4864.0)",
+      "camera_zoom": "(1.89, 1.89)",
+      "id": "zone06_exit",
+      "plate_covered_grid_cells": 1056,
+      "uncovered_visible_area_px2": 0,
+      "uncovered_visible_bounds_world": {
+        "height": 0.0,
+        "width": 0.0,
+        "x": 0.0,
+        "y": 0.0
+      },
+      "uncovered_visible_grid_cells": 0,
+      "visible_world_rect": {
+        "height": 380.952392578125,
+        "width": 677.248657226562,
+        "x": -338.624328613281,
+        "y": -5054.47607421875
+      }
+    },
+    {
+      "camera_center_world": "(0.0, -5184.0)",
+      "camera_zoom": "(1.89, 1.89)",
+      "id": "zone07_center",
+      "plate_covered_grid_cells": 1056,
+      "uncovered_visible_area_px2": 0,
+      "uncovered_visible_bounds_world": {
+        "height": 0.0,
+        "width": 0.0,
+        "x": 0.0,
+        "y": 0.0
+      },
+      "uncovered_visible_grid_cells": 0,
+      "visible_world_rect": {
+        "height": 380.952392578125,
+        "width": 677.248657226562,
+        "x": -338.624328613281,
+        "y": -5374.47607421875
+      }
+    },
+    {
+      "camera_center_world": "(0.0, -4864.0)",
+      "camera_zoom": "(1.89, 1.89)",
+      "id": "zone07_entry",
+      "plate_covered_grid_cells": 1056,
+      "uncovered_visible_area_px2": 0,
+      "uncovered_visible_bounds_world": {
+        "height": 0.0,
+        "width": 0.0,
+        "x": 0.0,
+        "y": 0.0
+      },
+      "uncovered_visible_grid_cells": 0,
+      "visible_world_rect": {
+        "height": 380.952392578125,
+        "width": 677.248657226562,
+        "x": -338.624328613281,
+        "y": -5054.47607421875
+      }
+    },
+    {
+      "camera_center_world": "(0.0, -5504.0)",
+      "camera_zoom": "(1.89, 1.89)",
+      "id": "zone07_exit",
+      "plate_covered_grid_cells": 1056,
+      "uncovered_visible_area_px2": 0,
+      "uncovered_visible_bounds_world": {
+        "height": 0.0,
+        "width": 0.0,
+        "x": 0.0,
+        "y": 0.0
+      },
+      "uncovered_visible_grid_cells": 0,
+      "visible_world_rect": {
+        "height": 380.952392578125,
+        "width": 677.248657226562,
+        "x": -338.624328613281,
+        "y": -5694.47607421875
+      }
+    },
+    {
+      "camera_center_world": "(0.0, -5872.0)",
+      "camera_zoom": "(1.89, 1.89)",
+      "id": "zone08_center",
+      "plate_covered_grid_cells": 1056,
+      "uncovered_visible_area_px2": 0,
+      "uncovered_visible_bounds_world": {
+        "height": 0.0,
+        "width": 0.0,
+        "x": 0.0,
+        "y": 0.0
+      },
+      "uncovered_visible_grid_cells": 0,
+      "visible_world_rect": {
+        "height": 380.952392578125,
+        "width": 677.248657226562,
+        "x": -338.624328613281,
+        "y": -6062.47607421875
+      }
+    },
+    {
+      "camera_center_world": "(0.0, -5504.0)",
+      "camera_zoom": "(1.89, 1.89)",
+      "id": "zone08_entry",
+      "plate_covered_grid_cells": 1056,
+      "uncovered_visible_area_px2": 0,
+      "uncovered_visible_bounds_world": {
+        "height": 0.0,
+        "width": 0.0,
+        "x": 0.0,
+        "y": 0.0
+      },
+      "uncovered_visible_grid_cells": 0,
+      "visible_world_rect": {
+        "height": 380.952392578125,
+        "width": 677.248657226562,
+        "x": -338.624328613281,
+        "y": -5694.47607421875
+      }
+    },
+    {
+      "camera_center_world": "(0.0, -6144.0)",
+      "camera_zoom": "(1.89, 1.89)",
+      "id": "zone08_exit",
+      "plate_covered_grid_cells": 1056,
+      "uncovered_visible_area_px2": 0,
+      "uncovered_visible_bounds_world": {
+        "height": 0.0,
+        "width": 0.0,
+        "x": 0.0,
+        "y": 0.0
+      },
+      "uncovered_visible_grid_cells": 0,
+      "visible_world_rect": {
+        "height": 380.952392578125,
+        "width": 677.248657226562,
+        "x": -338.624328613281,
+        "y": -6334.47607421875
+      }
+    },
+    {
+      "camera_center_world": "(-736.0, -5728.0)",
+      "camera_zoom": "(1.89, 1.89)",
+      "id": "zone09_center",
+      "plate_covered_grid_cells": 1056,
+      "uncovered_visible_area_px2": 0,
+      "uncovered_visible_bounds_world": {
+        "height": 0.0,
+        "width": 0.0,
+        "x": 0.0,
+        "y": 0.0
+      },
+      "uncovered_visible_grid_cells": 0,
+      "visible_world_rect": {
+        "height": 380.952392578125,
+        "width": 677.248657226562,
+        "x": -1074.62426757812,
+        "y": -5918.47607421875
+      }
+    },
+    {
+      "camera_center_world": "(-448.0, -5760.0)",
+      "camera_zoom": "(1.89, 1.89)",
+      "id": "zone09_entry",
+      "plate_covered_grid_cells": 1056,
+      "uncovered_visible_area_px2": 0,
+      "uncovered_visible_bounds_world": {
+        "height": 0.0,
+        "width": 0.0,
+        "x": 0.0,
+        "y": 0.0
+      },
+      "uncovered_visible_grid_cells": 0,
+      "visible_world_rect": {
+        "height": 380.952392578125,
+        "width": 677.248657226562,
+        "x": -786.624328613281,
+        "y": -5950.47607421875
+      }
+    },
+    {
+      "camera_center_world": "(-448.0, -5760.0)",
+      "camera_zoom": "(1.89, 1.89)",
+      "id": "zone09_exit",
+      "plate_covered_grid_cells": 1056,
+      "uncovered_visible_area_px2": 0,
+      "uncovered_visible_bounds_world": {
+        "height": 0.0,
+        "width": 0.0,
+        "x": 0.0,
+        "y": 0.0
+      },
+      "uncovered_visible_grid_cells": 0,
+      "visible_world_rect": {
+        "height": 380.952392578125,
+        "width": 677.248657226562,
+        "x": -786.624328613281,
+        "y": -5950.47607421875
+      }
+    },
+    {
+      "camera_center_world": "(6.0, -6626.0)",
+      "camera_zoom": "(1.89, 1.89)",
+      "id": "zone10_center",
+      "plate_covered_grid_cells": 1075,
+      "uncovered_visible_area_px2": 0,
+      "uncovered_visible_bounds_world": {
+        "height": 0.0,
+        "width": 0.0,
+        "x": 0.0,
+        "y": 0.0
+      },
+      "uncovered_visible_grid_cells": 0,
+      "visible_world_rect": {
+        "height": 380.952392578125,
+        "width": 677.248657226562,
+        "x": -332.624328613281,
+        "y": -6816.47607421875
+      }
+    },
+    {
+      "camera_center_world": "(0.0, -6144.0)",
+      "camera_zoom": "(1.89, 1.89)",
+      "id": "zone10_entry",
+      "plate_covered_grid_cells": 1056,
+      "uncovered_visible_area_px2": 0,
+      "uncovered_visible_bounds_world": {
+        "height": 0.0,
+        "width": 0.0,
+        "x": 0.0,
+        "y": 0.0
+      },
+      "uncovered_visible_grid_cells": 0,
+      "visible_world_rect": {
+        "height": 380.952392578125,
+        "width": 677.248657226562,
+        "x": -338.624328613281,
+        "y": -6334.47607421875
+      }
+    },
+    {
+      "camera_center_world": "(0.0, -6464.0)",
+      "camera_zoom": "(1.89, 1.89)",
+      "id": "zone10_exit",
+      "plate_covered_grid_cells": 1056,
+      "uncovered_visible_area_px2": 0,
+      "uncovered_visible_bounds_world": {
+        "height": 0.0,
+        "width": 0.0,
+        "x": 0.0,
+        "y": 0.0
+      },
+      "uncovered_visible_grid_cells": 0,
+      "visible_world_rect": {
+        "height": 380.952392578125,
+        "width": 677.248657226562,
+        "x": -338.624328613281,
+        "y": -6654.47607421875
+      }
+    },
+    {
+      "camera_center_world": "(0.0, -2736.0)",
+      "camera_zoom": "(1.62, 1.62)",
+      "id": "reveal_zone05_dust_lung",
+      "plate_covered_grid_cells": 1400,
+      "uncovered_visible_area_px2": 0,
+      "uncovered_visible_bounds_world": {
+        "height": 0.0,
+        "width": 0.0,
+        "x": 0.0,
+        "y": 0.0
+      },
+      "uncovered_visible_grid_cells": 0,
+      "visible_world_rect": {
+        "height": 444.444396972656,
+        "width": 790.123413085938,
+        "x": -395.061706542969,
+        "y": -2958.22216796875
+      }
+    },
+    {
+      "camera_center_world": "(0.0, -4812.0)",
+      "camera_zoom": "(1.53, 1.53)",
+      "id": "reveal_zone07_gate_of_dust",
+      "plate_covered_grid_cells": 1620,
+      "uncovered_visible_area_px2": 0,
+      "uncovered_visible_bounds_world": {
+        "height": 0.0,
+        "width": 0.0,
+        "x": 0.0,
+        "y": 0.0
+      },
+      "uncovered_visible_grid_cells": 0,
+      "visible_world_rect": {
+        "height": 470.588256835938,
+        "width": 836.601318359375,
+        "x": -418.300659179688,
+        "y": -5047.2939453125
+      }
+    },
+    {
+      "camera_center_world": "(0.0, -6200.0)",
+      "camera_zoom": "(1.485, 1.485)",
+      "id": "reveal_zone08_custodian_approach",
+      "plate_covered_grid_cells": 1674,
+      "uncovered_visible_area_px2": 0,
+      "uncovered_visible_bounds_world": {
+        "height": 0.0,
+        "width": 0.0,
+        "x": 0.0,
+        "y": 0.0
+      },
+      "uncovered_visible_grid_cells": 0,
+      "visible_world_rect": {
+        "height": 484.848480224609,
+        "width": 861.952880859375,
+        "x": -430.976440429688,
+        "y": -6442.42431640625
+      }
+    }
+  ],
+  "schema": "custodian.awakening_perimeter_camera_coverage.v1",
+  "viewport_px": "(1280.0, 720.0)",
+  "zone_plate_bounds_world": [
+    {
+      "bounds": {
+        "height": 704.0,
+        "width": 960.0,
+        "x": -480.0,
+        "y": -384.0
+      },
+      "zone_id": "zone01_creche",
+      "zone_index": 1
+    },
+    {
+      "bounds": {
+        "height": 960.0,
+        "width": 1152.0,
+        "x": -576.0,
+        "y": -1344.0
+      },
+      "zone_id": "zone02_ambulatory",
+      "zone_index": 2
+    },
+    {
+      "bounds": {
+        "height": 928.0,
+        "width": 832.0,
+        "x": -416.0,
+        "y": -2208.0
+      },
+      "zone_id": "zone03_attestation",
+      "zone_index": 3
+    },
+    {
+      "bounds": {
+        "height": 2048.0,
+        "width": 1502.0,
+        "x": -402.0,
+        "y": -3609.0
+      },
+      "zone_id": "zone04_locker_reliquary",
+      "zone_index": 4
+    },
+    {
+      "bounds": {
+        "height": 2048.0,
+        "width": 1502.0,
+        "x": -402.0,
+        "y": -3609.0
+      },
+      "zone_id": "zone05_dust_lung",
+      "zone_index": 5
+    },
+    {
+      "bounds": {
+        "height": 1216.0,
+        "width": 1536.0,
+        "x": -768.0,
+        "y": -4928.0
+      },
+      "zone_id": "zone06_undergate",
+      "zone_index": 6
+    },
+    {
+      "bounds": {
+        "height": 768.0,
+        "width": 1536.0,
+        "x": -768.0,
+        "y": -5568.0
+      },
+      "zone_id": "zone07_gate_of_dust",
+      "zone_index": 7
+    },
+    {
+      "bounds": {
+        "height": 864.0,
+        "width": 1024.0,
+        "x": -512.0,
+        "y": -6304.0
+      },
+      "zone_id": "zone08_custodian_approach",
+      "zone_index": 8
+    },
+    {
+      "bounds": {
+        "height": 768.0,
+        "width": 704.0,
+        "x": -1088.0,
+        "y": -6112.0
+      },
+      "zone_id": "zone09_chapel_late_service",
+      "zone_index": 9
+    },
+    {
+      "bounds": {
+        "height": 1254.0,
+        "width": 1254.0,
+        "x": -621.0,
+        "y": -7253.0
+      },
+      "zone_id": "zone10_road_south_reach",
+      "zone_index": 10
+    }
+  ],
+  "zones": [
+    {
+      "camera_sample_count": 3,
+      "layout_envelope_world": {
+        "height": 576.0,
+        "width": 832.0,
+        "x": -416.0,
+        "y": -320.0
+      },
+      "max_uncovered_visible_area_px2": 22528,
+      "optional": false,
+      "samples": [
+        "zone01_center",
+        "zone01_entry",
+        "zone01_exit"
+      ],
+      "zone_id": "zone01_creche"
+    },
+    {
+      "camera_sample_count": 3,
+      "layout_envelope_world": {
+        "height": 832.0,
+        "width": 1024.0,
+        "x": -512.0,
+        "y": -1280.0
+      },
+      "max_uncovered_visible_area_px2": 0,
+      "optional": false,
+      "samples": [
+        "zone02_center",
+        "zone02_entry",
+        "zone02_exit"
+      ],
+      "zone_id": "zone02_ambulatory"
+    },
+    {
+      "camera_sample_count": 3,
+      "layout_envelope_world": {
+        "height": 800.0,
+        "width": 704.0,
+        "x": -352.0,
+        "y": -2144.0
+      },
+      "max_uncovered_visible_area_px2": 0,
+      "optional": false,
+      "samples": [
+        "zone03_center",
+        "zone03_entry",
+        "zone03_exit"
+      ],
+      "zone_id": "zone03_attestation"
+    },
+    {
+      "camera_sample_count": 3,
+      "layout_envelope_world": {
+        "height": 576.0,
+        "width": 576.0,
+        "x": 416.0,
+        "y": -2272.0
+      },
+      "max_uncovered_visible_area_px2": 0,
+      "optional": false,
+      "samples": [
+        "zone04_center",
+        "zone04_entry",
+        "zone04_exit"
+      ],
+      "zone_id": "zone04_locker_reliquary"
+    },
+    {
+      "camera_sample_count": 3,
+      "layout_envelope_world": {
+        "height": 1088.0,
+        "width": 1088.0,
+        "x": -544.0,
+        "y": -3744.0
+      },
+      "max_uncovered_visible_area_px2": 67584,
+      "optional": false,
+      "samples": [
+        "zone05_center",
+        "zone05_entry",
+        "zone05_exit"
+      ],
+      "zone_id": "zone05_dust_lung"
+    },
+    {
+      "camera_sample_count": 3,
+      "layout_envelope_world": {
+        "height": 1088.0,
+        "width": 1408.0,
+        "x": -704.0,
+        "y": -4864.0
+      },
+      "max_uncovered_visible_area_px2": 67584,
+      "optional": false,
+      "samples": [
+        "zone06_center",
+        "zone06_entry",
+        "zone06_exit"
+      ],
+      "zone_id": "zone06_undergate"
+    },
+    {
+      "camera_sample_count": 3,
+      "layout_envelope_world": {
+        "height": 640.0,
+        "width": 1408.0,
+        "x": -704.0,
+        "y": -5504.0
+      },
+      "max_uncovered_visible_area_px2": 0,
+      "optional": false,
+      "samples": [
+        "zone07_center",
+        "zone07_entry",
+        "zone07_exit"
+      ],
+      "zone_id": "zone07_gate_of_dust"
+    },
+    {
+      "camera_sample_count": 3,
+      "layout_envelope_world": {
+        "height": 736.0,
+        "width": 896.0,
+        "x": -448.0,
+        "y": -6240.0
+      },
+      "max_uncovered_visible_area_px2": 0,
+      "optional": false,
+      "samples": [
+        "zone08_center",
+        "zone08_entry",
+        "zone08_exit"
+      ],
+      "zone_id": "zone08_custodian_approach"
+    },
+    {
+      "camera_sample_count": 3,
+      "layout_envelope_world": {
+        "height": 640.0,
+        "width": 576.0,
+        "x": -1024.0,
+        "y": -6048.0
+      },
+      "max_uncovered_visible_area_px2": 0,
+      "optional": true,
+      "samples": [
+        "zone09_center",
+        "zone09_entry",
+        "zone09_exit"
+      ],
+      "zone_id": "zone09_chapel_late_service"
+    },
+    {
+      "camera_sample_count": 3,
+      "layout_envelope_world": {
+        "height": 1254.0,
+        "width": 1254.0,
+        "x": -621.0,
+        "y": -7253.0
+      },
+      "max_uncovered_visible_area_px2": 0,
+      "optional": false,
+      "samples": [
+        "zone10_center",
+        "zone10_entry",
+        "zone10_exit"
+      ],
+      "zone_id": "zone10_road_south_reach"
+    }
+  ]
+}

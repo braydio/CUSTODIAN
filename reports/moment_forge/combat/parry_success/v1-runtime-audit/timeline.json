@@ -1,0 +1,155 @@
+[
+	{
+		"data": {
+			"authored_action": {
+				"action": "input_tap",
+				"hold_ticks": 1.0,
+				"name": "toggle_unarmed",
+				"tick": 2.0
+			},
+			"moment_tick": 2,
+			"result": {
+				"action": "input_tap",
+				"ok": true,
+				"tick": 2
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 2
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "aim_at_role",
+				"role": "operator",
+				"target_role": "target",
+				"tick": 12.0
+			},
+			"moment_tick": 12,
+			"result": {
+				"action": "aim_at_role",
+				"ok": true,
+				"tick": 12
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 12
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "input_press",
+				"name": "attack_secondary",
+				"tick": 16.0
+			},
+			"moment_tick": 16,
+			"result": {
+				"action": "input_press",
+				"ok": true,
+				"tick": 16
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 16
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "input_tap",
+				"hold_ticks": 1.0,
+				"name": "attack_primary",
+				"tick": 20.0
+			},
+			"moment_tick": 20,
+			"result": {
+				"action": "input_tap",
+				"ok": true,
+				"tick": 20
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 20
+	},
+	{
+		"data": {
+			"active_window_sec": 0.1,
+			"position": "(420.0, 360.0)",
+			"stamina": 92.0
+		},
+		"kind": "player_parry_started",
+		"tick": 20
+	},
+	{
+		"data": {
+			"position": "(420.0, 360.0)",
+			"window_sec": 0.1
+		},
+		"kind": "player_parry_active",
+		"tick": 22
+	},
+	{
+		"data": {
+			"position": "(420.0, 360.0)"
+		},
+		"kind": "player_parry_expired",
+		"tick": 29
+	},
+	{
+		"data": {
+			"position": "(403.1051, 349.2966)"
+		},
+		"kind": "player_parry_miss_vfx_spawned",
+		"tick": 29
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "input_release",
+				"name": "attack_secondary",
+				"tick": 30.0
+			},
+			"moment_tick": 30,
+			"result": {
+				"action": "input_release",
+				"ok": true,
+				"tick": 30
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 30
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "capture_marker",
+				"name": "parry_review",
+				"tick": 32.0
+			},
+			"moment_tick": 32,
+			"result": {
+				"action": "capture_marker",
+				"ok": true,
+				"tick": 32
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 32
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "finish",
+				"tick": 118.0
+			},
+			"moment_tick": 118,
+			"result": {
+				"action": "finish",
+				"finish": true,
+				"ok": true,
+				"tick": 118
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 118
+	}
+]

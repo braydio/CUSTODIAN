@@ -1,0 +1,2075 @@
+{
+  "banner_black_torn": {
+    "category": "banner_decorative",
+    "collision": false,
+    "gameplay_role": "decorative faction/compound prop",
+    "layer": "PropLayer",
+    "tags": [
+      "banner_decorative"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "barrel_single": {
+    "category": "barrel",
+    "collision": true,
+    "gameplay_role": "prop, destructible",
+    "layer": "PropLayer",
+    "tags": [
+      "barrel"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "barrel_stack_cluster": {
+    "category": "barrel",
+    "collision": true,
+    "gameplay_role": "prop, destructible",
+    "layer": "PropLayer",
+    "tags": [
+      "barrel"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "barrier_chain_posts_h": {
+    "category": "barrier_chain",
+    "collision": false,
+    "gameplay_role": "soft boundary, decorative blocker",
+    "layer": "PropLayer",
+    "tags": [
+      "barrier_chain"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "bell_frame_gothic_small": {
+    "category": "bell_frame",
+    "collision": true,
+    "gameplay_role": "bell shrine, alarm object, lore node",
+    "layer": "PropLayer",
+    "tags": [
+      "bell_frame"
+    ],
+    "connectors": [],
+    "classification_source": "classification.md"
+  },
+  "collapsed_spire_ruin_large": {
+    "category": "ruin_collapsed",
+    "collision": true,
+    "gameplay_role": "large collapsed ruin, landmark",
+    "layer": "PropLayer",
+    "tags": [
+      "ruin_collapsed"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "cover_low_wall_long_h": {
+    "category": "cover",
+    "collision": true,
+    "gameplay_role": "low cover, boundary divider, defensive barricade",
+    "layer": "PropLayer",
+    "tags": [
+      "cover"
+    ],
+    "connectors": [],
+    "classification_source": "classification.md"
+  },
+  "cover_sandbag_corner_curve": {
+    "category": "cover",
+    "collision": true,
+    "gameplay_role": "low cover, defensive barricade",
+    "layer": "PropLayer",
+    "tags": [
+      "cover"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "cover_sandbag_straight_h": {
+    "category": "cover",
+    "collision": true,
+    "gameplay_role": "low cover, defensive barricade",
+    "layer": "PropLayer",
+    "tags": [
+      "cover"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "cover_stone_low_wall_h": {
+    "category": "cover",
+    "collision": true,
+    "gameplay_role": "low cover, defensive barricade",
+    "layer": "PropLayer",
+    "tags": [
+      "cover"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "crate_single": {
+    "category": "crate",
+    "collision": true,
+    "gameplay_role": "prop, destructible cover",
+    "layer": "PropLayer",
+    "tags": [
+      "crate"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "crate_stack_large": {
+    "category": "crate",
+    "collision": true,
+    "gameplay_role": "prop, destructible cover",
+    "layer": "PropLayer",
+    "tags": [
+      "crate"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "dead_shrub_small": {
+    "category": "dead_vegetation",
+    "collision": true,
+    "gameplay_role": "natural blocker/scatter",
+    "layer": "PropLayer",
+    "tags": [
+      "dead_vegetation"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "dead_tree_large": {
+    "category": "dead_vegetation",
+    "collision": true,
+    "gameplay_role": "natural blocker/scatter",
+    "layer": "PropLayer",
+    "tags": [
+      "dead_vegetation"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "dead_tree_stump": {
+    "category": "dead_vegetation",
+    "collision": true,
+    "gameplay_role": "natural blocker/scatter",
+    "layer": "PropLayer",
+    "tags": [
+      "dead_vegetation"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "decal_light_pool_amber": {
+    "category": "light_decal",
+    "collision": false,
+    "gameplay_role": "light decal tile",
+    "layer": "LightDecalLayer",
+    "tags": [
+      "light_pool",
+      "amber",
+      "atmosphere"
+    ],
+    "connectors": [],
+    "classification_source": "classication_ii.md"
+  },
+  "decal_shadow_smoke_dark": {
+    "category": "shadow_decal",
+    "collision": false,
+    "gameplay_role": "shadow decal tile",
+    "layer": "ShadowDecalLayer",
+    "tags": [
+      "shadow",
+      "smoke",
+      "atmosphere"
+    ],
+    "connectors": [],
+    "classification_source": "classication_ii.md"
+  },
+  "doorway_gothic_small": {
+    "category": "doorway",
+    "collision": "partial",
+    "gameplay_role": "entrance marker, locked door visual, structure attachment",
+    "layer": "PropLayer",
+    "tags": [
+      "doorway"
+    ],
+    "connectors": [],
+    "classification_source": "classification.md"
+  },
+  "fence_wrought_iron_long_h": {
+    "category": "fence",
+    "collision": true,
+    "gameplay_role": "visual boundary, soft barrier",
+    "layer": "PropLayer",
+    "tags": [
+      "fence"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "fence_wrought_iron_short_h": {
+    "category": "fence",
+    "collision": true,
+    "gameplay_role": "visual boundary, soft barrier",
+    "layer": "PropLayer",
+    "tags": [
+      "fence"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "floor_sigil_stone_square": {
+    "category": "floor_decal",
+    "collision": false,
+    "gameplay_role": "floor decal tile",
+    "layer": "DecalLayer",
+    "tags": [
+      "sigil",
+      "ritual",
+      "stone",
+      "objective_floor"
+    ],
+    "connectors": [],
+    "classification_source": "classication_ii.md"
+  },
+  "funerary_marker_stone": {
+    "category": "funerary_marker",
+    "collision": true,
+    "gameplay_role": "lore marker, decorative prop",
+    "layer": "PropLayer",
+    "tags": [
+      "funerary_marker"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "gate_arch_open_gothic": {
+    "category": "gate_frame",
+    "collision": "partial",
+    "gameplay_role": "decorative open passage, entry landmark",
+    "layer": "PropLayer",
+    "tags": [
+      "gate_frame"
+    ],
+    "connectors": [],
+    "classification_source": "classification.md"
+  },
+  "gate_chain_posts": {
+    "category": "gate_post",
+    "collision": true,
+    "gameplay_role": "gate chain posts, boundary marker",
+    "layer": "PropLayer",
+    "tags": [
+      "gate_post"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "gate_fence_portcullis_small": {
+    "category": "gate_portcullis",
+    "collision": true,
+    "gameplay_role": "portcullis gate, visual barrier",
+    "layer": "PropLayer",
+    "tags": [
+      "gate_portcullis"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "gate_heavy_closed_blocking": {
+    "category": "gate_closed",
+    "collision": true,
+    "gameplay_role": "heavy closed gate, impassable",
+    "layer": "PropLayer",
+    "tags": [
+      "gate_closed"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "gate_open_arch_frame": {
+    "category": "gate_frame",
+    "collision": false,
+    "gameplay_role": "open arch gateway, decorative frame",
+    "layer": "PropLayer",
+    "tags": [
+      "gate_frame"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "gate_portcullis_spiked": {
+    "category": "gate_portcullis",
+    "collision": true,
+    "gameplay_role": "spiked portcullis, hazard",
+    "layer": "PropLayer",
+    "tags": [
+      "gate_portcullis"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "gate_threshold_closed_blocking": {
+    "category": "gate_threshold",
+    "collision": true,
+    "gameplay_role": "closed/locked gate, clear blocked passage",
+    "layer": "GateLayer",
+    "tags": [
+      "gate_threshold"
+    ],
+    "connectors": [],
+    "classification_source": "classification.md"
+  },
+  "gate_threshold_open_walkable": {
+    "category": "gate_threshold",
+    "collision": false,
+    "gameplay_role": "open/passable gate threshold",
+    "layer": "GateLayer",
+    "tags": [
+      "gate_threshold"
+    ],
+    "connectors": [],
+    "classification_source": "classification.md"
+  },
+  "gatehouse_main_closed_large": {
+    "category": "gatehouse",
+    "collision": true,
+    "gameplay_role": "main gatehouse closed, major entrance",
+    "layer": "PropLayer",
+    "tags": [
+      "gatehouse"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "gatehouse_main_open_large": {
+    "category": "gatehouse",
+    "collision": true,
+    "gameplay_role": "main gatehouse open, passable entrance",
+    "layer": "PropLayer",
+    "tags": [
+      "gatehouse"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "generator_block_industrial": {
+    "category": "generator",
+    "collision": true,
+    "gameplay_role": "interactable power object",
+    "layer": "PropLayer",
+    "tags": [
+      "generator"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "grate_round_metal": {
+    "category": "utility_tile",
+    "collision": false,
+    "gameplay_role": "utility tile tile",
+    "layer": "DecalLayer",
+    "tags": [
+      "grate",
+      "round",
+      "drain",
+      "industrial"
+    ],
+    "connectors": [],
+    "classification_source": "classication_ii.md"
+  },
+  "grate_square_metal": {
+    "category": "utility_tile",
+    "collision": false,
+    "gameplay_role": "utility tile tile",
+    "layer": "DecalLayer",
+    "tags": [
+      "grate",
+      "metal",
+      "industrial"
+    ],
+    "connectors": [],
+    "classification_source": "classication_ii.md"
+  },
+  "ground_ash_gravel_patch": {
+    "category": "ground_decal",
+    "collision": false,
+    "gameplay_role": "terrain overlay decal, no collision",
+    "layer": "DecalLayer",
+    "tags": [
+      "ground_decal"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "ground_brown_rubble_patch": {
+    "category": "ground_decal",
+    "collision": false,
+    "gameplay_role": "terrain overlay decal, no collision",
+    "layer": "DecalLayer",
+    "tags": [
+      "ground_decal"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "ground_cracked_stone_patch_a": {
+    "category": "ground_decal",
+    "collision": false,
+    "gameplay_role": "terrain overlay decal, no collision",
+    "layer": "DecalLayer",
+    "tags": [
+      "ground_decal"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "ground_cracked_stone_patch_b": {
+    "category": "ground_decal",
+    "collision": false,
+    "gameplay_role": "terrain overlay decal, no collision",
+    "layer": "DecalLayer",
+    "tags": [
+      "ground_decal"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "ground_dark_ash_patch": {
+    "category": "ground_decal",
+    "collision": false,
+    "gameplay_role": "terrain overlay decal, no collision",
+    "layer": "DecalLayer",
+    "tags": [
+      "ground_decal"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "ground_rocky_patch_large": {
+    "category": "ground_decal",
+    "collision": false,
+    "gameplay_role": "terrain overlay decal, no collision",
+    "layer": "DecalLayer",
+    "tags": [
+      "ground_decal"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "hanging_chain_hook": {
+    "category": "hanging_chain",
+    "collision": false,
+    "gameplay_role": "decorative overhead prop",
+    "layer": "PropLayer",
+    "tags": [
+      "hanging_chain"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "lamp_post_amber": {
+    "category": "lamp_post",
+    "collision": false,
+    "gameplay_role": "ambient light source, path marker",
+    "layer": "LightLayer",
+    "tags": [
+      "lamp_post"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "lamp_post_amber_single": {
+    "category": "lamp_post",
+    "collision": "partial",
+    "gameplay_role": "ambient light source, path marker",
+    "layer": "LightLayer",
+    "tags": [
+      "lamp_post"
+    ],
+    "connectors": [],
+    "classification_source": "classification.md"
+  },
+  "marker_hidden_spawn_ember_star": {
+    "category": "hidden_spawn_marker",
+    "collision": false,
+    "gameplay_role": "editor-only spawn marker, removed at runtime",
+    "layer": "EditorOnly",
+    "tags": [
+      "hidden_spawn_marker"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "marker_hidden_spawn_ring_amber": {
+    "category": "hidden_spawn_marker",
+    "collision": false,
+    "gameplay_role": "editor-only spawn marker, removed at runtime",
+    "layer": "EditorOnly",
+    "tags": [
+      "hidden_spawn_marker"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "marker_hidden_spawn_rocky_x": {
+    "category": "hidden_spawn_marker",
+    "collision": false,
+    "gameplay_role": "editor-only spawn marker, removed at runtime",
+    "layer": "EditorOnly",
+    "tags": [
+      "hidden_spawn_marker"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "marker_hidden_spawn_stone_ring": {
+    "category": "hidden_spawn_marker",
+    "collision": false,
+    "gameplay_role": "editor-only spawn marker, removed at runtime",
+    "layer": "EditorOnly",
+    "tags": [
+      "hidden_spawn_marker"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "marker_hidden_spawn_x_amber": {
+    "category": "hidden_spawn_marker",
+    "collision": false,
+    "gameplay_role": "editor-only spawn marker, removed at runtime",
+    "layer": "EditorOnly",
+    "tags": [
+      "hidden_spawn_marker"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "marker_hidden_spawn_x_plain": {
+    "category": "hidden_spawn_marker",
+    "collision": false,
+    "gameplay_role": "editor-only spawn marker, removed at runtime",
+    "layer": "EditorOnly",
+    "tags": [
+      "hidden_spawn_marker"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "obelisk_large_gothic": {
+    "category": "obelisk",
+    "collision": true,
+    "gameplay_role": "gothic landmark/marker",
+    "layer": "PropLayer",
+    "tags": [
+      "obelisk"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "obelisk_small_gothic": {
+    "category": "obelisk",
+    "collision": true,
+    "gameplay_role": "gothic landmark/marker",
+    "layer": "PropLayer",
+    "tags": [
+      "obelisk"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "obelisk_spire_marker_tall": {
+    "category": "obelisk",
+    "collision": true,
+    "gameplay_role": "processional marker, boundary marker, lore prop",
+    "layer": "PropLayer",
+    "tags": [
+      "obelisk"
+    ],
+    "connectors": [],
+    "classification_source": "classification.md"
+  },
+  "path_worn_dirt_vertical_a": {
+    "category": "path",
+    "collision": false,
+    "gameplay_role": "path tile",
+    "layer": "RoadPathLayer",
+    "tags": [
+      "dirt_path",
+      "worn",
+      "vertical"
+    ],
+    "connectors": [
+      "NORTH",
+      "SOUTH"
+    ],
+    "classification_source": "classication_ii.md"
+  },
+  "path_worn_dirt_vertical_b": {
+    "category": "path",
+    "collision": false,
+    "gameplay_role": "path tile",
+    "layer": "RoadPathLayer",
+    "tags": [
+      "dirt_path",
+      "worn",
+      "vertical",
+      "variant"
+    ],
+    "connectors": [
+      "NORTH",
+      "SOUTH"
+    ],
+    "classification_source": "classication_ii.md"
+  },
+  "path_worn_dirt_vertical_c": {
+    "category": "path",
+    "collision": false,
+    "gameplay_role": "path tile",
+    "layer": "RoadPathLayer",
+    "tags": [
+      "dirt_path",
+      "worn",
+      "vertical",
+      "variant"
+    ],
+    "connectors": [
+      "NORTH",
+      "SOUTH"
+    ],
+    "classification_source": "classication_ii.md"
+  },
+  "platform_hazard_striped_large": {
+    "category": "platform_hazard",
+    "collision": false,
+    "gameplay_role": "landing pad, build pad, machine pad, danger zone",
+    "layer": "TerrainLayer",
+    "tags": [
+      "platform_hazard"
+    ],
+    "connectors": [],
+    "classification_source": "classification.md"
+  },
+  "platform_stone_plain_large": {
+    "category": "platform",
+    "collision": false,
+    "gameplay_role": "courtyard floor, build pad, staging area",
+    "layer": "TerrainLayer",
+    "tags": [
+      "platform"
+    ],
+    "connectors": [],
+    "classification_source": "classification.md"
+  },
+  "platform_stone_symbol_large": {
+    "category": "platform_symbol",
+    "collision": false,
+    "gameplay_role": "command pad, ritual/anchor point, objective marker floor",
+    "layer": "TerrainLayer",
+    "tags": [
+      "platform_symbol"
+    ],
+    "connectors": [],
+    "classification_source": "classification.md"
+  },
+  "pylon_dead_light": {
+    "category": "pylon",
+    "collision": true,
+    "gameplay_role": "dead light pylon, industrial marker",
+    "layer": "PropLayer",
+    "tags": [
+      "pylon"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "resource_node_blackwood_deadfall_gothic": {
+    "category": "resource_node",
+    "collision": true,
+    "gameplay_role": "harvestable resource node",
+    "layer": "ResourceLayer",
+    "tags": [
+      "resource_node"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "resource_node_ruin_scrap_gothic": {
+    "category": "resource_node",
+    "collision": true,
+    "gameplay_role": "harvestable resource node",
+    "layer": "ResourceLayer",
+    "tags": [
+      "resource_node"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "road_corner_inner_ne": {
+    "category": "road_corner",
+    "collision": false,
+    "gameplay_role": "road corner tile",
+    "layer": "RoadPathLayer",
+    "tags": [
+      "road",
+      "corner",
+      "inner"
+    ],
+    "connectors": [
+      "SOUTH",
+      "WEST"
+    ],
+    "classification_source": "classication_ii.md"
+  },
+  "road_corner_inner_nw": {
+    "category": "road_corner",
+    "collision": false,
+    "gameplay_role": "road corner tile",
+    "layer": "RoadPathLayer",
+    "tags": [
+      "road",
+      "corner",
+      "inner"
+    ],
+    "connectors": [
+      "SOUTH",
+      "EAST"
+    ],
+    "classification_source": "classication_ii.md"
+  },
+  "road_corner_or_end_se": {
+    "category": "road_corner",
+    "collision": false,
+    "gameplay_role": "road corner tile",
+    "layer": "RoadPathLayer",
+    "tags": [
+      "road",
+      "corner",
+      "rounded"
+    ],
+    "connectors": [
+      "NORTH",
+      "WEST"
+    ],
+    "classification_source": "classication_ii.md"
+  },
+  "road_corner_or_end_sw": {
+    "category": "road_corner",
+    "collision": false,
+    "gameplay_role": "road corner tile",
+    "layer": "RoadPathLayer",
+    "tags": [
+      "road",
+      "corner",
+      "rounded"
+    ],
+    "connectors": [
+      "NORTH",
+      "EAST"
+    ],
+    "classification_source": "classication_ii.md"
+  },
+  "road_cross_intersection": {
+    "category": "road_junction",
+    "collision": false,
+    "gameplay_role": "road junction tile",
+    "layer": "RoadPathLayer",
+    "tags": [
+      "road",
+      "cross",
+      "intersection"
+    ],
+    "connectors": [
+      "NORTH",
+      "EAST",
+      "SOUTH",
+      "WEST"
+    ],
+    "classification_source": "classication_ii.md"
+  },
+  "road_curve_dirt_transition_ne_a": {
+    "category": "road_transition",
+    "collision": false,
+    "gameplay_role": "road transition tile",
+    "layer": "RoadPathLayer",
+    "tags": [
+      "road",
+      "curve",
+      "dirt_transition"
+    ],
+    "connectors": [
+      "SOUTH",
+      "WEST"
+    ],
+    "classification_source": "classication_ii.md"
+  },
+  "road_curve_dirt_transition_ne_b": {
+    "category": "road_transition",
+    "collision": false,
+    "gameplay_role": "road transition tile",
+    "layer": "RoadPathLayer",
+    "tags": [
+      "road",
+      "curve",
+      "dirt_transition",
+      "variant"
+    ],
+    "connectors": [
+      "SOUTH",
+      "WEST"
+    ],
+    "classification_source": "classication_ii.md"
+  },
+  "road_curve_dirt_transition_ne_c": {
+    "category": "road_transition",
+    "collision": false,
+    "gameplay_role": "road transition tile",
+    "layer": "RoadPathLayer",
+    "tags": [
+      "road",
+      "curve",
+      "dirt_transition",
+      "variant"
+    ],
+    "connectors": [
+      "SOUTH",
+      "WEST"
+    ],
+    "classification_source": "classication_ii.md"
+  },
+  "road_curve_dirt_transition_sw_a": {
+    "category": "road_transition",
+    "collision": false,
+    "gameplay_role": "road transition tile",
+    "layer": "RoadPathLayer",
+    "tags": [
+      "road",
+      "curve",
+      "dirt_transition"
+    ],
+    "connectors": [
+      "NORTH",
+      "EAST"
+    ],
+    "classification_source": "classication_ii.md"
+  },
+  "road_curve_dirt_transition_sw_b": {
+    "category": "road_transition",
+    "collision": false,
+    "gameplay_role": "road transition tile",
+    "layer": "RoadPathLayer",
+    "tags": [
+      "road",
+      "curve",
+      "dirt_transition",
+      "variant"
+    ],
+    "connectors": [
+      "NORTH",
+      "EAST"
+    ],
+    "classification_source": "classication_ii.md"
+  },
+  "road_end_s_rounded": {
+    "category": "road_end",
+    "collision": false,
+    "gameplay_role": "road end tile",
+    "layer": "RoadPathLayer",
+    "tags": [
+      "road",
+      "dead_end",
+      "rounded_cap"
+    ],
+    "connectors": [
+      "NORTH"
+    ],
+    "classification_source": "classication_ii.md"
+  },
+  "road_straight_ew_long": {
+    "category": "road",
+    "collision": false,
+    "gameplay_role": "road tile",
+    "layer": "RoadPathLayer",
+    "tags": [
+      "road",
+      "straight",
+      "horizontal",
+      "service_path"
+    ],
+    "connectors": [
+      "EAST",
+      "WEST"
+    ],
+    "classification_source": "classication_ii.md"
+  },
+  "road_straight_ns_a": {
+    "category": "road",
+    "collision": false,
+    "gameplay_role": "road tile",
+    "layer": "RoadPathLayer",
+    "tags": [
+      "road",
+      "straight",
+      "vertical"
+    ],
+    "connectors": [
+      "NORTH",
+      "SOUTH"
+    ],
+    "classification_source": "classication_ii.md"
+  },
+  "road_straight_ns_b": {
+    "category": "road",
+    "collision": false,
+    "gameplay_role": "road tile",
+    "layer": "RoadPathLayer",
+    "tags": [
+      "road",
+      "straight",
+      "vertical",
+      "variant"
+    ],
+    "connectors": [
+      "NORTH",
+      "SOUTH"
+    ],
+    "classification_source": "classication_ii.md"
+  },
+  "road_straight_ns_cracked": {
+    "category": "road",
+    "collision": false,
+    "gameplay_role": "road tile",
+    "layer": "RoadPathLayer",
+    "tags": [
+      "road",
+      "straight",
+      "vertical",
+      "cracked"
+    ],
+    "connectors": [
+      "NORTH",
+      "SOUTH"
+    ],
+    "classification_source": "classication_ii.md"
+  },
+  "road_straight_ns_dirt_edge_a": {
+    "category": "road_transition",
+    "collision": false,
+    "gameplay_role": "road transition tile",
+    "layer": "RoadPathLayer",
+    "tags": [
+      "road",
+      "dirt_edge",
+      "vertical"
+    ],
+    "connectors": [
+      "NORTH",
+      "SOUTH"
+    ],
+    "classification_source": "classication_ii.md"
+  },
+  "road_straight_ns_dirt_edge_b": {
+    "category": "road_transition",
+    "collision": false,
+    "gameplay_role": "road transition tile",
+    "layer": "RoadPathLayer",
+    "tags": [
+      "road",
+      "dirt_edge",
+      "vertical",
+      "variant"
+    ],
+    "connectors": [
+      "NORTH",
+      "SOUTH"
+    ],
+    "classification_source": "classication_ii.md"
+  },
+  "road_t_junction_s_a": {
+    "category": "road_junction",
+    "collision": false,
+    "gameplay_role": "road junction tile",
+    "layer": "RoadPathLayer",
+    "tags": [
+      "road",
+      "t_junction"
+    ],
+    "connectors": [
+      "NORTH",
+      "EAST",
+      "WEST"
+    ],
+    "classification_source": "classication_ii.md"
+  },
+  "road_t_junction_s_b": {
+    "category": "road_junction",
+    "collision": false,
+    "gameplay_role": "road junction tile",
+    "layer": "RoadPathLayer",
+    "tags": [
+      "road",
+      "t_junction",
+      "variant"
+    ],
+    "connectors": [
+      "NORTH",
+      "EAST",
+      "WEST"
+    ],
+    "classification_source": "classication_ii.md"
+  },
+  "road_t_junction_s_c": {
+    "category": "road_junction",
+    "collision": false,
+    "gameplay_role": "road junction tile",
+    "layer": "RoadPathLayer",
+    "tags": [
+      "road",
+      "t_junction",
+      "variant"
+    ],
+    "connectors": [
+      "NORTH",
+      "EAST",
+      "WEST"
+    ],
+    "classification_source": "classication_ii.md"
+  },
+  "road_t_junction_s_cracked": {
+    "category": "road_junction",
+    "collision": false,
+    "gameplay_role": "road junction tile",
+    "layer": "RoadPathLayer",
+    "tags": [
+      "road",
+      "t_junction",
+      "cracked"
+    ],
+    "connectors": [
+      "NORTH",
+      "EAST",
+      "WEST"
+    ],
+    "classification_source": "classication_ii.md"
+  },
+  "road_t_junction_s_d": {
+    "category": "road_junction",
+    "collision": false,
+    "gameplay_role": "road junction tile",
+    "layer": "RoadPathLayer",
+    "tags": [
+      "road",
+      "t_junction",
+      "variant"
+    ],
+    "connectors": [
+      "NORTH",
+      "EAST",
+      "WEST"
+    ],
+    "classification_source": "classication_ii.md"
+  },
+  "rubble_pile_large": {
+    "category": "rubble",
+    "collision": true,
+    "gameplay_role": "debris scatter/blocker",
+    "layer": "PropLayer",
+    "tags": [
+      "rubble"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "rubble_pile_medium": {
+    "category": "rubble",
+    "collision": true,
+    "gameplay_role": "debris scatter/blocker",
+    "layer": "PropLayer",
+    "tags": [
+      "rubble"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "rubble_pile_small": {
+    "category": "rubble",
+    "collision": true,
+    "gameplay_role": "debris scatter/blocker",
+    "layer": "PropLayer",
+    "tags": [
+      "rubble"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "ruin_column_rubble_large": {
+    "category": "rubble",
+    "collision": true,
+    "gameplay_role": "column ruin rubble, debris",
+    "layer": "PropLayer",
+    "tags": [
+      "rubble"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "spike_barricade_h": {
+    "category": "spike_barricade",
+    "collision": true,
+    "gameplay_role": "hazard barrier, blocked passage",
+    "layer": "PropLayer",
+    "tags": [
+      "spike_barricade"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "structure_command_keep_gothic_large": {
+    "category": "structure_keep",
+    "collision": true,
+    "gameplay_role": "command core, mission objective, compound center",
+    "layer": "PropLayer",
+    "tags": [
+      "structure_keep"
+    ],
+    "connectors": [],
+    "classification_source": "classification.md"
+  },
+  "structure_dry_fountain_basin_octagonal": {
+    "category": "structure_fountain",
+    "collision": true,
+    "gameplay_role": "courtyard centerpiece, lore marker, cover obstruction",
+    "layer": "PropLayer",
+    "tags": [
+      "structure_fountain"
+    ],
+    "connectors": [],
+    "classification_source": "classification.md"
+  },
+  "structure_machine_house_gothic_industrial": {
+    "category": "structure_machine",
+    "collision": true,
+    "gameplay_role": "generator room, power relay, fabricator support, objective building",
+    "layer": "PropLayer",
+    "tags": [
+      "structure_machine"
+    ],
+    "connectors": [],
+    "classification_source": "classification.md"
+  },
+  "structure_utility_fan_roof_block": {
+    "category": "structure_utility",
+    "collision": true,
+    "gameplay_role": "power/HVAC/industrial support building, possible repair or sabotage target",
+    "layer": "PropLayer",
+    "tags": [
+      "structure_utility"
+    ],
+    "connectors": [],
+    "classification_source": "classification.md"
+  },
+  "terminal_compound_control_console": {
+    "category": "terminal",
+    "collision": true,
+    "gameplay_role": "gate control, compound control, power/fabricator UI object",
+    "layer": "PropLayer",
+    "tags": [
+      "terminal"
+    ],
+    "connectors": [],
+    "classification_source": "classification.md"
+  },
+  "terrain_ash_base_dark_a": {
+    "category": "terrain_base",
+    "collision": false,
+    "gameplay_role": "terrain base tile",
+    "layer": "BaseGroundLayer",
+    "tags": [
+      "ash",
+      "dark",
+      "repeatable",
+      "wasteland"
+    ],
+    "connectors": [],
+    "classification_source": "classication_ii.md"
+  },
+  "terrain_ash_base_dark_b": {
+    "category": "terrain_base",
+    "collision": false,
+    "gameplay_role": "terrain base tile",
+    "layer": "BaseGroundLayer",
+    "tags": [
+      "ash",
+      "pebbles",
+      "repeatable",
+      "wasteland"
+    ],
+    "connectors": [],
+    "classification_source": "classication_ii.md"
+  },
+  "terrain_ash_roots_cracked_a": {
+    "category": "terrain_base_variant",
+    "collision": false,
+    "gameplay_role": "terrain base variant tile",
+    "layer": "BaseGroundLayer",
+    "tags": [
+      "ash",
+      "roots",
+      "cracked",
+      "dead_growth"
+    ],
+    "connectors": [],
+    "classification_source": "classication_ii.md"
+  },
+  "terrain_ash_roots_dense_b": {
+    "category": "terrain_base_variant",
+    "collision": false,
+    "gameplay_role": "terrain base variant tile",
+    "layer": "BaseGroundLayer",
+    "tags": [
+      "ash",
+      "roots",
+      "dense",
+      "dead_growth"
+    ],
+    "connectors": [],
+    "classification_source": "classication_ii.md"
+  },
+  "terrain_ash_roots_patch_a": {
+    "category": "terrain_base_variant",
+    "collision": false,
+    "gameplay_role": "terrain base variant tile",
+    "layer": "BaseGroundLayer",
+    "tags": [
+      "ash",
+      "roots",
+      "dead_growth"
+    ],
+    "connectors": [],
+    "classification_source": "classication_ii.md"
+  },
+  "terrain_ash_roots_patch_b": {
+    "category": "terrain_base_variant",
+    "collision": false,
+    "gameplay_role": "terrain base variant tile",
+    "layer": "BaseGroundLayer",
+    "tags": [
+      "ash",
+      "roots",
+      "dead_growth"
+    ],
+    "connectors": [],
+    "classification_source": "classication_ii.md"
+  },
+  "terrain_ash_roots_patch_c": {
+    "category": "terrain_base_variant",
+    "collision": false,
+    "gameplay_role": "terrain base variant tile",
+    "layer": "BaseGroundLayer",
+    "tags": [
+      "ash",
+      "roots",
+      "dead_growth"
+    ],
+    "connectors": [],
+    "classification_source": "classication_ii.md"
+  },
+  "terrain_ash_sparse_pebble_patch": {
+    "category": "terrain_base_variant",
+    "collision": false,
+    "gameplay_role": "terrain base variant tile",
+    "layer": "BaseGroundLayer",
+    "tags": [
+      "ash",
+      "pebbles",
+      "sparse"
+    ],
+    "connectors": [],
+    "classification_source": "classication_ii.md"
+  },
+  "terrain_cracked_rock_base_a": {
+    "category": "terrain_base",
+    "collision": false,
+    "gameplay_role": "terrain base tile",
+    "layer": "BaseGroundLayer",
+    "tags": [
+      "cracked_rock",
+      "stone",
+      "wasteland"
+    ],
+    "connectors": [],
+    "classification_source": "classication_ii.md"
+  },
+  "terrain_cracked_rock_base_b": {
+    "category": "terrain_base",
+    "collision": false,
+    "gameplay_role": "terrain base tile",
+    "layer": "BaseGroundLayer",
+    "tags": [
+      "cracked_rock",
+      "stone",
+      "wasteland"
+    ],
+    "connectors": [],
+    "classification_source": "classication_ii.md"
+  },
+  "terrain_rocky_ash_base_a": {
+    "category": "terrain_base_variant",
+    "collision": false,
+    "gameplay_role": "terrain base variant tile",
+    "layer": "BaseGroundLayer",
+    "tags": [
+      "ash",
+      "rocks",
+      "rough_ground"
+    ],
+    "connectors": [],
+    "classification_source": "classication_ii.md"
+  },
+  "terrain_rocky_dirt_scatter_a": {
+    "category": "terrain_base_variant",
+    "collision": false,
+    "gameplay_role": "terrain base variant tile",
+    "layer": "BaseGroundLayer",
+    "tags": [
+      "dirt",
+      "rocks",
+      "scatter"
+    ],
+    "connectors": [],
+    "classification_source": "classication_ii.md"
+  },
+  "terrain_rocky_dirt_scatter_b": {
+    "category": "terrain_base_variant",
+    "collision": false,
+    "gameplay_role": "terrain base variant tile",
+    "layer": "BaseGroundLayer",
+    "tags": [
+      "dirt",
+      "gravel",
+      "scatter"
+    ],
+    "connectors": [],
+    "classification_source": "classication_ii.md"
+  },
+  "terrain_rocky_dirt_scatter_c": {
+    "category": "terrain_base_variant",
+    "collision": false,
+    "gameplay_role": "terrain base variant tile",
+    "layer": "BaseGroundLayer",
+    "tags": [
+      "dirt",
+      "large_stones",
+      "scatter"
+    ],
+    "connectors": [],
+    "classification_source": "classication_ii.md"
+  },
+  "terrain_rocky_dirt_scatter_d": {
+    "category": "terrain_base_variant",
+    "collision": false,
+    "gameplay_role": "terrain base variant tile",
+    "layer": "BaseGroundLayer",
+    "tags": [
+      "dirt",
+      "rocks",
+      "rough_ground"
+    ],
+    "connectors": [],
+    "classification_source": "classication_ii.md"
+  },
+  "terrain_stone_broken_patch_a": {
+    "category": "terrain_overlay",
+    "collision": false,
+    "gameplay_role": "terrain overlay tile",
+    "layer": "DecalLayer",
+    "tags": [
+      "stone",
+      "broken",
+      "rubble_edge"
+    ],
+    "connectors": [],
+    "classification_source": "classication_ii.md"
+  },
+  "terrain_stone_broken_patch_b": {
+    "category": "terrain_overlay",
+    "collision": false,
+    "gameplay_role": "terrain overlay tile",
+    "layer": "DecalLayer",
+    "tags": [
+      "stone",
+      "broken",
+      "rubble_edge"
+    ],
+    "connectors": [],
+    "classification_source": "classication_ii.md"
+  },
+  "terrain_stone_broken_patch_c": {
+    "category": "terrain_overlay",
+    "collision": false,
+    "gameplay_role": "terrain overlay tile",
+    "layer": "DecalLayer",
+    "tags": [
+      "stone",
+      "broken",
+      "rubble_edge"
+    ],
+    "connectors": [],
+    "classification_source": "classication_ii.md"
+  },
+  "terrain_stone_cracked_base_a": {
+    "category": "terrain_base",
+    "collision": false,
+    "gameplay_role": "terrain base tile",
+    "layer": "BaseGroundLayer",
+    "tags": [
+      "stone",
+      "cracked",
+      "courtyard"
+    ],
+    "connectors": [],
+    "classification_source": "classication_ii.md"
+  },
+  "terrain_stone_cracked_base_b": {
+    "category": "terrain_base",
+    "collision": false,
+    "gameplay_role": "terrain base tile",
+    "layer": "BaseGroundLayer",
+    "tags": [
+      "stone",
+      "cracked",
+      "courtyard"
+    ],
+    "connectors": [],
+    "classification_source": "classication_ii.md"
+  },
+  "terrain_stone_cracked_base_c": {
+    "category": "terrain_base",
+    "collision": false,
+    "gameplay_role": "terrain base tile",
+    "layer": "BaseGroundLayer",
+    "tags": [
+      "stone",
+      "broken",
+      "courtyard"
+    ],
+    "connectors": [],
+    "classification_source": "classication_ii.md"
+  },
+  "terrain_stone_rubble_cap_s": {
+    "category": "terrain_transition",
+    "collision": false,
+    "gameplay_role": "terrain transition tile",
+    "layer": "DecalLayer",
+    "tags": [
+      "stone",
+      "rubble_transition",
+      "cap"
+    ],
+    "connectors": [
+      "NORTH"
+    ],
+    "classification_source": "classication_ii.md"
+  },
+  "terrain_stone_to_rubble_edge_e": {
+    "category": "terrain_transition",
+    "collision": false,
+    "gameplay_role": "terrain transition tile",
+    "layer": "DecalLayer",
+    "tags": [
+      "stone",
+      "rubble_transition",
+      "edge"
+    ],
+    "connectors": [
+      "WEST"
+    ],
+    "classification_source": "classication_ii.md"
+  },
+  "terrain_stone_to_rubble_edge_w": {
+    "category": "terrain_transition",
+    "collision": false,
+    "gameplay_role": "terrain transition tile",
+    "layer": "DecalLayer",
+    "tags": [
+      "stone",
+      "rubble_transition",
+      "edge"
+    ],
+    "connectors": [
+      "EAST"
+    ],
+    "classification_source": "classication_ii.md"
+  },
+  "threshold_stone_small": {
+    "category": "threshold",
+    "collision": false,
+    "gameplay_role": "stone threshold, visual ground transition",
+    "layer": "DecalLayer",
+    "tags": [
+      "threshold"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "tower_round_octagonal": {
+    "category": "tower",
+    "collision": true,
+    "gameplay_role": "octagonal tower, defensive landmark",
+    "layer": "PropLayer",
+    "tags": [
+      "tower"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "tower_square_keep": {
+    "category": "tower",
+    "collision": true,
+    "gameplay_role": "square keep tower, command structure",
+    "layer": "PropLayer",
+    "tags": [
+      "tower"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "tower_watch_spire": {
+    "category": "tower",
+    "collision": true,
+    "gameplay_role": "watch spire tower, lookout",
+    "layer": "PropLayer",
+    "tags": [
+      "tower"
+    ],
+    "connectors": [],
+    "classification_source": "pattern"
+  },
+  "wall_broken_corner_rubble_conn_n_e": {
+    "category": "wall_broken_corner",
+    "collision": true,
+    "gameplay_role": "modular wall segment, connectors: n, e",
+    "layer": "WallLayer",
+    "tags": [
+      "wall",
+      "broken",
+      "corner",
+      "conn_n",
+      "conn_e"
+    ],
+    "connectors": [
+      "N",
+      "E"
+    ],
+    "classification_source": "wall_pattern"
+  },
+  "wall_broken_rubble_conn_w_e_left_pillar": {
+    "category": "wall_broken",
+    "collision": true,
+    "gameplay_role": "modular wall segment, connectors: w, e",
+    "layer": "WallLayer",
+    "tags": [
+      "wall",
+      "broken",
+      "conn_w",
+      "conn_e"
+    ],
+    "connectors": [
+      "W",
+      "E"
+    ],
+    "classification_source": "wall_pattern"
+  },
+  "wall_broken_rubble_gap": {
+    "category": "wall_broken",
+    "collision": true,
+    "gameplay_role": "modular wall segment",
+    "layer": "WallLayer",
+    "tags": [
+      "wall",
+      "broken"
+    ],
+    "connectors": [],
+    "classification_source": "wall_pattern"
+  },
+  "wall_broken_spire_rubble_conn_s_w": {
+    "category": "wall_broken_spire",
+    "collision": true,
+    "gameplay_role": "modular wall segment, connectors: s, w",
+    "layer": "WallLayer",
+    "tags": [
+      "wall",
+      "broken",
+      "spire",
+      "conn_s",
+      "conn_w"
+    ],
+    "connectors": [
+      "S",
+      "W"
+    ],
+    "classification_source": "wall_pattern"
+  },
+  "wall_corner_inner_conn_e_s": {
+    "category": "wall_corner_inner",
+    "collision": true,
+    "gameplay_role": "modular wall segment, connectors: e, s",
+    "layer": "WallLayer",
+    "tags": [
+      "wall",
+      "corner",
+      "inner",
+      "conn_e",
+      "conn_s"
+    ],
+    "connectors": [
+      "E",
+      "S"
+    ],
+    "classification_source": "wall_pattern"
+  },
+  "wall_corner_inner_conn_w_n": {
+    "category": "wall_corner_inner",
+    "collision": true,
+    "gameplay_role": "modular wall segment, connectors: w, n",
+    "layer": "WallLayer",
+    "tags": [
+      "wall",
+      "corner",
+      "inner",
+      "conn_w",
+      "conn_n"
+    ],
+    "connectors": [
+      "W",
+      "N"
+    ],
+    "classification_source": "wall_pattern"
+  },
+  "wall_corner_inner_conn_w_s": {
+    "category": "wall_corner_inner",
+    "collision": true,
+    "gameplay_role": "modular wall segment, connectors: w, s",
+    "layer": "WallLayer",
+    "tags": [
+      "wall",
+      "corner",
+      "inner",
+      "conn_w",
+      "conn_s"
+    ],
+    "connectors": [
+      "W",
+      "S"
+    ],
+    "classification_source": "wall_pattern"
+  },
+  "wall_corner_l_conn_s_e": {
+    "category": "wall_corner_l",
+    "collision": true,
+    "gameplay_role": "modular wall segment, connectors: s, e",
+    "layer": "WallLayer",
+    "tags": [
+      "wall",
+      "corner",
+      "l_shape",
+      "conn_s",
+      "conn_e"
+    ],
+    "connectors": [
+      "S",
+      "E"
+    ],
+    "classification_source": "wall_pattern"
+  },
+  "wall_corner_l_conn_s_w": {
+    "category": "wall_corner_l",
+    "collision": true,
+    "gameplay_role": "modular wall segment, connectors: s, w",
+    "layer": "WallLayer",
+    "tags": [
+      "wall",
+      "corner",
+      "l_shape",
+      "conn_s",
+      "conn_w"
+    ],
+    "connectors": [
+      "S",
+      "W"
+    ],
+    "classification_source": "wall_pattern"
+  },
+  "wall_corner_spire_conn_s_w": {
+    "category": "wall_corner_spire",
+    "collision": true,
+    "gameplay_role": "modular wall segment, connectors: s, w",
+    "layer": "WallLayer",
+    "tags": [
+      "wall",
+      "corner",
+      "spire",
+      "conn_s",
+      "conn_w"
+    ],
+    "connectors": [
+      "S",
+      "W"
+    ],
+    "classification_source": "wall_pattern"
+  },
+  "wall_cross_junction_conn_n_e_s_w_a": {
+    "category": "wall_cross_junction",
+    "collision": true,
+    "gameplay_role": "modular wall segment, connectors: n, e, s, w",
+    "layer": "WallLayer",
+    "tags": [
+      "wall",
+      "junction",
+      "cross",
+      "conn_n",
+      "conn_e",
+      "conn_s",
+      "conn_w"
+    ],
+    "connectors": [
+      "N",
+      "E",
+      "S",
+      "W"
+    ],
+    "classification_source": "wall_pattern"
+  },
+  "wall_cross_junction_conn_n_e_s_w_b": {
+    "category": "wall_cross_junction",
+    "collision": true,
+    "gameplay_role": "modular wall segment, connectors: n, e, s, w",
+    "layer": "WallLayer",
+    "tags": [
+      "wall",
+      "junction",
+      "cross",
+      "conn_n",
+      "conn_e",
+      "conn_s",
+      "conn_w"
+    ],
+    "connectors": [
+      "N",
+      "E",
+      "S",
+      "W"
+    ],
+    "classification_source": "wall_pattern"
+  },
+  "wall_cross_junction_conn_n_e_s_w_c": {
+    "category": "wall_cross_junction",
+    "collision": true,
+    "gameplay_role": "modular wall segment, connectors: n, e, s, w",
+    "layer": "WallLayer",
+    "tags": [
+      "wall",
+      "junction",
+      "cross",
+      "conn_n",
+      "conn_e",
+      "conn_s",
+      "conn_w"
+    ],
+    "connectors": [
+      "N",
+      "E",
+      "S",
+      "W"
+    ],
+    "classification_source": "wall_pattern"
+  },
+  "wall_cross_junction_conn_n_e_s_w_d": {
+    "category": "wall_cross_junction",
+    "collision": true,
+    "gameplay_role": "modular wall segment, connectors: n, e, s, w",
+    "layer": "WallLayer",
+    "tags": [
+      "wall",
+      "junction",
+      "cross",
+      "conn_n",
+      "conn_e",
+      "conn_s",
+      "conn_w"
+    ],
+    "connectors": [
+      "N",
+      "E",
+      "S",
+      "W"
+    ],
+    "classification_source": "wall_pattern"
+  },
+  "wall_curve_corner_conn_s_e": {
+    "category": "wall_curve",
+    "collision": true,
+    "gameplay_role": "modular wall segment, connectors: s, e",
+    "layer": "WallLayer",
+    "tags": [
+      "wall",
+      "curve",
+      "corner",
+      "conn_s",
+      "conn_e"
+    ],
+    "connectors": [
+      "S",
+      "E"
+    ],
+    "classification_source": "wall_pattern"
+  },
+  "wall_curve_corner_conn_s_w": {
+    "category": "wall_curve",
+    "collision": true,
+    "gameplay_role": "modular wall segment, connectors: s, w",
+    "layer": "WallLayer",
+    "tags": [
+      "wall",
+      "curve",
+      "corner",
+      "conn_s",
+      "conn_w"
+    ],
+    "connectors": [
+      "S",
+      "W"
+    ],
+    "classification_source": "wall_pattern"
+  },
+  "wall_endcap_pillar_block": {
+    "category": "wall_endcap",
+    "collision": true,
+    "gameplay_role": "modular wall segment",
+    "layer": "WallLayer",
+    "tags": [
+      "wall",
+      "endcap"
+    ],
+    "connectors": [],
+    "classification_source": "wall_pattern"
+  },
+  "wall_endcap_pillar_large": {
+    "category": "wall_endcap",
+    "collision": true,
+    "gameplay_role": "modular wall segment",
+    "layer": "WallLayer",
+    "tags": [
+      "wall",
+      "endcap"
+    ],
+    "connectors": [],
+    "classification_source": "wall_pattern"
+  },
+  "wall_pillar_spire_single": {
+    "category": "wall_pillar",
+    "collision": true,
+    "gameplay_role": "modular wall segment",
+    "layer": "WallLayer",
+    "tags": [
+      "wall",
+      "pillar",
+      "standalone"
+    ],
+    "connectors": [],
+    "classification_source": "wall_pattern"
+  },
+  "wall_pillar_thin_large": {
+    "category": "wall_pillar",
+    "collision": true,
+    "gameplay_role": "modular wall segment",
+    "layer": "WallLayer",
+    "tags": [
+      "wall",
+      "pillar",
+      "standalone"
+    ],
+    "connectors": [],
+    "classification_source": "wall_pattern"
+  },
+  "wall_pillar_thin_small": {
+    "category": "wall_pillar",
+    "collision": true,
+    "gameplay_role": "modular wall segment",
+    "layer": "WallLayer",
+    "tags": [
+      "wall",
+      "pillar",
+      "standalone"
+    ],
+    "connectors": [],
+    "classification_source": "wall_pattern"
+  },
+  "wall_straight_conn_e_w_left_pillar": {
+    "category": "wall_straight",
+    "collision": true,
+    "gameplay_role": "modular wall segment, connectors: e, w",
+    "layer": "WallLayer",
+    "tags": [
+      "wall",
+      "straight",
+      "conn_e",
+      "conn_w"
+    ],
+    "connectors": [
+      "E",
+      "W"
+    ],
+    "classification_source": "wall_pattern"
+  },
+  "wall_straight_conn_w_e_right_pillar": {
+    "category": "wall_straight",
+    "collision": true,
+    "gameplay_role": "modular wall segment, connectors: w, e",
+    "layer": "WallLayer",
+    "tags": [
+      "wall",
+      "straight",
+      "conn_w",
+      "conn_e"
+    ],
+    "connectors": [
+      "W",
+      "E"
+    ],
+    "classification_source": "wall_pattern"
+  },
+  "wall_straight_damaged_center_conn_w_e": {
+    "category": "wall_damaged",
+    "collision": true,
+    "gameplay_role": "modular wall segment, connectors: w, e",
+    "layer": "WallLayer",
+    "tags": [
+      "wall",
+      "damaged",
+      "gap",
+      "conn_w",
+      "conn_e"
+    ],
+    "connectors": [
+      "W",
+      "E"
+    ],
+    "classification_source": "wall_pattern"
+  },
+  "wall_straight_damaged_conn_w_e": {
+    "category": "wall_damaged",
+    "collision": true,
+    "gameplay_role": "modular wall segment, connectors: w, e",
+    "layer": "WallLayer",
+    "tags": [
+      "wall",
+      "damaged",
+      "conn_w",
+      "conn_e"
+    ],
+    "connectors": [
+      "W",
+      "E"
+    ],
+    "classification_source": "wall_pattern"
+  },
+  "wall_straight_damaged_pillar_conn_w": {
+    "category": "wall_damaged",
+    "collision": true,
+    "gameplay_role": "modular wall segment, connectors: w",
+    "layer": "WallLayer",
+    "tags": [
+      "wall",
+      "damaged",
+      "conn_w"
+    ],
+    "connectors": [
+      "W"
+    ],
+    "classification_source": "wall_pattern"
+  },
+  "wall_straight_pillar_right_conn_w": {
+    "category": "wall_straight",
+    "collision": true,
+    "gameplay_role": "modular wall segment, connectors: w",
+    "layer": "WallLayer",
+    "tags": [
+      "wall",
+      "straight",
+      "conn_w"
+    ],
+    "connectors": [
+      "W"
+    ],
+    "classification_source": "wall_pattern"
+  },
+  "wall_straight_short_pillar_conn_w": {
+    "category": "wall_straight",
+    "collision": true,
+    "gameplay_role": "modular wall segment, connectors: w",
+    "layer": "WallLayer",
+    "tags": [
+      "wall",
+      "straight",
+      "conn_w"
+    ],
+    "connectors": [
+      "W"
+    ],
+    "classification_source": "wall_pattern"
+  },
+  "wall_straight_short_w_pillar_conn_e": {
+    "category": "wall_straight",
+    "collision": true,
+    "gameplay_role": "modular wall segment, connectors: e",
+    "layer": "WallLayer",
+    "tags": [
+      "wall",
+      "straight",
+      "conn_e"
+    ],
+    "connectors": [
+      "E"
+    ],
+    "classification_source": "wall_pattern"
+  },
+  "wall_straight_vertical_conn_n_s_large": {
+    "category": "wall_straight",
+    "collision": true,
+    "gameplay_role": "modular wall segment, connectors: n, s",
+    "layer": "WallLayer",
+    "tags": [
+      "wall",
+      "straight",
+      "vertical",
+      "conn_n",
+      "conn_s"
+    ],
+    "connectors": [
+      "N",
+      "S"
+    ],
+    "classification_source": "wall_pattern"
+  },
+  "wall_straight_w_pillar_conn_e": {
+    "category": "wall_straight",
+    "collision": true,
+    "gameplay_role": "modular wall segment, connectors: e",
+    "layer": "WallLayer",
+    "tags": [
+      "wall",
+      "straight",
+      "conn_e"
+    ],
+    "connectors": [
+      "E"
+    ],
+    "classification_source": "wall_pattern"
+  }
+}

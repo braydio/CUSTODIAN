@@ -1,0 +1,621 @@
+{
+  "schema": "custodian.operator_art_metrics.v1",
+  "frames": [
+    {
+      "size": [
+        96,
+        96
+      ],
+      "alpha_bbox": [
+        10,
+        15,
+        68,
+        85
+      ],
+      "opaque_pixels": 1988,
+      "semi_transparent_pixels": 0,
+      "visual_centroid": [
+        43.10513078470825,
+        52.033702213279675
+      ],
+      "lowest_occupied_y": 84,
+      "highest_occupied_y": 15,
+      "width": 58,
+      "height": 70,
+      "palette_size": 204,
+      "pixel_sha": "af60f5bc5d5c9e84ac16f0eb1609ac397ed320ef9307c69b2d7f3d3db1c63f20"
+    },
+    {
+      "size": [
+        96,
+        96
+      ],
+      "alpha_bbox": [
+        13,
+        15,
+        85,
+        85
+      ],
+      "opaque_pixels": 1842,
+      "semi_transparent_pixels": 0,
+      "visual_centroid": [
+        46.67589576547231,
+        50.61943539630836
+      ],
+      "lowest_occupied_y": 84,
+      "highest_occupied_y": 15,
+      "width": 72,
+      "height": 70,
+      "palette_size": 156,
+      "pixel_sha": "8ca13e3c381115299a6ff3e1322ba80446d1349482c427fd96eb2e9ff918ab73"
+    },
+    {
+      "size": [
+        96,
+        96
+      ],
+      "alpha_bbox": [
+        8,
+        15,
+        89,
+        85
+      ],
+      "opaque_pixels": 2169,
+      "semi_transparent_pixels": 0,
+      "visual_centroid": [
+        43.25910557860765,
+        49.13600737667128
+      ],
+      "lowest_occupied_y": 84,
+      "highest_occupied_y": 15,
+      "width": 81,
+      "height": 70,
+      "palette_size": 204,
+      "pixel_sha": "da6044e886a256b11d5316a10a102f25ab5a9cb3bce20490d7d9daaa1989a295"
+    },
+    {
+      "size": [
+        96,
+        96
+      ],
+      "alpha_bbox": [
+        8,
+        15,
+        84,
+        85
+      ],
+      "opaque_pixels": 1660,
+      "semi_transparent_pixels": 0,
+      "visual_centroid": [
+        44.619277108433735,
+        48.74759036144578
+      ],
+      "lowest_occupied_y": 84,
+      "highest_occupied_y": 15,
+      "width": 76,
+      "height": 70,
+      "palette_size": 156,
+      "pixel_sha": "737688058c2a16bb50335412dea9417326ee6823174d1c158c0d64eef9be651e"
+    },
+    {
+      "size": [
+        96,
+        96
+      ],
+      "alpha_bbox": [
+        6,
+        15,
+        69,
+        85
+      ],
+      "opaque_pixels": 1954,
+      "semi_transparent_pixels": 35,
+      "visual_centroid": [
+        41.22171945701358,
+        50.59678230266466
+      ],
+      "lowest_occupied_y": 84,
+      "highest_occupied_y": 15,
+      "width": 63,
+      "height": 70,
+      "palette_size": 253,
+      "pixel_sha": "00ea7dc7daf48938e44b90f475579752daa935d2a316a320e5c8a4b1026a95c1"
+    },
+    {
+      "size": [
+        96,
+        96
+      ],
+      "alpha_bbox": [
+        7,
+        15,
+        85,
+        86
+      ],
+      "opaque_pixels": 1821,
+      "semi_transparent_pixels": 0,
+      "visual_centroid": [
+        43.77265238879736,
+        51.028555738605164
+      ],
+      "lowest_occupied_y": 85,
+      "highest_occupied_y": 15,
+      "width": 78,
+      "height": 71,
+      "palette_size": 156,
+      "pixel_sha": "922d35aeba25afaebed5ded8414d555b9ed973ea2005b43c7f1828bf648e5125"
+    },
+    {
+      "size": [
+        96,
+        96
+      ],
+      "alpha_bbox": [
+        14,
+        15,
+        92,
+        85
+      ],
+      "opaque_pixels": 2069,
+      "semi_transparent_pixels": 0,
+      "visual_centroid": [
+        46.52005799903335,
+        49.267762203963265
+      ],
+      "lowest_occupied_y": 84,
+      "highest_occupied_y": 15,
+      "width": 78,
+      "height": 70,
+      "palette_size": 204,
+      "pixel_sha": "56350e83f4a611f30f03fef86cd11e1c8f6695c9131dd8efdae877b11437f50a"
+    },
+    {
+      "size": [
+        96,
+        96
+      ],
+      "alpha_bbox": [
+        6,
+        15,
+        84,
+        85
+      ],
+      "opaque_pixels": 1808,
+      "semi_transparent_pixels": 0,
+      "visual_centroid": [
+        42.68307522123894,
+        50.49944690265487
+      ],
+      "lowest_occupied_y": 84,
+      "highest_occupied_y": 15,
+      "width": 78,
+      "height": 70,
+      "palette_size": 156,
+      "pixel_sha": "00c3b099d421bb09680062ae304adc34690b014c18887d4b0cae9ecc4c7fb070"
+    }
+  ],
+  "duplicate_adjacent_frames": [],
+  "loop_discontinuity": true,
+  "trajectories": {
+    "ankle_far": [
+      [
+        1,
+        27,
+        77
+      ],
+      [
+        2,
+        28,
+        78
+      ],
+      [
+        3,
+        25,
+        77
+      ],
+      [
+        4,
+        23,
+        78
+      ],
+      [
+        5,
+        25,
+        77
+      ],
+      [
+        6,
+        22,
+        78
+      ],
+      [
+        7,
+        30,
+        77
+      ],
+      [
+        8,
+        22,
+        77
+      ]
+    ],
+    "ankle_near": [
+      [
+        1,
+        49,
+        79
+      ],
+      [
+        2,
+        48,
+        80
+      ],
+      [
+        3,
+        47,
+        79
+      ],
+      [
+        4,
+        41,
+        80
+      ],
+      [
+        5,
+        49,
+        79
+      ],
+      [
+        6,
+        42,
+        80
+      ],
+      [
+        7,
+        52,
+        79
+      ],
+      [
+        8,
+        42,
+        79
+      ]
+    ],
+    "head_center": [
+      [
+        1,
+        38,
+        25
+      ],
+      [
+        2,
+        48,
+        25
+      ],
+      [
+        3,
+        48,
+        25
+      ],
+      [
+        4,
+        46,
+        25
+      ],
+      [
+        5,
+        37,
+        25
+      ],
+      [
+        6,
+        46,
+        25
+      ],
+      [
+        7,
+        52,
+        25
+      ],
+      [
+        8,
+        44,
+        25
+      ]
+    ],
+    "hip_center": [
+      [
+        1,
+        38,
+        58
+      ],
+      [
+        2,
+        38,
+        59
+      ],
+      [
+        3,
+        36,
+        57
+      ],
+      [
+        4,
+        32,
+        59
+      ],
+      [
+        5,
+        37,
+        57
+      ],
+      [
+        6,
+        32,
+        59
+      ],
+      [
+        7,
+        41,
+        58
+      ],
+      [
+        8,
+        32,
+        58
+      ]
+    ],
+    "knee_far": [
+      [
+        1,
+        27,
+        68
+      ],
+      [
+        2,
+        28,
+        69
+      ],
+      [
+        3,
+        25,
+        68
+      ],
+      [
+        4,
+        23,
+        69
+      ],
+      [
+        5,
+        25,
+        68
+      ],
+      [
+        6,
+        22,
+        69
+      ],
+      [
+        7,
+        30,
+        68
+      ],
+      [
+        8,
+        22,
+        68
+      ]
+    ],
+    "knee_near": [
+      [
+        1,
+        49,
+        70
+      ],
+      [
+        2,
+        48,
+        71
+      ],
+      [
+        3,
+        47,
+        70
+      ],
+      [
+        4,
+        41,
+        71
+      ],
+      [
+        5,
+        49,
+        70
+      ],
+      [
+        6,
+        42,
+        71
+      ],
+      [
+        7,
+        52,
+        70
+      ],
+      [
+        8,
+        42,
+        70
+      ]
+    ],
+    "toe_far": [
+      [
+        1,
+        25,
+        83
+      ],
+      [
+        2,
+        26,
+        83
+      ],
+      [
+        3,
+        23,
+        83
+      ],
+      [
+        4,
+        21,
+        83
+      ],
+      [
+        5,
+        23,
+        83
+      ],
+      [
+        6,
+        20,
+        84
+      ],
+      [
+        7,
+        28,
+        83
+      ],
+      [
+        8,
+        20,
+        83
+      ]
+    ],
+    "toe_near": [
+      [
+        1,
+        51,
+        84
+      ],
+      [
+        2,
+        50,
+        84
+      ],
+      [
+        3,
+        49,
+        84
+      ],
+      [
+        4,
+        43,
+        84
+      ],
+      [
+        5,
+        51,
+        84
+      ],
+      [
+        6,
+        44,
+        85
+      ],
+      [
+        7,
+        54,
+        84
+      ],
+      [
+        8,
+        44,
+        84
+      ]
+    ],
+    "weapon_grip": [
+      [
+        1,
+        19,
+        60
+      ],
+      [
+        2,
+        38,
+        50
+      ],
+      [
+        3,
+        53,
+        38
+      ],
+      [
+        4,
+        37,
+        48
+      ],
+      [
+        5,
+        18,
+        54
+      ],
+      [
+        6,
+        38,
+        50
+      ],
+      [
+        7,
+        56,
+        36
+      ],
+      [
+        8,
+        37,
+        50
+      ]
+    ],
+    "weapon_tip": [
+      [
+        1,
+        54,
+        43
+      ],
+      [
+        2,
+        84,
+        45
+      ],
+      [
+        3,
+        88,
+        21
+      ],
+      [
+        4,
+        83,
+        43
+      ],
+      [
+        5,
+        53,
+        38
+      ],
+      [
+        6,
+        84,
+        44
+      ],
+      [
+        7,
+        91,
+        20
+      ],
+      [
+        8,
+        83,
+        44
+      ]
+    ]
+  }
+}

@@ -1,0 +1,161 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20261004T010403Z_70f9728c",
+  "timestamp": "2026-10-04T01:04:03.654728+00:00",
+  "family": "kenney_iso_miniature_bases_ref",
+  "kind": "tile",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/kenney_iso_miniature_bases_ref/base_dirt_detail_s.png",
+      "sha256": "16bd3f35a86a5af32b1fea482bef5413588f58600e3a02cd6df0caae9425027f"
+    },
+    {
+      "path": "asset_drop/inbox/kenney_iso_miniature_bases_ref/base_grass_flat_s.png",
+      "sha256": "6318ca96caa65d16a3036cf3d92e8cfeaeeaead6d22a7f71bca4db854fdc271e"
+    },
+    {
+      "path": "asset_drop/inbox/kenney_iso_miniature_bases_ref/base_stone_flat_s.png",
+      "sha256": "551b8f101277f3e36ecbec2cee95280d692423b866f2f7e7818188ba1a3cca9f"
+    },
+    {
+      "path": "asset_drop/inbox/kenney_iso_miniature_bases_ref/base_stone_high_s.png",
+      "sha256": "a36623aa6e61ece8a345a225c8e142a839f3093a444e506a04ed475fd89a69f7"
+    },
+    {
+      "path": "asset_drop/inbox/kenney_iso_miniature_bases_ref/square_dirt_high_s.png",
+      "sha256": "e92becb67c8e6fbf4b6439e651621ba1282bfbe2ba706175a8360d3385c7e1e9"
+    },
+    {
+      "path": "asset_drop/inbox/kenney_iso_miniature_bases_ref/square_stone_flat_s.png",
+      "sha256": "eeb35992f3cae8b021a031d4bf927c040a957c28069939643fac5f44008bacc8"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "base_dirt_detail_s",
+      "direction": "omni",
+      "semantic_identity": [
+        "kenney_iso_miniature_bases_ref",
+        "tile",
+        "body",
+        "tile",
+        "base_dirt_detail_s",
+        "omni"
+      ],
+      "path": "content/tiles/experiments/kenney_feasibility/kenney_iso_miniature_bases_ref_base_dirt_detail_s_256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "16bd3f35a86a5af32b1fea482bef5413588f58600e3a02cd6df0caae9425027f",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "base_grass_flat_s",
+      "direction": "omni",
+      "semantic_identity": [
+        "kenney_iso_miniature_bases_ref",
+        "tile",
+        "body",
+        "tile",
+        "base_grass_flat_s",
+        "omni"
+      ],
+      "path": "content/tiles/experiments/kenney_feasibility/kenney_iso_miniature_bases_ref_base_grass_flat_s_256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "6318ca96caa65d16a3036cf3d92e8cfeaeeaead6d22a7f71bca4db854fdc271e",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "base_stone_flat_s",
+      "direction": "omni",
+      "semantic_identity": [
+        "kenney_iso_miniature_bases_ref",
+        "tile",
+        "body",
+        "tile",
+        "base_stone_flat_s",
+        "omni"
+      ],
+      "path": "content/tiles/experiments/kenney_feasibility/kenney_iso_miniature_bases_ref_base_stone_flat_s_256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "551b8f101277f3e36ecbec2cee95280d692423b866f2f7e7818188ba1a3cca9f",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "base_stone_high_s",
+      "direction": "omni",
+      "semantic_identity": [
+        "kenney_iso_miniature_bases_ref",
+        "tile",
+        "body",
+        "tile",
+        "base_stone_high_s",
+        "omni"
+      ],
+      "path": "content/tiles/experiments/kenney_feasibility/kenney_iso_miniature_bases_ref_base_stone_high_s_256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "a36623aa6e61ece8a345a225c8e142a839f3093a444e506a04ed475fd89a69f7",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "square_dirt_high_s",
+      "direction": "omni",
+      "semantic_identity": [
+        "kenney_iso_miniature_bases_ref",
+        "tile",
+        "body",
+        "tile",
+        "square_dirt_high_s",
+        "omni"
+      ],
+      "path": "content/tiles/experiments/kenney_feasibility/kenney_iso_miniature_bases_ref_square_dirt_high_s_256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "e92becb67c8e6fbf4b6439e651621ba1282bfbe2ba706175a8360d3385c7e1e9",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "square_stone_flat_s",
+      "direction": "omni",
+      "semantic_identity": [
+        "kenney_iso_miniature_bases_ref",
+        "tile",
+        "body",
+        "tile",
+        "square_stone_flat_s",
+        "omni"
+      ],
+      "path": "content/tiles/experiments/kenney_feasibility/kenney_iso_miniature_bases_ref_square_stone_flat_s_256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "eeb35992f3cae8b021a031d4bf927c040a957c28069939643fac5f44008bacc8",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "retired_states": [],
+  "retired_files": [],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

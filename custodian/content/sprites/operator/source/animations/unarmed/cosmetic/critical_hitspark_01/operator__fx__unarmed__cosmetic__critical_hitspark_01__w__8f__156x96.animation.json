@@ -1,0 +1,30 @@
+{
+	"durations": [
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0
+	],
+	"fps": 15.0,
+	"frame_rgba_sha256": [
+		"1293a1139466aae4fdfd990d192ecae0dce690a6ce116429611c1ffefa14ee06",
+		"1293a1139466aae4fdfd990d192ecae0dce690a6ce116429611c1ffefa14ee06",
+		"40a77a181b9e27757bec35031382bfa321096a6f68d249e46188a577111cb822",
+		"246d0ff75740eefa64d0f1e0d3d818de646110d16b95b03548f713e59b0af11a",
+		"60714a14bf07a5c4a57ea0004fbbe546a2c986f7188816ae4540881ba5669fd6",
+		"86f506d2f514510cdf7a0ca53f67d59bd0697f4c6e6343e8ace61048218bb6fc",
+		"9dbf3dc0e4970d1a92e3d1b985b07b9ccd844f016f5656d816adf9efa3591368",
+		"1293a1139466aae4fdfd990d192ecae0dce690a6ce116429611c1ffefa14ee06"
+	],
+	"frames": 8,
+	"loop": false,
+	"migration_source": {
+		"consumer": "res://game/actors/operator/operator.gd",
+		"sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_operator_fx_critical_hitspark_01_w_8f_156x96/operator__fx__unarmed__cosmetic__legacy_operator_fx_critical_hitspark_01_w_8f_156x96__omni__1f__1248x96.png"
+	},
+	"schema": "custodian.operator_animation_timing.v1"
+}

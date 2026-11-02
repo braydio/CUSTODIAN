@@ -1,0 +1,40 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "procgen_depth_woodland",
+  "kind": "backdrop",
+  "runtime": {
+    "domain": "backgrounds/procgen/depth_chunks/woodland",
+    "owner": "procgen_depth_woodland",
+    "template": "{domain}/{filename}",
+    "filename_policy": "template",
+    "filename_template": "{owner}_{variant}_{frame_size}.png"
+  },
+  "canvas": {
+    "width": 896,
+    "height": 576
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "canopy_basin_v1": {
+      "required": true,
+      "layer": "background",
+      "action_group": "display",
+      "variant": "canopy_basin_v1",
+      "layout": "copy",
+      "frame_width": 896,
+      "frame_height": 576
+    },
+    "ravine_v1": {
+      "required": true,
+      "layer": "background",
+      "action_group": "display",
+      "variant": "ravine_v1",
+      "layout": "copy",
+      "frame_width": 896,
+      "frame_height": 576
+    }
+  },
+  "aliases": {},
+  "consumers": []
+}

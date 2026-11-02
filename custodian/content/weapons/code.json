@@ -1,0 +1,209 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Weapon Database Schema",
+  "version": "2.0.0",
+  "type": "object",
+
+  "definitions": {
+    "vector2": {
+      "type": "object",
+      "required": ["x", "y"],
+      "properties": {
+        "x": {"type": "number"},
+        "y": {"type": "number"}
+      }
+    },
+
+    "weapon": {
+      "type": "object",
+      "required": ["id", "name", "weapon_class", "archetype", "rarity", "handedness", "tier", "stats", "ammo", "handling", "animation", "ai_usage"],
+      "properties": {
+        "$schema": {"type": "string"},
+        "id": {"type": "string", "description": "Unique weapon identifier"},
+        "name": {"type": "string", "description": "Display name"},
+        "weapon_class": {"type": "string", "enum": ["pistol", "rifle", "carbine", "smg", "shotgun", "sniper", "minigun", "rocket"]},
+        "archetype": {"type": "string", "description": "Weapon archetype for stat inheritance"},
+        "rarity": {"type": "string", "enum": ["common", "uncommon", "rare", "legendary"]},
+        "handedness": {"type": "string", "enum": ["1h", "2h"]},
+        "tier": {"type": "integer", "minimum": 1, "maximum": 10},
+        "description": {"type": "string"},
+        "sprite": {"$ref": "#/definitions/sprite_refs"},
+        "stats": {"$ref": "#/definitions/weapon_stats"},
+        "ammo": {"$ref": "#/definitions/ammo_config"},
+        "handling": {"$ref": "#/definitions/handling_config"},
+        "fire_modes": {"type": "array", "items": {"type": "string", "enum": ["semi", "auto", "burst", "pump", "bolt"]}},
+        "animation": {"$ref": "#/definitions/animation_config"},
+        "projectile": {"$ref": "#/definitions/projectile_config"},
+        "sounds": {"$ref": "#/definitions/sound_config"},
+        "visual_effects": {"$ref": "#/definitions/vfx_config"},
+        "mod_slots": {"$ref": "#/definitions/mod_slots"},
+        "ai_usage": {"$ref": "#/definitions/ai_config"},
+        "economy": {"$ref": "#/definitions/economy_config"},
+        "unlock": {"$ref": "#/definitions/unlock_config"}
+      }
+    },
+
+    "sprite_refs": {
+      "type": "object",
+      "properties": {
+        "body": {"type": "string"},
+        "muzzle_flash": {"type": ["string", "null"]},
+        "icon": {"type": ["string", "null"]},
+        "frame_size": {"$ref": "#/definitions/vector2"}
+      }
+    },
+
+    "weapon_stats": {
+      "type": "object",
+      "required": ["damage", "fire_rate_rps", "range_px", "accuracy"],
+      "properties": {
+        "damage": {"type": "number", "minimum": 0},
+        "fire_rate_rps": {"type": "number", "minimum": 0, "description": "Rounds per second"},
+        "range_px": {"type": "number", "minimum": 0, "description": "Effective range in pixels"},
+        "accuracy": {"type": "number", "minimum": 0, "maximum": 1},
+        "spread_deg": {"type": "number", "minimum": 0, "description": "Degrees of spread"},
+        "recoil": {"type": "number", "minimum": 0},
+        "reload_time_sec": {"type": "number", "minimum": 0, "description": "Seconds to reload"},
+        "magazine_size": {"type": "integer", "minimum": 1},
+        "projectile_speed_px": {"type": "number", "minimum": 0, "description": "Bullet velocity in pixels/sec"},
+        "penetration": {"type": "integer", "minimum": 1},
+        "crit_chance": {"type": "number", "minimum": 0, "maximum": 1},
+        "crit_multiplier": {"type": "number", "minimum": 1},
+        "stagger": {"type": "number", "minimum": 0},
+        "pellets": {"type": "integer", "minimum": 1, "description": "For shotguns"}
+      }
+    },
+
+    "ammo_config": {
+      "type": "object",
+      "required": ["ammo_type", "capacity"],
+      "properties": {
+        "ammo_type": {"type": "string", "description": "Reference to ammo_types.json"},
+        "capacity": {"type": "integer", "minimum": 1, "description": "Magazine capacity"},
+        "reserve": {"type": "integer", "minimum": 0, "description": "Starting reserve ammo"},
+        "reload_style": {"type": "string", "enum": ["magazine", "shell", "single"]}
+      }
+    },
+
+    "handling_config": {
+      "type": "object",
+      "required": ["weight_kg", "equip_time_sec", "ads_time_sec"],
+      "properties": {
+        "weight_kg": {"type": "number", "minimum": 0, "description": "Weight in kilograms"},
+        "equip_time_sec": {"type": "number", "minimum": 0, "description": "Seconds to equip"},
+        "ads_time_sec": {"type": "number", "minimum": 0, "description": "Seconds to aim down sight"},
+        "movement_speed_penalty": {"type": "number", "minimum": -1, "maximum": 1},
+        "movement_accuracy_penalty": {"type": "number", "minimum": 0, "maximum": 1},
+        "sprint_allowed": {"type": "boolean"}
+      }
+    },
+
+    "animation_config": {
+      "type": "object",
+      "required": ["prefix", "stance", "muzzle_offset_px"],
+      "properties": {
+        "prefix": {"type": "string", "description": "Animation name prefix"},
+        "stance": {"type": "string", "description": "Stance type (1h, 2h, hip)"},
+        "muzzle_offset_px": {"$ref": "#/definitions/vector2"},
+        "hand_offset_px": {"$ref": "#/definitions/vector2"},
+        "recoil_animation": {"type": ["string", "null"]},
+        "fire_frame": {"type": "integer", "minimum": 0},
+        "frame_size_px": {"$ref": "#/definitions/vector2"}
+      }
+    },
+
+    "projectile_config": {
+      "type": "object",
+      "required": ["scene", "speed_px"],
+      "properties": {
+        "scene": {"type": "string", "description": "Path to projectile scene"},
+        "speed_px": {"type": "number", "minimum": 0},
+        "lifetime_sec": {"type": "number", "minimum": 0},
+        "gravity": {"type": "number", "description": "Gravity applied to projectile"},
+        "arc": {"type": "boolean", "description": "Whether projectile follows arc"},
+        "is_tracer": {"type": "boolean"},
+        "tracer_interval": {"type": "integer", "description": "Show tracer every N rounds"},
+        "is_pellet": {"type": "boolean", "description": "Is this a pellet (shotgun)"},
+        "pellet_count": {"type": "integer", "minimum": 1}
+      }
+    },
+
+    "sound_config": {
+      "type": "object",
+      "properties": {
+        "fire": {"type": ["string", "null"]},
+        "fire_last": {"type": ["string", "null"]},
+        "reload_start": {"type": ["string", "null"]},
+        "reload_insert": {"type": ["string", "null"]},
+        "reload_complete": {"type": ["string", "null"]},
+        "empty": {"type": ["string", "null"]},
+        "equip": {"type": ["string", "null"]}
+      }
+    },
+
+    "vfx_config": {
+      "type": "object",
+      "properties": {
+        "muzzle_flash": {"type": ["string", "null"], "enum": [null, "small", "standard", "large", "stream"]},
+        "shell_eject": {"type": "boolean"},
+        "shell_eject_offset_px": {"$ref": "#/definitions/vector2"},
+        "tracer": {"type": "boolean"},
+        "impact_spark": {"type": "boolean"},
+        "barrel_spin_animation": {"type": "boolean"}
+      }
+    },
+
+    "mod_slots": {
+      "type": "object",
+      "required": ["mod_capacity"],
+      "properties": {
+        "mod_capacity": {"type": "integer", "minimum": 0, "description": "Total mod slots available"},
+        "optic": {"$ref": "#/definitions/mod_slot"},
+        "barrel": {"$ref": "#/definitions/mod_slot"},
+        "underbarrel": {"$ref": "#/definitions/mod_slot"},
+        "magazine": {"$ref": "#/definitions/mod_slot"},
+        "stock": {"$ref": "#/definitions/mod_slot"},
+        "grip": {"$ref": "#/definitions/mod_slot"}
+      }
+    },
+
+    "mod_slot": {
+      "type": ["object", "null"],
+      "properties": {
+        "installed": {"type": ["string", "null"]},
+        "compatible": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+
+    "ai_config": {
+      "type": "object",
+      "required": ["preferred_range_min_px", "preferred_range_max_px", "engagement_style"],
+      "properties": {
+        "preferred_range_min_px": {"type": "number", "minimum": 0},
+        "preferred_range_max_px": {"type": "number", "minimum": 0},
+        "engagement_style": {"type": "string", "enum": ["semi_auto", "sustained_fire", "precision", "point_blank", "suppression", "burst"]},
+        "burst_count": {"type": "integer", "minimum": 1},
+        "priority": {"type": "string", "enum": ["primary", "secondary", "special"]},
+        "threat_score": {"type": "number", "minimum": 0, "description": "AI threat weighting"}
+      }
+    },
+
+    "economy_config": {
+      "type": "object",
+      "properties": {
+        "buy_cost": {"type": "integer", "minimum": 0},
+        "sell_value": {"type": "integer", "minimum": 0},
+        "repair_cost": {"type": "integer", "minimum": 0}
+      }
+    },
+
+    "unlock_config": {
+      "type": "object",
+      "properties": {
+        "required_level": {"type": "integer", "minimum": 1},
+        "cost": {"type": "integer", "minimum": 0},
+        "campaign_mission": {"type": ["string", "null"]}
+      }
+    }
+  }
+}

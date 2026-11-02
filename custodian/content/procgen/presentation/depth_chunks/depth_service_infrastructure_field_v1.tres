@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="TerrainStampProfile" load_steps=3 format=3]
+[ext_resource type="Script" path="res://game/world/procgen/presentation/terrain_stamp_profile.gd" id="1"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/procgen/depth_chunks/universal/procgen_depth_universal_service_infrastructure_field_v1_640x448.png" id="2"]
+[resource]
+script = ExtResource("1")
+stamp_id = &"service_infrastructure_field_v1"
+family_id = &"procgen_depth_universal"
+texture = ExtResource("2")
+canvas_px = Vector2i(640, 448)
+pivot_px = Vector2(0, 96)
+footprint_size_cells = Vector2i(20, 11)
+placement_domain = 1
+chasm_core_rect = Rect2i(4, 1, 12, 7)
+reveal_probe_cells = Array[Vector2i]([Vector2i(4, 0), Vector2i(7, 0), Vector2i(10, 0), Vector2i(13, 0), Vector2i(15, 0)])
+allowed_region_kinds = PackedStringArray("depth_south_edge")
+min_region_cells = 8
+depth_band = 0
+weight = 6
+claims_dressing_clearance = false
+allow_flip_h = true

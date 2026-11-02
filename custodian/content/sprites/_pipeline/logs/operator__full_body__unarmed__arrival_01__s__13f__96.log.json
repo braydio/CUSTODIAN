@@ -1,0 +1,9 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__full_body__unarmed__arrival_01__s__13f__96.json",
+	"outputs": [
+		"res://content/sprites/operator/runtime/full_body/operator__full_body__unarmed__arrival_01__s__13f__96.png"
+	],
+	"post_process": [],
+	"source": "res://content/sprites/_pipeline/inbox/operator__full_body__unarmed__arrival_01__s__13f__96.png",
+	"timestamp_utc": "2026-07-27 04:30:20"
+}

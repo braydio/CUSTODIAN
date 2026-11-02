@@ -1,0 +1,12 @@
+{
+  "job_id": "job_20260819T073945Z_e2cb99a9",
+  "timestamp": "2026-08-19T07:39:45.927746+00:00",
+  "staged_files": [],
+  "created_targets": [
+    "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/environment/props/field_fabricator_mk1/runtime/body/field_fabricator_mk1__body__interaction__fabricate__omni__4f__128x96.png",
+    "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/environment/props/field_fabricator_mk1/runtime/fx/field_fabricator_mk1__fx__interaction__powered_glow__omni__1f__128x96.png",
+    "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/environment/props/field_fabricator_mk1/runtime/body/field_fabricator_mk1__body__interaction__idle__omni__1f__128x96.png"
+  ],
+  "replaced_targets": [],
+  "backups": {}
+}

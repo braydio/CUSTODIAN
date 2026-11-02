@@ -1,0 +1,214 @@
+{
+  "tileset": {
+    "name": "ancient_ruined_roads_and_paths",
+    "tile_size": "identical_per_tile",
+    "intended_use": "modular road/path connectivity kit",
+    "connection_model": {
+      "N": "connects upward / north",
+      "S": "connects downward / south",
+      "E": "connects right / east",
+      "W": "connects left / west"
+    },
+    "sections": {
+      "top_left": {
+        "description": "wide horizontal ruined road segments",
+        "count": 4,
+        "primary_roles": [
+          {
+            "role": "road_straight_h",
+            "connects": ["W", "E"],
+            "count": 4
+          }
+        ],
+        "notes": "These are mostly visual variants of the same east-west road topology."
+      },
+      "top_right": {
+        "description": "vertical ruined road segments",
+        "count": 4,
+        "primary_roles": [
+          {
+            "role": "road_straight_v",
+            "connects": ["N", "S"],
+            "count": 4
+          }
+        ],
+        "notes": "Use as north-south road filler. Variants differ by rubble, moss, cracks, and side trim."
+      },
+      "center_left": {
+        "description": "large intersection cluster",
+        "count": 4,
+        "primary_roles": [
+          {
+            "role": "road_cross",
+            "connects": ["N", "S", "E", "W"],
+            "count": 3
+          },
+          {
+            "role": "road_t_side_variant",
+            "connects": ["N", "S", "E"],
+            "count": 1
+          }
+        ],
+        "notes": "This region is mostly 4-way crossings, with one piece reading closer to a sideways T / branch intersection."
+      },
+      "center_center": {
+        "description": "T-junction and branch pieces",
+        "count": 4,
+        "primary_roles": [
+          {
+            "role": "road_t_e",
+            "connects": ["N", "S", "E"],
+            "count": 1
+          },
+          {
+            "role": "road_t_w",
+            "connects": ["N", "S", "W"],
+            "count": 1
+          },
+          {
+            "role": "road_t_n",
+            "connects": ["W", "E", "N"],
+            "count": 1
+          },
+          {
+            "role": "road_t_s",
+            "connects": ["W", "E", "S"],
+            "count": 1
+          }
+        ],
+        "notes": "This is the main T-junction family. These are where roads split into three directions."
+      },
+      "center_right": {
+        "description": "corners, partial branches, caps, and compact utility pieces",
+        "count": 6,
+        "primary_roles": [
+          {
+            "role": "road_corner_ne",
+            "connects": ["N", "E"],
+            "count": 1
+          },
+          {
+            "role": "road_corner_es",
+            "connects": ["E", "S"],
+            "count": 1
+          },
+          {
+            "role": "road_corner_sw",
+            "connects": ["S", "W"],
+            "count": 1
+          },
+          {
+            "role": "road_corner_wn",
+            "connects": ["W", "N"],
+            "count": 1
+          },
+          {
+            "role": "road_end_or_cap",
+            "connects": ["one_direction"],
+            "count": 2
+          }
+        ],
+        "notes": "Use this area for bends, short endings, and weird non-rectangular road transitions."
+      },
+      "pre_bottom_row": {
+        "description": "small connector and terminal utility row",
+        "count": 10,
+        "primary_roles": [
+          {
+            "role": "small_straight_h",
+            "connects": ["W", "E"],
+            "count": 3
+          },
+          {
+            "role": "small_straight_v",
+            "connects": ["N", "S"],
+            "count": 3
+          },
+          {
+            "role": "small_endcap",
+            "connects": ["one_direction"],
+            "count": 3
+          },
+          {
+            "role": "rounded_or_u_terminal",
+            "connects": ["one_direction"],
+            "count": 1
+          }
+        ],
+        "notes": "These are not main road masses. They are for short links, narrow paths, caps, and transition details."
+      },
+      "bottom_row": {
+        "description": "degraded dirt paths and road-to-path transitions",
+        "count": 8,
+        "primary_roles": [
+          {
+            "role": "path_straight_v",
+            "connects": ["N", "S"],
+            "count": 3
+          },
+          {
+            "role": "road_to_dirt_transition_v",
+            "connects": ["N", "S"],
+            "count": 3
+          },
+          {
+            "role": "path_fade_end",
+            "connects": ["N"],
+            "count": 2
+          }
+        ],
+        "notes": "Use these to let ancient stone roads degrade into dirt trails, rubble, or terrain."
+      }
+    },
+    "summary_counts": {
+      "total_described_tiles": 36,
+      "wide_horizontal_straights": 4,
+      "vertical_straights": 4,
+      "cross_intersections": 3,
+      "t_junctions": 5,
+      "corners": 4,
+      "endcaps_or_terminals": 6,
+      "small_connectors": 6,
+      "path_or_degraded_transition_tiles": 8
+    },
+    "recommended_tile_role_names": [
+      "road_straight_h_a",
+      "road_straight_h_b",
+      "road_straight_h_c",
+      "road_straight_h_d",
+      "road_straight_v_a",
+      "road_straight_v_b",
+      "road_straight_v_c",
+      "road_straight_v_d",
+      "road_cross_a",
+      "road_cross_b",
+      "road_cross_c",
+      "road_t_n",
+      "road_t_s",
+      "road_t_e",
+      "road_t_w",
+      "road_corner_ne",
+      "road_corner_es",
+      "road_corner_sw",
+      "road_corner_wn",
+      "road_end_n",
+      "road_end_s",
+      "road_end_e",
+      "road_end_w",
+      "small_straight_h_a",
+      "small_straight_h_b",
+      "small_straight_h_c",
+      "small_straight_v_a",
+      "small_straight_v_b",
+      "small_straight_v_c",
+      "small_end_a",
+      "small_end_b",
+      "small_end_c",
+      "path_transition_v_a",
+      "path_transition_v_b",
+      "path_transition_v_c",
+      "path_fade_end_a",
+      "path_fade_end_b"
+    ]
+  }
+}

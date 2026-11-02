@@ -1,0 +1,49 @@
+{
+  "schema": "custodian.level_definition.v1",
+  "level_id": "npa_showcase_arena",
+  "display_name": "NPA Showcase Arena",
+  "route_scene_path": "",
+  "target_scene_path": "res://game/world/levels/authored/dev/npa_showcase_arena/npa_showcase_arena.tscn",
+  "authored_data_path": "",
+  "playtest_scene_path": "res://game/world/levels/authored/dev/npa_showcase_arena/npa_showcase_arena_playtest.tscn",
+  "authoring_scene_path": "res://game/world/levels/authored/dev/npa_showcase_arena/npa_showcase_arena_authoring.tscn",
+  "design_doc_path": "../design/05_levels/NPA_SHOWCASE_ARENA.md",
+  "world_context": "campaign_region",
+  "presentation_profile": "gameplay",
+  "spawns": ["Spawn_Main", "Return_Main"],
+  "lifecycle": {
+    "cache_policy": "snapshot_and_unload",
+    "state_policy": "reset_on_entry"
+  },
+  "tags": ["authored","playable_map","world_ingress","dev"],
+  "ingress": {
+  "ingress_id": "npa_showcase_arena",
+  "interaction_distance": 92.0,
+  "placement": {
+    "minimum_spacing_tiles": 10,
+    "offset_candidates_tiles": [
+      [
+        8,
+        0
+      ],
+      [
+        -8,
+        0
+      ],
+      [
+        0,
+        8
+      ],
+      [
+        0,
+        -8
+      ]
+    ],
+    "priority": 100,
+    "search_radius_tiles": 14,
+    "strategy": "near_compound_ingress"
+  },
+  "prompt_text": "ENTER NPA SHOWCASE ARENA",
+  "target_spawn_id": "Spawn_Main"
+}
+}

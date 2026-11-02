@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/vfx/one_shot_animated_vfx.gd" id="1_script"]
+[ext_resource type="SpriteFrames" path="res://assets/resources/vfx/weapons/carbine_mk1/carbine_mk1_impact_hard_01_frames.tres" id="2_frames"]
+
+[node name="CarbineMk1ImpactHardVFX" type="Node2D"]
+script = ExtResource("1_script")
+animation_name = &"impact"
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+position = Vector2(0, 0)
+sprite_frames = ExtResource("2_frames")
+animation = &"impact"
+centered = true

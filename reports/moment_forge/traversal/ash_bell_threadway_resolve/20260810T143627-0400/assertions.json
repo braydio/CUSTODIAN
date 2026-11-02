@@ -1,0 +1,117 @@
+[
+	{
+		"actual": true,
+		"expected": {
+			"role": "presentation",
+			"severity": "error",
+			"type": "role_exists"
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "role_exists"
+	},
+	{
+		"actual": 0,
+		"expected": {
+			"field": "persistent_tiles",
+			"op": "eq",
+			"probe": "threadway_state",
+			"severity": "error",
+			"tick": 0.0,
+			"type": "probe_compare",
+			"value": 0.0
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": 0,
+		"expected": {
+			"field": "reveal_count",
+			"op": "eq",
+			"probe": "threadway_state",
+			"severity": "error",
+			"tick": 20.0,
+			"type": "probe_compare",
+			"value": 1.0
+		},
+		"message": "",
+		"passed": false,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": false,
+		"expected": {
+			"field": "blocker_active",
+			"op": "eq",
+			"probe": "threadway_state",
+			"severity": "error",
+			"tick": 20.0,
+			"type": "probe_compare",
+			"value": true
+		},
+		"message": "",
+		"passed": false,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": 0,
+		"expected": {
+			"field": "persistent_tiles",
+			"op": "eq",
+			"probe": "threadway_state",
+			"severity": "error",
+			"tick": 110.0,
+			"type": "probe_compare",
+			"value": 18.0
+		},
+		"message": "",
+		"passed": false,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": false,
+		"expected": {
+			"field": "blocker_active",
+			"op": "eq",
+			"probe": "threadway_state",
+			"severity": "error",
+			"tick": 110.0,
+			"type": "probe_compare",
+			"value": false
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": false,
+		"expected": {
+			"severity": "error",
+			"type": "no_unreleased_inputs"
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "no_unreleased_inputs"
+	},
+	{
+		"actual": true,
+		"expected": {
+			"path": "telemetry.json",
+			"severity": "error",
+			"type": "output_exists"
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "output_exists"
+	}
+]

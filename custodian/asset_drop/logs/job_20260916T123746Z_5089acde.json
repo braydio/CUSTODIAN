@@ -1,0 +1,67 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260916T123746Z_5089acde",
+  "timestamp": "2026-09-16T12:37:46.566573+00:00",
+  "family": "awakening_undergate_environment",
+  "kind": "backdrop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/awakening_undergate_environment/foreground.png",
+      "sha256": "6d2d7259cac406a64a406f18cc73c9dfef1869ca5ec2e2db1ae539aabb3dca1f"
+    },
+    {
+      "path": "asset_drop/inbox/awakening_undergate_environment/underlay.png",
+      "sha256": "156b23974db8c502f162bb771ba70571c8f42cbdfbe5a41be93f7819eac41f6c"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "foreground",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_undergate",
+        "backdrop",
+        "foreground",
+        "display",
+        "foreground",
+        "omni"
+      ],
+      "path": "content/levels/awakening/06_undergate/awakening_undergate_foreground_1536x1216.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "6d2d7259cac406a64a406f18cc73c9dfef1869ca5ec2e2db1ae539aabb3dca1f",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "underlay",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_undergate",
+        "backdrop",
+        "background",
+        "display",
+        "underlay",
+        "omni"
+      ],
+      "path": "content/levels/awakening/06_undergate/awakening_undergate_underlay_1536x1216.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "156b23974db8c502f162bb771ba70571c8f42cbdfbe5a41be93f7819eac41f6c",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

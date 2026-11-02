@@ -1,0 +1,101 @@
+{
+	"failures": [],
+	"records": [
+		{
+			"id": "operator_octants",
+			"role": "operator",
+			"tick": 28,
+			"values": {
+				"aim_direction": [
+					0.0,
+					-1.0
+				],
+				"visible_visual_anchor_delta_px": 0.0
+			}
+		},
+		{
+			"id": "operator_octants",
+			"role": "operator",
+			"tick": 62,
+			"values": {
+				"aim_direction": [
+					0.70710676908493,
+					-0.70710676908493
+				],
+				"visible_visual_anchor_delta_px": 0.0
+			}
+		},
+		{
+			"id": "operator_octants",
+			"role": "operator",
+			"tick": 96,
+			"values": {
+				"aim_direction": [
+					1.0,
+					0.0
+				],
+				"visible_visual_anchor_delta_px": 0.0
+			}
+		},
+		{
+			"id": "operator_octants",
+			"role": "operator",
+			"tick": 130,
+			"values": {
+				"aim_direction": [
+					0.70710676908493,
+					0.70710676908493
+				],
+				"visible_visual_anchor_delta_px": 0.0
+			}
+		},
+		{
+			"id": "operator_octants",
+			"role": "operator",
+			"tick": 164,
+			"values": {
+				"aim_direction": [
+					0.0,
+					1.0
+				],
+				"visible_visual_anchor_delta_px": 0.0
+			}
+		},
+		{
+			"id": "operator_octants",
+			"role": "operator",
+			"tick": 198,
+			"values": {
+				"aim_direction": [
+					-0.70710676908493,
+					0.70710676908493
+				],
+				"visible_visual_anchor_delta_px": 0.0
+			}
+		},
+		{
+			"id": "operator_octants",
+			"role": "operator",
+			"tick": 232,
+			"values": {
+				"aim_direction": [
+					-1.0,
+					0.0
+				],
+				"visible_visual_anchor_delta_px": 0.0
+			}
+		},
+		{
+			"id": "operator_octants",
+			"role": "operator",
+			"tick": 266,
+			"values": {
+				"aim_direction": [
+					-0.70710676908493,
+					-0.70710676908493
+				],
+				"visible_visual_anchor_delta_px": 0.0
+			}
+		}
+	]
+}

@@ -1,0 +1,169 @@
+{
+	"actions": [
+		{
+			"action": "aim_at_role",
+			"ok": true,
+			"tick": 4
+		},
+		{
+			"action": "input_press",
+			"ok": true,
+			"tick": 8
+		},
+		{
+			"action": "input_tap",
+			"ok": true,
+			"tick": 68
+		},
+		{
+			"action": "aim_at_role",
+			"ok": true,
+			"tick": 69
+		},
+		{
+			"action": "capture_marker",
+			"ok": true,
+			"tick": 72
+		},
+		{
+			"action": "input_tap",
+			"ok": true,
+			"tick": 112
+		},
+		{
+			"action": "input_release",
+			"ok": true,
+			"tick": 150
+		},
+		{
+			"action": "finish",
+			"finish": true,
+			"ok": true,
+			"tick": 178
+		}
+	],
+	"assertions": [
+		{
+			"actual": true,
+			"expected": {
+				"role": "operator",
+				"severity": "error",
+				"type": "role_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "role_exists"
+		},
+		{
+			"actual": false,
+			"expected": {
+				"severity": "error",
+				"type": "no_unreleased_inputs"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "no_unreleased_inputs"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"path": "telemetry.json",
+				"severity": "error",
+				"type": "output_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "output_exists"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_aim",
+				"severity": "error",
+				"tick": 72.0,
+				"type": "probe_compare",
+				"value": 1.0
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		}
+	],
+	"capture_failures": [],
+	"capture_mode": "full",
+	"completed": true,
+	"completed_tick": 178,
+	"failures": [],
+	"keyframes": [
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/ranged_ballistic_alignment/20260810T192430-0400/keyframes/tick_000000.png",
+			"render_frame": 4,
+			"sha256": "6dc81d3299e4ab3f2225ae3995d405616ca2680f9e26d9f66b7850ff316c6022",
+			"tick": 0
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/ranged_ballistic_alignment/20260810T192430-0400/keyframes/tick_000068.png",
+			"render_frame": 72,
+			"sha256": "ddbac2abde55c566754b9cdf768182d2b7bca2d17222abab819d4094367a3b0c",
+			"tick": 68
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/ranged_ballistic_alignment/20260810T192430-0400/keyframes/tick_000072.png",
+			"render_frame": 76,
+			"sha256": "fb86aead4f3b44817934843d588e2e347f0cc6896e9c50eafe7fb890e2af01b8",
+			"tick": 72
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/ranged_ballistic_alignment/20260810T192430-0400/keyframes/tick_000082.png",
+			"render_frame": 86,
+			"sha256": "e01763e2a2cef4bdb5c90e92e7e5af63c2b6c979782fadbf20614f59543216a0",
+			"tick": 82
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/ranged_ballistic_alignment/20260810T192430-0400/keyframes/tick_000110.png",
+			"render_frame": 114,
+			"sha256": "9996dc3ea785e7be6a902b02459ad1b2d38dcb3b2049b9100ddf0e042074319f",
+			"tick": 110
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/ranged_ballistic_alignment/20260810T192430-0400/keyframes/tick_000160.png",
+			"render_frame": 164,
+			"sha256": "431b1f14ccb4996d6d2b45f960f27d1b1ca8003d23ce5a617e940044798cc613",
+			"tick": 160
+		}
+	],
+	"markers": [
+		{
+			"data": {},
+			"name": "committed_snap_release",
+			"tick": 72
+		}
+	],
+	"passed": true,
+	"probe_failures": [],
+	"runtime": {
+		"godot": {
+			"build": "arch_linux",
+			"hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+			"hex": 263937,
+			"major": 4,
+			"minor": 7,
+			"patch": 1,
+			"status": "stable",
+			"string": "4.7.1-stable (arch_linux)",
+			"timestamp": 1783976428
+		},
+		"physics_hz": 60,
+		"renderer": "vulkan"
+	},
+	"scenario_id": "combat/ranged_ballistic_alignment",
+	"scenario_path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/ranged_ballistic_alignment/20260810T192430-0400/scenario.snapshot.json",
+	"schema": "custodian.moment_forge.run_result.v1",
+	"seed": 104729
+}

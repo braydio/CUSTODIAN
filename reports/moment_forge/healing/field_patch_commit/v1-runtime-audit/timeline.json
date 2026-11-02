@@ -1,0 +1,63 @@
+[
+	{
+		"data": {
+			"authored_action": {
+				"action": "input_tap",
+				"hold_ticks": 1.0,
+				"name": "use_field_patch",
+				"tick": 12.0
+			},
+			"moment_tick": 12,
+			"result": {
+				"action": "input_tap",
+				"ok": true,
+				"tick": 12
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 12
+	},
+	{
+		"data": {
+			"health": 100.0,
+			"patches_remaining": 1,
+			"reason": "full_health"
+		},
+		"kind": "field_patch_rejected",
+		"tick": 12
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "capture_marker",
+				"name": "expected_heal_commit",
+				"tick": 90.0
+			},
+			"moment_tick": 90,
+			"result": {
+				"action": "capture_marker",
+				"ok": true,
+				"tick": 90
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 90
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "finish",
+				"tick": 148.0
+			},
+			"moment_tick": 148,
+			"result": {
+				"action": "finish",
+				"finish": true,
+				"ok": true,
+				"tick": 148
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 148
+	}
+]

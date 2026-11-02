@@ -1,0 +1,45 @@
+{
+  "argv": [
+    "/usr/bin/godot",
+    "--path",
+    "/home/braydenchaffee/Projects/CUSTODIAN/custodian",
+    "--fixed-fps",
+    "60",
+    "--headless",
+    "--script",
+    "res://tools/iteration/godot/moment_runner.gd",
+    "--",
+    "--custodian-dev",
+    "--observe",
+    "--moment-forge",
+    "--moment-scenario",
+    "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/traversal/ash_bell_lift_exterior_descent/20260803T162312-0400_r2/scenario.snapshot.json",
+    "--moment-output",
+    "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/traversal/ash_bell_lift_exterior_descent/20260803T162312-0400_r2",
+    "--moment-capture-mode",
+    "none"
+  ],
+  "capture_mode": "none",
+  "repository": {
+    "branch": "main",
+    "changed_files": [
+      "M custodian/docs/ai_context/CURRENT_STATE.md",
+      " M custodian/docs/ai_context/FILE_INDEX.md",
+      " M custodian/game/world/procgen/presentation/procgen_depth_backdrop.gd",
+      " M custodian/game/world/procgen/proc_gen_tilemap.gd",
+      " M custodian/tools/iteration/changed_file_routes.json",
+      " M custodian/tools/iteration/godot/moment_action_driver.gd",
+      " M custodian/tools/validation/elevated_world_asset_contract_smoke.gd",
+      " M custodian/tools/validation/moment_forge_schema_smoke.py",
+      " M design/02_features/procgen/ELEVATED_WORLD_PRESENTATION.md",
+      "?? custodian/tools/iteration/scenarios/traversal/",
+      "?? custodian/tools/validation/fixtures/ash_bell_lift_moment.gd",
+      "?? custodian/tools/validation/fixtures/ash_bell_lift_moment.gd.uid",
+      "?? custodian/tools/validation/fixtures/ash_bell_lift_moment.tscn",
+      "?? reports/moment_forge/traversal/"
+    ],
+    "commit": "cadd25e5501d961040aea049312631a5f38c9489",
+    "dirty": true
+  },
+  "scenario_sha256": "917e78a482affa4c282a44aa487eb8e22ea5be38c1ce7cd51bbe34e6e1fc9399"
+}

@@ -1,0 +1,11 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__modular_ranged_weapon__ranged_2h__relaxed_carbine_mk1_01__e__5f__96.json",
+	"outputs": [
+		"res://content/sprites/operator/new_operator/modular/ranged/operator__modular_ranged_weapon__ranged_2h__relaxed_carbine_mk1_01__e__5f__96.png"
+	],
+	"post_process": [
+		"operator_modular_runtime"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/operator__modular_ranged_weapon__ranged_2h__relaxed_carbine_mk1_01__e__5f__96.png",
+	"timestamp_utc": "2026-07-18 12:43:02"
+}

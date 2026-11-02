@@ -1,0 +1,22 @@
+{
+  "source": "operator__fx__unarmed__defense__parry_success_01__e__5f__96.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "operator/source/animations/unarmed/defense/parry_success_01/operator__fx__unarmed__defense__parry_success_01__e__5f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 5
+      }
+    }
+  ],
+  "post_process": [
+    "operator_runtime_build"
+  ],
+  "frame_size": [
+    96,
+    96
+  ]
+}

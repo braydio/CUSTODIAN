@@ -1,0 +1,152 @@
+{
+  "cells": {
+    "0,0": {
+      "collision": "unknown",
+      "coord": [
+        0,
+        0
+      ],
+      "notes": "",
+      "sockets": {},
+      "source_rect": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "tags": [],
+      "terrain_type": "skipped",
+      "walkable": false,
+      "weight": 0
+    },
+    "1,0": {
+      "collision": "unknown",
+      "coord": [
+        1,
+        0
+      ],
+      "notes": "",
+      "sockets": {},
+      "source_rect": [
+        32,
+        0,
+        32,
+        32
+      ],
+      "tags": [],
+      "terrain_type": "skipped",
+      "walkable": false,
+      "weight": 0
+    },
+    "2,0": {
+      "collision": "unknown",
+      "coord": [
+        2,
+        0
+      ],
+      "notes": "",
+      "sockets": {},
+      "source_rect": [
+        64,
+        0,
+        32,
+        32
+      ],
+      "tags": [],
+      "terrain_type": "skipped",
+      "walkable": false,
+      "weight": 0
+    },
+    "3,0": {
+      "collision": "none",
+      "collision_rect_px": null,
+      "coord": [
+        3,
+        0
+      ],
+      "notes": "",
+      "opaque_bounds_px": [
+        0,
+        17,
+        32,
+        2
+      ],
+      "placement_offset_px": [
+        0,
+        0
+      ],
+      "sockets": {
+        "east": "open",
+        "north": "open",
+        "south": "cliff",
+        "west": "open"
+      },
+      "source_rect": [
+        96,
+        0,
+        32,
+        32
+      ],
+      "tags": [
+        "cliff",
+        "plateau_top",
+        "walkable_cap",
+        "north_edge",
+        "stamp_member"
+      ],
+      "terrain_type": "terrain_wall_top",
+      "visual_rect_px": [
+        0,
+        17,
+        32,
+        15
+      ],
+      "walkable": true,
+      "weight": 1
+    },
+    "4,0": {
+      "collision": "unknown",
+      "collision_rect_px": null,
+      "coord": [
+        4,
+        0
+      ],
+      "notes": "walkable top surface of larger cliff/plateau block; south connects to cliff face",
+      "opaque_bounds_px": [
+        0,
+        17,
+        32,
+        15
+      ],
+      "placement_offset_px": [
+        0,
+        0
+      ],
+      "sockets": {},
+      "source_rect": [
+        128,
+        0,
+        32,
+        32
+      ],
+      "tags": [],
+      "terrain_type": "skipped",
+      "visual_rect_px": [
+        0,
+        17,
+        32,
+        15
+      ],
+      "walkable": false,
+      "weight": 0
+    }
+  },
+  "image_size": [
+    1536,
+    1024
+  ],
+  "schema": "custodian_terrain_cell_mapping_v1",
+  "source_image": "content/tiles/terrain/custodian_recolor/mountain_custodian_cold.png",
+  "stamps": {},
+  "tile_size": 32
+}

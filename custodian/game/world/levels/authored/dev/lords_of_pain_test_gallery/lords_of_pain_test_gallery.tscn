@@ -1,0 +1,40 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/world/levels/authored/dev/lords_of_pain_test_gallery/lords_of_pain_test_gallery.gd" id="1_level"]
+[ext_resource type="Script" path="res://game/world/levels/authored/dev/lords_of_pain_test_gallery/lords_of_pain_gallery_return_frame.gd" id="2_exit"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_exit_0"]
+size = Vector2(72, 72)
+
+[node name="LordsOfPainTestGallery" type="Node2D"]
+script = ExtResource("1_level")
+placeholder_canvas_size = Vector2(4096, 2560)
+draw_placeholder_grid = false
+camera_bounds = Rect2(-2048, -1280, 4096, 2560)
+
+[node name="UnderlayRoot" type="Node2D" parent="."]
+[node name="BackgroundRoot" type="Node2D" parent="."]
+[node name="PlayableRoot" type="Node2D" parent="."]
+[node name="PropsRoot" type="Node2D" parent="."]
+[node name="OcclusionRoot" type="Node2D" parent="."]
+[node name="Collision" type="Node2D" parent="."]
+[node name="PathBoundaryCollision" type="StaticBody2D" parent="Collision"]
+collision_layer = 1
+collision_mask = 1
+[node name="Markers" type="Node2D" parent="."]
+[node name="Spawn_Main" type="Marker2D" parent="Markers"]
+[node name="Return_Main" type="Marker2D" parent="Markers"]
+position = Vector2(96, 0)
+[node name="POIRoot" type="Node2D" parent="."]
+[node name="EventMarkers" type="Node2D" parent="."]
+[node name="EventRuntime" type="Node2D" parent="."]
+[node name="Exits" type="Node2D" parent="."]
+[node name="ReturnWorld" type="Area2D" parent="Exits"]
+position = Vector2(0, 840)
+script = ExtResource("2_exit")
+exit_id = &"return_world"
+prompt_text = "RETURN TO PROCGEN"
+arrival_guard_radius = 96.0
+interaction_distance = 96.0
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Exits/ReturnWorld"]
+shape = SubResource("RectangleShape2D_exit_0")
+[node name="NavigationRoot" type="Node2D" parent="."]

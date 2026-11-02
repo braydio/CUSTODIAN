@@ -1,0 +1,46 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260920T070925Z_cbcd816d",
+  "timestamp": "2026-09-20T07:09:25.571405+00:00",
+  "family": "pursuit_frame",
+  "kind": "enemy",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/pursuit_frame/patrol_walk_01__n.png",
+      "sha256": "e44d9526281c5ab505d8b1604218c0db054a958fc6bc4f315a5b22d5ce1462a0"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "patrol_walk_01",
+      "direction": "n",
+      "semantic_identity": [
+        "pursuit_frame",
+        "enemy",
+        "body",
+        "locomotion",
+        "patrol_walk_01",
+        "n"
+      ],
+      "path": "content/sprites/enemies/pursuit_frame/runtime/body/locomotion/pursuit_frame__body__locomotion__patrol_walk_01__n__8f__96.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "8ab903d3bff3f7fa20419f7fe21971e962d4d94ed75bc2f5804ff0fa8b1420d7",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    }
+  ],
+  "backends": [
+    "sprite_ingest"
+  ],
+  "post_process_hooks": [
+    "enemy_runtime_import"
+  ],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

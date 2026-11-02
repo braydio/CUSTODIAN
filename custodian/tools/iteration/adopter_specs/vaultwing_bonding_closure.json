@@ -1,0 +1,39 @@
+{
+  "schema": "custodian.moment_forge_adopter_spec.v1",
+  "id": "vaultwing_bonding_closure",
+  "feature_packet": "VAULTWING_BOND_GREET_FINAL_INGEST",
+  "states": ["notice_bait", "guarded_approach", "inspect_bait", "feed_accept", "watch_player", "bond_greet"],
+  "directions": ["north", "south", "east", "west"],
+  "asset_contract": {
+    "family": "ambient_vaultwing_common",
+    "runtime_strip_count": 24,
+    "frames_per_strip": 8,
+    "frame_size": [256, 256],
+    "strip_size": [2048, 256],
+    "frame_layout": "8x1 horizontal",
+    "alpha_required": true,
+    "registration_reference": "approved wild pose for the same direction"
+  },
+  "probe_templates": [
+    {"metric": "alpha_bounds", "scope": "every_frame_cell", "frames_per_strip": 8, "result_fields": ["bbox", "coverage_ratio"]},
+    {"metric": "matte_void", "scope": "every_runtime_strip", "result_fields": ["void_ratio", "matte_color", "matte_border_ratio"]},
+    {"metric": "roi_diff", "scope": "bond_greet_against_approved_directional_reference", "result_fields": ["changed_pixel_ratio", "mean_absolute_difference"]}
+  ],
+  "assertion_templates": [
+    {"type": "asset_strip_count", "state_count": 6, "direction_count": 4, "expected": 24},
+    {"type": "frame_cell_geometry", "frames_per_strip": 8, "frame_size": [256, 256], "strip_size": [2048, 256]},
+    {"type": "explicit_authored_direction", "state": "bond_greet", "direction": "west", "must_override_mirror": true}
+  ],
+  "authority_invariants": [
+    "Asset V2 family data owns runtime strip identity, dimensions, FPS, loop policy, and directional fallback.",
+    "Pixel metrics report geometry and coverage only; they do not approve animation quality or art direction.",
+    "Review every frame cell mechanically and reserve the compact direction sheet for human spot-check or metric failures."
+  ],
+  "evidence": {
+    "contact_sheet_builder": "build_roi_contact_sheet",
+    "contact_sheet_states": ["bond_greet"],
+    "contact_sheet_directions": ["north", "south", "east", "west"],
+    "metrics": ["alpha_bounds", "matte_void", "roi_diff"],
+    "raw_frames_secondary": true
+  }
+}

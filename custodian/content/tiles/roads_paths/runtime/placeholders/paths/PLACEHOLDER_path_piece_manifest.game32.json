@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "asset_pack": "PLACEHOLDER_custodian_runtime_path_pieces",
+  "source_image": "generated placeholder diagnostics",
+  "export_root": "res://content/tiles/roads_paths/runtime/placeholders/paths",
+  "piece_count": 7,
+  "direction_bitmask": {
+    "n": 1,
+    "e": 2,
+    "s": 4,
+    "w": 8
+  },
+  "procgen_notes": {
+    "purpose": "Temporary high-contrast runtime path overlay diagnostics. Replace with production path art after layout review.",
+    "naming_rule": "PLACEHOLDER_paths_mask_<connection_bitmask>.png"
+  },
+  "pieces": [
+    {
+      "id": "PLACEHOLDER_paths_mask_03",
+      "file": "pieces/PLACEHOLDER_paths_mask_03.png",
+      "name": "PLACEHOLDER_paths_mask_03",
+      "kind": "transition",
+      "width_class": "placeholder_path",
+      "connections": ["n", "e"],
+      "connection_bitmask": 3,
+      "tags": ["path", "placeholder", "corner"]
+    },
+    {
+      "id": "PLACEHOLDER_paths_mask_05",
+      "file": "pieces/PLACEHOLDER_paths_mask_05.png",
+      "name": "PLACEHOLDER_paths_mask_05",
+      "kind": "transition",
+      "width_class": "placeholder_path",
+      "connections": ["n", "s"],
+      "connection_bitmask": 5,
+      "tags": ["path", "placeholder", "straight", "vertical"]
+    },
+    {
+      "id": "PLACEHOLDER_paths_mask_06",
+      "file": "pieces/PLACEHOLDER_paths_mask_06.png",
+      "name": "PLACEHOLDER_paths_mask_06",
+      "kind": "transition",
+      "width_class": "placeholder_path",
+      "connections": ["e", "s"],
+      "connection_bitmask": 6,
+      "tags": ["path", "placeholder", "corner"]
+    },
+    {
+      "id": "PLACEHOLDER_paths_mask_09",
+      "file": "pieces/PLACEHOLDER_paths_mask_09.png",
+      "name": "PLACEHOLDER_paths_mask_09",
+      "kind": "transition",
+      "width_class": "placeholder_path",
+      "connections": ["n", "w"],
+      "connection_bitmask": 9,
+      "tags": ["path", "placeholder", "corner"]
+    },
+    {
+      "id": "PLACEHOLDER_paths_mask_10",
+      "file": "pieces/PLACEHOLDER_paths_mask_10.png",
+      "name": "PLACEHOLDER_paths_mask_10",
+      "kind": "transition",
+      "width_class": "placeholder_path",
+      "connections": ["e", "w"],
+      "connection_bitmask": 10,
+      "tags": ["path", "placeholder", "straight", "horizontal"]
+    },
+    {
+      "id": "PLACEHOLDER_paths_mask_12",
+      "file": "pieces/PLACEHOLDER_paths_mask_12.png",
+      "name": "PLACEHOLDER_paths_mask_12",
+      "kind": "transition",
+      "width_class": "placeholder_path",
+      "connections": ["s", "w"],
+      "connection_bitmask": 12,
+      "tags": ["path", "placeholder", "corner"]
+    },
+    {
+      "id": "PLACEHOLDER_paths_mask_15",
+      "file": "pieces/PLACEHOLDER_paths_mask_15.png",
+      "name": "PLACEHOLDER_paths_mask_15",
+      "kind": "transition",
+      "width_class": "placeholder_path",
+      "connections": ["n", "e", "s", "w"],
+      "connection_bitmask": 15,
+      "tags": ["path", "placeholder", "cross"]
+    }
+  ]
+}

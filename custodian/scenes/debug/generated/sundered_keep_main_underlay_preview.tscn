@@ -1,0 +1,104 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Texture2D" path="res://content/backgrounds/authored_underlays/sundered_keep_main/plates/sundered_keep_main__p_000_000.png" id="tex_0001"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/authored_underlays/sundered_keep_main/plates/sundered_keep_main__p_001_000.png" id="tex_0002"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/authored_underlays/sundered_keep_main/plates/sundered_keep_main__p_002_000.png" id="tex_0003"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/authored_underlays/sundered_keep_main/plates/sundered_keep_main__p_000_001.png" id="tex_0004"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/authored_underlays/sundered_keep_main/plates/sundered_keep_main__p_001_001.png" id="tex_0005"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/authored_underlays/sundered_keep_main/plates/sundered_keep_main__p_002_001.png" id="tex_0006"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/authored_underlays/sundered_keep_main/plates/sundered_keep_main__p_000_002.png" id="tex_0007"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/authored_underlays/sundered_keep_main/plates/sundered_keep_main__p_001_002.png" id="tex_0008"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/authored_underlays/sundered_keep_main/plates/sundered_keep_main__p_002_002.png" id="tex_0009"]
+
+[node name="AuthoredUnderlayPlateSetPreview" type="Node2D"]
+z_index = -120
+
+[node name="Plate_000_000" type="Sprite2D" parent="."]
+texture = ExtResource("tex_0001")
+centered = false
+region_enabled = true
+region_rect = Rect2(0.000000, 0.000000, 2048.000000, 2048.000000)
+position = Vector2(0.000000, 0.000000)
+scale = Vector2(0.709984, 0.709984)
+texture_filter = 4
+z_index = 0
+
+[node name="Plate_001_000" type="Sprite2D" parent="."]
+texture = ExtResource("tex_0002")
+centered = false
+region_enabled = true
+region_rect = Rect2(16.000000, 0.000000, 2048.000000, 2048.000000)
+position = Vector2(1454.047232, 0.000000)
+scale = Vector2(0.709984, 0.709984)
+texture_filter = 4
+z_index = 0
+
+[node name="Plate_002_000" type="Sprite2D" parent="."]
+texture = ExtResource("tex_0003")
+centered = false
+region_enabled = true
+region_rect = Rect2(16.000000, 0.000000, 952.000000, 2048.000000)
+position = Vector2(2908.094464, 0.000000)
+scale = Vector2(0.709984, 0.709984)
+texture_filter = 4
+z_index = 0
+
+[node name="Plate_000_001" type="Sprite2D" parent="."]
+texture = ExtResource("tex_0004")
+centered = false
+region_enabled = true
+region_rect = Rect2(0.000000, 16.000000, 2048.000000, 2048.000000)
+position = Vector2(0.000000, 1454.047232)
+scale = Vector2(0.709984, 0.709984)
+texture_filter = 4
+z_index = 0
+
+[node name="Plate_001_001" type="Sprite2D" parent="."]
+texture = ExtResource("tex_0005")
+centered = false
+region_enabled = true
+region_rect = Rect2(16.000000, 16.000000, 2048.000000, 2048.000000)
+position = Vector2(1454.047232, 1454.047232)
+scale = Vector2(0.709984, 0.709984)
+texture_filter = 4
+z_index = 0
+
+[node name="Plate_002_001" type="Sprite2D" parent="."]
+texture = ExtResource("tex_0006")
+centered = false
+region_enabled = true
+region_rect = Rect2(16.000000, 16.000000, 952.000000, 2048.000000)
+position = Vector2(2908.094464, 1454.047232)
+scale = Vector2(0.709984, 0.709984)
+texture_filter = 4
+z_index = 0
+
+[node name="Plate_000_002" type="Sprite2D" parent="."]
+texture = ExtResource("tex_0007")
+centered = false
+region_enabled = true
+region_rect = Rect2(0.000000, 16.000000, 2048.000000, 2048.000000)
+position = Vector2(0.000000, 2908.094464)
+scale = Vector2(0.709984, 0.709984)
+texture_filter = 4
+z_index = 0
+
+[node name="Plate_001_002" type="Sprite2D" parent="."]
+texture = ExtResource("tex_0008")
+centered = false
+region_enabled = true
+region_rect = Rect2(16.000000, 16.000000, 2048.000000, 2048.000000)
+position = Vector2(1454.047232, 2908.094464)
+scale = Vector2(0.709984, 0.709984)
+texture_filter = 4
+z_index = 0
+
+[node name="Plate_002_002" type="Sprite2D" parent="."]
+texture = ExtResource("tex_0009")
+centered = false
+region_enabled = true
+region_rect = Rect2(16.000000, 16.000000, 952.000000, 2048.000000)
+position = Vector2(2908.094464, 2908.094464)
+scale = Vector2(0.709984, 0.709984)
+texture_filter = 4
+z_index = 0

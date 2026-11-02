@@ -1,0 +1,52 @@
+{
+  "$schema": "https://repomix.com/schemas/latest/schema.json",
+  "output": {
+    "filePath": ".ai/custodian-ui.xml",
+    "style": "xml",
+    "compress": true,
+    "fileSummary": true,
+    "directoryStructure": true,
+    "files": true,
+    "removeEmptyLines": true
+  },
+  "include": [
+    "AGENTS.md",
+    "AGENTS_ADDENDUM.md",
+    "custodian/AGENTS.md",
+
+    "custodian/game/ui/**/*.gd",
+    "custodian/game/ui/**/*.tscn",
+    "custodian/game/ui/**/*.tres",
+    "custodian/game/rendering/**/*.gdshader",
+    "custodian/game/rendering/**/*.gd",
+
+    "custodian/content/dialogue/**/*.json",
+    "custodian/content/items/lore/**/*.json",
+
+    "custodian/docs/**/*UI*.md",
+    "custodian/docs/**/*ui*.md",
+    "custodian/docs/**/*TERMINAL*.md",
+    "custodian/docs/**/*terminal*.md"
+  ],
+  "ignore": {
+    "useGitignore": true,
+    "useDotIgnore": true,
+    "useDefaultPatterns": true,
+    "customPatterns": [
+      "custodian/addons/**",
+      "custodian/content/_aseprite/**",
+      "**/*.png",
+      "**/*.png.import",
+      "**/*.aseprite",
+      "**/*.ase",
+      "**/*.uid",
+      ".ai/**"
+    ]
+  },
+  "security": {
+    "enableSecurityCheck": true
+  },
+  "tokenCount": {
+    "encoding": "o200k_base"
+  }
+}

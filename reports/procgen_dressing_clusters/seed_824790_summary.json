@@ -1,0 +1,32 @@
+{
+	"baseline_foliage_count": 9,
+	"biome_counts": {
+		"rocky_upland": 4561,
+		"scrubland": 93,
+		"wetland": 31,
+		"woodland": 273
+	},
+	"candidate_foliage_absent": true,
+	"captures": [
+		"res://../reports/procgen_dressing_clusters/seed_824790_clusters_off.png",
+		"res://../reports/procgen_dressing_clusters/seed_824790_clusters_on.png"
+	],
+	"cluster_child_count": 9,
+	"cluster_count": 2,
+	"composed_total_foliage_count": 9,
+	"counts_by_profile": {
+		"rocky_scrub_pocket_01": 1,
+		"rocky_tree_scrub_small_01": 1
+	},
+	"promotion_fingerprint_matches": true,
+	"residual_foliage_count": 0,
+	"route_audit_ok": true,
+	"seed": 824790,
+	"surface_material_counts": {
+		"authored_landmark": 3417,
+		"natural_rock": 1432,
+		"natural_soft": 10,
+		"ruined_road": 91,
+		"wet_ground": 8
+	}
+}

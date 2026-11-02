@@ -1,0 +1,28 @@
+{
+	"durations": [
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0
+	],
+	"fps": 10.0,
+	"frame_rgba_sha256": [
+		"6189d867803e5744a5adfda79d2f331c5645084321c3b3af5ffd7745a97feedb",
+		"aeb67195cdbd0b69e6bf052bb96b48359c8eceda51ce056f669cb2e2f16a25d4",
+		"627f856bcd7369cbc8fd52945e55f315c3b978dc2936bc18334e838e132a4831",
+		"320c1ca6b4fc9540b965a10750280da0ed29d96c1452c969586b00b1c910ed2c",
+		"b204417038473788948990f3720ddd79924a0b8bfe2a8d60a815df649f0b7b24",
+		"991ddaf9370f155e5c92403cc42375b730a8e5e7b825a453482d119297fd4baf",
+		"8575c4685ce828c12654ddef7710ff278d63b7faf70f1a082e1b9ac02822552f"
+	],
+	"frames": 7,
+	"loop": true,
+	"migration_source": {
+		"consumer": "res://game/actors/operator/operator.gd",
+		"sheet": "res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/legacy_firing_slow_walk/operator__full_body__ranged_2h__cosmetic__legacy_firing_slow_walk__omni__1f__672x96.png"
+	},
+	"schema": "custodian.operator_animation_timing.v1"
+}

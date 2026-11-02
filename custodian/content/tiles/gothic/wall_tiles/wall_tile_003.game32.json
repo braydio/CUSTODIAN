@@ -1,0 +1,79 @@
+{
+  "schema": "game32.asset.v2",
+  "id": "wall_tile_003",
+  "display_name": "Wall Tile 003",
+  "source": {
+    "master_sheet": null,
+    "original_path": "res://content/tiles/gothic/wall_tiles/wall_tile_003.png",
+    "section": "tiles",
+    "subtype": "wall_tiles",
+    "source_rect_px": {
+      "x": 0,
+      "y": 0,
+      "w": 16,
+      "h": 24
+    },
+    "review_source": "human_llm_compact_review",
+    "review_status": "reviewed"
+  },
+  "file": {
+    "path": "res://content/tiles/gothic/wall_tiles/wall_tile_003.png",
+    "pixel_size": {
+      "w": 16,
+      "h": 24
+    }
+  },
+  "classification": {
+    "asset_type": "walls",
+    "semantic_role": "small_gothic_wall_detail_fragment",
+    "placement_layer": "wall_detail",
+    "tags": [
+      "gothic",
+      "wall",
+      "blocking",
+      "detail",
+      "fragment",
+      "trim",
+      "nonblocking",
+      "decorative"
+    ],
+    "review_status": "reviewed"
+  },
+  "placement": {
+    "tile_size": 32,
+    "footprint_tiles": {
+      "w": 1,
+      "h": 1
+    },
+    "origin_mode": "bottom_center",
+    "snap": "tile_or_free",
+    "allow_mirror_x": false,
+    "allow_rotation": false,
+    "y_sort": true,
+    "pivot_px": {
+      "x": 8,
+      "y": 24
+    },
+    "review_status": "reviewed"
+  },
+  "collision": {
+    "blocks_movement": false,
+    "blocks_sight": false,
+    "cover_value": 0,
+    "review_status": "reviewed",
+    "collision_shape": "none"
+  },
+  "procgen": {
+    "uses": [
+      "wall_detail",
+      "interior_wall_detail",
+      "gothic_trim_fragment"
+    ],
+    "weight": 4,
+    "can_spawn_indoor": true,
+    "can_spawn_outdoor": true,
+    "review_status": "reviewed",
+    "supports_gothic_compound": true
+  },
+  "master_index": 5
+}

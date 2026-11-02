@@ -1,0 +1,22 @@
+{
+  "enabled": true,
+  "route_master": true,
+  "route_contact_shadow": false,
+  "edge_mist_wrap": false,
+  "base_underlays": false,
+  "first_vista_presentation": false,
+  "grand_vista_presentation": false,
+  "authored_ground_overlays": true,
+  "authored_background_overlays": false,
+  "animated_overlays": false,
+  "fog_strips": false,
+  "parallax": false,
+  "roof_occlusion": false,
+  "lights": false,
+  "authored_enemies": false,
+  "vista_controller": false,
+  "reveal_director": false,
+  "debug_probe": false,
+  "sequence_triggers": false,
+  "live_processing": false
+}

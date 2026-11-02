@@ -1,0 +1,9 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/enemy__forlorn_ritualant__body__dissolve_01__s__6f__128.json",
+	"outputs": [
+		"res://content/sprites/enemies/enemy/runtime/forlorn_ritualant/enemy__forlorn_ritualant__body__dissolve_01__s__6f__128.png"
+	],
+	"post_process": [],
+	"source": "res://content/sprites/_pipeline/inbox/enemy__forlorn_ritualant__body__dissolve_01__s__6f__128.png",
+	"timestamp_utc": "2026-06-21 01:27:01"
+}

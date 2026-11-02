@@ -1,0 +1,34 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "dev_lop_loot_indicator",
+  "kind": "ui",
+  "priority": "P2",
+  "runtime": {
+    "domain": "sprites/dev/lords_of_pain",
+    "owner": "dev_lop_loot_indicator"
+  },
+  "canvas": {
+    "width": 256,
+    "height": 256
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "loot_indicator_yellow": {
+      "required": true,
+      "layer": "ui",
+      "action_group": "loot_indicator",
+      "variant": "loot_indicator_yellow",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 256
+    }
+  },
+  "aliases": {},
+  "consumers": [
+    {
+      "type": "manifest",
+      "path": "res://content/data/dev/lords_of_pain/gallery_manifest.json"
+    }
+  ]
+}

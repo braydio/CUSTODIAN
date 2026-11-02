@@ -1,0 +1,811 @@
+{
+  "schema": "custodian.game32.domain_manifest.v1",
+  "name": "sundered_keep_traversal",
+  "generated_at_utc": "2026-05-30T01:10:28.140017+00:00",
+  "domain": "traversal",
+  "asset_class": "traversal_module",
+  "domain_home": "res://content/runtime/sundered_keep/doors_traversal",
+  "count": 14,
+  "assets": [
+    {
+      "id": "sundered_keep/traversal/floor_hatch_closed_01",
+      "name": "floor_hatch_closed_01",
+      "filename": "floor_hatch_closed_01.png",
+      "description": "Stone floor hatch for the Sundered Keep (closed).",
+      "asset_class": "traversal_module",
+      "domain": "traversal",
+      "domain_home": "res://content/runtime/sundered_keep/doors_traversal/hatches",
+      "theme": "hatches",
+      "runtime_path": "res://content/runtime/sundered_keep/doors_traversal/hatches/floor_hatch_closed_01.png",
+      "metadata_path": "res://content/runtime/sundered_keep/doors_traversal/hatches/floor_hatch_closed_01.game32.json",
+      "source": {
+        "master_sheet": "doors_traversal.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/doors_traversal.png",
+        "sheet_key": "doors_traversal",
+        "sheet_asset_index": 12,
+        "crop_box_px": [
+          839,
+          778,
+          247,
+          249
+        ],
+        "bbox_px": [
+          829,
+          768,
+          267,
+          269
+        ]
+      },
+      "image": {
+        "format": "png_rgba",
+        "background": "transparent_after_extraction",
+        "exported_size_px": [
+          64,
+          64
+        ],
+        "source_sheet_sha256": "b061770339f420206adae0cfe9bef9417247fa5788ea84b03686156005105c1a"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_sight": false,
+        "cover_value": 0,
+        "collision_shape": "none",
+        "semantic_role": "stairs_or_hatch",
+        "placement_layer": "ground",
+        "tags": [
+          "floor hatch",
+          "stairs_or_hatch",
+          "sundered_keep",
+          "traversal"
+        ],
+        "variant_group": "floor_hatch"
+      }
+    },
+    {
+      "id": "sundered_keep/traversal/floor_hatch_open_01",
+      "name": "floor_hatch_open_01",
+      "filename": "floor_hatch_open_01.png",
+      "description": "Stone floor hatch for the Sundered Keep (open).",
+      "asset_class": "traversal_module",
+      "domain": "traversal",
+      "domain_home": "res://content/runtime/sundered_keep/doors_traversal/hatches",
+      "theme": "hatches",
+      "runtime_path": "res://content/runtime/sundered_keep/doors_traversal/hatches/floor_hatch_open_01.png",
+      "metadata_path": "res://content/runtime/sundered_keep/doors_traversal/hatches/floor_hatch_open_01.game32.json",
+      "source": {
+        "master_sheet": "doors_traversal.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/doors_traversal.png",
+        "sheet_key": "doors_traversal",
+        "sheet_asset_index": 13,
+        "crop_box_px": [
+          1127,
+          768,
+          252,
+          259
+        ],
+        "bbox_px": [
+          1117,
+          758,
+          272,
+          279
+        ]
+      },
+      "image": {
+        "format": "png_rgba",
+        "background": "transparent_after_extraction",
+        "exported_size_px": [
+          64,
+          64
+        ],
+        "source_sheet_sha256": "b061770339f420206adae0cfe9bef9417247fa5788ea84b03686156005105c1a"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_sight": false,
+        "cover_value": 0,
+        "collision_shape": "none",
+        "semantic_role": "stairs_or_hatch",
+        "placement_layer": "ground",
+        "tags": [
+          "floor hatch",
+          "stairs_or_hatch",
+          "sundered_keep",
+          "traversal"
+        ],
+        "variant_group": "floor_hatch"
+      }
+    },
+    {
+      "id": "sundered_keep/doors/gothic_double_door_closed_n",
+      "name": "gothic_double_door_closed_n",
+      "filename": "gothic_double_door_closed_n.png",
+      "description": "Heavy gothic double door for the Sundered Keep (north-facing).",
+      "asset_class": "door_module",
+      "domain": "doors",
+      "domain_home": "res://content/runtime/sundered_keep/doors_traversal/doors",
+      "theme": "doors",
+      "runtime_path": "res://content/runtime/sundered_keep/doors_traversal/doors/gothic_double_door_closed_n.png",
+      "metadata_path": "res://content/runtime/sundered_keep/doors_traversal/doors/gothic_double_door_closed_n.game32.json",
+      "source": {
+        "master_sheet": "doors_traversal.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/doors_traversal.png",
+        "sheet_key": "doors_traversal",
+        "sheet_asset_index": 2,
+        "crop_box_px": [
+          754,
+          75,
+          248,
+          289
+        ],
+        "bbox_px": [
+          744,
+          65,
+          268,
+          309
+        ]
+      },
+      "image": {
+        "format": "png_rgba",
+        "background": "transparent_after_extraction",
+        "exported_size_px": [
+          96,
+          128
+        ],
+        "source_sheet_sha256": "b061770339f420206adae0cfe9bef9417247fa5788ea84b03686156005105c1a"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": false,
+        "cover_value": 0,
+        "collision_shape": "block",
+        "semantic_role": "door",
+        "placement_layer": "ground",
+        "tags": [
+          "door",
+          "gothic",
+          "gothic double door",
+          "sundered_keep"
+        ],
+        "variant_group": "gothic_double_door",
+        "orientation": "n"
+      }
+    },
+    {
+      "id": "sundered_keep/doors/gothic_double_door_closed_s",
+      "name": "gothic_double_door_closed_s",
+      "filename": "gothic_double_door_closed_s.png",
+      "description": "Heavy gothic double door for the Sundered Keep (south-facing).",
+      "asset_class": "door_module",
+      "domain": "doors",
+      "domain_home": "res://content/runtime/sundered_keep/doors_traversal/doors",
+      "theme": "doors",
+      "runtime_path": "res://content/runtime/sundered_keep/doors_traversal/doors/gothic_double_door_closed_s.png",
+      "metadata_path": "res://content/runtime/sundered_keep/doors_traversal/doors/gothic_double_door_closed_s.game32.json",
+      "source": {
+        "master_sheet": "doors_traversal.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/doors_traversal.png",
+        "sheet_key": "doors_traversal",
+        "sheet_asset_index": 4,
+        "crop_box_px": [
+          65,
+          421,
+          248,
+          286
+        ],
+        "bbox_px": [
+          55,
+          411,
+          268,
+          306
+        ]
+      },
+      "image": {
+        "format": "png_rgba",
+        "background": "transparent_after_extraction",
+        "exported_size_px": [
+          96,
+          128
+        ],
+        "source_sheet_sha256": "b061770339f420206adae0cfe9bef9417247fa5788ea84b03686156005105c1a"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": false,
+        "cover_value": 0,
+        "collision_shape": "block",
+        "semantic_role": "door",
+        "placement_layer": "ground",
+        "tags": [
+          "door",
+          "gothic",
+          "gothic double door",
+          "sundered_keep"
+        ],
+        "variant_group": "gothic_double_door",
+        "orientation": "s"
+      }
+    },
+    {
+      "id": "sundered_keep/doors/gothic_double_door_open_n",
+      "name": "gothic_double_door_open_n",
+      "filename": "gothic_double_door_open_n.png",
+      "description": "Heavy gothic double door for the Sundered Keep (north-facing).",
+      "asset_class": "door_module",
+      "domain": "doors",
+      "domain_home": "res://content/runtime/sundered_keep/doors_traversal/doors",
+      "theme": "doors",
+      "runtime_path": "res://content/runtime/sundered_keep/doors_traversal/doors/gothic_double_door_open_n.png",
+      "metadata_path": "res://content/runtime/sundered_keep/doors_traversal/doors/gothic_double_door_open_n.game32.json",
+      "source": {
+        "master_sheet": "doors_traversal.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/doors_traversal.png",
+        "sheet_key": "doors_traversal",
+        "sheet_asset_index": 3,
+        "crop_box_px": [
+          1086,
+          76,
+          261,
+          288
+        ],
+        "bbox_px": [
+          1076,
+          66,
+          281,
+          308
+        ]
+      },
+      "image": {
+        "format": "png_rgba",
+        "background": "transparent_after_extraction",
+        "exported_size_px": [
+          96,
+          128
+        ],
+        "source_sheet_sha256": "b061770339f420206adae0cfe9bef9417247fa5788ea84b03686156005105c1a"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_sight": false,
+        "cover_value": 0,
+        "collision_shape": "none",
+        "semantic_role": "door",
+        "placement_layer": "ground",
+        "tags": [
+          "door",
+          "gothic",
+          "gothic double door",
+          "sundered_keep"
+        ],
+        "variant_group": "gothic_double_door",
+        "orientation": "n"
+      }
+    },
+    {
+      "id": "sundered_keep/doors/gothic_double_door_open_s",
+      "name": "gothic_double_door_open_s",
+      "filename": "gothic_double_door_open_s.png",
+      "description": "Heavy gothic double door for the Sundered Keep (south-facing).",
+      "asset_class": "door_module",
+      "domain": "doors",
+      "domain_home": "res://content/runtime/sundered_keep/doors_traversal/doors",
+      "theme": "doors",
+      "runtime_path": "res://content/runtime/sundered_keep/doors_traversal/doors/gothic_double_door_open_s.png",
+      "metadata_path": "res://content/runtime/sundered_keep/doors_traversal/doors/gothic_double_door_open_s.game32.json",
+      "source": {
+        "master_sheet": "doors_traversal.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/doors_traversal.png",
+        "sheet_key": "doors_traversal",
+        "sheet_asset_index": 5,
+        "crop_box_px": [
+          404,
+          421,
+          257,
+          286
+        ],
+        "bbox_px": [
+          394,
+          411,
+          277,
+          306
+        ]
+      },
+      "image": {
+        "format": "png_rgba",
+        "background": "transparent_after_extraction",
+        "exported_size_px": [
+          96,
+          128
+        ],
+        "source_sheet_sha256": "b061770339f420206adae0cfe9bef9417247fa5788ea84b03686156005105c1a"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_sight": false,
+        "cover_value": 0,
+        "collision_shape": "none",
+        "semantic_role": "door",
+        "placement_layer": "ground",
+        "tags": [
+          "door",
+          "gothic",
+          "gothic double door",
+          "sundered_keep"
+        ],
+        "variant_group": "gothic_double_door",
+        "orientation": "s"
+      }
+    },
+    {
+      "id": "sundered_keep/doors/main_gate_portcullis_closed",
+      "name": "main_gate_portcullis_closed",
+      "filename": "main_gate_portcullis_closed.png",
+      "description": "Main gate portcullis for the Sundered Keep (closed).",
+      "asset_class": "door_module",
+      "domain": "doors",
+      "domain_home": "res://content/runtime/sundered_keep/doors_traversal/gates",
+      "theme": "gates",
+      "runtime_path": "res://content/runtime/sundered_keep/doors_traversal/gates/main_gate_portcullis_closed.png",
+      "metadata_path": "res://content/runtime/sundered_keep/doors_traversal/gates/main_gate_portcullis_closed.game32.json",
+      "source": {
+        "master_sheet": "doors_traversal.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/doors_traversal.png",
+        "sheet_key": "doors_traversal",
+        "sheet_asset_index": 0,
+        "crop_box_px": [
+          38,
+          45,
+          315,
+          325
+        ],
+        "bbox_px": [
+          28,
+          35,
+          335,
+          345
+        ]
+      },
+      "image": {
+        "format": "png_rgba",
+        "background": "transparent_after_extraction",
+        "exported_size_px": [
+          128,
+          128
+        ],
+        "source_sheet_sha256": "b061770339f420206adae0cfe9bef9417247fa5788ea84b03686156005105c1a"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": false,
+        "cover_value": 0,
+        "collision_shape": "block",
+        "semantic_role": "gate",
+        "placement_layer": "ground",
+        "tags": [
+          "door",
+          "gate",
+          "main gate portcullis",
+          "sundered_keep"
+        ],
+        "variant_group": "main_gate_portcullis"
+      }
+    },
+    {
+      "id": "sundered_keep/doors/main_gate_portcullis_open",
+      "name": "main_gate_portcullis_open",
+      "filename": "main_gate_portcullis_open.png",
+      "description": "Main gate portcullis for the Sundered Keep (open).",
+      "asset_class": "door_module",
+      "domain": "doors",
+      "domain_home": "res://content/runtime/sundered_keep/doors_traversal/gates",
+      "theme": "gates",
+      "runtime_path": "res://content/runtime/sundered_keep/doors_traversal/gates/main_gate_portcullis_open.png",
+      "metadata_path": "res://content/runtime/sundered_keep/doors_traversal/gates/main_gate_portcullis_open.game32.json",
+      "source": {
+        "master_sheet": "doors_traversal.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/doors_traversal.png",
+        "sheet_key": "doors_traversal",
+        "sheet_asset_index": 1,
+        "crop_box_px": [
+          385,
+          46,
+          315,
+          324
+        ],
+        "bbox_px": [
+          375,
+          36,
+          335,
+          344
+        ]
+      },
+      "image": {
+        "format": "png_rgba",
+        "background": "transparent_after_extraction",
+        "exported_size_px": [
+          128,
+          128
+        ],
+        "source_sheet_sha256": "b061770339f420206adae0cfe9bef9417247fa5788ea84b03686156005105c1a"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_sight": false,
+        "cover_value": 0,
+        "collision_shape": "none",
+        "semantic_role": "gate",
+        "placement_layer": "ground",
+        "tags": [
+          "door",
+          "gate",
+          "main gate portcullis",
+          "sundered_keep"
+        ],
+        "variant_group": "main_gate_portcullis"
+      }
+    },
+    {
+      "id": "sundered_keep/traversal/stone_stairs_down_n",
+      "name": "stone_stairs_down_n",
+      "filename": "stone_stairs_down_n.png",
+      "description": "Stone stairs (downward) for the Sundered Keep (north-facing).",
+      "asset_class": "traversal_module",
+      "domain": "traversal",
+      "domain_home": "res://content/runtime/sundered_keep/doors_traversal/stairs",
+      "theme": "stairs",
+      "runtime_path": "res://content/runtime/sundered_keep/doors_traversal/stairs/stone_stairs_down_n.png",
+      "metadata_path": "res://content/runtime/sundered_keep/doors_traversal/stairs/stone_stairs_down_n.game32.json",
+      "source": {
+        "master_sheet": "doors_traversal.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/doors_traversal.png",
+        "sheet_key": "doors_traversal",
+        "sheet_asset_index": 10,
+        "crop_box_px": [
+          336,
+          760,
+          182,
+          249
+        ],
+        "bbox_px": [
+          326,
+          750,
+          202,
+          269
+        ]
+      },
+      "image": {
+        "format": "png_rgba",
+        "background": "transparent_after_extraction",
+        "exported_size_px": [
+          64,
+          64
+        ],
+        "source_sheet_sha256": "b061770339f420206adae0cfe9bef9417247fa5788ea84b03686156005105c1a"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_sight": false,
+        "cover_value": 0,
+        "collision_shape": "none",
+        "semantic_role": "stairs_or_hatch",
+        "placement_layer": "ground",
+        "tags": [
+          "stairs_or_hatch",
+          "stone stairs down",
+          "sundered_keep",
+          "traversal",
+          "vertical"
+        ],
+        "variant_group": "stone_stairs_down",
+        "orientation": "n"
+      }
+    },
+    {
+      "id": "sundered_keep/traversal/stone_stairs_down_s",
+      "name": "stone_stairs_down_s",
+      "filename": "stone_stairs_down_s.png",
+      "description": "Stone stairs (downward) for the Sundered Keep (south-facing).",
+      "asset_class": "traversal_module",
+      "domain": "traversal",
+      "domain_home": "res://content/runtime/sundered_keep/doors_traversal/stairs",
+      "theme": "stairs",
+      "runtime_path": "res://content/runtime/sundered_keep/doors_traversal/stairs/stone_stairs_down_s.png",
+      "metadata_path": "res://content/runtime/sundered_keep/doors_traversal/stairs/stone_stairs_down_s.game32.json",
+      "source": {
+        "master_sheet": "doors_traversal.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/doors_traversal.png",
+        "sheet_key": "doors_traversal",
+        "sheet_asset_index": 11,
+        "crop_box_px": [
+          591,
+          760,
+          182,
+          249
+        ],
+        "bbox_px": [
+          581,
+          750,
+          202,
+          269
+        ]
+      },
+      "image": {
+        "format": "png_rgba",
+        "background": "transparent_after_extraction",
+        "exported_size_px": [
+          64,
+          64
+        ],
+        "source_sheet_sha256": "b061770339f420206adae0cfe9bef9417247fa5788ea84b03686156005105c1a"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_sight": false,
+        "cover_value": 0,
+        "collision_shape": "none",
+        "semantic_role": "stairs_or_hatch",
+        "placement_layer": "ground",
+        "tags": [
+          "stairs_or_hatch",
+          "stone stairs down",
+          "sundered_keep",
+          "traversal",
+          "vertical"
+        ],
+        "variant_group": "stone_stairs_down",
+        "orientation": "s"
+      }
+    },
+    {
+      "id": "sundered_keep/traversal/stone_stairs_up_e",
+      "name": "stone_stairs_up_e",
+      "filename": "stone_stairs_up_e.png",
+      "description": "Stone stairs (upward) for the Sundered Keep (south-facing).",
+      "asset_class": "traversal_module",
+      "domain": "traversal",
+      "domain_home": "res://content/runtime/sundered_keep/doors_traversal/stairs",
+      "theme": "stairs",
+      "runtime_path": "res://content/runtime/sundered_keep/doors_traversal/stairs/stone_stairs_up_e.png",
+      "metadata_path": "res://content/runtime/sundered_keep/doors_traversal/stairs/stone_stairs_up_e.game32.json",
+      "source": {
+        "master_sheet": "doors_traversal.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/doors_traversal.png",
+        "sheet_key": "doors_traversal",
+        "sheet_asset_index": 7,
+        "crop_box_px": [
+          948,
+          488,
+          212,
+          203
+        ],
+        "bbox_px": [
+          938,
+          478,
+          232,
+          223
+        ]
+      },
+      "image": {
+        "format": "png_rgba",
+        "background": "transparent_after_extraction",
+        "exported_size_px": [
+          64,
+          64
+        ],
+        "source_sheet_sha256": "b061770339f420206adae0cfe9bef9417247fa5788ea84b03686156005105c1a"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_sight": false,
+        "cover_value": 0,
+        "collision_shape": "none",
+        "semantic_role": "stairs_or_hatch",
+        "placement_layer": "ground",
+        "tags": [
+          "stairs_or_hatch",
+          "stone stairs up",
+          "sundered_keep",
+          "traversal",
+          "vertical"
+        ],
+        "variant_group": "stone_stairs_up",
+        "orientation": "e"
+      }
+    },
+    {
+      "id": "sundered_keep/traversal/stone_stairs_up_n",
+      "name": "stone_stairs_up_n",
+      "filename": "stone_stairs_up_n.png",
+      "description": "Stone stairs (upward) for the Sundered Keep (north-facing).",
+      "asset_class": "traversal_module",
+      "domain": "traversal",
+      "domain_home": "res://content/runtime/sundered_keep/doors_traversal/stairs",
+      "theme": "stairs",
+      "runtime_path": "res://content/runtime/sundered_keep/doors_traversal/stairs/stone_stairs_up_n.png",
+      "metadata_path": "res://content/runtime/sundered_keep/doors_traversal/stairs/stone_stairs_up_n.game32.json",
+      "source": {
+        "master_sheet": "doors_traversal.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/doors_traversal.png",
+        "sheet_key": "doors_traversal",
+        "sheet_asset_index": 6,
+        "crop_box_px": [
+          738,
+          439,
+          172,
+          253
+        ],
+        "bbox_px": [
+          728,
+          429,
+          192,
+          273
+        ]
+      },
+      "image": {
+        "format": "png_rgba",
+        "background": "transparent_after_extraction",
+        "exported_size_px": [
+          64,
+          64
+        ],
+        "source_sheet_sha256": "b061770339f420206adae0cfe9bef9417247fa5788ea84b03686156005105c1a"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_sight": false,
+        "cover_value": 0,
+        "collision_shape": "none",
+        "semantic_role": "stairs_or_hatch",
+        "placement_layer": "ground",
+        "tags": [
+          "stairs_or_hatch",
+          "stone stairs up",
+          "sundered_keep",
+          "traversal",
+          "vertical"
+        ],
+        "variant_group": "stone_stairs_up",
+        "orientation": "n"
+      }
+    },
+    {
+      "id": "sundered_keep/traversal/stone_stairs_up_s",
+      "name": "stone_stairs_up_s",
+      "filename": "stone_stairs_up_s.png",
+      "description": "Stone stairs (upward) for the Sundered Keep (south-facing).",
+      "asset_class": "traversal_module",
+      "domain": "traversal",
+      "domain_home": "res://content/runtime/sundered_keep/doors_traversal/stairs",
+      "theme": "stairs",
+      "runtime_path": "res://content/runtime/sundered_keep/doors_traversal/stairs/stone_stairs_up_s.png",
+      "metadata_path": "res://content/runtime/sundered_keep/doors_traversal/stairs/stone_stairs_up_s.game32.json",
+      "source": {
+        "master_sheet": "doors_traversal.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/doors_traversal.png",
+        "sheet_key": "doors_traversal",
+        "sheet_asset_index": 8,
+        "crop_box_px": [
+          1199,
+          439,
+          169,
+          253
+        ],
+        "bbox_px": [
+          1189,
+          429,
+          189,
+          273
+        ]
+      },
+      "image": {
+        "format": "png_rgba",
+        "background": "transparent_after_extraction",
+        "exported_size_px": [
+          64,
+          64
+        ],
+        "source_sheet_sha256": "b061770339f420206adae0cfe9bef9417247fa5788ea84b03686156005105c1a"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_sight": false,
+        "cover_value": 0,
+        "collision_shape": "none",
+        "semantic_role": "stairs_or_hatch",
+        "placement_layer": "ground",
+        "tags": [
+          "stairs_or_hatch",
+          "stone stairs up",
+          "sundered_keep",
+          "traversal",
+          "vertical"
+        ],
+        "variant_group": "stone_stairs_up",
+        "orientation": "s"
+      }
+    },
+    {
+      "id": "sundered_keep/traversal/stone_stairs_up_w",
+      "name": "stone_stairs_up_w",
+      "filename": "stone_stairs_up_w.png",
+      "description": "Stone stairs (upward) for the Sundered Keep (south-facing).",
+      "asset_class": "traversal_module",
+      "domain": "traversal",
+      "domain_home": "res://content/runtime/sundered_keep/doors_traversal/stairs",
+      "theme": "stairs",
+      "runtime_path": "res://content/runtime/sundered_keep/doors_traversal/stairs/stone_stairs_up_w.png",
+      "metadata_path": "res://content/runtime/sundered_keep/doors_traversal/stairs/stone_stairs_up_w.game32.json",
+      "source": {
+        "master_sheet": "doors_traversal.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/doors_traversal.png",
+        "sheet_key": "doors_traversal",
+        "sheet_asset_index": 9,
+        "crop_box_px": [
+          59,
+          796,
+          233,
+          215
+        ],
+        "bbox_px": [
+          49,
+          786,
+          253,
+          235
+        ]
+      },
+      "image": {
+        "format": "png_rgba",
+        "background": "transparent_after_extraction",
+        "exported_size_px": [
+          64,
+          64
+        ],
+        "source_sheet_sha256": "b061770339f420206adae0cfe9bef9417247fa5788ea84b03686156005105c1a"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_sight": false,
+        "cover_value": 0,
+        "collision_shape": "none",
+        "semantic_role": "stairs_or_hatch",
+        "placement_layer": "ground",
+        "tags": [
+          "stairs_or_hatch",
+          "stone stairs up",
+          "sundered_keep",
+          "traversal",
+          "vertical"
+        ],
+        "variant_group": "stone_stairs_up",
+        "orientation": "w"
+      }
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__fx__unarmed__heavy_01__n__8f__96.json",
+	"outputs": [
+		"res://content/sprites/operator/runtime/overlay/unarmed/operator__fx__unarmed__heavy_01__n__8f__96.png"
+	],
+	"post_process": [
+		"operator_curated_resources"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/operator__fx__unarmed__heavy_01__n__8f__96.png",
+	"timestamp_utc": "2026-05-02 03:55:11"
+}

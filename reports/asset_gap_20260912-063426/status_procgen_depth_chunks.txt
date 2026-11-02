@@ -1,0 +1,18 @@
+
+PROCGEN DEPTH CHUNKS
+────────────────────
+Required art      0 / 0 ready
+Recommended       0 / 0 ready
+Optional          7 / 7 ready
+Inbox             0 files waiting
+
+READY
+  ✓ woodland_overgrown_works OMNI
+  ✓ wetland_flooded_basin OMNI
+  ✓ wetland_reed_channels OMNI
+  ✓ wetland_drowned_service_platform OMNI
+  ✓ rocky_upland_cliff_bowl OMNI
+  ✓ rocky_upland_talus_ravine OMNI
+  ✓ rocky_upland_exposed_ledge OMNI
+
+Next: asset request procgen_depth_chunks

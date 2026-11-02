@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/world/routes/sundered_keep/stages/sundered_keep_grand_vista.gd" id="1_grand_vista"]
+
+[node name="SunderedKeepGrandVista" type="Node2D"]
+script = ExtResource("1_grand_vista")
+
+[node name="EntrySpawn" type="Marker2D" parent="."]
+position = Vector2(-240, 420)
+
+[node name="CameraBounds" type="Node2D" parent="."]

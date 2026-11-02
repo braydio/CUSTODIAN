@@ -1,0 +1,32 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "awakening_dust_lung_lift",
+  "kind": "world_prop",
+  "priority": "P0",
+  "runtime": {
+    "domain": "sprites/environment/props/awakening",
+    "owner": "awakening_dust_lung_lift"
+  },
+  "canvas": {
+    "width": 192,
+    "height": 256
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "idle": {
+      "required": true,
+      "layer": "body",
+      "action_group": "interaction",
+      "variant": "idle",
+      "layout": "copy"
+    }
+  },
+  "aliases": {},
+  "consumers": [
+    {
+      "type": "scene",
+      "path": "res://scenes/awakening_first_return.tscn"
+    }
+  ]
+}

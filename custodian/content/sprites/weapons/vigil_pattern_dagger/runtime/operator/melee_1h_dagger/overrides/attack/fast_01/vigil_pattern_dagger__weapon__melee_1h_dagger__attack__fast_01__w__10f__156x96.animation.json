@@ -1,0 +1,35 @@
+{
+	"durations": [
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0
+	],
+	"fps": 18.0,
+	"frame_rgba_sha256": [
+		"2a0a9026aec44c111cdd7ad68eafb14e08575ceda356cf5cb561d60401b5e2ac",
+		"4974f7c094c00d142a1eb2079939330e6a7f80bfee48c7434abe68019611d5e0",
+		"7ae084f45e83a5ec522813c1d89bf34c0736047fa155a6b35c4fc661338009a4",
+		"0289216d200f36b75ccaa4113fcf5b942b14e360e27f32e42fa0d4e87188a781",
+		"072cec1fe99bf929fba1470708383228e9ef9880f409502bf5899f75328836f4",
+		"0e7fc60b982156ae6981df0fd99fcc70c4d6b38ae66f691b4d7110c5c51c569d",
+		"1293a1139466aae4fdfd990d192ecae0dce690a6ce116429611c1ffefa14ee06",
+		"4fe66405c9dfdb96919879af0a5be5a5540d84e44cb03ef3712b8a24e3f4451b",
+		"467a9e9ef2c7bba9a446f42d94dddb62f0aceb0537ddbc08e7280f905b713ee4",
+		"6e37ac1e8e91aaddb44d0de33d49857e98711dd8f58c5610965a4578bd8a6eae"
+	],
+	"frames": 10,
+	"loop": false,
+	"migration_source": {
+		"animation": "vigil_dagger_fast_01_weapon_left",
+		"consumer": "res://game/actors/operator/vigil_pattern_dagger_definition.tres",
+		"resource": "res://game/actors/operator/vigil_pattern_dagger_melee_overlay_frames.tres"
+	},
+	"schema": "custodian.operator_animation_timing.v1"
+}

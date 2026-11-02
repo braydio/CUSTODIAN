@@ -1,0 +1,54 @@
+{
+  "action_count": 7,
+  "camera": {
+    "position": [
+      420.224426269531,
+      308.044738769531
+    ]
+  },
+  "completed": true,
+  "duration_ticks": 148,
+  "event_count": 18,
+  "media": {
+    "audio": {
+      "available": true,
+      "channels": 2,
+      "duration_sec": 2.533333333333333,
+      "frames": 121600,
+      "noise_floor_dbfs": -27.04351479587883,
+      "onset_ms": 1477.1875,
+      "onset_threshold_dbfs": -15.043514795878831,
+      "peak_dbfs": -13.469037531031702,
+      "peak_time_ms": 1486.2083333333333,
+      "rms_dbfs": -26.841757654151696,
+      "sample_rate": 48000,
+      "sample_width": 2
+    },
+    "baseline_audio": null,
+    "visual_diff": null
+  },
+  "operator": {
+    "position": [
+      420.0,
+      360.0
+    ]
+  },
+  "probe_sample_count": 14,
+  "stable": {
+    "completed_tick": 148,
+    "visible_visual_anchor_delta_px": 0.0,
+    "visible_visual_anchor_sample_count": 8
+  },
+  "stable_fingerprint": {
+    "algorithm": "sha256",
+    "schema": "custodian.moment_forge.stable_fingerprint.v1",
+    "value": "8f7fcfaed16d959a2bc423e90a6324ddaae36654f78745b0edfef922da11537c"
+  },
+  "target": {
+    "position": [
+      458.933319091797,
+      360.0
+    ]
+  },
+  "warning_count": 0
+}

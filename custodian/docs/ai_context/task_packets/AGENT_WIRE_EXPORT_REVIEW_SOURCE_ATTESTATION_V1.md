@@ -1,0 +1,57 @@
+# EXACT WIRE EXPORT REVIEW SOURCE ATTESTATION V1
+
+- Packet schema: custodian.task_packet.v2
+- Workstream: agent-wire-export-review-source-attestation-v1
+- Category: agent-ops
+- Status: `ready`
+- Dispatch: `auto`
+- Authoring handoff: auto
+- Priority: P1
+- Depends on: none
+- Locks: paired-review-source-provenance, paired-review-host-validation
+- Kind: implementation
+- Review: auto
+- Review stage: post-land
+- Review modes: code, architecture, workflow
+- Paired review workstream: review-agent-wire-export-review-source-attestation-v1
+- Review cycle: 0
+- Max automatic review cycles: 2
+- Review rationale: This changes the paired-review host trust boundary and adds an exact post-hoc source attestation. A fresh independent review must falsify source identity, accepted-review, and fail-closed controls before the exception can activate.
+- Reviewed main: 8bc0fe40184dec741ccc5a92997052f96e0deb43
+- Authoring chat: not-recorded
+- Visual review: none
+- Goal: Safely allow the preserved WIRE exporter paired review to validate its declared validation-manifest test-definition change after an independently accepted, exact source attestation.
+- Completion boundary: Add one source-attestation verifier and exact attestation record for the exporter source and preserved review identity below, with real-Git positive and adversarial regressions. The exception remains inert until the correction implementation has a genuine accepted independent PASS archived on origin/main. Do not modify, recreate, re-claim, or release the original review's claim, run evidence, worktree, or lock. Do not change the exporter or its archived packet.
+- Current measured state: The exporter source commit is 5013c8404a6c9c3c08ac2800f66f7b5f5f035703, parent 1784cbe67eeb06d49d9202e66969e46ca98c15cd. The packet archive transition is 3dd84a7bb2abc683ed2403e4303bd054d990f372. The reviewed-main landing/synchronization merge is 38545e4c12b848861284d77c299790c046df6f62 with parents 3dd84a7bb2abc683ed2403e4303bd054d990f372 and 8c8bf4f724dc354767e13c53a77fac21be802dc4. The source-span manifest Git blob changed from add5794ffa67a02185c8d8c33427bab933df2167 to cf955038a80f8558b93c840852ddfcaa516d8df5, adding the exact wire_observation_export_unit test definition. The archived exporter packet declares the manifest update in its Work surface and Acceptance. Preserved exporter review host run 20261101T181049Z-ec613c8a7c18, claim/worktree run 20261101T181128Z-265f4bc374a4, review branch agent/review-agent-wire-observation-export-v1, pinned main 38545e4c12b848861284d77c299790c046df6f62, archived target packet blob b7ec264808dac6235b2413cde666ad63a8d050c3, and paired review packet blob f22af9f2a024e016278fb65d602e605d6bc0a5ed are all exact identity inputs. Its host validation selected 5 tests and passed 5/5, then refused before reviewer launch because no accepted exact source attestation exists. The recovery planner also refuses the run because it has neither a verified green pin nor a complete failed-report pair.
+- Evidence: custodian/tools/agent/paired_review_host_validation.py::_attested_manifest_comparison; custodian/tools/agent/paired_review_host_validation.py::_verified_procession_scope_attestation; custodian/tools/agent/test_paired_review_runner.py; custodian/tools/validation/validation_manifest.json and its exact historical blobs; archived custodian/docs/ai_context/task_packets/archived/AGENT_WIRE_OBSERVATION_EXPORT_V1.md; preserved local host evidence at .git/custodian-review-runs/review-agent-wire-observation-export-v1/20261101T181049Z-ec613c8a7c18; exporter claim trace run 20261101T175107Z-096decf85436.
+- Task-specific authority: AGENTS.md; custodian/AGENTS.md; custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md; the archived exporter implementation packet; paired_review_host_validation.py's immutable reviewed-main policy and exact post-hoc attestation rules; paired_review_runner.py's plan/apply recovery contract; dispatcher claims, locks, and genuine review acceptance.
+- Work surface: custodian/tools/agent/paired_review_host_validation.py; custodian/tools/agent/test_paired_review_runner.py; new custodian/docs/ai_context/review_scope_attestations/wire_observation_export_manifest_v1.json. Use the existing paired_review_runner_unit validation registration. Do not change validation_manifest.json in this workstream, the exporter, archived packets, review-run evidence, Dropbox, or other workstreams.
+- Publication inputs: `custodian/tools/agent/paired_review_host_validation.py`; `custodian/tools/agent/paired_review_runner.py`; `custodian/tools/agent/test_paired_review_runner.py`; `custodian/tools/validation/validation_manifest.json`; `custodian/tools/validation/run_validation.py`; `custodian/tools/agent/review_outcome.py`; `custodian/tools/agent/review_receipt_delta.py`; `custodian/docs/ai_context/task_packets/archived/AGENT_WIRE_OBSERVATION_EXPORT_V1.md`; `custodian/docs/ai_context/task_packets/REVIEW_AGENT_WIRE_OBSERVATION_EXPORT_V1.md`; `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`.
+- Change: Add a one-case attestation path. It must verify the exact exporter source base/head/commit, source-path set, all source file modes and blobs, archived implementation packet identity, archive transition, synchronization merge parents/tree, validation-manifest old/new blobs and canonical manifest delta, exporter source claim/trace identity, and the exact preserved review workstream, review packet blob, pinned main, original host run ID and claim/worktree run ID. It must preserve the existing baseline policy comparison and canonical changed-test selection. It must read the proposed attestation only from current origin/main, require it to be byte-canonical and present by the exact correction implementation, and authenticate the correction's archived packet, matching review packet, canonical review outcome, accepted receipt, exact reviewed implementation identity, ancestry, and genuine independent PASS before returning accepted provenance. The attestation may be present before review but must remain inert until every accepted-review predicate passes. Reject every other source/review identity; do not generalize the manifest exception or weaken existing attestation paths.
+- Preserve: The complete original exporter review claim, claim/worktree lock, branch, worktree, and all original host run bytes; the exporter source and archived packet; reviewed-main manifest policy; existing correction/review outcomes; current locks and workstreams; all unrelated attestations, manifest behavior, public WIRE, hourly automation, Dropbox, and service state.
+- Non-goals: Applying the preserved recovery plan; launching or duplicating the exporter reviewer; changing/rewriting exporter history or its archived packet; accepting the exporter review without its real reviewer PASS; changing global manifest selection or exclusions; editing other workstreams to release locks; publishing telemetry or enabling a schedule.
+- Acceptance:
+  - A failing-first real-Git regression reconstructs the exact original exporter source span, archive transition and synchronization merge. Against current code it proves the preserved report's 5/5 passing tests still fail closed at the missing-attestation predicate. After the correction, the same identity passes source-manifest authentication only when the exact correction review has a genuine accepted PASS.
+  - Positive evidence binds source base 1784cbe67eeb06d49d9202e66969e46ca98c15cd, source commit 5013c8404a6c9c3c08ac2800f66f7b5f5f035703, archive transition 3dd84a7bb2abc683ed2403e4303bd054d990f372, reviewed main 38545e4c12b848861284d77c299790c046df6f62, manifest Git blobs add5794ffa67a02185c8d8c33427bab933df2167 and cf955038a80f8558b93c840852ddfcaa516d8df5, exporter source workstream/run, preserved review workstream/run 20261101T181049Z-ec613c8a7c18, and claim/worktree run 20261101T181128Z-265f4bc374a4.
+  - Real-Git negative tests reject wrong source revisions, any source blob/mode/path mutation, wrong archive/merge parent or tree, wrong old/new manifest blob or any unexpected manifest change, missing/forged/non-PASS/unaccepted correction review, wrong review packet/outcome/run, unrelated workstreams, and any exception without the exact original preserved review identity.
+  - The accepted correction PASS is required from canonical archived review outcome/receipt verification; a synthetic test PASS cannot activate the real attestation. The original host run, claim/run files, branch/ref, worktree, lock and hashes remain unchanged.
+  - No new validation-manifest entry is needed; existing paired_review_runner_unit covers the changed host-validator and regression-test paths. Focused tests and complete changed-file validation pass.
+  - The attestation does not itself mark the exporter review passed. Only after the correction review is genuinely accepted may the preserved original review be continued through an exact fresh recovery plan, whose apply remains subject to its separately authorized exact plan SHA.
+- Validation:
+  - Add the real-Git exact-case regression before implementation changes and confirm it fails for the missing accepted attestation.
+  - Exercise the preserved reviewed-main and source-span identities from repository Git objects; do not mutate the original review branch/worktree/run evidence.
+  - Run focused paired-review host validation tests, then `python3 custodian/tools/agent/test_paired_review_runner.py`, relevant packet/review contract tests, `python3 custodian/tools/validation/run_validation.py --changed --base origin/main --json`, and `git diff --check`.
+  - Verify the original review run files and exact claim/ref/worktree/lock before and after; require byte-identical evidence and no reviewer launch from this correction implementation.
+- Task overrides: none
+- Deferred: Any broader validation-manifest source policy; all changes to other review-source attestations; continuation/apply of the preserved exporter review until genuine correction-review acceptance and a separately authorized exact recovery apply.
+
+## Handoff
+
+- Next workstream: review-agent-wire-export-review-source-attestation-v1
+- Next packet state: dependency-gated
+- Refresh owner: execution-agent
+- ChatGPT/user planning refresh required: no
+- Authoring chat: not-recorded
+- Refresh reason: Recheck that both source-provenance and host-validation locks are released and reconstruct the exact preserved review/run identities from immutable evidence before claiming.
+- Next action: Claim only after dispatcher confirms both declared locks are free; complete the exact correction and obtain its fresh-context independent review PASS before preparing the original review recovery plan.
+- Blockers or open questions: Dispatcher audit currently reports paired-review-source-provenance held by review-agent-paired-review-procession-doc-scope-recovery-v1 and paired-review-host-validation held by review-agent-paired-review-host-validation-recovery-v1-review-corrections-1. Both are declared locks so dispatch will keep this packet blocked until their owners release them.

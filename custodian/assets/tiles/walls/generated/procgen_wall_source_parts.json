@@ -1,0 +1,1880 @@
+{
+  "schema": "custodian.wall_parts.v1",
+  "generated_at": "2026-05-02T18:36:04.425492+00:00",
+  "source": "custodian/content/tiles/walls/source/procgen_wall_modules_source.png",
+  "extraction_mode": "alpha_components",
+  "tile_size": 32,
+  "padding": 2,
+  "alpha_threshold": 1,
+  "min_area": 16,
+  "atlas": "custodian/assets/tiles/walls/generated/procgen_wall_source_atlas.png",
+  "parts_dir": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts",
+  "parts": [
+    {
+      "id": "wall_part_000",
+      "kind": "long_straight",
+      "source_rect": [
+        5,
+        2,
+        221,
+        32
+      ],
+      "atlas_rect": [
+        0,
+        0,
+        225,
+        36
+      ],
+      "size_px": [
+        225,
+        36
+      ],
+      "size_tiles_guess": [
+        7,
+        1
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_000.png",
+      "area": 6634
+    },
+    {
+      "id": "wall_part_001",
+      "kind": "short_straight",
+      "source_rect": [
+        5,
+        35,
+        62,
+        32
+      ],
+      "atlas_rect": [
+        227,
+        0,
+        66,
+        36
+      ],
+      "size_px": [
+        66,
+        36
+      ],
+      "size_tiles_guess": [
+        2,
+        1
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_001.png",
+      "area": 1855
+    },
+    {
+      "id": "wall_part_002",
+      "kind": "short_straight",
+      "source_rect": [
+        200,
+        35,
+        64,
+        32
+      ],
+      "atlas_rect": [
+        295,
+        0,
+        68,
+        36
+      ],
+      "size_px": [
+        68,
+        36
+      ],
+      "size_tiles_guess": [
+        2,
+        1
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_002.png",
+      "area": 1918
+    },
+    {
+      "id": "wall_part_003",
+      "kind": "short_straight",
+      "source_rect": [
+        69,
+        36,
+        63,
+        31
+      ],
+      "atlas_rect": [
+        365,
+        0,
+        67,
+        35
+      ],
+      "size_px": [
+        67,
+        35
+      ],
+      "size_tiles_guess": [
+        2,
+        1
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_003.png",
+      "area": 1825
+    },
+    {
+      "id": "wall_part_004",
+      "kind": "short_straight",
+      "source_rect": [
+        135,
+        36,
+        63,
+        31
+      ],
+      "atlas_rect": [
+        434,
+        0,
+        67,
+        35
+      ],
+      "size_px": [
+        67,
+        35
+      ],
+      "size_tiles_guess": [
+        2,
+        1
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_004.png",
+      "area": 1843
+    },
+    {
+      "id": "wall_part_005",
+      "kind": "vertical_end_or_pillar",
+      "source_rect": [
+        2,
+        69,
+        32,
+        120
+      ],
+      "atlas_rect": [
+        503,
+        0,
+        36,
+        124
+      ],
+      "size_px": [
+        36,
+        124
+      ],
+      "size_tiles_guess": [
+        1,
+        4
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_005.png",
+      "area": 3208
+    },
+    {
+      "id": "wall_part_006",
+      "kind": "short_straight",
+      "source_rect": [
+        35,
+        69,
+        32,
+        35
+      ],
+      "atlas_rect": [
+        541,
+        0,
+        36,
+        39
+      ],
+      "size_px": [
+        36,
+        39
+      ],
+      "size_tiles_guess": [
+        1,
+        2
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_006.png",
+      "area": 992
+    },
+    {
+      "id": "wall_part_007",
+      "kind": "short_straight",
+      "source_rect": [
+        69,
+        69,
+        32,
+        35
+      ],
+      "atlas_rect": [
+        579,
+        0,
+        36,
+        39
+      ],
+      "size_px": [
+        36,
+        39
+      ],
+      "size_tiles_guess": [
+        1,
+        2
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_007.png",
+      "area": 1016
+    },
+    {
+      "id": "wall_part_008",
+      "kind": "short_straight",
+      "source_rect": [
+        102,
+        69,
+        29,
+        35
+      ],
+      "atlas_rect": [
+        617,
+        0,
+        33,
+        39
+      ],
+      "size_px": [
+        33,
+        39
+      ],
+      "size_tiles_guess": [
+        1,
+        2
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_008.png",
+      "area": 902
+    },
+    {
+      "id": "wall_part_009",
+      "kind": "short_straight",
+      "source_rect": [
+        135,
+        69,
+        32,
+        35
+      ],
+      "atlas_rect": [
+        652,
+        0,
+        36,
+        39
+      ],
+      "size_px": [
+        36,
+        39
+      ],
+      "size_tiles_guess": [
+        1,
+        2
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_009.png",
+      "area": 998
+    },
+    {
+      "id": "wall_part_010",
+      "kind": "short_straight",
+      "source_rect": [
+        167,
+        69,
+        31,
+        35
+      ],
+      "atlas_rect": [
+        690,
+        0,
+        35,
+        39
+      ],
+      "size_px": [
+        35,
+        39
+      ],
+      "size_tiles_guess": [
+        1,
+        2
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_010.png",
+      "area": 972
+    },
+    {
+      "id": "wall_part_011",
+      "kind": "short_straight",
+      "source_rect": [
+        200,
+        69,
+        32,
+        36
+      ],
+      "atlas_rect": [
+        727,
+        0,
+        36,
+        40
+      ],
+      "size_px": [
+        36,
+        40
+      ],
+      "size_tiles_guess": [
+        1,
+        2
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_011.png",
+      "area": 1029
+    },
+    {
+      "id": "wall_part_012",
+      "kind": "short_straight",
+      "source_rect": [
+        233,
+        69,
+        31,
+        36
+      ],
+      "atlas_rect": [
+        765,
+        0,
+        35,
+        40
+      ],
+      "size_px": [
+        35,
+        40
+      ],
+      "size_tiles_guess": [
+        1,
+        2
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_012.png",
+      "area": 1035
+    },
+    {
+      "id": "wall_part_013",
+      "kind": "short_straight",
+      "source_rect": [
+        35,
+        113,
+        32,
+        33
+      ],
+      "atlas_rect": [
+        802,
+        0,
+        36,
+        37
+      ],
+      "size_px": [
+        36,
+        37
+      ],
+      "size_tiles_guess": [
+        1,
+        2
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_013.png",
+      "area": 925
+    },
+    {
+      "id": "wall_part_014",
+      "kind": "short_straight",
+      "source_rect": [
+        69,
+        113,
+        32,
+        32
+      ],
+      "atlas_rect": [
+        840,
+        0,
+        36,
+        36
+      ],
+      "size_px": [
+        36,
+        36
+      ],
+      "size_tiles_guess": [
+        1,
+        1
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_014.png",
+      "area": 906
+    },
+    {
+      "id": "wall_part_015",
+      "kind": "short_straight",
+      "source_rect": [
+        102,
+        113,
+        29,
+        32
+      ],
+      "atlas_rect": [
+        878,
+        0,
+        33,
+        36
+      ],
+      "size_px": [
+        33,
+        36
+      ],
+      "size_tiles_guess": [
+        1,
+        1
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_015.png",
+      "area": 841
+    },
+    {
+      "id": "wall_part_016",
+      "kind": "short_straight",
+      "source_rect": [
+        134,
+        113,
+        64,
+        32
+      ],
+      "atlas_rect": [
+        913,
+        0,
+        68,
+        36
+      ],
+      "size_px": [
+        68,
+        36
+      ],
+      "size_tiles_guess": [
+        2,
+        1
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_016.png",
+      "area": 1843
+    },
+    {
+      "id": "wall_part_017",
+      "kind": "short_straight",
+      "source_rect": [
+        200,
+        113,
+        64,
+        33
+      ],
+      "atlas_rect": [
+        0,
+        126,
+        68,
+        37
+      ],
+      "size_px": [
+        68,
+        37
+      ],
+      "size_tiles_guess": [
+        2,
+        2
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_017.png",
+      "area": 1926
+    },
+    {
+      "id": "wall_part_018",
+      "kind": "short_straight",
+      "source_rect": [
+        36,
+        154,
+        31,
+        36
+      ],
+      "atlas_rect": [
+        70,
+        126,
+        35,
+        40
+      ],
+      "size_px": [
+        35,
+        40
+      ],
+      "size_tiles_guess": [
+        1,
+        2
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_018.png",
+      "area": 939
+    },
+    {
+      "id": "wall_part_019",
+      "kind": "short_straight",
+      "source_rect": [
+        69,
+        154,
+        32,
+        36
+      ],
+      "atlas_rect": [
+        107,
+        126,
+        36,
+        40
+      ],
+      "size_px": [
+        36,
+        40
+      ],
+      "size_tiles_guess": [
+        1,
+        2
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_019.png",
+      "area": 1006
+    },
+    {
+      "id": "wall_part_020",
+      "kind": "short_straight",
+      "source_rect": [
+        102,
+        154,
+        30,
+        36
+      ],
+      "atlas_rect": [
+        145,
+        126,
+        34,
+        40
+      ],
+      "size_px": [
+        34,
+        40
+      ],
+      "size_tiles_guess": [
+        1,
+        2
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_020.png",
+      "area": 909
+    },
+    {
+      "id": "wall_part_021",
+      "kind": "medium_straight",
+      "source_rect": [
+        133,
+        154,
+        65,
+        85
+      ],
+      "atlas_rect": [
+        181,
+        126,
+        69,
+        89
+      ],
+      "size_px": [
+        69,
+        89
+      ],
+      "size_tiles_guess": [
+        3,
+        3
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_021.png",
+      "area": 4674
+    },
+    {
+      "id": "wall_part_022",
+      "kind": "short_straight",
+      "source_rect": [
+        200,
+        154,
+        64,
+        80
+      ],
+      "atlas_rect": [
+        252,
+        126,
+        68,
+        84
+      ],
+      "size_px": [
+        68,
+        84
+      ],
+      "size_tiles_guess": [
+        2,
+        3
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_022.png",
+      "area": 4544
+    },
+    {
+      "id": "wall_part_023",
+      "kind": "short_straight",
+      "source_rect": [
+        3,
+        198,
+        30,
+        35
+      ],
+      "atlas_rect": [
+        322,
+        126,
+        34,
+        39
+      ],
+      "size_px": [
+        34,
+        39
+      ],
+      "size_tiles_guess": [
+        1,
+        2
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_023.png",
+      "area": 806
+    },
+    {
+      "id": "wall_part_024",
+      "kind": "short_straight",
+      "source_rect": [
+        35,
+        198,
+        31,
+        35
+      ],
+      "atlas_rect": [
+        358,
+        126,
+        35,
+        39
+      ],
+      "size_px": [
+        35,
+        39
+      ],
+      "size_tiles_guess": [
+        1,
+        2
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_024.png",
+      "area": 838
+    },
+    {
+      "id": "wall_part_025",
+      "kind": "short_straight",
+      "source_rect": [
+        69,
+        199,
+        32,
+        40
+      ],
+      "atlas_rect": [
+        395,
+        126,
+        36,
+        44
+      ],
+      "size_px": [
+        36,
+        44
+      ],
+      "size_tiles_guess": [
+        1,
+        2
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_025.png",
+      "area": 1082
+    },
+    {
+      "id": "wall_part_026",
+      "kind": "short_straight",
+      "source_rect": [
+        102,
+        199,
+        30,
+        40
+      ],
+      "atlas_rect": [
+        433,
+        126,
+        34,
+        44
+      ],
+      "size_px": [
+        34,
+        44
+      ],
+      "size_tiles_guess": [
+        1,
+        2
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_026.png",
+      "area": 1012
+    },
+    {
+      "id": "wall_part_027",
+      "kind": "short_straight",
+      "source_rect": [
+        3,
+        240,
+        29,
+        39
+      ],
+      "atlas_rect": [
+        469,
+        126,
+        33,
+        43
+      ],
+      "size_px": [
+        33,
+        43
+      ],
+      "size_tiles_guess": [
+        1,
+        2
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_027.png",
+      "area": 786
+    },
+    {
+      "id": "wall_part_028",
+      "kind": "short_straight",
+      "source_rect": [
+        34,
+        240,
+        33,
+        39
+      ],
+      "atlas_rect": [
+        504,
+        126,
+        37,
+        43
+      ],
+      "size_px": [
+        37,
+        43
+      ],
+      "size_tiles_guess": [
+        2,
+        2
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_028.png",
+      "area": 804
+    },
+    {
+      "id": "wall_part_029",
+      "kind": "short_straight",
+      "source_rect": [
+        133,
+        242,
+        33,
+        37
+      ],
+      "atlas_rect": [
+        543,
+        126,
+        37,
+        41
+      ],
+      "size_px": [
+        37,
+        41
+      ],
+      "size_tiles_guess": [
+        2,
+        2
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_029.png",
+      "area": 1073
+    },
+    {
+      "id": "wall_part_030",
+      "kind": "long_straight",
+      "source_rect": [
+        133,
+        242,
+        132,
+        58
+      ],
+      "atlas_rect": [
+        582,
+        126,
+        136,
+        62
+      ],
+      "size_px": [
+        136,
+        62
+      ],
+      "size_tiles_guess": [
+        5,
+        2
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_030.png",
+      "area": 5359
+    },
+    {
+      "id": "wall_part_031",
+      "kind": "short_straight",
+      "source_rect": [
+        69,
+        244,
+        32,
+        35
+      ],
+      "atlas_rect": [
+        720,
+        126,
+        36,
+        39
+      ],
+      "size_px": [
+        36,
+        39
+      ],
+      "size_tiles_guess": [
+        1,
+        2
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_031.png",
+      "area": 1016
+    },
+    {
+      "id": "wall_part_032",
+      "kind": "short_straight",
+      "source_rect": [
+        102,
+        244,
+        31,
+        35
+      ],
+      "atlas_rect": [
+        758,
+        126,
+        35,
+        39
+      ],
+      "size_px": [
+        35,
+        39
+      ],
+      "size_tiles_guess": [
+        1,
+        2
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_032.png",
+      "area": 997
+    },
+    {
+      "id": "wall_part_033",
+      "kind": "long_straight",
+      "source_rect": [
+        4,
+        285,
+        130,
+        15
+      ],
+      "atlas_rect": [
+        795,
+        126,
+        134,
+        19
+      ],
+      "size_px": [
+        134,
+        19
+      ],
+      "size_tiles_guess": [
+        5,
+        1
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_033.png",
+      "area": 1683
+    },
+    {
+      "id": "wall_part_034",
+      "kind": "medium_straight",
+      "source_rect": [
+        4,
+        310,
+        128,
+        17
+      ],
+      "atlas_rect": [
+        0,
+        217,
+        132,
+        21
+      ],
+      "size_px": [
+        132,
+        21
+      ],
+      "size_tiles_guess": [
+        4,
+        1
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_034.png",
+      "area": 2039
+    },
+    {
+      "id": "wall_part_035",
+      "kind": "short_straight",
+      "source_rect": [
+        3,
+        329,
+        31,
+        33
+      ],
+      "atlas_rect": [
+        134,
+        217,
+        35,
+        37
+      ],
+      "size_px": [
+        35,
+        37
+      ],
+      "size_tiles_guess": [
+        1,
+        2
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_035.png",
+      "area": 897
+    },
+    {
+      "id": "wall_part_036",
+      "kind": "short_straight",
+      "source_rect": [
+        36,
+        329,
+        30,
+        32
+      ],
+      "atlas_rect": [
+        171,
+        217,
+        34,
+        36
+      ],
+      "size_px": [
+        34,
+        36
+      ],
+      "size_tiles_guess": [
+        1,
+        1
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_036.png",
+      "area": 874
+    },
+    {
+      "id": "wall_part_037",
+      "kind": "short_straight",
+      "source_rect": [
+        69,
+        329,
+        31,
+        32
+      ],
+      "atlas_rect": [
+        207,
+        217,
+        35,
+        36
+      ],
+      "size_px": [
+        35,
+        36
+      ],
+      "size_tiles_guess": [
+        1,
+        1
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_037.png",
+      "area": 883
+    },
+    {
+      "id": "wall_part_038",
+      "kind": "short_straight",
+      "source_rect": [
+        102,
+        329,
+        29,
+        32
+      ],
+      "atlas_rect": [
+        244,
+        217,
+        33,
+        36
+      ],
+      "size_px": [
+        33,
+        36
+      ],
+      "size_tiles_guess": [
+        1,
+        1
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_038.png",
+      "area": 853
+    },
+    {
+      "id": "wall_part_039",
+      "kind": "short_straight",
+      "source_rect": [
+        133,
+        329,
+        32,
+        32
+      ],
+      "atlas_rect": [
+        279,
+        217,
+        36,
+        36
+      ],
+      "size_px": [
+        36,
+        36
+      ],
+      "size_tiles_guess": [
+        1,
+        1
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_039.png",
+      "area": 894
+    },
+    {
+      "id": "wall_part_040",
+      "kind": "short_straight",
+      "source_rect": [
+        167,
+        329,
+        31,
+        32
+      ],
+      "atlas_rect": [
+        317,
+        217,
+        35,
+        36
+      ],
+      "size_px": [
+        35,
+        36
+      ],
+      "size_tiles_guess": [
+        1,
+        1
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_040.png",
+      "area": 890
+    },
+    {
+      "id": "wall_part_041",
+      "kind": "short_straight",
+      "source_rect": [
+        200,
+        329,
+        64,
+        32
+      ],
+      "atlas_rect": [
+        354,
+        217,
+        68,
+        36
+      ],
+      "size_px": [
+        68,
+        36
+      ],
+      "size_tiles_guess": [
+        2,
+        1
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_041.png",
+      "area": 1940
+    },
+    {
+      "id": "wall_part_042",
+      "kind": "short_straight",
+      "source_rect": [
+        3,
+        380,
+        64,
+        15
+      ],
+      "atlas_rect": [
+        424,
+        217,
+        68,
+        19
+      ],
+      "size_px": [
+        68,
+        19
+      ],
+      "size_tiles_guess": [
+        2,
+        1
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_042.png",
+      "area": 861
+    },
+    {
+      "id": "wall_part_043",
+      "kind": "short_straight",
+      "source_rect": [
+        69,
+        381,
+        63,
+        14
+      ],
+      "atlas_rect": [
+        494,
+        217,
+        67,
+        18
+      ],
+      "size_px": [
+        67,
+        18
+      ],
+      "size_tiles_guess": [
+        2,
+        1
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_043.png",
+      "area": 873
+    },
+    {
+      "id": "wall_part_044",
+      "kind": "short_straight",
+      "source_rect": [
+        135,
+        381,
+        63,
+        14
+      ],
+      "atlas_rect": [
+        563,
+        217,
+        67,
+        18
+      ],
+      "size_px": [
+        67,
+        18
+      ],
+      "size_tiles_guess": [
+        2,
+        1
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_044.png",
+      "area": 868
+    },
+    {
+      "id": "wall_part_045",
+      "kind": "short_straight",
+      "source_rect": [
+        200,
+        381,
+        64,
+        14
+      ],
+      "atlas_rect": [
+        632,
+        217,
+        68,
+        18
+      ],
+      "size_px": [
+        68,
+        18
+      ],
+      "size_tiles_guess": [
+        2,
+        1
+      ],
+      "tags": [],
+      "anchor": "bottom_left",
+      "file": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts/wall_part_045.png",
+      "area": 850
+    }
+  ],
+  "skipped_components": [
+    {
+      "source_rect": [
+        166,
+        85,
+        1,
+        2
+      ],
+      "area": 2
+    },
+    {
+      "source_rect": [
+        260,
+        244,
+        1,
+        2
+      ],
+      "area": 2
+    },
+    {
+      "source_rect": [
+        166,
+        34,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        134,
+        35,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        5,
+        46,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        31,
+        72,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        31,
+        77,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        102,
+        82,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        164,
+        82,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        102,
+        101,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        107,
+        104,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        247,
+        109,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        233,
+        121,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        230,
+        123,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        133,
+        131,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        133,
+        133,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        133,
+        172,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        133,
+        177,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        195,
+        189,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        210,
+        189,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        213,
+        189,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        153,
+        196,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        249,
+        196,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        154,
+        197,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        133,
+        227,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        133,
+        229,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        133,
+        231,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        149,
+        235,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        259,
+        235,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        148,
+        236,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        129,
+        237,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        251,
+        245,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        257,
+        245,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        262,
+        245,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        229,
+        246,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        231,
+        246,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        237,
+        247,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        64,
+        260,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        133,
+        261,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        33,
+        263,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        166,
+        272,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        198,
+        276,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        31,
+        278,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        195,
+        278,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        225,
+        278,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        133,
+        289,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        133,
+        298,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        50,
+        299,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        95,
+        299,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        200,
+        299,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        42,
+        329,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        33,
+        339,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        99,
+        340,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        200,
+        341,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        99,
+        359,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        18,
+        364,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        95,
+        364,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        230,
+        364,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        257,
+        364,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        240,
+        365,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        8,
+        378,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        15,
+        379,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        1,
+        390,
+        1,
+        1
+      ],
+      "area": 1
+    },
+    {
+      "source_rect": [
+        130,
+        395,
+        1,
+        1
+      ],
+      "area": 1
+    }
+  ]
+}

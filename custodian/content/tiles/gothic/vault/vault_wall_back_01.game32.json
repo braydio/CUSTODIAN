@@ -1,0 +1,79 @@
+{
+  "schema": "game32.asset.v2",
+  "id": "vault_wall_back_01",
+  "display_name": "Vault Wall Back 01",
+  "source": {
+    "master_sheet": null,
+    "original_path": "res://content/tiles/gothic/vault/vault_wall_back_01.png",
+    "section": "tiles",
+    "subtype": "vault",
+    "source_rect_px": {
+      "x": 0,
+      "y": 0,
+      "w": 32,
+      "h": 32
+    },
+    "review_source": "human_llm_compact_review",
+    "review_status": "reviewed"
+  },
+  "file": {
+    "path": "res://content/tiles/gothic/vault/vault_wall_back_01.png",
+    "pixel_size": {
+      "w": 32,
+      "h": 32
+    }
+  },
+  "classification": {
+    "asset_type": "walls",
+    "semantic_role": "vault_back_wall_segment",
+    "placement_layer": "wall",
+    "tags": [
+      "gothic",
+      "wall",
+      "blocking",
+      "vault",
+      "back_wall",
+      "stone",
+      "interior_wall"
+    ],
+    "review_status": "reviewed"
+  },
+  "placement": {
+    "tile_size": 32,
+    "footprint_tiles": {
+      "w": 1,
+      "h": 1
+    },
+    "origin_mode": "bottom_center",
+    "snap": "tile",
+    "allow_mirror_x": false,
+    "allow_rotation": false,
+    "y_sort": true,
+    "pivot_px": {
+      "x": 16,
+      "y": 32
+    },
+    "review_status": "reviewed"
+  },
+  "collision": {
+    "blocks_movement": true,
+    "blocks_sight": true,
+    "cover_value": 2,
+    "review_status": "reviewed",
+    "collision_shape": "footprint"
+  },
+  "procgen": {
+    "uses": [
+      "vault_wall",
+      "back_wall",
+      "interior_wall",
+      "storage_room_boundary"
+    ],
+    "weight": 20,
+    "can_spawn_indoor": true,
+    "can_spawn_outdoor": true,
+    "review_status": "reviewed",
+    "supports_gothic_compound": true
+  },
+  "master_index": 10
+}

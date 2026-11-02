@@ -1,0 +1,1 @@
+{"schema":"custodian.operator_animation_recipe.v1","kind":"heavy_attack","loop":false,"required_landmarks":["head_center","hip_center","weapon_grip","weapon_tip"],"qa":["registration","silhouette","weapon"],"constraints":["preserve frame count, timing, and hit windows","keep grip welded","maintain readable anticipation"]}

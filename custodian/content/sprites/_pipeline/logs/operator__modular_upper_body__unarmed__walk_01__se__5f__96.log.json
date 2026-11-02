@@ -1,0 +1,12 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__modular_upper_body__unarmed__walk_01__se__5f__96.json",
+	"outputs": [
+		"res://content/sprites/operator/new_operator/modular/walk/operator__modular_upper_body__unarmed__walk_01__se__5f__96.png",
+		"res://content/sprites/operator/new_operator/modular/walk/operator__modular_upper_body__unarmed__walk_01__sw__5f__96.png"
+	],
+	"post_process": [
+		"operator_modular_runtime"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/operator__modular_upper_body__unarmed__walk_01__se__5f__96.png",
+	"timestamp_utc": "2026-07-24 05:06:17"
+}
