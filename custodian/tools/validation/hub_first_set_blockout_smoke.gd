@@ -4,17 +4,18 @@ const MAP_SCENE := preload("res://game/world/hub/first_set/hub_first_set_map.tsc
 const PLAYTEST_SCENE := preload("res://scenes/hub_first_set_blockout_playtest.tscn")
 const OPERATOR_SCENE := preload("res://game/actors/operator/operator.tscn")
 const LAYOUT := preload("res://game/world/hub/first_set/hub_first_set_layout.gd")
+const GARDENS := preload("res://game/world/hub/first_set/sepulcher_gardens_geometry_v1.gd")
 const EXPECTED_ENVELOPES := {
-	"north_processional": Rect2i(72, 97, 32, 36),
-	"ashen_forum": Rect2i(48, 46, 80, 56),
-	"sepulcher_gardens": Rect2i(8, 50, 36, 44),
-	"sepulcher_north_connector": Rect2i(44, 68, 4, 8),
-	"sepulcher_south_connector": Rect2i(44, 85, 4, 8),
-	"lower_archive_rise": Rect2i(66, 9, 44, 40),
-	"crown_transfer_court": Rect2i(110, 14, 24, 24),
-	"muster_court": Rect2i(132, 56, 34, 44),
-	"muster_connector": Rect2i(128, 70, 4, 10),
-	"continuity_port_chamber": Rect2i(166, 64, 22, 28),
+	"north_processional": Rect2i(113, 97, 32, 36),
+	"ashen_forum": Rect2i(89, 46, 80, 56),
+	"sepulcher_gardens": Rect2i(0, 32, 96, 84),
+	"sepulcher_north_connector": Rect2i(85, 68, 4, 8),
+	"sepulcher_south_connector": Rect2i(85, 85, 4, 8),
+	"lower_archive_rise": Rect2i(107, 9, 44, 40),
+	"crown_transfer_court": Rect2i(151, 14, 24, 24),
+	"muster_court": Rect2i(173, 56, 34, 44),
+	"muster_connector": Rect2i(169, 70, 4, 10),
+	"continuity_port_chamber": Rect2i(207, 64, 22, 28),
 }
 const TARGET_MARKERS := [
 	"ForumSouth", "AdjudicationDais", "ForumNorth", "WestGardenThreshold",
@@ -41,6 +42,7 @@ func _run() -> void:
 	await process_frame
 	_check_layout_and_map(map, failures)
 	_check_raw_navigation(map, failures)
+	_check_debug_overlay_presentation_only(map, failures)
 	var clearance_metrics := await _check_operator_clearance(map, failures)
 	_check_road_ownership(map, failures)
 	_check_lifecycle_is_inert(map, failures)
@@ -68,10 +70,10 @@ func _run() -> void:
 func _check_layout_and_map(map: HubFirstSetMap, failures: Array[String]) -> void:
 	_expect(map.camera_bounds == LAYOUT.WORLD_BOUNDS, "world bounds mismatch", failures)
 	_expect(LAYOUT.GRID_SIZE * LAYOUT.CELL_SIZE == LAYOUT.WORLD_BOUNDS.size, "grid does not span bounds", failures)
-	_expect(LAYOUT.GRID_ORIGIN == Vector2(-2816, -5504), "grid origin mismatch", failures)
+	_expect(LAYOUT.GRID_ORIGIN == Vector2(-4128, -5504), "grid origin mismatch", failures)
 	_expect(LAYOUT.THRESHOLD_VOLUME == Rect2(3104, -3072, 96, 128), "campaign threshold volume mismatch", failures)
 	_expect(map.blockout_grid.authored_cell_size == 32.0, "cell size mismatch", failures)
-	_expect(map.blockout_grid.map_size_cells == Vector2i(188, 190), "grid dimensions mismatch", failures)
+	_expect(map.blockout_grid.map_size_cells == Vector2i(229, 190), "grid dimensions mismatch", failures)
 	_expect(map.blockout_grid.position == LAYOUT.GRID_ORIGIN, "grid position mismatch", failures)
 	_expect(map.has_spawn(&"Spawn_SouthReach"), "South Reach spawn missing", failures)
 	_expect(map.get_spawn_position(&"Spawn_SouthReach") == Vector2(-6, 162), "South Reach spawn mismatch", failures)
@@ -90,9 +92,16 @@ func _check_layout_and_map(map: HubFirstSetMap, failures: Array[String]) -> void
 		var rect: Rect2i = LAYOUT.ENVELOPES.get(envelope_name, Rect2i())
 		_expect(rect == EXPECTED_ENVELOPES[envelope_name], "spatial authority drift: %s" % envelope_name, failures)
 		_expect(rect.size.x >= 4 and rect.size.y >= 4, "authored route narrower than four cells: %s" % envelope_name, failures)
+		if envelope_name == "sepulcher_gardens":
+			continue # garden rectangle is authoring canvas; exact mask is checked below
 		for y in range(rect.position.y, rect.end.y):
 			for x in range(rect.position.x, rect.end.x):
 				_expect(map.blockout_grid.is_walkable_cell(Vector2i(x, y)), "envelope cell missing from walkability: %s at (%d,%d)" % [envelope_name, x, y], failures)
+	_expect(GARDENS.total_walkable_cells() == 3977, "Garden mask density or data drift", failures)
+	for y in 84:
+		for x in 89:
+			var cell := Vector2i(x, y + GARDENS.HUB_GRID_OFFSET.y)
+			_expect(map.blockout_grid.is_walkable_cell(cell) == GARDENS.is_gardens_walkable_hub_cell(cell), "Garden mask mismatch at (%d,%d)" % [x, y], failures)
 	_expect(LAYOUT.ENVELOPES["sepulcher_north_connector"].size == Vector2i(4, 8), "north garden connector is not 4x8", failures)
 	_expect(LAYOUT.ENVELOPES["sepulcher_south_connector"].size == Vector2i(4, 8), "south garden connector is not 4x8", failures)
 	_expect(LAYOUT.MARKERS["Spawn_CampaignReturn"] == Vector2(2592, -3008), "campaign return is not the Port west bay", failures)
@@ -112,13 +121,37 @@ func _check_raw_navigation(map: HubFirstSetMap, failures: Array[String]) -> void
 		_expect(not map.authored_navigation.compute_path(LAYOUT.MARKERS["Spawn_SouthReach"], LAYOUT.MARKERS[marker_name]).is_empty(), "navigation provider disconnected at %s" % marker_name, failures)
 	_expect(_all_connected(walkable), "raw walkability contains an isolated component", failures)
 	var garden_cycle := _garden_cycle_cells(walkable)
-	var north_mouth := Vector2i(48, 72)
-	var south_mouth := Vector2i(48, 89)
+	var north_mouth := Vector2i(89, 72)
+	var south_mouth := Vector2i(89, 89)
 	_expect(_can_reach(garden_cycle, north_mouth, south_mouth), "Sepulcher loop does not enter one connector and leave the other", failures)
 	for route_name in ["north connector", "south connector"]:
 		var connector_name := "sepulcher_north_connector" if route_name == "north connector" else "sepulcher_south_connector"
 		var connector: Rect2i = LAYOUT.ENVELOPES[connector_name]
 		_expect(_has_connected_rectangle(walkable, connector), "%s is not fully walkable" % route_name, failures)
+
+
+func _check_debug_overlay_presentation_only(map: HubFirstSetMap, failures: Array[String]) -> void:
+	var overlay := map.get_node_or_null("SepulcherGardensGeometryDebug") as CanvasItem
+	_expect(overlay != null and not overlay.visible, "geometry preview must exist hidden by default", failures)
+	if overlay == null:
+		return
+	var walkable_count := map.blockout_grid.get_walkable_cells().size()
+	var boundary_segments := map.get_boundary_segments()
+	var nav_path := map.authored_navigation.compute_path(
+		LAYOUT.MARKERS["Spawn_SouthReach"], LAYOUT.MARKERS["WestGardenThreshold"]
+	)
+	var toggle := InputEventKey.new()
+	toggle.pressed = true
+	toggle.keycode = KEY_F8
+	map._unhandled_input(toggle)
+	_expect(overlay.visible, "F8 must show the geometry preview", failures)
+	_expect(map.blockout_grid.get_walkable_cells().size() == walkable_count, "geometry preview changed walkability", failures)
+	_expect(map.get_boundary_segments() == boundary_segments, "geometry preview changed collision boundaries", failures)
+	_expect(map.authored_navigation.compute_path(
+		LAYOUT.MARKERS["Spawn_SouthReach"], LAYOUT.MARKERS["WestGardenThreshold"]
+	) == nav_path, "geometry preview changed navigation", failures)
+	map._unhandled_input(toggle)
+	_expect(not overlay.visible, "second F8 must hide the geometry preview", failures)
 
 
 func _check_operator_clearance(map: HubFirstSetMap, failures: Array[String]) -> Dictionary:
@@ -157,7 +190,7 @@ func _check_operator_clearance(map: HubFirstSetMap, failures: Array[String]) -> 
 		if spawn_cell != Vector2i(-1, -1) and target_cell != Vector2i(-1, -1):
 			_expect(_can_reach(safe_cells, spawn_cell, target_cell), "Operator-clearance route disconnected at %s (capsule=%0.1f, rail=%0.1f)" % [marker_name, operator_clearance, rail_clearance], failures)
 	var garden_cycle := _garden_cycle_cells(safe_cells)
-	_expect(_can_reach(garden_cycle, Vector2i(48, 72), Vector2i(48, 89)), "Operator clearance breaks the two-connector Sepulcher loop", failures)
+	_expect(_can_reach(garden_cycle, Vector2i(89, 72), Vector2i(89, 89)), "Operator clearance breaks the two-connector Sepulcher loop", failures)
 	for connector_name in ["sepulcher_north_connector", "sepulcher_south_connector"]:
 		var connector: Rect2i = LAYOUT.ENVELOPES[connector_name]
 		_expect(_has_any_cell(safe_cells, connector), "Operator clearance closes %s" % connector_name, failures)
@@ -175,12 +208,10 @@ func _garden_cycle_cells(walkable: Dictionary) -> Dictionary:
 	var allowed: Dictionary = {}
 	for cell_variant: Variant in walkable:
 		var cell := cell_variant as Vector2i
-		if LAYOUT.ENVELOPES["sepulcher_gardens"].has_point(cell) \
-		or LAYOUT.ENVELOPES["sepulcher_north_connector"].has_point(cell) \
-		or LAYOUT.ENVELOPES["sepulcher_south_connector"].has_point(cell):
+		if GARDENS.is_gardens_walkable_hub_cell(cell):
 			allowed[cell] = true
-	allowed[Vector2i(48, 72)] = true
-	allowed[Vector2i(48, 89)] = true
+	allowed[Vector2i(89, 72)] = true
+	allowed[Vector2i(89, 89)] = true
 	return allowed
 
 

@@ -174,6 +174,8 @@ The central dais is presentation/interaction space, not a mandatory giant collis
 
 ### D. Sepulcher Gardens first loop
 
+**Historical H1 rectangle (superseded 2026-11-02):** The `Rect2(-2560,-3904,1152,1408)` / `Rect2i(8,50,36,44)` baseline below records the original first-loop proposal only. The active runtime geometry is the expanded irregular 96×84-cell mask in [SEPULCHER_GARDENS_GEOMETRY_V1.json](SEPULCHER_GARDENS_GEOMETRY_V1.json) and `hub_first_set_layout.gd`; do not restore or treat this old rectangle as walkability authority. Existing Forum, road, and grave-event world coordinates remain fixed.
+
 ```text
 envelope: Rect2(-2560,-3904,1152,1408)
 center:   (-1984,-3200)

@@ -5096,5 +5096,12 @@
   ],
   "documentation_drift": {
     "dust_lung_layer_pass": "Dust Lung V2 separates traversal/void/depth/occlusion in design yet its 8-item source manifest still mixes floor and structures; reconcile under independent DL0 owner before changing those assets."
+  },
+  "geometry_expansion_2026_11_02": {
+    "status": "blocking_geometry_change",
+    "runtime_geometry": "design/04_architecture/SEPULCHER_GARDENS_GEOMETRY_V1.json",
+    "superseded_underlay_target": "1152x1408 rectangular fully walkable Gardens",
+    "current_walkable_geometry": "3072x2688 authoring bounds with an exact 96x84 irregular mask; see runtime mask authority",
+    "generation_hold": "Do not generate or register a full-scene Gardens underlay until art inventory, dimensions, and modular ground coverage are reconciled to the irregular walkable mask. Existing paving is a material reference only; no artwork is approved by this geometry change."
   }
 }

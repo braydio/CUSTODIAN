@@ -2,6 +2,8 @@ class_name HubFirstSetMap
 extends AuthoredLevel2D
 
 const LAYOUT := preload("res://game/world/hub/first_set/hub_first_set_layout.gd")
+const GARDENS := preload("res://game/world/hub/first_set/sepulcher_gardens_geometry_v1.gd")
+const GARDENS_DEBUG := preload("res://game/world/hub/first_set/sepulcher_gardens_debug_overlay_v1.gd")
 const CROWN_TRANSFER_INGRESS_SCRIPT := preload(
 	"res://game/world/hub/hub_crown_transfer_ingress.gd"
 )
@@ -27,11 +29,12 @@ func _ready() -> void:
 	camera_bounds = LAYOUT.WORLD_BOUNDS
 	draw_placeholder_grid = false
 	blockout_grid.position = LAYOUT.GRID_ORIGIN
-	blockout_grid.configure(LAYOUT.CELL_SIZE, LAYOUT.GRID_SIZE, LAYOUT.WALKABLE_REGIONS, _visual_regions())
+	blockout_grid.configure(LAYOUT.CELL_SIZE, LAYOUT.GRID_SIZE, LAYOUT.all_walkable_regions(), _visual_regions())
 	blockout_grid.visible = true
 	authored_navigation.configure(blockout_grid)
 	_build_markers()
 	_build_labels()
+	_build_garden_geometry_preview()
 	super._ready()
 	add_to_group("world_origin_branch")
 	_build_crown_transfer_ingress()
@@ -83,14 +86,36 @@ func _rebuild_boundary_collision() -> void:
 func _visual_regions() -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
 	for region_name: Variant in LAYOUT.ENVELOPES:
-		if str(region_name).ends_with("connector"):
+		if str(region_name).ends_with("connector") or str(region_name) == "sepulcher_gardens":
 			continue
 		result.append({
 			"name": str(region_name),
 			"rect": LAYOUT.ENVELOPES[region_name],
 			"color": LAYOUT.DISTRICT_COLORS[region_name],
 		})
+	for run in GARDENS.walkable_runs():
+		result.append({"name": "sepulcher_gardens", "rect": run, "color": LAYOUT.DISTRICT_COLORS["sepulcher_gardens"]})
 	return result
+
+
+func _build_garden_geometry_preview() -> void:
+	var preview := Node2D.new()
+	preview.name = "SepulcherGardensGeometryDebug"
+	preview.set_script(GARDENS_DEBUG)
+	preview.visible = false
+	add_child(preview)
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	# DEBUG BUILD ONLY: F8 toggles geography sketch; no gameplay authority.
+	if not OS.is_debug_build() or not event is InputEventKey:
+		return
+	var key := event as InputEventKey
+	if key.pressed and not key.echo and key.keycode == KEY_F8:
+		var overlay := get_node_or_null("SepulcherGardensGeometryDebug") as Node2D
+		if overlay != null:
+			overlay.visible = not overlay.visible
+			get_viewport().set_input_as_handled()
 
 
 func _build_markers() -> void:
