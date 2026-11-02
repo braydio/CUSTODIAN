@@ -460,6 +460,17 @@ the first-parent workstream commits as the owned source inventory, so upstream
 files imported by synchronization do not become authored task changes. An
 untraced merge or an ambiguous checkpoint/resume sequence remains invalid.
 
+For source-span closeout, a merge recorded as the exact `worktree_resumed.head`
+may be inherited upstream history when that full commit is on the current
+`origin/main` first-parent chain and its tree matches Git's deterministic merge
+result. This classification is limited to a run without checkpoint history;
+runs with checkpoints retain the strict authored checkpoint/resume or
+`main_sync` witness rules. The independent paired-review consumer verifies
+diagnostic trace snapshots are append-only and derives the inherited merge set
+from Git objects and pinned resume records. Imported upstream paths remain
+outside the workstream-owned source inventory. If the resume or main-history
+boundary cannot be established, closeout and its read-only preflight block.
+
 A failed initial `worktree add` may leave the exact claim and `worktree_create_begin`
 in the run trace without a `worktree_published` event. A recovered checkout is
 authenticated only by one matching claim, one create attempt, a recorded failed

@@ -152,6 +152,99 @@ class WorkstreamTests(unittest.TestCase):
                          head=merge_commit)
         return workstream_id, source_base, merge_commit, merge_second, trace
 
+    def _inherited_main_merge_fixture(self):
+        workstream_id = "agent-inherited-main-resume-fixture"
+        branch = workstream.branch_for(workstream_id)
+        active_packet = f"custodian/docs/ai_context/task_packets/{workstream_id.upper().replace('-', '_')}.md"
+        active = self.repo / active_packet
+        active.parent.mkdir(parents=True, exist_ok=True)
+        active.write_text(
+            f"# Fixture\n- Workstream: `{workstream_id}`\n- Status: `in_progress`\n"
+        )
+        git(self.repo, "add", active_packet)
+        git(self.repo, "commit", "-m", "publish inherited resume fixture")
+        claim_base = git(self.repo, "rev-parse", "HEAD")
+        git(self.repo, "checkout", "-b", branch)
+
+        run_id = "20261101T000000Z-abcdef123456"
+        claim_oid = git(
+            self.repo, "commit-tree", f"{claim_base}^{{tree}}", "-p", claim_base,
+            "-m", f"workstream claim {workstream_id} codex:{os.getpid()}:{run_id}",
+        )
+        trace = workstream.RunTrace.start(
+            self.repo, workstream_id, packet=active_packet, agent="codex", run_id=run_id,
+        )
+        trace.record(
+            "remote_claim_acquired",
+            remote_ref=f"refs/heads/dispatch-claims/{workstream_id}",
+            local_ref=f"refs/custodian/claims/{workstream_id}/{run_id}",
+            claim_oid=claim_oid, main_sha=claim_base,
+        )
+        trace.record(
+            "worktree_published", worktree=str(self.repo), branch=branch,
+            head=claim_base, upstream=claim_base, clean=True,
+        )
+
+        git(self.repo, "checkout", "main")
+        (self.repo / "upstream-linear.txt").write_text("published upstream\n")
+        git(self.repo, "add", "upstream-linear.txt")
+        git(self.repo, "commit", "-m", "publish upstream linear change")
+        side_base = git(self.repo, "rev-parse", "HEAD")
+        git(self.repo, "checkout", "-b", "upstream-topic")
+        (self.repo / "upstream-topic.txt").write_text("published topic\n")
+        git(self.repo, "add", "upstream-topic.txt")
+        git(self.repo, "commit", "-m", "publish upstream topic change")
+        git(self.repo, "checkout", "main")
+        (self.repo / "upstream-main.txt").write_text("published mainline\n")
+        git(self.repo, "add", "upstream-main.txt")
+        git(self.repo, "commit", "-m", "publish upstream mainline change")
+        git(self.repo, "merge", "--no-ff", "upstream-topic", "-m", "merge upstream topic")
+        inherited_head = git(self.repo, "rev-parse", "HEAD")
+        git(self.repo, "push", "origin", "main")
+        git(self.repo, "fetch", "origin")
+        self.assertEqual(git(self.repo, "rev-parse", "origin/main"), inherited_head)
+
+        git(self.repo, "checkout", branch)
+        self.assertEqual(git(self.repo, "rev-parse", "HEAD"), claim_base)
+        self.assertTrue(workstream.sync_main(self.repo))
+        self.assertEqual(git(self.repo, "rev-parse", "HEAD"), inherited_head)
+        trace.record("worktree_resumed", branch=branch, worktree=str(self.repo), head=inherited_head)
+        self.assertTrue(trace.publish())
+
+        (self.repo / "source.py").write_text("authored after resume\n")
+        git(self.repo, "add", "source.py")
+        git(self.repo, "commit", "-m", "author source after inherited resume")
+        source_head = git(self.repo, "rev-parse", "HEAD")
+        return workstream_id, claim_base, inherited_head, source_head, trace, side_base
+
+    def test_finish_source_span_accepts_authenticated_inherited_main_merge_prefix(self):
+        workstream_id, claim_base, inherited_head, source_head, trace, _ = (
+            self._inherited_main_merge_fixture()
+        )
+        self.assertEqual(git(self.repo, "rev-parse", f"{inherited_head}^1"),
+                         git(self.repo, "rev-parse", "origin/main^1"))
+        self.assertIsNone(workstream._source_span_sync_merge_witness_error(
+            workstream_id, self.repo, source_head, trace,
+        ))
+
+        original = trace.path.read_text()
+        events = [json.loads(line) for line in original.splitlines()]
+        resume = next(event for event in events if event["event"] == "worktree_resumed")
+        resume["data"]["head"] = source_head
+        trace.path.write_text("".join(json.dumps(event) + "\n" for event in events))
+        self.assertIsNotNone(workstream._source_span_sync_merge_witness_error(
+            workstream_id, self.repo, source_head, trace,
+        ))
+
+        trace.path.write_text(original)
+        events = [json.loads(line) for line in original.splitlines()]
+        resume = next(event for event in events if event["event"] == "worktree_resumed")
+        resume["data"]["worktree"] = str(self.base / "other-worktree")
+        trace.path.write_text("".join(json.dumps(event) + "\n" for event in events))
+        self.assertIsNotNone(workstream._source_span_sync_merge_witness_error(
+            workstream_id, self.repo, source_head, trace,
+        ))
+
     def _after_sync_witness(self, trace, sync_head: str, main_sha: str) -> None:
         identity = workstream._git_source_identity(self.repo, sync_head)
         trace.record("validation_after_sync", path="after-sync.json", sha256="a" * 64,

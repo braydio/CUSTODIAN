@@ -783,6 +783,47 @@ def _source_span_sync_merge_witness_error(workstream_id: str, path: Path,
            or event.get("workstream") != workstream_id
            or event.get("run_id") != trace.run_id for event in events):
         return "source-span lifecycle trace schema, data shape, or identity is inconsistent"
+
+    def diagnostic_trace_prefix_event_count() -> int | None:
+        ref = f"refs/custodian/diagnostics/{workstream_id}/{trace.run_id}"
+        history = subprocess.run(["git", "rev-list", "--reverse", ref], cwd=path,
+                                 text=True, capture_output=True)
+        if history.returncode or not history.stdout.splitlines():
+            return None
+        previous_commit = None
+        previous_blob = b""
+        for commit in history.stdout.splitlines():
+            parent_line = subprocess.run(["git", "rev-list", "--parents", "-n", "1", commit],
+                                         cwd=path, text=True, capture_output=True)
+            entries = subprocess.run(["git", "ls-tree", "-r", "-z", commit], cwd=path,
+                                     capture_output=True)
+            if (parent_line.returncode or entries.returncode
+                    or (previous_commit is None and len(parent_line.stdout.split()) != 1)
+                    or (previous_commit is not None
+                        and parent_line.stdout.split() != [commit, previous_commit])):
+                return None
+            rows = [row for row in entries.stdout.split(b"\0") if row]
+            if len(rows) != 1 or rows[0].split(b"\t", 1)[1] != b"trace.jsonl":
+                return None
+            fields = rows[0].split(b"\t", 1)[0].split()
+            if len(fields) != 3 or fields[:2] != [b"100644", b"blob"]:
+                return None
+            blob = subprocess.run(["git", "cat-file", "blob", fields[2].decode()],
+                                  cwd=path, capture_output=True)
+            if blob.returncode or not blob.stdout.startswith(previous_blob):
+                return None
+            previous_blob = blob.stdout
+            previous_commit = commit
+        try:
+            local = trace.path.read_bytes()
+        except OSError:
+            return None
+        if not local.startswith(previous_blob):
+            return None
+        return len(previous_blob.splitlines())
+
+    resumes = [(i, event) for i, event in enumerate(events)
+               if event.get("event") == "worktree_resumed"]
     main = git("rev-parse", "origin/main", cwd=path, check=False)
     if not main:
         return "cannot authenticate source-span synchronization parents without origin/main"
@@ -865,6 +906,28 @@ def _source_span_sync_merge_witness_error(workstream_id: str, path: Path,
         return "source-span lifecycle claim commit or published-worktree identity is invalid"
 
     source_base = claim_base
+    merge_history_probe = subprocess.run(
+        ["git", "rev-list", "--first-parent", "--reverse", f"{claim_base}..{source_head}"],
+        cwd=path, text=True, capture_output=True,
+    )
+    probe_commits = merge_history_probe.stdout.splitlines()
+    inherited_resume_positions = [
+        index for index, event in resumes
+        if isinstance(event.get("data"), dict) and event["data"].get("head") in probe_commits
+    ]
+    has_uncheckpointed_resume_merge = (
+        merge_history_probe.returncode == 0
+        and not any(event.get("event") == "checkpoint_completed" for event in events)
+        and bool(inherited_resume_positions)
+        and any(len(git("rev-list", "--parents", "-n", "1", commit, cwd=path).split()) > 2
+                for commit in probe_commits)
+    )
+    if has_uncheckpointed_resume_merge:
+        published_event_count = diagnostic_trace_prefix_event_count()
+        if published_event_count is None:
+            return "source-span inherited resume requires an append-only published diagnostic trace"
+        if any(index >= published_event_count for index in inherited_resume_positions):
+            return "source-span inherited resume is absent from the published diagnostic trace"
     if subprocess.run(["git", "merge-base", "--is-ancestor", source_base, source_head],
                       cwd=path, capture_output=True).returncode:
         return "source-span claim base is not an ancestor of its archive transition"
@@ -894,13 +957,51 @@ def _source_span_sync_merge_witness_error(workstream_id: str, path: Path,
                    if event.get("event") == "checkpoint_completed"]
     checkpoint_starts = [(i, event) for i, event in enumerate(events)
                          if event.get("event") == "checkpoint_started"]
-    resumes = [(i, event) for i, event in enumerate(events)
-               if event.get("event") == "worktree_resumed"]
     syncs = [(i, event) for i, event in enumerate(events)
              if event.get("event") == "main_sync"]
     consumed_resumes: set[int] = set()
     consumed_syncs: set[int] = set()
     consumed_checkpoints: set[int] = set()
+    main_first_parent = subprocess.run(
+        ["git", "rev-list", "--first-parent", "--reverse", main],
+        cwd=path, text=True, capture_output=True,
+    )
+    if main_first_parent.returncode:
+        return "cannot enumerate origin/main first-parent history for resume provenance"
+    main_positions = {commit: i for i, commit in enumerate(main_first_parent.stdout.splitlines())}
+    if source_base not in main_positions:
+        return "source-span claim base is not on origin/main first-parent history"
+    main_prefix = subprocess.run(
+        ["git", "rev-list", "--first-parent", "--reverse", f"{source_base}..{main}"],
+        cwd=path, text=True, capture_output=True,
+    )
+    if main_prefix.returncode:
+        return "cannot enumerate inherited origin/main prefix"
+    main_prefix_commits = set(main_prefix.stdout.splitlines())
+    inherited_boundaries: dict[str, tuple[int, int]] = {}
+    previous_resume = source_base
+    previous_resume_pos = published_pos
+    for resume_pos, resume_event in resumes:
+        data = resume_event.get("data")
+        resume_head = data.get("head") if isinstance(data, dict) else None
+        if (resume_pos <= previous_resume_pos or not isinstance(resume_head, str)
+                or re.fullmatch(r"[0-9a-f]{40,64}", resume_head) is None
+                or data.get("branch") != branch
+                or subprocess.run(["git", "merge-base", "--is-ancestor", previous_resume, resume_head],
+                                  cwd=path, capture_output=True).returncode):
+            return "source-span resume provenance is invalid or outside origin/main first-parent history"
+        if (data.get("worktree") == published_worktree and resume_head in main_positions
+                and previous_resume in main_positions
+                and main_positions[resume_head] > main_positions[previous_resume]):
+            span = subprocess.run(
+                ["git", "rev-list", "--first-parent", "--reverse",
+                 f"{previous_resume}..{resume_head}"], cwd=path, text=True, capture_output=True,
+            )
+            if span.returncode or not set(span.stdout.splitlines()).issubset(main_prefix_commits):
+                return "source-span resume boundary contains commits outside inherited origin/main"
+            inherited_boundaries[resume_head] = (resume_pos, main_positions[resume_head])
+        previous_resume = resume_head
+        previous_resume_pos = resume_pos
     previous = source_base
     previous_witness = published_pos
     for commit in history_commits:
@@ -913,6 +1014,28 @@ def _source_span_sync_merge_witness_error(workstream_id: str, path: Path,
         if len(parents) != 2:
             return f"source-span merge {commit} is not a two-parent synchronization"
         first_parent, second_parent = parents
+        inherited = inherited_boundaries.get(commit)
+        if inherited is not None:
+            resume_pos, main_pos = inherited
+            first_pos, second_pos = main_positions.get(first_parent), main_positions.get(second_parent)
+            if (first_pos is None
+                    or first_pos >= main_pos
+                    or main_positions.get(commit) != main_pos):
+                return f"source-span inherited-main merge {commit} has invalid resume boundary"
+            expected = subprocess.run(
+                ["git", "merge-tree", "--write-tree", first_parent, second_parent],
+                cwd=path, text=True, capture_output=True,
+            )
+            expected_tree = expected.stdout.splitlines()[0].strip() if expected.stdout.splitlines() else ""
+            if (expected.returncode or not expected_tree
+                    or git("rev-parse", f"{commit}^{{tree}}", cwd=path) != expected_tree):
+                return f"source-span inherited-main merge {commit} differs from Git's deterministic merge tree"
+            if second_parent != git("rev-parse", f"{commit}^2", cwd=path):
+                return f"source-span inherited-main merge {commit} has invalid main parent"
+            consumed_resumes.add(resume_pos)
+            previous_witness = resume_pos
+            previous = commit
+            continue
         if subprocess.run(["git", "merge-base", "--is-ancestor", source_base, second_parent],
                           cwd=path, capture_output=True).returncode:
             return f"source-span merge {commit} has a second parent outside the claimed history"
@@ -2495,6 +2618,22 @@ def closeout_preflight(
         ["git", "merge-base", "--is-ancestor", "origin/main", "HEAD"], cwd=path,
     ).returncode == 0
     archive_transition_error = _archive_transition_tip_error(workstream_id, path)
+    source_span_error = None
+    active_trace_path = RunTrace(repo, workstream_id, "placeholder").active_path
+    if active_trace_path.is_file():
+        try:
+            pointer = json.loads(active_trace_path.read_text())
+            run_id = pointer.get("run_id") if isinstance(pointer, dict) else None
+            trace_path = RunTrace(repo, workstream_id, run_id).path
+            if isinstance(run_id, str) and trace_path.is_file():
+                active_trace = RunTrace(repo, workstream_id, run_id)
+                first_event = json.loads(trace_path.open(encoding="utf-8").readline())
+                active_trace.packet = first_event.get("packet") if isinstance(first_event, dict) else None
+                source_span_error = _source_span_sync_merge_witness_error(
+                    workstream_id, path, head, active_trace,
+                )
+        except (OSError, ValueError, TypeError, WorkstreamError) as exc:
+            source_span_error = f"cannot load active source-span trace: {exc}"
 
     validation = _validation_report_status(validation_report)
     operator_guard = _run_operator_chassis_authority_guard(repo, path)
@@ -2528,6 +2667,8 @@ def closeout_preflight(
         blockers.append({"gate": "branch_drift", "detail": f"local branch is {behind} commit(s) behind its published branch"})
     if archive_transition_error:
         blockers.append({"gate": "archive_transition_tip", "detail": archive_transition_error})
+    if source_span_error:
+        blockers.append({"gate": "source_span_provenance", "detail": source_span_error})
     blockers.extend({"gate": "task_packet", "detail": str(item)} for item in packet_blockers)
     blockers.extend({"gate": "completion_truth", "detail": str(item)} for item in truth_blockers)
     blockers.extend({"gate": "managed_index", "detail": str(item)} for item in stale_index)
@@ -2544,7 +2685,7 @@ def closeout_preflight(
         blockers.extend({"gate": "operator_chassis_authority_guard", "detail": str(item)}
                         for item in operator_guard["failures"])
     ready = (
-        branch_ready and not archive_transition_error and not packet_blockers and not truth_blockers and not stale_index
+        branch_ready and not archive_transition_error and not source_span_error and not packet_blockers and not truth_blockers and not stale_index
         and not artifact_report and summary_ok and not review_blockers and not review_artifact_blockers
         and bool(validation["green"]) and operator_guard["status"] != "blocked"
     )
@@ -2572,6 +2713,8 @@ def closeout_preflight(
             "status": "blocked" if archive_transition_error else "pass",
             "error": archive_transition_error,
         },
+        "source_span_provenance": {"status": "blocked" if source_span_error else "pass",
+                                    "error": source_span_error},
         "packets": packet_reports,
         "packet_blockers": packet_blockers,
         "completion_truth_blockers": truth_blockers,
