@@ -6,7 +6,7 @@
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P2`
-- Depends on: `review-campaign-empty-convoy-placement-v1`
+- Depends on: `campaign-empty-convoy-placement-v1`
 - Locks: `procgen-authored-convoy, campaign-encounter`
 - Kind: `implementation`
 - Review: `auto`
@@ -35,7 +35,7 @@
 - Deferred: Production raster Asset V2 art and unlisted expansion mechanics; no mandatory external asset package.
 
 ## Dependency assumption
-Assume predecessor `review-campaign-empty-convoy-placement-v1` passed its post-land review and is archived complete. Consume its public event-state/runtime seams; re-read actual files at claim time and adapt private names only. Never duplicate its controller or persistence owner.
+Predecessor implementation `campaign-empty-convoy-placement-v1` landed at `47fd0755203dc22fb7149889253154741c78689b` and passed implementation validation (5/5, complete changed-source coverage). Its paired review was explicitly owner-waived prelaunch because the exact read-only host gate rejected the changed validation manifest as lacking an accepted exact source attestation. That disposition is not reviewer PASS or independent acceptance. This packet depends on the landed implementation only. Consume its public event-state/runtime seams; re-read actual files at claim time and adapt private names only. Never duplicate its controller or persistence owner.
 
 ## Refresh Planning Authority
 - Refresh owner: `execution-agent`

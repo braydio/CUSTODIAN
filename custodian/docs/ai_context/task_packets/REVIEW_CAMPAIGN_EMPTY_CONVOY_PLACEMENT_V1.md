@@ -3,8 +3,8 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-campaign-empty-convoy-placement-v1`
 - Kind: `review`
-- Status: `ready`
-- Dispatch: `auto`
+- Status: `blocked`
+- Dispatch: `manual`
 - Authoring handoff: `auto`
 - Priority: `P2`
 - Depends on: `campaign-empty-convoy-placement-v1`
@@ -32,6 +32,19 @@
 
 ## Dependency assumption
 The implementation `campaign-empty-convoy-placement-v1` has landed and its archive is accessible at the named path. Inspect the real implementation's chosen private seams; judge the contract, not proposed function names.
+
+## Owner disposition
+- Disposition: `owner_waived_prelaunch`
+- Review workstream: `review-campaign-empty-convoy-placement-v1`
+- Review run: `not-created`; read-only exact source-scope preflight completed before claim or reviewer checkout.
+- Implementation commit: `47fd0755203dc22fb7149889253154741c78689b`
+- Verified landing: `0cdb0c8c8b583a166df06315a3ec01119ce675c1`
+- Implementation validation: `5/5 passed` with complete changed-source coverage and zero failed, timed out, skipped, or infrastructure-error checks; report SHA-256 `bc0db96d3a41e6cbb32ba06935eb1464c0d96a0ee1cfbfe8b63ee63d35219b50`.
+- Review launch: The read-only exact host source-scope preflight blocked before claim because `changed validation manifest is not covered by an accepted exact source attestation`.
+- Reviewer verdict or acceptance: `none`; no independent reviewer process launched and no PASS or acceptance was produced.
+- Further review, source-attestation recovery, or correction authorized: `no` for this exact landed implementation.
+- Administrative disposition: closed by explicit coordinator/project-owner waiver; this packet remains blocked/manual, not complete, independently accepted, or claimable.
+- Authorizing planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae7eb07-c554-83e9-911a-1335e640e4d0`
 
 ## Handoff
 - Next action: On passing review, unlock the next slice in this event chain if any.
