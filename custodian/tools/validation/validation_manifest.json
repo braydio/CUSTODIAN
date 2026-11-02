@@ -6850,6 +6850,27 @@
       "needs_import": true
     },
     {
+      "id": "sepulcher_modular_assembly_pilot_v1",
+      "type": "godot_script",
+      "script": "res://tools/validation/levels/sepulcher_modular_assembly_pilot_v1_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "sepulcher",
+        "operator",
+        "presentation",
+        "assets",
+        "experiment",
+        "playtest"
+      ],
+      "owners": [
+        "custodian/game/world/levels/authored/dev/sepulcher_modular_assembly_pilot_v1/**",
+        "custodian/tools/validation/levels/sepulcher_modular_assembly_pilot_v1_smoke.gd",
+        "custodian/tools/validation/levels/sepulcher_modular_assembly_pilot_v1_capture.gd"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
+    },
+    {
       "id": "sundered_keep_marine_ambush",
       "type": "godot_script",
       "script": "res://tools/validation/sundered_keep_marine_ambush_smoke.gd",

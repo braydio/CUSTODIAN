@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://game/world/levels/authored/dev/sepulcher_material_operator_v2/sepulcher_material_operator_v2_level.tscn" id="1_v2_level"]
+[ext_resource type="Script" path="res://game/world/levels/authored/dev/sepulcher_modular_assembly_pilot_v1/sepulcher_modular_assembly_pilot_v1_level.gd" id="2_assembly_level"]
+
+[node name="SepulcherModularAssemblyPilotV1Level" instance=ExtResource("1_v2_level")]
+script = ExtResource("2_assembly_level")
+camera_bounds = Rect2(0, 0, 1024, 768)
+draw_placeholder_grid = false
+placeholder_canvas_size = Vector2(1024, 768)
