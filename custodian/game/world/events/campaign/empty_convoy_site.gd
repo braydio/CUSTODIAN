@@ -6,10 +6,15 @@ const EVENT_PREFIX := "campaign_empty_convoy_v1"
 const SECURITY_LIMIT := 3
 const SECURITY_OFFSETS := [Vector2(-104.0, -76.0), Vector2(104.0, -76.0), Vector2(0.0, 124.0)]
 const SECURITY_FACING := [Vector2(-1.0, -1.0), Vector2(1.0, -1.0), Vector2(0.0, 1.0)]
+const CUSTODY_TRACE_TEXT := "CONVOY CUSTODY TRACE: SHIPMENT UNVERIFIED"
+const SALVAGE_RESOURCE_ID := "ruin_scrap"
+const SALVAGE_AMOUNT := 1
 const STATE_IDLE := &"idle"
 const STATE_ACTIVE := &"active"
 const STATE_CLEARED := &"cleared"
 const STATE_EMPTY_DEFENSE := &"empty_defense"
+const STATE_TRACE_RECORDED := &"trace_recorded"
+const STATE_EVIDENCE_ONLY := &"evidence_only"
 
 var inspect_count := 0
 var event_id: StringName
@@ -18,11 +23,14 @@ var expected_enemy_count := 0
 var _world_seed := 0
 var _memory: Node
 var _spawner: Node
+var _ledger: Node
 var _defeated_slots: Array[String] = []
 var _active_enemies: Dictionary = {}
 var _spawn_positions: Array[Vector2] = []
 var _assigned_slots: Dictionary = {}
 var _pending_spawn_count := 0
+var _custody_trace_recorded := false
+var _salvage_granted := false
 
 
 func _ready() -> void:
@@ -30,10 +38,16 @@ func _ready() -> void:
 	queue_redraw()
 
 
-func configure_runtime(world_seed: int, memory: Node = null, spawner: Node = null) -> void:
+func configure_runtime(
+	world_seed: int,
+	memory: Node = null,
+	spawner: Node = null,
+	ledger: Node = null
+) -> void:
 	_world_seed = world_seed
 	_memory = memory if memory != null else get_node_or_null("/root/WorldEventMemory")
 	_spawner = spawner if spawner != null else get_tree().get_first_node_in_group("ambient_enemy_spawn_scheduler")
+	_ledger = ledger if ledger != null else get_node_or_null("/root/ResourceLedger")
 	var run_seed := int(_memory.get("run_seed")) if _memory != null and "run_seed" in _memory else 0
 	event_id = StringName("%s:%d:%d" % [EVENT_PREFIX, run_seed, _world_seed])
 	_restore_event_state()
@@ -51,9 +65,13 @@ func get_interaction_prompt() -> String:
 		STATE_ACTIVE:
 			return "SECURITY ACTIVE — %d/%d NEUTRALIZED" % [_defeated_slots.size(), expected_enemy_count]
 		STATE_CLEARED:
-			return "CONVOY SECURITY CLEARED"
+			return "RECORD CUSTODY TRACE"
 		STATE_EMPTY_DEFENSE:
-			return "SECURITY UNAVAILABLE — EVIDENCE MODE"
+			return "RECORD CUSTODY TRACE"
+		STATE_TRACE_RECORDED:
+			return "CUSTODY TRACE RECORDED"
+		STATE_EVIDENCE_ONLY:
+			return "CUSTODY TRACE — EVIDENCE ONLY"
 	return "INSPECT CONVOY MANIFEST"
 
 
@@ -67,6 +85,10 @@ func get_interaction_prompt_body() -> String:
 			return "SECURITY CLEARED / SHIPMENT CUSTODY UNVERIFIED"
 		STATE_EMPTY_DEFENSE:
 			return "NO SAFE REGISTERED DEFENSE / EVIDENCE RETAINED"
+		STATE_TRACE_RECORDED:
+			return "%s / SALVAGE: +%d RUIN SCRAP" % [CUSTODY_TRACE_TEXT, SALVAGE_AMOUNT]
+		STATE_EVIDENCE_ONLY:
+			return "%s / LEDGER UNAVAILABLE; NO SALVAGE GRANTED" % CUSTODY_TRACE_TEXT
 	return MANIFEST_TEXT
 
 
@@ -82,6 +104,37 @@ func interact(_actor: Node = null) -> void:
 	inspect_count += 1
 	if security_state == STATE_IDLE:
 		_activate_security()
+	elif security_state in [STATE_CLEARED, STATE_EMPTY_DEFENSE]:
+		_record_custody_trace()
+	queue_redraw()
+
+
+func _record_custody_trace() -> void:
+	if _custody_trace_recorded:
+		return
+	var resource_defs: Variant = _ledger.call("get_resource_defs") \
+		if _ledger != null and _ledger.has_method("get_resource_defs") else {}
+	var ledger_ready := _ledger != null \
+		and _ledger.has_method("add") \
+		and resource_defs is Dictionary \
+		and (resource_defs as Dictionary).has(SALVAGE_RESOURCE_ID)
+	var completion_ready := _memory != null and _memory.has_method("mark_completed")
+	_custody_trace_recorded = true
+	_salvage_granted = ledger_ready and completion_ready
+	security_state = STATE_TRACE_RECORDED if _salvage_granted else STATE_EVIDENCE_ONLY
+	var payload := _state_payload({
+		"custody_trace_recorded": true,
+		"salvage_granted": _salvage_granted,
+		"salvage_resource_id": SALVAGE_RESOURCE_ID if _salvage_granted else "",
+		"salvage_amount": SALVAGE_AMOUNT if _salvage_granted else 0,
+	})
+	if completion_ready:
+		# Commit the run-scoped exactly-once receipt before granting through the ledger.
+		_memory.call("mark_completed", event_id, payload)
+	elif _memory != null and _memory.has_method("mark_spawned"):
+		_memory.call("mark_spawned", event_id, payload)
+	if _salvage_granted:
+		_ledger.call("add", SALVAGE_RESOURCE_ID, SALVAGE_AMOUNT)
 	queue_redraw()
 
 
@@ -242,21 +295,27 @@ func _on_security_enemy_died(enemy: Node) -> void:
 func _restore_event_state() -> void:
 	if event_id.is_empty() or _memory == null or not _memory.has_method("get_payload"):
 		return
-	if _memory.has_method("is_completed") and bool(_memory.call("is_completed", event_id)):
-		security_state = STATE_CLEARED
-		return
 	var payload: Dictionary = _memory.call("get_payload", event_id)
+	_custody_trace_recorded = bool(payload.get("custody_trace_recorded", false))
+	_salvage_granted = bool(payload.get("salvage_granted", false))
 	security_state = StringName(payload.get("security_state", String(STATE_IDLE)))
 	expected_enemy_count = maxi(0, int(payload.get("expected_enemy_count", 0)))
 	var raw_defeated: Variant = payload.get("defeated_slots", [])
 	if raw_defeated is Array:
 		for slot in raw_defeated:
 			_defeated_slots.append(str(slot))
+	if _custody_trace_recorded:
+		security_state = STATE_TRACE_RECORDED if _salvage_granted else STATE_EVIDENCE_ONLY
+		return
+	if _memory.has_method("is_completed") and bool(_memory.call("is_completed", event_id)):
+		security_state = STATE_CLEARED
+		return
 	if security_state == STATE_ACTIVE:
 		var live_count := _reconnect_live_enemies()
 		if live_count == 0:
 			_enter_empty_defense_mode("active_wave_not_present_on_reentry")
-	elif security_state not in [STATE_IDLE, STATE_CLEARED, STATE_EMPTY_DEFENSE]:
+	elif security_state not in [STATE_IDLE, STATE_CLEARED, STATE_EMPTY_DEFENSE,
+			STATE_TRACE_RECORDED, STATE_EVIDENCE_ONLY]:
 		_enter_empty_defense_mode("invalid_persisted_security_state")
 
 
@@ -305,6 +364,8 @@ func _state_payload(extra: Dictionary = {}) -> Dictionary:
 		"world_seed": _world_seed,
 		"expected_enemy_count": expected_enemy_count,
 		"defeated_slots": _defeated_slots.duplicate(),
+		"custody_trace_recorded": _custody_trace_recorded,
+		"salvage_granted": _salvage_granted,
 	}
 	for key in extra:
 		payload[key] = extra[key]
