@@ -1266,6 +1266,50 @@ def _is_authorized_archive_metadata_followup(
     return True
 
 
+def _is_authorized_archive_summary_rename(
+    workstream_id: str, path: Path, transition_commit: str, archived_packet: str,
+    candidate: str,
+) -> bool:
+    """Accept one exact legacy-to-canonical summary rename after archive."""
+    expected = _expected_summary_filename(workstream_id)
+    packet_text = git("show", f"{transition_commit}:{archived_packet}", cwd=path, check=False)
+    if not packet_text:
+        return False
+    parents = git("rev-list", "--parents", "-n", "1", candidate, cwd=path, check=False).split()
+    if parents != [candidate, transition_commit]:
+        return False
+    changed = git("diff-tree", "--no-commit-id", "--name-status", "--no-renames",
+                  "-r", transition_commit, candidate, cwd=path, check=False).splitlines()
+    deleted = [line[2:] for line in changed if line.startswith("D\t")]
+    if (len(changed) != 2 or len(deleted) != 1
+            or set(changed) != {f"D\t{deleted[0]}", f"A\t{expected}"}
+            or not re.fullmatch(r"[A-Z0-9]+(?:_[A-Z0-9]+)*_CLAUDE_SUMMARY\.md", deleted[0])
+            or deleted[0] == expected):
+        return False
+    legacy = deleted[0]
+    if git("rev-parse", f"{transition_commit}:{archived_packet}", cwd=path, check=False) != \
+            git("rev-parse", f"{candidate}:{archived_packet}", cwd=path, check=False):
+        return False
+    old_entry = subprocess.run(["git", "ls-tree", "-z", transition_commit, "--", legacy],
+                               cwd=path, capture_output=True)
+    new_entry = subprocess.run(["git", "ls-tree", "-z", candidate, "--", expected],
+                               cwd=path, capture_output=True)
+    if (old_entry.returncode or new_entry.returncode or not old_entry.stdout or not new_entry.stdout
+            or old_entry.stdout.split(b"\t", 1)[0].split()[0] != b"100644"
+            or new_entry.stdout.split(b"\t", 1)[0].split()[0] != b"100644"):
+        return False
+    old_blob = old_entry.stdout.split(b"\t", 1)[0].split()[2]
+    new_blob = new_entry.stdout.split(b"\t", 1)[0].split()[2]
+    if old_blob != new_blob:
+        return False
+    old_bytes = subprocess.run(["git", "show", f"{transition_commit}:{legacy}"],
+                               cwd=path, capture_output=True)
+    new_bytes = subprocess.run(["git", "show", f"{candidate}:{expected}"],
+                               cwd=path, capture_output=True)
+    return (old_bytes.returncode == 0 and new_bytes.returncode == 0
+            and old_bytes.stdout == new_bytes.stdout)
+
+
 def _archive_transition_tip_error(workstream_id: str, path: Path,
                                   trace: RunTrace | None = None) -> str | None:
     """Require a bounded archive boundary, allowing only authenticated sync/follow-up."""
@@ -1326,6 +1370,11 @@ def _archive_transition_tip_error(workstream_id: str, path: Path,
             workstream_id, path, transition_commit, packet, head):
         # RC-119 permits this exact clean pre-sync tip so normal finish can
         # merge the latest main and validate the complete first-parent chain.
+        return None
+    if _is_authorized_archive_summary_rename(
+            workstream_id, path, transition_commit, packet, head):
+        # Permit only the direct, byte-identical rename recorded by this archived
+        # packet; finish still performs its ordinary sync, validation and landing.
         return None
     transition_packet_blob = _git_blob(path, transition_commit, packet)
     try:
@@ -1454,6 +1503,7 @@ def _archive_transition_tip_error(workstream_id: str, path: Path,
         pending_conflict_repair: tuple[str, bytes] | None = None
         repaired_managed_conflict = False
         archive_metadata_correction_seen = False
+        archive_summary_rename_seen = False
         failure_detail = "the archive-to-head commit chain did not satisfy a supported shape"
         for commit in commits:
             parents = git("rev-list", "--parents", "-n", "1", commit, cwd=path).split()
@@ -1550,6 +1600,11 @@ def _archive_transition_tip_error(workstream_id: str, path: Path,
                   and _is_authorized_archive_metadata_followup(
                       workstream_id, path, transition_commit, packet, commit)):
                 archive_metadata_correction_seen = True
+            elif (len(parents) == 2 and parents[1] == previous and not sync_merges
+                  and not archive_summary_rename_seen
+                  and _is_authorized_archive_summary_rename(
+                      workstream_id, path, transition_commit, packet, commit)):
+                archive_summary_rename_seen = True
             elif len(parents) == 2 and parents[1] == previous and sync_merges:
                 status = git("diff-tree", "--no-commit-id", "--name-status", "--no-renames",
                              "-r", commit, cwd=path).splitlines()
@@ -1574,11 +1629,7 @@ def _archive_transition_tip_error(workstream_id: str, path: Path,
                     pending_conflict_repair = None
                     repaired_managed_conflict = True
                 else:
-                    archived_summary = _expected_summary_filename(workstream_id)
-                    legacy_summary = archived_summary.replace(
-                        "_V1_CLAUDE_SUMMARY.md", "_CLAUDE_SUMMARY.md"
-                    )
-                    permitted_admin = {packet, archived_summary, legacy_summary, readme}
+                    permitted_admin = {packet, readme}
                     if workstream_id == ARCHIVE_METADATA_FOLLOWUP["workstream"]:
                         # The protected packet's only authorized correction is
                         # the pinned child immediately after archival above.
@@ -1593,8 +1644,8 @@ def _archive_transition_tip_error(workstream_id: str, path: Path,
                     if (not operations or any(
                             len(row) != 2 or row[0] not in {"A", "M", "D"}
                             or row[1] not in declared_work_surface | permitted_admin
-                            or (row[0] == "A" and row[1] not in declared_work_surface | {archived_summary})
-                            or (row[0] == "D" and row[1] != legacy_summary)
+                            or (row[0] == "A" and row[1] not in declared_work_surface)
+                            or row[1].endswith("_CLAUDE_SUMMARY.md")
                             for row in operations)):
                         valid = False
                         break

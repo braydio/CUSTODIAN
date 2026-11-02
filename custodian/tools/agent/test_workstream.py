@@ -825,7 +825,10 @@ class WorkstreamTests(unittest.TestCase):
         git(self.repo, "add", str(active.relative_to(self.repo)))
         git(self.repo, "commit", "-m", "publish active packet")
         (self.repo / "source.py").write_text("source\n")
+        legacy_summary = self.repo / "AGENT_TEST_ARCHIVE_TIP_LEGACY_CLAUDE_SUMMARY.md"
+        legacy_summary.write_bytes(b"canonical closeout bytes\n")
         git(self.repo, "add", "source.py")
+        git(self.repo, "add", str(legacy_summary.relative_to(self.repo)))
         git(self.repo, "commit", "-m", "implement source")
         archived.parent.mkdir(parents=True)
         archived.write_text(active.read_text().replace("in_progress", "complete"))
@@ -835,6 +838,21 @@ class WorkstreamTests(unittest.TestCase):
         self.assertIsNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
         preflight = workstream.closeout_preflight(workstream_id, self.repo)
         self.assertEqual(preflight["archive_transition"]["status"], "pass")
+
+        canonical_summary = self.repo / workstream._expected_summary_filename(workstream_id)
+        legacy_bytes = legacy_summary.read_bytes()
+        legacy_summary.unlink()
+        canonical_summary.write_bytes(legacy_bytes)
+        git(self.repo, "add", "-A")
+        git(self.repo, "commit", "-m", "rename archived summary to canonical filename")
+        rename_commit = git(self.repo, "rev-parse", "HEAD")
+        transition_commit = git(self.repo, "rev-parse", "HEAD^1")
+        self.assertTrue(workstream._is_authorized_archive_summary_rename(
+            workstream_id, self.repo, transition_commit,
+            "custodian/docs/ai_context/task_packets/archived/AGENT_TEST_ARCHIVE_TIP.md",
+            rename_commit,
+        ))
+        self.assertIsNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
 
         (self.repo / "summary.md").write_text("follow-up after archive\n")
         git(self.repo, "add", "summary.md")
@@ -846,6 +864,104 @@ class WorkstreamTests(unittest.TestCase):
         self.assertEqual(preflight["archive_transition"]["status"], "blocked")
         self.assertTrue(any(blocker["gate"] == "archive_transition_tip"
                             for blocker in preflight["blockers"]))
+
+    def test_archive_summary_rename_rejects_real_git_near_misses(self):
+        workstream_id = "agent-test-summary-rename"
+        branch = workstream.branch_for(workstream_id)
+        active = self.repo / "custodian/docs/ai_context/task_packets/AGENT_TEST_SUMMARY_RENAME.md"
+        archived_rel = "custodian/docs/ai_context/task_packets/archived/AGENT_TEST_SUMMARY_RENAME.md"
+        archived = self.repo / archived_rel
+        legacy_rel = "AGENT_TEST_SUMMARY_RENAME_OLD_CLAUDE_SUMMARY.md"
+        legacy = self.repo / legacy_rel
+        canonical_rel = workstream._expected_summary_filename(workstream_id)
+        canonical = self.repo / canonical_rel
+        git(self.repo, "checkout", "-b", branch)
+        active.parent.mkdir(parents=True, exist_ok=True)
+        active.write_text(
+            f"# Test\n- Workstream: `{workstream_id}`\n- Status: `in_progress`\n"
+        )
+        git(self.repo, "add", str(active.relative_to(self.repo)))
+        git(self.repo, "commit", "-m", "publish summary rename packet")
+        (self.repo / "source.py").write_text("source\n")
+        legacy.write_bytes(b"identical closing summary\n")
+        git(self.repo, "add", "source.py", legacy_rel)
+        git(self.repo, "commit", "-m", "implement and write legacy summary")
+        archived.parent.mkdir(parents=True, exist_ok=True)
+        archived.write_text(active.read_text().replace("in_progress", "complete"))
+        active.unlink()
+        git(self.repo, "add", "-A")
+        git(self.repo, "commit", "-m", "archive summary rename packet")
+        archive = git(self.repo, "rev-parse", "HEAD")
+
+        mutations = ("changed-bytes", "wrong-destination", "copy", "extra-path",
+                     "executable", "symlink", "changed-packet", "wrong-parent",
+                     "source-edit")
+        for mutation in mutations:
+            with self.subTest(mutation=mutation):
+                git(self.repo, "checkout", "-B", branch, archive)
+                if mutation == "wrong-parent":
+                    git(self.repo, "commit", "--allow-empty", "-m", "insert unrelated parent")
+                legacy.unlink(missing_ok=True)
+                destination = (self.repo / "WRONG_CLAUDE_SUMMARY.md"
+                              if mutation == "wrong-destination" else canonical)
+                if mutation == "symlink":
+                    destination.symlink_to("source.py")
+                else:
+                    destination.write_bytes(
+                        b"changed closing summary\n" if mutation == "changed-bytes"
+                        else b"identical closing summary\n"
+                    )
+                    if mutation == "executable":
+                        destination.chmod(0o755)
+                if mutation == "copy":
+                    legacy.write_bytes(b"identical closing summary\n")
+                if mutation == "extra-path":
+                    (self.repo / "unrelated.txt").write_text("extra\n")
+                if mutation == "changed-packet":
+                    archived.write_text(archived.read_text() + "- Changed: true\n")
+                if mutation == "source-edit":
+                    (self.repo / "source.py").write_text("modified after archive\n")
+                git(self.repo, "add", "-A")
+                git(self.repo, "commit", "-m", f"attempt invalid summary rename: {mutation}")
+                candidate = git(self.repo, "rev-parse", "HEAD")
+                self.assertFalse(workstream._is_authorized_archive_summary_rename(
+                    workstream_id, self.repo, archive, archived_rel, candidate,
+                ))
+                self.assertIsNotNone(workstream._archive_transition_tip_error(
+                    workstream_id, self.repo,
+                ))
+
+        with self.subTest(mutation="second-rename"):
+            git(self.repo, "checkout", "-B", branch, archive)
+            legacy.unlink()
+            canonical.write_bytes(b"identical closing summary\n")
+            git(self.repo, "add", "-A")
+            git(self.repo, "commit", "-m", "first exact rename")
+            extra_legacy = self.repo / "SECOND_CLAUDE_SUMMARY.md"
+            canonical.unlink()
+            extra_legacy.write_bytes(b"identical closing summary\n")
+            git(self.repo, "add", "-A")
+            git(self.repo, "commit", "-m", "second summary rename")
+            self.assertIsNotNone(workstream._archive_transition_tip_error(
+                workstream_id, self.repo,
+            ))
+
+        with self.subTest(mutation="merge-instead-of-single-parent"):
+            side_branch = "summary-rename-side-branch"
+            git(self.repo, "checkout", "-B", side_branch, archive)
+            legacy.unlink()
+            canonical.write_bytes(b"identical closing summary\n")
+            git(self.repo, "add", "-A")
+            git(self.repo, "commit", "-m", "prepare summary rename side branch")
+            git(self.repo, "checkout", "-B", branch, archive)
+            git(self.repo, "merge", "--no-ff", side_branch, "-m", "merge summary rename")
+            candidate = git(self.repo, "rev-parse", "HEAD")
+            self.assertFalse(workstream._is_authorized_archive_summary_rename(
+                workstream_id, self.repo, archive, archived_rel, candidate,
+            ))
+            self.assertIsNotNone(workstream._archive_transition_tip_error(
+                workstream_id, self.repo,
+            ))
 
     def test_archive_guard_accepts_only_exact_rc119_metadata_correction(self):
         self.assertEqual(workstream.ARCHIVE_METADATA_FOLLOWUP["archive"],
@@ -1026,7 +1142,7 @@ class WorkstreamTests(unittest.TestCase):
         git(self.repo, "add", str(active.relative_to(self.repo)))
         git(self.repo, "commit", "-m", "publish active packet")
         (self.repo / "source.py").write_text("source\n")
-        legacy_summary = self.repo / "AGENT_TEST_ARCHIVE_TRACE_CLAUDE_SUMMARY.md"
+        legacy_summary = self.repo / "AGENT_TEST_ARCHIVE_TRACE_OLD_CLAUDE_SUMMARY.md"
         legacy_summary.write_text("historical summary filename\n")
         git(self.repo, "add", "source.py")
         git(self.repo, "add", str(legacy_summary.relative_to(self.repo)))
@@ -1066,7 +1182,7 @@ class WorkstreamTests(unittest.TestCase):
         git(self.repo, "add", str(active.relative_to(self.repo)))
         git(self.repo, "commit", "-m", "publish active packet")
         (self.repo / "source.py").write_text("source\n")
-        legacy_summary = self.repo / "AGENT_TEST_ARCHIVE_TRACE_CLAUDE_SUMMARY.md"
+        legacy_summary = self.repo / "AGENT_TEST_ARCHIVE_TRACE_OLD_CLAUDE_SUMMARY.md"
         legacy_summary.write_text("historical summary filename\n")
         git(self.repo, "add", "source.py")
         git(self.repo, "add", str(legacy_summary.relative_to(self.repo)))
@@ -1077,6 +1193,12 @@ class WorkstreamTests(unittest.TestCase):
         git(self.repo, "add", "-A")
         git(self.repo, "commit", "-m", "archive packet")
         archive = git(self.repo, "rev-parse", "HEAD")
+
+        legacy_summary.unlink()
+        canonical_summary = self.repo / workstream._expected_summary_filename(workstream_id)
+        canonical_summary.write_bytes(b"historical summary filename\n")
+        git(self.repo, "add", "-A")
+        git(self.repo, "commit", "-m", "correct summary filename")
 
         # Make an independently published main commit, then sync it into the task branch.
         git(self.repo, "checkout", "main")
@@ -1122,15 +1244,6 @@ class WorkstreamTests(unittest.TestCase):
         git(trace_repo, "commit", "-m", "publish immutable trace")
         git(trace_repo, "push", "origin", f"HEAD:refs/heads/agent-diagnostics/{workstream_id}/{run_id}")
         git(self.repo, "fetch", "origin")
-        self.assertIsNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
-
-        # Correcting a historical summary filename is a bounded administrative
-        # follow-up when both Git objects are present and the canonical file lands.
-        legacy_summary.unlink()
-        canonical_summary = self.repo / workstream._expected_summary_filename(workstream_id)
-        canonical_summary.write_text("completed summary\n")
-        git(self.repo, "add", "-A")
-        git(self.repo, "commit", "-m", "correct summary filename")
         self.assertIsNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
 
         (self.repo / "test_source.py").write_text("regression\n")
@@ -1698,9 +1811,11 @@ class WorkstreamTests(unittest.TestCase):
         archived = self.repo / archived_rel
         archived.parent.mkdir(parents=True, exist_ok=True)
         archived.write_text(active.read_text().replace("Status: `ready`", "Status: `blocked`"))
+        summary_rel = "AGENT_TEST_RESOLVED_MAIN_SYNC_CLAUDE_SUMMARY.md"
+        (self.repo / summary_rel).write_text("completed\nAuthoring chat: not-recorded\n")
         active.unlink()
         task_packet_index.write(self.repo)
-        git(self.repo, "add", archived_rel, packet_rel, readme_rel)
+        git(self.repo, "add", archived_rel, packet_rel, readme_rel, summary_rel)
         git(self.repo, "commit", "-m", "archive the bounded task")
         archive_commit = git(self.repo, "rev-parse", "HEAD")
 
@@ -1776,11 +1891,7 @@ class WorkstreamTests(unittest.TestCase):
         git(self.repo, "commit", "-m", "record scoped follow-up")
         archived = self.repo / "custodian/docs/ai_context/task_packets/archived/AGENT_TEST_RESOLVED_MAIN_SYNC.md"
         archived.write_text(archived.read_text().replace("Status: `blocked`", "Status: `complete`"))
-        (self.repo / "AGENT_TEST_RESOLVED_MAIN_SYNC_CLAUDE_SUMMARY.md").write_text(
-            "completed\nAuthoring chat: not-recorded\n"
-        )
-        git(self.repo, "add", str(archived.relative_to(self.repo)),
-            "AGENT_TEST_RESOLVED_MAIN_SYNC_CLAUDE_SUMMARY.md")
+        git(self.repo, "add", str(archived.relative_to(self.repo)))
         git(self.repo, "commit", "-m", "record bounded closeout evidence")
         self.assertTrue(task_packet_index.check(self.repo)[0])
         self.assertIsNone(workstream._archive_transition_tip_error(workstream_id, self.repo))

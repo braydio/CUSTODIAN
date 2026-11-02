@@ -279,6 +279,18 @@ index conflict resolution. Untraced merges, extra source changes, and
 out-of-surface paths remain blocked. Finish reports the exact blocking commit
 and path without pushing or landing the branch.
 
+One additional pre-sync transition is narrowly allowed: immediately after the
+canonical archive commit, one direct single-parent child may delete a legacy
+`*_CLAUDE_SUMMARY.md` path and add the exact workstream-derived canonical
+summary path. The archive packet must retain the same Git blob, both summary
+entries must be regular mode `100644` with identical blob IDs and bytes, and
+the rename commit may change no other path. `workstream.py` checks the producer
+history; paired-review host validation independently rechecks the commit,
+parent, tree, modes, blobs, and archived packet. The normal authenticated
+main-sync and after-sync validation gates still apply. This exception does not
+permit summary creation, copying, edits, a second rename, later summary-path
+changes, or arbitrary post-archive commits.
+
 One additional interrupted-merge shape is accepted only when Git reproduces a
 single conflict in `task_packets/README.md`'s managed Ready/Auto block for the
 exact packet archived by the first parent. The committed merge must match
