@@ -7514,6 +7514,29 @@
   ],
   "timeout_sec": 30,
   "needs_import": false
-}
+},
+    {
+      "id": "campaign_empty_convoy_placement",
+      "type": "godot_script",
+      "script": "res://tools/validation/campaign_empty_convoy_placement_smoke.gd",
+      "tier": "actor",
+      "tags": [
+        "procgen",
+        "authored_event",
+        "determinism",
+        "navigation",
+        "streaming"
+      ],
+      "owners": [
+        "custodian/game/world/procgen/special_rooms/special_room_runtime_inserter.gd",
+        "custodian/content/procgen/special_rooms/empty_convoy_v1.json",
+        "custodian/game/world/events/campaign/empty_convoy_site.gd",
+        "custodian/game/world/events/campaign/empty_convoy_site.tscn",
+        "custodian/tools/validation/campaign_empty_convoy_placement_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 180,
+      "needs_import": true
+    }
   ]
 }

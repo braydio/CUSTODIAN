@@ -17,14 +17,14 @@
 - Max automatic review cycles: `2`
 - Review rationale: `substantial engineering default`
 - Reviewed main: `6e75b57ea828f5d90679ae737052a4acdefce361`
-- Authoring chat: `not-recorded`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae7eb07-c554-83e9-911a-1335e640e4d0`
 - Visual review: `conditional`
 - Goal: Generated convoy pocket placement; deliver one playable, bounded event slice.
 - Completion boundary: Place optional single convoy 12x10-or-larger safe roadside pocket using existing seed-qualified semantic claim before realization. Close only with real runtime integration and focused proof, not a disconnected demo.
 - Current measured state: Generated world provides seed/intent, placement validation and streaming; there is no convoy claim/profile. Vehicle Scout wreck runtime exists but Asset V2 presentation may still be incomplete.
 - Evidence: design/04_architecture/REGION_GENERATION_SYSTEM.md; custodian/game/world/procgen/landmarks/sundered_keep/; design/02_features/vehicles/FIELD_SCOUT_BUGGY_MK1.md
 - Task-specific authority: Procgen semantic placement/route safety, event spec §4 and existing vehicle prop contracts.; `design/02_features/events/AUTHORED_HUB_CAMPAIGN_MICROEVENTS_V1.md`.
-- Work surface: Separate optional convoy event placement claim/realization under custodian/game/world/procgen/landmarks/ or established generated-event owner; focused seed smoke.
+- Work surface: `custodian/game/world/procgen/special_rooms/special_room_runtime_inserter.gd`; `custodian/content/procgen/special_rooms/empty_convoy_v1.json`; `custodian/game/world/events/campaign/empty_convoy_site.gd`; `custodian/game/world/events/campaign/empty_convoy_site.gd.uid`; `custodian/game/world/events/campaign/empty_convoy_site.tscn`; `custodian/tools/validation/campaign_empty_convoy_placement_smoke.gd`; `custodian/tools/validation/campaign_empty_convoy_placement_smoke.gd.uid`; and `custodian/tools/validation/validation_manifest.json`.
 - Publication inputs: `design/02_features/events/AUTHORED_HUB_CAMPAIGN_MICROEVENTS_V1.md`
 - Change: Place optional single convoy 12x10-or-larger safe roadside pocket using existing seed-qualified semantic claim before realization. Layout: three outward-facing static wreck silhouettes, empty central cargo cradle, inspectable manifest stub, open escape. No global mandatory quota; invalid seed/site deterministically SKIPs without failing world generation; streaming reload retains same fingerprint. Static shapes/approved existing art only.
 - Preserve: Route ingress, objectives, biome/material surfaces, navigation/collision, other landmarks and accepted seed.
