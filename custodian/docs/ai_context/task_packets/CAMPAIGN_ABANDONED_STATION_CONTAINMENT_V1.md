@@ -6,7 +6,7 @@
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P2`
-- Depends on: `review-campaign-abandoned-station-stability-v1`
+- Depends on: `campaign-abandoned-station-stability-v1`
 - Locks: `procgen-authored-alpine-station`
 - Kind: `implementation`
 - Review: `auto`
@@ -21,8 +21,8 @@
 - Visual review: `none`
 - Goal: Station containment choice + completion; deliver one playable, bounded event slice.
 - Completion boundary: After 3 services in time present exactly two choices: MAINTAIN CONTAINMENT / EVIDENCE PRESERVED and SHUT DOWN COUPLING / EVIDENCE INCOMPLETE. Close only with real runtime integration and focused proof, not a disconnected demo.
-- Current measured state: Assume S1 site + S2 local timer/service states fully reviewed. No final Hold/Shutdown choice or durable in-run readback.
-- Evidence: S2 stability smoke, WorldEventMemory, Reciprocal Continuity Doctrine
+- Current measured state: S1 and S2 implementations are complete on main. The project owner waived prospective independent review of S2 before reviewer claim because its archived source scope omits landed paths; this is not reviewer acceptance. No final Hold/Shutdown choice or durable in-run readback exists.
+- Evidence: landed S2 implementation and final source-bound validation report; WorldEventMemory; Reciprocal Continuity Doctrine
 - Task-specific authority: Custodian Mandate/Reciprocal Continuity, event spec §5, reviewed S1/S2.; `design/02_features/events/AUTHORED_HUB_CAMPAIGN_MICROEVENTS_V1.md`.
 - Work surface: Station controller decision/readback and run-scoped event payload; focused completion smoke.
 - Publication inputs: `design/02_features/events/AUTHORED_HUB_CAMPAIGN_MICROEVENTS_V1.md`
@@ -35,7 +35,7 @@
 - Deferred: Production raster Asset V2 art and unlisted expansion mechanics; no mandatory external asset package.
 
 ## Dependency assumption
-Assume predecessor `review-campaign-abandoned-station-stability-v1` passed its post-land review and is archived complete. Consume its public event-state/runtime seams; re-read actual files at claim time and adapt private names only. Never duplicate its controller or persistence owner.
+Predecessor `campaign-abandoned-station-stability-v1` is archived complete. Its paired review was explicitly waived by the project owner before reviewer claim because the archived implementation Work surface omits five landed code/test paths; no reviewer verdict or acceptance exists. This waiver permits S3 to proceed and does not represent independent acceptance. Consume S2's landed event-state/runtime seams; re-read actual files at claim time and adapt private names only. Never duplicate its controller or persistence owner.
 
 ## Refresh Planning Authority
 - Refresh owner: `execution-agent`
