@@ -1,9 +1,181 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-02T12:29:10Z",
-  "source_main_sha": "04a617c492fc56aafc6df7804beff1058610e211",
+  "generated_at": "2026-11-02T13:55:08Z",
+  "source_main_sha": "09e15e239da24757a9587b61314b4f62e08eba0e",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "empty-convoy-security-correction-landed-09e15e23",
+      "headline": "Empty Convoy security fix lands; a full gameplay retest still stands between code and confidence",
+      "summary": "The Empty Convoy correction has landed on main after focused security, recovery and placement tests passed. Temporary spawn failures now keep the encounter unresolved rather than granting the custody trace. The original production trigger is still unknown, and neither an integrated GUI retest nor independent review is accepted.",
+      "body": "A targeted correction to Empty Convoy's defense state machine is now on main. Temporary ambient-capacity exhaustion, unsafe spawn positions, queue rejection and missing actors on reentry no longer count as an empty or defeated defense. The trace requires verified defender defeats or authoritative absence. The archived implementation packet reports focused security, recovery and placement smokes passing, including a generated-map seed-2 scenario that registered three defenders; canonical changed-file validation reported 4/4 passing. This is implementation and source-bound test evidence, not a new production gameplay PASS. The original trigger remains unknown; a coordinator-directed GUI retest and separate review decision remain outstanding. No host teardown or live-process state was verified.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "gameplay-systems",
+      "workstream": "campaign-empty-convoy-security-integrated-correction-v1",
+      "occurred_at": "2026-11-02T13:55:08Z",
+      "bullets": [
+        "Correction landed on main; packet archived complete.",
+        "Transient spawn failures cannot unlock the custody trace.",
+        "Focused security, recovery and placement smokes reported PASS; changed-file validation 4/4.",
+        "Integrated GUI retest and independent review remain outstanding."
+      ],
+      "links": [
+        {
+          "title": "Correction landed on main",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/09e15e239da24757a9587b61314b4f62e08eba0e"
+        },
+        {
+          "title": "Validated implementation commit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/c7bc91207a7b582b657c63785515f0aac19496e9e"
+        },
+        {
+          "title": "Archived correction packet",
+          "url": "https://github.com/braydio/CUSTODIAN/blob/09e15e239da24757a9587b61314b4f62e08eba0e/custodian/docs/ai_context/task_packets/archived/CAMPAIGN_EMPTY_CONVOY_SECURITY_INTEGRATED_CORRECTION_V1.md"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "Empty Convoy's defense loophole has received a targeted fix. Previously, temporary failures to produce enemies could leave the site looking cleared and allow the player to record the missing shipment's custody trace without a fight. The new implementation keeps that security state unresolved until the encounter has trustworthy evidence of clearance.",
+        "sections": [
+          {
+            "heading": "The encounter now distinguishes failure from victory",
+            "text": "Capacity limits, rejected spawn positions, failed queues and enemies missing after reentry no longer masquerade as a defeated defense. The trace opens only after verified defeats or a genuinely authoritative empty-defense result. This protects the event's salvage reward without changing its larger design."
+          },
+          {
+            "heading": "Tests passed, but the original gameplay failure needs another look",
+            "text": "The implementation packet reports passing security, recovery and placement smoke tests. A generated seed-2 map accepted three registered defenders, and the changed-file validation reported four passing checks. However, the exact cause of the original in-game failure remains unknown. A new production GUI retest and an independent review decision are still needed."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Security state must follow evidence, not absence",
+            "explanation": "No enemies visible is not the same as enemies defeated. This distinction protects both the encounter and its exactly-once salvage reward against temporary world-generation or spawning failures."
+          },
+          {
+            "title": "A headless PASS is not a gameplay PASS",
+            "explanation": "The corrected source passed targeted tests, but only a fresh integrated retest can establish that the originally observed player-facing bypass is gone."
+          }
+        ],
+        "takeaway": "The correction is landed and test-backed, but its player-facing resolution is not yet independently established.",
+        "next_watch": "A coordinator-directed production seed-2 GUI retest, followed by a separate review disposition."
+      },
+      "details": {
+        "overview": "Source main 09e15e239da24757a9587b61314b4f62e08eba0e. The implementation was validated at c7bc91207a7b582b657c63785515f0aac19496e9e and subsequently landed. The archived packet reports changed-file validation 4/4 and focused smoke PASS; no independent review was launched or accepted.",
+        "ledger": [
+          {
+            "stage": "Implementation",
+            "status": "verified landed",
+            "evidence": "Correction source commit c7bc9120; current main 09e15e239da24757a9587b61314b4f62e08eba0e."
+          },
+          {
+            "stage": "Validation",
+            "status": "reported PASS, source-bound",
+            "evidence": "Archived packet reports security/recovery/placement smoke PASS, generated seed-2 three registered defenders, changed-file 4/4; report digest 4adaac526829167ae300569f2e7af9e82bdee03106028c6924b26db819abf1db."
+          },
+          {
+            "stage": "Integrated GUI retest",
+            "status": "pending",
+            "evidence": "Archived completion explicitly requests production retest after landing."
+          },
+          {
+            "stage": "Independent review",
+            "status": "not accepted",
+            "evidence": "Review disposition deferred to separate coordinator control."
+          },
+          {
+            "stage": "Canonical teardown",
+            "status": "unknown",
+            "evidence": "No independently readable host cleanup receipt."
+          }
+        ],
+        "notes": [
+          "The original runtime trigger remains unconfirmed.",
+          "No GitHub commit statuses or PR-triggered workflow runs were returned for the latest main SHA."
+        ],
+        "unknowns": [
+          "Production GUI retest outcome",
+          "Independent review disposition",
+          "Host claim, lock, worktree and teardown state"
+        ],
+        "actions": [
+          "Coordinator: authorize and inspect the production seed-2 GUI retest after landing.",
+          "Coordinator: determine independent correction review disposition."
+        ]
+      },
+      "scorecard": {
+        "stage": "Landed implementation; awaiting integrated retest and review decision",
+        "as_of": "2026-11-02T13:55:08Z",
+        "scope": "Named Empty Convoy correction only, not global dispatcher queue",
+        "metrics": [
+          {
+            "id": "other-validation-checks",
+            "label": "CHANGED-FILE CHECKS",
+            "value": 4,
+            "verification": "reported",
+            "basis": "Archived packet reports 4/4 source-bound changed-file validation checks passed",
+            "url": "https://github.com/braydio/CUSTODIAN/blob/09e15e239da24757a9587b61314b4f62e08eba0e/custodian/docs/ai_context/task_packets/archived/CAMPAIGN_EMPTY_CONVOY_SECURITY_INTEGRATED_CORRECTION_V1.md"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Original bypass reproduced",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Integrated seed-2 QA finding documented in correction packet."
+          },
+          {
+            "label": "Correction implemented",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Source commit c7bc9120."
+          },
+          {
+            "label": "Focused validation",
+            "status": "done",
+            "verification": "reported",
+            "evidence": "Archived completion reports passing smoke tests and 4/4 changed-file checks."
+          },
+          {
+            "label": "Landed on main",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Current main 09e15e239da24757a9587b61314b4f62e08eba0e includes correction."
+          },
+          {
+            "label": "Production GUI retest",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Not yet evidenced after landing."
+          },
+          {
+            "label": "Independent review",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Requires separate coordinator decision."
+          },
+          {
+            "label": "Canonical cleanup",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "Host teardown evidence unavailable."
+          }
+        ],
+        "next_gate": "Coordinator authorizes a production seed-2 GUI retest on landed main; review disposition remains a separate control."
+      },
+      "related": [
+        {
+          "title": "Empty Convoy security can be bypassed when defenders fail to appear",
+          "context": "Earlier coverage of the original failure or its recovery foundation.",
+          "story_id": "convoy-security-integrated-correction-04a617c4"
+        },
+        {
+          "title": "Empty Convoy's missing shipment can now be traced, but its reviews remain waived",
+          "context": "Earlier coverage of the original failure or its recovery foundation.",
+          "story_id": "empty-convoy-recovery-landed-review-waived-58769228"
+        }
+      ]
+    },
     {
       "id": "convoy-security-integrated-correction-04a617c4",
       "headline": "Empty Convoy security can be bypassed when defenders fail to appear",
@@ -1614,206 +1786,6 @@
           "title": "WIRE's observation exporter lands; independent review stalls at an attestation gate",
           "context": "The new attestation pair directly addresses the preserved review blocker described in this earlier report.",
           "story_id": "wire-exporter-landed-review-attestation-blocked-38545e4c"
-        }
-      ]
-    },
-    {
-      "id": "wire-exporter-landed-review-attestation-blocked-38545e4c",
-      "headline": "WIRE's observation exporter lands; independent review stalls at an attestation gate",
-      "summary": "CUSTODIAN landed the local sanitized observation exporter and published its private-transport packet pair. The exporter passed reported focused tests, but its independent reviewer stopped at a source-attestation gate before launch. Dropbox transport remains unimplemented and dependency-blocked; a separate repository-validation run failed queue-authority checks.",
-      "body": "The local WIRE observation exporter landed on main at 38545e4c12b848861284d77c299790c046df6f62. It consumes a pre-existing task-administrator snapshot, checks evidence completeness and freshness, and preserves unavailable counts rather than manufacturing zeroes. The executor reported 15 focused synthetic tests and changed-file validation passing; GitHub repository validation also passed at the landing SHA. The implementation packet was archived, but implementation testing is not independent acceptance.\n\nThe paired review was reportedly claimed as codex-reviewer and stopped by host validation before reviewer launch: 'changed validation manifest is not covered by an accepted exact source attestation.' The preserved review runs and retained worktree are host-reported, not independently inspected here. No independent PASS is established. The private transport implementation/review pair was then published and promoted on main at 8bc0fe40184dec741ccc5a92997052f96e0deb43, with implementation dependent on accepted exporter review. No private observation upload, ChatGPT retrieval, or producer schedule is established.\n\nGitHub Actions additionally show a failed repository validation on the transport authoring commit 8967187af, specifically the task-packet queue-authority step; the automatic authoring handoff succeeded. The Godot Level Pipeline failed at the exporter landing SHA in a separate authored-level lifecycle step. These failures need separate diagnosis; neither proves the exporter itself failed.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-wire-observation-export-v1",
-      "occurred_at": "2026-11-01T18:13:59Z",
-      "bullets": [
-        "Exporter landed and implementation packet archived on main.",
-        "15 synthetic tests passed per executor; independent review has not started.",
-        "Source-attestation host gate blocks preserved paired review.",
-        "Transport packet pair promoted but dependency-gated; no private delivery yet.",
-        "Repository queue-authority validation failed on transport authoring commit; investigate separately."
-      ],
-      "links": [
-        {
-          "title": "Exporter landing",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/38545e4c12b848861284d77c299790c046df6f62"
-        },
-        {
-          "title": "Exporter implementation",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/5013c8404a6c9c3c08ac2800f66f7b5f5f035703"
-        },
-        {
-          "title": "Transport packet promotion",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/8bc0fe40184dec741ccc5a92997052f96e0deb43"
-        },
-        {
-          "title": "Exporter review packet",
-          "url": "https://github.com/braydio/CUSTODIAN/blob/8bc0fe40184dec741ccc5a92997052f96e0deb43/custodian/docs/ai_context/task_packets/REVIEW_AGENT_WIRE_OBSERVATION_EXPORT_V1.md"
-        },
-        {
-          "title": "Passing landing validation",
-          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41335445237"
-        },
-        {
-          "title": "Failing transport-authoring queue validation",
-          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41335491813"
-        },
-        {
-          "title": "Godot lifecycle failure",
-          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41335201305"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN now has the first working piece of its operational reporting pipeline: a local exporter that turns an existing task-administrator snapshot into a constrained, sanitized observation. The code has landed, but a separate evidence-authentication rule stopped its independent reviewer before review could begin. The private Dropbox delivery layer must wait.",
-        "sections": [
-          {
-            "heading": "What the exporter changes",
-            "text": "Instead of inferring project activity from GitHub branches, the exporter is designed to consume an existing operational snapshot and report only supported counts. It rejects stale or inconsistent evidence and keeps missing values unknown. That is the foundation for a more truthful WIRE status panel, but it is not a live telemetry service yet."
-          },
-          {
-            "heading": "Why the review cannot proceed",
-            "text": "The reviewer was stopped by a host-validation requirement for an accepted exact source attestation covering the changed validation manifest. Passing implementation tests cannot substitute for this proof. The preserved claim and review evidence need a supported recovery, not a bypass."
-          },
-          {
-            "heading": "Transport is queued, not operating",
-            "text": "A separate implementation and independent-review pair for private Dropbox delivery has been promoted. Its implementation explicitly depends on accepted exporter review. No upload or ChatGPT readback has been verified. Separately, a repository validation run failed a packet queue-authority check on the transport authoring commit; that failure should be diagnosed rather than conflated with exporter test results."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The bottleneck has shifted from code to provenance",
-            "explanation": "The exporter has landed and reported tests pass. The immediate obstacle is proving the exact reviewed source and validation policy to the independent review system. Resolving that gate unlocks the transport dependency without weakening the acceptance contract."
-          },
-          {
-            "title": "A ready packet is not an active data pipeline",
-            "explanation": "The transport pair exists in the queue, but its dependency is unmet and there is no verified upload, consumer retrieval, or schedule. WIRE must continue labeling GitHub-only observations as partial."
-          }
-        ],
-        "takeaway": "The exporter is landed, but the independent-review and private-delivery milestones remain open. Treat the source-attestation recovery as the next gate.",
-        "next_watch": "Watch for a supported source-attestation recovery plan and genuine independent PASS, plus a separate diagnosis of the queue-authority CI failure."
-      },
-      "scorecard": {
-        "stage": "Exporter landed; independent review blocked before launch",
-        "as_of": "2026-11-01T18:53:24Z",
-        "scope": "Named WIRE exporter and dependent private-transport packet pair; GitHub and reported host review evidence only",
-        "metrics": [
-          {
-            "id": "other-wire-transport-packets",
-            "label": "TRANSPORT PACKETS PROMOTED",
-            "value": 2,
-            "verification": "verified",
-            "basis": "Two named implementation/review packets promoted by automatic handoff on main; not a count of eligible claims",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/8bc0fe40184dec741ccc5a92997052f96e0deb43"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Exporter packet published",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Published and subsequently archived on main."
-          },
-          {
-            "label": "Exporter implementation landed",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Main contains implementation commit 5013c8404 and landing 38545e4c."
-          },
-          {
-            "label": "Implementation validation",
-            "status": "done",
-            "verification": "reported",
-            "evidence": "Executor reports 15 focused tests and changed-file coverage passing; repository validation at landing SHA passed."
-          },
-          {
-            "label": "Independent exporter review",
-            "status": "blocked",
-            "verification": "reported",
-            "evidence": "Host validation stopped before reviewer launch due to missing accepted exact source attestation for changed validation manifest; no PASS."
-          },
-          {
-            "label": "Transport implementation",
-            "status": "next",
-            "verification": "verified",
-            "evidence": "Published dependency-gated packet; no transport implementation landing identified."
-          },
-          {
-            "label": "Transport independent acceptance",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Requires completed transport and genuine review receipt."
-          },
-          {
-            "label": "Private upload and WIRE consumption",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No upload, readback, or producer schedule verified."
-          }
-        ],
-        "next_gate": "Authorized recovery owner must resolve exact source-attestation blocker and obtain a valid independent exporter-review result before transport claim."
-      },
-      "details": {
-        "overview": "Main advanced through exporter implementation, archive, and transport packet promotion. Source attestation is a host review prerequisite. GitHub cannot prove current local process, retained worktree, or disk status.",
-        "ledger": [
-          {
-            "stage": "Implementation source",
-            "status": "verified landed",
-            "evidence": "5013c8404 implementation; 38545e4c landing; 3dd84a7b archive transition."
-          },
-          {
-            "stage": "Validation",
-            "status": "reported pass plus verified CI",
-            "evidence": "Executor reports 15 tests, 5/5 and 6/6 changed-file validation; Validate Repository passed on 38545e4c."
-          },
-          {
-            "stage": "Independent review",
-            "status": "reported blocked before launch",
-            "evidence": "Preserved host run 20261101T181049Z-ec613c8a7c18 and claim run 20261101T181128Z-265f4bc374a4; no verdict."
-          },
-          {
-            "stage": "Transport packet promotion",
-            "status": "verified",
-            "evidence": "8967187af authored pair, 8bc0fe401 promoted it; implementation depends on exporter review."
-          },
-          {
-            "stage": "Repository validation",
-            "status": "verified failure on authoring commit",
-            "evidence": "Actions 41335491813 failed task-packet queue-authority step on 8967187af."
-          },
-          {
-            "stage": "Godot level pipeline",
-            "status": "verified failure",
-            "evidence": "Actions 41335201305 failed authored-level lifecycle suite at exporter landing SHA."
-          },
-          {
-            "stage": "Canonical teardown",
-            "status": "reported partial",
-            "evidence": "Exporter worktree retired; review worktree preserved according to host relay; no independent host verification."
-          }
-        ],
-        "notes": [
-          "Reported host: 2 worktrees created, 1 retired, 1 retained; 104 total and 72 GB free. These are not current independently measured figures.",
-          "Dispatcher-wide counts unavailable; do not extrapolate from named packets."
-        ],
-        "unknowns": [
-          "Accepted source-attestation recovery plan and reviewer verdict absent.",
-          "No independent current host ownership, worktree, or disk inspection.",
-          "No private Dropbox observation or ChatGPT consumer retrieval."
-        ],
-        "actions": [
-          "Authorized recovery owner: resolve the exact source-attestation gate without bypassing provenance.",
-          "Review owner: resume preserved review only after canonical recovery validation passes.",
-          "Transport executor: wait for independent exporter acceptance and dispatcher-confirmed eligibility.",
-          "CI owner: inspect failed queue-authority and Godot lifecycle jobs separately."
-        ]
-      },
-      "related": [
-        {
-          "title": "WIRE telemetry gets an authorized path: exporter and independent-review packets enter the queue",
-          "context": "Earlier packet publication established the implementation and independent-review sequence.",
-          "story_id": "wire-observation-export-packets-ready-f38d7f40"
         }
       ]
     }
