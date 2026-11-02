@@ -50,6 +50,7 @@ func _run() -> void:
 	site.configure_runtime(41002, memory, spawner)
 	_expect(site.get_interaction_prompt() == "SCAN CARGO CRADLE", "idle convoy should expose the scan interaction")
 	site.interact(null)
+	await _drain_spawn_queue(spawner)
 	var first_wave := _event_enemies(site.event_id)
 	_expect(site.security_state == &"active", "registered safe spawns should activate security")
 	_expect(first_wave.size() == 3, "scan should spawn no more than three registered units")
@@ -68,12 +69,27 @@ func _run() -> void:
 	site.queue_free()
 	await process_frame
 
+	# The shared ambient cap also applies to event-triggered waves.
+	spawner.max_active_ambient_enemies = 2
+	var capped: EmptyConvoySite = SITE_SCRIPT.new()
+	root.add_child(capped)
+	capped.configure_runtime(41007, memory, spawner)
+	capped.interact(null)
+	await _drain_spawn_queue(spawner)
+	_expect(_event_enemies(capped.event_id).size() == 2, "convoy wave should respect remaining ambient capacity")
+	for enemy in _event_enemies(capped.event_id):
+		enemy.call("die")
+	capped.queue_free()
+	await process_frame
+	spawner.max_active_ambient_enemies = 12
+
 	# An interrupted active wave is never respawned on reentry when its actors no longer exist.
 	memory.call("reset_run_events", 620185)
 	var interrupted: EmptyConvoySite = SITE_SCRIPT.new()
 	root.add_child(interrupted)
 	interrupted.configure_runtime(41003, memory, spawner)
 	interrupted.interact(null)
+	await _drain_spawn_queue(spawner)
 	var interrupted_id: StringName = interrupted.event_id
 	var interrupted_enemies := _event_enemies(interrupted_id)
 	_expect(interrupted_enemies.size() == 3, "second run seed should activate its own wave")
@@ -105,6 +121,15 @@ func _run() -> void:
 	unsafe.interact(null)
 	_expect(unsafe.security_state == &"empty_defense", "no safe spawn positions should fail closed")
 	_expect(_event_enemies(unsafe.event_id).is_empty(), "unsafe spawn resolution must not create enemies")
+	probe.reject_all = false
+	var changed_walkability: EmptyConvoySite = SITE_SCRIPT.new()
+	root.add_child(changed_walkability)
+	changed_walkability.configure_runtime(41006, memory, spawner)
+	changed_walkability.interact(null)
+	probe.reject_all = true
+	await _drain_spawn_queue(spawner)
+	_expect(changed_walkability.security_state == &"empty_defense", "queue-time safe-spawn failure should resolve into evidence mode")
+	_expect(_event_enemies(changed_walkability.event_id).is_empty(), "queue-time spawn failure must not leave a phantom wave")
 
 	if _errors.is_empty():
 		print("PASS: empty convoy security bounded wave, completion, run identity, reentry, and fail-closed evidence")
@@ -121,6 +146,14 @@ func _event_enemies(target_event_id: StringName) -> Array[Node]:
 		if String(enemy.get_meta("empty_convoy_event_id", "")) == String(target_event_id):
 			result.append(enemy)
 	return result
+
+
+func _drain_spawn_queue(spawner: Node) -> void:
+	for _frame in range(10):
+		if int(spawner.call("get_pending_spawn_count")) == 0:
+			return
+		await physics_frame
+	_expect(int(spawner.call("get_pending_spawn_count")) == 0, "ambient spawn queue should drain")
 
 
 func _expect(condition: bool, message: String) -> void:

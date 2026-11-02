@@ -1,0 +1,9 @@
+# CUSTODIAN campaign empty convoy security
+
+- Workstream: `campaign-empty-convoy-security-v1`
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae7eb07-c554-83e9-911a-1335e640e4d0
+- Implementation commits: `cd38d1584a8e5a5c4760915f8578899024f9f562`, `9120a60cd847dabeb8d1daabae39b1509ea226a4`, followed by this bounded source-scope and closeout update.
+- Result: `SCAN CARGO CRADLE` activates a run-scoped wave of up to three registered security units. Spawn requests use the ambient scheduler, respect its remaining active capacity, and enter evidence mode if safe placement fails before or during queued spawning. Reentry does not duplicate an interrupted wave; defeating the registered units completes the event without asserting cargo custody.
+- Changed source paths: `custodian/game/world/events/campaign/empty_convoy_site.gd`; `custodian/game/world/procgen/special_rooms/special_room_runtime_inserter.gd`; `custodian/game/systems/spawning/ambient_enemy_spawner.gd`; `custodian/tools/validation/campaign_empty_convoy_security_smoke.gd`; `custodian/tools/validation/campaign_empty_convoy_security_smoke.gd.uid`; `custodian/tools/validation/validation_manifest.json`.
+- Focused evidence: `campaign_empty_convoy_security` passes bounded wave, shared-cap, outward-facing, completion, run identity, reentry, and fail-closed checks. `ambient_actor_spawn_walkability` and `procgen_ambient_enemy_real_world_spawn` pass. The earlier implementation validation report passed 5/5 checks with complete coverage; final changed-source validation is required after this closeout commit.
+- Lifecycle: C2 packet archived complete with truthful Completion Truth and refreshed exact source scope. Canonical finish, origin/main landing, paired review, and teardown remain pending. No independent review PASS is claimed.

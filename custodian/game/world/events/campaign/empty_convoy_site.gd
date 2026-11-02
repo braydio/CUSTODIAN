@@ -20,6 +20,9 @@ var _memory: Node
 var _spawner: Node
 var _defeated_slots: Array[String] = []
 var _active_enemies: Dictionary = {}
+var _spawn_positions: Array[Vector2] = []
+var _assigned_slots: Dictionary = {}
+var _pending_spawn_count := 0
 
 
 func _ready() -> void:
@@ -88,7 +91,16 @@ func _activate_security() -> void:
 			or not _spawner.has_method("resolve_runtime_walkable_spawn"):
 		_enter_empty_defense_mode("registered_enemy_or_walkability_service_unavailable")
 		return
-	var planned_count := SECURITY_LIMIT
+	var active_count := int(_spawner.call("get_active_enemy_count")) \
+		if _spawner.has_method("get_active_enemy_count") else 0
+	var pending_count := int(_spawner.call("get_pending_spawn_count")) \
+		if _spawner.has_method("get_pending_spawn_count") else 0
+	var active_limit := int(_spawner.get("max_active_ambient_enemies")) \
+		if "max_active_ambient_enemies" in _spawner else SECURITY_LIMIT
+	var planned_count := mini(SECURITY_LIMIT, maxi(0, active_limit - active_count - pending_count))
+	if planned_count <= 0:
+		_enter_empty_defense_mode("registered_spawn_capacity_unavailable")
+		return
 	var positions: Array[Vector2] = []
 	for index in range(planned_count):
 		var desired: Vector2 = global_position + (SECURITY_OFFSETS[index] as Vector2)
@@ -109,35 +121,22 @@ func _activate_security() -> void:
 
 	expected_enemy_count = positions.size()
 	security_state = STATE_ACTIVE
+	_spawn_positions = positions.duplicate()
+	_pending_spawn_count = positions.size()
 	_persist_spawned_state()
-	var parent: Node2D = self
-	if _spawner.has_method("get_enemy_spawn_parent"):
-		var spawn_parent := _spawner.call("get_enemy_spawn_parent") as Node2D
-		if spawn_parent != null:
-			parent = spawn_parent
 	for index in range(positions.size()):
 		var scene := scenes[index % scenes.size()]
-		var enemy := scene.instantiate() as Node2D
-		if enemy == null:
-			continue
-		enemy.set_meta("empty_convoy_event_id", String(event_id))
-		enemy.set_meta("empty_convoy_slot", index)
-		parent.add_child(enemy)
-		enemy.global_position = positions[index]
-		var facing: Vector2 = SECURITY_FACING[index] as Vector2
-		if enemy.has_method("set_ability_facing"):
-			enemy.call("set_ability_facing", facing)
-		if enemy.has_method("refresh_enemy_directional_animation"):
-			enemy.call("refresh_enemy_directional_animation")
-		_configure_ambient_home(enemy)
-		if enemy.has_signal("enemy_died"):
-			enemy.connect("enemy_died", Callable(self, "_on_security_enemy_died"))
-		_active_enemies[str(index)] = enemy
-	if _active_enemies.is_empty():
-		_enter_empty_defense_mode("registered_enemy_scenes_failed_to_instantiate")
-	else:
-		expected_enemy_count = _active_enemies.size()
-		_persist_spawned_state()
+		_spawner.call(
+			"queue_enemy_spawn",
+			scene,
+			self,
+			positions[index],
+			global_position,
+			event_id,
+			320.0,
+			&"raider_grunt",
+			Callable(self, "_on_security_enemy_spawned")
+		)
 
 
 func _registered_enemy_scenes() -> Array[PackedScene]:
@@ -165,6 +164,62 @@ func _configure_ambient_home(enemy: Node2D) -> void:
 		behavior.call("setup_profile", profile)
 	if behavior.has_method("setup_ambient_home"):
 		behavior.call("setup_ambient_home", global_position, event_id, 320.0)
+
+
+func _on_security_enemy_spawned(enemy: Node2D) -> void:
+	_pending_spawn_count = maxi(0, _pending_spawn_count - 1)
+	if enemy == null or not is_instance_valid(enemy):
+		if _pending_spawn_count == 0:
+			_finish_spawn_batch()
+		return
+	var slot_index := _nearest_unassigned_slot(enemy.global_position)
+	if slot_index < 0:
+		enemy.queue_free()
+		if _pending_spawn_count == 0:
+			_finish_spawn_batch()
+		return
+	var slot := str(slot_index)
+	_assigned_slots[slot] = true
+	enemy.set_meta("empty_convoy_event_id", String(event_id))
+	enemy.set_meta("empty_convoy_slot", slot)
+	var facing: Vector2 = SECURITY_FACING[slot_index] as Vector2
+	if enemy.has_method("set_ability_facing"):
+		enemy.call("set_ability_facing", facing)
+	if enemy.has_method("refresh_enemy_directional_animation"):
+		enemy.call("refresh_enemy_directional_animation")
+	_configure_ambient_home(enemy)
+	if enemy.has_signal("enemy_died"):
+		enemy.connect("enemy_died", Callable(self, "_on_security_enemy_died"))
+	_active_enemies[slot] = enemy
+	if _pending_spawn_count == 0:
+		_finish_spawn_batch()
+	queue_redraw()
+
+
+func _nearest_unassigned_slot(position: Vector2) -> int:
+	var best_index := -1
+	var best_distance := INF
+	for index in range(_spawn_positions.size()):
+		var slot := str(index)
+		if _assigned_slots.has(slot):
+			continue
+		var distance := position.distance_squared_to(_spawn_positions[index])
+		if distance < best_distance:
+			best_distance = distance
+			best_index = index
+	return best_index
+
+
+func _finish_spawn_batch() -> void:
+	expected_enemy_count = _active_enemies.size() + _defeated_slots.size()
+	if expected_enemy_count == 0:
+		_enter_empty_defense_mode("registered_enemy_spawn_failed")
+		return
+	if _defeated_slots.size() >= expected_enemy_count:
+		security_state = STATE_CLEARED
+		_persist_completed_state()
+	else:
+		_persist_spawned_state()
 
 
 func _on_security_enemy_died(enemy: Node) -> void:
