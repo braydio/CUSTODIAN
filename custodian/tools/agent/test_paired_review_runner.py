@@ -1210,7 +1210,7 @@ class PairedReviewRunnerTests(unittest.TestCase):
             {key: value for key, value in published_pair.items()
              if key not in {"owners", "timeout_sec"}},
         )
-        self.assertEqual(actual_pair["timeout_sec"], 300)
+        self.assertEqual(actual_pair["timeout_sec"], 480)
         self.assertTrue(set(published_pair["owners"]).issubset(actual_pair["owners"]))
 
     def test_invalid_disposition_repair_moves_only_the_four_allowlisted_handoff_lines(self):
