@@ -23,8 +23,8 @@
 - Completion boundary: After 3 services in time present exactly two choices: MAINTAIN CONTAINMENT / EVIDENCE PRESERVED and SHUT DOWN COUPLING / EVIDENCE INCOMPLETE. Close only with real runtime integration and focused proof, not a disconnected demo.
 - Current measured state: S1 and S2 implementations are complete on main. The project owner waived prospective independent review of S2 before reviewer claim because its archived source scope omits landed paths; this is not reviewer acceptance. No final Hold/Shutdown choice or durable in-run readback exists.
 - Evidence: landed S2 implementation and final source-bound validation report; WorldEventMemory; Reciprocal Continuity Doctrine
-- Task-specific authority: Custodian Mandate/Reciprocal Continuity, event spec §5, reviewed S1/S2.; `design/02_features/events/AUTHORED_HUB_CAMPAIGN_MICROEVENTS_V1.md`.
-- Work surface: Station controller decision/readback and run-scoped event payload; focused completion smoke.
+- Task-specific authority: Custodian Mandate/Reciprocal Continuity, event spec §5, landed S1/S2 implementations (S2 review owner-waived before launch); `design/02_features/events/AUTHORED_HUB_CAMPAIGN_MICROEVENTS_V1.md`.
+- Work surface: `custodian/game/world/events/abandoned_station/abandoned_station_site.gd`, `custodian/tools/validation/abandoned_station_containment_smoke.gd`, and `custodian/tools/validation/validation_manifest.json`; station-local containment choices/readback, run-scoped completion, and focused completion proof.
 - Publication inputs: `design/02_features/events/AUTHORED_HUB_CAMPAIGN_MICROEVENTS_V1.md`
 - Change: After 3 services in time present exactly two choices: MAINTAIN CONTAINMENT / EVIDENCE PRESERVED and SHUT DOWN COUPLING / EVIDENCE INCOMPLETE. One choice completes event once in WorldEventMemory and shows corresponding readback; changing route/world does not silently create a campaign-wide outcome. On prior expiry decision stays unavailable and site is inspectable. No actual reciprocal Port opened.
 - Preserve: S1/S2 weather/timer and local failure; global CampaignOutcome, HubState and extraction ownership.

@@ -7,10 +7,75 @@ const SERVICE_LABELS := ["NORTH RELAY", "EAST CONDUIT", "CORE FEED"]
 const TICKS_PER_SECOND := 60
 const STABILITY_WINDOW_SECONDS := 90
 const STABILITY_WINDOW_TICKS := TICKS_PER_SECOND * STABILITY_WINDOW_SECONDS
+const DECISION_MAINTAIN := &"maintain_containment"
+const DECISION_SHUT_DOWN := &"shut_down_coupling"
+const DECISION_READBACKS := {
+	DECISION_MAINTAIN: "EVIDENCE PRESERVED",
+	DECISION_SHUT_DOWN: "EVIDENCE INCOMPLETE",
+}
+const DECISION_PROMPTS := {
+	DECISION_MAINTAIN: "MAINTAIN CONTAINMENT",
+	DECISION_SHUT_DOWN: "SHUT DOWN COUPLING",
+}
 const PHASE_IDLE := &"idle"
 const PHASE_ACTIVE := &"active"
 const PHASE_HAZARD_REVEALED := &"hazard_revealed"
 const PHASE_EXPIRED := &"expired"
+const PHASE_RESOLVED := &"resolved"
+
+
+class ResolutionPoint extends Node2D:
+	var controller: Node
+	var decision_id: StringName
+	var prompt_text := ""
+	var readback_text := ""
+	var _label: Label
+
+
+	func _ready() -> void:
+		add_to_group("interactable")
+		_label = Label.new()
+		_label.text = prompt_text + "\n" + readback_text
+		_label.position = Vector2(-78.0, 17.0)
+		_label.size = Vector2(156.0, 34.0)
+		_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		_label.add_theme_font_size_override("font_size", 10)
+		_label.add_theme_color_override("font_color", Color(0.78, 0.91, 0.95))
+		add_child(_label)
+		queue_redraw()
+
+
+	func can_interact(_actor: Node = null) -> bool:
+		return is_instance_valid(controller) \
+			and bool(controller.call("can_resolve_containment", decision_id))
+
+
+	func get_interaction_prompt() -> String:
+		return String(prompt_text) if can_interact() else ""
+
+
+	func get_interaction_prompt_body() -> String:
+		return String(readback_text)
+
+
+	func get_interaction_position() -> Vector2:
+		return global_position
+
+
+	func get_interaction_distance() -> float:
+		return 76.0
+
+
+	func interact(_actor: Node) -> void:
+		if can_interact():
+			controller.call("resolve_containment", decision_id)
+
+
+	func _draw() -> void:
+		var color := Color("77a5a0") if decision_id == DECISION_MAINTAIN else Color("b77d5d")
+		draw_circle(Vector2.ZERO, 10.0, color)
+		draw_arc(Vector2.ZERO, 16.0, 0.0, TAU, 24, Color("d3c897"), 1.5)
 
 var event_id: StringName
 var service_states: Array[bool] = [false, false, false]
@@ -19,6 +84,8 @@ var _stability_started_tick := -1
 var _broadcast: Label
 var _local_stability_cue: Polygon2D
 var _memory: Node
+var _containment_decision: StringName = &""
+var _resolution_points: Array[ResolutionPoint] = []
 
 
 func configure(p_event_id: StringName, services: Array, memory: Node) -> void:
@@ -30,6 +97,13 @@ func configure(p_event_id: StringName, services: Array, memory: Node) -> void:
 		service_states[index] = bool(completed[index]) if index < completed.size() else false
 	_stability_started_tick = int(payload.get("stability_started_tick", -1))
 	_stability_phase = _phase_from_payload(payload)
+	_containment_decision = StringName(payload.get("containment_decision", ""))
+	if _containment_decision not in DECISION_READBACKS:
+		_containment_decision = &""
+	if _containment_decision != &"":
+		_stability_phase = PHASE_RESOLVED
+	elif _stability_phase == PHASE_RESOLVED:
+		_stability_phase = PHASE_IDLE
 	if _stability_phase == PHASE_ACTIVE and _stability_started_tick < 0:
 		_stability_phase = PHASE_IDLE
 	if _stability_phase == PHASE_HAZARD_REVEALED and _service_count() < SERVICE_LABELS.size():
@@ -46,6 +120,7 @@ func configure(p_event_id: StringName, services: Array, memory: Node) -> void:
 		point.label_text = SERVICE_LABELS[index]
 		add_child(point)
 		point.global_position = services[index]
+	_create_resolution_points()
 
 	_broadcast = Label.new()
 	_broadcast.name = "EvacuationBroadcast"
@@ -73,6 +148,7 @@ func can_service(index: int) -> bool:
 	return index >= 0 \
 		and index < service_states.size() \
 		and not service_states[index] \
+		and not _event_completed() \
 		and _stability_phase != PHASE_EXPIRED \
 		and _stability_phase != PHASE_HAZARD_REVEALED
 
@@ -113,6 +189,41 @@ func get_remaining_stability_ticks(fixed_tick: int = -1) -> int:
 	return maxi(0, STABILITY_WINDOW_TICKS - elapsed_ticks)
 
 
+func can_offer_resolution() -> bool:
+	return _stability_phase == PHASE_HAZARD_REVEALED \
+		and _containment_decision == &"" \
+		and not _event_completed()
+
+
+func can_resolve_containment(decision_id: StringName) -> bool:
+	return can_offer_resolution() and DECISION_READBACKS.has(decision_id)
+
+
+func resolve_containment(decision_id: StringName) -> void:
+	if not can_resolve_containment(decision_id) or _memory == null \
+		or not _memory.has_method("mark_completed"):
+		return
+	_containment_decision = decision_id
+	_stability_phase = PHASE_RESOLVED
+	var payload := _state_payload()
+	payload["containment_decision"] = String(decision_id)
+	payload["containment_readback"] = String(DECISION_READBACKS[decision_id])
+	_memory.call("mark_completed", event_id, payload)
+	_refresh_presentation(_current_simulation_tick())
+
+
+func get_resolution_points() -> Array[ResolutionPoint]:
+	return _resolution_points.duplicate()
+
+
+func get_containment_decision() -> StringName:
+	return _containment_decision
+
+
+func get_resolution_readback() -> String:
+	return String(DECISION_READBACKS.get(_containment_decision, ""))
+
+
 func _advance_to_simulation_tick(fixed_tick: int) -> void:
 	if _stability_phase != PHASE_ACTIVE or fixed_tick < _stability_started_tick:
 		return
@@ -123,7 +234,7 @@ func _advance_to_simulation_tick(fixed_tick: int) -> void:
 
 func _phase_from_payload(payload: Dictionary) -> StringName:
 	var stored := StringName(payload.get("stability_phase", String(PHASE_IDLE)))
-	if stored in [PHASE_IDLE, PHASE_ACTIVE, PHASE_HAZARD_REVEALED, PHASE_EXPIRED]:
+	if stored in [PHASE_IDLE, PHASE_ACTIVE, PHASE_HAZARD_REVEALED, PHASE_EXPIRED, PHASE_RESOLVED]:
 		return stored
 	return PHASE_IDLE
 
@@ -131,11 +242,15 @@ func _phase_from_payload(payload: Dictionary) -> StringName:
 func _persist_state() -> void:
 	if _memory == null or not _memory.has_method("mark_spawned"):
 		return
-	_memory.call("mark_spawned", event_id, {
-			"services": service_states.duplicate(),
-			"stability_phase": String(_stability_phase),
-			"stability_started_tick": _stability_started_tick,
-	})
+	_memory.call("mark_spawned", event_id, _state_payload())
+
+
+func _state_payload() -> Dictionary:
+	return {
+		"services": service_states.duplicate(),
+		"stability_phase": String(_stability_phase),
+		"stability_started_tick": _stability_started_tick,
+	}
 
 
 func _refresh_presentation(current_tick: int) -> void:
@@ -148,15 +263,44 @@ func _refresh_presentation(current_tick: int) -> void:
 			_broadcast.text = "STABILITY WINDOW %02d SEC\nSERVICES %d/3\nDO NOT LINK TO THE CORE FEED" % [remaining_seconds, service_count]
 			_broadcast.add_theme_color_override("font_color", Color(1.0, 0.58, 0.28) if remaining_seconds <= 30 else Color(1.0, 0.72, 0.42))
 		PHASE_HAZARD_REVEALED:
-			_broadcast.text = "OUTWARD LINK IS UNSAFE\nEVIDENCE PRESERVED\nS3 RESOLUTION PENDING"
+			_broadcast.text = "OUTWARD LINK IS UNSAFE\nEVIDENCE OUTCOME PENDING\nS3 RESOLUTION PENDING"
 			_broadcast.add_theme_color_override("font_color", Color(1.0, 0.38, 0.28))
 		PHASE_EXPIRED:
 			_broadcast.text = "STABILITY WINDOW EXPIRED\nSERVICES %d/3\nCAMPAIGN AND EXTRACTION INTACT" % service_count
 			_broadcast.add_theme_color_override("font_color", Color(1.0, 0.24, 0.18))
+		PHASE_RESOLVED:
+			_broadcast.text = "%s\n%s\nSTATION EVENT COMPLETE" % [
+				String(DECISION_PROMPTS.get(_containment_decision, "STATION RESOLVED")),
+				get_resolution_readback(),
+			]
+			_broadcast.add_theme_color_override("font_color", Color(0.72, 0.91, 0.78))
 		_:
-			_broadcast.text = "EVACUATE THIS STATION\nDO NOT LINK TO THE CORE FEED\nSERVICES %d/3\nWINDOW STARTS ON FIRST SERVICE" % service_count
+			if _event_completed():
+				_broadcast.text = "STATION EVENT ALREADY COMPLETE\nNO CONTAINMENT DECISION RECORDED"
+			else:
+				_broadcast.text = "EVACUATE THIS STATION\nDO NOT LINK TO THE CORE FEED\nSERVICES %d/3\nWINDOW STARTS ON FIRST SERVICE" % service_count
 			_broadcast.add_theme_color_override("font_color", Color(1.0, 0.72, 0.42))
+	for point in _resolution_points:
+		point.visible = can_offer_resolution()
 	_update_local_stability_cue(current_tick)
+
+
+func _create_resolution_points() -> void:
+	for decision_id in [DECISION_MAINTAIN, DECISION_SHUT_DOWN]:
+		var point := ResolutionPoint.new()
+		point.name = "StationResolution_%s" % String(decision_id).to_pascal_case()
+		point.controller = self
+		point.decision_id = decision_id
+		point.prompt_text = String(DECISION_PROMPTS[decision_id])
+		point.readback_text = String(DECISION_READBACKS[decision_id])
+		add_child(point)
+		point.position = Vector2(-72.0 if decision_id == DECISION_MAINTAIN else 72.0, 76.0)
+		_resolution_points.append(point)
+
+
+func _event_completed() -> bool:
+	return _memory != null and _memory.has_method("is_completed") \
+		and bool(_memory.call("is_completed", event_id))
 
 
 func _create_local_stability_cue(services: Array) -> void:
