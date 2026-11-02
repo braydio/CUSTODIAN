@@ -1,9 +1,188 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-02T10:54:23Z",
-  "source_main_sha": "38c188421b18e0f5ddcd47ad0ff3dd5399eceac6",
+  "generated_at": "2026-11-02T11:48:57Z",
+  "source_main_sha": "5876922872b8e08b6edc13f2a2a60c8947315e9e",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "empty-convoy-recovery-landed-review-waived-58769228",
+      "headline": "Empty Convoy's missing shipment can now be traced, but its reviews remain waived",
+      "summary": "The Empty Convoy encounter gained bounded security and a one-time custody trace with optional salvage. Its three implementation slices landed, while security and recovery independent reviews were owner-waived before launch. The latest recovery review hit a source-attestation gate, not a gameplay verdict.",
+      "body": "The Empty Convoy encounter progressed beyond optional placement. Security scanning now queues up to three registered enemies within ambient spawn capacity and fails safely when placement is impossible. After clearing security, the player can record an unverified shipment trace and obtain existing ruin_scrap once when the ledger supports it; otherwise evidence-only completion is preserved. C2 landed at bde08b88 and C3 at e346eaea. C2 implementation reports 10/10 selected validation checks, C3 reports 8/8. The C2 review was owner-waived without launch. C3 review was also waived before launch after the host gate rejected missing authenticated source-span provenance for the changed validation manifest. No independent PASS, gameplay acceptance or verified host teardown follows from these commits.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "campaign",
+      "workstream": "campaign-empty-convoy-recovery-v1",
+      "occurred_at": "2026-11-02T11:37:46Z",
+      "bullets": [
+        "C2 security and C3 custody/recovery implementations landed.",
+        "Reported selected checks: C2 10/10; C3 8/8, not independent acceptance.",
+        "Both paired reviews were owner-waived prelaunch, not passed.",
+        "Host teardown and live gameplay remain unverified."
+      ],
+      "links": [
+        {
+          "title": "Security implementation",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/bde08b88caf38b8163f3c6dbbeff2597bd3935ab"
+        },
+        {
+          "title": "Security review waiver",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/b4069cce78f3d40bc8244cee9729c9b504fe7c39"
+        },
+        {
+          "title": "Recovery implementation",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/e346eaea2f6b9a2068f160f58b50d090427bda61"
+        },
+        {
+          "title": "Recovery review waiver",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/5876922872b8e08b6edc13f2a2a60c8947315e9e"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "The abandoned convoy now offers more than an eerie roadside discovery. Scanning its cargo cradle can trigger a contained defense, and surviving the encounter reveals a custody trace that refuses to pretend the missing shipment has been found. The code landed, but neither follow-up slice received independent review.",
+        "sections": [
+          {
+            "heading": "A threat that respects the rest of the world",
+            "text": "The scan queues at most three existing security units, sharing the game's ambient enemy capacity rather than creating an unlimited separate wave. If safe spawning fails, the event falls back to evidence instead of trapping the player or crashing."
+          },
+          {
+            "heading": "One clue, one salvage opportunity",
+            "text": "After security clears, the convoy records SHIPMENT UNVERIFIED. A valid existing scrap reward may be granted once; repeated interactions and same-run reentry cannot duplicate it. Without a usable ledger entry, the clue still remains accessible."
+          },
+          {
+            "heading": "The missing verdict",
+            "text": "Both security and recovery implementation packets landed with reported focused checks. Their paired reviews were waived before a reviewer ran. The latest review was stopped by a source-attestation requirement, so these waivers are administrative dispositions, not independent gameplay approval."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The event chain now has a coherent playable loop",
+            "explanation": "Placement, bounded defense, and durable evidence form a connected interaction rather than three isolated prototypes. This creates a stronger foundation for later narrative work without asserting what happened to the cargo."
+          },
+          {
+            "title": "Review waivers do not repair the proof gap",
+            "explanation": "The reported tests cover specific behavior, but the blocked source-attestation gate prevented independent falsification. Additional acceptance would require separately authorized review or gameplay evidence."
+          }
+        ],
+        "takeaway": "Three Empty Convoy implementation slices are on main; security and recovery remain independently unaccepted.",
+        "next_watch": "Watch for a separately authorized gameplay verification or an independently accepted review, not another administrative waiver."
+      },
+      "details": {
+        "overview": "C1 placement landed earlier at 47fd0755 and archived at 0cdb0c8c. C2 security landed at bde08b88, reported 10/10 selected checks, then was owner-waived prelaunch at b4069cce. C3 recovery landed at e346eaea, reported 8/8 selected checks, and its paired review was owner-waived prelaunch at 58769228 after source-span attestation failure. No independent PASS or authenticated teardown was inspected.",
+        "ledger": [
+          {
+            "stage": "C1 placement",
+            "status": "verified landed",
+            "evidence": "47fd0755; archive 0cdb0c8c"
+          },
+          {
+            "stage": "C2 security",
+            "status": "verified landed; tests reported",
+            "evidence": "bde08b88; 10/10 selected checks in completion evidence"
+          },
+          {
+            "stage": "C2 independent review",
+            "status": "owner-waived before launch",
+            "evidence": "b4069cce; no reviewer verdict"
+          },
+          {
+            "stage": "C3 custody trace",
+            "status": "verified landed; tests reported",
+            "evidence": "e346eaea; 8/8 selected checks"
+          },
+          {
+            "stage": "C3 independent review",
+            "status": "owner-waived before launch",
+            "evidence": "58769228; missing authenticated validation-manifest source span"
+          },
+          {
+            "stage": "Canonical host teardown",
+            "status": "unknown",
+            "evidence": "No authenticated current host observation"
+          }
+        ],
+        "notes": [
+          "GitHub combined commit status returned no individual statuses for the inspected head; this is not evidence of passing CI."
+        ],
+        "unknowns": [
+          "Independent gameplay acceptance is not established.",
+          "Live process and canonical teardown are not established."
+        ],
+        "actions": [
+          "Owner/coordinator: authorize any new verification explicitly; do not interpret either waiver as PASS."
+        ]
+      },
+      "scorecard": {
+        "stage": "Three slices landed; two paired reviews waived",
+        "as_of": "2026-11-02T11:37:46Z",
+        "scope": "Named Empty Convoy C1-C3 implementation and C2-C3 review evidence only",
+        "metrics": [
+          {
+            "id": "other-convoy-slices-landed",
+            "label": "SLICES LANDED",
+            "value": 3,
+            "verification": "verified",
+            "basis": "C1, C2 and C3 commits inspected; not a project-wide count",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/e346eaea2f6b9a2068f160f58b50d090427bda61"
+          },
+          {
+            "id": "other-convoy-waived-reviews",
+            "label": "REVIEWS WAIVED",
+            "value": 2,
+            "verification": "verified",
+            "basis": "Named C2 and C3 review packets marked owner-waived prelaunch",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/5876922872b8e08b6edc13f2a2a60c8947315e9e"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Optional placement landed",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "47fd0755"
+          },
+          {
+            "label": "Bounded security landed",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "bde08b88"
+          },
+          {
+            "label": "Custody trace and salvage landed",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "e346eaea"
+          },
+          {
+            "label": "Focused validation",
+            "status": "done",
+            "verification": "reported",
+            "evidence": "C2 10/10 and C3 8/8 selected checks reported"
+          },
+          {
+            "label": "Independent paired review",
+            "status": "blocked",
+            "verification": "verified",
+            "evidence": "C2/C3 owner-waived prelaunch; no PASS"
+          },
+          {
+            "label": "Host teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No authenticated host proof"
+          }
+        ],
+        "next_gate": "Owner explicitly authorizes fresh gameplay or independent acceptance verification if desired."
+      },
+      "related": [
+        {
+          "title": "Empty Convoy enters generated worlds, with safe placement and an inspectable manifest",
+          "context": "Earlier coverage of the placement slice that the new security and recovery build upon.",
+          "story_id": "empty-convoy-placement-landed-0cdb0c8c"
+        }
+      ]
+    },
     {
       "id": "empty-convoy-placement-landed-0cdb0c8c",
       "headline": "Empty Convoy enters generated worlds, with safe placement and an inspectable manifest",
@@ -1637,103 +1816,6 @@
         ],
         "next_gate": "Sepulcher recovery owner must reconcile the original held review and authorize a bounded recovery or disposition based on preserved evidence."
       }
-    },
-    {
-      "id": "sepulcher-v2-salvage-pair-withdrawn-b245bfb0",
-      "headline": "Sepulcher recovery proposal withdrawn after authoring handoff fails",
-      "summary": "A proposed Sepulcher V2 source-salvage implementation/review pair failed automatic packet publication and was reverted from main. The rollback preserves the original correction branch and reviewer evidence, but leaves the recovery path unresolved. Repository validation passed on the rollback; no implementation or review acceptance is established.",
-      "body": "A new Sepulcher V2 source-salvage packet pair appeared on main at 15:56 UTC, but the automatic packet-authoring handoff failed. At 16:06 UTC, a revert removed both unclaimed packets and restored the prior file index. The rollback's repository validation and authoring workflow succeeded. This is a correction to task authoring, not a gameplay fix, a recovered validation run, or a completed independent review. The next owner should examine the failed handoff and existing recovery authority before proposing a replacement; the original correction branch and reviewer evidence were preserved according to the revert commit. WIRE exporter packets remain ready/auto, but neither their implementation nor transport is verified as landed.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-sepulcher-v2-recovery-source-salvage-v1",
-      "occurred_at": "2026-11-01T16:06:30Z",
-      "bullets": [
-        "Proposed implementation/review pair removed from main after failed handoff.",
-        "Rollback preserved the preexisting recovery branch and review evidence according to its commit.",
-        "The next gate is diagnosing the failed handoff and determining an authorized recovery path."
-      ],
-      "links": [
-        {
-          "title": "Withdrawal commit and exact changed files",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/b245bfb0ef1ef13b60ccc1165ad9ce0a5d052585"
-        },
-        {
-          "title": "Failed automatic handoff",
-          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41323756922"
-        },
-        {
-          "title": "Original proposal",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/0aee8bf0450dcb7368196201f731f45b0f4cd3d9"
-        },
-        {
-          "title": "Successful rollback validation",
-          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41324599187"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "A proposed recovery route for Sepulcher's V2 scene was withdrawn just ten minutes after it reached main. Its automatic packet handoff failed, and the repository reverted the unclaimed implementation and review pair. The underlying scene-recovery question remains open.",
-        "sections": [
-          {
-            "heading": "Why the recovery proposal disappeared",
-            "text": "The proposal sought a bounded way to salvage source evidence for an existing Sepulcher V2 validation problem. The automatic handoff did not accept the pair. A follow-up commit removed both packets and restored the previous file index, rather than leaving an unusable new workstream in the queue."
-          },
-          {
-            "heading": "What the rollback does, and doesn't, establish",
-            "text": "The rollback passed repository validation and the automatic handoff workflow. Its commit says the original correction branch and reviewer evidence were preserved. That is evidence of a clean repository-level withdrawal, not proof that the underlying scene validation passed or that any host worktree was retired."
-          }
-        ],
-        "insights": [
-          {
-            "title": "A failed authoring gate is not a failed game build",
-            "explanation": "The failure occurred while promoting proposed task packets, before they could authorize implementation. Sepulcher's runtime outcome cannot be inferred from this workflow failure."
-          },
-          {
-            "title": "Recovery evidence remains the useful starting point",
-            "explanation": "Because the revert explicitly preserves the earlier correction branch and reviewer evidence, the next attempt should reconcile those existing materials before creating a replacement packet."
-          }
-        ],
-        "takeaway": "The unclaimed salvage proposal was removed from main; Sepulcher V2 recovery still needs an authorized, evidence-backed path.",
-        "next_watch": "A diagnosis of the failed handoff and a valid replacement or continuation of the existing recovery workstream."
-      },
-      "details": {
-        "overview": "Main b245bfb0 reverted the immediately preceding Sepulcher V2 source-salvage packet authoring commit 0aee8bf0. The failed handoff was GitHub Actions run 41323756922. Main rollback validation succeeded in run 41324599187; automatic handoff also succeeded in run 41324599208. Neither result is an independent implementation acceptance receipt.",
-        "ledger": [
-          {
-            "stage": "Source-salvage packet authoring",
-            "status": "Verified: published proposal, then handoff failure",
-            "evidence": "0aee8bf0 added the pair; GitHub Actions 41323756922 failed its Validate and publish explicitly authorized pairs step."
-          },
-          {
-            "stage": "Withdrawal from main",
-            "status": "Verified: reverted",
-            "evidence": "b245bfb0 removed both packet files and restored FILE_INDEX."
-          },
-          {
-            "stage": "Repository validation after revert",
-            "status": "Verified: passed",
-            "evidence": "GitHub Actions 41324599187 passed on b245bfb0."
-          },
-          {
-            "stage": "Implementation, independent acceptance, canonical host teardown",
-            "status": "Unknown/not established",
-            "evidence": "No implementation, PASS receipt, or host cleanup evidence was inspected for this withdrawn proposal."
-          }
-        ],
-        "notes": [
-          "The revert commit states the original correction branch and reviewer evidence were preserved.",
-          "The separate WIRE observation exporter pair remains ready/auto in the two inspected packet headers."
-        ],
-        "unknowns": [
-          "The precise failing authoring validator message was not inspected beyond the failed job step.",
-          "No current full dispatcher audit or host-state evidence was available."
-        ],
-        "actions": [
-          "Recovery owner: inspect failed authoring run and existing correction evidence before choosing an authorized replacement or continuation."
-        ]
-      },
-      "related": []
     }
   ],
   "snapshot": {
