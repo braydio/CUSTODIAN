@@ -3149,7 +3149,92 @@ def _verify_split_landing_sync_merges(repo: Path, reviewed_main: str, landing_co
         )
         if merge_witness_shape and index not in used_sync_events:
             raise HostValidationError("synchronization merge trace contains unmatched or conflicting main-sync events")
+    changed_merge_syncs = [
+        index for index, event in sync_events
+        if isinstance(event.get("data"), dict)
+        and event["data"].get("changed") is True
+        and event["data"].get("head") in merge_heads
+    ]
+    after_sync_evidence = _verify_after_sync_validation_witnesses(
+        repo, events, changed_merge_syncs,
+    )
+    for record in proven:
+        changed_index = record.get("changed_sync_event_index")
+        if changed_index is not None:
+            record["after_sync_validation"] = after_sync_evidence[changed_index]
     return proven
+
+
+def _verify_after_sync_validation_witnesses(
+    repo: Path, events: list[dict], changed_sync_indices: list[int],
+) -> dict[int, dict]:
+    """Bind each changed sync to its unique trace-published green validation witness.
+
+    The paired-review consumer receives the immutable lifecycle trace and Git
+    objects, but not the producer's run directory. It can authenticate the
+    report digest as trace provenance; it cannot re-read or re-hash report bytes.
+    """
+    validation_events = [(index, event) for index, event in enumerate(events)
+                         if event.get("event") == "validation_after_sync"]
+    consumed: set[int] = set()
+    evidence: dict[int, dict] = {}
+    empty_status_sha256 = hashlib.sha256(b"").hexdigest()
+    for sync_index in changed_sync_indices:
+        sync_event = events[sync_index]
+        sync_data = sync_event.get("data")
+        if not isinstance(sync_data, dict):
+            raise HostValidationError("after-sync validation witness has malformed main-sync event")
+        sync_head = sync_data.get("head")
+        main_sha = sync_data.get("main_sha")
+        if (not isinstance(sync_head, str) or re.fullmatch(r"[0-9a-f]{40,64}", sync_head) is None
+                or not isinstance(main_sha, str)
+                or re.fullmatch(r"[0-9a-f]{40,64}", main_sha) is None):
+            raise HostValidationError("after-sync validation witness has malformed synchronization identity")
+        witnesses = [(index, event) for index, event in validation_events
+                     if isinstance(event.get("data"), dict)
+                     and event["data"].get("sync_head") == sync_head]
+        if len(witnesses) != 1:
+            raise HostValidationError(
+                f"changed main sync {sync_head} requires one unique after-sync validation witness"
+            )
+        witness_index, witness_event = witnesses[0]
+        witness = witness_event["data"]
+        tree = _git(repo, "rev-parse", f"{sync_head}^{{tree}}")
+        next_sync = min((index for index, event in enumerate(events)
+                         if index > sync_index and event.get("event") == "main_sync"),
+                        default=len(events))
+        path = witness.get("path")
+        digest = witness.get("sha256")
+        if (witness_index <= sync_index or witness_index >= next_sync
+                or witness.get("source_commit") != sync_head
+                or witness.get("source_tree") != tree
+                or witness.get("source_status_sha256") != empty_status_sha256
+                or witness.get("sync_main_sha") != main_sha
+                or witness.get("passed") is not True
+                or not isinstance(path, str) or not path or path in {".", ".."}
+                or "\x00" in path or Path(path).name != path
+                or not isinstance(digest, str)
+                or re.fullmatch(r"[0-9a-f]{64}", digest) is None):
+            raise HostValidationError(
+                f"changed main sync {sync_head} has an invalid or misordered after-sync validation witness"
+            )
+        consumed.add(witness_index)
+        evidence[sync_index] = {
+            "event_index": witness_index,
+            "sync_head": sync_head,
+            "sync_main_sha": main_sha,
+            "source_tree": tree,
+            "source_status_sha256": empty_status_sha256,
+            "report_path": path,
+            "report_sha256": digest,
+            "report_content_verified": False,
+            "report_digest_provenance": "immutable-lifecycle-trace-only",
+        }
+    if consumed != {index for index, _ in validation_events}:
+        raise HostValidationError(
+            "lifecycle trace contains unmatched, duplicate, or reused after-sync validation witnesses"
+        )
+    return evidence
 
 
 def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: str,

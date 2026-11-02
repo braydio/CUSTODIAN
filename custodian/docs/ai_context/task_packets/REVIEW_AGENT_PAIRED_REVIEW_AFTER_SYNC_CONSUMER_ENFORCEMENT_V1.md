@@ -5,8 +5,8 @@
 - Workstream: `review-agent-paired-review-after-sync-consumer-enforcement-v1`
 - Category: `agent-ops`
 - Kind: `review`
-- Status: `ready`
-- Dispatch: `auto`
+- Status: `blocked`
+- Dispatch: `manual`
 - Priority: `P0`
 - Depends on: `agent-paired-review-after-sync-consumer-enforcement-v1`
 - Locks: `workstream-finish-sync-provenance`
@@ -31,6 +31,10 @@
 - Acceptance: Produce a findings-first independent review of live `main`, with exact implementation identity, genuine reproduction and validation results, evidence hashes, and lifecycle outcome. Record one canonical passing receipt only if every required acceptance claim is independently demonstrated. Otherwise record concrete stable `R0-NN` findings and `human_required`; do not author correction work because automatic correction cycles are zero. Never revise the original cycle-2 human-required outcome.
 - Non-goals: Do not modify the implementation, producer, original cycle-2 review/outcome, preserved reviewer artifacts or unrelated claims. Do not launch a reviewer before the implementation is landed and torn down. Do not add a second review or correction cycle.
 - Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+
+## Owner disposition
+
+The project owner waived this prospective independent review for this exact workstream under the two-turn finalization policy. No reviewer was launched or accepted. This packet records no Review Outcome, reviewer PASS, or acceptance receipt. The historical cycle-2 R2-01 `human_required` outcome and all reviewer-authored evidence remain unchanged.
 
 ## Procedure
 
