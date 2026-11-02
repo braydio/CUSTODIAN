@@ -22,7 +22,11 @@ func _ready() -> void:
 
 
 func can_interact(_actor: Node = null) -> bool:
-	return is_instance_valid(site) and not site.is_service_complete(service_index)
+	if not is_instance_valid(site):
+		return false
+	if site.has_method("can_service"):
+		return bool(site.call("can_service", service_index))
+	return not site.is_service_complete(service_index)
 
 
 func get_interaction_prompt() -> String:

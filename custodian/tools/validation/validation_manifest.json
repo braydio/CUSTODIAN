@@ -57,6 +57,26 @@
       "needs_import": true
     },
     {
+      "id": "abandoned_station_stability",
+      "type": "godot_script",
+      "script": "res://tools/validation/abandoned_station_stability_smoke.gd",
+      "tier": "unit",
+      "tags": [
+        "authored_event",
+        "fixed_step",
+        "persistence",
+        "state_machine"
+      ],
+      "owners": [
+        "custodian/game/world/events/abandoned_station/abandoned_station_site.gd",
+        "custodian/game/world/events/abandoned_station/abandoned_station_service_point.gd",
+        "custodian/tools/validation/abandoned_station_stability_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 60,
+      "needs_import": true
+    },
+    {
       "id": "campaign_geography_identity",
       "type": "godot_script",
       "script": "res://tools/validation/campaign_geography_identity_smoke.gd",
