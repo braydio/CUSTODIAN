@@ -46,3 +46,24 @@ The S1 implementation `campaign-abandoned-station-site-v1` landed at `3edbb93917
 ## Handoff
 - Next action: Complete the focused implementation, land, then run `review-campaign-abandoned-station-stability-v1`.
 - Blockers or open questions: No authoring-side design blockers; ordinary dispatcher dependencies and live claim locks apply.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: Implementation commit `b83be87a5c3e9627bee4efa2fc6c9178a42f81cb`; committed-source changed validation report SHA-256 `246e7bcb8e8ffaa44a179da8caba16350c21123ceab9db89c19164fdafe6cb33` passed 5/5 with complete applicable changed-source coverage; six fixed-tick/persistence/environment scenarios passed; four-seed S1 placement regression passed. S2 success preserves the station and leaves final event resolution to S3.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `The new smoke initially referenced the lighting director from the wrong directory; the staged whitespace check also caught trailing whitespace. Both were corrected before final commit.`
+- Root cause / contributing factors: `The validation fixture needed the actual world/lighting path; blank tab-only lines were introduced while expanding scenarios.`
+- Prevention / pipeline improvement: `Use repository source paths for preloads and run git diff --check before staging.`
+- Tooling / docs drift discovered: `none`
+- Follow-up: `fixed-in-scope`
+- What worked: `Fixed-tick, persistence, pause/reload, legacy compatibility, local environment invariance and generated placement checks cover the bounded event lifecycle.`
