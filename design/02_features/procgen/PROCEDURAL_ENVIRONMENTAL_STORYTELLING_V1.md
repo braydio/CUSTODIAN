@@ -9,7 +9,7 @@
 
 ## Design rule
 
-**Proceduralize evidence, not exposition.** Every generated tableau has causally related traces of **past/original function**, **rupture**, **afterlife/reuse**, and **uncertainty**. Select a coherent causal story first, then compatible terrain, architecture, objects, evidence and optional inspect wording. Never roll independent random clutter to imply a history that cannot have happened. The visual scene should communicate former use and consequential change before any lore text is read.
+**Proceduralize evidence, not exposition.** Every generated tableau has causally related traces of **past/original function**, **a specific rupture or decision**, **afterlife/reuse**, and **a legible present consequence**. Uncertainty is optional, not a required fourth clue. Select a coherent causal story first, then compatible terrain, architecture, objects, evidence and optional inspect wording. Never roll independent random clutter to imply a history that cannot have happened. The visual scene should communicate former use and consequential change before any lore text is read. Select and document the underlying event before composing traces; each clue must follow from that event. Ordinary histories and definitive discoveries are valid. Reserve rare anomalous evidence for sites with an explicit causal/evidentiary model.
 
 First target: **ALPINE_PLATEAU** region frame, preserving distinct rocky_upland, woodland, scrubland and wetland local biomes, Alpine graphite/ochre/frost/olive palette, and Archive Resolve as reveal only. These are optional small environmental sites, not major missions. No automatic clues to the Severing's cause, Ash-Bell figures, NON-RECIPIENT or provenance-as-physical-coherence fiction.
 
@@ -17,9 +17,9 @@ First target: **ALPINE_PLATEAU** region frame, preserving distinct rocky_upland,
 
 ## Style 1: The Refused Passage
 
-**Narrative:** an evacuation checkpoint shows an orderly queue, supplies, abandoned belongings and an intact barrier deliberately ordered shut. Was closure an act of cruelty, rationing or necessary quarantine? Preserve uncertainty. It is *not* the literal authored Ash-Bell West Gate event.
+**Narrative:** an evacuation checkpoint shows an orderly queue, supplies, abandoned belongings and an intact barrier deliberately ordered shut. Choose the specific closure motive, responsible authority, and costs in the authored variant; let the physical arrangement demonstrate the decision. A player may initially lack that knowledge, but the scenario need not hide it indefinitely or stage an automatic three-way mystery. It is *not* the literal authored Ash-Bell West Gate event.
 
-**Visual grammar:** linear bureaucratic approach → queue/waiting traces → powered closure barrier → protected stores and conflicting records. Rigid concrete/steel, oxidized warning red, worn ochre route markings, frost. Require **one authority object, two distinct abandonment traces, one contradiction**.
+**Visual grammar:** linear bureaucratic approach → queue/waiting traces → powered closure barrier → protected stores and conflicting records. Rigid concrete/steel, oxidized warning red, worn ochre route markings, frost. Require **one authority object, two distinct abandonment traces, and one trace of the closure's material or human cost**. A disputed order is optional only when the chosen history actually warrants it.
 
 **Proposed footprint:** **16×12 native 32px cells = 512×384 px**. Conceptual local coordinates: approach x0–5/y2–9; closure spine x6–8/y1–10; service/stores x9–15/y1–10. Preserve a real clear through-route or bypass, initially target minimum **3 cells** clear, subject to actual Operator/vehicle proof. Rotate only a semantic layout where art facing/legibility supports it.
 
@@ -33,7 +33,7 @@ First target: **ALPINE_PLATEAU** region frame, preserving distinct rocky_upland,
 
 **Narrative:** the damaged housing of an old climate/service machine has become a painstakingly maintained shelter. Residual warmth, redirected runoff, planted beds, laundry, shared meals and repaired conduits attest to ordinary life after the collapse. The central tension is living well inside unstable infrastructure, not generic post-apocalyptic wreckage.
 
-**Visual grammar:** asymmetric industrial shell → cultivation/water → meal/tools/sleeping place → suspended personal details. Small warm amber accents against cold Alpine palette. Require **one original-machine trace, one repair/maintenance trace, two domestic clues and one uncertain fate/resource cue**.
+**Visual grammar:** asymmetric industrial shell → cultivation/water → meal/tools/sleeping place → suspended personal details. Small warm amber accents against cold Alpine palette. Require **one original-machine trace, one repair/maintenance trace, two domestic clues and one demonstrable resource constraint or lived consequence**. Uncertainty about occupants is optional, not mandatory.
 
 **Proposed footprint:** **12×12 cells = 384×384 px**. Conceptual local zones: machine/canopy x2–9/y1–5; plants/water x1–4/y6–9; table/tools x7–10/y6–9; hanging textiles x3–9/y5–7; reachable southern entrance, not a false doorway.
 
@@ -45,15 +45,15 @@ First target: **ALPINE_PLATEAU** region frame, preserving distinct rocky_upland,
 
 ## Style 3: The False Seam
 
-**Narrative:** a service ruin contains incompatible construction standards, impossible-looking joints and two conflicting but credible infrastructure records. Material origin, deliberate falsification or actual continuity displacement remain distinct possibilities. No glowing rift, teleport or supernatural answer.
+**Narrative:** a rare service ruin exposes physically incompatible construction histories at a specific, inspectable seam. Author one actual cause first and show a material chain of evidence supporting it; construction reuse, deliberate alteration, and canon-supported continuity displacement are distinct authored variants, not interchangeable vague answers. Contradictory paperwork alone cannot establish an anomaly. No glowing rift, teleport or automatic supernatural answer.
 
-**Visual grammar:** two coherent architectural vocabularies join at a misregistered seam; contradictory wear, threshold and records are separately legible. Require **two physical discrepancies plus one documentary/provenance discrepancy**, all physically discoverable.
+**Visual grammar:** two coherent architectural vocabularies join at a misregistered seam; the contact points, foundations, repair sequence, and access consequences are physically legible. Require **two specific physical clues tied to the chosen event**; a provenance/documentary discrepancy is optional and only if grounded by an independently established record. Do not manufacture two incompatible logs merely to satisfy the grammar.
 
 **Proposed footprint:** **12×9 cells = 384×288 px**. Conceptual zones: structure A x0–5/y1–7, structure B x6–11/y1–7, seam x5–6. A blocked stair or door must **remain correctly blocked** by real collision/navigation even when architecture appears contradictory. Provide one, preferably two, reachable evidence viewpoints.
 
 **Variants:** imported_structure (only when explicit matching continuity origin exists), topology_overlap (only with real compatible anomaly metadata), overwritten_history (a fully mundane possibility involving changed labels/materials and incompatible records). Rare: proposed maximum one per eligible region. No canonical cause reveal; usually quiet.
 
-**Sample inspect wording:** "The second frame has no matching foundation."; "Both maintenance stamps are genuine."; "SOURCE INTEGRITY: CONTRADICTORY."
+**Sample inspect wording:** "The upper frame rests on a sealed drain."; "Old anchor bolts remain behind the replacement wall."; "FOUNDATION SURVEY: EAST BAY NOT RECORDED." Use contradictory provenance only for an authored case where independent physical evidence supports it.
 
 **Proposed Asset V2 family:** campaign_story_false_seam. Nine required static states: mismatched_joint, twin_threshold, misregistered_plaque, foreign_panel, stair_stub, double_drain, paired_fasteners, archived_marker, seal_fissure. One optional animated state: intermittent_signal, four frames at 8 FPS, a faulty diagnostic rather than physics.
 

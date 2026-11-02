@@ -71,9 +71,19 @@ The world should answer questions through:
 - enemy activity
 - incomplete or distorted readouts
 
+### Causal authorship and mystery restraint
+
+Before selecting clues or inspect text, define a coherent local event: original operation; who made a consequential choice and why; the actual physical intervention or breakdown; what it cost people; the surviving material traces; and the present practical consequence. This underlying event must exist in the authoring model even if the player initially sees only part of it. A site may be abandoned, well understood, and still worth exploring.
+
+Prefer repair methods, salvaged machinery, blocked access, housing adaptations, labor, and explicit histories over generic document disputes. A discrepancy may be used only when its causes, evidentiary limits, and gameplay significance are specified. Do not use mismatched timestamps, unexplained occupants, anomalous machine greetings, or contradictory logs as default hooks. Genuine continuity anomalies are exceptional and require compatible continuity metadata and corroborating physical evidence. Ordinary damage, error, fraud, political conflict, and misunderstood procedure must remain distinct explanations, not interchangeable ominous prose.
+
+Questions should arise from concrete consequences rather than withheld authoring decisions. At least one important local discovery should resolve something specific or affect a meaningful choice; not every room or region requires a reserved mystery. This authoring guidance does not change canonical unknowns or the runtime payload schema.
+
 ---
 
 ## Canonical Lore Payload
+
+The sample below deliberately depicts an anomaly-bearing site; it is **not** the default for every region. Ordinary local sites can have `continuity_anomaly: none`, verified evidence, and no false interpretation. Populate `contradictory` or `unresolved` only from the selected site's actual evidence, never to make a generated place sound mysterious.
 
 Every generated region should be able to carry a lore payload like this, whether as explicit fields, derived tags, or runtime metadata:
 
@@ -244,11 +254,11 @@ Recommended first-pass values:
 
 ## Truth / Misinterpretation Pairs
 
-The strongest procedural lore comes from a true statement paired with a wrong local reading.
+A truth/misinterpretation pair is useful **when a specific group behaves differently because of its mistake**. It is one optional device, not the required premise of procedural lore.
 
 ### Pairing Rule
 
-Do not generate `surviving_truth` without also considering `false_local_interpretation` unless the site is intentionally low-ambiguity.
+Define `surviving_truth` whenever evidence supports it. Populate `false_local_interpretation` only if a credible actor, practice, or conflict materially depends on that false reading; otherwise leave the interpretation absent/null where the consumer contract permits, or use a supported non-misinterpretation variant. A straightforward, well-evidenced history is a normal successful outcome, not a low-ambiguity exception.
 
 ### Good Examples
 
@@ -274,7 +284,7 @@ Avoid pairs where the false interpretation is just a paraphrase of the truth. Wr
 
 The active design extension [Procedural Environmental Storytelling V1](../02_features/procgen/PROCEDURAL_ENVIRONMENTAL_STORYTELLING_V1.md) describes three **procedurally composable, visually readable** causal-tableau grammars: **The Refused Passage** (denied evacuation passage), **The Borrowed Hearth** (domestic reuse of hazardous machinery), and **The False Seam** (physical/record contradiction). Its [roadmap](../02_features/procgen/PROCEDURAL_ENVIRONMENTAL_STORYTELLING_ROADMAP.md) reserves physical integration, frequency, art and packet authorization for later human review. They are not implemented by documenting them.
 
-All three instantiate this document's rule: **original function → rupture → post-collapse reuse → incomplete/contradictory evidence**, not standalone random props. The existing continuity_anomaly, continuity_origin, source_integrity, provenance_status, surviving_truth and false_local_interpretation vocabulary should inform clue selection without asserting cosmic answers. The seven canonical polities in [Faction Overview](factions/_FACTION_OVERVIEW.md) supersede the historical six-roster **Present Ideology** examples and associated faction cue list below, which remain pre-migration design references. FI-001/FI-002 or a verified compatibility mapping must precede new polity-conditioned runtime tableaux; the Legacy Interdiction Mesh stays a hazard layer. The B2 semantic geography sidecar is data-only and does not create these sites.
+All three instantiate the causal sequence **original function → specific rupture or decision → physical adaptation/reuse → legible present consequence**, not standalone random props. Evidence may be complete, partial, contested, or genuinely anomalous. Do not require uncertainty for the Refused Passage or Borrowed Hearth; the False Seam is a deliberately rare, specially justified exception. The existing continuity_anomaly, continuity_origin, source_integrity, provenance_status, surviving_truth and false_local_interpretation vocabulary should inform clue selection without asserting cosmic answers. The seven canonical polities in [Faction Overview](factions/_FACTION_OVERVIEW.md) supersede the historical six-roster **Present Ideology** examples and associated faction cue list below, which remain pre-migration design references. FI-001/FI-002 or a verified compatibility mapping must precede new polity-conditioned runtime tableaux; the Legacy Interdiction Mesh stays a hazard layer. The B2 semantic geography sidecar is data-only and does not create these sites.
 
 ## Room-Level Lore Hooks
 
@@ -319,6 +329,7 @@ Inspect text should be:
 - materially grounded
 - useful on repetition
 - suggestive without overexplaining
+- causally useful even if no contradictory log or supernatural anomaly exists
 
 ### Recommended Length
 - 4 to 14 words for common inspectables
@@ -336,6 +347,8 @@ Inspect text should be:
 - `The chairs face the locked chamber.`
 - `Burn marks stop at the threshold.`
 - `Tool brackets remain. Tools do not.`
+- `The railcar's copper windings now power the containment pumps.`
+- `Brake shoes were welded into the emergency gate.`
 
 ### Bad Examples
 - `This room was once used by the ancient operators before the fall of civilization.`
@@ -374,7 +387,7 @@ Residual machine language is one of the strongest lore channels in CUSTODIAN.
 
 ### Usage Rule
 
-Use machine language to imply original function, collapse state, or contradiction with local interpretation.
+Use machine language to communicate an actual operating condition, original function, measurable failure, or authenticated historical action. Do not make routine machine readouts manufacture plot twists by asserting impossible dates, phantom occupants, or contradictory records. A record discrepancy belongs only where independently defined causal evidence makes it significant.
 
 ---
 
