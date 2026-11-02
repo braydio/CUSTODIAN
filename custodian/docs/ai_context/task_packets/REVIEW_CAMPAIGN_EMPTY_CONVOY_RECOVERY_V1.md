@@ -3,8 +3,8 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-campaign-empty-convoy-recovery-v1`
 - Kind: `review`
-- Status: `ready`
-- Dispatch: `auto`
+- Status: `blocked`
+- Dispatch: `manual`
 - Authoring handoff: `auto`
 - Priority: `P2`
 - Depends on: `campaign-empty-convoy-recovery-v1`
@@ -36,3 +36,13 @@ The implementation `campaign-empty-convoy-recovery-v1` has landed and its archiv
 ## Handoff
 - Next action: On passing review, unlock the next slice in this event chain if any.
 - Blockers or open questions: Implementation must archive complete.
+
+
+## Owner-waived prelaunch disposition
+
+- Disposition: `owner_waived_prelaunch`
+- Implementation commit and landed main: `e346eaea2f6b9a2068f160f58b50d090427bda61`
+- Validation: report SHA-256 `47c768aa45894545c0f6e1b101faf3ecd99c7420088a9213e25188cebcf53ccf`; 8/8 selected checks passed with complete changed-source coverage.
+- Gate result: read-only host source gate reproduced the expected failure: `changed validation manifest has no authenticated source-span provenance`. The implementation changed `custodian/tools/validation/validation_manifest.json`; no accepted historical exact-source attestation covers this change.
+- Reviewer: not launched; review not performed; no independent PASS.
+- Authorization: final C3 closeout control in https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae7eb07-c554-83e9-911a-1335e640e4d0
