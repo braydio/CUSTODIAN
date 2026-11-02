@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `campaign-empty-convoy-placement-v1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P2`
@@ -44,5 +44,27 @@ Root slice of an independent event chain; implement against live main without wa
 - Refresh instruction: Read latest origin/main and predecessor review; reconcile exact runtime owners/paths without expanding user-approved scope or starting new design research.
 
 ## Handoff
-- Next action: Complete the focused implementation, land, then run `review-campaign-empty-convoy-placement-v1`.
+- Next action: Audit the paired review after implementation lands; await coordinator control before launching it.
 - Blockers or open questions: No authoring-side design blockers; ordinary dispatcher dependencies and live claim locks apply.
+
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: Commit `47fd0755203dc22fb7149889253154741c78689b` adds the deterministic optional 12x10 generated site, validates its navigable footprint and two-tile protected-semantic clearance before floor claiming, and provides the static inspectable convoy arrangement. The four-seed smoke passed with three placed sites and one safe skip, including route/ingress safety, manifest inspection, and streaming reveal idempotence. Committed-source changed-file validation passed 5/5 selected checks with complete coverage and zero failed, timed-out, skipped, or infrastructure-error checks; report `/tmp/campaign-empty-convoy-placement-validation.json`, SHA-256 `bc0db96d3a41e6cbb32ba06935eb1464c0d96a0ee1cfbfe8b63ee63d35219b50`. The smoke emitted only the existing report-classified object/resource leak warnings.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `Initial smoke iterations used untyped arrays for a dynamically called typed API, assumed a 96x80 map would contain a 12x10 navigable pocket, and attempted to free a RefCounted helper.`
+- Root cause / contributing factors: `Dynamic GDScript calls enforce typed-array signatures at runtime; generated terrain at the smaller fixture size did not contain an eligible site; RefCounted objects are released by reference lifetime.`
+- Prevention / pipeline improvement: `Keep fixture arguments explicitly typed, use sufficiently large generated maps for large authored pockets, and do not manually free RefCounted helpers.`
+- Tooling / docs drift discovered: `none`
+- Follow-up: `none`
+- What worked: `Four real generated seeds verified safe placement and skip behavior plus streaming idempotence before committed-source coverage validation.`
