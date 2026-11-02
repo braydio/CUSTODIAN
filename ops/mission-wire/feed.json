@@ -1,9 +1,188 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-01T23:20:37Z",
-  "source_main_sha": "9c9fb5c29c97c84d142184af7dfa6d2f41b52df7",
+  "generated_at": "2026-11-02T00:45:38Z",
+  "source_main_sha": "b4a5fb6f745333b0206fcd3c970792affa21f144",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "inherited-main-consumer-proof-correction-landed-b4a5fb6f",
+      "headline": "CUSTODIAN's provenance tests expose a real source-inventory defect; correction lands, review still ahead",
+      "summary": "A focused correction to CUSTODIAN's inherited-Git-history validation uncovered and fixed a real bug: upstream-only commits before a resumed merge were counted as task-owned files. The correction landed and its packet was archived. Its newly promoted independent review remains ready, not accepted, and protected closeout stays gated.",
+      "body": "A user-authorized correction for independent-review finding R0-01 landed on main. Real-Git tests showed that the validator excluded the inherited merge but still counted preceding upstream-only commits as workstream-owned. The patch now authenticates the complete claim-base-to-resume history, excludes that inherited prefix from authored paths, and rejects forged or inconsistent resume evidence. The implementation summary reports 275 consumer and 89 producer tests passing. The correction packet is archived/complete, but its fresh independent review packet is ready/auto and has not returned an accepted PASS. The prior nonpassing review is unchanged. The protected summary-rename closeout remains gated. Latest GitHub repository validation and automatic handoff succeeded, while one validation run was still in progress at inspection. No canonical dispatcher audit or private operational relay observation was available; host processes, locks, worktree teardown and disk status are unknown.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-workstream-inherited-main-resume-provenance-v1-review-corrections-1",
+      "occurred_at": "2026-11-02T00:35:29Z",
+      "bullets": [
+        "Real-Git tests exposed inherited upstream files incorrectly counted as task-authored.",
+        "Consumer provenance fix landed; correction implementation packet archived.",
+        "Independent correction review is ready/auto, not accepted.",
+        "Protected original closeout remains blocked pending fresh review acceptance."
+      ],
+      "links": [
+        {
+          "title": "Correction implementation and tests",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/f4e3259196c7b279f4b397dd24c6fe2b0c907288"
+        },
+        {
+          "title": "Correction packet archived",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/b4a5fb6f745333b0206fcd3c970792affa21f144"
+        },
+        {
+          "title": "Independent correction review packet",
+          "url": "https://github.com/braydio/CUSTODIAN/blob/b4a5fb6f745333b0206fcd3c970792affa21f144/custodian/docs/ai_context/task_packets/REVIEW_AGENT_WORKSTREAM_INHERITED_MAIN_RESUME_PROVENANCE_V1_REVIEW_CORRECTIONS_1.md"
+        },
+        {
+          "title": "Repository validation",
+          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41368674781"
+        },
+        {
+          "title": "Automatic packet handoff",
+          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41368303037"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "Tests intended to close a missing safety-proof gap found a real defect instead: CUSTODIAN's reviewer could mistake upstream files inherited during a task resume for files authored by that task. A narrow fix has now landed, but independent acceptance is still outstanding.",
+        "sections": [
+          {
+            "heading": "The bug was hiding before the merge",
+            "text": "The earlier correction taught CUSTODIAN to recognize a legitimate inherited Git merge. New real-repository tests revealed that the validator still included earlier upstream-only commits in its source inventory. That could misstate which files the task actually changed."
+          },
+          {
+            "heading": "A bounded fix with adversarial tests",
+            "text": "The new implementation checks the entire inherited history between the original claim and the resume event, not just the merge itself. It verifies identity, ancestry and tree consistency, excludes inherited paths from task-owned files, and rejects tampered or contradictory resume evidence."
+          },
+          {
+            "heading": "Why this is not yet an accepted closeout",
+            "text": "The correction landed and its implementation packet was archived. Its separate reviewer packet is ready for an independent challenge. The original review's finding remains nonpassing until that fresh review produces genuine acceptance. No local teardown or running process was verified."
+          }
+        ],
+        "insights": [
+          {
+            "title": "A missing test revealed a real ownership error",
+            "explanation": "R0-01 initially concerned absent consumer-side evidence. Adding realistic history tests exposed incorrect source attribution, showing why independent positive and adversarial cases matter beyond green unit-test totals."
+          },
+          {
+            "title": "Review acceptance remains a separate gate",
+            "explanation": "A landed patch and archived implementation packet do not override the earlier findings verdict. The new reviewer must challenge the corrected source-inventory boundary before protected closeout can resume."
+          }
+        ],
+        "takeaway": "The source-inventory defect is corrected on main, with fresh independent acceptance still required.",
+        "next_watch": "Watch for a canonical independent PASS on the correction's ready reviewer packet, followed by authorized reconsideration of the protected summary-rename closeout."
+      },
+      "details": {
+        "overview": "Implementation commit f4e3259 adds a real-Git fixture and changes paired_review_host_validation.py to authenticate the inherited first-parent prefix. Commit b4a5fb6 archives the implementation packet. The existing review finding R0-01 was not retroactively accepted. GitHub Actions validation succeeded on the latest SHA; host state was not inspected.",
+        "ledger": [
+          {
+            "stage": "Correction authorization and handoff",
+            "status": "verified published",
+            "evidence": "2b4e63b5 authorization and 75430438 handoff commits."
+          },
+          {
+            "stage": "Implementation and regression coverage",
+            "status": "verified landed; tests reported",
+            "evidence": "f4e3259 source diff and closeout summary report 275 consumer and 89 producer tests."
+          },
+          {
+            "stage": "Implementation archive",
+            "status": "verified GitHub archive transition",
+            "evidence": "b4a5fb6 packet status ready to complete; this is not proof of all host cleanup."
+          },
+          {
+            "stage": "Independent review",
+            "status": "ready/auto; not accepted",
+            "evidence": "Named review packet on main remains ready and depends on archived correction."
+          },
+          {
+            "stage": "Canonical teardown",
+            "status": "unknown",
+            "evidence": "No trustworthy current host cleanup evidence accessible."
+          }
+        ],
+        "notes": [
+          "Latest completed repository validation and automatic handoff succeeded.",
+          "A separate validation run was in progress at inspection; no final result inferred."
+        ],
+        "unknowns": [
+          "Full dispatcher counts, active host claims, locks, retained worktrees, and disk usage were not observed.",
+          "Private WIRE transport acceptance and readable observation are not verified."
+        ],
+        "actions": [
+          "Canonical dispatcher/authorized reviewer owner: establish eligibility and run the fresh independent correction review; require genuine accepted receipt before protected closeout."
+        ]
+      },
+      "scorecard": {
+        "stage": "Correction landed; fresh independent review ready",
+        "as_of": "2026-11-02T00:45:38Z",
+        "scope": "Named R0-01 correction implementation and paired review only; GitHub records, not host dispatcher audit",
+        "metrics": [
+          {
+            "id": "other-correction-archived",
+            "label": "IMPLEMENTATION ARCHIVED",
+            "value": 1,
+            "verification": "verified",
+            "basis": "One named correction implementation packet archived in b4a5fb6; not project-wide",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/b4a5fb6f745333b0206fcd3c970792affa21f144"
+          },
+          {
+            "id": "other-correction-review-ready",
+            "label": "REVIEW READY",
+            "value": 1,
+            "verification": "verified",
+            "basis": "One named correction review packet remains ready/auto on main",
+            "url": "https://github.com/braydio/CUSTODIAN/blob/b4a5fb6f745333b0206fcd3c970792affa21f144/custodian/docs/ai_context/task_packets/REVIEW_AGENT_WORKSTREAM_INHERITED_MAIN_RESUME_PROVENANCE_V1_REVIEW_CORRECTIONS_1.md"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Authorize bounded R0-01 correction",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "2b4e63b5 recorded authorization and packet publication."
+          },
+          {
+            "label": "Implement and test consumer fix",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "f4e3259 landed code and real-Git test fixture; closeout reports passing suites."
+          },
+          {
+            "label": "Archive implementation packet",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "b4a5fb6 archive transition on main."
+          },
+          {
+            "label": "Independent correction review",
+            "status": "next",
+            "verification": "verified",
+            "evidence": "Review packet is ready/auto, not accepted."
+          },
+          {
+            "label": "Canonical review teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No host receipt available."
+          },
+          {
+            "label": "Reconsider protected original closeout",
+            "status": "blocked",
+            "verification": "verified",
+            "evidence": "Requires genuine fresh independent acceptance."
+          }
+        ],
+        "next_gate": "Authorized dispatcher/reviewer owner must confirm eligibility and independently review the landed correction, with accepted PASS required before protected closeout."
+      },
+      "related": [
+        {
+          "title": "CUSTODIAN's inherited-history fix lands, but independent review finds a missing safety test",
+          "context": "The preceding independent review raised R0-01, which prompted this bounded correction.",
+          "story_id": "inherited-main-provenance-review-findings-9c9fb5c2"
+        }
+      ]
+    },
     {
       "id": "inherited-main-provenance-review-findings-9c9fb5c2",
       "headline": "CUSTODIAN's inherited-history fix lands, but independent review finds a missing safety test",
@@ -1672,91 +1851,32 @@
         ]
       },
       "related": []
-    },
-    {
-      "id": "validator-cycle2-nonpassing-closeout-8c15235e",
-      "headline": "Validator's second correction closes without a passing independent review",
-      "summary": "CUSTODIAN's cycle-2 paired-review validator correction was archived with a nonpassing review outcome. This is a documented closeout, not acceptance of the validator fix. Further remediation requires an explicit decision rather than treating the completed packet as a PASS.",
-      "body": "A new main-branch closeout commit records a nonpassing independent review for the second validator correction and archives the correction packet. The distinction matters: completing or archiving an implementation does not mean the independent reviewer accepted its safety behavior. The previous review had identified a retry path that could bypass validation evidence. The latest closeout does not establish that the flaw is resolved or the review accepted. The next action is to inspect the exact findings and decide on bounded human-directed remediation; no automatic third correction is implied.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-paired-review-validator-recertification-v1-review-corrections-2",
-      "occurred_at": "2026-11-01T11:20:17Z",
-      "bullets": [
-        "Cycle-2 correction archived with nonpassing review outcome.",
-        "No independent accepted PASS established.",
-        "Review findings must determine any subsequent authorized remediation."
-      ],
-      "links": [
-        {
-          "title": "Nonpassing closeout commit",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/8c15235e2c897b0990a1b110a82435a86ec403f3"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN's second attempt to repair a validator loophole has reached closeout, but not acceptance. The latest record explicitly calls the independent review nonpassing, keeping the safety gate unresolved.",
-        "sections": [
-          {
-            "heading": "Closeout does not mean approval",
-            "text": "The correction packet has been archived. The paired independent review did not produce an accepted PASS, so the archive cannot be interpreted as evidence that the retry-path defect is fixed."
-          },
-          {
-            "heading": "The decision moves back to the findings",
-            "text": "The prior review showed that retrying after synchronization could bypass required validation evidence. The exact latest findings must be inspected before choosing another bounded repair; a third automatic correction should not be assumed."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The review boundary held",
-            "explanation": "A completed implementation did not silently become an accepted fix. The independent review's nonpassing disposition remains visible and consequential."
-          }
-        ],
-        "takeaway": "Cycle-2 correction closeout is verified; independent acceptance is not.",
-        "next_watch": "A findings-backed, explicitly authorized remediation decision or a new accepted independent review receipt."
-      },
-      "details": {
-        "overview": "Commit 8c15235 records nonpassing paired-review closeout and correction-2 archival. The underlying complete reviewer findings were not independently reproduced in this run.",
-        "ledger": [
-          {
-            "stage": "Cycle-2 correction closeout",
-            "status": "verified archived",
-            "evidence": "Commit 8c15235."
-          },
-          {
-            "stage": "Independent review",
-            "status": "nonpassing",
-            "evidence": "Commit 8c15235 explicitly records nonpassing closeout; no accepted PASS."
-          }
-        ],
-        "notes": [],
-        "unknowns": [
-          "Precise cycle-2 reviewer findings and host teardown are not independently verified."
-        ],
-        "actions": [
-          "Owner: inspect canonical review findings before authorizing any further remediation."
-        ]
-      },
-      "related": []
     }
   ],
   "snapshot": {
-    "observed_at": "2026-11-01T23:20:37Z",
-    "source_main_sha": "9c9fb5c29c97c84d142184af7dfa6d2f41b52df7",
+    "observed_at": "2026-11-02T00:45:38Z",
+    "source_main_sha": "b4a5fb6f745333b0206fcd3c970792affa21f144",
     "coverage": "partial",
-    "scope": "Inspected inherited-main implementation and paired independent review, named WIRE dependencies and recent GitHub Actions on main; not a full canonical dispatcher audit.",
+    "scope": "Inspected named inherited-main R0-01 correction implementation/review packets and recent GitHub main/Actions; no canonical full dispatcher audit or private host observation.",
     "metrics": [
       {
-        "id": "other-provenance-closed-packets",
-        "label": "PROVENANCE PAIR CLOSED",
-        "value": 2,
+        "id": "other-correction-archived",
+        "label": "CORRECTION ARCHIVED",
+        "value": 1,
         "verification": "verified",
-        "basis": "The named inherited-main implementation and its paired review packets both transitioned to archived/complete on main; the review outcome is findings, not acceptance. This is a two-packet scope, not a project-wide total.",
-        "url": "https://github.com/braydio/CUSTODIAN/commit/9c9fb5c29c97c84d142184af7dfa6d2f41b52df7"
+        "basis": "One named R0-01 implementation packet archived on main; excludes other workstreams",
+        "url": "https://github.com/braydio/CUSTODIAN/commit/b4a5fb6f745333b0206fcd3c970792affa21f144"
+      },
+      {
+        "id": "other-correction-review-ready",
+        "label": "REVIEW READY",
+        "value": 1,
+        "verification": "verified",
+        "basis": "One named R0-01 correction reviewer packet ready/auto on main; not a global ready count",
+        "url": "https://github.com/braydio/CUSTODIAN/blob/b4a5fb6f745333b0206fcd3c970792affa21f144/custodian/docs/ai_context/task_packets/REVIEW_AGENT_WORKSTREAM_INHERITED_MAIN_RESUME_PROVENANCE_V1_REVIEW_CORRECTIONS_1.md"
       }
     ],
-    "focus": "Obtain a human decision on R0-01 focused host-consumer real-Git tests, then fresh independent acceptance before protected original closeout.",
-    "note": "Implementation landed and independent review returned findings. Latest GitHub validation and handoff pass; private WIRE transport and host telemetry remain unverified."
+    "focus": "Fresh independent review of the R0-01 consumer correction; only accepted PASS can unblock protected closeout.",
+    "note": "Correction implementation landed and archived; independent review not yet accepted. Full dispatcher and private WIRE telemetry unavailable."
   }
 }
