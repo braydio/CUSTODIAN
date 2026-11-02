@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `campaign-abandoned-station-site-v1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P2`
@@ -45,4 +45,23 @@ Root slice of an independent event chain; implement against live main without wa
 
 ## Handoff
 - Next action: Complete the focused implementation, land, then run `review-campaign-abandoned-station-site-v1`.
-- Blockers or open questions: No authoring-side design blockers; ordinary dispatcher dependencies and live claim locks apply.
+- Blockers or open questions: Independent paired review remains the required next workstream.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `CAMPAIGN_ABANDONED_STATION_SITE_V1_CLAUDE_SUMMARY.md`; committed-source changed validation 20/20; station smoke and Region Frame regression PASS.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: `The initial placement smoke used the lower-level ProcGen map and did not model the campaign route-distance/reservation contract. The default changed-file validation also compares the worktree to HEAD, so a committed-source report required --base origin/main.`
+- Root cause / contributing factors: `The feature integration lives at ContractWorldLoader above ProcGenTilemap, and the validator default targets uncommitted changes rather than the claimed branch delta.`
+- Prevention / pipeline improvement: `Keep planner eligibility based on explicit level_data route/reservation fields and runtime walkability. For finish-bound committed-source proof, invoke run_validation.py --changed --base origin/main --json.`
+- Tooling / docs drift discovered: `No repository tooling defect. The initial test fixture was corrected to use a small deterministic candidate field while retaining generated-map multi-seed construction.`
