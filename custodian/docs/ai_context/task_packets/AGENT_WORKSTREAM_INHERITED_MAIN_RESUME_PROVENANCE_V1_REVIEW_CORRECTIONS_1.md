@@ -5,8 +5,8 @@
 - Workstream: agent-workstream-inherited-main-resume-provenance-v1-review-corrections-1
 - Category: agent-ops
 - Kind: correction
-- Status: draft
-- Dispatch: manual
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: P0
 - Depends on: review-agent-workstream-inherited-main-resume-provenance-v1
 - Locks: workstream-source-span-provenance
