@@ -1,9 +1,221 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-02T00:45:38Z",
-  "source_main_sha": "b4a5fb6f745333b0206fcd3c970792affa21f144",
+  "generated_at": "2026-11-02T05:46:04Z",
+  "source_main_sha": "42bb8d3162f33c18fc99039cf548e1378e017e23",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "canonical-summary-rename-recovery-e13e461f",
+      "headline": "Canonical summary-rename recovery lands, opening a path through a stubborn closeout failure",
+      "summary": "CUSTODIAN now authenticates a tightly bounded, byte-identical closing-summary rename after packet archive. The implementation landed with reported 9/9 canonical checks passing. Independent review remains outstanding, so protected downstream recovery is not accepted.",
+      "body": "The canonical summary-rename recovery landed on main at e13e461f. It allows exactly one byte-identical legacy-to-canonical summary rename after archive, independently checked by producer and host consumer. The implementation summary reports 89 producer tests, 279 consumer tests and 9/9 selected canonical checks passing. Its implementation packet was archived, but independent review has no verified PASS. Host teardown, process and locks remain unknown.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-workstream-canonical-summary-rename-recovery-v1",
+      "occurred_at": "2026-11-02T03:45:28Z",
+      "bullets": [
+        "Implementation landed; independent acceptance and host cleanup remain unverified.",
+        "Watch for the canonical independent review receipt and eligibility of the previously protected recovery."
+      ],
+      "links": [
+        {
+          "title": "Source landing and closeout",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/e13e461f9f87eb8f9c7dd7970a2b286245bd9e44"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "A narrowly scoped repair has reached CUSTODIAN's main branch: closing summaries can now be renamed after packet archive without making the entire closeout appear untrustworthy. The change is landed and tested, but not independently accepted.",
+        "sections": [
+          {
+            "heading": "A rename with exact boundaries",
+            "text": "The new producer and independent host consumer inspect Git ancestry, changed paths, file modes, packet identity and exact bytes. Only one matching rename is permitted; edits, copies and unrelated changes remain disallowed."
+          },
+          {
+            "heading": "The remaining gate",
+            "text": "Reported validation passed and the implementation packet was archived. Its fresh paired review still needs an authentic accepted outcome before protected downstream recovery proceeds."
+          }
+        ],
+        "insights": [
+          {
+            "title": "A bookkeeping transition was blocking substantive recovery",
+            "explanation": "The repair addresses an exact source-history mismatch rather than relaxing general source validation. It could unblock older closeout work once independently accepted."
+          }
+        ],
+        "takeaway": "Implementation landed; independent acceptance and host cleanup remain unverified.",
+        "next_watch": "Watch for the canonical independent review receipt and eligibility of the previously protected recovery."
+      },
+      "details": {
+        "overview": "The canonical summary-rename recovery landed on main at e13e461f. It allows exactly one byte-identical legacy-to-canonical summary rename after archive, independently checked by producer and host consumer. The implementation summary reports 89 producer tests, 279 consumer tests and 9/9 selected canonical checks passing. Its implementation packet was archived, but independent review has no verified PASS. Host teardown, process and locks remain unknown.",
+        "ledger": [
+          {
+            "stage": "Implementation landing",
+            "status": "verified on main",
+            "evidence": "https://github.com/braydio/CUSTODIAN/commit/e13e461f9f87eb8f9c7dd7970a2b286245bd9e44"
+          },
+          {
+            "stage": "Independent review",
+            "status": "pending; no PASS verified",
+            "evidence": "No accepted review receipt inspected."
+          },
+          {
+            "stage": "Canonical host teardown",
+            "status": "unknown",
+            "evidence": "No current authenticated host evidence accessible."
+          }
+        ],
+        "notes": [],
+        "unknowns": [
+          "Current dispatcher audit, host locks, processes, worktree disposition and disk status are unavailable."
+        ],
+        "actions": [
+          "Watch for the canonical independent review receipt and eligibility of the previously protected recovery."
+        ]
+      },
+      "scorecard": {
+        "stage": "Landed; independent review pending",
+        "as_of": "2026-11-02T05:46:04Z",
+        "scope": "Named implementation and paired-review evidence only; GitHub partial coverage",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Implementation landed",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "https://github.com/braydio/CUSTODIAN/commit/e13e461f9f87eb8f9c7dd7970a2b286245bd9e44"
+          },
+          {
+            "label": "Canonical validation",
+            "status": "done",
+            "verification": "reported",
+            "evidence": "Reported passing selected checks in implementation summary."
+          },
+          {
+            "label": "Independent review",
+            "status": "next",
+            "verification": "reported",
+            "evidence": "Awaiting independent acceptance."
+          },
+          {
+            "label": "Host cleanup",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No current host proof."
+          }
+        ],
+        "next_gate": "Watch for the canonical independent review receipt and eligibility of the previously protected recovery."
+      },
+      "related": []
+    },
+    {
+      "id": "after-sync-witness-enforcement-42bb8d31",
+      "headline": "Review validator now requires green after-sync evidence; owner waives its new paired review",
+      "summary": "A new host-consumer check rejects changed-main synchronization merges without a unique, correctly bound green validation witness. The implementation landed and was archived, but its prospective independent review was explicitly waived, not passed.",
+      "body": "The after-sync consumer enforcement landed on main at 42bb8d31. The implementation summary reports 278 runner and 88 workstream tests passing, plus focused witness checks. The host consumer now rejects missing, duplicate, stale, reused or misbound validation witnesses. The source report explicitly states that digest provenance does not establish access to the report bytes. The owner waived prospective independent review for this exact workstream and marked its review packet blocked/manual. Historical human_required findings remain unchanged. Reported host disk state is historical and not a current measurement.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-paired-review-after-sync-consumer-enforcement-v1",
+      "occurred_at": "2026-11-02T04:11:15Z",
+      "bullets": [
+        "After-sync witness enforcement is landed; prospective independent review was waived, not passed.",
+        "Watch for independent acceptance on other pending recovery reviews and evidence that protected closeouts are eligible."
+      ],
+      "links": [
+        {
+          "title": "Source landing and closeout",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/42bb8d3162f33c18fc99039cf548e1378e017e23"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN's independent host validator now demands a correctly matched green validation witness whenever a task synchronizes with changed main. The implementation is landed, but its prospective independent review was owner-waived rather than accepted.",
+        "sections": [
+          {
+            "heading": "A stronger check on synchronization",
+            "text": "The consumer rejects missing, duplicate, out-of-order, stale or mismatched validation witnesses. It binds each witness to the synchronization merge and source identity."
+          },
+          {
+            "heading": "The proof has limits",
+            "text": "The recorded digest identifies a validation report but does not give the consumer its bytes to re-hash. The owner explicitly waived this workstream's prospective paired review; earlier human-required findings remain intact."
+          }
+        ],
+        "insights": [
+          {
+            "title": "A digest is not the report",
+            "explanation": "The consumer can authenticate trace provenance but cannot claim it independently verified inaccessible report bytes. This distinction matters when deciding what a green witness proves."
+          },
+          {
+            "title": "Waived does not mean accepted",
+            "explanation": "The owner-authorized review waiver allows a specific implementation disposition without creating an independent PASS or rewriting the historical findings."
+          }
+        ],
+        "takeaway": "After-sync witness enforcement is landed; prospective independent review was waived, not passed.",
+        "next_watch": "Watch for independent acceptance on other pending recovery reviews and evidence that protected closeouts are eligible."
+      },
+      "details": {
+        "overview": "The after-sync consumer enforcement landed on main at 42bb8d31. The implementation summary reports 278 runner and 88 workstream tests passing, plus focused witness checks. The host consumer now rejects missing, duplicate, stale, reused or misbound validation witnesses. The source report explicitly states that digest provenance does not establish access to the report bytes. The owner waived prospective independent review for this exact workstream and marked its review packet blocked/manual. Historical human_required findings remain unchanged. Reported host disk state is historical and not a current measurement.",
+        "ledger": [
+          {
+            "stage": "Implementation landing",
+            "status": "verified on main",
+            "evidence": "https://github.com/braydio/CUSTODIAN/commit/42bb8d3162f33c18fc99039cf548e1378e017e23"
+          },
+          {
+            "stage": "Independent review",
+            "status": "owner-waived; no PASS",
+            "evidence": "Owner waiver recorded in landing summary; historical findings unchanged."
+          },
+          {
+            "stage": "Canonical host teardown",
+            "status": "unknown",
+            "evidence": "No current authenticated host evidence accessible."
+          }
+        ],
+        "notes": [],
+        "unknowns": [
+          "Current dispatcher audit, host locks, processes, worktree disposition and disk status are unavailable."
+        ],
+        "actions": [
+          "Watch for independent acceptance on other pending recovery reviews and evidence that protected closeouts are eligible."
+        ]
+      },
+      "scorecard": {
+        "stage": "Landed; prospective review waived",
+        "as_of": "2026-11-02T05:46:04Z",
+        "scope": "Named implementation and paired-review evidence only; GitHub partial coverage",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Implementation landed",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "https://github.com/braydio/CUSTODIAN/commit/42bb8d3162f33c18fc99039cf548e1378e017e23"
+          },
+          {
+            "label": "Canonical validation",
+            "status": "done",
+            "verification": "reported",
+            "evidence": "Reported passing selected checks in implementation summary."
+          },
+          {
+            "label": "Independent review",
+            "status": "unknown",
+            "verification": "reported",
+            "evidence": "Owner waiver, no independent PASS."
+          },
+          {
+            "label": "Host cleanup",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No current host proof."
+          }
+        ],
+        "next_gate": "Watch for independent acceptance on other pending recovery reviews and evidence that protected closeouts are eligible."
+      },
+      "related": []
+    },
     {
       "id": "inherited-main-consumer-proof-correction-landed-b4a5fb6f",
       "headline": "CUSTODIAN's provenance tests expose a real source-inventory defect; correction lands, review still ahead",
@@ -1476,13 +1688,7 @@
         ],
         "next_gate": "Executor owner: verify dispatch eligibility and complete the unchanged canonical runner suite after the bounded timeout implementation lands."
       },
-      "related": [
-        {
-          "title": "New safeguard targets the validation loophole left by cycle 2",
-          "context": "The after-sync enforcement workstream depends on trustworthy paired-review validation evidence.",
-          "story_id": "after-sync-consumer-enforcement-ready-7a6dfdf2"
-        }
-      ]
+      "related": []
     },
     {
       "id": "sepulcher-operator-v2-preview-landed-ba76204b",
@@ -1644,211 +1850,6 @@
           }
         ],
         "next_gate": "Recovery owner: correct V2 smoke and provenance validation under a separately accepted review before authorized original-review disposition."
-      },
-      "related": [
-        {
-          "title": "Sepulcher's paving preview lands, but its independent review hits a source-evidence gate",
-          "context": "The earlier native paving comparison is the predecessor to the combined Operator/material V2 preview.",
-          "story_id": "sepulcher-native-quad-landed-review-gate-82d97438"
-        }
-      ]
-    },
-    {
-      "id": "after-sync-consumer-enforcement-ready-7a6dfdf2",
-      "headline": "New safeguard targets the validation loophole left by cycle 2",
-      "summary": "A new implementation and independent-review pair has been promoted to ready/auto to close the mismatch between after-sync validation evidence produced during changed-main merges and the host validator that consumes it. The historical cycle-2 human_required outcome remains unchanged. Dispatch, implementation, acceptance and teardown are unverified.",
-      "body": "The archived cycle-2 reviewer identified R2-01: the producer requires after-sync validation witnesses for changed-main merges, but the paired-review host consumer does not authenticate those witnesses. Commit 956a272 creates a bounded correction and independent-review pair; commit 7a6dfdf changes both packet headers to ready/auto. The review depends on the implementation landing and normal teardown. No claim, execution, accepted PASS or host cleanup is established by these commits. This is a prospective fix, not retroactive acceptance of the historical human_required review.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-paired-review-after-sync-consumer-enforcement-v1",
-      "occurred_at": "2026-11-01T11:39:26Z",
-      "bullets": [
-        "Two named packets promoted from draft/manual to ready/auto.",
-        "Implementation must first reproduce the missing-witness defect with real Git histories.",
-        "Fresh independent review is dependency-gated; original cycle-2 human_required remains unchanged.",
-        "Host claims, liveness, independent acceptance and teardown are unknown."
-      ],
-      "links": [
-        {
-          "title": "After-sync consumer enforcement specification",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/956a2729d2d5a17ab90a290593f6b5ec94d3b8a6"
-        },
-        {
-          "title": "Automatic handoff commit",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/7a6dfdf27cc4c0025e3dff8124b9728f66369a92"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN has prepared a targeted repair for a gap in its independent-review safety checks. The system that produces validation evidence requires proof after merging newer main-branch code, but the system that checks the merge does not yet demand that same proof. A new implementation and review pair is ready for dispatch, not yet completed.",
-        "sections": [
-          {
-            "heading": "A mismatch at the trust boundary",
-            "text": "The producer already requires validation after a changed-main synchronization. The host validator can still authenticate that synchronization without consuming the corresponding validation witness. This creates a route for unvalidated source to appear adequately checked."
-          },
-          {
-            "heading": "A prospective repair with an independent gate",
-            "text": "The new packet calls for real-Git failing-first reproduction, exact witness binding, negative tests for missing or reused evidence, and preservation of supported workflows. A separate fresh-context reviewer must test the result after implementation lands."
-          },
-          {
-            "heading": "The historical finding stays intact",
-            "text": "The original cycle-2 review remains human_required. This work cannot rewrite its evidence or convert that past result into PASS. The new pair is declared ready/auto, but dispatch, execution, acceptance and cleanup have not been observed."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The missing check is on the receiving side",
-            "explanation": "The producer and consumer enforce different evidence contracts. Fixing only the producer would not prevent the host validator from accepting a merge without checking the required witness."
-          },
-          {
-            "title": "Ready is not accepted",
-            "explanation": "Both packets are marked ready/auto, but the reviewer is dependency-gated behind implementation. The safety improvement remains hypothetical until independently tested and accepted."
-          }
-        ],
-        "takeaway": "A narrowly scoped prospective correction is ready for dispatch; no implementation landing or independent PASS has been established.",
-        "next_watch": "Look for a real-Git failing-first reproduction, source landing, fresh independent review receipt and verified canonical teardown."
-      },
-      "details": {
-        "overview": "Commits 956a272 and 7a6dfdf create and promote the implementation/review pair for R2-01. The implementation targets paired_review_host_validation.py's split-landing synchronization checks; producer workstream.py behavior and archived cycle-2 review evidence are to remain unchanged.",
-        "ledger": [
-          {
-            "stage": "R2-01 defect identification",
-            "status": "verified documented",
-            "evidence": "Commit 956a272 cites archived cycle-2 human_required finding and producer/consumer contract mismatch."
-          },
-          {
-            "stage": "Packet authoring",
-            "status": "verified",
-            "evidence": "Commit 956a272 adds implementation and independent review packet definitions."
-          },
-          {
-            "stage": "Automatic handoff",
-            "status": "verified ready/auto declarations",
-            "evidence": "Commit 7a6dfdf changes both named packet headers; review depends on implementation."
-          },
-          {
-            "stage": "Implementation, validation and landing",
-            "status": "unknown",
-            "evidence": "No corresponding landing or validation receipt established by inspected commits."
-          },
-          {
-            "stage": "Independent acceptance and canonical teardown",
-            "status": "unknown",
-            "evidence": "No independent PASS or host cleanup proof inspected."
-          }
-        ],
-        "notes": [
-          "The review packet specifies zero automatic correction cycles, not zero independent reviews.",
-          "The implementation must bound report-byte verification claims to accessible durable evidence."
-        ],
-        "unknowns": [
-          "Canonical dispatcher claim and process liveness not inspected.",
-          "Host worktree/lock disposition and disk status not verified.",
-          "Current CI health for latest main not established."
-        ],
-        "actions": [
-          "Dispatcher/operator: verify actual eligibility and claim before execution.",
-          "Implementer: reproduce the missing-witness failure before enforcing exact witness checks.",
-          "Fresh reviewer: independently test landed behavior and issue a genuine disposition."
-        ]
-      },
-      "related": []
-    },
-    {
-      "id": "sepulcher-native-quad-landed-review-gate-82d97438",
-      "headline": "Sepulcher's paving preview lands, but its independent review hits a source-evidence gate",
-      "summary": "A playable Godot preview now includes four native-resolution paving crops, the real Operator and camera, and three comparison modes. The implementation was landed and archived, but its independent review has no verdict: a source-scope host check rejected four paths. A narrowly pinned recovery proposal is drafted, not approved or dispatched.",
-      "body": "The Sepulcher paving experiment advanced from instructions to a committed, playable comparison scene. The scene uses four 512-pixel crops, the real Operator and camera, and neutral, full-crop and deliberate repeat presentations. The implementation closeout reports Godot, crop, LFS and capture checks passed, and the task packet was archived. That is implementation progress, not independent review acceptance or production-art approval. The preserved independent review received no verdict after its pre-review host source-scope check rejected four paths missing from the historical task's explicit source list. A new source-scope attestation implementation/review pair is drafted/manual. It proposes an exact four-path exception that cannot activate before its own independently accepted PASS, then separate recovery of the original preserved review run. Host worktree and liveness status are not independently verified.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "sepulcher-paving-native-quad-playtest-v1",
-      "occurred_at": "2026-11-01T11:25:48Z",
-      "bullets": [
-        "Playable native-quad scene and capture harness committed to main.",
-        "Implementation archived; independent technical review has no verdict.",
-        "Four-path source-scope attestation packets are draft/manual, not ready/auto.",
-        "Human approval for production art remains outstanding."
-      ],
-      "links": [
-        {
-          "title": "Playable scene implementation",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/1881a21ab1aa193e414d738a68dc37f7fbb0de9e"
-        },
-        {
-          "title": "Implementation archive",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/3ac23cda031d80fdaf283b5d9a8b5a88db2782e8"
-        },
-        {
-          "title": "Source-scope recovery packet",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/82d9743865813130d0d4cb65525c4cd1b5095c9d"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "Sepulcher Gardens now has a committed playable paving comparison, bringing its first experimental floor material into a real Operator-camera scene. But the technical review has stopped before a verdict because the historical task did not explicitly name four source paths.",
-        "sections": [
-          {
-            "heading": "From artwork to a playable comparison",
-            "text": "The new Godot scene places four native 512-pixel crops alongside a neutral floor and a deliberately repeated tile. Switching modes lets reviewers distinguish the quality of the original composition from visible repetition in gameplay."
-          },
-          {
-            "heading": "Why the review stopped",
-            "text": "The implementation was landed and archived, with tests reported in its closeout. Its separate independent review was preserved without a verdict when a host check rejected four source-bearing paths outside the original packet's explicit scope. No PASS or art approval follows from the implementation landing."
-          },
-          {
-            "heading": "A narrow recovery, not a shortcut",
-            "text": "A new draft/manual attestation pair proposes pinning exactly those four historical paths. Its exception would remain inactive until its own independent review earns canonical acceptance. Only then could the original preserved review be recovered separately."
-          }
-        ],
-        "insights": [
-          {
-            "title": "A playable scene is not an accepted asset",
-            "explanation": "The preview now exists in code, but neither its independent technical review nor the human visual approval has been completed. That separation protects the production asset pipeline."
-          },
-          {
-            "title": "Review provenance is the new bottleneck",
-            "explanation": "The blocker is not a missing texture or game scene. It is the review system's inability to authenticate four historically omitted source paths without weakening its broader protections."
-          }
-        ],
-        "takeaway": "Sepulcher's preview implementation landed; independent technical acceptance and production-art approval remain outstanding.",
-        "next_watch": "Look for a properly authorized, independently accepted four-path attestation and then recovery of the original preserved review."
-      },
-      "details": {
-        "overview": "Main contains the playable scene implementation, task closeout, and archive. A subsequent main commit documents a no-verdict review preflight and draft/manual recovery pair. Local review process, worktree retention and disk state are not independently observed.",
-        "ledger": [
-          {
-            "stage": "Playable preview implementation",
-            "status": "verified landed",
-            "evidence": "Commit 1881a21 adds the Godot scene, four LFS crop pointers and capture harness."
-          },
-          {
-            "stage": "Implementation closeout",
-            "status": "reported validation and verified archive",
-            "evidence": "Commits 0944e669 and 3ac23cda; closeout reports Godot/crop/LFS/capture checks."
-          },
-          {
-            "stage": "Independent technical review",
-            "status": "blocked; no verdict",
-            "evidence": "Commit 82d974 documents four source-scope host-gate rejects and preserved review; no independent PASS."
-          },
-          {
-            "stage": "Attestation recovery",
-            "status": "draft/manual",
-            "evidence": "Commit 82d974 adds implementation and review packets, both draft/manual."
-          }
-        ],
-        "notes": [
-          "This is a preview-only scene, not Asset V2 ingest."
-        ],
-        "unknowns": [
-          "Original review host liveness and canonical teardown not verified.",
-          "Human art approval not established."
-        ],
-        "actions": [
-          "Responsible project owner: verify preserved review identity and authorize any source-scope correction before dispatch."
-        ]
       },
       "related": []
     }
