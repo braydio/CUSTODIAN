@@ -1,9 +1,164 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-02T11:48:57Z",
-  "source_main_sha": "5876922872b8e08b6edc13f2a2a60c8947315e9e",
+  "generated_at": "2026-11-02T12:29:10Z",
+  "source_main_sha": "04a617c492fc56aafc6df7804beff1058610e211",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "convoy-security-integrated-correction-04a617c4",
+      "headline": "Empty Convoy security can be bypassed when defenders fail to appear",
+      "summary": "An integrated gameplay retest found that scanning the Empty Convoy could unlock its custody trace without a defender encounter. A new P1 correction packet targets temporary spawn failures being mistaken for cleared security. The failure is documented; the correction is not implemented.",
+      "body": "A documented integrated gameplay retest on contract seed 2 (generated map seed 3570245418) found no hostiles after scanning the cargo cradle, yet RECORD CUSTODY TRACE appeared immediately. Source inspection in the newly committed packet identifies several ways temporary spawn or observation failures can become empty_defense, which the recovery step treats as clearance. The exact trigger in that run remains unknown. The new P1 packet is ready/auto in source, not proven claimed or running. It requires deferred retry, authoritative defeat evidence, safe reentry, and production-realistic regression tests before any corrected behavior can be claimed. C1-C3 implementations remain landed; their waived reviews do not establish independent acceptance.",
+      "severity": "important",
+      "verification": "reported",
+      "category": "gameplay-systems",
+      "workstream": "campaign-empty-convoy-security-integrated-correction-v1",
+      "occurred_at": "2026-11-02T12:17:05Z",
+      "bullets": [
+        "Integrated retest reported no defenders but unlocked custody trace.",
+        "New P1 correction packet is source-ready; no implementation landing yet.",
+        "Temporary spawn failures must remain unresolved, not count as defeat.",
+        "Exact runtime trigger and independent acceptance remain unknown."
+      ],
+      "links": [
+        {
+          "title": "Integrated security correction packet",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/04a617c492fc56aafc6df7804beff1058610e211"
+        },
+        {
+          "title": "Previously landed custody trace",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/e346eaea2f6b9a2068f160f58b50d090427bda61"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "The Empty Convoy's new encounter has an important gap: in an integrated retest, its defenders never appeared, but the player was allowed to record the shipment's custody trace anyway. A targeted correction has now been queued, not yet implemented.",
+        "sections": [
+          {
+            "heading": "When no enemies appear, the game assumes the fight is over",
+            "text": "The documented retest reached the cargo cradle without seeing hostiles, then immediately offered RECORD CUSTODY TRACE. The newly authored correction packet identifies multiple paths where a temporary failure to spawn or track defenders can be mistaken for a legitimately empty defense."
+          },
+          {
+            "heading": "A narrow fix instead of another encounter rewrite",
+            "text": "The P1 correction calls for retrying temporary failures, preserving unresolved security on reentry, and requiring authoritative enemy defeat before allowing the trace or salvage. It also calls for realistic navigation and queue-failure tests. The exact cause of the observed run is still unconfirmed."
+          }
+        ],
+        "insights": [
+          {
+            "title": "A graceful fallback became an unintended shortcut",
+            "explanation": "The safe-empty outcome protects against genuinely absent defenders, but it must not also treat capacity or navigation failures as completed combat. That distinction controls whether the player's evidence and salvage are earned."
+          },
+          {
+            "title": "Focused tests missed an integrated state transition",
+            "explanation": "Earlier selected tests were reported passing, yet the integrated retest found a player-facing failure. The new validation must exercise real spawning and walkability behavior, not only simplified probes."
+          }
+        ],
+        "takeaway": "The failure is documented and a correction packet exists; no corrected runtime behavior or independent acceptance has yet been verified.",
+        "next_watch": "Watch for the correction implementation, focused realistic regressions, and a separately decided review disposition."
+      },
+      "details": {
+        "overview": "Main commit 04a617c4 adds a P1 ready/auto implementation packet. Its measured-state section reports a seed-2 integrated retest with no hostiles and immediate trace eligibility. The packet lists multiple possible source transitions but does not prove which caused the retest.",
+        "ledger": [
+          {
+            "stage": "C1-C3 implementation",
+            "status": "verified landed",
+            "evidence": "Prior commits 47fd0755, bde08b88 and e346eaea"
+          },
+          {
+            "stage": "Integrated gameplay retest",
+            "status": "reported failure",
+            "evidence": "Packet 04a617c4 describes seed 2 and generated map seed 3570245418; original host screenshot not independently inspected"
+          },
+          {
+            "stage": "Correction packet",
+            "status": "verified authored, source-ready",
+            "evidence": "04a617c4; status ready, dispatch auto in source, not host claim"
+          },
+          {
+            "stage": "Correction implementation and validation",
+            "status": "not established",
+            "evidence": "No correction implementation commit or validation receipt inspected"
+          },
+          {
+            "stage": "Independent review and teardown",
+            "status": "unknown",
+            "evidence": "Previous C2/C3 reviews owner-waived; no authenticated host cleanup"
+          }
+        ],
+        "notes": [
+          "Combined GitHub commit status has no statuses; not evidence of green CI."
+        ],
+        "unknowns": [
+          "Exact integrated-run trigger is unconfirmed.",
+          "Current host claim, locks, process and teardown are unknown."
+        ],
+        "actions": [
+          "Execution owner: claim only if canonical dispatcher confirms eligibility, then implement and validate the bounded correction.",
+          "Coordinator: separately determine correction review disposition."
+        ]
+      },
+      "scorecard": {
+        "stage": "Observed failure; correction packet ready in source",
+        "as_of": "2026-11-02T12:17:05Z",
+        "scope": "Named Empty Convoy integrated security correction only",
+        "metrics": [
+          {
+            "id": "other-correction-packets",
+            "label": "CORRECTION PACKET",
+            "value": 1,
+            "verification": "verified",
+            "basis": "One named new P1 correction packet in commit 04a617c4",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/04a617c492fc56aafc6df7804beff1058610e211"
+          }
+        ],
+        "steps": [
+          {
+            "label": "C1-C3 features landed",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Previously inspected landing commits"
+          },
+          {
+            "label": "Integrated failure documented",
+            "status": "done",
+            "verification": "reported",
+            "evidence": "Seed-2 retest in correction packet; original host evidence unavailable"
+          },
+          {
+            "label": "Correction packet authored",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "04a617c4"
+          },
+          {
+            "label": "Correction implementation",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No landed correction observed"
+          },
+          {
+            "label": "Production-realistic validation",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Required by packet, not yet evidenced"
+          },
+          {
+            "label": "Review disposition",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "Deferred to coordinator"
+          }
+        ],
+        "next_gate": "Execution owner confirms dispatcher eligibility and implements the bounded correction."
+      },
+      "related": [
+        {
+          "title": "Empty Convoy's missing shipment can now be traced, but its reviews remain waived",
+          "context": "Earlier C1-C3 coverage describes the feature whose integrated security path now needs correction.",
+          "story_id": "empty-convoy-recovery-landed-review-waived-58769228"
+        }
+      ]
+    },
     {
       "id": "empty-convoy-recovery-landed-review-waived-58769228",
       "headline": "Empty Convoy's missing shipment can now be traced, but its reviews remain waived",
@@ -1661,161 +1816,6 @@
           "story_id": "wire-observation-export-packets-ready-f38d7f40"
         }
       ]
-    },
-    {
-      "id": "sepulcher-v2-host-validation-recovery-withdrawn-1784cbe6",
-      "headline": "Sepulcher's second recovery queue is withdrawn, leaving its held review unresolved",
-      "summary": "A second Sepulcher V2 recovery packet pair has been removed from main after its owner withdrew it. The branch's original source and historical corrections were preserved in the archive record. Repository validation passed, but the original independent review remains unresolved and host-local cleanup is unverified.",
-      "body": "A separate Sepulcher V2 host-validation recovery proposal was administratively withdrawn on November 1. The change removes its implementation and paired-review packets from the active queue and reconciles the indexes, while preserving the original branch head and correction evidence in the branch archive. This is distinct from the earlier source-salvage packet rollback. It does not fix the reported spawn/reset smoke failure or authenticate the original held review. The repository validation for this commit passed. Next, the responsible owner should reconcile the preserved held-review evidence and select a bounded authorized recovery path; host-local worktree and lock disposition remain unknown.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-sepulcher-v2-host-validation-recovery-v1",
-      "occurred_at": "2026-11-01T17:47:32Z",
-      "bullets": [
-        "A separate Sepulcher V2 host-validation implementation/review pair was removed from the active packet queue.",
-        "Original branch and correction evidence remain documented in the archive.",
-        "No independent review PASS or host teardown is established.",
-        "Next: owner must reconcile held-review evidence before authorizing replacement recovery."
-      ],
-      "links": [
-        {
-          "title": "Withdrawal and archive evidence",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/1784cbe67eeb06d49d9202e66969e46ca98c15cd"
-        },
-        {
-          "title": "Passing repository validation",
-          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41333688165"
-        },
-        {
-          "title": "Previous salvage withdrawal",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/b245bfb0ef1ef13b60ccc1165ad9ce0a5d052585"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "Sepulcher's attempt to repair a blocked validation and review path has lost another proposed recovery queue. The owner withdrew the host-validation implementation and review packets, but preserved their historical branch evidence. That keeps the evidence intact while leaving the original review unresolved.",
-        "sections": [
-          {
-            "heading": "A second withdrawal, not a gameplay rollback",
-            "text": "The latest commit removes a different recovery pair from the source-salvage proposal withdrawn earlier. This one targeted a reported spawn/reset test regression and a possible failed-report authentication issue. The commit changes task packets, indexes and the branch archive, not the playable scene."
-          },
-          {
-            "heading": "Evidence preserved; acceptance still open",
-            "text": "The branch archive records the original recovery head and historical corrections. It explicitly does not assert an independent review PASS. The latest repository validation passed, but that checks the withdrawal commit, not the unresolved gameplay smoke or held-review acceptance."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Removing a queue item does not close its underlying obligation",
-            "explanation": "The packet removal reduces the active administrative surface without demonstrating that the failed validation or held-review evidence was resolved. Any future recovery must begin from the preserved evidence rather than interpreting the clean queue as a clean review."
-          },
-          {
-            "title": "The archive is now the continuity point",
-            "explanation": "By preserving the branch head and historical corrections, the project retains a bounded reference for a future recovery decision. Local worktree and lock cleanup still require host evidence."
-          }
-        ],
-        "takeaway": "The second Sepulcher recovery proposal is withdrawn, with source history preserved but the original review still unresolved.",
-        "next_watch": "Look for a documented owner decision on the held review, a targeted verified correction, and independently evidenced acceptance or teardown."
-      },
-      "details": {
-        "overview": "Commit 1784cbe removes AGENT_SEPULCHER_V2_HOST_VALIDATION_RECOVERY_V1.md and its paired review, updates packet README and file index, and adds a branch archive row. This is separate from b245bfb's earlier source-salvage withdrawal. No gameplay source files were changed in this commit.",
-        "ledger": [
-          {
-            "stage": "Host-validation recovery packet publication",
-            "status": "verified previously present; now withdrawn",
-            "evidence": "Commit 1784cbe removes both active packet files and reconciles indexes."
-          },
-          {
-            "stage": "Original branch evidence",
-            "status": "verified archive entry",
-            "evidence": "BRANCH_ARCHIVE.md records head f48fe5f62e6f0b4c99c2437f459311c81c30ff3d and historical correction 332ecf8bd7fdb4a46bc931dc49071911213d3d04."
-          },
-          {
-            "stage": "Withdrawal repository validation",
-            "status": "verified passed",
-            "evidence": "GitHub Actions 41333688165 succeeded on 1784cbe."
-          },
-          {
-            "stage": "Independent review acceptance",
-            "status": "not verified",
-            "evidence": "Withdrawal explicitly does not assert original lifecycle PASS or independent acceptance."
-          },
-          {
-            "stage": "Canonical host cleanup",
-            "status": "unknown",
-            "evidence": "No direct host worktree, process, or lock evidence inspected."
-          }
-        ],
-        "notes": [
-          "Earlier b245bfb withdrew a different Sepulcher V2 source-salvage proposal.",
-          "The WIRE exporter implementation and review packet headers remain ready/auto on inspected main, but no exporter implementation landing was found."
-        ],
-        "unknowns": [
-          "Whether the original held review can be resumed without a new correction.",
-          "Current host-local worktree, process and lock disposition.",
-          "Project-wide dispatcher queue counts; no full live audit accessible."
-        ],
-        "actions": [
-          "Sepulcher recovery owner: reconcile preserved evidence and identify the narrowest authorized next gate.",
-          "Exporter executor: independently verify claim eligibility before any implementation claim."
-        ]
-      },
-      "related": [
-        {
-          "title": "Sepulcher recovery proposal withdrawn after authoring handoff fails",
-          "context": "Earlier withdrawal affected the separate source-salvage packet pair, not this host-validation recovery.",
-          "story_id": "sepulcher-v2-salvage-pair-withdrawn-b245bfb0"
-        }
-      ],
-      "scorecard": {
-        "stage": "Host-validation recovery proposal withdrawn; original held review unresolved",
-        "as_of": "2026-11-01T18:02:46Z",
-        "scope": "Only the named Sepulcher V2 host-validation recovery and its preserved review obligation, not the full project queue",
-        "metrics": [
-          {
-            "id": "other-withdrawn-pair-packets",
-            "label": "WITHDRAWN PACKETS",
-            "value": 2,
-            "verification": "verified",
-            "basis": "Exactly the implementation and paired review files deleted in commit 1784cbe.",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/1784cbe67eeb06d49d9202e66969e46ca98c15cd"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Recovery packet pair previously published",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Both files existed before 1784cbe and are shown in its deletion diff."
-          },
-          {
-            "label": "Owner withdrawal and index reconciliation",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "1784cbe deletes both packets and updates the indexes."
-          },
-          {
-            "label": "Original evidence preserved in archive",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "BRANCH_ARCHIVE.md entry in 1784cbe."
-          },
-          {
-            "label": "Original review acceptance",
-            "status": "blocked",
-            "verification": "verified",
-            "evidence": "Archive explicitly disclaims independent PASS; unresolved validation/review evidence."
-          },
-          {
-            "label": "Host-local teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No host-local worktree/lock evidence accessible."
-          }
-        ],
-        "next_gate": "Sepulcher recovery owner must reconcile the original held review and authorize a bounded recovery or disposition based on preserved evidence."
-      }
     }
   ],
   "snapshot": {
