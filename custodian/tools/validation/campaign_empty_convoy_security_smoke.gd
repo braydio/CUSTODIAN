@@ -14,6 +14,11 @@ class WalkabilityProbe extends Node:
 		return Vector2.INF if reject_all else position
 
 
+class NavigationProbe extends Node:
+	func get_path_to_target(start: Vector2, target: Vector2) -> PackedVector2Array:
+		return PackedVector2Array([start, target])
+
+
 var _errors: Array[String] = []
 
 
@@ -31,6 +36,9 @@ func _run() -> void:
 	var probe := WalkabilityProbe.new()
 	probe.add_to_group("procgen_walkability_provider")
 	root.add_child(probe)
+	var navigation := NavigationProbe.new()
+	navigation.add_to_group("navigation")
+	root.add_child(navigation)
 	var spawner := SPAWNER_SCRIPT.new() as AmbientEnemySpawner
 	spawner.enemy_scene = GRUNT_SCENE
 	spawner.enemy_scenes = [GRUNT_SCENE, PURSUIT_SCENE]
@@ -48,7 +56,8 @@ func _run() -> void:
 	_expect(site.expected_enemy_count == 3, "event state should persist the realized bounded wave size")
 	for enemy in first_wave:
 		var facing: Vector2 = enemy.call("get_ability_facing")
-		_expect(facing.length_squared() > 0.9, "security unit should face outward from the cradle")
+		var outward: Vector2 = (enemy.global_position - site.global_position).normalized()
+		_expect(facing.dot(outward) > 0.9, "security unit should face outward from the cradle")
 	site.interact(null)
 	_expect(_event_enemies(site.event_id).size() == 3, "repeat scan must not spawn a duplicate wave")
 	for enemy in first_wave:
@@ -89,6 +98,13 @@ func _run() -> void:
 	_expect(unavailable.security_state == &"empty_defense", "missing registered enemy scenes should enter evidence mode")
 	_expect(unavailable.get_interaction_prompt_body().contains("EVIDENCE RETAINED"), "empty-defense mode should retain evidence readback")
 	_expect(_event_enemies(unavailable.event_id).is_empty(), "empty-defense mode must not create enemies")
+	probe.reject_all = true
+	var unsafe: EmptyConvoySite = SITE_SCRIPT.new()
+	root.add_child(unsafe)
+	unsafe.configure_runtime(41005, memory, spawner)
+	unsafe.interact(null)
+	_expect(unsafe.security_state == &"empty_defense", "no safe spawn positions should fail closed")
+	_expect(_event_enemies(unsafe.event_id).is_empty(), "unsafe spawn resolution must not create enemies")
 
 	if _errors.is_empty():
 		print("PASS: empty convoy security bounded wave, completion, run identity, reentry, and fail-closed evidence")
