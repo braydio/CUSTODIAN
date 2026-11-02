@@ -3,8 +3,8 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-campaign-abandoned-station-stability-v1`
 - Kind: `review`
-- Status: `ready`
-- Dispatch: `auto`
+- Status: `blocked`
+- Dispatch: `manual`
 - Authoring handoff: `auto`
 - Priority: `P2`
 - Depends on: `campaign-abandoned-station-stability-v1`
@@ -33,6 +33,20 @@
 ## Dependency assumption
 The implementation `campaign-abandoned-station-stability-v1` has landed and its archive is accessible at the named path. Inspect the real implementation's chosen private seams; judge the contract, not proposed function names.
 
+## Owner disposition
+- Disposition: `owner_waived_prelaunch`
+- Review workstream: `review-campaign-abandoned-station-stability-v1`
+- Review run: `not-created`; read-only source-scope preflight completed before claim or reviewer checkout.
+- Implementation commit: `b83be87a5c3e9627bee4efa2fc6c9178a42f81cb`
+- Verified landing: `fff57f3ced3e85996047e77356fe520aef88a77c`
+- Implementation validation: `7/7 passed` (final committed-source changed-file validation); report SHA-256 `48d74263f6a3548683b265165827b02700734e66011f1228aa856c526f2e9c37`.
+- Review launch: blocked before claim because the archived Work surface does not document all source paths. The source-span validator identifies `custodian/game/world/events/abandoned_station/abandoned_station_service_point.gd`, `custodian/game/world/events/abandoned_station/abandoned_station_site.gd`, `custodian/tools/validation/abandoned_station_placement_smoke.gd`, `custodian/tools/validation/abandoned_station_stability_smoke.gd`, and `custodian/tools/validation/validation_manifest.json` as omitted. The generated `.gd.uid` companion is not an additional source path.
+- Reviewer verdict or acceptance: `none`; no review claim, reviewer process, or review checkout was created.
+- Validation record note: this archived implementation packet references an earlier `5/5` report; the final source-bound `7/7` report and hash above are authoritative. The discrepancy is retained, not silently reconciled.
+- Further review or correction authorized: `no` for this exact landed implementation; this waiver does not constitute independent acceptance.
+- Administrative disposition: closed by explicit project-owner waiver; not complete, independently accepted, or claimable.
+- Authorizing planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae7eb07-c554-83e9-911a-1335e640e4d0`
+
 ## Handoff
-- Next action: On passing review, unlock the next slice in this event chain if any.
-- Blockers or open questions: Implementation must archive complete.
+- Next action: No further review execution is authorized for this exact implementation; the owner waived prospective independent review. Continue with the separate S3 Station Containment packet after this disposition is published.
+- Blockers or open questions: None for administrative closure. This packet remains blocked/manual and is not an acceptance receipt.
