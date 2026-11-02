@@ -5,7 +5,7 @@
 - Workstream: review-agent-workstream-inherited-main-resume-provenance-v1-review-corrections-1
 - Category: agent-ops
 - Kind: review
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: P0
 - Depends on: agent-workstream-inherited-main-resume-provenance-v1-review-corrections-1
@@ -54,3 +54,33 @@
 - Refresh reason: This new independent review is the final user-authorized evidence gate for R0-01; an authentic PASS permits a later same-run readiness reassessment, while findings/human_required keep original summary-rename finish blocked.
 - Next action: After genuinely accepted review, verify original protected claim/run/source, branch, preflight, and source-bound finish evidence before deciding whether to resume. Do not create or replace the original claim.
 - Blockers or open questions: No automatic correction-2 or additional reviewer is authorized. Original summary-rename remains blocked unless a new independent PASS establishes the missing consumer proof.
+
+## Independent Review
+
+The correction closes R0-01. The source change authenticates exactly one matching resume event in the published-worktree-to-landing interval, requires the resumed head to be the complete claim-base-to-resume first-parent prefix on both reviewed main and the source chain, verifies parent continuity and deterministic trees for inherited merges, and excludes the entire prefix from authored source accounting. The positive temporary-Git fixture asserts the exact merge parents/tree and resume event, preserves later authored implementation/test paths, and excludes upstream-only paths. Its negative matrix rejects missing, mismatched, duplicate, reordered, conflicting, forged, tampered, non-first-parent, hidden-source, and unwitnessed-merge cases. The host evidence report is immutable and its requested SHA-256 matches; it reports complete coverage, 275 consumer tests passed, no skips/failures/timeouts/infrastructure errors, and no source mutation. The producer regression count of 89/89 and other required checks are recorded in the correction's durable closeout. I did not execute or replace host validation.
+
+### Review Receipt: review-agent-workstream-inherited-main-resume-provenance-v1-review-corrections-1
+- Schema: `custodian.paired_review.v1`
+- Review workstream: `review-agent-workstream-inherited-main-resume-provenance-v1-review-corrections-1`
+- Review target workstream: `agent-workstream-inherited-main-resume-provenance-v1-review-corrections-1`
+- Status: `passed`
+- Blocking defects: `0`
+- Material gaps: `0`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Reviewed main: `b4a5fb6f745333b0206fcd3c970792affa21f144`
+- Reviewed implementation commit: `b4a5fb6f745333b0206fcd3c970792affa21f144`
+
+## Review Outcome
+
+- Schema: `custodian.review_outcome.v1`
+- Outcome: `passed`
+- Review workstream: `review-agent-workstream-inherited-main-resume-provenance-v1-review-corrections-1`
+- Review target workstream: `agent-workstream-inherited-main-resume-provenance-v1-review-corrections-1`
+- Reviewed main: `b4a5fb6f745333b0206fcd3c970792affa21f144`
+- Reviewed implementation commit: `b4a5fb6f745333b0206fcd3c970792affa21f144`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Run ID: `20261102T004119Z-413457600207`
+- Review cycle: `1`
+- Finding IDs: `none`
