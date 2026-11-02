@@ -1,9 +1,146 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-02T10:12:19Z",
-  "source_main_sha": "560fbf2d60306b88f989c168185fe2e838246bf7",
+  "generated_at": "2026-11-02T10:54:23Z",
+  "source_main_sha": "38c188421b18e0f5ddcd47ad0ff3dd5399eceac6",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "empty-convoy-placement-landed-0cdb0c8c",
+      "headline": "Empty Convoy enters generated worlds, with safe placement and an inspectable manifest",
+      "summary": "CUSTODIAN has landed an optional Empty Convoy encounter pocket. Four seeded smoke cases reportedly produced three placements and one safe skip; the implementation packet is archived, but independent review and player-facing validation are not established.",
+      "body": "Commit 47fd0755 adds a 12×10 optional Empty Convoy scene and deterministic placement in the main playable component, with route and objective clearance. The scene shows three wreck silhouettes, an empty cargo cradle, and an inspectable dispatch manifest. The completion receipt reports four seeded smoke cases (three placements, one safe skip) and 5/5 selected changed-source checks. Commit 0cdb0c8c archives the implementation packet. No independent reviewer PASS or host cleanup evidence was inspected.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "campaign",
+      "workstream": "campaign-empty-convoy-placement-v1",
+      "occurred_at": "2026-11-02T10:15:03Z",
+      "bullets": [
+        "Optional encounter placement and source archive are verified.",
+        "Independent review, in-game visual acceptance, and host teardown remain unverified."
+      ],
+      "links": [
+        {
+          "title": "Empty Convoy implementation",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/47fd0755203dc22fb7149889253154741c78689b"
+        },
+        {
+          "title": "Implementation archive",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/0cdb0c8c8b583a166df06315a3ec01119ce675c1"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "An abandoned convoy can now appear as an optional discovery in CUSTODIAN's generated world. Its placement is designed to leave essential routes untouched, while its empty cargo cradle and unanswered manifest introduce a new thread for exploration.",
+        "sections": [
+          {
+            "heading": "A roadside mystery that does not block the road",
+            "text": "The new pocket contains three outward-facing wrecks, an empty central cradle, and a manifest marked as unacknowledged. It appears only when a safe 12-by-10-tile site exists in the playable map; unsuitable seeds skip it rather than forcing a broken placement."
+          },
+          {
+            "heading": "The first slice is placement, not the full event",
+            "text": "The implementation and packet archive are on main. Its completion report records three successful placements and one safe skip across four seeds, plus five selected validation checks passing. Independent review and full player-facing behavior remain unverified."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Optional encounters can preserve world-generation guarantees",
+            "explanation": "A deterministic skip is part of the feature, not a failure. It allows authored discoveries without sacrificing navigation or mandatory objectives."
+          },
+          {
+            "title": "The mystery has a foothold, not a finished storyline",
+            "explanation": "This first slice establishes a place and an inspectable clue. Recovery and security follow-ups remain separate work, and the placement implementation has no verified independent PASS."
+          }
+        ],
+        "takeaway": "Empty Convoy placement landed and was archived; its broader event chain and independent acceptance remain outstanding.",
+        "next_watch": "Watch for independent review and the next convoy recovery slice, with host and gameplay evidence kept distinct."
+      },
+      "details": {
+        "overview": "Source implementation 47fd0755; completion and archive at 0cdb0c8c. Committed completion text reports four-seed smoke with three placements and one safe skip, and 5/5 selected checks. The current GitHub evidence does not establish an accepted independent review, actual host teardown, or live game session.",
+        "ledger": [
+          {
+            "stage": "Placement implementation",
+            "status": "verified landed",
+            "evidence": "47fd0755 adds site, scene, deterministic inserter and smoke test."
+          },
+          {
+            "stage": "Source validation",
+            "status": "reported passing",
+            "evidence": "Archived completion records 5/5 checks and four-seed smoke."
+          },
+          {
+            "stage": "Packet archive",
+            "status": "verified",
+            "evidence": "0cdb0c8c moves packet to archived/complete."
+          },
+          {
+            "stage": "Independent review",
+            "status": "unknown",
+            "evidence": "No accepted PASS inspected."
+          },
+          {
+            "stage": "Host teardown",
+            "status": "unknown",
+            "evidence": "No authenticated host evidence."
+          }
+        ],
+        "notes": [],
+        "unknowns": [
+          "No independently accepted gameplay review inspected."
+        ],
+        "actions": [
+          "Coordinator: inspect the exact paired review eligibility and obtain a genuine verdict before calling this independently accepted."
+        ]
+      },
+      "scorecard": {
+        "stage": "Placement landed; independent review not verified",
+        "as_of": "2026-11-02T10:54:23Z",
+        "scope": "Named Empty Convoy placement packet only",
+        "metrics": [
+          {
+            "id": "other-seed-cases",
+            "label": "SMOKE SEEDS",
+            "value": 4,
+            "verification": "reported",
+            "basis": "Four seeded cases in archived completion receipt; three placed and one safe skip",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/0cdb0c8c8b583a166df06315a3ec01119ce675c1"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Placement code landed",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "47fd0755"
+          },
+          {
+            "label": "Seed smoke and changed-file checks",
+            "status": "done",
+            "verification": "reported",
+            "evidence": "4 seed cases and 5/5 checks in completion receipt"
+          },
+          {
+            "label": "Implementation archived",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "0cdb0c8c"
+          },
+          {
+            "label": "Independent review",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No PASS inspected"
+          },
+          {
+            "label": "Host teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No host evidence"
+          }
+        ],
+        "next_gate": "Coordinator verifies independent review status before further acceptance claims."
+      },
+      "related": []
+    },
     {
       "id": "alpine-station-containment-waived-560fbf2d",
       "headline": "Alpine Station gains a final containment choice, but its independent review is waived",
@@ -1595,194 +1732,6 @@
         "actions": [
           "Recovery owner: inspect failed authoring run and existing correction evidence before choosing an authorized replacement or continuation."
         ]
-      },
-      "related": []
-    },
-    {
-      "id": "wire-observation-export-packets-ready-f38d7f40",
-      "headline": "WIRE telemetry gets an authorized path: exporter and independent-review packets enter the queue",
-      "summary": "CUSTODIAN has published and automatically promoted a paired implementation and independent-review plan for a read-only WIRE observation exporter. Repository validation and authoring handoff passed. The exporter has not been implemented or claimed; its reviewer must wait until implementation lands.",
-      "body": "Two agent-ops packets landed on main at 73070fd8 and were promoted to ready/auto at f38d7f40. The implementation packet specifies a local, sanitized, deterministic JSON exporter that consumes an existing task-administrator snapshot without triggering another expensive audit. Its separate review packet requires adversarial checks of freshness, count reconciliation, privacy and read-only behavior. The GitHub authoring and repository validation runs succeeded for the publication commit. Ready/auto is an authoring and dispatch state, not proof of a claim or running implementation. The paired review has an explicit dependency on the implementation landing and archiving. The next gate is a fresh canonical dispatcher eligibility check followed by a separately authorized claim. Dropbox delivery, hourly WIRE integration and public feed changes are outside this implementation packet.",
-      "severity": "milestone",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-wire-observation-export-v1",
-      "occurred_at": "2026-11-01T15:11:50Z",
-      "bullets": [
-        "Two named agent-ops packets are ready/auto on main; this is not a full queue count.",
-        "Implementation remains unclaimed on the latest available host report; GitHub cannot independently confirm live claims.",
-        "A fresh canonical eligibility check is required before a dispatcher claim.",
-        "Paired independent review is dependency-gated until implementation lands and archives.",
-        "Private delivery and WIRE consumer integration require later authorization."
-      ],
-      "links": [
-        {
-          "title": "Packet publication commit",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/73070fd8c8523ad6cb2d54d030a4c34c737f6f1e"
-        },
-        {
-          "title": "Automatic promotion commit",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/f38d7f405014960072e10feeb93f339e1ba7067e"
-        },
-        {
-          "title": "Implementation packet",
-          "url": "https://github.com/braydio/CUSTODIAN/blob/f38d7f405014960072e10feeb93f339e1ba7067e/custodian/docs/ai_context/task_packets/AGENT_WIRE_OBSERVATION_EXPORT_V1.md"
-        },
-        {
-          "title": "Paired review packet",
-          "url": "https://github.com/braydio/CUSTODIAN/blob/f38d7f405014960072e10feeb93f339e1ba7067e/custodian/docs/ai_context/task_packets/REVIEW_AGENT_WIRE_OBSERVATION_EXPORT_V1.md"
-        },
-        {
-          "title": "Passing authoring handoff",
-          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41319942048"
-        },
-        {
-          "title": "Passing repository validation",
-          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41319941987"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN has opened a controlled route to more trustworthy WIRE reporting. A new implementation packet and its independent-review partner have passed authoring validation and entered the dispatch queue. The planned exporter will turn an existing local observation into a sanitized, countable record, without starting another expensive dispatcher audit. No exporter code has landed yet.",
-        "sections": [
-          {
-            "heading": "The reporting gap is now a defined workstream",
-            "text": "WIRE can publish project news, but its packet totals are only as trustworthy as the evidence it can actually inspect. The new exporter is designed to preserve the original observation's scope, timestamps and source revision, then reconcile packet counts against a complete sanitized inventory. Missing evidence must remain unknown rather than becoming a misleading zero."
-          },
-          {
-            "heading": "The first milestone is intentionally narrow",
-            "text": "The implementation is limited to local JSON generation and synthetic tests. It cannot collect new audits, upload to Dropbox, alter claims or change the public feed. A separate reviewer must challenge stale inputs, duplicated identities, privacy leaks and fabricated statuses before the result can be accepted."
-          },
-          {
-            "heading": "Ready to dispatch is not running",
-            "text": "Both packets are marked ready/auto, but the reviewer depends on a landed, archived implementation. A successful authoring workflow proves that the packet plan passed its checks, not that the exporter exists or has been independently accepted. The next meaningful evidence will be a canonical claim receipt and, later, an implementation landing."
-          }
-        ],
-        "insights": [
-          {
-            "title": "A reusable observation is better than another audit",
-            "explanation": "The dispatcher audit refreshes Git references and can be slow. Reusing an already collected snapshot separates reporting from expensive operational collection and makes the freshness boundary explicit."
-          },
-          {
-            "title": "Privacy and accuracy share one review gate",
-            "explanation": "The exporter will summarize authority-bearing queue evidence while crossing a public-reporting boundary. Its independent review is tasked with catching both incorrect counts and sensitive data leakage before downstream integration."
-          }
-        ],
-        "takeaway": "The reporting improvement is now formally authorized for dispatch, not implemented. Its first deliverable is a local, testable evidence format; publication and private transport come later.",
-        "next_watch": "Look for a verified dispatcher claim for agent-wire-observation-export-v1, then focused validation, landing, and a separate independent-review receipt."
-      },
-      "details": {
-        "overview": "Main f38d7f405014960072e10feeb93f339e1ba7067e contains both promoted packets. The publication commit is 73070fd8. GitHub authoring handoff and repository validation for that publication both concluded successfully. No current host audit was independently accessible in this run; the prior host relay reported 481 active Markdown packets, 420 managed packets and implementation claim eligibility, but these are not refreshed totals. No implementation, accepted review, running process or canonical teardown is established by these commits.",
-        "ledger": [
-          {
-            "stage": "Implementation/review packet publication",
-            "status": "verified landed",
-            "evidence": "Commit 73070fd8 contains the paired packet plan."
-          },
-          {
-            "stage": "Automatic authoring promotion",
-            "status": "verified ready/auto",
-            "evidence": "Commit f38d7f40 and successful authoring workflow 41319942048; ready is not claimed."
-          },
-          {
-            "stage": "Repository validation",
-            "status": "verified successful for publication commit",
-            "evidence": "Workflow 41319941987 passed on 73070fd8; not exporter runtime validation."
-          },
-          {
-            "stage": "Implementation claim",
-            "status": "unknown current host state",
-            "evidence": "Earlier coordinator relay said unclaimed and eligible; no refreshed canonical claim receipt was accessible."
-          },
-          {
-            "stage": "Implementation, focused tests and landing",
-            "status": "not evidenced",
-            "evidence": "No implementation commit or validation receipt inspected."
-          },
-          {
-            "stage": "Independent review and acceptance",
-            "status": "dependency gated",
-            "evidence": "Review packet depends on landed/archived implementation and fresh independent review."
-          },
-          {
-            "stage": "Canonical cleanup",
-            "status": "unknown",
-            "evidence": "No live host teardown receipt inspected."
-          }
-        ],
-        "notes": [
-          "The prior host relay reported a bounded 42-second dispatcher audit, but it was not rerun or independently inspected here.",
-          "Earlier host relay reported 114 worktrees and 29 GB free; neither is a current host measurement."
-        ],
-        "unknowns": [
-          "Current live dispatcher totals, claim ownership, processes and lock state.",
-          "Implementation test outcome and independent review result.",
-          "Current host worktree and disk disposition."
-        ],
-        "actions": [
-          "Authorized executor: refresh canonical eligibility, then claim only agent-wire-observation-export-v1 if still eligible.",
-          "After landing/archive, independent reviewer: claim the paired review and produce a genuine acceptance or findings receipt."
-        ]
-      },
-      "scorecard": {
-        "stage": "Packet pair promoted; implementation claim is next",
-        "as_of": "2026-11-01T15:18:18Z",
-        "scope": "Two named WIRE observation-export packets on inspected main; not the full dispatcher queue.",
-        "metrics": [
-          {
-            "id": "ready_auto",
-            "label": "READY/AUTO IN PAIR",
-            "value": 2,
-            "verification": "verified",
-            "basis": "Both named packet headers at main f38d7f40; review is dependency-gated.",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/f38d7f405014960072e10feeb93f339e1ba7067e"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Author implementation and review packets",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Publication commit 73070fd8."
-          },
-          {
-            "label": "Automatic authoring promotion",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "f38d7f40 and successful workflow 41319942048."
-          },
-          {
-            "label": "Canonical eligibility and claim",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Prior host report says eligible; no fresh claim receipt."
-          },
-          {
-            "label": "Exporter implementation and focused validation",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No landed implementation evidence."
-          },
-          {
-            "label": "Implementation landing and archive",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Required before reviewer claim."
-          },
-          {
-            "label": "Independent review and acceptance",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Separate paired review must produce actual receipt."
-          },
-          {
-            "label": "Canonical teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "Requires trustworthy host evidence."
-          }
-        ],
-        "next_gate": "Authorized executor must verify fresh dispatcher eligibility and claim only the implementation packet."
       },
       "related": []
     }
