@@ -3,8 +3,8 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-campaign-abandoned-station-containment-v1`
 - Kind: `review`
-- Status: `ready`
-- Dispatch: `auto`
+- Status: `blocked`
+- Dispatch: `manual`
 - Authoring handoff: `auto`
 - Priority: `P2`
 - Depends on: `campaign-abandoned-station-containment-v1`
@@ -33,6 +33,23 @@
 ## Dependency assumption
 The implementation `campaign-abandoned-station-containment-v1` has landed and its archive is accessible at the named path. Inspect the real implementation's chosen private seams; judge the contract, not proposed function names.
 
+## Owner disposition
+- Disposition: `owner_waived_prelaunch`
+- Review workstream: `review-campaign-abandoned-station-containment-v1`
+- Review run: `20261102T091856Z-aaa6aa3b38aa`; exactly one canonical runner attempt acquired the claim.
+- Implementation commit: `ac471cb2f7a6344226bddc548f0087757e90fd0e`
+- Verified landing: `76272409061dd181fd08055250abd6715f4cded7`
+- Implementation validation: `7/7 passed` with complete changed-source coverage and zero failed, timed out, skipped, or infrastructure-error checks; report SHA-256 `129862b4b78936e24d27cfe64fe82ce921413d9237584d8ee42dcfe1fe3cbe83`.
+- Review launch: The dispatcher claim succeeded, but canonical coordinator host validation blocked before reviewer launch with `changed validation manifest is not covered by an accepted exact source attestation`. Its validation report records 7/7 execution checks passed; that is not a reviewer verdict.
+- Reviewer verdict or acceptance: `none`; no independent reviewer process launched and no PASS or acceptance was produced.
+- Further review, source-attestation recovery, or correction authorized: `no` for this exact landed implementation.
+- Administrative disposition: closed by explicit owner waiver; this packet remains blocked/manual, not complete, independently accepted, or claimable.
+- Authorizing planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae7eb07-c554-83e9-911a-1335e640e4d0`
+
+## Open verification limitation
+
+`ContractWorldLoader` skips completed station events. The S3 smoke verifies persisted readback by directly reconstructing the station, but player-accessible readback after a normal same-run world revisit has not been established. Do not claim end-to-end runtime review acceptance. This is recorded as an unverified gameplay behavior; no implementation change or new follow-up workstream is authorized in this closeout.
+
 ## Handoff
-- Next action: On passing review, unlock the next slice in this event chain if any.
-- Blockers or open questions: Implementation must archive complete.
+- Next action: Close the exact preserved review claim administratively and record the Alpine Station chain's implementation-complete, review-waived status.
+- Blockers or open questions: Generated-world revisit/readback remains unverified. No additional reviewer or recovery chain is authorized by this disposition.
