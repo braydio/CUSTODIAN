@@ -5,7 +5,7 @@
 - Workstream: agent-workstream-inherited-main-resume-provenance-v1-review-corrections-1
 - Category: agent-ops
 - Kind: correction
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: P0
 - Depends on: review-agent-workstream-inherited-main-resume-provenance-v1
@@ -62,13 +62,34 @@
 - Task overrides: none
 - Deferred: Future clean-root coordination-sync and optional GC/path import defects belong to their own owners; no unrelated work in this exception.
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `test_paired_review_runner.py` now has an isolated real-Git inherited-main resume fixture and adversarial identity/history matrix. The tests exposed and the narrowly scoped consumer validator fix closes a source-inventory defect: the complete authenticated claim-base-to-resume fast-forward prefix is excluded, rather than excluding only its merge commit. The consumer suite passed 275/275, producer suite 89/89, AI-context check, packet category checks, authoring/pairing/index checks, Python compilation, and canonical changed-file validation with complete coverage and no failures, skips, timeouts, or source mutation.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `The existing consumer exception omitted the inherited main prefix from merge handling but still counted upstream-only single-parent commits before the merge as task-owned paths; a focused consumer fixture also needed to model trace and object lineage end to end.`
+- Root cause / contributing factors: `The resolver authenticated the inherited merge object but applied the exclusion only to that commit, leaving the rest of the resumed fast-forward prefix in the ordinary authored-path inventory.`
+- Prevention / pipeline improvement: `Authenticate the exact resume event and first-parent prefix, verify each ordered parent/tree, then exclude the entire prefix and record merge provenance. Retain the real-Git positive and adversarial consumer fixture as a regression gate.`
+- Tooling / docs drift discovered: `none`
+- Follow-up: `fixed-in-scope; independent paired review remains required`
+- What worked: `Direct resolver assertions over temporary Git repositories exposed the source-inventory gap and verified task-owned paths remain included while upstream-only paths are excluded.`
+
 ## Handoff
 
 - Next workstream: review-agent-workstream-inherited-main-resume-provenance-v1-review-corrections-1
-- Next packet state: dependency-gated
+- Next packet state: ready after this correction is landed and archived
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae73140-7bb8-83e8-8a42-705d683aa2fb
 - Refresh reason: none
-- Next action: Only after this correction is landed, archived complete and canonically torn down may the previously published paired review be claimed in a fresh independent context. Do not resume summary-rename solely on this correction landing.
+- Next action: After this correction is landed, archived complete and canonically torn down, audit dispatcher eligibility and run `paired_review_runner.py review-agent-workstream-inherited-main-resume-provenance-v1-review-corrections-1` once in a fresh independent context. Do not resume summary-rename solely on this correction landing.
 - Blockers or open questions: Original review findings are immutable. If an adversarial test exposes an out-of-scope production flaw, halt for a separate explicit user decision rather than widening the authorized work.
