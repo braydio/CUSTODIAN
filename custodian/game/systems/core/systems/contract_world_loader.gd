@@ -57,6 +57,8 @@ const SUNDERED_KEEP_MAP_SCRIPT := preload("res://game/world/sundered_keep/sunder
 const WORLD_INGRESS_SITE_SCRIPT := preload("res://game/world/procgen/ingress/world_ingress_site.gd")
 const LEVEL_LOADER_SCRIPT := preload("res://game/world/levels/level_loader.gd")
 const WORLD_INGRESS_SPAWNER_SCRIPT := preload("res://game/world/levels/world_ingress_spawner.gd")
+const ABANDONED_STATION_PLANNER_SCRIPT := preload("res://game/world/events/abandoned_station/abandoned_station_placement_planner.gd")
+const ABANDONED_STATION_SITE_SCRIPT := preload("res://game/world/events/abandoned_station/abandoned_station_site.gd")
 const SUNDERED_KEEP_FRONTAGE_VISUAL_SPAWNER_SCRIPT := preload(
 	"res://game/world/procgen/landmarks/sundered_keep/"
 	+ "sundered_keep_frontage_visual_spawner.gd"
@@ -260,6 +262,7 @@ func _on_contract_generated(contract: Dictionary) -> void:
 		_position_arrn_relays(level_data, map_instance)
 	if place_ambient_enemy_camps_from_contract:
 		_place_ambient_enemy_camps(level_data, map_instance)
+	_place_abandoned_station_site(contract, level_data, map_instance)
 	if place_vaultwing_markers_from_contract:
 		_place_vaultwing_markers(level_data, map_instance)
 	if place_gothic_compound_connection:
@@ -422,6 +425,35 @@ func _place_ambient_enemy_camps(level_data: Dictionary, map_instance: Node) -> v
 	else:
 		_place_legacy_ambient_enemy_markers(level_data, map_instance)
 	_request_ambient_spawner_refresh()
+
+
+func _place_abandoned_station_site(contract: Dictionary, level_data: Dictionary, map_instance: Node) -> void:
+	var profile: Dictionary = contract.get("world_profile", {}) as Dictionary
+	if String(profile.get("region_frame_profile_id", "")) != "alpine_plateau":
+		return
+	var memory := get_node_or_null("/root/WorldEventMemory")
+	if memory == null:
+		return
+	var run_seed := int(memory.get("run_seed"))
+	var contract_seed := int(contract.get("contract_seed", 0))
+	var event_id := StringName("%s:%d:%d" % ["campaign_abandoned_station_site_v1", run_seed, contract_seed])
+	if memory.has_method("is_completed") and bool(memory.call("is_completed", event_id)):
+		return
+	var seed_value := absi(hash("%d:%d:%s" % [run_seed, contract_seed, String(profile.get("world_id", "alpine"))]))
+	var plan: Dictionary = ABANDONED_STATION_PLANNER_SCRIPT.plan(map_instance, level_data, seed_value)
+	if plan.is_empty():
+		return
+	var site := ABANDONED_STATION_SITE_SCRIPT.new()
+	site.name = "AbandonedAlpineStation"
+	map_instance.add_child(site)
+	var anchor: Vector2i = plan.get("anchor", Vector2i.ZERO)
+	site.global_position = _tile_to_world(map_instance, anchor)
+	var service_positions: Array[Vector2] = []
+	for tile in plan.get("services", []):
+		service_positions.append(_tile_to_world(map_instance, tile) - site.global_position)
+	site.configure(event_id, service_positions, memory)
+	if not memory.call("has_spawned", event_id):
+		memory.call("mark_spawned", event_id, {"anchor": anchor, "seed": seed_value, "services": [false, false, false]})
 
 
 func _clear_generated_ambient_enemy_markers() -> void:

@@ -37,6 +37,26 @@
   ],
   "tests": [
     {
+      "id": "abandoned_station_placement",
+      "type": "godot_script",
+      "script": "res://tools/validation/abandoned_station_placement_smoke.gd",
+      "tier": "actor",
+      "tags": [
+        "procgen",
+        "authored_event",
+        "determinism",
+        "navigation"
+      ],
+      "owners": [
+        "custodian/game/world/events/abandoned_station/**",
+        "custodian/game/systems/core/systems/contract_world_loader.gd",
+        "custodian/tools/validation/abandoned_station_placement_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 180,
+      "needs_import": true
+    },
+    {
       "id": "campaign_geography_identity",
       "type": "godot_script",
       "script": "res://tools/validation/campaign_geography_identity_smoke.gd",
