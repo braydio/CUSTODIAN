@@ -26,7 +26,7 @@ Previously completed S1 payloads remain completed legacy records; they do not be
 - Superseded/legacy production path disposition: `n/a`
 - Evidence: implementation commit and committed-source report above; six focused stability scenarios and four generated placement seeds passed. S2 deliberately leaves the S3 containment/shutdown decision pending.
 
-## Execution Feedback
+## Process Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
 - Outcome: `success`
