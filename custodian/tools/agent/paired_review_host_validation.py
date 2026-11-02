@@ -3613,37 +3613,81 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
     if main_first_parent.returncode:
         raise HostValidationError("cannot enumerate reviewed main first-parent provenance")
     main_history = set(main_first_parent.stdout.splitlines())
-    inherited_resume_events = {
-        event.get("data", {}).get("head"): index
-        for index, event in enumerate(events)
-        if event.get("event") == "worktree_resumed"
-        and isinstance(event.get("data"), dict)
+    has_checkpoint_history = any(event.get("event") == "checkpoint_completed" for event in events)
+    resume_events = [(index, event) for index, event in enumerate(events)
+                     if event.get("event") == "worktree_resumed"]
+    matching_resume_events = [
+        (index, event) for index, event in resume_events
+        if isinstance(event.get("data"), dict)
         and event["data"].get("branch") == claim_record["branch"]
         and event["data"].get("worktree") == claim_record["worktree"]
-    }
-    has_checkpoint_history = any(event.get("event") == "checkpoint_completed" for event in events)
-    inherited_main_merges: list[dict] = []
-    for index, commit in enumerate(commits):
-        parents = _git(repo, "rev-list", "--parents", "-n", "1", commit).split()[1:]
-        if len(parents) == 1:
-            owned_paths.update(_changed_paths(repo, f"{parents[0]}..{commit}"))
-        else:
-            if (commit in inherited_resume_events and commit in main_history
-                    and not has_checkpoint_history):
+        and event["data"].get("head") in commits
+    ]
+    inherited_main_prefix: set[str] = set()
+    inherited_main_merge_records: dict[str, dict] = {}
+    prefix_commits: list[str] = []
+    if matching_resume_events and not has_checkpoint_history:
+        if len(matching_resume_events) != 1 or len(resume_events) != 1:
+            raise HostValidationError("inherited-main resume trace contains duplicate or conflicting resume events")
+        resume_index, resume_event = matching_resume_events[0]
+        publication_indices = [i for i, event in enumerate(events)
+                               if event.get("event") == "worktree_published"
+                               and isinstance(event.get("data"), dict)
+                               and event["data"].get("branch") == claim_record["branch"]
+                               and event["data"].get("worktree") == claim_record["worktree"]]
+        landing_indices = [i for i, event in enumerate(events)
+                           if event.get("event") == "landing_started"]
+        if (len(publication_indices) != 1 or len(landing_indices) != 1
+                or not publication_indices[0] < resume_index < landing_indices[0]):
+            raise HostValidationError("inherited-main resume event is outside the published-worktree landing interval")
+        resumed_head = resume_event["data"]["head"]
+        prefix = subprocess.run(
+            ["git", "rev-list", "--first-parent", "--reverse",
+             f"{source_base}..{resumed_head}"], cwd=repo, text=True, capture_output=True,
+        )
+        prefix_commits = prefix.stdout.splitlines()
+        if (prefix.returncode or not prefix_commits
+                or prefix_commits[-1] != resumed_head
+                or any(commit not in main_history or commit not in commits
+                       for commit in prefix_commits)):
+            raise HostValidationError("inherited-main resume head is not a proven reviewed-main first-parent fast-forward")
+        inherited_main_prefix = set(prefix_commits)
+        previous = source_base
+        for commit in prefix_commits:
+            parents = _git(repo, "rev-list", "--parents", "-n", "1", commit).split()[1:]
+            if not parents or parents[0] != previous:
+                raise HostValidationError(
+                    "inherited-main resume prefix breaks first-parent continuity: "
+                    f"{commit} follows {parents[0] if parents else 'no parent'}, expected {previous}"
+                )
+            if len(parents) > 1:
+                if len(parents) != 2:
+                    raise HostValidationError("inherited-main resume merge has invalid ordered parents")
                 expected = subprocess.run(
                     ["git", "merge-tree", "--write-tree", parents[0], parents[1]],
                     cwd=repo, text=True, capture_output=True,
                 )
                 tree = _git(repo, "rev-parse", f"{commit}^{{tree}}")
                 expected_tree = expected.stdout.splitlines()[0].strip() if expected.stdout.splitlines() else ""
-                if (len(parents) != 2 or expected.returncode or tree != expected_tree):
+                if expected.returncode or tree != expected_tree:
                     raise HostValidationError("inherited-main resume merge differs from deterministic Git tree")
-                inherited_main_merges.append({
+                inherited_main_merge_records[commit] = {
                     "commit": commit, "first_parent": parents[0], "main_parent": parents[1],
-                    "resume_event_index": inherited_resume_events[commit], "tree": tree,
+                    "resume_event_index": resume_index, "tree": tree,
                     "provenance": "authenticated-resume-on-reviewed-main-first-parent",
-                })
-                continue
+                }
+            previous = commit
+    inherited_main_merges: list[dict] = []
+    for index, commit in enumerate(commits):
+        parents = _git(repo, "rev-list", "--parents", "-n", "1", commit).split()[1:]
+        if commit in inherited_main_prefix:
+            inherited = inherited_main_merge_records.get(commit)
+            if inherited is not None:
+                inherited_main_merges.append(inherited)
+            continue
+        if len(parents) == 1:
+            owned_paths.update(_changed_paths(repo, f"{parents[0]}..{commit}"))
+        else:
             merge_commits.append((index, commit, parents))
             owned_paths_at_merge[commit] = set(owned_paths)
     checkpoint_resume_merge = None

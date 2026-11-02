@@ -6026,6 +6026,197 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                 "reviewed_main": trace_landing, "workstream": workstream,
                 "archive": archive, "source_path": source_path, "test_path": test_path}
 
+    def _build_inherited_main_resume_fixture(self, *, mutation=None, alternate_main_history=False):
+        """Build a clean resumed worktree whose main fast-forward includes a merge."""
+        repository = Path(self.temp.name) / f"inherited-main-{mutation or 'valid'}-{alternate_main_history}"
+        repository.mkdir()
+        subprocess.run(["git", "init", "-q", str(repository)], check=True)
+        for key, value in (("user.name", "test"), ("user.email", "test@example.invalid")):
+            subprocess.run(["git", "-C", str(repository), "config", key, value], check=True)
+
+        def git(*args, input_text=None):
+            result = subprocess.run(["git", *args], cwd=repository, text=True,
+                                    input=input_text, capture_output=True)
+            if result.returncode:
+                raise AssertionError(result.stderr or result.stdout)
+            return result.stdout.strip()
+
+        workstream = "agent-synthetic-inherited-main-resume"
+        active = f"{runner.PACKET_ROOT}/SYNTHETIC_INHERITED_MAIN_RESUME.md"
+        archive = f"{runner.PACKET_ROOT}/archived/SYNTHETIC_INHERITED_MAIN_RESUME.md"
+        source_path = "custodian/tools/agent/inherited_resume_fixture.py"
+        test_path = "custodian/tools/agent/test_inherited_resume_fixture.py"
+        upstream_only_path = "custodian/tools/agent/upstream_only_fixture.md"
+        branch = f"agent/{workstream}"
+        run_id = "20261101T120000Z-abcdef123456"
+        worktree = f"/tmp/{workstream}-{run_id}"
+
+        (repository / "README.md").write_text("initial\n")
+        git("add", "README.md")
+        git("commit", "-qm", "initial history")
+        reviewed_base = git("rev-parse", "HEAD")
+        packet = (f"# Synthetic inherited main resume\n"
+                  f"- Packet schema: `custodian.task_packet.v2`\n"
+                  f"- Workstream: `{workstream}`\n- Kind: `implementation`\n"
+                  f"- Status: `in_progress`\n- Reviewed main: `{reviewed_base}`\n"
+                  f"- Work surface: `{source_path}`; `{test_path}`\n")
+        (repository / active).parent.mkdir(parents=True, exist_ok=True)
+        (repository / active).write_text(packet)
+        git("add", active)
+        git("commit", "-qm", "publish source packet")
+        claim_base = git("rev-parse", "HEAD")
+
+        git("branch", "-M", "main")
+        git("checkout", "-qb", "workstream", claim_base)
+        git("checkout", "-qb", "upstream-topic", claim_base)
+        (repository / upstream_only_path).parent.mkdir(parents=True, exist_ok=True)
+        (repository / upstream_only_path).write_text("upstream topic content\n")
+        git("add", upstream_only_path)
+        git("commit", "-qm", "author upstream-only change")
+        topic = git("rev-parse", "HEAD")
+
+        git("checkout", "main")
+        (repository / "main-only-fixture.md").write_text("main first-parent content\n")
+        git("add", "main-only-fixture.md")
+        git("commit", "-qm", "advance upstream main")
+        main_first_parent = git("rev-parse", "HEAD")
+        if mutation in {"altered-tree", "altered-parents"}:
+            if mutation == "altered-tree":
+                merge_tree = git("rev-parse", f"{main_first_parent}^{{tree}}")
+                merge = git("commit-tree", merge_tree, "-m", "altered inherited main merge",
+                            "-p", main_first_parent, "-p", topic)
+            else:
+                merge_tree = subprocess.run(
+                    ["git", "merge-tree", "--write-tree", main_first_parent, topic],
+                    cwd=repository, text=True, capture_output=True,
+                )
+                if merge_tree.returncode:
+                    raise AssertionError(merge_tree.stderr)
+                merge = git("commit-tree", merge_tree.stdout.splitlines()[0].strip(),
+                            "-m", "octopus inherited main merge", "-p", main_first_parent,
+                            "-p", topic, "-p", claim_base)
+        else:
+            git("merge", "--no-ff", "upstream-topic", "-m", "upstream main merge")
+            merge = git("rev-parse", "HEAD")
+        if mutation in {"altered-tree", "altered-parents"}:
+            git("reset", "--hard", merge)
+
+        # This is the clean same-run resume boundary. All task-authored source
+        # changes happen afterward, on the resumed worktree's first parent.
+        git("checkout", "workstream")
+        git("merge", "--ff-only", "main")
+        resumed_head = git("rev-parse", "HEAD")
+        resume_boundary = resumed_head
+
+        if mutation == "hidden-local-source":
+            hidden_path = "custodian/tools/agent/hidden_local_resume.py"
+            (repository / hidden_path).write_text("undocumented local source\n")
+            git("add", hidden_path)
+            git("commit", "-qm", "author undocumented local source")
+        elif mutation == "unwitnessed-authored-merge":
+            git("checkout", "-qb", "local-authored-merge", resumed_head)
+            authored_path = "custodian/tools/agent/local_authored_merge.py"
+            (repository / authored_path).write_text("local authored merge source\n")
+            git("add", authored_path)
+            git("commit", "-qm", "author local merge source")
+            git("checkout", "workstream")
+            git("merge", "--no-ff", "local-authored-merge", "-m", "unwitnessed authored merge")
+            resumed_head = git("rev-parse", "HEAD")
+
+        for path, contents in ((source_path, "authored implementation\n"),
+                               (test_path, "authored consumer regression\n")):
+            target = repository / path
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(contents)
+        git("add", source_path, test_path)
+        git("commit", "-qm", "author implementation source and test")
+        source_commit = git("rev-parse", "HEAD")
+
+        complete_packet = packet.replace("`in_progress`", "`complete`")
+        (repository / archive).parent.mkdir(parents=True, exist_ok=True)
+        (repository / archive).write_text(complete_packet)
+        (repository / active).unlink()
+        (repository / f"{runner.PACKET_ROOT}/README.md").write_text("archived synthetic packet\n")
+        (repository / f"{workstream.upper().replace('-', '_')}_CLAUDE_SUMMARY.md").write_text(
+            "synthetic implementation summary\n")
+        git("add", "-A")
+        git("commit", "-qm", "archive source-bearing workstream")
+        landing = git("rev-parse", "HEAD")
+        reviewed_main = landing
+        if alternate_main_history:
+            git("checkout", "-qb", "unrelated-main", claim_base)
+            (repository / "unrelated-main.md").write_text("other first-parent history\n")
+            git("add", "unrelated-main.md")
+            git("commit", "-qm", "advance independent main")
+            git("merge", "--no-ff", landing, "-m", "merge landing as second parent")
+            reviewed_main = git("rev-parse", "HEAD")
+
+        claim_oid = git("commit-tree", f"{claim_base}^{{tree}}", "-p", claim_base,
+                        "-m", f"workstream claim {workstream} codex:42:{run_id}")
+        events = []
+
+        def emit(name, data):
+            events.append({"schema": "custodian.workflow_trace_event.v1", "schema_version": 1,
+                           "agent": "codex", "execution_generation": "execution-reset-v1-test",
+                           "host": "test-host", "run_id": run_id,
+                           "workstream": workstream, "packet": active,
+                           "event": name, "data": data})
+
+        emit("remote_claim_acquired", {"claim_oid": claim_oid, "main_sha": claim_base,
+             "local_ref": f"refs/custodian/claims/{workstream}/{run_id}",
+             "remote_ref": f"refs/heads/dispatch-claims/{workstream}"})
+        emit("worktree_published", {"head": claim_base, "upstream": claim_base,
+             "branch": branch, "clean": True, "worktree": worktree})
+        if mutation == "tampered-checkpoint":
+            emit("checkpoint_completed", {"remote_head": "0" * 40,
+                 "branch": branch, "removed": False})
+        emit("worktree_resumed", {"head": resume_boundary, "branch": branch, "worktree": worktree})
+        emit("landing_started", {"start_sha": landing, "branch": branch, "target": "main"})
+        emit("landing_completed", {"head": landing, "outcome": "landed"})
+        emit("teardown_started", {"head": landing, "branch": branch, "worktree": worktree})
+        emit("teardown_completed", {"head": landing, "branch": branch,
+             "worktree_removed": True, "worktree": worktree})
+
+        if mutation == "missing-resume":
+            events = [event for event in events if event["event"] != "worktree_resumed"]
+        elif mutation == "wrong-run":
+            next(event for event in events if event["event"] == "worktree_resumed")["run_id"] = "20261101T120001Z-fedcba654321"
+        elif mutation == "wrong-worktree":
+            next(event for event in events if event["event"] == "worktree_resumed")["data"]["worktree"] = "/tmp/other-checkout"
+        elif mutation == "wrong-branch":
+            next(event for event in events if event["event"] == "worktree_resumed")["data"]["branch"] = "agent/other-workstream"
+        elif mutation == "forged-head":
+            next(event for event in events if event["event"] == "worktree_resumed")["data"]["head"] = claim_base
+        elif mutation == "duplicate-resume":
+            resume_event = next(event for event in events if event["event"] == "worktree_resumed")
+            events.insert(events.index(resume_event) + 1, json.loads(json.dumps(resume_event)))
+        elif mutation == "reordered-resume":
+            resume_event = next(event for event in events if event["event"] == "worktree_resumed")
+            events.remove(resume_event)
+            events.insert(events.index(next(event for event in events if event["event"] == "landing_started")) + 1,
+                          resume_event)
+        elif mutation == "conflicting-resume":
+            resume_event = json.loads(json.dumps(next(
+                event for event in events if event["event"] == "worktree_resumed")))
+            resume_event["data"]["head"] = claim_base
+            events.insert(events.index(next(event for event in events if event["event"] == "landing_started")),
+                          resume_event)
+
+        raw = ("\n".join(json.dumps(event, sort_keys=True, separators=(",", ":"))
+                          for event in events) + "\n").encode()
+        blob = git("hash-object", "-w", "--stdin", input_text=raw.decode())
+        tree = git("mktree", input_text=f"100644 blob {blob}\ttrace.jsonl\n")
+        trace_commit = git("commit-tree", tree, "-m", "inherited main resume trace")
+        run_ref = f"refs/remotes/origin/agent-diagnostics/{workstream}/{run_id}"
+        git("update-ref", run_ref, trace_commit)
+        return {"repo": repository, "workstream": workstream, "active": active,
+                "archive": archive, "run_id": run_id, "branch": branch, "worktree": worktree,
+                "reviewed_main": reviewed_main, "landing": landing, "claim_base": claim_base,
+                "resumed_head": resumed_head, "main_first_parent": main_first_parent,
+                "topic": topic, "merge": merge, "source_commit": source_commit,
+                "source_path": source_path, "test_path": test_path,
+                "upstream_only_path": upstream_only_path, "trace_ref": run_ref}
+
     def test_interior_main_sync_merge_requires_exact_trace_and_excludes_inherited_paths(self):
         valid = self._build_checkpoint_resume_fixture(variant="interior-main-sync")
         span = host_validation.resolve_validation_source_span(
@@ -9363,6 +9554,63 @@ Verify the exact post-hoc attestation.
         self.assertIn(overlap["source_path"], overlap_provenance["overlapping_paths"])
         self.assertIn(overlap["source_path"], overlap_provenance["owned_paths"])
         self.assertIn(overlap["source_path"], overlap_span["paths"])
+
+    def test_inherited_main_resume_classifies_only_authenticated_main_merge(self):
+        fixture = self._build_inherited_main_resume_fixture()
+        span = host_validation.resolve_validation_source_span(
+            fixture["repo"], fixture["reviewed_main"], fixture["landing"],
+            fixture["workstream"], fixture["archive"],
+        )
+        provenance = span["provenance"]["inherited_main_merges"]
+        self.assertEqual(len(provenance), 1)
+        self.assertEqual(provenance[0]["commit"], fixture["merge"])
+        self.assertEqual(provenance[0]["first_parent"], fixture["main_first_parent"])
+        self.assertEqual(provenance[0]["main_parent"], fixture["topic"])
+        self.assertEqual(provenance[0]["tree"], subprocess.run(
+            ["git", "rev-parse", f"{fixture['merge']}^{{tree}}"], cwd=fixture["repo"],
+            check=True, text=True, capture_output=True,
+        ).stdout.strip())
+        self.assertEqual(provenance[0]["resume_event_index"], 2)
+        self.assertEqual(span["base"], fixture["claim_base"])
+        self.assertIn(fixture["source_path"], span["paths"])
+        self.assertIn(fixture["test_path"], span["paths"])
+        self.assertNotIn(fixture["upstream_only_path"], span["paths"])
+        self.assertNotIn("main-only-fixture.md", span["paths"])
+
+        cases = (
+            ("missing-resume", "unique matching checkpoint|exact worktree resume"),
+            ("wrong-run", "identity|trace|resume"),
+            ("wrong-worktree", "unique matching checkpoint|exact worktree resume"),
+            ("wrong-branch", "unique matching checkpoint|exact worktree resume"),
+            ("forged-head", "unique matching checkpoint|exact worktree resume"),
+            ("duplicate-resume", "duplicate|conflicting|unique|resume"),
+            ("reordered-resume", "out of order|resume|landing"),
+            ("conflicting-resume", "conflicting|duplicate|resume|unique"),
+            ("altered-tree", "deterministic Git tree"),
+            ("altered-parents", "invalid ordered parents"),
+            ("tampered-checkpoint", "unique matching checkpoint"),
+            ("hidden-local-source", "not documented"),
+            ("unwitnessed-authored-merge", "unique matching checkpoint|unmatched"),
+        )
+        for mutation, reason in cases:
+            with self.subTest(mutation=mutation):
+                invalid = self._build_inherited_main_resume_fixture(mutation=mutation)
+                with self.assertRaisesRegex(host_validation.HostValidationError, reason):
+                    host_validation.resolve_validation_source_span(
+                        invalid["repo"], invalid["reviewed_main"], invalid["landing"],
+                        invalid["workstream"], invalid["archive"],
+                    )
+
+        outside_first_parent = self._build_inherited_main_resume_fixture(
+            alternate_main_history=True,
+        )
+        with self.assertRaisesRegex(host_validation.HostValidationError,
+                                    "unique matching checkpoint|first-parent"):
+            host_validation.resolve_validation_source_span(
+                outside_first_parent["repo"], outside_first_parent["reviewed_main"],
+                outside_first_parent["landing"], outside_first_parent["workstream"],
+                outside_first_parent["archive"],
+            )
 
     def test_two_ordered_main_sync_merges_keep_only_owned_source_paths(self):
         fixture = self._build_checkpoint_resume_fixture(variant="multiple-main-sync")
