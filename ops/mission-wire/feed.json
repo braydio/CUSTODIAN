@@ -1,9 +1,137 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-02T15:08:24Z",
-  "source_main_sha": "9f450bb4ed04dd6ca09df317e296a8a72a0aa857",
+  "generated_at": "2026-11-02T18:55:51Z",
+  "source_main_sha": "4900dbee03f3a9992391c5f985d1c35d819dc7ae",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "operator-fast-attack-n-art-publish-4900dbee",
+      "headline": "Operator fast-attack artwork reaches main, with six sprite assets updated",
+      "summary": "A new Operator art publication updates six PNG assets for the north-facing fast unarmed attack: upper body, lower body and effects, each in source and runtime locations. The commit establishes asset publication, not animation playback, direction coverage or gameplay acceptance.",
+      "body": "Commit 4900dbee updates six binary sprite files in the Operator's fast unarmed attack animation family, north direction, six-frame, 96-pixel naming convention. Three layers (upper body, lower body, effects) were updated in both source and runtime asset trees. The available GitHub comparison confirms the files changed but does not independently establish visual quality, frame sequencing, integration, tests or review. Other directions and the approved full-body idle are outside this commit. Next: inspect the rendered animation in-engine and verify alignment, frame timing and directional coverage.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "",
+      "occurred_at": "2026-11-02T17:36:54Z",
+      "bullets": [
+        "Six PNG files updated across source and runtime Operator art trees.",
+        "Three fast-attack layers: upper body, lower body and effects.",
+        "North-facing, six-frame, 96-pixel asset family by filename.",
+        "In-engine playback and independent acceptance are not established."
+      ],
+      "links": [
+        {
+          "title": "Operator art publication",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/4900dbee03f3a9992391c5f985d1c35d819dc7ae"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "The Operator's unarmed fast attack has received a new art publication on main. The update touches the character's upper-body motion, lower-body motion and effects layers in both the source artwork and the runtime asset set, moving this particular attack direction forward without yet proving how it looks or behaves in play.",
+        "sections": [
+          {
+            "heading": "A layered attack update",
+            "text": "Six PNG files changed in the north-facing fast-attack family: three source assets and their three runtime counterparts. The filenames identify a six-frame, 96-pixel animation family, but the repository diff alone cannot establish what changed visually inside the sprites."
+          },
+          {
+            "heading": "Publication is not an animation sign-off",
+            "text": "The change provides assets for one facing direction. It does not demonstrate correct alignment between layers, playback timing, other directional variants or an integrated gameplay test. No independent review outcome or teardown evidence accompanies this observation."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Source and runtime art moved together",
+            "explanation": "Matching layer names changed in both trees, reducing the risk that only editable artwork was updated while the game kept an older runtime copy. Pixel equivalence and in-engine loading still need inspection."
+          },
+          {
+            "title": "Directional completeness remains a separate gate",
+            "explanation": "The commit targets the north-facing fast attack, not the full directional animation set. A successful publication here cannot establish complete combat-animation coverage."
+          }
+        ],
+        "takeaway": "The north-facing Operator fast-attack art assets are published on main; animation quality and gameplay integration remain unverified.",
+        "next_watch": "A rendered in-engine attack preview or source-bound validation showing layer alignment, timing and directional coverage."
+      },
+      "details": {
+        "overview": "Main commit 4900dbee03f3a9992391c5f985d1c35d819dc7ae changes six PNG assets under custodian/content/sprites/operator in source and runtime animations/unarmed/attack/fast_01. GitHub compare reports no other changed paths in this commit.",
+        "ledger": [
+          {
+            "stage": "Art publication",
+            "status": "verified landed",
+            "evidence": "Commit 4900dbee changes six sprite PNG paths in main."
+          },
+          {
+            "stage": "Visual inspection and validation",
+            "status": "unknown",
+            "evidence": "Binary diff metadata does not establish rendered frame content, playback or test outcomes."
+          },
+          {
+            "stage": "Independent acceptance",
+            "status": "unknown",
+            "evidence": "No independent PASS receipt inspected."
+          },
+          {
+            "stage": "Host cleanup",
+            "status": "unknown",
+            "evidence": "No private host teardown observation available."
+          }
+        ],
+        "notes": [
+          "Asset naming identifies north direction, six frames and 96-pixel family; these are filename conventions, not independently checked dimensions."
+        ],
+        "unknowns": [
+          "Whether runtime and source sprites match exactly.",
+          "Whether this animation is correctly loaded and timed in gameplay.",
+          "Whether other directions are complete."
+        ],
+        "actions": [
+          "Operator art/gameplay owner: capture an in-engine preview and check layer registration and frame timing."
+        ]
+      },
+      "scorecard": {
+        "stage": "Asset publication landed; integration unverified",
+        "as_of": "2026-11-02T17:36:54Z",
+        "scope": "North-facing Operator unarmed fast attack assets only",
+        "metrics": [
+          {
+            "id": "changed-art-files",
+            "label": "SPRITE FILES",
+            "value": 6,
+            "verification": "verified",
+            "basis": "Six changed PNG paths in main comparison",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/4900dbee03f3a9992391c5f985d1c35d819dc7ae"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Source and runtime sprites updated",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Six changed PNGs in main commit 4900dbee."
+          },
+          {
+            "label": "Visual and layer alignment inspection",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No rendered proof inspected."
+          },
+          {
+            "label": "In-engine animation test",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No gameplay playback evidence inspected."
+          },
+          {
+            "label": "Independent art/gameplay sign-off",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No accepted review receipt inspected."
+          }
+        ],
+        "next_gate": "Operator owner to validate the north-facing fast attack in engine with a captured preview."
+      },
+      "related": []
+    },
     {
       "id": "narrative-causal-history-doctrine-9f450bb4",
       "headline": "CUSTODIAN rewrites its environmental storytelling rules: every ruin needs a real history",
@@ -1515,189 +1643,6 @@
           "story_id": "inherited-main-resume-provenance-ready-5de7fa9f"
         }
       ]
-    },
-    {
-      "id": "inherited-main-resume-provenance-ready-5de7fa9f",
-      "headline": "CUSTODIAN clears a packet handoff for a provenance fix; protected closeout still awaits execution",
-      "summary": "A new P0 implementation/review pair now passes authoring handoff after a metadata correction. It targets a canonical finish that misclassifies cleanly inherited main history as workstream-authored synchronization. No implementation or independent acceptance has occurred; the original summary-rename claim remains protected.",
-      "body": "CUSTODIAN has restored a valid task-packet handoff for a correction to its workstream finish machinery. A protected summary-rename job cannot close because the validator mistakes upstream history inherited during a clean resume for a merge authored by that job. The new correction and independent-review packets are ready for automatic dispatch, but neither has been executed or accepted.\n\nA narrow fix for a blocked finish: The original summary-rename workstream has reported clean committed source and green validation, yet its canonical finish stopped before synchronization. The new workstream must prove which Git history was inherited through a clean resume and which changes were actually authored by the workstream. It must refuse ambiguous history instead of weakening the checkpoint rule.\n\nThe publication gate recovers: The first automatic handoff for the new packet pair failed. A correction to its publication metadata landed, followed by successful repository validation and automatic packet promotion. This clears the earlier authoring failure, not the implementation, independent review, or protected original finish.\n\nWhy it matters beyond one packet: The same source-provenance distinction is checked by canonical finish and the independent-review host validator. A narrowly proven correction could prevent valid work from becoming stranded at closeout without accepting unverified source. WIRE's separate exporter-review attestation and private transport remain outstanding.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-workstream-inherited-main-resume-provenance-v1",
-      "occurred_at": "2026-11-01T20:14:29Z",
-      "bullets": [
-        "New inherited-main provenance implementation/review pair promoted to ready/auto.",
-        "Repository validation and automatic packet handoff passed on the corrected publication.",
-        "Original summary-rename claim remains protected; no finish or teardown verified.",
-        "Next gate: canonical dispatcher eligibility and claim for the implementation."
-      ],
-      "links": [
-        {
-          "title": "Promoted packet pair",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/5de7fa9fe52bd9b467319042c50b9d280fe59acc"
-        },
-        {
-          "title": "Implementation packet",
-          "url": "https://github.com/braydio/CUSTODIAN/blob/5de7fa9fe52bd9b467319042c50b9d280fe59acc/custodian/docs/ai_context/task_packets/AGENT_WORKSTREAM_INHERITED_MAIN_RESUME_PROVENANCE_V1.md"
-        },
-        {
-          "title": "Independent review packet",
-          "url": "https://github.com/braydio/CUSTODIAN/blob/5de7fa9fe52bd9b467319042c50b9d280fe59acc/custodian/docs/ai_context/task_packets/REVIEW_AGENT_WORKSTREAM_INHERITED_MAIN_RESUME_PROVENANCE_V1.md"
-        },
-        {
-          "title": "Passing repository validation",
-          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41345797272"
-        },
-        {
-          "title": "Successful authoring handoff",
-          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41345797223"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN has restored a valid task-packet handoff for a correction to its workstream finish machinery. A protected summary-rename job cannot close because the validator mistakes upstream history inherited during a clean resume for a merge authored by that job. The new correction and independent-review packets are ready for automatic dispatch, but neither has been executed or accepted.",
-        "sections": [
-          {
-            "heading": "A narrow fix for a blocked finish",
-            "text": "The original summary-rename workstream has reported clean committed source and green validation, yet its canonical finish stopped before synchronization. The new workstream must prove which Git history was inherited through a clean resume and which changes were actually authored by the workstream. It must refuse ambiguous history instead of weakening the checkpoint rule."
-          },
-          {
-            "heading": "The publication gate recovers",
-            "text": "The first automatic handoff for the new packet pair failed. A correction to its publication metadata landed, followed by successful repository validation and automatic packet promotion. This clears the earlier authoring failure, not the implementation, independent review, or protected original finish."
-          },
-          {
-            "heading": "Why it matters beyond one packet",
-            "text": "The same source-provenance distinction is checked by canonical finish and the independent-review host validator. A narrowly proven correction could prevent valid work from becoming stranded at closeout without accepting unverified source. WIRE's separate exporter-review attestation and private transport remain outstanding."
-          }
-        ],
-        "insights": [
-          {
-            "title": "A passing test is not a finished workstream",
-            "explanation": "The original source's reported green validation did not satisfy canonical finish because its source-span history was ambiguous. The correction addresses provenance, not the underlying feature implementation."
-          },
-          {
-            "title": "One provenance boundary has two guardians",
-            "explanation": "Both the workstream finish producer and the independent-review consumer must independently authenticate inherited versus authored Git history. Fixing only one would leave the other gate inconsistent."
-          }
-        ],
-        "takeaway": "The publication failure is resolved, but only the task-packet authoring gate has passed. Execution, independent acceptance and original closeout remain separate.",
-        "next_watch": "Look for a dispatcher-confirmed claim, failing-first real-Git regression tests, canonical landing, and then a genuine independent PASS for the provenance correction."
-      },
-      "details": {
-        "overview": "The inherited-main resume provenance correction is a separate, P0 agent-ops pair. It targets the protected summary-rename run's missing exact checkpoint at inherited Wire merge 38545e4. The packet requires authenticated original claim, clean resume identities, first-parent ancestry, and unchanged strict requirements for workstream-authored synchronization.",
-        "ledger": [
-          {
-            "stage": "Pair publication",
-            "status": "verified published",
-            "evidence": "bf2c91e67b0d and metadata correction 2df98b2c99d on main."
-          },
-          {
-            "stage": "Authoring handoff",
-            "status": "verified success",
-            "evidence": "5de7fa9fe52b promotion; GitHub Actions 41345797223 success."
-          },
-          {
-            "stage": "Repository validation",
-            "status": "verified success",
-            "evidence": "GitHub Actions 41345797272 at corrected publication SHA."
-          },
-          {
-            "stage": "Implementation claim",
-            "status": "unknown",
-            "evidence": "No current canonical dispatcher audit or host claim evidence."
-          },
-          {
-            "stage": "Implementation landing",
-            "status": "not verified",
-            "evidence": "No correction implementation landing in inspected main history."
-          },
-          {
-            "stage": "Independent review",
-            "status": "not verified",
-            "evidence": "Review packet ready/auto but dependency-gated; no PASS receipt."
-          },
-          {
-            "stage": "Original summary-rename teardown",
-            "status": "blocked/reported",
-            "evidence": "Protected original claim and source-run evidence described in published packet; host state not refreshed."
-          }
-        ],
-        "notes": [
-          "The publication exception authorizes one implementation and one independent review, not additional corrective cycles.",
-          "Separate WIRE export-review source attestation and private Dropbox transport remain unaccepted."
-        ],
-        "unknowns": [
-          "Current host dispatcher claimability, worktree/lock state and disk measurements unavailable.",
-          "Original host-private trace and diagnostic refs not independently inspected."
-        ],
-        "actions": [
-          "Dispatcher owner: confirm eligibility, then claim the correction through canonical authority.",
-          "Correction implementer: reproduce and prove inherited-main boundary with adversarial real-Git tests.",
-          "Independent reviewer: evaluate landed correction before original protected finish resumes."
-        ]
-      },
-      "scorecard": {
-        "stage": "Ready for dispatcher eligibility check; not claimed or implemented",
-        "as_of": "2026-11-01T20:14:29Z",
-        "scope": "This named inherited-main provenance implementation and paired independent review only.",
-        "metrics": [
-          {
-            "id": "other-provenance-packets",
-            "label": "PAIR PACKETS",
-            "value": 2,
-            "verification": "verified",
-            "basis": "Exactly two named packet files promoted by 5de7fa9f; not a project-wide count.",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/5de7fa9fe52bd9b467319042c50b9d280fe59acc"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Publish packet pair",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "bf2c91e6 and 2df98b2c9 publication."
-          },
-          {
-            "label": "Pass automatic authoring handoff",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "5de7fa9f and successful Action 41345797223."
-          },
-          {
-            "label": "Canonical claim",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No full dispatcher audit or live claim record available."
-          },
-          {
-            "label": "Implement and validate correction",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No implementation commit or test receipt."
-          },
-          {
-            "label": "Land and canonical cleanup",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No landed correction or teardown evidence."
-          },
-          {
-            "label": "Independent acceptance",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Paired review depends on implementation; no PASS."
-          },
-          {
-            "label": "Resume protected original finish",
-            "status": "blocked",
-            "verification": "reported",
-            "evidence": "Must await correction's independent acceptance and fresh same-claim preflight."
-          }
-        ],
-        "next_gate": "Dispatcher owner must verify eligibility and claim the implementation without touching the protected original claim."
-      },
-      "related": []
     }
   ],
   "snapshot": {
