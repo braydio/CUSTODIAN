@@ -7516,6 +7516,27 @@
   "needs_import": false
 },
     {
+      "id": "campaign_empty_convoy_security",
+      "type": "godot_script",
+      "script": "res://tools/validation/campaign_empty_convoy_security_smoke.gd",
+      "tier": "actor",
+      "tags": [
+        "campaign_event",
+        "authored_event",
+        "combat",
+        "persistence"
+      ],
+      "owners": [
+        "custodian/game/world/events/campaign/empty_convoy_site.gd",
+        "custodian/game/world/procgen/special_rooms/special_room_runtime_inserter.gd",
+        "custodian/game/world/events/campaign/empty_convoy_site.tscn",
+        "custodian/tools/validation/campaign_empty_convoy_security_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
+    },
+    {
       "id": "campaign_empty_convoy_placement",
       "type": "godot_script",
       "script": "res://tools/validation/campaign_empty_convoy_placement_smoke.gd",

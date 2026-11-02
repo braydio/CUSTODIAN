@@ -45,6 +45,7 @@ func insert_special_rooms(context: Dictionary) -> Array[Dictionary]:
 		for instance_index in range(instances):
 			if inserted.size() >= max_rooms:
 				break
+			var instance_seed := seed + instance_index * 101
 			var center := _pick_room_center(
 				map_instance,
 				definition,
@@ -52,13 +53,13 @@ func insert_special_rooms(context: Dictionary) -> Array[Dictionary]:
 				blocked_lookup,
 				occupied_rects,
 				map_size,
-				seed + instance_index * 101,
+				instance_seed,
 				main_component if bool(definition.get("require_main_playable_component", false)) else {},
 				maxi(0, int(definition.get("clearance_tiles", 2)))
 			)
 			if center == Vector2i(-999999, -999999):
 				continue
-			var site := _instantiate_room(map_instance, parent, definition, center)
+			var site := _instantiate_room(map_instance, parent, definition, center, instance_seed)
 			if site.is_empty():
 				continue
 			inserted.append(site)
@@ -213,7 +214,13 @@ func _candidate_score(definition: Dictionary, cell: Vector2i, seed: int, spawn_t
 	return noise + distance_score
 
 
-func _instantiate_room(map_instance: Node, parent: Node, definition: Dictionary, center: Vector2i) -> Dictionary:
+func _instantiate_room(
+	map_instance: Node,
+	parent: Node,
+	definition: Dictionary,
+	center: Vector2i,
+	instance_seed: int
+) -> Dictionary:
 	var scene_path := String(definition.get("scene_path", ""))
 	var scene_resource := load(scene_path)
 	if not (scene_resource is PackedScene):
@@ -253,6 +260,8 @@ func _instantiate_room(map_instance: Node, parent: Node, definition: Dictionary,
 	else:
 		instance.global_position = Vector2(center * 16)
 	instance.name = "SpecialRoom_%s" % String(definition.get("id", "room")).to_pascal_case()
+	if instance.has_method("configure_runtime"):
+		instance.call("configure_runtime", instance_seed)
 	var site := {
 		"id": String(definition.get("id", "special_room")),
 		"display_name": String(definition.get("display_name", definition.get("id", "special_room"))),
