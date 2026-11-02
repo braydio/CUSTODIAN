@@ -6,7 +6,7 @@
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P2`
-- Depends on: `review-campaign-abandoned-station-site-v1`
+- Depends on: `campaign-abandoned-station-site-v1`
 - Locks: `procgen-authored-alpine-station`
 - Kind: `implementation`
 - Review: `auto`
@@ -35,7 +35,7 @@
 - Deferred: Production raster Asset V2 art and unlisted expansion mechanics; no mandatory external asset package.
 
 ## Dependency assumption
-Assume predecessor `review-campaign-abandoned-station-site-v1` passed its post-land review and is archived complete. Consume its public event-state/runtime seams; re-read actual files at claim time and adapt private names only. Never duplicate its controller or persistence owner.
+The S1 implementation `campaign-abandoned-station-site-v1` landed at `3edbb939175109247da9200caaa963b03a044b10` and its committed-source validation passed 20/20. S1 was not independently reviewed: its sole authorized paired-review attempt (`review-campaign-abandoned-station-site-v1`, run `20261102T074816Z-3a660e915a2f`) was blocked before reviewer launch by a host-validation source-scope rejection. The project owner explicitly waived prospective independent review for this exact implementation and accepted S1 only as the predecessor dependency for this Stability workstream; this owner authorization is not a reviewer PASS or independent acceptance. Consume the landed public event-state/runtime seams; re-read actual files at claim time and adapt private names only. Never duplicate its controller or persistence owner.
 
 ## Refresh Planning Authority
 - Refresh owner: `execution-agent`

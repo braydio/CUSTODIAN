@@ -374,7 +374,6 @@ packet and its paired review, not as chat-only downloads.
 - `REVIEW_BRIDGED_FALLS_BRIDGE_GRAMMAR_AND_ASSET_V2.md` — Independently verify Asset V2 correctness, geometry registration and generated-seed bridge readability against the user-approved art lock.
 - `REVIEW_BRIDGED_FALLS_VISTA_AND_WATERFALL_PRESENTATION.md` — Independently verify the technical presentation and preserve the recorded human visual decision for the Bridged Falls atmosphere.
 - `REVIEW_CAMPAIGN_ABANDONED_STATION_CONTAINMENT_V1.md` — Independently falsify the implementation packet's acceptance against landed main, not just its claimed unit tests.
-- `REVIEW_CAMPAIGN_ABANDONED_STATION_SITE_V1.md` — Independently falsify the implementation packet's acceptance against landed main, not just its claimed unit tests.
 - `REVIEW_CAMPAIGN_ABANDONED_STATION_STABILITY_V1.md` — Independently falsify the implementation packet's acceptance against landed main, not just its claimed unit tests.
 - `REVIEW_CAMPAIGN_EMPTY_CONVOY_PLACEMENT_V1.md` — Independently falsify the implementation packet's acceptance against landed main, not just its claimed unit tests.
 - `REVIEW_CAMPAIGN_EMPTY_CONVOY_RECOVERY_V1.md` — Independently falsify the implementation packet's acceptance against landed main, not just its claimed unit tests.
