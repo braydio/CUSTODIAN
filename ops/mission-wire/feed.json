@@ -1,9 +1,120 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-02T13:55:08Z",
-  "source_main_sha": "09e15e239da24757a9587b61314b4f62e08eba0e",
+  "generated_at": "2026-11-02T15:08:24Z",
+  "source_main_sha": "9f450bb4ed04dd6ca09df317e296a8a72a0aa857",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "narrative-causal-history-doctrine-9f450bb4",
+      "headline": "CUSTODIAN rewrites its environmental storytelling rules: every ruin needs a real history",
+      "summary": "New design guidance on main requires procedural locations to have a specific causal history before clues are placed. Ordinary labor, repairs and consequences take priority over interchangeable contradictory logs and manufactured mysteries. This is an authoring-standard change, not a runtime generator update.",
+      "body": "The newly landed design revision asks authors to define a site's original purpose, responsible people, consequential decision or failure, material cost and surviving traces before constructing clues. The Refused Passage, machine shelter and rare False Seam examples were revised to make physical consequences legible. Continuity anomalies remain exceptional and must be grounded in compatible metadata and corroborating physical evidence. This updates design doctrine only: it does not demonstrate changed generated maps, assets, runtime payloads or gameplay. The next meaningful gate is a source-bound content implementation and visual/interactive evaluation against these rules.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "",
+      "occurred_at": "2026-11-02T15:08:24Z",
+      "bullets": [
+        "Causal local history now precedes procedural clue placement.",
+        "Ordinary maintenance, scarcity and human consequences are preferred over default contradictions.",
+        "Rare continuity anomalies require physical corroboration and compatible canon.",
+        "No runtime generator implementation or gameplay validation is established."
+      ],
+      "links": [
+        {
+          "title": "Design doctrine revision",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/9f450bb4ed04dd6ca09df317e296a8a72a0aa857"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "A new design rule changes how CUSTODIAN's world should tell stories. Instead of scattering ominous records around ruins and leaving the cause undefined, every substantial location must begin with an actual event: who built it, what happened there, what it cost, and what the player can still see.",
+        "sections": [
+          {
+            "heading": "The world must have a past before it has clues",
+            "text": "The revised authoring guidance requires a specific chain of cause and effect before environmental props or inspection text are selected. Repairs, salvaged machinery, abandoned routes and lived-in shelters can tell complete stories without requiring a supernatural twist."
+          },
+          {
+            "heading": "Anomalies become rare exceptions, not reusable templates",
+            "text": "The Refused Passage now needs an authored closure motive and human cost. The machine shelter needs an identifiable resource constraint. The False Seam can still suggest an extraordinary continuity event, but only where physical evidence and established lore support it. Contradictory paperwork alone is no longer enough."
+          },
+          {
+            "heading": "This is design direction, not shipped procedural behavior",
+            "text": "The change is confined to documentation and authoring standards. It does not prove the procedural generator selects coherent histories, that new artwork exists, or that players can discover the intended consequences in-game."
+          }
+        ],
+        "insights": [
+          {
+            "title": "A mystery is stronger when the author knows its answer",
+            "explanation": "Requiring a real underlying event makes clues mutually consistent and lets discoveries resolve something concrete, rather than treating ambiguity as a substitute for worldbuilding."
+          },
+          {
+            "title": "Ordinary lives can carry the setting",
+            "explanation": "Maintenance, scarcity, adaptation and institutional choices now have explicit priority. This broadens environmental variety while reserving genuine continuity anomalies for places where they matter."
+          }
+        ],
+        "takeaway": "The design standard now favors causally coherent, materially legible environmental storytelling; runtime adoption remains unverified.",
+        "next_watch": "A concrete procedural-location implementation, authored sample or integrated map test demonstrating these standards."
+      },
+      "details": {
+        "overview": "Main revision 9f450bb4ed04dd6ca09df317e296a8a72a0aa857 changes narrative and procedural environmental storytelling design documents. No runtime ownership, locked lore or payload schema was changed by the described doctrine.",
+        "ledger": [
+          {
+            "stage": "Authoring doctrine",
+            "status": "verified landed",
+            "evidence": "Commit 9f450bb4ed04dd6ca09df317e296a8a72a0aa857 changes design guidance."
+          },
+          {
+            "stage": "Runtime implementation",
+            "status": "not established",
+            "evidence": "Documentation changes alone do not establish generator behavior."
+          },
+          {
+            "stage": "Integrated validation",
+            "status": "unknown",
+            "evidence": "No gameplay proof associated with this documentation revision."
+          }
+        ],
+        "notes": [
+          "The revision explicitly avoids retroactive changes to locked lore and reserved cosmological mysteries."
+        ],
+        "unknowns": [
+          "Whether current generator output follows the revised standards.",
+          "Which location family will receive the first implemented demonstration."
+        ],
+        "actions": [
+          "Content/design owner: select one concrete location and document its causal event before asset or runtime implementation."
+        ]
+      },
+      "scorecard": {
+        "stage": "Design doctrine landed; runtime adoption unverified",
+        "as_of": "2026-11-02T15:08:24Z",
+        "scope": "This documentation revision only",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Authoring rules revised",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Commit 9f450bb4ed04dd6ca09df317e296a8a72a0aa857."
+          },
+          {
+            "label": "Runtime or authored example adoption",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No implementation evidence inspected."
+          },
+          {
+            "label": "Integrated player-facing validation",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No integrated evidence inspected."
+          }
+        ],
+        "next_gate": "Implement and inspect one representative generated location under the revised causal-history rules."
+      },
+      "related": []
+    },
     {
       "id": "empty-convoy-security-correction-landed-09e15e23",
       "headline": "Empty Convoy security fix lands; a full gameplay retest still stands between code and confidence",
@@ -1586,208 +1697,7 @@
         ],
         "next_gate": "Dispatcher owner must verify eligibility and claim the implementation without touching the protected original claim."
       },
-      "related": [
-        {
-          "title": "WIRE review recovery gets an exact attestation workstream, but queue validation fails",
-          "context": "Separate source-attestation recovery still needed before the WIRE exporter review can proceed.",
-          "story_id": "wire-review-source-attestation-pair-ready-0e5da248"
-        }
-      ]
-    },
-    {
-      "id": "wire-review-source-attestation-pair-ready-0e5da248",
-      "headline": "WIRE review recovery gets an exact attestation workstream, but queue validation fails",
-      "summary": "A narrowly scoped implementation and independent-review pair now exists to authenticate WIRE exporter's preserved review source. Automatic handoff promoted both packets, but repository queue-authority validation and a subsequent handoff run failed. No attestation implementation, independent PASS, or transport delivery is established.",
-      "body": "A new exact-source-attestation implementation/review pair was authored at 834341ab and promoted at 0e5da248. It targets the preserved exporter-review host-validation refusal, binding the proposed exception to specific source and manifest blobs, archived packet identity, reviewed main, and review run. The correction must remain inert until its own independent review is accepted.\n\nGitHub Actions show Automatic Packet Authoring Handoff succeeded for the authored pair, but Validate Repository failed at the queue-authority gate. A subsequent handoff run on the promotion commit also failed its 'Validate and publish explicitly authorized pairs' step. These are separate failures and cannot be assumed to have the same cause. Promotion on main is not proof that the live dispatcher considers either packet claimable.\n\nThe original exporter remains landed and its preserved review is not accepted. The transport implementation/review pair remains dependency-gated; no private Dropbox observation or ChatGPT consumer readback is verified. Host worktree, lock, process and disk status were not freshly inspected.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-wire-export-review-source-attestation-v1",
-      "occurred_at": "2026-11-01T19:07:30Z",
-      "bullets": [
-        "Exact-source-attestation implementation/review pair authored and promoted on main.",
-        "New correction is designed to remain inert until its own genuine independent PASS.",
-        "Repository queue-authority validation failed on authoring commit.",
-        "Subsequent automatic handoff failed on promotion commit; eligibility is not established.",
-        "Exporter review and dependent private transport remain blocked."
-      ],
-      "links": [
-        {
-          "title": "Attestation pair authored",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/834341ab84edbc9dc397e2e35164cb0131e0c538"
-        },
-        {
-          "title": "Attestation pair promoted",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/0e5da248e93f0395f084f0abb7feba8285132bc0"
-        },
-        {
-          "title": "Repository validation failed",
-          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41340067654"
-        },
-        {
-          "title": "Later automatic handoff failed",
-          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41340432927"
-        },
-        {
-          "title": "Attestation implementation packet",
-          "url": "https://github.com/braydio/CUSTODIAN/blob/0e5da248e93f0395f084f0abb7feba8285132bc0/custodian/docs/ai_context/task_packets/AGENT_WIRE_EXPORT_REVIEW_SOURCE_ATTESTATION_V1.md"
-        },
-        {
-          "title": "Attestation review packet",
-          "url": "https://github.com/braydio/CUSTODIAN/blob/0e5da248e93f0395f084f0abb7feba8285132bc0/custodian/docs/ai_context/task_packets/REVIEW_AGENT_WIRE_EXPORT_REVIEW_SOURCE_ATTESTATION_V1.md"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN has published a targeted recovery path for WIRE's stalled independent review. The new workstream aims to prove exactly which exporter source and validation-manifest change the reviewer may trust. Its packet handoff advanced, but two CI checks failed, so this is authorization groundwork, not a recovered review.",
-        "sections": [
-          {
-            "heading": "A recovery bound to one source",
-            "text": "The new packet specifies exact implementation, archive, merge, manifest and preserved-review identities. Its proposed attestation cannot activate merely because code lands: it must pass its own independent review. That narrow scope is intended to unblock the original exporter review without weakening unrelated review safeguards."
-          },
-          {
-            "heading": "Promotion does not erase failed checks",
-            "text": "The authoring handoff succeeded and promoted both packets to ready/auto in repository text. However, repository validation failed the queue-authority step, and a later automatic handoff failed on the promoted commit. Their precise causes require investigation; neither failure proves the attestation logic itself is defective."
-          },
-          {
-            "heading": "The operational WIRE remains offline",
-            "text": "The exporter is landed, but its independent review has no accepted verdict. The private transport is still dependency-gated. Until review acceptance, transport implementation, and verified private retrieval occur, WIRE cannot present live dispatcher measurements."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The missing evidence now has an explicit owner",
-            "explanation": "Rather than bypassing the host gate or rewriting the exporter, the new workstream makes the exact source-attestation exception independently testable and reviewable. This is a more controlled route to releasing the existing preserved review."
-          },
-          {
-            "title": "Queue authority is a separate gate",
-            "explanation": "A packet can appear as ready/auto in GitHub while CI rejects its queue authority. The failed validation and subsequent handoff must be reconciled before interpreting the pair as executable."
-          }
-        ],
-        "takeaway": "A concrete recovery pair is published, but the original exporter review remains blocked and the new pair's queue validity is not established.",
-        "next_watch": "Watch for the queue-authority and handoff failures to be resolved, followed by an actual attestation implementation and independently accepted PASS."
-      },
-      "scorecard": {
-        "stage": "Attestation recovery packets promoted; queue validation failing",
-        "as_of": "2026-11-01T19:20:04Z",
-        "scope": "The named WIRE exporter-review attestation pair and its immediate dependencies, not the full dispatcher",
-        "metrics": [
-          {
-            "id": "other-attestation-packets",
-            "label": "ATTESTATION PACKETS",
-            "value": 2,
-            "verification": "verified",
-            "basis": "Exactly the implementation and paired-review packet files in promotion commit 0e5da248; not a project-wide count.",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/0e5da248e93f0395f084f0abb7feba8285132bc0"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Exporter implementation landed",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "5013c8404 implementation; 38545e4c landing."
-          },
-          {
-            "label": "Attestation packet pair authored",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "834341ab added implementation and review packets."
-          },
-          {
-            "label": "Packet promotion recorded",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "0e5da248 changes both to ready/auto in repository."
-          },
-          {
-            "label": "Queue authority verified",
-            "status": "blocked",
-            "verification": "verified",
-            "evidence": "Validate Repository 41340067654 failed queue-authority; handoff 41340432927 subsequently failed."
-          },
-          {
-            "label": "Attestation implementation and independent PASS",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No landed correction or accepted independent review established."
-          },
-          {
-            "label": "Original exporter independent review",
-            "status": "blocked",
-            "verification": "reported",
-            "evidence": "Preserved host-validation refusal; no reviewer verdict."
-          },
-          {
-            "label": "Transport implementation and acceptance",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Dependent on exporter independent acceptance; no delivery evidence."
-          }
-        ],
-        "next_gate": "Authorized packet/CI owner must reconcile the exact queue-authority and handoff failures before dispatcher-confirmed attestation claim."
-      },
-      "details": {
-        "overview": "The attestation packet explicitly binds the exporter source commit, archive, reviewed main, manifest before/after blobs, and preserved review identity. GitHub verifies the packet publication and CI outcomes, not host claim eligibility or reviewer activity.",
-        "ledger": [
-          {
-            "stage": "Exporter implementation",
-            "status": "verified landed",
-            "evidence": "5013c8404 source; 38545e4c landing."
-          },
-          {
-            "stage": "Original exporter independent review",
-            "status": "reported blocked",
-            "evidence": "Preserved run 20261101T181049Z-ec613c8a7c18, no accepted verdict."
-          },
-          {
-            "stage": "Attestation authoring",
-            "status": "verified",
-            "evidence": "834341ab authored two draft packets."
-          },
-          {
-            "stage": "Attestation promotion",
-            "status": "verified repository state",
-            "evidence": "0e5da248 marks both ready/auto; no host claim verified."
-          },
-          {
-            "stage": "Repository validation",
-            "status": "verified failure",
-            "evidence": "41340067654 failed Validate task packet queue authority."
-          },
-          {
-            "stage": "Automatic handoff",
-            "status": "verified failure",
-            "evidence": "41340432927 failed Validate and publish explicitly authorized pairs."
-          },
-          {
-            "stage": "Transport",
-            "status": "verified dependency pending",
-            "evidence": "Previously published transport pair depends on original exporter review acceptance."
-          }
-        ],
-        "notes": [
-          "No open pull requests returned by the current GitHub API query.",
-          "Earlier Godot Level Pipeline failure at exporter landing SHA is separate and not shown to be caused by WIRE."
-        ],
-        "unknowns": [
-          "Exact root cause of each CI failure; job-step conclusions alone do not expose detailed logs.",
-          "Live canonical dispatcher eligibility and current host claim/worktree/lock/disk status.",
-          "Independent PASS and private observation delivery remain absent."
-        ],
-        "actions": [
-          "Packet/CI owner: inspect both failed workflow logs and reconcile queue authority without bypass.",
-          "Authorized executor: claim correction only after dispatcher confirms eligibility.",
-          "Independent reviewer: accept correction only on genuine evidence before original review recovery."
-        ]
-      },
-      "related": [
-        {
-          "title": "WIRE's observation exporter lands; independent review stalls at an attestation gate",
-          "context": "The new attestation pair directly addresses the preserved review blocker described in this earlier report.",
-          "story_id": "wire-exporter-landed-review-attestation-blocked-38545e4c"
-        }
-      ]
+      "related": []
     }
   ],
   "snapshot": {
