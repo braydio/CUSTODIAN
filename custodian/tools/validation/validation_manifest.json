@@ -520,7 +520,8 @@
         "custodian/content/levels/hub/road_of_witnesses/**",
         "custodian/game/actors/operator/operator.tscn",
         "custodian/tools/validation/hub_first_set_blockout_smoke.gd",
-        "custodian/tools/validation/hub_first_set_overview_capture.gd"
+        "custodian/tools/validation/hub_first_set_overview_capture.gd",
+        "custodian/tools/validation/hub_sepulcher_gardens_geometry_v1_capture.gd"
       ],
       "timeout_sec": 90,
       "needs_import": true
