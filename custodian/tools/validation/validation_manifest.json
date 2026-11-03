@@ -1234,7 +1234,7 @@
       "timeout_sec": 45,
       "needs_import": false
     },
-	{
+    {
       "id": "carrow_yard_interior",
       "type": "godot_script",
       "script": "res://tools/validation/carrow_yard_interior_smoke.gd",
@@ -1782,7 +1782,11 @@
       "type": "python",
       "script": "custodian/tools/validation/test_operator_unarmed_fast_chain_north_vfx_contract.py",
       "tier": "unit",
-      "tags": ["operator", "asset_contract", "provenance"],
+      "tags": [
+        "operator",
+        "asset_contract",
+        "provenance"
+      ],
       "owners": [
         "custodian/tools/validation/operator_unarmed_fast_chain_north_vfx_contract.py",
         "custodian/tools/validation/test_operator_unarmed_fast_chain_north_vfx_contract.py",
@@ -1846,7 +1850,12 @@
       "type": "python",
       "script": "custodian/tools/validation/operator_motion_foundry_core_smoke.py",
       "tier": "unit",
-      "tags": ["operator", "animation", "determinism", "candidate"],
+      "tags": [
+        "operator",
+        "animation",
+        "determinism",
+        "candidate"
+      ],
       "owners": [
         "custodian/tools/operator/motion_foundry/**",
         "custodian/tools/validation/operator_motion_foundry_core_smoke.py"
@@ -1859,7 +1868,12 @@
       "type": "python",
       "script": "custodian/tools/validation/operator_south_rig_extract_smoke.py",
       "tier": "unit",
-      "tags": ["operator", "animation", "source-work", "asset-provenance"],
+      "tags": [
+        "operator",
+        "animation",
+        "source-work",
+        "asset-provenance"
+      ],
       "owners": [
         "custodian/asset_drop/source_work/operator/motion_foundry/operator_south_visible_surface_v1/**",
         "custodian/tools/assets/operator_south_rig_extract.py",
@@ -1873,7 +1887,13 @@
       "type": "python",
       "script": "custodian/tools/validation/operator_motion_foundry_blender_2d_smoke.py",
       "tier": "unit",
-      "tags": ["operator", "animation", "blender", "asset-provenance", "candidate"],
+      "tags": [
+        "operator",
+        "animation",
+        "blender",
+        "asset-provenance",
+        "candidate"
+      ],
       "owners": [
         "custodian/tools/operator/motion_foundry/blender/**",
         "custodian/tools/validation/operator_motion_foundry_blender_2d_smoke.py",
@@ -2500,7 +2520,10 @@
       "type": "python",
       "script": "custodian/tools/validation/validation_manifest_diff_selection_smoke.py",
       "tier": "unit",
-      "tags": ["validation", "tooling"],
+      "tags": [
+        "validation",
+        "tooling"
+      ],
       "owners": [
         "custodian/tools/validation/run_validation.py",
         "custodian/tools/validation/validation_manifest.json",
@@ -4617,7 +4640,11 @@
       "type": "godot_script",
       "script": "res://tools/validation/levels/procgen_showcase_exhibit_catalog_smoke.gd",
       "tier": "integration",
-      "tags": ["procgen_showcase", "catalog", "authored_level"],
+      "tags": [
+        "procgen_showcase",
+        "catalog",
+        "authored_level"
+      ],
       "owners": [
         "custodian/content/data/dev/procgen_showcase/exhibits.v1.json",
         "custodian/game/world/levels/authored/dev/procgen_showcase_gallery/**",
@@ -4936,7 +4963,13 @@
       "type": "godot_script",
       "script": "res://tools/validation/vehicle_diagnosis_knowledge_smoke.gd",
       "tier": "actor",
-      "tags": ["vehicle", "diagnosis", "knowledge", "input", "persistence"],
+      "tags": [
+        "vehicle",
+        "diagnosis",
+        "knowledge",
+        "input",
+        "persistence"
+      ],
       "owners": [
         "custodian/content/vehicles/vehicle_archetypes.json",
         "custodian/content/vehicles/vehicle_knowledge_progression.json",
@@ -7106,7 +7139,12 @@
       "type": "python",
       "script": "custodian/tools/agent/test_legacy_claim_quarantine.py",
       "tier": "unit",
-      "tags": ["agent_workflow", "dispatch", "legacy_quarantine", "provenance"],
+      "tags": [
+        "agent_workflow",
+        "dispatch",
+        "legacy_quarantine",
+        "provenance"
+      ],
       "owners": [
         "custodian/tools/agent/legacy_claim_quarantine.py",
         "custodian/tools/agent/test_legacy_claim_quarantine.py",
@@ -7479,7 +7517,13 @@
       "type": "python",
       "script": "custodian/tools/validation/sprite_import_shared_transform_smoke.py",
       "tier": "unit",
-      "tags": ["assets", "sprites", "normalization", "determinism", "negative_control"],
+      "tags": [
+        "assets",
+        "sprites",
+        "normalization",
+        "determinism",
+        "negative_control"
+      ],
       "owners": [
         "custodian/tools/assets/sprite_import/**",
         "custodian/tools/art/custodian_pixelart_converter.py",
@@ -7494,7 +7538,12 @@
       "type": "python",
       "script": "custodian/tools/art/broken_warrant_3d/test_material_patch_contract.py",
       "tier": "unit",
-      "tags": ["art", "materials", "blender", "source_only"],
+      "tags": [
+        "art",
+        "materials",
+        "blender",
+        "source_only"
+      ],
       "owners": [
         "custodian/tools/art/broken_warrant_3d/build_materials.py",
         "custodian/tools/art/broken_warrant_3d/material_palette.json",
@@ -7508,33 +7557,33 @@
       "timeout_sec": 30,
       "needs_import": false
     },
-{
-  "id": "operator_chassis_authority_guard",
-  "type": "python",
-  "script": "custodian/tools/validation/test_operator_chassis_authority_guard.py",
-  "tier": "unit",
-  "tags": [
-    "operator",
-    "architecture",
-    "authority",
-    "negative_control"
-  ],
-  "owners": [
-    "custodian/game/actors/operator/operator.gd",
-    "custodian/game/actors/operator/**",
-    "custodian/tools/validation/operator_chassis_authority_guard.py",
-    "custodian/tools/validation/operator_chassis_authority_budget.json",
-    "custodian/tools/validation/test_operator_chassis_authority_guard.py",
-    "custodian/tools/agent/workstream.py",
-    "custodian/tools/agent/test_workstream.py",
-    "custodian/tools/validation/validation_manifest.json",
-    "custodian/tools/validation/operator_architecture_debt_audit.py",
-    "custodian/tools/validation/operator_runtime_path_audit.py",
-    "custodian/tools/validation/operator_runtime_animation_authority_smoke.py"
-  ],
-  "timeout_sec": 30,
-  "needs_import": false
-},
+    {
+      "id": "operator_chassis_authority_guard",
+      "type": "python",
+      "script": "custodian/tools/validation/test_operator_chassis_authority_guard.py",
+      "tier": "unit",
+      "tags": [
+        "operator",
+        "architecture",
+        "authority",
+        "negative_control"
+      ],
+      "owners": [
+        "custodian/game/actors/operator/operator.gd",
+        "custodian/game/actors/operator/**",
+        "custodian/tools/validation/operator_chassis_authority_guard.py",
+        "custodian/tools/validation/operator_chassis_authority_budget.json",
+        "custodian/tools/validation/test_operator_chassis_authority_guard.py",
+        "custodian/tools/agent/workstream.py",
+        "custodian/tools/agent/test_workstream.py",
+        "custodian/tools/validation/validation_manifest.json",
+        "custodian/tools/validation/operator_architecture_debt_audit.py",
+        "custodian/tools/validation/operator_runtime_path_audit.py",
+        "custodian/tools/validation/operator_runtime_animation_authority_smoke.py"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
     {
       "id": "campaign_empty_convoy_security",
       "type": "godot_script",
@@ -7561,7 +7610,12 @@
       "type": "godot_script",
       "script": "res://tools/validation/campaign_empty_convoy_recovery_smoke.gd",
       "tier": "actor",
-      "tags": ["campaign_event", "authored_event", "persistence", "inventory"],
+      "tags": [
+        "campaign_event",
+        "authored_event",
+        "persistence",
+        "inventory"
+      ],
       "owners": [
         "custodian/game/world/events/campaign/empty_convoy_site.gd",
         "custodian/game/systems/core/state/world_event_memory.gd",
@@ -7594,6 +7648,30 @@
       ],
       "timeout_sec": 180,
       "needs_import": true
+    },
+    {
+      "id": "hub_full_artwork_manifest",
+      "type": "python",
+      "script": "custodian/tools/validation/validate_hub_art_manifest.py",
+      "tier": "unit",
+      "tags": [
+        "assets",
+        "environment_art",
+        "hub",
+        "sepulcher",
+        "documentation",
+        "manifest"
+      ],
+      "owners": [
+        "custodian/tools/validation/validate_hub_art_manifest.py",
+        "design/04_architecture/HUB_SEPULCHER_AWAKENING_ART_V1_MANIFEST.json",
+        "design/04_architecture/HUB_SEPULCHER_AWAKENING_ART_V1_MANIFEST.md",
+        "design/04_architecture/SEPULCHER_GARDENS_GEOMETRY_V1.json",
+        "design/04_architecture/AI_ART_GENERATION_REVIEW_PROTOCOL_V1.md",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
     }
   ]
 }
