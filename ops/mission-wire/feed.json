@@ -1,9 +1,140 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-03T02:56:24Z",
-  "source_main_sha": "a288181bcd9e66c9b2b3b7f444e40ee3a5f21728",
+  "generated_at": "2026-11-03T04:25:00Z",
+  "source_main_sha": "bb047a717945e4cdbb54430a6dfe002625eca345",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "sepulcher-gardens-cal01-modular-floor-correction-bb047a71",
+      "headline": "Sepulcher Gardens art plan shifts to modular paving, preserving the playable map",
+      "summary": "A new main-branch correction replaces the proposed rectangular Gardens ground painting with one 512×512 repeatable floor-material candidate. The existing irregular walkability mask remains authoritative. Earlier paving is explicitly unapproved, and the separate architecture layer remains blocked pending a footprint contract.",
+      "body": "CUSTODIAN's Sepulcher Gardens art guidance now calls for a 512×512 seamless opaque ground-material candidate, repeated and clipped to the existing irregular walkability mask rather than painted as an entire rectangular room. This prevents an art plate from silently redefining traversable terrain. Existing paving candidates are unapproved references, including one reported to fail a 3×3 tiling check. CAL-01 is still awaiting generation and individual human approval; CAL-02 structural presentation remains blocked on an approved footprint contract. This commit changes source-art instructions and manifest metadata, not the game renderer or an accepted asset.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "assets-art",
+      "workstream": "hub-first-set-sepulcher-gardens-environment",
+      "occurred_at": "2026-11-03T03:51:24Z",
+      "bullets": [
+        "CAL-01 target is now one 512×512 seamless opaque material candidate.",
+        "Existing irregular Gardens walkability mask retains geometry authority.",
+        "Earlier paving references remain unapproved; no human V3 acceptance verified.",
+        "CAL-02 architecture remains blocked on a modular solid-footprint contract.",
+        "Next: produce and screen one candidate, then obtain explicit human approval."
+      ],
+      "links": [
+        {
+          "title": "Gardens modular material correction",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/bb047a717945e4cdbb54430a6dfe002625eca345"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "The Sepulcher Gardens will no longer be illustrated as one rectangular floor painting. A new art-plan correction makes the first deliverable a repeatable paving material that follows the game's existing irregular walkable terrain, rather than rewriting it.",
+        "sections": [
+          {
+            "heading": "The map stays in charge",
+            "text": "The corrected CAL-01 brief calls for one opaque 512×512 seamless material. A future renderer would tile it at native scale and clip it to the authoritative Gardens walkability mask. This is a source-art contract change, not proof that the renderer has been changed."
+          },
+          {
+            "heading": "Existing paving is not approved artwork",
+            "text": "An earlier candidate remains a reference only, with a recorded failed repetition test. There is no verified human-approved V3 style anchor. The separate architectural layer remains blocked until its structural footprint is authorized."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Material and geometry are now separate decisions",
+            "explanation": "A repeating surface can be evaluated for visual continuity without giving a generated image authority over playable routes. This reduces the chance that attractive art creates false paths or blocked-looking traversable cells."
+          },
+          {
+            "title": "The next milestone is still a candidate",
+            "explanation": "Revising the manifest does not constitute source approval, pipeline promotion or runtime integration. The one-image calibration gate remains intact."
+          }
+        ],
+        "takeaway": "The Gardens art contract is more faithful to the existing map, but no new approved or runtime-bound paving asset is established.",
+        "next_watch": "A single CAL-01 candidate with a genuine tiling preview, explicit human approval and later Asset V2 handoff."
+      },
+      "details": {
+        "overview": "Main commit bb047a717945e4cdbb54430a6dfe002625eca345 revises the art-generation protocol and Gardens manifest. The correction preserves the irregular 96×84 walkability mask within a 3072×2688 authoring envelope. The previous 1152×1408 mixed plate is rejected. No canonical dispatcher audit or authenticated host relay was available.",
+        "ledger": [
+          {
+            "stage": "Art contract reconciliation",
+            "status": "verified landed",
+            "evidence": "bb047a717945e4cdbb54430a6dfe002625eca345"
+          },
+          {
+            "stage": "CAL-01 candidate",
+            "status": "not verified complete",
+            "evidence": "New 512×512 target defined; no approved candidate receipt"
+          },
+          {
+            "stage": "Human source approval",
+            "status": "pending",
+            "evidence": "Existing paving explicitly unapproved"
+          },
+          {
+            "stage": "CAL-02 architecture",
+            "status": "blocked",
+            "evidence": "Requires separate approved structural footprint"
+          },
+          {
+            "stage": "Runtime binding and independent acceptance",
+            "status": "unknown",
+            "evidence": "No runtime or independent PASS evidence inspected"
+          }
+        ],
+        "notes": [
+          "GitHub status API returned no combined status checks for the inspected commit."
+        ],
+        "unknowns": [
+          "Host execution, worktree disposition and cleanup",
+          "Current full dispatcher totals"
+        ],
+        "actions": [
+          "Art producer: generate and technically screen exactly one CAL-01 candidate.",
+          "Human approver: review tiling and source provenance before any promotion."
+        ]
+      },
+      "scorecard": {
+        "stage": "Reconciled art brief; candidate not yet approved",
+        "as_of": "2026-11-03T03:51:24Z",
+        "scope": "CAL-01 and CAL-02 Sepulcher Gardens art gates only",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Reconcile CAL-01 geometry contract",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "bb047a717945e4cdbb54430a6dfe002625eca345"
+          },
+          {
+            "label": "Generate and screen one repeatable material",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No new candidate receipt"
+          },
+          {
+            "label": "Obtain human source approval",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No approved V3 receipt"
+          },
+          {
+            "label": "Approve structural footprint for CAL-02",
+            "status": "blocked",
+            "verification": "verified",
+            "evidence": "Manifest retains footprint dependency"
+          },
+          {
+            "label": "Promote and bind through Asset V2",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No pipeline/runtime acceptance"
+          }
+        ],
+        "next_gate": "Art producer to create one CAL-01 material candidate with repeat-preview evidence for human review."
+      },
+      "related": []
+    },
     {
       "id": "ritualant-recovery-2-shader-landed-review-scope-blocked-a288181b",
       "headline": "Ritualant shader lands with passing tests, but its independent review hits a provenance gate",
@@ -1584,110 +1715,6 @@
           }
         ],
         "next_gate": "Human reviewer evaluates captures; art owner then reconciles asset manifest."
-      },
-      "related": []
-    },
-    {
-      "id": "canonical-summary-rename-recovery-e13e461f",
-      "headline": "Canonical summary-rename recovery lands, opening a path through a stubborn closeout failure",
-      "summary": "CUSTODIAN now authenticates a tightly bounded, byte-identical closing-summary rename after packet archive. The implementation landed with reported 9/9 canonical checks passing. Independent review remains outstanding, so protected downstream recovery is not accepted.",
-      "body": "The canonical summary-rename recovery landed on main at e13e461f. It allows exactly one byte-identical legacy-to-canonical summary rename after archive, independently checked by producer and host consumer. The implementation summary reports 89 producer tests, 279 consumer tests and 9/9 selected canonical checks passing. Its implementation packet was archived, but independent review has no verified PASS. Host teardown, process and locks remain unknown.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-workstream-canonical-summary-rename-recovery-v1",
-      "occurred_at": "2026-11-02T03:45:28Z",
-      "bullets": [
-        "Implementation landed; independent acceptance and host cleanup remain unverified.",
-        "Watch for the canonical independent review receipt and eligibility of the previously protected recovery."
-      ],
-      "links": [
-        {
-          "title": "Source landing and closeout",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/e13e461f9f87eb8f9c7dd7970a2b286245bd9e44"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "A narrowly scoped repair has reached CUSTODIAN's main branch: closing summaries can now be renamed after packet archive without making the entire closeout appear untrustworthy. The change is landed and tested, but not independently accepted.",
-        "sections": [
-          {
-            "heading": "A rename with exact boundaries",
-            "text": "The new producer and independent host consumer inspect Git ancestry, changed paths, file modes, packet identity and exact bytes. Only one matching rename is permitted; edits, copies and unrelated changes remain disallowed."
-          },
-          {
-            "heading": "The remaining gate",
-            "text": "Reported validation passed and the implementation packet was archived. Its fresh paired review still needs an authentic accepted outcome before protected downstream recovery proceeds."
-          }
-        ],
-        "insights": [
-          {
-            "title": "A bookkeeping transition was blocking substantive recovery",
-            "explanation": "The repair addresses an exact source-history mismatch rather than relaxing general source validation. It could unblock older closeout work once independently accepted."
-          }
-        ],
-        "takeaway": "Implementation landed; independent acceptance and host cleanup remain unverified.",
-        "next_watch": "Watch for the canonical independent review receipt and eligibility of the previously protected recovery."
-      },
-      "details": {
-        "overview": "The canonical summary-rename recovery landed on main at e13e461f. It allows exactly one byte-identical legacy-to-canonical summary rename after archive, independently checked by producer and host consumer. The implementation summary reports 89 producer tests, 279 consumer tests and 9/9 selected canonical checks passing. Its implementation packet was archived, but independent review has no verified PASS. Host teardown, process and locks remain unknown.",
-        "ledger": [
-          {
-            "stage": "Implementation landing",
-            "status": "verified on main",
-            "evidence": "https://github.com/braydio/CUSTODIAN/commit/e13e461f9f87eb8f9c7dd7970a2b286245bd9e44"
-          },
-          {
-            "stage": "Independent review",
-            "status": "pending; no PASS verified",
-            "evidence": "No accepted review receipt inspected."
-          },
-          {
-            "stage": "Canonical host teardown",
-            "status": "unknown",
-            "evidence": "No current authenticated host evidence accessible."
-          }
-        ],
-        "notes": [],
-        "unknowns": [
-          "Current dispatcher audit, host locks, processes, worktree disposition and disk status are unavailable."
-        ],
-        "actions": [
-          "Watch for the canonical independent review receipt and eligibility of the previously protected recovery."
-        ]
-      },
-      "scorecard": {
-        "stage": "Landed; independent review pending",
-        "as_of": "2026-11-02T05:46:04Z",
-        "scope": "Named implementation and paired-review evidence only; GitHub partial coverage",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Implementation landed",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "https://github.com/braydio/CUSTODIAN/commit/e13e461f9f87eb8f9c7dd7970a2b286245bd9e44"
-          },
-          {
-            "label": "Canonical validation",
-            "status": "done",
-            "verification": "reported",
-            "evidence": "Reported passing selected checks in implementation summary."
-          },
-          {
-            "label": "Independent review",
-            "status": "next",
-            "verification": "reported",
-            "evidence": "Awaiting independent acceptance."
-          },
-          {
-            "label": "Host cleanup",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No current host proof."
-          }
-        ],
-        "next_gate": "Watch for the canonical independent review receipt and eligibility of the previously protected recovery."
       },
       "related": []
     }
