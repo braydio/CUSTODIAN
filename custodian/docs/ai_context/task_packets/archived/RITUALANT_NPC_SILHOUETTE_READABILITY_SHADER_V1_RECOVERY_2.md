@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `ritualant-npc-silhouette-readability-shader-v1-recovery-2`
 - Category: `assets-art`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P2`
@@ -59,32 +59,33 @@ These are implementation outputs to create or modify in the claimed recovery-2 w
 
 ## Completion Truth
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `<fill>`
-- Completion boundary satisfied: `<fill>`
-- Acceptance satisfied: `<fill>`
-- Superseded/legacy production path disposition: `<fill>`
-- Evidence: `<fill>`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Preserved-path detail: `Recovery-1 remains blocked/manual, superseded, not complete, and not accepted; its exact checkpoint source and diagnostic trace remain archived. Recovery-2 uses the same production scene and does not inherit recovery-1 merge or validation history.`
+- Evidence: `origin/main` implementation commit from this workstream; canonical changed-file validation report `/home/braydenchaffee/.cache/custodian/validation/ritualant-recovery-2-20261103T020234Z-435ac42deb5e/changed.json` (6/6 passed, complete coverage); import-preflight PASS; focused production presentation, runtime/underground and hazard checks; Oct 17 human decision receipt cited above.
 
 ## Execution Feedback
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `<fill>`
-- Friction severity: `<fill>`
-- What went wrong: `<fill>`
-- Root cause / contributing factors: `<fill>`
-- Prevention / pipeline improvement: `<fill>`
-- Tooling / docs drift discovered: `<fill>`
-- Follow-up: `<fill>`
+- Outcome: `completed`
+- Friction severity: `moderate`
+- What went wrong: `The first direct script launch preceded initial Godot editor import and lacked its generated class/resource cache; the full project import established the cache before canonical validation. The historical recovery-1 main-sync tree also had invalid PNG sidecars, repaired on main before this replacement.`
+- Root cause / contributing factors: `Fresh isolated worktrees do not carry ignored Godot editor caches; recovery-1 had captured an upstream main with 46 invalid import sidecars.`
+- Prevention / pipeline improvement: `Run import preflight, then perform the first Godot import in a fresh full checkout before direct script launches; validate against repaired current main.`
+- Tooling / docs drift discovered: `Existing scene texture UID fallback warnings are emitted for unchanged ext_resource references; canonical validation still passed and resources loaded by their text paths.`
+- Follow-up: `Fresh-context paired review recovery-2; no new visual approval requested.`
 
 ## Handoff
 - Next workstream: `review-ritualant-npc-silhouette-readability-shader-v1-recovery-2`
-- Next packet state: `dependency-gated`
+- Next packet state: `ready/auto`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae7eb07-c554-83e9-911a-1335e640e4d0
 - Summary backlink: Include this exact Authoring chat URL in every durable implementation/review/correction/recovery/closeout summary and final Next Handoff. Original visual-decision conversation: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acb367f-4ca0-83e8-a226-31a3ae38da20.
 - Refresh reason: `none`
-- Next action: After human acceptance and successful implementation closeout, independently review the landed shader, regression evidence, and approved ROI presentation.
-- Blockers or open questions: The October 17 human visual decision is already recorded; objective validation and independent review remain required.
+- Next action: After implementation landing, run the fresh-context paired review against the exact landed shader, regression evidence, and recorded October 17 approval; preserve the independent review gate.
+- Blockers or open questions: `Implementation validation is green. Independent review remains required; October 17 human visual approval is recorded.`
 
 
 ## Supersession and donor provenance
