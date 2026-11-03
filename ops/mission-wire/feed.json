@@ -1,9 +1,165 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-03T08:34:00.242Z",
-  "source_main_sha": "27afd56f876ff63d7c084dea853189ecf5f8ae36",
+  "generated_at": "2026-11-03T11:59:31Z",
+  "source_main_sha": "b83e268b03aaeebf2ca6f10eb481d45760ed3ebd",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "hub-sepulcher-art-roadmap-v2-b83e268b",
+      "headline": "Sepulcher art roadmap expands to 198 required sources, while production approval remains separate",
+      "summary": "A new main-branch roadmap defines 198 required art sources, 36 optional extras and 193 ordered candidate sets across the Hub, Sepulcher, Awakening and Dust Lung. It locks CAL-02's architectural geometry and adds a manifest validator, but does not approve or install production artwork.",
+      "body": "The expanded V2 plan retains 72 original core states and 67 generation-set IDs while specifying 126 new required states. It maps proposed artwork across grounds, shorelines, landmarks and interiors, and adds drift validation. CAL-01 remains a candidate-only paving reference; CAL-02 is next for candidate screening. No human production source approval, Asset V2 registration or gameplay cutover follows from the roadmap. The commit notes unrelated authored-level lifecycle validation failures; current CI success is not established.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "hub-sepulcher-awakening-art-v1",
+      "occurred_at": "2026-11-03T10:22:10Z",
+      "bullets": [
+        "198 required sources: 72 preserved plus 126 new.",
+        "36 optional sources and 193 candidate-generation sets.",
+        "CAL-02 D6 modular arcade geometry locked for candidate screening.",
+        "Human approval, Asset V2 ingest and gameplay integration remain future gates."
+      ],
+      "links": [
+        {
+          "title": "Expanded V2 roadmap and validator",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/b83e268b03aaeebf2ca6f10eb481d45760ed3ebd"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN's burial-city artwork plan has grown into a much more complete production map. The latest main-branch update specifies the individual sources needed to dress the Sepulcher, neighboring Hub and Awakening spaces, and Dust Lung, without confusing an art plan with finished game assets.",
+        "sections": [
+          {
+            "heading": "A larger map, with its original landmarks intact",
+            "text": "The roadmap now contains 198 required sources, preserving the original 72 and adding 126. Another 36 sources are optional. The 193 ordered candidate sets provide a screening sequence, while original identifiers remain stable for continuity."
+          },
+          {
+            "heading": "The next image is constrained by real geometry",
+            "text": "CAL-02 is a modular, root-choked arcade bound to an existing nonwalkable region. The plan explicitly forbids inventing an entrance or collision changes. CAL-01's paving image remains candidate-only, not approved production art."
+          },
+          {
+            "heading": "Validation is not a playable art release",
+            "text": "A new manifest drift validator helps keep the enlarged inventory coherent. The document still requires visual screening, human source approval, asset registration and in-game testing. Unrelated authored-level lifecycle failures are disclosed rather than hidden."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The bottleneck moves from naming to source approval",
+            "explanation": "A complete inventory reduces ambiguity, but the next meaningful throughput measure is independently screened and human-approved source art, not the number of prompts written."
+          },
+          {
+            "title": "Geometry constraints protect gameplay",
+            "explanation": "Binding the arcade to a nonwalkable polygon prevents attractive artwork from silently becoming a new route or collision surface."
+          }
+        ],
+        "takeaway": "The production blueprint is substantially more complete; production assets and playable integration have not been established.",
+        "next_watch": "Watch for CAL-02 candidate screening and explicit human source approval before Asset V2 ingestion."
+      },
+      "details": {
+        "overview": "Main b83e268b03aaeebf2ca6f10eb481d45760ed3ebd expands the retained artwork manifest and adds validate_hub_art_manifest.py. The roadmap itself states that authored-level lifecycle validation is not green for unrelated reasons. CI checks for this head were not confirmed by the available connector responses.",
+        "ledger": [
+          {
+            "stage": "Expanded manifest and validator",
+            "status": "verified landed",
+            "evidence": "Main commit b83e268b03aaeebf2ca6f10eb481d45760ed3ebd; 198 required, 36 optional, 193 candidate sets."
+          },
+          {
+            "stage": "CAL-01 candidate",
+            "status": "reported candidate only",
+            "evidence": "Manifest identifies a screened candidate but expressly withholds human production approval."
+          },
+          {
+            "stage": "CAL-02 source",
+            "status": "next",
+            "evidence": "D6 384x576 nonwalkable modular arcade geometry locked; image screening pending."
+          },
+          {
+            "stage": "Production approval and Asset V2",
+            "status": "not established",
+            "evidence": "No approval or ingest receipt in inspected change."
+          },
+          {
+            "stage": "Gameplay and independent acceptance",
+            "status": "unknown",
+            "evidence": "No playable cutover or accepted independent review established by this documentation commit."
+          }
+        ],
+        "notes": [
+          "Full canonical dispatcher counts and host execution are not available."
+        ],
+        "unknowns": [
+          "Current main CI conclusion unavailable; status API and PR-triggered run lookup returned no checks.",
+          "Host claims, disk, locks and teardown unverified."
+        ],
+        "actions": [
+          "Art owner: screen CAL-02 candidate against the D6 geometry, then obtain explicit human production-source approval before registration."
+        ]
+      },
+      "scorecard": {
+        "stage": "Expanded roadmap landed; production approval pending",
+        "as_of": "2026-11-03T10:22:10Z",
+        "scope": "Hub/Sepulcher/Awakening/Dust Lung V2 roadmap only",
+        "metrics": [
+          {
+            "id": "required_sources",
+            "label": "REQUIRED SOURCES",
+            "value": 198,
+            "verification": "verified",
+            "basis": "72 retained plus 126 new manifest core sources",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/b83e268b03aaeebf2ca6f10eb481d45760ed3ebd"
+          },
+          {
+            "id": "candidate_sets",
+            "label": "CANDIDATE SETS",
+            "value": 193,
+            "verification": "verified",
+            "basis": "Manifest ordered candidate-generation sets, not completed images",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/b83e268b03aaeebf2ca6f10eb481d45760ed3ebd"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Expanded inventory and validator",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Main commit b83e268b03aaeebf2ca6f10eb481d45760ed3ebd"
+          },
+          {
+            "label": "CAL-02 candidate screening",
+            "status": "next",
+            "verification": "verified",
+            "evidence": "Manifest cursor CAL-02; source not approved"
+          },
+          {
+            "label": "Human production source approval",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No receipt established"
+          },
+          {
+            "label": "Asset V2 ingest",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No ingest established"
+          },
+          {
+            "label": "Runtime and independent review",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No playable acceptance receipt"
+          }
+        ],
+        "next_gate": "Art screening owner: produce and independently screen CAL-02 to locked D6 geometry."
+      },
+      "related": [
+        {
+          "title": "Sepulcher art pipeline records its first staged candidate while keeping production approval separate",
+          "context": "The predecessor established candidate-only CAL-01 and the CAL-02 handoff.",
+          "story_id": "hub-art-candidate-staging-cal01-cal03-4b65fba4"
+        }
+      ]
+    },
     {
       "id": "alpine-cliff-bunker-design-manifest-27afd56f",
       "headline": "Alpine cliff bunker gains a room-by-room design, but its entrance is not playable yet",
@@ -1429,11 +1585,6 @@
           "title": "Empty Convoy security can be bypassed when defenders fail to appear",
           "context": "Earlier coverage of the original failure or its recovery foundation.",
           "story_id": "convoy-security-integrated-correction-04a617c4"
-        },
-        {
-          "title": "Empty Convoy's missing shipment can now be traced, but its reviews remain waived",
-          "context": "Earlier coverage of the original failure or its recovery foundation.",
-          "story_id": "empty-convoy-recovery-landed-review-waived-58769228"
         }
       ]
     },
@@ -1584,192 +1735,7 @@
         ],
         "next_gate": "Execution owner confirms dispatcher eligibility and implements the bounded correction."
       },
-      "related": [
-        {
-          "title": "Empty Convoy's missing shipment can now be traced, but its reviews remain waived",
-          "context": "Earlier C1-C3 coverage describes the feature whose integrated security path now needs correction.",
-          "story_id": "empty-convoy-recovery-landed-review-waived-58769228"
-        }
-      ]
-    },
-    {
-      "id": "empty-convoy-recovery-landed-review-waived-58769228",
-      "headline": "Empty Convoy's missing shipment can now be traced, but its reviews remain waived",
-      "summary": "The Empty Convoy encounter gained bounded security and a one-time custody trace with optional salvage. Its three implementation slices landed, while security and recovery independent reviews were owner-waived before launch. The latest recovery review hit a source-attestation gate, not a gameplay verdict.",
-      "body": "The Empty Convoy encounter progressed beyond optional placement. Security scanning now queues up to three registered enemies within ambient spawn capacity and fails safely when placement is impossible. After clearing security, the player can record an unverified shipment trace and obtain existing ruin_scrap once when the ledger supports it; otherwise evidence-only completion is preserved. C2 landed at bde08b88 and C3 at e346eaea. C2 implementation reports 10/10 selected validation checks, C3 reports 8/8. The C2 review was owner-waived without launch. C3 review was also waived before launch after the host gate rejected missing authenticated source-span provenance for the changed validation manifest. No independent PASS, gameplay acceptance or verified host teardown follows from these commits.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "campaign",
-      "workstream": "campaign-empty-convoy-recovery-v1",
-      "occurred_at": "2026-11-02T11:37:46Z",
-      "bullets": [
-        "C2 security and C3 custody/recovery implementations landed.",
-        "Reported selected checks: C2 10/10; C3 8/8, not independent acceptance.",
-        "Both paired reviews were owner-waived prelaunch, not passed.",
-        "Host teardown and live gameplay remain unverified."
-      ],
-      "links": [
-        {
-          "title": "Security implementation",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/bde08b88caf38b8163f3c6dbbeff2597bd3935ab"
-        },
-        {
-          "title": "Security review waiver",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/b4069cce78f3d40bc8244cee9729c9b504fe7c39"
-        },
-        {
-          "title": "Recovery implementation",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/e346eaea2f6b9a2068f160f58b50d090427bda61"
-        },
-        {
-          "title": "Recovery review waiver",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/5876922872b8e08b6edc13f2a2a60c8947315e9e"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "The abandoned convoy now offers more than an eerie roadside discovery. Scanning its cargo cradle can trigger a contained defense, and surviving the encounter reveals a custody trace that refuses to pretend the missing shipment has been found. The code landed, but neither follow-up slice received independent review.",
-        "sections": [
-          {
-            "heading": "A threat that respects the rest of the world",
-            "text": "The scan queues at most three existing security units, sharing the game's ambient enemy capacity rather than creating an unlimited separate wave. If safe spawning fails, the event falls back to evidence instead of trapping the player or crashing."
-          },
-          {
-            "heading": "One clue, one salvage opportunity",
-            "text": "After security clears, the convoy records SHIPMENT UNVERIFIED. A valid existing scrap reward may be granted once; repeated interactions and same-run reentry cannot duplicate it. Without a usable ledger entry, the clue still remains accessible."
-          },
-          {
-            "heading": "The missing verdict",
-            "text": "Both security and recovery implementation packets landed with reported focused checks. Their paired reviews were waived before a reviewer ran. The latest review was stopped by a source-attestation requirement, so these waivers are administrative dispositions, not independent gameplay approval."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The event chain now has a coherent playable loop",
-            "explanation": "Placement, bounded defense, and durable evidence form a connected interaction rather than three isolated prototypes. This creates a stronger foundation for later narrative work without asserting what happened to the cargo."
-          },
-          {
-            "title": "Review waivers do not repair the proof gap",
-            "explanation": "The reported tests cover specific behavior, but the blocked source-attestation gate prevented independent falsification. Additional acceptance would require separately authorized review or gameplay evidence."
-          }
-        ],
-        "takeaway": "Three Empty Convoy implementation slices are on main; security and recovery remain independently unaccepted.",
-        "next_watch": "Watch for a separately authorized gameplay verification or an independently accepted review, not another administrative waiver."
-      },
-      "details": {
-        "overview": "C1 placement landed earlier at 47fd0755 and archived at 0cdb0c8c. C2 security landed at bde08b88, reported 10/10 selected checks, then was owner-waived prelaunch at b4069cce. C3 recovery landed at e346eaea, reported 8/8 selected checks, and its paired review was owner-waived prelaunch at 58769228 after source-span attestation failure. No independent PASS or authenticated teardown was inspected.",
-        "ledger": [
-          {
-            "stage": "C1 placement",
-            "status": "verified landed",
-            "evidence": "47fd0755; archive 0cdb0c8c"
-          },
-          {
-            "stage": "C2 security",
-            "status": "verified landed; tests reported",
-            "evidence": "bde08b88; 10/10 selected checks in completion evidence"
-          },
-          {
-            "stage": "C2 independent review",
-            "status": "owner-waived before launch",
-            "evidence": "b4069cce; no reviewer verdict"
-          },
-          {
-            "stage": "C3 custody trace",
-            "status": "verified landed; tests reported",
-            "evidence": "e346eaea; 8/8 selected checks"
-          },
-          {
-            "stage": "C3 independent review",
-            "status": "owner-waived before launch",
-            "evidence": "58769228; missing authenticated validation-manifest source span"
-          },
-          {
-            "stage": "Canonical host teardown",
-            "status": "unknown",
-            "evidence": "No authenticated current host observation"
-          }
-        ],
-        "notes": [
-          "GitHub combined commit status returned no individual statuses for the inspected head; this is not evidence of passing CI."
-        ],
-        "unknowns": [
-          "Independent gameplay acceptance is not established.",
-          "Live process and canonical teardown are not established."
-        ],
-        "actions": [
-          "Owner/coordinator: authorize any new verification explicitly; do not interpret either waiver as PASS."
-        ]
-      },
-      "scorecard": {
-        "stage": "Three slices landed; two paired reviews waived",
-        "as_of": "2026-11-02T11:37:46Z",
-        "scope": "Named Empty Convoy C1-C3 implementation and C2-C3 review evidence only",
-        "metrics": [
-          {
-            "id": "other-convoy-slices-landed",
-            "label": "SLICES LANDED",
-            "value": 3,
-            "verification": "verified",
-            "basis": "C1, C2 and C3 commits inspected; not a project-wide count",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/e346eaea2f6b9a2068f160f58b50d090427bda61"
-          },
-          {
-            "id": "other-convoy-waived-reviews",
-            "label": "REVIEWS WAIVED",
-            "value": 2,
-            "verification": "verified",
-            "basis": "Named C2 and C3 review packets marked owner-waived prelaunch",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/5876922872b8e08b6edc13f2a2a60c8947315e9e"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Optional placement landed",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "47fd0755"
-          },
-          {
-            "label": "Bounded security landed",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "bde08b88"
-          },
-          {
-            "label": "Custody trace and salvage landed",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "e346eaea"
-          },
-          {
-            "label": "Focused validation",
-            "status": "done",
-            "verification": "reported",
-            "evidence": "C2 10/10 and C3 8/8 selected checks reported"
-          },
-          {
-            "label": "Independent paired review",
-            "status": "blocked",
-            "verification": "verified",
-            "evidence": "C2/C3 owner-waived prelaunch; no PASS"
-          },
-          {
-            "label": "Host teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No authenticated host proof"
-          }
-        ],
-        "next_gate": "Owner explicitly authorizes fresh gameplay or independent acceptance verification if desired."
-      },
-      "related": [
-        {
-          "title": "Empty Convoy enters generated worlds, with safe placement and an inspectable manifest",
-          "context": "Earlier coverage of the placement slice that the new security and recovery build upon.",
-          "story_id": "empty-convoy-placement-landed-0cdb0c8c"
-        }
-      ]
+      "related": []
     }
   ],
   "snapshot": {
