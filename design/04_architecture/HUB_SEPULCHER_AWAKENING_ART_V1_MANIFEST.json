@@ -3,7 +3,7 @@
   "program_id": "hub-sepulcher-awakening-art-v1",
   "decision": {
     "date": "2026-10-31",
-    "authorized_scope": "Complete proposed 71-image core V1 art inventory plus 12 conditional/optional source requests, sequential image-generation and correction, individual source review, Dropbox handoff, and gated Asset Pipeline V2 implementation",
+    "authorized_scope": "Complete proposed 72-image core V1 art inventory plus 12 conditional/optional source requests, sequential image-generation and correction, individual source review, Dropbox handoff, and gated Asset Pipeline V2 implementation",
     "image_generation_authorized_after_publication": true,
     "individual_source_art_approval": "NOT_APPROVED_AS_PART_OF_THIS_DECISION",
     "authoring_chat_url": null,
@@ -11,7 +11,8 @@
     "process_amendment_2026_11_01": "CAL-A strictly one image at a time; after calibration, independent low-risk same-style props or decals may be generated in small groups without reducing per-image review, according to AI_ART_GENERATION_REVIEW_PROTOCOL_V1.md. The 71-core/12-optional scope is unchanged.",
     "command_amendment_2026_11_01": "The phrase 'generate the next set' now explicitly authorizes generation of the earliest eligible unfinished set under generation_sets. Its cardinality and exact image IDs are fixed; no bulk art approval. This does not replace individual review, Dropbox handoff or Asset V2 gates.",
     "floor_first_revision_2026_11_01": "Sepulcher floor first, separate structural alpha source added (72 core, 12 optional, 84 prompts and 67 sets). Original mixed CAL-01 candidate remains unapproved.",
-    "modular_ground_revision_2026_11_02": "Explicitly supersedes CAL-01's historical 1152x1408 rectangular ground plate with one 512x512 opaque seamless modular material candidate, keeping the original asset ID and immutable rejected-candidate evidence. The existing paving candidates are unapproved material references, not established human-approved V3 sources, and no generator image conditioning is claimed. CAL-01 approval, Dropbox source promotion, family registration and runtime binding are all still pending."
+    "modular_ground_revision_2026_11_02": "Explicitly supersedes CAL-01's historical 1152x1408 rectangular ground plate with one 512x512 opaque seamless modular material candidate, keeping the original asset ID and immutable rejected-candidate evidence. The existing paving candidates are unapproved material references, not established human-approved V3 sources, and no generator image conditioning is claimed. CAL-01 approval, Dropbox source promotion, family registration and runtime binding are all still pending.",
+    "candidate_only_auto_queue_amendment_2026_11_03": "User authorizes automatically producing, screening and candidate-staging every outstanding required core image without pausing between sets for separate human source approval; Codex artwork commands only generate/review/upload. Human approval is still needed before any production source handoff, Asset V2 ingest or scene cutover. Unresolved geometry-dependent required states must be explicitly deferred and revisited, never silently skipped or marked complete."
   },
   "repo": {
     "repository": "braydio/CUSTODIAN",
@@ -4084,7 +4085,55 @@
       }
     ],
     "geometry_reconciliation": "CAL-01 modular tile generation released; historical rejected candidate does NOT satisfy current prompt; CAL-02 architectural footprint remains blocked.",
-    "paving_reference_status": "UNAPPROVED_MATERIAL_REFERENCE_ONLY; V3 approval receipt absent; human CAL-01 approval pending"
+    "paving_reference_status": "UNAPPROVED_MATERIAL_REFERENCE_ONLY; V3 approval receipt absent; human CAL-01 approval pending",
+    "candidate_staging_receipts": [
+      {
+        "set_id": "CAL-01",
+        "asset_id": "hub_first_set_sepulcher_gardens_environment/underlay",
+        "candidate_status": "PASS_CANDIDATE",
+        "candidate_source_sha256": "5bf414069ea9c70139fa0ffe5ceee3378e2c226f22fb76e8a55e46a7e14773d2",
+        "actual_normalized_dimensions_px": [
+          512,
+          512
+        ],
+        "source_mode": "RGB",
+        "alpha_requirement": "OPAQUE__NOT_APPLICABLE",
+        "repeat_preview_sha256": "867b545f77e2235cbd2d7edeeea18bb179e457674426508114607cdfd0c88c49",
+        "checked_repeat": "pixel-identical 3x3 output; edge RGB MAE zero at both axes; some visible repeat pattern remains; human aesthetic approval PENDING",
+        "candidate_dropbox_path": "/CUSTODIAN/candidate_staging/hub-sepulcher-awakening-art-v1/CAL-01_underlay_512x512_RGB_candidate_5bf41406.png",
+        "dropbox_file_id": "id:8NXqdXuW6GUAAAAAAAAHEw",
+        "dropbox_revision": "65f57a8e1c486915cdd61",
+        "dropbox_file_size": 547131,
+        "candidate_upload_verified": true,
+        "authoritative_asset_source_approved": false,
+        "production_source_sha256": null,
+        "remark": "Chat candidate review PASS_CANDIDATE; no human production source approval, no Asset V2 ingest; preserve original failed candidates as historical evidence."
+      }
+    ],
+    "candidate_staged_set_ids": [
+      "CAL-01"
+    ],
+    "candidate_deferred_required_sets": [
+      {
+        "set_id": "CAL-02",
+        "asset_ids": [
+          "hub_first_set_sepulcher_gardens_environment/structural_presentation"
+        ],
+        "reason": "Historic 1152x1408 transparent whole-district structure contract conflicts with runtime 3072x2688 irregular mask; explicit spatial/solid footprint and modular source contract required before safe generation. Old prompt itself prohibits generation.",
+        "owner": "Human Gardens design lock plus ChatGPT manifest reconciliation; Codex artwork commands must NOT invent geometry",
+        "resolution": "Review new modular/nonwalkable architectural calibration footprint and updated source canvas/prompt, preserve Operator clearance and connectors, then re-enter the same CAL-02 set.",
+        "status": "DEFERRED_REQUIRED__NOT_COMPLETED__NO_CANDIDATE"
+      }
+    ],
+    "next_candidate_generation_set_id": "CAL-03",
+    "candidate_queue_status": "CAL-01 candidate staged, CAL-02 deferred required, CAL-03 next independent eligible candidate. Note production source queue still awaits individual human approvals.",
+    "candidate_only_progress": {
+      "core_candidates_uploaded": 1,
+      "core_required_total": 72,
+      "core_deferred_required": 1,
+      "core_remaining_not_staged": 71,
+      "optional_not_authorized": 12
+    }
   },
   "gates": {
     "user_image_review_before_dropbox": true,
@@ -4094,7 +4143,7 @@
     "separate_Dust_Lung_DL0_ownership_preserved": true,
     "grave_resolution_review_branch_active_during_audit": true,
     "required_assets_registry_update_only_on_real_fulfillment": true,
-    "candidate_staging_exception": "Only user-authorized /CUSTODIAN/candidate_staging/hub-sepulcher-awakening-art-v1 may receive objectively screened AI candidates before human production approval; source_work/inbox/production Dropbox remain human-gated."
+    "candidate_staging_exception": "User-authorized /CUSTODIAN/candidate_staging/hub-sepulcher-awakening-art-v1 receives ONLY independently screened PASS_CANDIDATE images with verified per-file evidence, prior to human source approval. Does not apply to production handoff source_work/inbox or Asset V2. Verified candidate staging does not infer human approval."
   },
   "drift": {
     "awakening_asset_manifest": "Historical section says nine generic perimeter contracts unregistered despite nine existing live .asset.json schemas. Reconcile in bounded future documentation correction after status recheck.",
@@ -4132,7 +4181,8 @@
     ],
     "correction_policy": "correct or regenerate the same state without marking accepted; preserve rejected candidate identity; no guess-filled receipts",
     "restart_authority": "read current GitHub planning ledger and reconcile actual Dropbox receipts and Asset V2 records; never trust a stale empty checkpoint as proof of absence",
-    "alpha_screening_rule": "For every transparency-requiring asset, report apparent transparency, visible matte/checkerboard, and uncertainty; claim true alpha only after byte-level inspection. CAL-01 opaque: alpha N/A."
+    "alpha_screening_rule": "For every transparency-requiring asset, report apparent transparency, visible matte/checkerboard, and uncertainty; claim true alpha only after byte-level inspection. CAL-01 opaque: alpha N/A.",
+    "candidate_only_workflow_amendment": "Automated core candidate pipeline: GENERATE_ASSET -> REVIEW_ASSET -> UPLOAD_ASSET_TO_DROPBOX to candidate-only lane. Verified candidate upload advances candidate cursor without human approval. Human approval, Asset V2, runtime cutover remain separate. Defer hard spatial blockers with exact IDs and revisit. 12 optional sources never automatic."
   },
   "generation_sets_contract": {
     "version": 1,
@@ -4144,19 +4194,19 @@
     ],
     "default_program_id": "hub-sepulcher-awakening-art-v1",
     "default_manifest_path": "design/04_architecture/HUB_SEPULCHER_AWAKENING_ART_V1_MANIFEST.json",
-    "selection": "first incomplete set in generation_sets by order; reconcile actual live receipts, approved source hashes, Dropbox and Asset V2 state; never trust checkpoint alone; never count duplicate calibration appearances twice",
+    "selection": "Candidate-only automation: select the earliest set (preserve order and exact asset_ids) lacking verified PASS_CANDIDATE staging for any required state, except documented DEFERRED_REQUIRED candidate blockers; do not lose or mark those deferred sets complete. Revisit deferred sets when their stated dependency changes. Production source approval uses a SEPARATE human review ledger and cannot advance assets into source_work/inbox without explicit per-image approval.",
     "generation_action": "Generate only actual missing candidate image(s) in that set, each with its own stored prompt and independent image output. Do not merely propose what to draw; when image generator is available, invoke it. For multi-image sets use separate per-state calls, not n=2 same prompt or contact-sheet slicing.",
     "initial_next_set_id": "CAL-01",
     "initial_next_asset_ids": [
       "hub_first_set_sepulcher_gardens_environment/underlay"
     ],
-    "completion_predicate": "All 72 distinct core states individually human-approved. Never bypass floor or geometry gates.",
-    "pending_review_rule": "If an image of the current set exists but is pending human approval/correction, return to that image and its outstanding review rather than silently generating another set, skipping it or regenerating duplicate images.",
-    "partial_set_rule": "If some images of a multi-state set are already approved, generate only the ungenerated remainder; if any generated image is unreviewed, review it first. Keep set order and identities stable.",
-    "blocked_set_rule": "If a phase, scene, workstream, style-reference or review gate is unmet, identify exact blocked set and unmet condition, do not skip ahead or pretend an unavailable reference exists.",
-    "approval_rule": "One explicit human decision for every produced asset source. Program or set authorizations are not art approvals.",
+    "completion_predicate": "All 72 distinct required core states have a separately identified PASS_CANDIDATE image, objective review, and completed verified Dropbox candidate-staging receipt. This is CANDIDATE QUEUE completion ONLY; no human source approval, runtime registration, or Asset Pipeline V2 acceptance is implied.",
+    "pending_review_rule": "A generated image with AI screening PENDING must be reviewed under REVIEW_ASSET; a failed image is regenerated under the SAME asset_id, not skipped. Once PASS_CANDIDATE and the candidate-only Dropbox file is verified (ID, revision, hash, path), candidate production may advance regardless of human_image_approval=pending. Human source approval never follows automatically.",
+    "partial_set_rule": "For each fixed set, produce/review/upload only missing candidate-staging states, each with its own independently addressable image. Set candidate completion means all its required asset IDs have valid verified staged PASS_CANDIDATE receipts. Do not infer production approval.",
+    "blocked_set_rule": "A true candidate-production blocker (missing geometry footprint, unregistered connector registration, necessary unavailable source or active-owner conflict) must be recorded as DEFERRED_REQUIRED with exact set ID, asset ID, reason and resolution owner. Keep it incomplete; the next eligible independent candidate set MAY proceed. Automatically revisit deferred required sets after upstream evidence changes; never report all-core complete while any deferred state remains.",
+    "approval_rule": "An individual human approval is still required for every production source and any Asset V2 ingest. AI PASS_CANDIDATE is exclusively candidate-only review and never artistic approval.",
     "tool_output_rule": "For a grouped set of 2 states, generate two distinguishable independent source images in separate calls unless a tool can return independently identified per-prompt files; do not generate one composite grid. Reuse verified approved reference imagery if technically accessible; otherwise acknowledge limitation.",
-    "optional_policy": "All 12 optional states excluded from automatic next-set queue. Require explicit user opt-in and a separately sequenced optional dispatch amendment.",
+    "optional_policy": "The 12 optional states stay excluded until the user explicitly authorizes them. All 72 core required states remain scheduled; required blockers may be deferred with full ledger but not omitted from completion.",
     "when_all_complete": "Report that core image-generation set queue is complete; do not automatically create additional tasks or consume optional states.",
     "prompt_source": "assets[*].image_generation_prompt and state target/frame/alpha/anchor/consumer attributes; never substitute a generic scene prompt.",
     "receipt_fields": [
@@ -4172,11 +4222,20 @@
       "dropbox_file_id_and_revision",
       "asset_v2_job_and_runtime_evidence"
     ],
-    "checkpoint_authority": "Current main plus verified receipts and actual Dropbox/pipeline status; generation_sets is the immutable planned dispatch order, not proof of any generated output.",
-    "current_initial_status": "CAL-01 is selected, no image approved by this publication; user still needs to request first generation.",
+    "checkpoint_authority": "Use live origin/main plus actual source bytes, candidate staging file ID/revision/byte hash and stored candidate screening receipt. Candidate advancement and human-approved source advancement are separate independent cursors.",
+    "current_initial_status": "CAL-01 staged PASS_CANDIDATE (new 512px candidate), human production source approval pending. CAL-02 structural canvas obsolete and remains DEFERRED_REQUIRED; next independent eligible candidate set is CAL-03. Confirm live receipts on each resumed run.",
     "floor_first_rule": "For large authored region art: lock actual walkability -> strict orthographic ground-only underlay -> independently generated transparent structural layer after geometry clearance -> separate scenic depth -> optional foreground occlusion; all with one world/pixel transform. CAL-01 floor only, new CAL-02 structure blocked; separate Dust Lung DL0 manifest not silently rewritten.",
     "geometry_reconciliation": "CAL-01 is eligible ONLY as 512x512 opaque modular ground tile per revised asset prompt; old 1152x1408 scene is permanently disallowed. CAL-02 still blocked. No skipped asset IDs or approvals.",
-    "cal01_reference_gate": "No approved paving V3 style anchor established. Unapproved reference studies may inform the creative brief only; actual supplied image inputs must be evidenced. Human CAL-01 approval remains pending."
+    "cal01_reference_gate": "No approved paving V3 style anchor established. Unapproved reference studies may inform the creative brief only; actual supplied image inputs must be evidenced. Human CAL-01 approval remains pending.",
+    "production_source_completion_predicate": "All 72 distinct core states individually human-approved. Never bypass floor or geometry gates.",
+    "codex_artwork_command_vocabulary": [
+      "GENERATE_ASSET",
+      "REVIEW_ASSET",
+      "UPLOAD_ASSET_TO_DROPBOX"
+    ],
+    "codex_command_contract": "Codex supplies ONLY one of these three command names, plus exact existing set_id and asset_id(s) from the current manifest. It does not issue plan/implement/unblock/merge actions in this artwork-production session. The assistant handles manifest reconciliation outside these commands. REVIEW_ASSET emits objective-versus-visual checks; UPLOAD_ASSET_TO_DROPBOX targets candidate_staging only after PASS_CANDIDATE and verifies file identity/revision/content; none of the commands grants human production approval.",
+    "candidate_staging_destination": "/CUSTODIAN/candidate_staging/hub-sepulcher-awakening-art-v1",
+    "candidate_review_rubric": "Actual image visual check plus independent byte-level format/dimensions/alpha requirements and real 3x3 repetition for seamless textures. A visual checkbox/label printed inside an image is not evidence; actual image bytes are required. For transparent assets report apparent alpha/matte/checkerboard separately from byte-level alpha verification."
   },
   "generation_sets": [
     {
@@ -4191,7 +4250,10 @@
       "request_rule": "Generate exactly ONE independent 512x512 opaque flat floor material image for the same CAL-01 asset ID; do not generate a 3072x2688 map or a 1152x1408 plate. Validate 3x3 repeat and preserve irregular runtime mask.",
       "release_gate": "OPEN__reconciled_modular_512_ground_candidate_only",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished.",
+      "candidate_status": "PASS_CANDIDATE__DROPBOX_VERIFIED__HUMAN_PENDING"
     },
     {
       "set_id": "CAL-02",
@@ -4205,7 +4267,10 @@
       "request_rule": "1 independently generated alpha-only structural image after approved floor and spatial lock",
       "release_gate": "BLOCKED__obsolete_1152x1408_full_scene_architecture__await_modular_footprint_and_state_reauthoring",
       "approval_rule": "Explicit human image decision before advancing",
-      "source_handoff_rule": "No Dropbox or ingest until reviewed"
+      "source_handoff_rule": "No Dropbox or ingest until reviewed",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished.",
+      "candidate_status": "DEFERRED_REQUIRED__OBSOLETE_STRUCTURAL_CANVAS"
     },
     {
       "set_id": "CAL-03",
@@ -4219,7 +4284,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "calibration_one_at_a_time",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "CAL-04",
@@ -4233,7 +4300,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "calibration_one_at_a_time",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "CAL-05",
@@ -4247,7 +4316,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "calibration_one_at_a_time",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "CAL-06",
@@ -4261,7 +4332,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "calibration_one_at_a_time",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "B1-01",
@@ -4275,7 +4348,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "accepted_calibration_refs_required",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "B1-02",
@@ -4289,7 +4364,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "accepted_calibration_refs_required",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "B1-03",
@@ -4304,7 +4381,9 @@
       "request_rule": "Generate EACH named state as a distinct source image with its OWN full prompt, not one contact-sheet collage. Calls may run sequentially; images receive individual reviews.",
       "release_gate": "CAL-A five images approved, grave slab reference and verified event offsets",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "B1-04",
@@ -4318,7 +4397,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "accepted_calibration_refs_required",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "B1-05",
@@ -4333,7 +4414,9 @@
       "request_rule": "Generate EACH named state as a distinct source image with its OWN full prompt, not one contact-sheet collage. Calls may run sequentially; images receive individual reviews.",
       "release_gate": "Gardens and grave reference approvals complete; independent transparent props",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "B1-06",
@@ -4348,7 +4431,9 @@
       "request_rule": "Generate EACH named state as a distinct source image with its OWN full prompt, not one contact-sheet collage. Calls may run sequentially; images receive individual reviews.",
       "release_gate": "Gardens style approval and each independent source review",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "B1-07",
@@ -4362,7 +4447,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "accepted_calibration_refs_required",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "B1-08",
@@ -4376,7 +4463,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "accepted_calibration_refs_required",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "B1-09",
@@ -4391,7 +4480,9 @@
       "request_rule": "Generate EACH named state as a distinct source image with its OWN full prompt, not one contact-sheet collage. Calls may run sequentially; images receive individual reviews.",
       "release_gate": "Gardens style approval; each state retains own source RGBA and identity",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "B2-01",
@@ -4405,7 +4496,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "B2-02",
@@ -4419,7 +4512,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "B2-03",
@@ -4433,7 +4528,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "B2-04",
@@ -4447,7 +4544,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "B2-05",
@@ -4461,7 +4560,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "B2-06",
@@ -4475,7 +4576,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "B2-07",
@@ -4489,7 +4592,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "B2-08",
@@ -4503,7 +4608,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "B2-09",
@@ -4517,7 +4624,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "B2-10",
@@ -4531,7 +4640,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "B2-11",
@@ -4545,7 +4656,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "B2-12",
@@ -4559,7 +4672,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "B2-13",
@@ -4573,7 +4688,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "B2-14",
@@ -4588,7 +4705,9 @@
       "request_rule": "Generate EACH named state as a distinct source image with its OWN full prompt, not one contact-sheet collage. Calls may run sequentially; images receive individual reviews.",
       "release_gate": "Accepted North Processional environment underlay as visual reference; distinct hero silhouettes",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "B2-15",
@@ -4602,7 +4721,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "B2-16",
@@ -4616,7 +4737,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "B2-17",
@@ -4630,7 +4753,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "B2-18",
@@ -4644,7 +4769,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "B2-19",
@@ -4658,7 +4785,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "B2-20",
@@ -4672,7 +4801,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "AP-01",
@@ -4686,7 +4817,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "AP-02",
@@ -4700,7 +4833,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "AP-03",
@@ -4714,7 +4849,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "AP-04",
@@ -4728,7 +4865,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "AP-05",
@@ -4742,7 +4881,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "AP-06",
@@ -4756,7 +4897,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "AP-07",
@@ -4770,7 +4913,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "AP-08",
@@ -4784,7 +4929,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "AP-09",
@@ -4798,7 +4945,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "AP-10",
@@ -4812,7 +4961,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "AP-11",
@@ -4826,7 +4977,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "AP-12",
@@ -4840,7 +4993,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "AP-13",
@@ -4854,7 +5009,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "AP-14",
@@ -4868,7 +5025,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "AP-15",
@@ -4882,7 +5041,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "AP-16",
@@ -4896,7 +5057,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "AP-17",
@@ -4910,7 +5073,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "AP-18",
@@ -4924,7 +5089,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "AP-19",
@@ -4938,7 +5105,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "AP-20",
@@ -4952,7 +5121,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "AP-21",
@@ -4966,7 +5137,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "AP-22",
@@ -4980,7 +5153,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "AP-23",
@@ -4994,7 +5169,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "AP-24",
@@ -5008,7 +5185,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "DL-01",
@@ -5022,7 +5201,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "separate_dust_lung_v2_design_source_review_and_DL0_owner",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "DL-02",
@@ -5036,7 +5217,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "separate_dust_lung_v2_design_source_review_and_DL0_owner",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "DL-03",
@@ -5050,7 +5233,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "separate_dust_lung_v2_design_source_review_and_DL0_owner",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "DL-04",
@@ -5064,7 +5249,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "separate_dust_lung_v2_design_source_review_and_DL0_owner",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "DL-05",
@@ -5078,7 +5265,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "separate_dust_lung_v2_design_source_review_and_DL0_owner",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "DL-06",
@@ -5092,7 +5281,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "separate_dust_lung_v2_design_source_review_and_DL0_owner",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "DL-07",
@@ -5106,7 +5297,9 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "separate_dust_lung_v2_design_source_review_and_DL0_owner",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     },
     {
       "set_id": "DL-08",
@@ -5120,11 +5313,13 @@
       "request_rule": "One independent asset image; for animations one independent complete animation strip",
       "release_gate": "separate_dust_lung_v2_design_source_review_and_DL0_owner",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
-      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash.",
+      "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
+      "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished."
     }
   ],
   "documentation_drift": {
-    "dust_lung_layer_pass": "Dust Lung V2 separates traversal/void/depth/occlusion in design yet its 8-item source manifest still mixes floor and structures; reconcile under independent DL0 owner before changing those assets.",
+    "dust_lung_layer_pass": "Dust Lung V2's eight image prompts mix traversal/void/scenic layers; candidate-only generation must preserve DL0 ownership, and actual fit/cutover remains independently gated.",
     "cal01_reconciliation": "Old scene-floor prompt corrected to 512x512 modular material; legacy rejection retained for audit. CAL-02 architecture state still needs revised modular footprint and prompt. No Asset V2 production registration is implied.",
     "paving_v3_reference_correction": {
       "authority": "design/04_architecture/SEPULCHER_MODULAR_PLAYTEST_ASSET_PILOT_V1.json",
@@ -5133,7 +5328,11 @@
       "repeat_test": "FAILED",
       "v3_human_approval_receipt": "NOT_FOUND_IN_AUTHORITATIVE_SOURCE",
       "disposition": "UNAPPROVED_REFERENCE_ONLY__NO_IMAGE_CONDITIONING_CLAIM"
-    }
+    },
+    "candidate_vs_production_queue": "Prior generation_sets_contract selected by human source approval and froze at CAL-01 despite verified candidate upload. Candidate and production gates now split. Existing `checkpoint.next_generation_set_id` tracks the human production review position; `checkpoint.next_candidate_generation_set_id` tracks independent candidate production. Old CAL-01 full scene receipt retained as historic rejection.",
+    "geometry_runtime_status": "SEPULCHER_GARDENS_GEOMETRY_V1.json status remains human_design_draft_not_runtime_approved, but live HubFirstSetMap and SepulcherGardensGeometryV1 already consume its 96x84 irregular mask for walkability. Do not misrepresent this as explicit human approval of solid artwork footprints.",
+    "hub_b2_floor_structure_mix": "Six other Hub district underlay prompts still paint terraces/stairs/architecture inside walkable rectangles. Before candidate-quality release, apply the approved floor-first separation, preserving current layout and independent assets; geometry-affecting source contracts cannot be accepted as production.",
+    "calibration_count": "Six CAL-A images (CAL-01 through CAL-06), despite older prose describing five."
   },
   "geometry_expansion_2026_11_02": {
     "status": "CAL01_MODULAR_GROUND_RECONCILED__CAL02_STRUCTURE_STILL_BLOCKED",
@@ -5141,7 +5340,7 @@
     "superseded_underlay_target": "Historic 1152x1408 full-scene plate permanently superseded; do NOT generate it",
     "current_walkable_geometry": "3072x2688 authoring rectangle with exact 96x84 irregular mask; E0-E5 and both east connectors unchanged",
     "cal01_generation_gate": "OPEN_FOR_ONE_512x512_OPAQUE_REPEATABLE_GROUND_CANDIDATE_ONLY",
-    "cal02_generation_gate": "BLOCKED_PENDING_APPROVED_MODULAR_ARCHITECTURAL_FOOTPRINT_AND_SOURCE_CONTRACT",
+    "cal02_generation_gate": "DEFERRED_REQUIRED_FOR_CANDIDATE__BLOCKED_FOR_PRODUCTION__await_modular_footprint_contract",
     "masked_floor_rule": "Use currently approved authored walkability and collision; repeat and clip CAL-01 512x512 tile at origin (-4128,-4480), not a pre-painted rectangular region",
     "reconciliation_basis": "2026-11-02 live expanded HubFirstSetLayout and SEPULCHER_GARDENS_GEOMETRY_V1; separate existing approved four-asset material pilot"
   }
