@@ -1,9 +1,127 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-03T06:54:41Z",
-  "source_main_sha": "4b65fba48767c9634e37242981a1f955cc294de0",
+  "generated_at": "2026-11-03T07:52:08Z",
+  "source_main_sha": "50fd76fdb6e85d6bf11d01bce7c5e9ee26f5df62",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "license-proprietary-history-preserved-50fd76fd",
+      "headline": "CUSTODIAN clarifies ownership of original game material while preserving earlier MIT grants",
+      "summary": "A new main-branch licensing update marks original CUSTODIAN material proprietary and archives two historical MIT notices verbatim. The change explicitly preserves valid earlier permissions and third-party licenses; it does not resolve provenance of every asset or alter gameplay.",
+      "body": "The project now has a repository-wide proprietary notice for original materials owned by its named rights holder. Two MIT notices previously in the Godot project tree are retained verbatim in licensing history. The new text explicitly says prior valid permissions are not retroactively withdrawn and separately owned components keep their own terms. This is a documentation and distribution-policy milestone, not evidence of a game build, a legal determination of asset ownership, or a change to runtime behavior. Historical names ShardSpace and [Lighar] still require provenance verification before any specific files can be confidently assigned.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "",
+      "occurred_at": "2026-11-03T07:17:18Z",
+      "bullets": [
+        "Repository-wide proprietary notice added for owned original materials.",
+        "Both prior MIT notices retained verbatim in licensing history.",
+        "Earlier valid grants and third-party licenses expressly preserved.",
+        "Asset-by-asset provenance remains an open distribution gate."
+      ],
+      "links": [
+        {
+          "title": "Licensing notice and preserved history",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/50fd76fdb6e85d6bf11d01bce7c5e9ee26f5df62"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN has clarified how its original game material is licensed, without attempting to erase the project's earlier open-source history. The new notice protects original work prospectively while preserving the permissions and third-party obligations that already exist.",
+        "sections": [
+          {
+            "heading": "What changed",
+            "text": "The main branch now carries a proprietary notice for original code, artwork, writing and other materials owned by the named rights holder. Two older MIT notices have been copied verbatim into a historical record rather than silently discarded."
+          },
+          {
+            "heading": "What the notice cannot settle",
+            "text": "The text expressly preserves valid permissions previously granted and licenses belonging to outside contributors or incorporated components. It also acknowledges that the identities attached to the historical notices do not establish ownership of individual files."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Distribution needs a provenance map",
+            "explanation": "A clear current policy is useful, but the license file alone cannot establish who owns every imported asset or code component. A file-level provenance check remains important before distributing the game."
+          },
+          {
+            "title": "Historical grants remain a separate obligation",
+            "explanation": "The preserved MIT notices prevent the current policy from being mistaken for a retroactive withdrawal of valid older rights."
+          }
+        ],
+        "takeaway": "The licensing documentation has changed on main; ownership provenance and third-party compliance still require independent review before distribution.",
+        "next_watch": "A component-level attribution and provenance audit, especially for materials associated with the historical notices."
+      },
+      "details": {
+        "overview": "Commit 50fd76fdb6e85d6bf11d01bce7c5e9ee26f5df62 adds LICENSE, revises custodian/LICENSE and LICENSE.md, and adds custodian/LICENSING_HISTORY.md. No runtime changes. Combined commit status endpoint returned no statuses, so CI health is unknown. No host dispatcher audit or private operational pilot observation was available.",
+        "ledger": [
+          {
+            "stage": "Licensing documentation",
+            "status": "verified landed",
+            "evidence": "Commit 50fd76fdb6e85d6bf11d01bce7c5e9ee26f5df62"
+          },
+          {
+            "stage": "Historical MIT preservation",
+            "status": "verified landed",
+            "evidence": "Both previous notices reproduced in LICENSING_HISTORY.md"
+          },
+          {
+            "stage": "Third-party ownership audit",
+            "status": "unknown",
+            "evidence": "Notice explicitly leaves third-party terms and historic author provenance unresolved"
+          },
+          {
+            "stage": "Independent legal review",
+            "status": "unknown",
+            "evidence": "No review receipt inspected"
+          }
+        ],
+        "notes": [
+          "Not a gameplay or deployment change."
+        ],
+        "unknowns": [
+          "Ownership provenance of individual historically attributed files",
+          "Independent legal review and distribution readiness"
+        ],
+        "actions": [
+          "Project owner: verify provenance and required third-party attribution before distributing affected materials."
+        ]
+      },
+      "scorecard": {
+        "stage": "Policy documented; provenance review outstanding",
+        "as_of": "2026-11-03T07:17:18Z",
+        "scope": "Licensing files changed in this commit only",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Publish current licensing notice",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "New root LICENSE in commit"
+          },
+          {
+            "label": "Preserve prior MIT notices",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "LICENSING_HISTORY.md in commit"
+          },
+          {
+            "label": "Map third-party and historic ownership",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No file-level provenance audit reviewed"
+          },
+          {
+            "label": "Confirm distribution compliance",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No independent legal or attribution acceptance inspected"
+          }
+        ],
+        "next_gate": "Project owner to verify ownership and third-party obligations before distribution."
+      },
+      "related": []
+    },
     {
       "id": "hub-art-candidate-staging-cal01-cal03-4b65fba4",
       "headline": "Sepulcher art pipeline records its first staged candidate while keeping production approval separate",
@@ -1638,129 +1756,6 @@
           }
         ],
         "next_gate": "Coordinator verifies independent review status before further acceptance claims."
-      },
-      "related": []
-    },
-    {
-      "id": "alpine-station-containment-waived-560fbf2d",
-      "headline": "Alpine Station gains a final containment choice, but its independent review is waived",
-      "summary": "The Abandoned Alpine Station now records a one-time choice after three timely services. Seven implementation checks reportedly passed and the packet was archived. Host validation blocked the paired reviewer before launch; the owner explicitly waived that review, leaving normal revisit behavior unverified.",
-      "body": "S3 containment implementation ac471cb2 landed and archived at 76272409. Completion report says 7/7 changed-source checks passed. Review attempt 20261102T091856Z-aaa6aa3b38aa acquired a claim but host validation rejected a changed validation manifest lacking accepted source attestation. No reviewer launched. Owner waiver 560fbf2d marks review blocked/manual. Host cleanup and liveness are unknown.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "campaign",
-      "workstream": "campaign-abandoned-station-containment-v1",
-      "occurred_at": "2026-11-02T09:32:20Z",
-      "bullets": [
-        "S3 implementation landed and was archived; independent review was waived, not passed.",
-        "Watch whether a separately authorized gameplay verification establishes normal revisit readback."
-      ],
-      "links": [
-        {
-          "title": "Implementation completion receipt",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/d5a21b534512584c2feaded5d7a5a58987b76005"
-        },
-        {
-          "title": "Archive transition",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/76272409061dd181fd08055250abd6715f4cded7"
-        },
-        {
-          "title": "Owner review waiver",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/560fbf2d60306b88f989c168185fe2e838246bf7"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "The Abandoned Alpine Station's final encounter can now resolve into one of two permanent, run-scoped outcomes. Its implementation reached main, but the independent reviewer never launched and the owner closed that review by waiver rather than acceptance.",
-        "sections": [
-          {
-            "heading": "A decision the station remembers",
-            "text": "After three timely services, players can maintain containment or shut down the coupling. The outcome is written once and cannot be replaced by repeat interactions. Expired events do not manufacture a choice."
-          },
-          {
-            "heading": "A missing gameplay proof",
-            "text": "The implementation's direct reconstruction smoke demonstrates persisted readback, but the ordinary same-run revisit path has not been verified. The host validation gate rejected the paired review before a reviewer could launch."
-          }
-        ],
-        "insights": [
-          {
-            "title": "A finished encounter is not a fully verified revisit",
-            "explanation": "The durable choice has implementation evidence, while player-accessible revisit behavior remains uncertain. The owner waiver closes review administration without changing that distinction."
-          }
-        ],
-        "takeaway": "S3 implementation landed and was archived; independent review was waived, not passed.",
-        "next_watch": "Watch whether a separately authorized gameplay verification establishes normal revisit readback."
-      },
-      "details": {
-        "overview": "S3 containment implementation ac471cb2 landed and archived at 76272409. Completion report says 7/7 changed-source checks passed. Review attempt 20261102T091856Z-aaa6aa3b38aa acquired a claim but host validation rejected a changed validation manifest lacking accepted source attestation. No reviewer launched. Owner waiver 560fbf2d marks review blocked/manual. Host cleanup and liveness are unknown.",
-        "ledger": [
-          {
-            "stage": "Implementation and archive",
-            "status": "verified landed and archived",
-            "evidence": "Commits ac471cb2 and 76272409"
-          },
-          {
-            "stage": "Validation",
-            "status": "reported 7/7 passed",
-            "evidence": "Completion receipt d5a21b53"
-          },
-          {
-            "stage": "Independent review",
-            "status": "owner-waived, not accepted",
-            "evidence": "560fbf2d; no reviewer verdict"
-          },
-          {
-            "stage": "Host teardown",
-            "status": "unknown",
-            "evidence": "No authenticated current host proof"
-          }
-        ],
-        "notes": [],
-        "unknowns": [
-          "Normal same-run revisit readback not established."
-        ],
-        "actions": [
-          "No follow-up authorized in the recorded waiver; new verification requires separate owner decision."
-        ]
-      },
-      "scorecard": {
-        "stage": "Landed and archived; independent review waived",
-        "as_of": "2026-11-02T10:12:19Z",
-        "scope": "Named Alpine Station S3 workstream only",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "S3 implementation landed",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "ac471cb2 and 76272409"
-          },
-          {
-            "label": "Source validation",
-            "status": "done",
-            "verification": "reported",
-            "evidence": "7/7 in completion receipt"
-          },
-          {
-            "label": "Independent reviewer",
-            "status": "blocked",
-            "verification": "verified",
-            "evidence": "Host validation rejected; owner waived review"
-          },
-          {
-            "label": "Normal revisit readback",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No end-to-end gameplay proof"
-          },
-          {
-            "label": "Host cleanup",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No authenticated host evidence"
-          }
-        ],
-        "next_gate": "Owner must separately authorize gameplay revisit verification if desired."
       },
       "related": []
     }
