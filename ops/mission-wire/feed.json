@@ -1,9 +1,163 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-02T18:55:51Z",
-  "source_main_sha": "4900dbee03f3a9992391c5f985d1c35d819dc7ae",
+  "generated_at": "2026-11-03T01:05:27Z",
+  "source_main_sha": "392639adcf96fbfc9db591b4fc09ba462fb7906c",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "empty-convoy-postland-qa-not-accepted-aea113b7",
+      "headline": "Empty Convoy fails its post-fix gameplay sign-off despite passing focused tests",
+      "summary": "A post-land manual check did not accept the Empty Convoy encounter correction. The Operator reached the prepared approach point, but the reviewer reported a possible scenario mismatch; the exact cause remains unknown. A separate documented QA checkout was safely retired, with host-reported disk recovery. Independent review remains outstanding.",
+      "body": "The security correction was previously landed and passed targeted headless tests. The subsequent authorized GUI check reached its prepared approach, but the human reviewer returned NOT_ACCEPTED and reported a possible encounter mismatch. No successful defense, custody trace or exactly-once salvage was confirmed. The post-land closeout receipt reports scoped evidence preservation and non-forced removal of one detached QA worktree, with disk free increasing by about 6.92 GiB. These are documented host observations, not independently remeasured by WIRE. The original gameplay failure is unresolved; no paired review PASS is established. Main also contains a subsequent whitespace-only receipt edit.",
+      "severity": "important",
+      "verification": "reported",
+      "category": "gameplay-systems",
+      "workstream": "campaign-empty-convoy-security-integrated-correction-v1",
+      "occurred_at": "2026-11-02T23:00:00Z",
+      "bullets": [
+        "Manual gameplay acceptance: NOT_ACCEPTED, per post-land QA receipt.",
+        "The prepared approach was reached; actual encounter success was not confirmed.",
+        "One detached QA worktree retired; 6.92 GiB disk recovery reported.",
+        "Root cause and independent review remain outstanding."
+      ],
+      "links": [
+        {
+          "title": "Post-land QA closeout receipt",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/aea113b72e261104bd7b3cad3cdf4078b593ef24"
+        },
+        {
+          "title": "Follow-up receipt formatting",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/392639adcf96fbfc9db591b4fc09ba462fb7906c"
+        },
+        {
+          "title": "Landed security correction",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/09e15e239da24757a9587b61314b4f62e08eba0e"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "Empty Convoy's security correction has met its first significant post-land obstacle: the human gameplay check did not accept it. The Operator reached the prepared encounter approach, but the reviewer still could not confirm that the intended scenario behaved correctly. Passing focused tests has not yet translated into a successful player-facing encounter.",
+        "sections": [
+          {
+            "heading": "The test reached the site, not the finish line",
+            "text": "The documented GUI run positioned the Operator for a manual check. The reviewer returned a possible scenario or encounter mismatch. No confirmed defender battle, custody trace or one-time salvage result followed, leaving the original failure unexplained."
+          },
+          {
+            "heading": "Cleanup succeeded on a narrower evidentiary footing",
+            "text": "The closeout record describes preservation of QA evidence, scoped cleanup and ordinary removal of a detached checkout. It reports one fewer attached worktree and about 6.92 GiB more free disk. WIRE has not independently inspected the host, so these are source-reported measurements, not live telemetry."
+          }
+        ],
+        "insights": [
+          {
+            "title": "A passing security test can miss a scenario mismatch",
+            "explanation": "The correction guards against treating failed enemy spawns as victory, but the manual outcome suggests the remaining problem may involve reaching or identifying the intended encounter. That possibility needs diagnosis, not an assumed fix."
+          },
+          {
+            "title": "A closed QA checkout does not close the gameplay issue",
+            "explanation": "The temporary test environment can be retired while the correction remains unaccepted. Cleanup and gameplay acceptance are distinct gates."
+          }
+        ],
+        "takeaway": "The fix is landed and test-backed, but the player-facing Empty Convoy outcome is not accepted; the root cause remains unconfirmed.",
+        "next_watch": "A source-bound diagnosis of the manual scenario mismatch, a fresh integrated retest and a separate independent review disposition."
+      },
+      "details": {
+        "overview": "Main SHA 392639adcf96fbfc9db591b4fc09ba462fb7906c. Post-land closeout published in aea113b7; later 392639ad removes a blank line only. The closeout reports manual acceptance NOT_ACCEPTED, source-bound QA checks passing, and scoped checkout removal. No independent host observation was obtained by this watch.",
+        "ledger": [
+          {
+            "stage": "Implementation and landing",
+            "status": "verified landed",
+            "evidence": "Correction commit c7bc9120 and landing 09e15e23 are ancestors of main."
+          },
+          {
+            "stage": "Focused tests",
+            "status": "reported PASS",
+            "evidence": "Source-bound security and startup validation in archived QA receipt."
+          },
+          {
+            "stage": "Manual gameplay acceptance",
+            "status": "reported NOT_ACCEPTED",
+            "evidence": "Human reviewer recorded possible scenario mismatch; no successful encounter recorded."
+          },
+          {
+            "stage": "Independent review",
+            "status": "unknown",
+            "evidence": "No accepted independent PASS receipt inspected."
+          },
+          {
+            "stage": "QA checkout cleanup",
+            "status": "reported completed",
+            "evidence": "Host-local receipt describes non-forced removal after evidence preservation; not independently remeasured."
+          }
+        ],
+        "notes": [
+          "Reported attached worktrees: 108 before and 107 after this specific QA closeout.",
+          "Reported disk free gain: 7,259,364 KiB (~6.92 GiB), scoped to that host operation."
+        ],
+        "unknowns": [
+          "Exact encounter mismatch and original failure cause.",
+          "Current host processes, other worktrees and claim/lock inventory."
+        ],
+        "actions": [
+          "Gameplay coordinator: diagnose scenario identity and reproduce player-facing behavior before accepting the correction.",
+          "Independent reviewer: issue separate review disposition after suitable evidence exists."
+        ]
+      },
+      "scorecard": {
+        "stage": "Landed; gameplay acceptance not achieved",
+        "as_of": "2026-11-03T01:05:27Z",
+        "scope": "Empty Convoy correction and one documented post-land QA checkout",
+        "metrics": [
+          {
+            "id": "qa-worktrees-retired",
+            "label": "QA WORKTREES RETIRED",
+            "value": 1,
+            "verification": "reported",
+            "basis": "One detached QA checkout removed, per post-land closeout receipt",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/aea113b72e261104bd7b3cad3cdf4078b593ef24"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Security correction landed",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "09e15e23 on main."
+          },
+          {
+            "label": "Focused source tests",
+            "status": "done",
+            "verification": "reported",
+            "evidence": "Archived source-bound PASS results."
+          },
+          {
+            "label": "Manual gameplay check",
+            "status": "blocked",
+            "verification": "reported",
+            "evidence": "Human acceptance NOT_ACCEPTED; mismatch possible."
+          },
+          {
+            "label": "Mismatch diagnosis and retest",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Root cause not yet confirmed."
+          },
+          {
+            "label": "Independent review acceptance",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No accepted review receipt."
+          },
+          {
+            "label": "Detached QA checkout cleanup",
+            "status": "done",
+            "verification": "reported",
+            "evidence": "Host-local closeout describes scoped non-forced retirement."
+          }
+        ],
+        "next_gate": "Gameplay coordinator to establish the exact scenario mismatch and run an integrated retest."
+      },
+      "related": []
+    },
     {
       "id": "operator-fast-attack-n-art-publish-4900dbee",
       "headline": "Operator fast-attack artwork reaches main, with six sprite assets updated",
@@ -1516,131 +1670,6 @@
           "title": "CUSTODIAN's inherited-history fix lands, but independent review finds a missing safety test",
           "context": "The preceding independent review raised R0-01, which prompted this bounded correction.",
           "story_id": "inherited-main-provenance-review-findings-9c9fb5c2"
-        }
-      ]
-    },
-    {
-      "id": "inherited-main-provenance-review-findings-9c9fb5c2",
-      "headline": "CUSTODIAN's inherited-history fix lands, but independent review finds a missing safety test",
-      "summary": "The inherited-main resume provenance correction landed and passed reported validation, but fresh independent review returned finding R0-01: missing focused real-Git positive/negative coverage for the host review consumer. The protected original summary-rename closeout remains blocked pending a human-authorized correction and fresh independent acceptance.",
-      "body": "Implementation source acc88b858 landed and its packet archived at 40b8126d. The implementation summary reports 9/9 selected validation checks passed, including 89 producer and 274 paired-review unit tests. Fresh different-agent review 20261101T225910Z-3be5be94e46a, recorded on main in 9c9fb5c2, returned findings R0-01, not PASS: the independent host consumer lacks focused real-Git positive/negative tests for the inherited-main classification. No specific bypass was found. The original protected summary-rename closeout remains blocked. The reviewer requests a human decision on narrowly scoped correction tests and fresh acceptance. Latest repository validation and packet-authoring handoff passed on main, but neither is independent acceptance. No current canonical dispatcher audit or host cleanup evidence was inspected.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "review-agent-workstream-inherited-main-resume-provenance-v1",
-      "occurred_at": "2026-11-01T23:15:51Z",
-      "bullets": [
-        "Implementation landed and archived at 40b8126d; 9/9 selected validation checks reported passing.",
-        "Independent review recorded findings R0-01, not an accepted PASS.",
-        "Add focused real-Git positive/negative tests for the independent host consumer only through authorized correction.",
-        "Preserve the original summary-rename claim until genuine fresh acceptance."
-      ],
-      "links": [
-        {
-          "title": "Implementation source",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/acc88b8585361c2a075f4f63499629bf0f22b168"
-        },
-        {
-          "title": "Implementation closeout",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/40b8126d6abdd57d36528b7e7f8efd68df2e88f6"
-        },
-        {
-          "title": "Independent review findings",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/9c9fb5c29c97c84d142184af7dfa6d2f41b52df7"
-        },
-        {
-          "title": "Independent reviewer summary",
-          "url": "https://github.com/braydio/CUSTODIAN/blob/9c9fb5c29c97c84d142184af7dfa6d2f41b52df7/REVIEW_AGENT_WORKSTREAM_INHERITED_MAIN_RESUME_PROVENANCE_V1_CLAUDE_SUMMARY.md"
-        },
-        {
-          "title": "Latest repository validation",
-          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41361284820"
-        },
-        {
-          "title": "Latest automatic handoff",
-          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41361284671"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN has landed a correction intended to let legitimate resumed work finish without mistaking inherited upstream commits for task-authored changes. Its independent reviewer found a material gap: the new reviewer-side classification lacks focused real-Git tests. The verdict is findings, not acceptance, so the original protected closeout remains blocked.",
-        "sections": [
-          {
-            "heading": "A correction reaches main",
-            "text": "The implementation now distinguishes a merge inherited through a documented clean resume from one authored by the workstream. It checks first-parent Git ancestry, deterministic merge trees and append-only diagnostic trace evidence. The implementation was archived as complete after reported 9/9 selected validation checks passed, including focused producer and paired-review suites. Landing and passing tests do not constitute independent acceptance."
-          },
-          {
-            "heading": "The reviewer identifies an untested decision",
-            "text": "The fresh, different-agent review found no specific bypass in the inspected code. But the independent host validator's new inherited-merge branch had no dedicated real-Git positive and negative cases proving it excludes inherited files while rejecting forged, mismatched or out-of-boundary histories. Broad test coverage does not establish that this particular authority decision was exercised. The reviewer recorded finding R0-01 and withheld PASS."
-          },
-          {
-            "heading": "The original closeout remains protected",
-            "text": "The reviewer requests a human decision on a narrowly scoped consumer-test correction followed by fresh independent acceptance. The original canonical summary-rename finish cannot resume on the strength of this landing alone. Separately, the WIRE exporter review still needs source attestation before its private transport can proceed; no live operational relay was verified."
-          }
-        ],
-        "insights": [
-          {
-            "title": "A landed fix can still fail the acceptance gate",
-            "explanation": "The implementation has reached main and its reported tests passed, but the independent reviewer identified missing evidence for the exact new decision branch. The distinction prevents a green test suite from silently becoming permission to resume a protected claim."
-          },
-          {
-            "title": "The missing tests belong to the independent consumer",
-            "explanation": "Producer tests exercise the completion-side rule. The host reviewer independently decides what source history to trust, so it needs its own adversarial real-Git proof that inherited changes are not misclassified as authored work."
-          }
-        ],
-        "takeaway": "The inherited-history correction has landed but is not independently accepted. The missing host-consumer adversarial evidence is the next gate, and the protected original closeout must remain untouched.",
-        "next_watch": "A human-authorized focused consumer-test correction, followed by a fresh independent PASS and only then an eligible original summary-rename recovery."
-      },
-      "details": {
-        "overview": "Source commit acc88b858 updates workstream finish and independent host source-span validation; closeout 40b8126d archives the implementation packet. The reviewer at 9c9fb5c2 independently inspected the change and reported finding R0-01. Review tests were not rerun by that reviewer. A repository CI success confirms the checked repository workflow, not acceptance or host teardown.",
-        "ledger": [
-          {
-            "stage": "Implementation source",
-            "status": "verified landed",
-            "evidence": "acc88b858 on main; producer and independent consumer updated."
-          },
-          {
-            "stage": "Implementation validation",
-            "status": "reported passing",
-            "evidence": "Closeout summary at 40b8126d reports 9/9 selected checks, producer suite 89 passed and paired-review suite 274 passed; original local report not independently retrieved."
-          },
-          {
-            "stage": "Implementation archive",
-            "status": "verified repository transition",
-            "evidence": "40b8126d moves implementation packet to archived/complete; host worktree teardown not independently observed."
-          },
-          {
-            "stage": "Independent review",
-            "status": "verified findings, not accepted",
-            "evidence": "9c9fb5c2 records fresh different-agent run 20261101T225910Z-3be5be94e46a and finding R0-01."
-          },
-          {
-            "stage": "Canonical original recovery",
-            "status": "blocked",
-            "evidence": "Reviewer explicitly says original summary-rename claim remains protected pending a human decision and fresh acceptance."
-          }
-        ],
-        "notes": [
-          "Current main is 9c9fb5c29c97c84d142184af7dfa6d2f41b52df7.",
-          "Latest GitHub Validate Repository and Automatic Packet Authoring Handoff succeeded on current main.",
-          "No complete canonical dispatcher audit was accessible; counts cannot be projected to the whole queue."
-        ],
-        "unknowns": [
-          "Current host claim/process, lock and worktree status and disk use were not independently observed.",
-          "Whether a narrowly scoped correction has been authorized after the findings is not evidenced.",
-          "Private WIRE observation producer, Dropbox transport acceptance and consumer retrieval are not verified."
-        ],
-        "actions": [
-          "Human owner: decide whether to authorize focused independent-consumer real-Git test coverage for R0-01.",
-          "Authorized correction owner, if approved: implement and validate positive/negative host-consumer fixtures without weakening source authentication.",
-          "Independent reviewer: provide fresh accepted PASS before any protected original summary-rename continuation."
-        ]
-      },
-      "related": [
-        {
-          "title": "CUSTODIAN clears a packet handoff for a provenance fix; protected closeout still awaits execution",
-          "context": "Earlier packet promotion established the correction workstream; this story reports its landed implementation and independent review outcome.",
-          "story_id": "inherited-main-resume-provenance-ready-5de7fa9f"
         }
       ]
     }
