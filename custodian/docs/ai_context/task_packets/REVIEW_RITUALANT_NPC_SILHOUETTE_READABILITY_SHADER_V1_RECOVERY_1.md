@@ -6,7 +6,7 @@
 - Kind: `review`
 - Status: `blocked`
 - Dispatch: `manual`
-- Authoring handoff: `auto`
+- Authoring handoff: `manual`
 - Priority: `P2`
 - Depends on: `ritualant-npc-silhouette-readability-shader-v1-recovery-1`
 - Locks: `ritualant-npc-presentation`

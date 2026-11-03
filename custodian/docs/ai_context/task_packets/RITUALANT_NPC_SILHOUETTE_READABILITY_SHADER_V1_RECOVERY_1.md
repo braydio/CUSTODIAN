@@ -5,7 +5,7 @@
 - Category: `assets-art`
 - Status: `blocked`
 - Dispatch: `manual`
-- Authoring handoff: `auto`
+- Authoring handoff: `manual`
 - Priority: `P2`
 - Depends on: `none`
 - Locks: `ritualant-npc-presentation`
