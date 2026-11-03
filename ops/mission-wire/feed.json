@@ -1,9 +1,154 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-03T01:05:27Z",
-  "source_main_sha": "392639adcf96fbfc9db591b4fc09ba462fb7906c",
+  "generated_at": "2026-11-03T01:41:32Z",
+  "source_main_sha": "a4e2930b8d979e705f8cdcec83be34836b1ecf48",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "ritualant-shader-recovery-handoff-3b06a904",
+      "headline": "Ritualant readability work gets a fresh recovery path, with implementation and review queued",
+      "summary": "CUSTODIAN has superseded an unfinished Ritualant silhouette shader workstream and published a replacement implementation/review pair as ready for automatic dispatch. The original is explicitly not accepted; no new shader implementation or independent PASS is established.",
+      "body": "Main now documents a supersession of the unfinished Ritualant silhouette readability shader and its original review. Replacement packets target restrained actor-local contrast in the production chapel without changing gameplay, source sprites, camera or collision. Commit 3b06a904 sets both replacement packets ready/auto; this is eligibility, not proof of claim or execution. The donor branch history was archived in the branch archive ledger. The latest commit a4e2930 changes Godot .import metadata, not evidence of a successful renderer preview. Next gate: a source-bound implementation and validation, followed by an independent review.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "assets-art",
+      "workstream": "ritualant-npc-silhouette-readability-shader-v1-recovery-1",
+      "occurred_at": "2026-11-03T01:11:01Z",
+      "bullets": [
+        "Original implementation and review explicitly superseded, not accepted.",
+        "Replacement implementation and paired review marked ready/auto in main packets.",
+        "No execution, shader landing, renderer acceptance or independent PASS verified.",
+        "Next: source-bound implementation and validation before paired review."
+      ],
+      "links": [
+        {
+          "title": "Supersession receipt",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/95384de10399ff8fe2ba51475a91f1e068f19d36"
+        },
+        {
+          "title": "Validation gate clarification",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/f8e674052158b929ca7b1be9d5acd063c6ca65ef"
+        },
+        {
+          "title": "Automatic handoff packet change",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/3b06a9042bc86e407be4d820aa02132ed8f626ae"
+        },
+        {
+          "title": "Archived donor history",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/518ff1c51dd863277a05db95bf99fe3563abcb83"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "A stalled Ritualant visibility improvement has a new route forward. CUSTODIAN has formally superseded the unfinished shader work and prepared a replacement implementation with its own independent review, without pretending the old attempt passed.",
+        "sections": [
+          {
+            "heading": "A narrow visual fix, not a redesign",
+            "text": "The replacement targets the Ritualant's silhouette against the busy chapel floor. Its packet preserves the existing sprites, encounter mechanics, camera and collision while asking for a restrained actor-local treatment."
+          },
+          {
+            "heading": "Ready to dispatch is not running",
+            "text": "Both replacement packets are now marked ready for automatic handoff in main. That records queue eligibility, not a claimed worker, finished shader or accepted review. The original work and review remain explicitly unaccepted."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Supersession preserves evidence without inheriting acceptance",
+            "explanation": "The donor history is archived while the replacement gets a clean implementation/review boundary. Old visual decisions can guide the new work, but cannot substitute for new source-bound validation."
+          },
+          {
+            "title": "The bottleneck moves from stale ownership to production proof",
+            "explanation": "The next useful evidence is a shader bound to the actual production actor, tested against alpha, atlas bleed and fade behavior, followed by an independent review."
+          }
+        ],
+        "takeaway": "The Ritualant recovery is now eligible for dispatch, but no new shader or accepted review has been demonstrated.",
+        "next_watch": "A landed replacement implementation with current-source validation, then a distinct independent review receipt."
+      },
+      "details": {
+        "overview": "Main inspected through a4e2930b8d979e705f8cdcec83be34836b1ecf48. Supersession 95384de, gate clarification f8e674, ready/auto handoff 3b06a904, archive record 518ff1c. Latest .import metadata changes do not establish gameplay or renderer success.",
+        "ledger": [
+          {
+            "stage": "Original shader and review",
+            "status": "verified superseded; not accepted",
+            "evidence": "95384de explicitly marks both unfinished."
+          },
+          {
+            "stage": "Replacement packet handoff",
+            "status": "verified ready/auto in GitHub",
+            "evidence": "3b06a904 packet changes; no host claim evidence."
+          },
+          {
+            "stage": "Implementation and validation",
+            "status": "unknown",
+            "evidence": "No replacement implementation landing or source-bound validation inspected."
+          },
+          {
+            "stage": "Independent review",
+            "status": "unknown",
+            "evidence": "No accepted independent PASS inspected."
+          },
+          {
+            "stage": "Donor archive",
+            "status": "verified archive ledger entry",
+            "evidence": "518ff1c documents preservation; host teardown not independently observed."
+          }
+        ],
+        "notes": [
+          "Private operational pilot pointer unavailable; full dispatcher counts not used."
+        ],
+        "unknowns": [
+          "Host claim, lock and execution state.",
+          "Current production render result and review outcome."
+        ],
+        "actions": [
+          "Implementation owner: execute only through existing authorized dispatcher process and record source-bound validation.",
+          "Independent reviewer: inspect exact replacement implementation after landing."
+        ]
+      },
+      "scorecard": {
+        "stage": "Replacement packets ready; implementation unverified",
+        "as_of": "2026-11-03T01:41:32Z",
+        "scope": "Two named replacement Ritualant packets on main only",
+        "metrics": [
+          {
+            "id": "replacement-packets-ready",
+            "label": "REPLACEMENT PACKETS READY",
+            "value": 2,
+            "verification": "verified",
+            "basis": "Named implementation and paired review both ready/auto in 3b06a904; review still depends on implementation",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/3b06a9042bc86e407be4d820aa02132ed8f626ae"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Original work superseded",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "95384de receipt"
+          },
+          {
+            "label": "Replacement packets prepared",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "3b06a904 ready/auto"
+          },
+          {
+            "label": "Implementation source and validation",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No landing or PASS inspected"
+          },
+          {
+            "label": "Independent paired review",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Dependent on implementation; no accepted receipt"
+          }
+        ],
+        "next_gate": "Implementation owner to produce source-bound shader validation before paired review."
+      },
+      "related": []
+    },
     {
       "id": "empty-convoy-postland-qa-not-accepted-aea113b7",
       "headline": "Empty Convoy fails its post-fix gameplay sign-off despite passing focused tests",
@@ -1493,185 +1638,6 @@
         "next_gate": "Watch for independent acceptance on other pending recovery reviews and evidence that protected closeouts are eligible."
       },
       "related": []
-    },
-    {
-      "id": "inherited-main-consumer-proof-correction-landed-b4a5fb6f",
-      "headline": "CUSTODIAN's provenance tests expose a real source-inventory defect; correction lands, review still ahead",
-      "summary": "A focused correction to CUSTODIAN's inherited-Git-history validation uncovered and fixed a real bug: upstream-only commits before a resumed merge were counted as task-owned files. The correction landed and its packet was archived. Its newly promoted independent review remains ready, not accepted, and protected closeout stays gated.",
-      "body": "A user-authorized correction for independent-review finding R0-01 landed on main. Real-Git tests showed that the validator excluded the inherited merge but still counted preceding upstream-only commits as workstream-owned. The patch now authenticates the complete claim-base-to-resume history, excludes that inherited prefix from authored paths, and rejects forged or inconsistent resume evidence. The implementation summary reports 275 consumer and 89 producer tests passing. The correction packet is archived/complete, but its fresh independent review packet is ready/auto and has not returned an accepted PASS. The prior nonpassing review is unchanged. The protected summary-rename closeout remains gated. Latest GitHub repository validation and automatic handoff succeeded, while one validation run was still in progress at inspection. No canonical dispatcher audit or private operational relay observation was available; host processes, locks, worktree teardown and disk status are unknown.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-workstream-inherited-main-resume-provenance-v1-review-corrections-1",
-      "occurred_at": "2026-11-02T00:35:29Z",
-      "bullets": [
-        "Real-Git tests exposed inherited upstream files incorrectly counted as task-authored.",
-        "Consumer provenance fix landed; correction implementation packet archived.",
-        "Independent correction review is ready/auto, not accepted.",
-        "Protected original closeout remains blocked pending fresh review acceptance."
-      ],
-      "links": [
-        {
-          "title": "Correction implementation and tests",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/f4e3259196c7b279f4b397dd24c6fe2b0c907288"
-        },
-        {
-          "title": "Correction packet archived",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/b4a5fb6f745333b0206fcd3c970792affa21f144"
-        },
-        {
-          "title": "Independent correction review packet",
-          "url": "https://github.com/braydio/CUSTODIAN/blob/b4a5fb6f745333b0206fcd3c970792affa21f144/custodian/docs/ai_context/task_packets/REVIEW_AGENT_WORKSTREAM_INHERITED_MAIN_RESUME_PROVENANCE_V1_REVIEW_CORRECTIONS_1.md"
-        },
-        {
-          "title": "Repository validation",
-          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41368674781"
-        },
-        {
-          "title": "Automatic packet handoff",
-          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41368303037"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "Tests intended to close a missing safety-proof gap found a real defect instead: CUSTODIAN's reviewer could mistake upstream files inherited during a task resume for files authored by that task. A narrow fix has now landed, but independent acceptance is still outstanding.",
-        "sections": [
-          {
-            "heading": "The bug was hiding before the merge",
-            "text": "The earlier correction taught CUSTODIAN to recognize a legitimate inherited Git merge. New real-repository tests revealed that the validator still included earlier upstream-only commits in its source inventory. That could misstate which files the task actually changed."
-          },
-          {
-            "heading": "A bounded fix with adversarial tests",
-            "text": "The new implementation checks the entire inherited history between the original claim and the resume event, not just the merge itself. It verifies identity, ancestry and tree consistency, excludes inherited paths from task-owned files, and rejects tampered or contradictory resume evidence."
-          },
-          {
-            "heading": "Why this is not yet an accepted closeout",
-            "text": "The correction landed and its implementation packet was archived. Its separate reviewer packet is ready for an independent challenge. The original review's finding remains nonpassing until that fresh review produces genuine acceptance. No local teardown or running process was verified."
-          }
-        ],
-        "insights": [
-          {
-            "title": "A missing test revealed a real ownership error",
-            "explanation": "R0-01 initially concerned absent consumer-side evidence. Adding realistic history tests exposed incorrect source attribution, showing why independent positive and adversarial cases matter beyond green unit-test totals."
-          },
-          {
-            "title": "Review acceptance remains a separate gate",
-            "explanation": "A landed patch and archived implementation packet do not override the earlier findings verdict. The new reviewer must challenge the corrected source-inventory boundary before protected closeout can resume."
-          }
-        ],
-        "takeaway": "The source-inventory defect is corrected on main, with fresh independent acceptance still required.",
-        "next_watch": "Watch for a canonical independent PASS on the correction's ready reviewer packet, followed by authorized reconsideration of the protected summary-rename closeout."
-      },
-      "details": {
-        "overview": "Implementation commit f4e3259 adds a real-Git fixture and changes paired_review_host_validation.py to authenticate the inherited first-parent prefix. Commit b4a5fb6 archives the implementation packet. The existing review finding R0-01 was not retroactively accepted. GitHub Actions validation succeeded on the latest SHA; host state was not inspected.",
-        "ledger": [
-          {
-            "stage": "Correction authorization and handoff",
-            "status": "verified published",
-            "evidence": "2b4e63b5 authorization and 75430438 handoff commits."
-          },
-          {
-            "stage": "Implementation and regression coverage",
-            "status": "verified landed; tests reported",
-            "evidence": "f4e3259 source diff and closeout summary report 275 consumer and 89 producer tests."
-          },
-          {
-            "stage": "Implementation archive",
-            "status": "verified GitHub archive transition",
-            "evidence": "b4a5fb6 packet status ready to complete; this is not proof of all host cleanup."
-          },
-          {
-            "stage": "Independent review",
-            "status": "ready/auto; not accepted",
-            "evidence": "Named review packet on main remains ready and depends on archived correction."
-          },
-          {
-            "stage": "Canonical teardown",
-            "status": "unknown",
-            "evidence": "No trustworthy current host cleanup evidence accessible."
-          }
-        ],
-        "notes": [
-          "Latest completed repository validation and automatic handoff succeeded.",
-          "A separate validation run was in progress at inspection; no final result inferred."
-        ],
-        "unknowns": [
-          "Full dispatcher counts, active host claims, locks, retained worktrees, and disk usage were not observed.",
-          "Private WIRE transport acceptance and readable observation are not verified."
-        ],
-        "actions": [
-          "Canonical dispatcher/authorized reviewer owner: establish eligibility and run the fresh independent correction review; require genuine accepted receipt before protected closeout."
-        ]
-      },
-      "scorecard": {
-        "stage": "Correction landed; fresh independent review ready",
-        "as_of": "2026-11-02T00:45:38Z",
-        "scope": "Named R0-01 correction implementation and paired review only; GitHub records, not host dispatcher audit",
-        "metrics": [
-          {
-            "id": "other-correction-archived",
-            "label": "IMPLEMENTATION ARCHIVED",
-            "value": 1,
-            "verification": "verified",
-            "basis": "One named correction implementation packet archived in b4a5fb6; not project-wide",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/b4a5fb6f745333b0206fcd3c970792affa21f144"
-          },
-          {
-            "id": "other-correction-review-ready",
-            "label": "REVIEW READY",
-            "value": 1,
-            "verification": "verified",
-            "basis": "One named correction review packet remains ready/auto on main",
-            "url": "https://github.com/braydio/CUSTODIAN/blob/b4a5fb6f745333b0206fcd3c970792affa21f144/custodian/docs/ai_context/task_packets/REVIEW_AGENT_WORKSTREAM_INHERITED_MAIN_RESUME_PROVENANCE_V1_REVIEW_CORRECTIONS_1.md"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Authorize bounded R0-01 correction",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "2b4e63b5 recorded authorization and packet publication."
-          },
-          {
-            "label": "Implement and test consumer fix",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "f4e3259 landed code and real-Git test fixture; closeout reports passing suites."
-          },
-          {
-            "label": "Archive implementation packet",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "b4a5fb6 archive transition on main."
-          },
-          {
-            "label": "Independent correction review",
-            "status": "next",
-            "verification": "verified",
-            "evidence": "Review packet is ready/auto, not accepted."
-          },
-          {
-            "label": "Canonical review teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No host receipt available."
-          },
-          {
-            "label": "Reconsider protected original closeout",
-            "status": "blocked",
-            "verification": "verified",
-            "evidence": "Requires genuine fresh independent acceptance."
-          }
-        ],
-        "next_gate": "Authorized dispatcher/reviewer owner must confirm eligibility and independently review the landed correction, with accepted PASS required before protected closeout."
-      },
-      "related": [
-        {
-          "title": "CUSTODIAN's inherited-history fix lands, but independent review finds a missing safety test",
-          "context": "The preceding independent review raised R0-01, which prompted this bounded correction.",
-          "story_id": "inherited-main-provenance-review-findings-9c9fb5c2"
-        }
-      ]
     }
   ],
   "snapshot": {
