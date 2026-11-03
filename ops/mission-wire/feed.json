@@ -1,9 +1,169 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-03T01:41:32Z",
-  "source_main_sha": "a4e2930b8d979e705f8cdcec83be34836b1ecf48",
+  "generated_at": "2026-11-03T02:56:24Z",
+  "source_main_sha": "a288181bcd9e66c9b2b3b7f444e40ee3a5f21728",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "ritualant-recovery-2-shader-landed-review-scope-blocked-a288181b",
+      "headline": "Ritualant shader lands with passing tests, but its independent review hits a provenance gate",
+      "summary": "The Ritualant silhouette shader is now on main with a reported 8/8 changed-file validation PASS. Its preserved independent review cannot proceed because two archived Markdown source files fall outside the declared review work surface. A narrowly scoped attestation and its own independent review are now ready for dispatch, not yet accepted.",
+      "body": "The replacement Ritualant readability shader and actor-local material are present on main. The implementation summary reports successful Godot import and 8/8 canonical changed-file tests, while noting existing texture UID fallback warnings. The original October visual approval is retained; fresh independent acceptance is not established. The recovery-2 review run is preserved after its source-scope gate rejected two historical Markdown files in the immutable archive. Main now contains a dedicated exact-source attestation implementation packet and paired review, both ready/auto. This is dispatch eligibility only. The attestation must land and receive its own accepted independent PASS before the preserved shader review can be resumed. No host execution or cleanup is verified.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "assets-art",
+      "workstream": "ritualant-npc-silhouette-readability-shader-v1-recovery-2",
+      "occurred_at": "2026-11-03T02:46:28Z",
+      "bullets": [
+        "Shader, material and presentation smoke landed on main.",
+        "Implementation reports 8/8 changed-file validation PASS; independent shader review remains unaccepted.",
+        "Review source-scope mismatch concerns exactly two archived Markdown files.",
+        "Attestation implementation and its paired review marked ready/auto; no execution proven.",
+        "Next: land and independently accept exact-source attestation before recovering preserved shader review."
+      ],
+      "links": [
+        {
+          "title": "Shader implementation archive",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/a45663a9b23d2e2818edd1531cbb5ac1aa231f58"
+        },
+        {
+          "title": "Attestation handoff",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/a288181bcd9e66c9b2b3b7f444e40ee3a5f21728"
+        },
+        {
+          "title": "Implementation summary",
+          "url": "https://github.com/braydio/CUSTODIAN/blob/a288181bcd9e66c9b2b3b7f444e40ee3a5f21728/RITUALANT_NPC_SILHOUETTE_READABILITY_SHADER_V1_RECOVERY_2_CLAUDE_SUMMARY.md"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "The Ritualant's chapel silhouette treatment has moved from a stalled proposal into the game source. Focused tests reportedly pass, but the independent review has encountered a narrow evidence-boundary problem, so the visual improvement is not yet accepted.",
+        "sections": [
+          {
+            "heading": "A visible improvement reaches the game source",
+            "text": "The new shader and material apply a restrained, actor-local contrast treatment to the Ritualant without rewriting its sprites or encounter rules. The implementation summary reports a successful import and eight passing changed-file checks. Existing texture-reference warnings did not fail those tests."
+          },
+          {
+            "heading": "The review is blocked by its own archive boundary",
+            "text": "The preserved reviewer found two Markdown files in the implementation archive that were not declared in its historical work surface. Rather than quietly expanding review authority, CUSTODIAN has queued a narrowly pinned attestation, itself requiring independent scrutiny before the original review can resume."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Green tests are not independent acceptance",
+            "explanation": "The shader exists and the implementation's focused checks reportedly pass, but neither proves a separate reviewer accepted its provenance and behavior."
+          },
+          {
+            "title": "The bottleneck is evidence scope, not a new art direction",
+            "explanation": "The earlier human visual decision remains the artistic baseline. The immediate dependency is proving exactly which historical files the reviewer may inspect, without granting broad exceptions."
+          }
+        ],
+        "takeaway": "The Ritualant treatment is landed and test-backed, but independent acceptance remains blocked on a source-scope correction.",
+        "next_watch": "A landed, independently accepted attestation followed by exact-run recovery and a genuine verdict from the preserved Ritualant reviewer."
+      },
+      "details": {
+        "overview": "Main inspected at a288181bcd9e66c9b2b3b7f444e40ee3a5f21728. The recovery-2 archive a45663a9 includes the shader, material, scene and smoke test. Its summary reports 8/8 changed-file PASS. The preserved review is blocked on two undeclared Markdown archive paths. The attestation packets are ready/auto only; host state unknown.",
+        "ledger": [
+          {
+            "stage": "Shader implementation",
+            "status": "verified landed",
+            "evidence": "Archive a45663a9 on main; shader/material/scene files present."
+          },
+          {
+            "stage": "Changed-file validation",
+            "status": "reported PASS",
+            "evidence": "Implementation summary reports 8/8; raw host report not independently inspected."
+          },
+          {
+            "stage": "Independent shader review",
+            "status": "blocked, no accepted verdict",
+            "evidence": "Preserved review source-scope rejection; no PASS receipt."
+          },
+          {
+            "stage": "Historical source attestation",
+            "status": "verified packets ready/auto",
+            "evidence": "a288181b handoff; implementation and independent review still required."
+          },
+          {
+            "stage": "Host cleanup",
+            "status": "unknown",
+            "evidence": "No independently readable host teardown observation."
+          }
+        ],
+        "notes": [
+          "No private pilot pointer available in connected Dropbox folder inventory."
+        ],
+        "unknowns": [
+          "Whether attestation has been claimed or executed on host.",
+          "Current dispatcher totals, process state and teardown."
+        ],
+        "actions": [
+          "Attestation implementation owner: land exact-source verifier with fail-closed tests.",
+          "Independent reviewer: accept or reject attestation before original review recovery."
+        ]
+      },
+      "scorecard": {
+        "stage": "Shader landed; independent review blocked",
+        "as_of": "2026-11-03T02:56:24Z",
+        "scope": "Ritualant recovery-2 shader and two named source-scope attestation packets",
+        "metrics": [
+          {
+            "id": "attestation-packets-ready",
+            "label": "ATTESTATION PACKETS READY",
+            "value": 2,
+            "verification": "verified",
+            "basis": "Named implementation and paired review marked ready/auto in a288181b; dependent review not executable until implementation",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/a288181bcd9e66c9b2b3b7f444e40ee3a5f21728"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Shader implementation landed",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "a45663a9 on main"
+          },
+          {
+            "label": "Focused validation",
+            "status": "done",
+            "verification": "reported",
+            "evidence": "8/8 PASS in implementation summary"
+          },
+          {
+            "label": "Shader review source-scope check",
+            "status": "blocked",
+            "verification": "verified",
+            "evidence": "Historical archive includes two undeclared Markdown files"
+          },
+          {
+            "label": "Exact-source attestation implementation",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Ready/auto packet only"
+          },
+          {
+            "label": "Attestation independent review",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Requires implementation and accepted PASS"
+          },
+          {
+            "label": "Resume preserved shader review",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Requires accepted attestation and separately authorized exact-run recovery"
+          }
+        ],
+        "next_gate": "Attestation implementation owner to land fail-closed exact-source correction, then independent reviewer to issue a genuine verdict."
+      },
+      "related": [
+        {
+          "title": "Ritualant readability work gets a fresh recovery path, with implementation and review queued",
+          "context": "Earlier recovery handoff preceded the shader landing and the newly exposed provenance gate.",
+          "story_id": "ritualant-shader-recovery-handoff-3b06a904"
+        }
+      ]
+    },
     {
       "id": "ritualant-shader-recovery-handoff-3b06a904",
       "headline": "Ritualant readability work gets a fresh recovery path, with implementation and review queued",
@@ -1528,114 +1688,6 @@
           }
         ],
         "next_gate": "Watch for the canonical independent review receipt and eligibility of the previously protected recovery."
-      },
-      "related": []
-    },
-    {
-      "id": "after-sync-witness-enforcement-42bb8d31",
-      "headline": "Review validator now requires green after-sync evidence; owner waives its new paired review",
-      "summary": "A new host-consumer check rejects changed-main synchronization merges without a unique, correctly bound green validation witness. The implementation landed and was archived, but its prospective independent review was explicitly waived, not passed.",
-      "body": "The after-sync consumer enforcement landed on main at 42bb8d31. The implementation summary reports 278 runner and 88 workstream tests passing, plus focused witness checks. The host consumer now rejects missing, duplicate, stale, reused or misbound validation witnesses. The source report explicitly states that digest provenance does not establish access to the report bytes. The owner waived prospective independent review for this exact workstream and marked its review packet blocked/manual. Historical human_required findings remain unchanged. Reported host disk state is historical and not a current measurement.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-paired-review-after-sync-consumer-enforcement-v1",
-      "occurred_at": "2026-11-02T04:11:15Z",
-      "bullets": [
-        "After-sync witness enforcement is landed; prospective independent review was waived, not passed.",
-        "Watch for independent acceptance on other pending recovery reviews and evidence that protected closeouts are eligible."
-      ],
-      "links": [
-        {
-          "title": "Source landing and closeout",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/42bb8d3162f33c18fc99039cf548e1378e017e23"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN's independent host validator now demands a correctly matched green validation witness whenever a task synchronizes with changed main. The implementation is landed, but its prospective independent review was owner-waived rather than accepted.",
-        "sections": [
-          {
-            "heading": "A stronger check on synchronization",
-            "text": "The consumer rejects missing, duplicate, out-of-order, stale or mismatched validation witnesses. It binds each witness to the synchronization merge and source identity."
-          },
-          {
-            "heading": "The proof has limits",
-            "text": "The recorded digest identifies a validation report but does not give the consumer its bytes to re-hash. The owner explicitly waived this workstream's prospective paired review; earlier human-required findings remain intact."
-          }
-        ],
-        "insights": [
-          {
-            "title": "A digest is not the report",
-            "explanation": "The consumer can authenticate trace provenance but cannot claim it independently verified inaccessible report bytes. This distinction matters when deciding what a green witness proves."
-          },
-          {
-            "title": "Waived does not mean accepted",
-            "explanation": "The owner-authorized review waiver allows a specific implementation disposition without creating an independent PASS or rewriting the historical findings."
-          }
-        ],
-        "takeaway": "After-sync witness enforcement is landed; prospective independent review was waived, not passed.",
-        "next_watch": "Watch for independent acceptance on other pending recovery reviews and evidence that protected closeouts are eligible."
-      },
-      "details": {
-        "overview": "The after-sync consumer enforcement landed on main at 42bb8d31. The implementation summary reports 278 runner and 88 workstream tests passing, plus focused witness checks. The host consumer now rejects missing, duplicate, stale, reused or misbound validation witnesses. The source report explicitly states that digest provenance does not establish access to the report bytes. The owner waived prospective independent review for this exact workstream and marked its review packet blocked/manual. Historical human_required findings remain unchanged. Reported host disk state is historical and not a current measurement.",
-        "ledger": [
-          {
-            "stage": "Implementation landing",
-            "status": "verified on main",
-            "evidence": "https://github.com/braydio/CUSTODIAN/commit/42bb8d3162f33c18fc99039cf548e1378e017e23"
-          },
-          {
-            "stage": "Independent review",
-            "status": "owner-waived; no PASS",
-            "evidence": "Owner waiver recorded in landing summary; historical findings unchanged."
-          },
-          {
-            "stage": "Canonical host teardown",
-            "status": "unknown",
-            "evidence": "No current authenticated host evidence accessible."
-          }
-        ],
-        "notes": [],
-        "unknowns": [
-          "Current dispatcher audit, host locks, processes, worktree disposition and disk status are unavailable."
-        ],
-        "actions": [
-          "Watch for independent acceptance on other pending recovery reviews and evidence that protected closeouts are eligible."
-        ]
-      },
-      "scorecard": {
-        "stage": "Landed; prospective review waived",
-        "as_of": "2026-11-02T05:46:04Z",
-        "scope": "Named implementation and paired-review evidence only; GitHub partial coverage",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Implementation landed",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "https://github.com/braydio/CUSTODIAN/commit/42bb8d3162f33c18fc99039cf548e1378e017e23"
-          },
-          {
-            "label": "Canonical validation",
-            "status": "done",
-            "verification": "reported",
-            "evidence": "Reported passing selected checks in implementation summary."
-          },
-          {
-            "label": "Independent review",
-            "status": "unknown",
-            "verification": "reported",
-            "evidence": "Owner waiver, no independent PASS."
-          },
-          {
-            "label": "Host cleanup",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No current host proof."
-          }
-        ],
-        "next_gate": "Watch for independent acceptance on other pending recovery reviews and evidence that protected closeouts are eligible."
       },
       "related": []
     }
