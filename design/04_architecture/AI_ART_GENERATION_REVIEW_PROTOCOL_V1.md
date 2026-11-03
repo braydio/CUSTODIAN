@@ -5,7 +5,17 @@
 **Does not supersede:** `custodian.asset_family.v2` / Asset Pipeline V2; specific design/level layout authorities; specialized Operator pixel-art/animation tooling; the existing reviewed handoff installer; active workstream dispatch, review gates or human approval.  
 **Current production example:** [Hub Sepulcher, First-Set Hub and Awakening Artwork V1](HUB_SEPULCHER_AWAKENING_ART_V1_MANIFEST.md) and its [84-entry JSON](HUB_SEPULCHER_AWAKENING_ART_V1_MANIFEST.json).
 
-## Decision in one sentence
+## Candidate-only automated art lane (2026-11-03; controlling dispatch rules)
+
+**Codex's only artwork instructions:** `GENERATE_ASSET`, `REVIEW_ASSET`, `UPLOAD_ASSET_TO_DROPBOX`, each with exact current manifest `set_id` and `asset_id`(s). No other Codex command is valid inside this browser artwork session. The ChatGPT coordination session owns design/manifest reconciliation separately. Never confuse an AI candidate review with user art approval.
+
+A source with independent actual image bytes, a **PASS_CANDIDATE** visual/objective screen and a verified `/CUSTODIAN/candidate_staging/hub-sepulcher-awakening-art-v1` upload (file ID, revision, path, checksum) completes **candidate production for that state**, even if human_image_approval is pending. It does not authorize source_work/inbox, asset family registration, Asset V2, gameplay, or source approval. A failing candidate must regenerate the SAME manifest asset, not advance. A true geometry/neighbor/owner dependency is **DEFERRED_REQUIRED** with exact set/asset, blocker, owner and resolution; only independent later candidates may proceed; deferred required states remain incomplete and must be revisited. All 72 required states must be staged before candidate-complete; 12 optional states require separate explicit authorization.
+
+CAL-01 candidate-only staging: SHA-256 `5bf414069ea9c70139fa0ffe5ceee3378e2c226f22fb76e8a55e46a7e14773d2`, Dropbox `id:8NXqdXuW6GUAAAAAAAAHEw`, revision `65f57a8e1c486915cdd61`; AI-screened PASS_CANDIDATE, **NOT human source approved**. CAL-02 `hub_first_set_sepulcher_gardens_environment/structural_presentation` has an obsolete 1152×1408 source/prompt and remains DEFERRED_REQUIRED pending a valid modular structure/footprint. Next independently candidate-eligible set: **CAL-03**, `hub_sepulcher_grave_evidence_art/memorial_slab`. This does not mean CAL-02 is skipped or approved. Only actual complete candidate receipts can advance the staging cursor. User production approvals are separately tracked.
+
+For transparent assets report visually apparent transparency, any matte/checkerboard, and uncertainty, then verify true alpha from actual bytes. For opaque CAL-01: transparency NOT APPLICABLE. Existing paving reference sources remain unapproved; no image-conditioning claim without actual input evidence.
+
+## Decision in one sentence (source-production baseline)
 
 **Queue 5–10 manifest states for organized planning, generate high-consequence states one independently reviewed image at a time, and after visual calibration use only small, compatible generation groups (usually 2–3), while approving and recording each actual asset individually.** Never generate ten different production assets as one combined atlas and treat its crops as ten approved images.
 
@@ -36,26 +46,26 @@ The live Sepulcher Gardens instead use a 3072×2688 authoring envelope and autho
 
 **This is an executable shorthand, not a request to discuss the next images.** When the user says **"generate the next set"**, **"next art set"**, or **"next image set"** within CUSTODIAN without specifying another named art program, use the active default `hub-sepulcher-awakening-art-v1` and its JSON at `design/04_architecture/HUB_SEPULCHER_AWAKENING_ART_V1_MANIFEST.json`. A user may instead explicitly name a different program; do not silently apply this program's asset queue to it.
 
-The JSON has `generation_sets_contract` plus a complete ordered `generation_sets` list. **Each set specifies its exact image IDs and cardinality.** It already excludes the five CAL-A states when they recur in downstream stage lists. The `checkpoint.next_generation_set_id` is a convenience hint, not the sole authority.
+The JSON has `generation_sets_contract` plus a complete ordered `generation_sets` list. **Each set specifies its exact image IDs and cardinality.** It already excludes the six CAL-A states when they recur in downstream stage lists. The `checkpoint.next_generation_set_id` is a convenience hint, not the sole authority.
 
 ### Deterministic dispatch steps
 
 1. Read current GitHub `main`, this protocol, the JSON, and any more recent genuine source/approval receipts. Reconcile actual saved source hashes, verified Dropbox revisions, current active workstream claims and Asset V2 status. Never infer absence solely from an empty original JSON checkpoint.
-2. In `generation_sets` ascending `order`, choose the earliest set **not completely individually human-approved**. For generated but unreviewed candidates, bring the *existing* images to user review (if recoverable) rather than proceeding to a new set or gratuitously regenerating them. For partially approved sets, select only remaining missing states. Do not choose a different set to avoid a blocker.
-3. Enforce that set's `release_gate`, any human-reviewed family reference images and exact upstream scene contracts. If genuinely unavailable, state the specific blocker and stop without claiming generation success. The six CAL-A sets are absolutely one image each; subsequent sets have predefined 1- or 2-image cardinalities, allowing compatible paired props only after appropriate style approval.
+2. For candidate-only staging, select the earliest required set without real PASS_CANDIDATE staging receipts. If a true geometry/neighbor/owner blocker exists, record it DEFERRED_REQUIRED with exact asset ID, preserve it as incomplete, and proceed only to a later independent eligible state. Human source approval is tracked separately. Review existing candidate bytes before creating duplicates.
+3. Enforce all HARD geometry/scene/neighbor requirements for candidates, not human production source approval. Six CAL-A sets remain one distinct image each. Preserve existing AP1–AP4 and Dust Lung DL0 owners; defer required states whose actual candidate source contract is unsafe.
 4. For each eligible missing candidate **invoke the image generator immediately**, using that state entry's **complete** `image_generation_prompt` and format/anchor/alpha/frame constraints. Use approved reference imagery if accessible, but never claim image conditioning if the reference could not actually be supplied. Multi-state sets require **two independent outputs**, ideally separate per-state tool calls: `n=2` of a single prompt is *not* two different state images. Never substitute a labeled 2-up or ten-up atlas.
-5. Present actual image(s) for human review, identify their manifest IDs and report objective issues or required corrections. **Generation does not advance approval automatically.** Record the decision and real source hashes/receipts through the existing workflow. On a follow-up "generate the next set" without approval of an outstanding generated image, return to its review gate; do not skip it.
-6. After every image of the current set is explicitly human-approved, the next identical shorthand selects the next set. Source/Dropbox staging may then be batched separately as previously defined. If all 72 core states are complete, say so; the 12 conditional/optional states require separate explicit authorization and never appear automatically.
+5. REVIEW_ASSET must inspect the actual independent PNG and record visual/artistic screening distinctly from byte-level format, alpha, frame and geometry checks. A candidate failure returns REGENERATE of the SAME asset; PASS_CANDIDATE is not human approval.
+6. UPLOAD_ASSET_TO_DROPBOX uploads only a PASS_CANDIDATE to the authorized candidate lane, verifies real file ID/revision/path/checksum, and records it. Once every state in a set has a verified receipt, advance the candidate cursor even if human production approval is pending. Do not claim all core candidates complete while any required set is deferred. Optional states excluded unless explicitly authorized.
 
 ### Initial deterministic answer
 
-Under the current reconciled baseline, **the next set is `CAL-01`**, exactly **one image**: `hub_first_set_sepulcher_gardens_environment/underlay`, **512×512 opaque seamless repeatable material**, one static frame. Its source does NOT depict or own the full Gardens geometry. After CAL-01 approval the successor is `CAL-02`: one separate RGBA `structural_presentation` source, BLOCKED pending approved structural/collision footprint. Memorial slab follows as `CAL-03`. Do not assume these remain next after later receipts.
+Current candidate resume: **CAL-01** has verified PASS_CANDIDATE candidate-staging receipt, **CAL-02** is DEFERRED_REQUIRED for obsolete structure footprint/source; **CAL-03** with exactly `hub_sepulcher_grave_evidence_art/memorial_slab` is next independent candidate production set. Human production source approval cursor remains at CAL-01.
 
 **Do not conflate**: a *planning queue* may hold 5–10 forthcoming states; a *generation set* is the fixed next 1- or 2-image execution group; a *handoff batch* can consolidate multiple already-approved sources. These separate units eliminate ambiguity in ordinary conversational commands.
 
 ## First six: mandatory one-image calibration gate for this program
 
-The Hub/Sepulcher/Awakening manifest's CAL-A queue must be handled one at a time, with corrections and explicit human approval before proceeding:
+The Hub/Sepulcher/Awakening CAL-A queue requires one independent image per set. During candidate automation, stage each screened candidate before advancing; human source approval is still required separately for production:
 
 1. `hub_first_set_sepulcher_gardens_environment/underlay` — one 512×512 opaque repeatable walkable-ground-only candidate, clipped to the authored irregular mask at runtime, no walls.
 2. `hub_first_set_sepulcher_gardens_environment/structural_presentation` — separately aligned RGBA architecture; blocked pending structural/collision plan.
@@ -144,8 +154,8 @@ No field may be backfilled with a guess. Always distinguish user approval of the
 1. **Which image or what size/prompt?** Open `HUB_SEPULCHER_AWAKENING_ART_V1_MANIFEST.json` (or the applicable newer program manifest); inspect family/state entry and source authority.
 2. **How many images should be generated together?** Use the table and style-lock prerequisites in this document; choose 1 whenever dependency, architecture or provenance is uncertain.
 3. **What reference or style?** Use the latest *human-approved* specific family reference and live adjacent art; if absent, stay at 1 and seek visual approval.
-4. **Can it be uploaded?** Verify human image approval, source identity, dimensions and hashes; follow the real handoff schema and Dropbox lifecycle.
+4. **Can it be uploaded?** For candidate staging require PASS_CANDIDATE and verified source identity, dimensions/hash and Dropbox receipt. For production source handoff require explicit human image approval and the full asset handoff contract.
 5. **Can Codex ingest or bind it?** Check Asset Pipeline V2, active packet/dispatcher and scene authority; source approval alone does not authorize a runtime cutover.
 6. **What already happened?** Read latest GitHub ledger plus actual Dropbox and pipeline records, not last chat's optimistic summary. If there is a conflict, record discrepancy and investigate it before proceeding.
 
-**Next candidate-production step after this reconciliation lands on main:** generate exactly one `hub_first_set_sepulcher_gardens_environment/underlay` 512×512 opaque repeatable floor candidate for automated technical/visual screening, using the freshly reconciled state-specific prompt. Do not begin with a ten-image generation call.
+**Next candidate-only action:** CAL-03 `hub_sepulcher_grave_evidence_art/memorial_slab` (one independent source), while CAL-02 remains deferred required. Keep 72 core states in scope, optional states excluded.
