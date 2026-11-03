@@ -1,9 +1,158 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-03T07:52:08Z",
-  "source_main_sha": "50fd76fdb6e85d6bf11d01bce7c5e9ee26f5df62",
+  "generated_at": "2026-11-03T08:34:00.242Z",
+  "source_main_sha": "27afd56f876ff63d7c084dea853189ecf5f8ae36",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "alpine-cliff-bunker-design-manifest-27afd56f",
+      "headline": "Alpine cliff bunker gains a room-by-room design, but its entrance is not playable yet",
+      "summary": "A new locked design maps a reversible cliff-bunker entrance, antechamber and later service rooms. Its 26 planned art states span five proposed families, but geometry, source approvals, registration and runtime work remain pending.",
+      "body": "CUSTODIAN has committed a design and production plan for an enterable Alpine cliff bunker. The plan separates walkable ground, scenic walls, architecture, doors and dressing so the Operator can enter and exit a real space rather than a painted cutaway. The 26-state inventory is planning only: 14 initial, nine later and three optional. Two inspected transparent image references are composition guides, not approved production art. No room geometry, Asset V2 registration, runtime binding, independent review or playable entrance is established by this commit. The next gate is a no-art real-Operator blockout to establish reversible ingress, collision, floor masks and door anchors before producing final assets.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "alpine-cliff-bunker-v1",
+      "occurred_at": "2026-11-03T08:05:18Z",
+      "bullets": [
+        "Design and production plan landed on main.",
+        "26 planned states: 14 initial, nine later, three optional.",
+        "Five art families proposed, none registered.",
+        "No-art Operator blockout is the next gate.",
+        "No playable runtime or independent acceptance is claimed."
+      ],
+      "links": [
+        {
+          "title": "Design and manifest commit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/27afd56f876ff63d7c084dea853189ecf5f8ae36"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "The Alpine cliff bunker now has a concrete plan for becoming somewhere the Operator can actually enter. The new design replaces the temptation to treat a dramatic cutaway as a playable room with a sequence of physical spaces, starting at the snowy approach and antechamber.",
+        "sections": [
+          {
+            "heading": "From scenery to a traversable place",
+            "text": "The design calls for reversible ingress, a physical threshold and antechamber, then service and control rooms in a later stage. Walkable floors and collision must be established independently of decorative scenery. That distinction matters because a beautiful cliff illustration alone cannot tell the game where a character may stand or pass."
+          },
+          {
+            "heading": "The art inventory is mapped, not delivered",
+            "text": "The manifest names 26 states across five proposed asset families: 14 for the initial pass, nine for expansion and three optional. Two transparent 1254-pixel references were inspected as composition guides, but are not approved source assets. Exact floor masks, room canvases and door anchors are still pending."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Geometry before paint",
+            "explanation": "A no-art blockout with the real Operator is the first production gate. It prevents later art from forcing fake entrances, mismatched floors or blocked traversal."
+          },
+          {
+            "title": "A manifest is not an asset shipment",
+            "explanation": "The commit locks scope and naming but does not register Asset V2 families, bind runtime resources or provide independently accepted gameplay."
+          }
+        ],
+        "takeaway": "The bunker has a credible production blueprint, not a playable implementation.",
+        "next_watch": "Watch for the no-art Operator traversal blockout and exact floor, collision and door-anchor geometry before source approval and asset registration."
+      },
+      "details": {
+        "overview": "Main commit 27afd56f introduces the Alpine Cliff Bunker enterable design, G0–G6 production plan and 26-state planning manifest. Source main SHA in the manifest references its preceding baseline. Two RGBA references are marked composition-only, unavailable in the repo and unapproved.",
+        "ledger": [
+          {
+            "stage": "Design and planning manifest",
+            "status": "verified landed",
+            "evidence": "Commit 27afd56f on main; 26 states and five proposed families."
+          },
+          {
+            "stage": "No-art Operator geometry blockout",
+            "status": "pending",
+            "evidence": "Floor masks, canvases, anchors and projection registration remain null."
+          },
+          {
+            "stage": "Source approval and Asset V2",
+            "status": "not completed",
+            "evidence": "No approved/uploaded production source or registered family."
+          },
+          {
+            "stage": "Runtime and independent acceptance",
+            "status": "not completed",
+            "evidence": "Manifest explicitly says runtime not implemented and review not performed."
+          }
+        ],
+        "notes": [
+          "Initial stage 14 states; later stage nine; optional three.",
+          "Existing Alpine Station and connected-bunker work are separate."
+        ],
+        "unknowns": [
+          "Host execution, locks, teardown and full dispatcher totals are not available.",
+          "No runtime traversal evidence or independent PASS."
+        ],
+        "actions": [
+          "Game/level implementation owner: build the reversible no-art Operator ingress blockout and capture exact geometry before art production."
+        ]
+      },
+      "scorecard": {
+        "stage": "Design locked; production not started",
+        "as_of": "2026-11-03T08:05:18Z",
+        "scope": "Alpine cliff bunker V1 planning manifest only",
+        "metrics": [
+          {
+            "id": "planned_states",
+            "label": "PLANNED ART STATES",
+            "value": 26,
+            "verification": "verified",
+            "basis": "26 manifest entries: 14 v1a, nine v1b, three optional",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/27afd56f876ff63d7c084dea853189ecf5f8ae36"
+          },
+          {
+            "id": "proposed_families",
+            "label": "PROPOSED FAMILIES",
+            "value": 5,
+            "verification": "verified",
+            "basis": "Five proposed-only family records in the manifest",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/27afd56f876ff63d7c084dea853189ecf5f8ae36"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Design and manifest",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Main commit 27afd56f."
+          },
+          {
+            "label": "No-art geometry and traversal",
+            "status": "next",
+            "verification": "verified",
+            "evidence": "Production plan G0–G6 requires real Operator blockout."
+          },
+          {
+            "label": "Human-approved source art",
+            "status": "unknown",
+            "verification": "verified",
+            "evidence": "Manifest says not approved or uploaded."
+          },
+          {
+            "label": "Asset V2 registration and runtime",
+            "status": "unknown",
+            "verification": "verified",
+            "evidence": "No family registration or runtime implementation."
+          },
+          {
+            "label": "Independent acceptance",
+            "status": "unknown",
+            "verification": "verified",
+            "evidence": "No review performed."
+          }
+        ],
+        "next_gate": "Level implementation owner: validate no-art reversible Operator traversal and exact door/floor geometry."
+      },
+      "related": [
+        {
+          "title": "Sepulcher art pipeline records its first staged candidate while keeping production approval separate",
+          "context": "Both programs distinguish candidate/reference imagery from approved runtime art.",
+          "story_id": "hub-art-candidate-staging-cal01-cal03-4b65fba4"
+        }
+      ]
+    },
     {
       "id": "license-proprietary-history-preserved-50fd76fd",
       "headline": "CUSTODIAN clarifies ownership of original game material while preserving earlier MIT grants",
@@ -1621,143 +1770,6 @@
           "story_id": "empty-convoy-placement-landed-0cdb0c8c"
         }
       ]
-    },
-    {
-      "id": "empty-convoy-placement-landed-0cdb0c8c",
-      "headline": "Empty Convoy enters generated worlds, with safe placement and an inspectable manifest",
-      "summary": "CUSTODIAN has landed an optional Empty Convoy encounter pocket. Four seeded smoke cases reportedly produced three placements and one safe skip; the implementation packet is archived, but independent review and player-facing validation are not established.",
-      "body": "Commit 47fd0755 adds a 12×10 optional Empty Convoy scene and deterministic placement in the main playable component, with route and objective clearance. The scene shows three wreck silhouettes, an empty cargo cradle, and an inspectable dispatch manifest. The completion receipt reports four seeded smoke cases (three placements, one safe skip) and 5/5 selected changed-source checks. Commit 0cdb0c8c archives the implementation packet. No independent reviewer PASS or host cleanup evidence was inspected.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "campaign",
-      "workstream": "campaign-empty-convoy-placement-v1",
-      "occurred_at": "2026-11-02T10:15:03Z",
-      "bullets": [
-        "Optional encounter placement and source archive are verified.",
-        "Independent review, in-game visual acceptance, and host teardown remain unverified."
-      ],
-      "links": [
-        {
-          "title": "Empty Convoy implementation",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/47fd0755203dc22fb7149889253154741c78689b"
-        },
-        {
-          "title": "Implementation archive",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/0cdb0c8c8b583a166df06315a3ec01119ce675c1"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "An abandoned convoy can now appear as an optional discovery in CUSTODIAN's generated world. Its placement is designed to leave essential routes untouched, while its empty cargo cradle and unanswered manifest introduce a new thread for exploration.",
-        "sections": [
-          {
-            "heading": "A roadside mystery that does not block the road",
-            "text": "The new pocket contains three outward-facing wrecks, an empty central cradle, and a manifest marked as unacknowledged. It appears only when a safe 12-by-10-tile site exists in the playable map; unsuitable seeds skip it rather than forcing a broken placement."
-          },
-          {
-            "heading": "The first slice is placement, not the full event",
-            "text": "The implementation and packet archive are on main. Its completion report records three successful placements and one safe skip across four seeds, plus five selected validation checks passing. Independent review and full player-facing behavior remain unverified."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Optional encounters can preserve world-generation guarantees",
-            "explanation": "A deterministic skip is part of the feature, not a failure. It allows authored discoveries without sacrificing navigation or mandatory objectives."
-          },
-          {
-            "title": "The mystery has a foothold, not a finished storyline",
-            "explanation": "This first slice establishes a place and an inspectable clue. Recovery and security follow-ups remain separate work, and the placement implementation has no verified independent PASS."
-          }
-        ],
-        "takeaway": "Empty Convoy placement landed and was archived; its broader event chain and independent acceptance remain outstanding.",
-        "next_watch": "Watch for independent review and the next convoy recovery slice, with host and gameplay evidence kept distinct."
-      },
-      "details": {
-        "overview": "Source implementation 47fd0755; completion and archive at 0cdb0c8c. Committed completion text reports four-seed smoke with three placements and one safe skip, and 5/5 selected checks. The current GitHub evidence does not establish an accepted independent review, actual host teardown, or live game session.",
-        "ledger": [
-          {
-            "stage": "Placement implementation",
-            "status": "verified landed",
-            "evidence": "47fd0755 adds site, scene, deterministic inserter and smoke test."
-          },
-          {
-            "stage": "Source validation",
-            "status": "reported passing",
-            "evidence": "Archived completion records 5/5 checks and four-seed smoke."
-          },
-          {
-            "stage": "Packet archive",
-            "status": "verified",
-            "evidence": "0cdb0c8c moves packet to archived/complete."
-          },
-          {
-            "stage": "Independent review",
-            "status": "unknown",
-            "evidence": "No accepted PASS inspected."
-          },
-          {
-            "stage": "Host teardown",
-            "status": "unknown",
-            "evidence": "No authenticated host evidence."
-          }
-        ],
-        "notes": [],
-        "unknowns": [
-          "No independently accepted gameplay review inspected."
-        ],
-        "actions": [
-          "Coordinator: inspect the exact paired review eligibility and obtain a genuine verdict before calling this independently accepted."
-        ]
-      },
-      "scorecard": {
-        "stage": "Placement landed; independent review not verified",
-        "as_of": "2026-11-02T10:54:23Z",
-        "scope": "Named Empty Convoy placement packet only",
-        "metrics": [
-          {
-            "id": "other-seed-cases",
-            "label": "SMOKE SEEDS",
-            "value": 4,
-            "verification": "reported",
-            "basis": "Four seeded cases in archived completion receipt; three placed and one safe skip",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/0cdb0c8c8b583a166df06315a3ec01119ce675c1"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Placement code landed",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "47fd0755"
-          },
-          {
-            "label": "Seed smoke and changed-file checks",
-            "status": "done",
-            "verification": "reported",
-            "evidence": "4 seed cases and 5/5 checks in completion receipt"
-          },
-          {
-            "label": "Implementation archived",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "0cdb0c8c"
-          },
-          {
-            "label": "Independent review",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No PASS inspected"
-          },
-          {
-            "label": "Host teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No host evidence"
-          }
-        ],
-        "next_gate": "Coordinator verifies independent review status before further acceptance claims."
-      },
-      "related": []
     }
   ],
   "snapshot": {
