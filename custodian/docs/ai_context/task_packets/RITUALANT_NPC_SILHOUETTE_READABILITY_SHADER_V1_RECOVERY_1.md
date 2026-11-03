@@ -3,8 +3,8 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `ritualant-npc-silhouette-readability-shader-v1-recovery-1`
 - Category: `assets-art`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P2`
 - Depends on: `none`

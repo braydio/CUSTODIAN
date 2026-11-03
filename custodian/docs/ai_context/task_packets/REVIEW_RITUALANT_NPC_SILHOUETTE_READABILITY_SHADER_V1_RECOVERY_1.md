@@ -4,8 +4,8 @@
 - Workstream: `review-ritualant-npc-silhouette-readability-shader-v1-recovery-1`
 - Category: `assets-art`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P2`
 - Depends on: `ritualant-npc-silhouette-readability-shader-v1-recovery-1`
