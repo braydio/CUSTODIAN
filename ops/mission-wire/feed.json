@@ -1,9 +1,181 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-03T11:59:31Z",
-  "source_main_sha": "b83e268b03aaeebf2ca6f10eb481d45760ed3ebd",
+  "generated_at": "2026-11-03T14:07:14Z",
+  "source_main_sha": "394e05469659c9a024c0353bf1a727b83d4a49a5",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "sepulcher-cal02-deferred-three-failed-394e0546",
+      "headline": "Sepulcher arcade artwork deferred after three failed screens; CAL-03 becomes next candidate",
+      "summary": "The CAL-02 root-choked arcade failed all three recorded candidate screenings. Its source remains unapproved and unstaged, with further retries unauthorized. The artwork queue can move to independent CAL-03 work without treating CAL-02 as complete.",
+      "body": "Main now records CAL-02 as DEFERRED_REQUIRED after three failed candidate screens. The last image did not meet the 384×576 native source size, D6 alpha boundary, strict overhead projection, 32px registration or non-room-like silhouette. These are reported screening findings recorded in the manifest, not independently authenticated image bytes. CAL-01 remains the sole staged candidate among 198 required sources; none of the 198 has documented human production approval in this manifest. CAL-03 is next for independent candidate work. CAL-02 needs technical correction and explicit user permission before any retry. This is a manifest disposition, not a runtime asset release.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "hub-sepulcher-awakening-art-v1",
+      "occurred_at": "2026-11-03T13:54:53Z",
+      "bullets": [
+        "CAL-02: three recorded failed screens; deferred, not completed.",
+        "CAL-01: one staged candidate out of 198 required sources.",
+        "CAL-03: next independent candidate set.",
+        "CAL-02 retries require correction and explicit user authorization."
+      ],
+      "links": [
+        {
+          "title": "CAL-02 deferred disposition on main",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/394e05469659c9a024c0353bf1a727b83d4a49a5"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "The Sepulcher's root-choked arcade has hit a visual-production gate. Three candidate attempts failed its geometry and presentation rules, so CUSTODIAN has formally deferred the artwork rather than quietly advancing an unsuitable image into the game.",
+        "sections": [
+          {
+            "heading": "Why the arcade did not pass",
+            "text": "The recorded screening found a source at 1024×1536 instead of the required 384×576, along with visible pixels outside the D6 footprint, an angled architectural view, inconsistent 32-pixel alignment and a central form that resembled an enterable room. The locked design calls for a strictly overhead, nonwalkable architectural feature."
+          },
+          {
+            "heading": "The queue can move without erasing the debt",
+            "text": "CAL-02 is now DEFERRED_REQUIRED, not approved or completed. The next independent set is CAL-03. CAL-01 remains the only staged candidate in the 198-source required inventory, and staging is still separate from human approval and game integration."
+          },
+          {
+            "heading": "A retry needs a different approach",
+            "text": "The artwork maintainer must resolve source sizing, transparent clipping, overhead geometry and grid registration. The three-attempt limit is exhausted, and another CAL-02 generation requires explicit user authorization."
+          }
+        ],
+        "insights": [
+          {
+            "title": "A failed image can still improve the production system",
+            "explanation": "The new disposition makes the failure measurable and preserves the obligation to revisit it, while allowing unrelated art to advance."
+          },
+          {
+            "title": "The failure is geometric, not merely stylistic",
+            "explanation": "The source conflicts with map footprint and nonwalkable-space constraints. Accepting it would risk depicting navigation that gameplay does not support."
+          }
+        ],
+        "takeaway": "CAL-02 has a documented blocker, not a production asset; CAL-03 may proceed independently.",
+        "next_watch": "Watch for CAL-03 candidate screening and a separately authorized, geometry-correct CAL-02 retry."
+      },
+      "details": {
+        "overview": "Main commit 394e05469659c9a024c0353bf1a727b83d4a49a5 updates the Hub/Sepulcher/Awakening manifest only. The manifest reports three rejected candidate attempts; original candidate image bytes were not independently inspected in this run. No production approval, Asset V2 ingest, independent acceptance or runtime change is established.",
+        "ledger": [
+          {
+            "stage": "CAL-02 disposition",
+            "status": "verified landed manifest record",
+            "evidence": "Main commit 394e0546 records DEFERRED_REQUIRED and three reported failed candidate screens."
+          },
+          {
+            "stage": "Candidate screening",
+            "status": "reported failures",
+            "evidence": "Three recorded REGENERATE verdicts; underlying images not independently validated here."
+          },
+          {
+            "stage": "Candidate staging",
+            "status": "reported not staged",
+            "evidence": "Manifest states CAL-02 upload false; CAL-01 is sole staged candidate."
+          },
+          {
+            "stage": "Human approval and Asset V2",
+            "status": "not established",
+            "evidence": "Approval pending, asset_v2_ready false."
+          },
+          {
+            "stage": "Runtime and independent review",
+            "status": "unknown",
+            "evidence": "No acceptance or gameplay cutover receipt inspected."
+          }
+        ],
+        "notes": [
+          "Counts are limited to the 198-source art manifest, not dispatcher workstream totals.",
+          "CI combined status endpoint returned no statuses; CI health remains unknown."
+        ],
+        "unknowns": [
+          "Underlying rejected image bytes and screening identity not independently verified.",
+          "Full dispatcher, host process, locks, teardown and disk observations unavailable."
+        ],
+        "actions": [
+          "Artwork maintainer: screen independent CAL-03 candidate under existing rules.",
+          "Artwork maintainer: correct CAL-02 geometry and request explicit user authorization before reopening its attempt cap."
+        ]
+      },
+      "scorecard": {
+        "stage": "CAL-02 deferred; CAL-03 next",
+        "as_of": "2026-11-03T13:54:53Z",
+        "scope": "Required Hub/Sepulcher/Awakening/Dust Lung art sources in manifest",
+        "metrics": [
+          {
+            "id": "required_sources",
+            "label": "REQUIRED SOURCES",
+            "value": 198,
+            "verification": "verified",
+            "basis": "Required source inventory in main manifest",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/394e05469659c9a024c0353bf1a727b83d4a49a5"
+          },
+          {
+            "id": "staged_candidates",
+            "label": "STAGED CANDIDATES",
+            "value": 1,
+            "verification": "reported",
+            "basis": "Manifest candidate-only count; CAL-01 only",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/394e05469659c9a024c0353bf1a727b83d4a49a5"
+          },
+          {
+            "id": "deferred_required",
+            "label": "DEFERRED REQUIRED",
+            "value": 1,
+            "verification": "verified",
+            "basis": "CAL-02 disposition in manifest",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/394e05469659c9a024c0353bf1a727b83d4a49a5"
+          }
+        ],
+        "steps": [
+          {
+            "label": "V2 source inventory",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Main b83e268b roadmap"
+          },
+          {
+            "label": "CAL-02 screening",
+            "status": "blocked",
+            "verification": "reported",
+            "evidence": "Three REGENERATE verdicts recorded, underlying images not independently inspected"
+          },
+          {
+            "label": "CAL-03 candidate screening",
+            "status": "next",
+            "verification": "verified",
+            "evidence": "Manifest cursor now CAL-03"
+          },
+          {
+            "label": "CAL-02 corrected retry authorization",
+            "status": "blocked",
+            "verification": "verified",
+            "evidence": "Attempt cap exhausted; explicit authorization absent"
+          },
+          {
+            "label": "Human production approval",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No approval established"
+          },
+          {
+            "label": "Asset V2 and runtime review",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No ingest or acceptance established"
+          }
+        ],
+        "next_gate": "Art owner: screen CAL-03 independently; CAL-02 requires corrected geometry and user retry authorization."
+      },
+      "related": [
+        {
+          "title": "Sepulcher art roadmap expands to 198 required sources, while production approval remains separate",
+          "context": "The roadmap defines the candidate sequence and production gates now governing CAL-02.",
+          "story_id": "hub-sepulcher-art-roadmap-v2-b83e268b"
+        }
+      ]
+    },
     {
       "id": "hub-sepulcher-art-roadmap-v2-b83e268b",
       "headline": "Sepulcher art roadmap expands to 198 required sources, while production approval remains separate",
@@ -1587,155 +1759,6 @@
           "story_id": "convoy-security-integrated-correction-04a617c4"
         }
       ]
-    },
-    {
-      "id": "convoy-security-integrated-correction-04a617c4",
-      "headline": "Empty Convoy security can be bypassed when defenders fail to appear",
-      "summary": "An integrated gameplay retest found that scanning the Empty Convoy could unlock its custody trace without a defender encounter. A new P1 correction packet targets temporary spawn failures being mistaken for cleared security. The failure is documented; the correction is not implemented.",
-      "body": "A documented integrated gameplay retest on contract seed 2 (generated map seed 3570245418) found no hostiles after scanning the cargo cradle, yet RECORD CUSTODY TRACE appeared immediately. Source inspection in the newly committed packet identifies several ways temporary spawn or observation failures can become empty_defense, which the recovery step treats as clearance. The exact trigger in that run remains unknown. The new P1 packet is ready/auto in source, not proven claimed or running. It requires deferred retry, authoritative defeat evidence, safe reentry, and production-realistic regression tests before any corrected behavior can be claimed. C1-C3 implementations remain landed; their waived reviews do not establish independent acceptance.",
-      "severity": "important",
-      "verification": "reported",
-      "category": "gameplay-systems",
-      "workstream": "campaign-empty-convoy-security-integrated-correction-v1",
-      "occurred_at": "2026-11-02T12:17:05Z",
-      "bullets": [
-        "Integrated retest reported no defenders but unlocked custody trace.",
-        "New P1 correction packet is source-ready; no implementation landing yet.",
-        "Temporary spawn failures must remain unresolved, not count as defeat.",
-        "Exact runtime trigger and independent acceptance remain unknown."
-      ],
-      "links": [
-        {
-          "title": "Integrated security correction packet",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/04a617c492fc56aafc6df7804beff1058610e211"
-        },
-        {
-          "title": "Previously landed custody trace",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/e346eaea2f6b9a2068f160f58b50d090427bda61"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "The Empty Convoy's new encounter has an important gap: in an integrated retest, its defenders never appeared, but the player was allowed to record the shipment's custody trace anyway. A targeted correction has now been queued, not yet implemented.",
-        "sections": [
-          {
-            "heading": "When no enemies appear, the game assumes the fight is over",
-            "text": "The documented retest reached the cargo cradle without seeing hostiles, then immediately offered RECORD CUSTODY TRACE. The newly authored correction packet identifies multiple paths where a temporary failure to spawn or track defenders can be mistaken for a legitimately empty defense."
-          },
-          {
-            "heading": "A narrow fix instead of another encounter rewrite",
-            "text": "The P1 correction calls for retrying temporary failures, preserving unresolved security on reentry, and requiring authoritative enemy defeat before allowing the trace or salvage. It also calls for realistic navigation and queue-failure tests. The exact cause of the observed run is still unconfirmed."
-          }
-        ],
-        "insights": [
-          {
-            "title": "A graceful fallback became an unintended shortcut",
-            "explanation": "The safe-empty outcome protects against genuinely absent defenders, but it must not also treat capacity or navigation failures as completed combat. That distinction controls whether the player's evidence and salvage are earned."
-          },
-          {
-            "title": "Focused tests missed an integrated state transition",
-            "explanation": "Earlier selected tests were reported passing, yet the integrated retest found a player-facing failure. The new validation must exercise real spawning and walkability behavior, not only simplified probes."
-          }
-        ],
-        "takeaway": "The failure is documented and a correction packet exists; no corrected runtime behavior or independent acceptance has yet been verified.",
-        "next_watch": "Watch for the correction implementation, focused realistic regressions, and a separately decided review disposition."
-      },
-      "details": {
-        "overview": "Main commit 04a617c4 adds a P1 ready/auto implementation packet. Its measured-state section reports a seed-2 integrated retest with no hostiles and immediate trace eligibility. The packet lists multiple possible source transitions but does not prove which caused the retest.",
-        "ledger": [
-          {
-            "stage": "C1-C3 implementation",
-            "status": "verified landed",
-            "evidence": "Prior commits 47fd0755, bde08b88 and e346eaea"
-          },
-          {
-            "stage": "Integrated gameplay retest",
-            "status": "reported failure",
-            "evidence": "Packet 04a617c4 describes seed 2 and generated map seed 3570245418; original host screenshot not independently inspected"
-          },
-          {
-            "stage": "Correction packet",
-            "status": "verified authored, source-ready",
-            "evidence": "04a617c4; status ready, dispatch auto in source, not host claim"
-          },
-          {
-            "stage": "Correction implementation and validation",
-            "status": "not established",
-            "evidence": "No correction implementation commit or validation receipt inspected"
-          },
-          {
-            "stage": "Independent review and teardown",
-            "status": "unknown",
-            "evidence": "Previous C2/C3 reviews owner-waived; no authenticated host cleanup"
-          }
-        ],
-        "notes": [
-          "Combined GitHub commit status has no statuses; not evidence of green CI."
-        ],
-        "unknowns": [
-          "Exact integrated-run trigger is unconfirmed.",
-          "Current host claim, locks, process and teardown are unknown."
-        ],
-        "actions": [
-          "Execution owner: claim only if canonical dispatcher confirms eligibility, then implement and validate the bounded correction.",
-          "Coordinator: separately determine correction review disposition."
-        ]
-      },
-      "scorecard": {
-        "stage": "Observed failure; correction packet ready in source",
-        "as_of": "2026-11-02T12:17:05Z",
-        "scope": "Named Empty Convoy integrated security correction only",
-        "metrics": [
-          {
-            "id": "other-correction-packets",
-            "label": "CORRECTION PACKET",
-            "value": 1,
-            "verification": "verified",
-            "basis": "One named new P1 correction packet in commit 04a617c4",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/04a617c492fc56aafc6df7804beff1058610e211"
-          }
-        ],
-        "steps": [
-          {
-            "label": "C1-C3 features landed",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Previously inspected landing commits"
-          },
-          {
-            "label": "Integrated failure documented",
-            "status": "done",
-            "verification": "reported",
-            "evidence": "Seed-2 retest in correction packet; original host evidence unavailable"
-          },
-          {
-            "label": "Correction packet authored",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "04a617c4"
-          },
-          {
-            "label": "Correction implementation",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No landed correction observed"
-          },
-          {
-            "label": "Production-realistic validation",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Required by packet, not yet evidenced"
-          },
-          {
-            "label": "Review disposition",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "Deferred to coordinator"
-          }
-        ],
-        "next_gate": "Execution owner confirms dispatcher eligibility and implements the bounded correction."
-      },
-      "related": []
     }
   ],
   "snapshot": {
