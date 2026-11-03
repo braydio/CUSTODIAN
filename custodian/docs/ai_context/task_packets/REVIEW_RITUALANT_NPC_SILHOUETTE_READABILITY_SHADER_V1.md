@@ -3,8 +3,8 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-ritualant-npc-silhouette-readability-shader-v1`
 - Kind: `review`
-- Status: `ready`
-- Dispatch: `auto`
+- Status: `blocked`
+- Dispatch: `manual`
 - Priority: `P2`
 - Depends on: `ritualant-npc-silhouette-readability-shader-v1`
 - Locks: `ritualant-npc-presentation`
@@ -39,3 +39,8 @@
 - Refresh reason: `none`
 - Next action: Return the review outcome and accepted Ritualant visual evidence to this conversation; then resume the Forlorn Ritualant soundtrack at Track 07/08.
 - Blockers or open questions: `none` unless an objective defect or missing human visual decision is found.
+
+
+## Supersession disposition
+
+Project-owner authorization in https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae7eb07-c554-83e9-911a-1335e640e4d0 supersedes this unfinished review packet with `review-ritualant-npc-silhouette-readability-shader-v1-recovery-1`. This packet is blocked/manual and is **not complete, not accepted, and not a PASS**. Preserve this packet and all historical evidence. The replacement implementation/review pair is independent of this packet's unfinished status; no acceptance or completion truth is inferred from the donor branch.
