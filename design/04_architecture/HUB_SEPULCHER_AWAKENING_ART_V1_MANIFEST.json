@@ -10,7 +10,8 @@
     "authoring_chat_url_status": "awaiting exact user-supplied chat URL",
     "process_amendment_2026_11_01": "CAL-A strictly one image at a time; after calibration, independent low-risk same-style props or decals may be generated in small groups without reducing per-image review, according to AI_ART_GENERATION_REVIEW_PROTOCOL_V1.md. The 71-core/12-optional scope is unchanged.",
     "command_amendment_2026_11_01": "The phrase 'generate the next set' now explicitly authorizes generation of the earliest eligible unfinished set under generation_sets. Its cardinality and exact image IDs are fixed; no bulk art approval. This does not replace individual review, Dropbox handoff or Asset V2 gates.",
-    "floor_first_revision_2026_11_01": "Sepulcher floor first, separate structural alpha source added (72 core, 12 optional, 84 prompts and 67 sets). Original mixed CAL-01 candidate remains unapproved."
+    "floor_first_revision_2026_11_01": "Sepulcher floor first, separate structural alpha source added (72 core, 12 optional, 84 prompts and 67 sets). Original mixed CAL-01 candidate remains unapproved.",
+    "modular_ground_revision_2026_11_02": "Explicitly supersedes CAL-01's historical 1152x1408 rectangular ground plate with one 512x512 opaque seamless modular material candidate, keeping the original asset ID and immutable rejected-candidate evidence. The existing paving candidates are unapproved material references, not established human-approved V3 sources, and no generator image conditioning is claimed. CAL-01 approval, Dropbox source promotion, family registration and runtime binding are all still pending."
   },
   "repo": {
     "repository": "braydio/CUSTODIAN",
@@ -475,15 +476,15 @@
       "source_work_path": "custodian/asset_drop/source_work/hub/first_set/hub_first_set_sepulcher_gardens_environment/underlay_source.png",
       "inbox_path": "custodian/asset_drop/inbox/hub_first_set_sepulcher_gardens_environment/underlay.png",
       "family_contract_path": "custodian/content/metadata/assets/families/hub_first_set_sepulcher_gardens_environment.asset.json",
-      "consumer": "res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation",
+      "consumer": "PLANNED res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation modular ground renderer; not yet registered or runtime-bound",
       "registration_status": "proposed_not_registered",
       "normalized_canvas": {
-        "width": 1152,
-        "height": 1408
+        "width": 512,
+        "height": 512
       },
       "frame_size": {
-        "width": 1152,
-        "height": 1408
+        "width": 512,
+        "height": 512
       },
       "frames": 1,
       "layout": "copy",
@@ -491,12 +492,12 @@
       "loop": false,
       "direction": "omni",
       "auto_mirror": false,
-      "layer": "walkable_ground_only",
-      "alpha": "Opaque 1152x1408 flat traversable civic floor, no structural or scenic objects",
-      "anchor": "HubFirstSetLayout.ENVELOPES.sepulcher_gardens, 1px/world-unit candidate",
-      "placement_rule": "Whole live Gardens envelope walkable. Strict unblocked flat ground; all event footprints and the two eastern passage bands stay open.",
-      "image_generation_prompt": "Create exactly one 1152x1408 strict 90-degree orthographic top-down static WALKABLE-GROUND-ONLY Sepulcher Gardens image, north up and registered 1 pixel per world unit on the 32px CUSTODIAN Hub grid. All 1152x1408 pixels in the existing Gardens envelope are currently walkable: depict only FLAT continuous aged civic paving, fractured chalk-limestone and charcoal basalt, restrained oxidized bronze floor indexing, cracks and dust. Grave local center (576,704), inspection locations (256,704),(1024,704),(1024,1216), and choice locations (484,816),(668,816) MUST all remain accessible and clear. The two east edge connectors MUST be level open paving over x1024..1152, y576..832 and x1024..1152, y1120..1376. Absolutely NO columns, walls, arches, tomb slabs, steps, raised terraces, vegetation blocking ground, scenic depth, fake voids, architectural shadows, foreground, characters, text, UI, lighting vignette, perspective tilt or isometric camera. Other architecture and inaccessible scenic depth are separate asset layers. One continuous exact-aspect overhead ground plate; generator output needs review before normalization and acceptance.",
-      "prompt_authority": "AI_ART_GENERATION_REVIEW_PROTOCOL_V1.md floor-first process and HubFirstSetLayout",
+      "layer": "repeatable_walkable_ground_material_only",
+      "alpha": "OPAQUE RGB, 512x512; transparency is not applicable to CAL-01",
+      "anchor": "Texture-grid origin world (-4128,-4480); repeat 512px at native scale, clip to SepulcherGardensGeometryV1's exact 96x84 walkable mask; artwork never authors mask/collision",
+      "placement_rule": "Modular floor source only; repeat and clip to irregular walkable mask in current expanded Gardens (3072x2688 authoring envelope), preserving E0-E5 grave-event world anchors and both Forum connectors. No 1152x1408 rectangle; no pond, void or architectural paint.",
+      "image_generation_prompt": "Generate EXACTLY ONE independent seamless 512x512 opaque RGB WALKABLE-GROUND-ONLY material tile for CUSTODIAN's expanded Sepulcher Gardens. Strict 90-degree orthographic overhead, world north up, one static frame, 32px architectural rhythm. Use the Sepulcher burial-civic material vocabulary of aged chalk-limestone, charcoal basalt and restrained oxidized bronze. Existing paving images, including the V3-named candidate, are UNAPPROVED material references only: the pilot manifest records source_approved=false and failed 3x3 repeat, and no authoritative human-approved V3 SHA/receipt has been verified. Do not claim any reference image was supplied or image-conditioned unless the exact source bytes and generator-use evidence are actually recorded. Flat old civic burial paving ONLY: worn chalk-limestone and charcoal basalt slabs, subdued grout, mineral dust, fine cracks, restrained irregular bronze floor indexing. Every edge and corner MUST join seamlessly under unrotated 3x3 repetition; deterministic quarter-turn rotation may supply variation but must not be required to hide bad seams. No distinctive recurring central emblem, artificial picture border, vignette, baked directional shadow, stone height transition, wall, column, slab monument, steps, pond, shoreline, flora, raised terrace, scenic void, overhang, objects, characters, readable writing, UI, logos or false path. The image is a REPEATABLE MATERIAL SOURCE, NOT A DISTRICT MAP OR FULL-SCENE 3072x2688 PAINTING. Runtime must repeat and clip this texture ONLY to the current SepulcherGardensGeometryV1 96x84 irregular walkable cell mask within world Rect2(-4128,-4480,3072,2688), and leave nonwalkable water/collapse/crypt cells untouched. Artwork does NOT own the mask, collision, routes, grave-event clearances or either preserved Forum connector. Candidate passes only after byte-level RGB/dimensions checks, actual edge/corner 3x3 test and visual assessment against the unapproved paving material reference, only when its exact source is available (never as human approval evidence); human approval remains separate.",
+      "prompt_authority": "CAL-01 modular geometry reconciliation 2026-11-02; design/04_architecture/SEPULCHER_GARDENS_GEOMETRY_V1.json; AI_ART_GENERATION_REVIEW_PROTOCOL_V1.md",
       "source_sha256": null,
       "normalized_sha256": null,
       "dropbox_path": null,
@@ -515,7 +516,27 @@
         "technical_outcome": "REQUIRES_CORRECTION__DO_NOT_INGEST",
         "review_summary": "Canonical east connectors and eastern reading footprints obstructed; regenerate with spatial lock.",
         "source_persisted_to_dropbox": false,
-        "reviewed_2026_11_01": true
+        "reviewed_2026_11_01": true,
+        "specification": "HISTORIC_SUPERSEDED_1152x1408_DO_NOT_REUSE"
+      },
+      "current_spec_status": "candidate_generation_allowed__modular_512_only__human_approval_pending",
+      "candidate_staging_destination": "/CUSTODIAN/candidate_staging/hub-sepulcher-awakening-art-v1",
+      "historical_candidate_disposition": "2026-11-01 old 1134x1387 scene painting REQUIRES_CORRECTION and not eligible to satisfy this new modular 512px spec",
+      "unapproved_material_reference": {
+        "status": "UNAPPROVED_MATERIAL_REFERENCE_ONLY__NOT_APPROVED_STYLE_ANCHOR",
+        "authority_pilot_manifest": "design/04_architecture/SEPULCHER_MODULAR_PLAYTEST_ASSET_PILOT_V1.json",
+        "asset_id": "hub_first_set_sepulcher_gardens_floor_materials/paving_base",
+        "pilot_source_approved": false,
+        "original_candidate_dimensions_px": [
+          1254,
+          1254
+        ],
+        "original_candidate_sha256": "62341f6850cd526b5b03187d9c9035318453c2b7cf2d6e213f19f1597af967bf",
+        "original_candidate_review": "NEEDS_CORRECTION__NO_INGEST; 3x3 repeat failed",
+        "human_approved_v3_sha256": null,
+        "human_approved_v3_receipt": null,
+        "image_reference_supplied_to_generator": false,
+        "qualification": "No image-conditioning claim without the exact bytes and record of actual reference input; reference image availability and source approval are separate questions."
       }
     },
     {
@@ -548,9 +569,9 @@
       "layer": "structural_presentation",
       "alpha": "True RGBA isolated architectural silhouettes, no floor matte",
       "anchor": "Same 1152x1408 1:1 world/pixel origin, no per-layer transforms",
-      "placement_rule": "BLOCKED pending approved structure/collision footprint; must match live walkability and operator clearance",
+      "placement_rule": "BLOCKED. 1152x1408 historic structure must NOT be generated/registered; require separately approved modular architectural footprints aligned to 96x84 current mask and preserved event/Forum connections. Artwork never grants collision.",
       "image_generation_prompt": "Create one separately generated 1152x1408 TRUE RGBA transparent architectural presentation source for CUSTODIAN Sepulcher Gardens, exactly pixel-registered 1:1 over an approved flat floor, strict 90-degree orthographic north-up camera. Ruined institutional burial architecture: damaged cloister arches, retaining masonry, broken column bases, pale limestone and black basalt plinths, restrained bronze. NO ground texture or fully opaque scene. CRITICAL PRECONDITION: the current full Gardens envelope is walkable in HubFirstSetLayout. DO NOT place walls, tomb terraces or any other apparent blocking solids inside the playable floor unless a separately human-reviewed, approved geometry/collision and solid footprint map assigns their nonwalkable space. Preserve grave center (576,704), reading offsets (256,704),(1024,704),(1024,1216), choices (484,816),(668,816), east connector bands x1024..1152 at y576..832 and y1120..1376. Keep alpha truly transparent outside authorized architectural silhouettes. No camera tilt, art-only collision invention, readable inscriptions, UI, characters, fictional entrances or extra playable-looking corridors. If approved structural footprint is absent this requested source is BLOCKED and must not be generated.",
-      "prompt_authority": "AI_ART_GENERATION_REVIEW_PROTOCOL_V1.md; added required source state, family schema not registered",
+      "prompt_authority": "Historical prompt retained for provenance ONLY; not authorized by current Gardens geometry. Replacement requires revised source contract and explicit geometry lock.",
       "source_sha256": null,
       "normalized_sha256": null,
       "dropbox_path": null,
@@ -559,7 +580,9 @@
       "asset_v2_job": null,
       "live_status": "not_checked_at_publication",
       "human_image_approval": "pending",
-      "handoff_review_status": null
+      "handoff_review_status": null,
+      "current_spec_status": "BLOCKED_OBSOLETE_1152x1408_STRUCTURE_REAUTHORING_REQUIRED",
+      "geometry_block": "Previous registered 1152x1408 full-scene structure geometry is obsolete. Do not generate. Define per-landmark nonwalkable footprints and modular structural source inventory against the expanded Gardens and its 80px Operator clearance before revising this state."
     },
     {
       "id": "hub_first_set_archive_rise_environment/underlay",
@@ -4059,7 +4082,9 @@
         "review_snapshot": "Annotation generated locally, not a production art asset or permanent source",
         "notes": "Objective findings are an AI technical/art-direction audit; final aesthetic accept/reject remains human-owned."
       }
-    ]
+    ],
+    "geometry_reconciliation": "CAL-01 modular tile generation released; historical rejected candidate does NOT satisfy current prompt; CAL-02 architectural footprint remains blocked.",
+    "paving_reference_status": "UNAPPROVED_MATERIAL_REFERENCE_ONLY; V3 approval receipt absent; human CAL-01 approval pending"
   },
   "gates": {
     "user_image_review_before_dropbox": true,
@@ -4068,7 +4093,8 @@
     "existing_AP1_AP4_ownership_preserved": true,
     "separate_Dust_Lung_DL0_ownership_preserved": true,
     "grave_resolution_review_branch_active_during_audit": true,
-    "required_assets_registry_update_only_on_real_fulfillment": true
+    "required_assets_registry_update_only_on_real_fulfillment": true,
+    "candidate_staging_exception": "Only user-authorized /CUSTODIAN/candidate_staging/hub-sepulcher-awakening-art-v1 may receive objectively screened AI candidates before human production approval; source_work/inbox/production Dropbox remain human-gated."
   },
   "drift": {
     "awakening_asset_manifest": "Historical section says nine generic perimeter contracts unregistered despite nine existing live .asset.json schemas. Reconcile in bounded future documentation correction after status recheck.",
@@ -4105,7 +4131,8 @@
       "separate Asset V2 registration/plan/status/doctor/ingest and runtime review"
     ],
     "correction_policy": "correct or regenerate the same state without marking accepted; preserve rejected candidate identity; no guess-filled receipts",
-    "restart_authority": "read current GitHub planning ledger and reconcile actual Dropbox receipts and Asset V2 records; never trust a stale empty checkpoint as proof of absence"
+    "restart_authority": "read current GitHub planning ledger and reconcile actual Dropbox receipts and Asset V2 records; never trust a stale empty checkpoint as proof of absence",
+    "alpha_screening_rule": "For every transparency-requiring asset, report apparent transparency, visible matte/checkerboard, and uncertainty; claim true alpha only after byte-level inspection. CAL-01 opaque: alpha N/A."
   },
   "generation_sets_contract": {
     "version": 1,
@@ -4147,7 +4174,9 @@
     ],
     "checkpoint_authority": "Current main plus verified receipts and actual Dropbox/pipeline status; generation_sets is the immutable planned dispatch order, not proof of any generated output.",
     "current_initial_status": "CAL-01 is selected, no image approved by this publication; user still needs to request first generation.",
-    "floor_first_rule": "For large authored region art: lock actual walkability -> strict orthographic ground-only underlay -> independently generated transparent structural layer after geometry clearance -> separate scenic depth -> optional foreground occlusion; all with one world/pixel transform. CAL-01 floor only, new CAL-02 structure blocked; separate Dust Lung DL0 manifest not silently rewritten."
+    "floor_first_rule": "For large authored region art: lock actual walkability -> strict orthographic ground-only underlay -> independently generated transparent structural layer after geometry clearance -> separate scenic depth -> optional foreground occlusion; all with one world/pixel transform. CAL-01 floor only, new CAL-02 structure blocked; separate Dust Lung DL0 manifest not silently rewritten.",
+    "geometry_reconciliation": "CAL-01 is eligible ONLY as 512x512 opaque modular ground tile per revised asset prompt; old 1152x1408 scene is permanently disallowed. CAL-02 still blocked. No skipped asset IDs or approvals.",
+    "cal01_reference_gate": "No approved paving V3 style anchor established. Unapproved reference studies may inform the creative brief only; actual supplied image inputs must be evidenced. Human CAL-01 approval remains pending."
   },
   "generation_sets": [
     {
@@ -4159,8 +4188,8 @@
         "hub_first_set_sepulcher_gardens_environment/underlay"
       ],
       "generation_mode": "single",
-      "request_rule": "One independent asset image; for animations one independent complete animation strip",
-      "release_gate": "calibration_one_at_a_time",
+      "request_rule": "Generate exactly ONE independent 512x512 opaque flat floor material image for the same CAL-01 asset ID; do not generate a 3072x2688 map or a 1152x1408 plate. Validate 3x3 repeat and preserve irregular runtime mask.",
+      "release_gate": "OPEN__reconciled_modular_512_ground_candidate_only",
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
       "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
     },
@@ -4174,7 +4203,7 @@
       ],
       "generation_mode": "single",
       "request_rule": "1 independently generated alpha-only structural image after approved floor and spatial lock",
-      "release_gate": "BLOCKED: whole district walkable until approved separate solid/collision footprint, reference floor and consumer registration",
+      "release_gate": "BLOCKED__obsolete_1152x1408_full_scene_architecture__await_modular_footprint_and_state_reauthoring",
       "approval_rule": "Explicit human image decision before advancing",
       "source_handoff_rule": "No Dropbox or ingest until reviewed"
     },
@@ -5095,13 +5124,25 @@
     }
   ],
   "documentation_drift": {
-    "dust_lung_layer_pass": "Dust Lung V2 separates traversal/void/depth/occlusion in design yet its 8-item source manifest still mixes floor and structures; reconcile under independent DL0 owner before changing those assets."
+    "dust_lung_layer_pass": "Dust Lung V2 separates traversal/void/depth/occlusion in design yet its 8-item source manifest still mixes floor and structures; reconcile under independent DL0 owner before changing those assets.",
+    "cal01_reconciliation": "Old scene-floor prompt corrected to 512x512 modular material; legacy rejection retained for audit. CAL-02 architecture state still needs revised modular footprint and prompt. No Asset V2 production registration is implied.",
+    "paving_v3_reference_correction": {
+      "authority": "design/04_architecture/SEPULCHER_MODULAR_PLAYTEST_ASSET_PILOT_V1.json",
+      "paving_base_source_approved": false,
+      "original_source_sha256": "62341f6850cd526b5b03187d9c9035318453c2b7cf2d6e213f19f1597af967bf",
+      "repeat_test": "FAILED",
+      "v3_human_approval_receipt": "NOT_FOUND_IN_AUTHORITATIVE_SOURCE",
+      "disposition": "UNAPPROVED_REFERENCE_ONLY__NO_IMAGE_CONDITIONING_CLAIM"
+    }
   },
   "geometry_expansion_2026_11_02": {
-    "status": "blocking_geometry_change",
+    "status": "CAL01_MODULAR_GROUND_RECONCILED__CAL02_STRUCTURE_STILL_BLOCKED",
     "runtime_geometry": "design/04_architecture/SEPULCHER_GARDENS_GEOMETRY_V1.json",
-    "superseded_underlay_target": "1152x1408 rectangular fully walkable Gardens",
-    "current_walkable_geometry": "3072x2688 authoring bounds with an exact 96x84 irregular mask; see runtime mask authority",
-    "generation_hold": "Do not generate or register a full-scene Gardens underlay until art inventory, dimensions, and modular ground coverage are reconciled to the irregular walkable mask. Existing paving is a material reference only; no artwork is approved by this geometry change."
+    "superseded_underlay_target": "Historic 1152x1408 full-scene plate permanently superseded; do NOT generate it",
+    "current_walkable_geometry": "3072x2688 authoring rectangle with exact 96x84 irregular mask; E0-E5 and both east connectors unchanged",
+    "cal01_generation_gate": "OPEN_FOR_ONE_512x512_OPAQUE_REPEATABLE_GROUND_CANDIDATE_ONLY",
+    "cal02_generation_gate": "BLOCKED_PENDING_APPROVED_MODULAR_ARCHITECTURAL_FOOTPRINT_AND_SOURCE_CONTRACT",
+    "masked_floor_rule": "Use currently approved authored walkability and collision; repeat and clip CAL-01 512x512 tile at origin (-4128,-4480), not a pre-painted rectangular region",
+    "reconciliation_basis": "2026-11-02 live expanded HubFirstSetLayout and SEPULCHER_GARDENS_GEOMETRY_V1; separate existing approved four-asset material pilot"
   }
 }
