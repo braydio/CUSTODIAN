@@ -12,8 +12,9 @@
 - Placement smoke: Passed for four seeds, three placements.
 - Changed-file validation: Passed `4/4`, complete coverage, no failures/skips/timeouts/infrastructure errors. Source-bound report SHA-256: `4adaac526829167ae300569f2e7af9e82bdee03106028c6924b26db819abf1db`. Validated source commit/tree: `c7bc91207a7b582b657c63785515f0aac19496e9` / `4a5797e7509bc0d9832b5614a44832dfc7ca49ad`.
 - Shutdown warning classification: The original baseline security smoke had no shutdown leak warning. Running the correction smoke harness against baseline runtime reproduced the same `71 ObjectDB` and `2 resource` warnings as the corrected runtime, attributing them to the generated-map smoke fixture teardown rather than the runtime correction. The canonical runner classifies these as known, nonfatal warnings.
-- Landing: Canonical finish pending after this summary/archive commit. The persistent project-root checkout remains dirty and behind; the normal safe sync will leave it untouched and report synchronization pending.
-- Production retest: Pending after landing. Do not claim integrated gameplay PASS from headless evidence. No paired review was launched or accepted; review disposition remains deferred to a separate coordinator control.
+- Landing: Canonical finish landed the implementation at `c7bc91207a7b582b657c63785515f0aac19496e9` and the archive closeout at `09e15e239da24757a9587b61314b4f62e08eba0e`. Both were verified as ancestors of `origin/main` at `4900dbee03f3a9992391c5f985d1c35d819dc7ae` before this documentation-only update. The persistent root checkout was left untouched because it is dirty and behind.
+- Post-land QA: The one authorized seed-2 GUI reached `QA_CONVOY_APPROACH_READY` at map seed `3570245418`, convoy `(115,98)`, approach `(115,94)`, and interaction destination `(115,96)`. The user completed the manual review and signed off with “No dice; possible scenario/encounter mismatch.” Human review is complete; integrated gameplay acceptance is `NOT_ACCEPTED`, and the exact failure cause remains unconfirmed. There is no confirmed successful defender encounter, custody trace, or exactly-once salvage. Codex sent no gameplay input. The separate Forlorn Ritualant Threadway finding remains separate. No paired review was launched or accepted; its disposition remains deferred.
+- QA evidence and teardown: The detached QA checkout was retired through ordinary non-forced `git worktree remove` after the exact temporary autoload line and four QA files were preserved and removed through scoped cleanup. All 20,057 ignored entries were inventoried; only regenerable Godot caches, `.import` metadata, and Python bytecode were absent/different from the root. The compact host-local evidence archive is `/home/braydenchaffee/.local/share/custodian/evidence/empty-convoy-postland-closeout-2026-11-02/evidence.tar.gz` (SHA-256 `81d2970f1862667d9ae376d7859f71ac280988a39ed73235b781916d06c455b1`); ignored inventory SHA-256 `5deecd15ec66e25602c1e3db6a703d7f40f69c7102eda1166e8fb28994895e9d`. Disk free space rose from `26415376` to `33674740` KiB (measured gain `7259364` KiB, about 6.92 GiB); attached worktrees fell from 108 to 107. No claim or review lock was released.
 
 ## Process Feedback
 
@@ -24,7 +25,7 @@
 - Root cause / contributing factors: `Generated import caches are checkout-local, and committed branch changes require an explicit origin/main comparison for changed-file selection.`
 - Prevention / pipeline improvement: `Reuse an exact-source generated Godot cache when available, and pass --base origin/main when validating a clean committed workstream branch.`
 - Tooling / docs drift discovered: `none`
-- Follow-up: `Coordinator-directed production seed-2 retest after landing; correction review disposition awaits separate coordinator control.`
+- Follow-up: `Manual gameplay acceptance is not accepted and its exact failure cause is unconfirmed; correction review disposition awaits separate coordinator control.`
 
 ## Next Handoff
 
