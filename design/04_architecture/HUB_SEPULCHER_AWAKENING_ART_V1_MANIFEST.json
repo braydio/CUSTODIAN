@@ -15566,7 +15566,7 @@
     ]
   },
   "runtime_installation_workflow_v1": {
-    "status": "implementation_candidate_not_production_verified",
+    "status": "first_capture_and_collector_slice_proposed_requires_godot_review",
     "design_spec": "design/02_features/debug_ui/ART_FIELD_NOTES_V1.md",
     "human_source_approval": "required_per_asset_before_source_work_or_runtime_binding",
     "candidate_only_staging": "never_counts_as_source_approval",
@@ -15585,7 +15585,6 @@
     ],
     "runtime_write_authorization": "separate_reviewed_task_required",
     "scope": "no_generation_no_approval_no_auto_placement_no_gameplay_changes",
-    "observatory_compatibility": "F9_F10_F11_are_unchanged",
-    "current_branch_status": "proposed_for_review_not_merged"
+    "observatory_compatibility": "F9_F10_F11_are_unchanged"
   }
 }
