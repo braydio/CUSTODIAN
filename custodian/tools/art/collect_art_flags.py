@@ -126,11 +126,11 @@ def markdown(summary: dict) -> str:
         scene = stretch["scene"].replace("|", "/")
         region = ", ".join(stretch["regions"]).replace("|", "/")
         lines.append(
-            f"| \`{scene}\` | {stretch['bucket']} | {stretch['flag_count']} | "
+            f"| `{scene}` | {stretch['bucket']} | {stretch['flag_count']} | "
             f"{region} | {stretch['snapshots_found']}/{stretch['flag_count']} |"
         )
         for flag_id, report in zip(stretch["flag_ids"], stretch["report_files"]):
-            lines.append(f"  - \`{flag_id}\`: \`{report}\`")
+            lines.append(f"  - `{flag_id}`: `{report}`")
     if summary["problems"]:
         lines += ["", "## Invalid or unreadable records"]
         lines += ["- " + str(problem) for problem in summary["problems"]]
