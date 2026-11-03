@@ -3,11 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dl16u7mbxs43d"
-valid=false
+path="res://.godot/imported/body_snow_streak_01.png-58c03661aae956a9c770876a0a8d7fb8.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://content/tiles/mountain_cliffs/alpine_fascia/body_snow_streak_01.png"
+dest_files=["res://.godot/imported/body_snow_streak_01.png-58c03661aae956a9c770876a0a8d7fb8.ctex"]
 
 [params]
 

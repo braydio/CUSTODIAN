@@ -3,11 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c87b5o6t5r0mg"
-valid=false
+path="res://.godot/imported/depth_rocky_upland_service_ruin_drop_v1.png-646748b34ed38bb4d206390c2826e6f1.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://content/backgrounds/procgen/depth_chunks/depth_rocky_upland_service_ruin_drop_v1.png"
+dest_files=["res://.godot/imported/depth_rocky_upland_service_ruin_drop_v1.png-646748b34ed38bb4d206390c2826e6f1.ctex"]
 
 [params]
 

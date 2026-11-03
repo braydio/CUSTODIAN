@@ -3,11 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://hmh5kmchax1j"
-valid=false
+path="res://.godot/imported/top_broken_01.png-6bc2a42638103e9d8d17b370cdeb95d4.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://content/tiles/mountain_cliffs/alpine_fascia/top_broken_01.png"
+dest_files=["res://.godot/imported/top_broken_01.png-6bc2a42638103e9d8d17b370cdeb95d4.ctex"]
 
 [params]
 

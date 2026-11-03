@@ -3,11 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b357m3f2thq6c"
-valid=false
+path="res://.godot/imported/east_broad_01.png-778368caf62039464d37667d41415e10.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://content/tiles/procgen_macro/runtime/alpine_cliff_contact/east_broad_01.png"
+dest_files=["res://.godot/imported/east_broad_01.png-778368caf62039464d37667d41415e10.ctex"]
 
 [params]
 
