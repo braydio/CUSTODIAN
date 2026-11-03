@@ -1,9 +1,153 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-03T16:17:54Z",
+  "generated_at": "2026-11-03T20:29:10Z",
   "source_main_sha": "eef8a41f8e82fe47c346002087f52492d945322a",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "art-field-notes-draft-pr111-69380262",
+      "headline": "In-game art flagging reaches draft review, promising coordinate-stamped field notes",
+      "summary": "Draft PR #111 proposes an opt-in I-key Art Inspector that records local screenshots and world coordinates, plus a read-only collector grouping missing-art flags. It is not merged, validated in Godot, or enabled in production.",
+      "body": "PR #111 introduces a proposed Art Field Notes workflow for recording missing art during gameplay. An opt-in I-key capture would save local PNG/JSON evidence with world coordinates and bounded visible actors; a Python collector groups flags by spatial stretch. Manifest instructions describe a human-approved, incremental installation lane. The PR is draft and explicitly requests Godot import and runtime smoke tests, privacy/security review and regression validation. It does not generate, approve or install art. Release-mode inspection currently requires broader DevMode flags, so a dedicated inspection-only gate is a material pre-release question. No passing CI or independent review was established. Main remains eef8a41f8e82fe47c346002087f52492d945322a.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "art-field-notes-v1",
+      "occurred_at": "2026-11-03T18:21:31Z",
+      "bullets": [
+        "Draft PR #111 proposes I-key coordinate-stamped local screenshot/JSON capture.",
+        "Read-only collector groups flags into 256px stretches.",
+        "No production art approvals or runtime installations.",
+        "Godot smoke, privacy review and release gating remain required."
+      ],
+      "links": [
+        {
+          "title": "Draft PR #111",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/111"
+        },
+        {
+          "title": "Latest PR commit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/6938026260e432ab600720b5b67c38b1c3c26bb4"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "A practical bridge between spotting missing artwork and fixing it has reached draft review. Art Field Notes would let a developer press I while playing CUSTODIAN, capture where the problem occurs, and later group nearby observations into manageable installation stretches.",
+        "sections": [
+          {
+            "heading": "From visual annoyance to actionable coordinates",
+            "text": "The proposed inspector records a local screenshot and JSON with world coordinates and a bounded view of nearby actors. A separate read-only collector groups flags by location so artwork can be matched to the correct manifest entry rather than guessed from memory."
+          },
+          {
+            "heading": "Art approval stays deliberately separate",
+            "text": "The manifest adds a staged installation workflow, but neither the inspector nor collector approves images or alters gameplay art. A human-approved source and a separately reviewed Asset V2 integration are still required."
+          },
+          {
+            "heading": "The draft has a meaningful release-mode caveat",
+            "text": "The PR has not passed its requested Godot gameplay smoke tests or security review. Its release-mode opt-in currently uses broader developer flags, so a dedicated inspection-only gate should be considered before wider use."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The missing-art backlog could become spatially actionable",
+            "explanation": "Coordinate-stamped observations would give the art pipeline exact places to repair, connecting playtesting directly to incremental asset installation without automating aesthetic approval."
+          },
+          {
+            "title": "Developer-mode isolation is the key safety gate",
+            "explanation": "The proposed release opt-in also enables other DevMode features. Separating the inspector's permissions would reduce accidental exposure of unrelated debug capabilities."
+          }
+        ],
+        "takeaway": "A reviewable implementation candidate now exists, but no gameplay-tested or production-enabled art inspection feature has been established.",
+        "next_watch": "Watch for Godot capture smoke tests, local evidence privacy review, dedicated release gating and an independent acceptance decision."
+      },
+      "details": {
+        "overview": "Open draft PR #111 targets main eef8a41f and carries nine commits, with latest head 69380262. No combined commit statuses were returned. No canonical dispatcher audit or verified host evidence is available.",
+        "ledger": [
+          {
+            "stage": "Draft implementation",
+            "status": "verified on PR branch",
+            "evidence": "PR #111 describes inspector autoload, local screenshot/JSON and Python spatial collector."
+          },
+          {
+            "stage": "Focused validation",
+            "status": "not established",
+            "evidence": "PR explicitly requests Godot 4 parse/import, gameplay capture, rapid presses, Python unit tests and existing tool regressions."
+          },
+          {
+            "stage": "Independent review",
+            "status": "not established",
+            "evidence": "PR remains draft."
+          },
+          {
+            "stage": "Main landing",
+            "status": "not landed",
+            "evidence": "Main is eef8a41f; PR head is 69380262."
+          },
+          {
+            "stage": "Production activation and teardown",
+            "status": "unknown",
+            "evidence": "No host evidence; release opt-in has broad DevMode dependency."
+          }
+        ],
+        "notes": [
+          "F9/F10/F11 are intended to remain unchanged.",
+          "No new production artwork is approved by this PR."
+        ],
+        "unknowns": [
+          "Actual runtime capture behavior and privacy under gameplay conditions.",
+          "Host processes, claims, locks, worktrees and teardown."
+        ],
+        "actions": [
+          "PR owner: run the specified Godot and Python tests and review release-mode isolation before requesting independent acceptance."
+        ]
+      },
+      "scorecard": {
+        "stage": "Draft implementation awaiting validation",
+        "as_of": "2026-11-03T18:21:31Z",
+        "scope": "PR #111 only, not the complete dispatcher queue",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Implementation proposed in draft PR",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "PR #111 and head 69380262"
+          },
+          {
+            "label": "Godot gameplay capture and collector tests",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Required by PR; no passing receipt inspected"
+          },
+          {
+            "label": "Privacy and release gating review",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Broader DevMode enabled by current release opt-in"
+          },
+          {
+            "label": "Independent review acceptance",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Draft PR has no accepted review"
+          },
+          {
+            "label": "Merge and runtime rollout",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Not on main or verified deployed"
+          }
+        ],
+        "next_gate": "PR owner: complete gameplay smoke and privacy/release-gate review before independent acceptance."
+      },
+      "related": [
+        {
+          "title": "New art orchestration guide separates candidate production from game-ready approval",
+          "context": "The field notes provide location-specific input to the separately documented candidate and installation workflow.",
+          "story_id": "art-candidate-orchestrator-guide-eef8a41f"
+        }
+      ]
+    },
     {
       "id": "art-candidate-orchestrator-guide-eef8a41f",
       "headline": "New art orchestration guide separates candidate production from game-ready approval",
@@ -1625,117 +1769,6 @@
           }
         ],
         "next_gate": "Operator owner to validate the north-facing fast attack in engine with a captured preview."
-      },
-      "related": []
-    },
-    {
-      "id": "narrative-causal-history-doctrine-9f450bb4",
-      "headline": "CUSTODIAN rewrites its environmental storytelling rules: every ruin needs a real history",
-      "summary": "New design guidance on main requires procedural locations to have a specific causal history before clues are placed. Ordinary labor, repairs and consequences take priority over interchangeable contradictory logs and manufactured mysteries. This is an authoring-standard change, not a runtime generator update.",
-      "body": "The newly landed design revision asks authors to define a site's original purpose, responsible people, consequential decision or failure, material cost and surviving traces before constructing clues. The Refused Passage, machine shelter and rare False Seam examples were revised to make physical consequences legible. Continuity anomalies remain exceptional and must be grounded in compatible metadata and corroborating physical evidence. This updates design doctrine only: it does not demonstrate changed generated maps, assets, runtime payloads or gameplay. The next meaningful gate is a source-bound content implementation and visual/interactive evaluation against these rules.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "general",
-      "workstream": "",
-      "occurred_at": "2026-11-02T15:08:24Z",
-      "bullets": [
-        "Causal local history now precedes procedural clue placement.",
-        "Ordinary maintenance, scarcity and human consequences are preferred over default contradictions.",
-        "Rare continuity anomalies require physical corroboration and compatible canon.",
-        "No runtime generator implementation or gameplay validation is established."
-      ],
-      "links": [
-        {
-          "title": "Design doctrine revision",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/9f450bb4ed04dd6ca09df317e296a8a72a0aa857"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "A new design rule changes how CUSTODIAN's world should tell stories. Instead of scattering ominous records around ruins and leaving the cause undefined, every substantial location must begin with an actual event: who built it, what happened there, what it cost, and what the player can still see.",
-        "sections": [
-          {
-            "heading": "The world must have a past before it has clues",
-            "text": "The revised authoring guidance requires a specific chain of cause and effect before environmental props or inspection text are selected. Repairs, salvaged machinery, abandoned routes and lived-in shelters can tell complete stories without requiring a supernatural twist."
-          },
-          {
-            "heading": "Anomalies become rare exceptions, not reusable templates",
-            "text": "The Refused Passage now needs an authored closure motive and human cost. The machine shelter needs an identifiable resource constraint. The False Seam can still suggest an extraordinary continuity event, but only where physical evidence and established lore support it. Contradictory paperwork alone is no longer enough."
-          },
-          {
-            "heading": "This is design direction, not shipped procedural behavior",
-            "text": "The change is confined to documentation and authoring standards. It does not prove the procedural generator selects coherent histories, that new artwork exists, or that players can discover the intended consequences in-game."
-          }
-        ],
-        "insights": [
-          {
-            "title": "A mystery is stronger when the author knows its answer",
-            "explanation": "Requiring a real underlying event makes clues mutually consistent and lets discoveries resolve something concrete, rather than treating ambiguity as a substitute for worldbuilding."
-          },
-          {
-            "title": "Ordinary lives can carry the setting",
-            "explanation": "Maintenance, scarcity, adaptation and institutional choices now have explicit priority. This broadens environmental variety while reserving genuine continuity anomalies for places where they matter."
-          }
-        ],
-        "takeaway": "The design standard now favors causally coherent, materially legible environmental storytelling; runtime adoption remains unverified.",
-        "next_watch": "A concrete procedural-location implementation, authored sample or integrated map test demonstrating these standards."
-      },
-      "details": {
-        "overview": "Main revision 9f450bb4ed04dd6ca09df317e296a8a72a0aa857 changes narrative and procedural environmental storytelling design documents. No runtime ownership, locked lore or payload schema was changed by the described doctrine.",
-        "ledger": [
-          {
-            "stage": "Authoring doctrine",
-            "status": "verified landed",
-            "evidence": "Commit 9f450bb4ed04dd6ca09df317e296a8a72a0aa857 changes design guidance."
-          },
-          {
-            "stage": "Runtime implementation",
-            "status": "not established",
-            "evidence": "Documentation changes alone do not establish generator behavior."
-          },
-          {
-            "stage": "Integrated validation",
-            "status": "unknown",
-            "evidence": "No gameplay proof associated with this documentation revision."
-          }
-        ],
-        "notes": [
-          "The revision explicitly avoids retroactive changes to locked lore and reserved cosmological mysteries."
-        ],
-        "unknowns": [
-          "Whether current generator output follows the revised standards.",
-          "Which location family will receive the first implemented demonstration."
-        ],
-        "actions": [
-          "Content/design owner: select one concrete location and document its causal event before asset or runtime implementation."
-        ]
-      },
-      "scorecard": {
-        "stage": "Design doctrine landed; runtime adoption unverified",
-        "as_of": "2026-11-02T15:08:24Z",
-        "scope": "This documentation revision only",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Authoring rules revised",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Commit 9f450bb4ed04dd6ca09df317e296a8a72a0aa857."
-          },
-          {
-            "label": "Runtime or authored example adoption",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No implementation evidence inspected."
-          },
-          {
-            "label": "Integrated player-facing validation",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No integrated evidence inspected."
-          }
-        ],
-        "next_gate": "Implement and inspect one representative generated location under the revised causal-history rules."
       },
       "related": []
     }
