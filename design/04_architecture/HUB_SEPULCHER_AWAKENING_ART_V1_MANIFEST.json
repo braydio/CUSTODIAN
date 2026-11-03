@@ -27,8 +27,12 @@
       "design/04_architecture/AWAKENING_DUST_LUNG_V2_ASSET_MANIFEST.md",
       "design/04_architecture/ASSET_PIPELINE_V2.md",
       "custodian/game/world/hub/first_set/hub_first_set_layout.gd",
-      "custodian/game/world/hub/events/sepulcher_grave/sepulcher_grave_evidence.gd"
-    ]
+      "custodian/game/world/hub/events/sepulcher_grave/sepulcher_grave_evidence.gd",
+      "design/04_architecture/SEPULCHER_GARDENS_GEOMETRY_V1.json",
+      "design/04_architecture/AI_ART_GENERATION_REVIEW_PROTOCOL_V1.md",
+      "custodian/game/world/hub/first_set/sepulcher_gardens_geometry_v1.gd"
+    ],
+    "v2_roadmap_design_baseline_main_sha": "50fd76fdb6e85d6bf11d01bce7c5e9ee26f5df62"
   },
   "counts": {
     "core": 198,
@@ -427,7 +431,7 @@
         "awakening_gate_of_dust_perimeter_support/distant_structures",
         "awakening_road_south_reach_perimeter_support/edge_transition"
       ],
-      "criterion": "6 individually reviewed images: CAL-01 flat walkable floor ONLY, CAL-02 separately generated structural architecture RGBA BLOCKED on approved solid/collision footprint and floor source; remaining four calibration images unchanged."
+      "criterion": "Six calibration sources; CAL-01 approved as AI candidate only, CAL-02 approved D6-only candidate contract, no per-image human source approvals implied."
     },
     {
       "code": "HUB-B1",
@@ -528,6 +532,160 @@
         "awakening_dust_lung_environment_v2/lift_station_transition_upper"
       ],
       "criterion": "6 underlays and 2 route/lift seam overlays; composition-level human approval before separate DL0 spatial change. Existing scene is fallback."
+    },
+    {
+      "code": "SG-V2",
+      "title": "Expanded Sepulcher Gardens complete artwork",
+      "ids": [
+        "hub_first_set_sepulcher_floor_materials_v2/quiet_chalk_limestone",
+        "hub_first_set_sepulcher_floor_materials_v2/civic_charcoal_register",
+        "hub_first_set_sepulcher_floor_materials_v2/memorial_court_worn",
+        "hub_first_set_sepulcher_floor_materials_v2/west_terrace_grit",
+        "hub_first_set_sepulcher_floor_materials_v2/southern_orchard_path",
+        "hub_first_set_sepulcher_water_materials_v2/blackwater_base_still",
+        "hub_first_set_sepulcher_water_materials_v2/witness_shallow_reflection",
+        "hub_first_set_sepulcher_water_materials_v2/witness_depth_haze",
+        "hub_first_set_sepulcher_water_materials_v2/sunken_basin_silt",
+        "hub_first_set_sepulcher_water_materials_v2/submerged_broken_limestone",
+        "hub_first_set_sepulcher_water_materials_v2/submerged_bronze_index",
+        "hub_first_set_sepulcher_water_materials_v2/dark_water_microripples",
+        "hub_first_set_sepulcher_shoreline_v2/formal_straight_plain",
+        "hub_first_set_sepulcher_shoreline_v2/formal_straight_weathered",
+        "hub_first_set_sepulcher_shoreline_v2/formal_outer_corner_90",
+        "hub_first_set_sepulcher_shoreline_v2/formal_inner_corner_90",
+        "hub_first_set_sepulcher_shoreline_v2/formal_convex_curve_45",
+        "hub_first_set_sepulcher_shoreline_v2/formal_concave_curve_45",
+        "hub_first_set_sepulcher_shoreline_v2/formal_terminal_cap",
+        "hub_first_set_sepulcher_shoreline_v2/formal_step_landing",
+        "hub_first_set_sepulcher_shoreline_v2/ruined_straight_cracked",
+        "hub_first_set_sepulcher_shoreline_v2/ruined_straight_gap",
+        "hub_first_set_sepulcher_shoreline_v2/ruined_outer_corner_90",
+        "hub_first_set_sepulcher_shoreline_v2/ruined_inner_corner_90",
+        "hub_first_set_sepulcher_shoreline_v2/ruined_curve_45",
+        "hub_first_set_sepulcher_shoreline_v2/ruined_rubble_terminal",
+        "hub_first_set_sepulcher_shoreline_v2/ruined_root_breach",
+        "hub_first_set_sepulcher_shoreline_v2/raw_earth_bank_straight",
+        "hub_first_set_sepulcher_shoreline_v2/formal_to_ruined_joint",
+        "hub_first_set_sepulcher_shoreline_v2/ruined_to_raw_bank_joint",
+        "hub_first_set_sepulcher_shoreline_v2/formal_to_raw_bank_joint",
+        "hub_first_set_sepulcher_shoreline_v2/shallow_angle_adapter",
+        "hub_first_set_sepulcher_landmark_architecture_v2/north_threshold_coping",
+        "hub_first_set_sepulcher_landmark_architecture_v2/north_threshold_heraldic_footing",
+        "hub_first_set_sepulcher_landmark_architecture_v2/south_threshold_coping",
+        "hub_first_set_sepulcher_landmark_architecture_v2/south_threshold_return_plinth",
+        "hub_first_set_sepulcher_landmark_architecture_v2/unreturned_names_east_arcade",
+        "hub_first_set_sepulcher_landmark_architecture_v2/unreturned_names_broken_arch",
+        "hub_first_set_sepulcher_landmark_architecture_v2/unreturned_names_registry_recess",
+        "hub_first_set_sepulcher_landmark_architecture_v2/memorial_court_index_ring",
+        "hub_first_set_sepulcher_landmark_architecture_v2/memorial_court_low_side_wall",
+        "hub_first_set_sepulcher_landmark_architecture_v2/memorial_court_marker_footing",
+        "hub_first_set_sepulcher_landmark_architecture_v2/bell_less_rotunda_ring",
+        "hub_first_set_sepulcher_landmark_architecture_v2/bell_less_rotunda_pedestal",
+        "hub_first_set_sepulcher_landmark_architecture_v2/bell_less_rotunda_outer_footings",
+        "hub_first_set_sepulcher_landmark_architecture_v2/witness_pool_formal_entry",
+        "hub_first_set_sepulcher_landmark_architecture_v2/witness_pool_mute_marker",
+        "hub_first_set_sepulcher_landmark_architecture_v2/twin_sarcophagus_pair",
+        "hub_first_set_sepulcher_landmark_architecture_v2/twin_sarcophagus_low_terrace",
+        "hub_first_set_sepulcher_landmark_architecture_v2/twin_sarcophagus_inspection_niche",
+        "hub_first_set_sepulcher_landmark_architecture_v2/sunken_basin_collapsed_overlook",
+        "hub_first_set_sepulcher_landmark_architecture_v2/sunken_basin_foundation_stub",
+        "hub_first_set_sepulcher_landmark_architecture_v2/rootbound_reliquary_arch_slit",
+        "hub_first_set_sepulcher_landmark_architecture_v2/rootbound_reliquary_stone_shrine",
+        "hub_first_set_sepulcher_landmark_architecture_v2/rootbound_reliquary_outer_coping",
+        "hub_first_set_sepulcher_landmark_architecture_v2/pale_growth_orchard_boundary",
+        "hub_first_set_sepulcher_landmark_architecture_v2/pale_growth_orchard_witness_tree",
+        "hub_first_set_sepulcher_landmark_architecture_v2/pale_growth_orchard_small_shrine",
+        "hub_first_set_sepulcher_interiors_v2/arcade_vestibule_floor_plate",
+        "hub_first_set_sepulcher_interiors_v2/arcade_architrave_broken",
+        "hub_first_set_sepulcher_interiors_v2/arcade_registry_wall",
+        "hub_first_set_sepulcher_interiors_v2/arcade_rear_occluder",
+        "hub_first_set_sepulcher_interiors_v2/crypt_garden_floor_plate",
+        "hub_first_set_sepulcher_interiors_v2/crypt_garden_sealed_grate",
+        "hub_first_set_sepulcher_interiors_v2/crypt_garden_ossuary_wall",
+        "hub_first_set_sepulcher_interiors_v2/crypt_garden_dead_cenotaph",
+        "hub_first_set_sepulcher_interiors_v2/rotunda_undercroft_floor_plate",
+        "hub_first_set_sepulcher_interiors_v2/rotunda_undercroft_column",
+        "hub_first_set_sepulcher_interiors_v2/rotunda_undercroft_record_wall",
+        "hub_first_set_sepulcher_interiors_v2/rotunda_undercroft_occlusion",
+        "hub_first_set_sepulcher_interiors_v2/reliquary_chamber_floor_plate",
+        "hub_first_set_sepulcher_interiors_v2/reliquary_inner_shelf",
+        "hub_first_set_sepulcher_interiors_v2/reliquary_roof_occlusion",
+        "hub_first_set_sepulcher_interiors_v2/reliquary_blind_door",
+        "hub_first_set_sepulcher_void_boundaries_v2/western_collapse_upper_lip",
+        "hub_first_set_sepulcher_void_boundaries_v2/western_collapse_depth_rubble",
+        "hub_first_set_sepulcher_void_boundaries_v2/north_cloister_rubble_cap",
+        "hub_first_set_sepulcher_void_boundaries_v2/north_cloister_depth_field",
+        "hub_first_set_sepulcher_void_boundaries_v2/closed_crypt_outer_wall",
+        "hub_first_set_sepulcher_void_boundaries_v2/closed_crypt_blind_corner",
+        "hub_first_set_sepulcher_void_boundaries_v2/outer_arcade_broken_footing",
+        "hub_first_set_sepulcher_void_boundaries_v2/southern_thicket_broken_wall",
+        "hub_first_set_sepulcher_void_boundaries_v2/southern_thicket_scree",
+        "hub_first_set_sepulcher_void_boundaries_v2/external_garden_dead_margin",
+        "hub_first_set_sepulcher_vegetation_v2/pale_orchard_witness_shrub",
+        "hub_first_set_sepulcher_vegetation_v2/ashen_low_ground_cover",
+        "hub_first_set_sepulcher_vegetation_v2/root_seam_short",
+        "hub_first_set_sepulcher_vegetation_v2/root_seam_long",
+        "hub_first_set_sepulcher_vegetation_v2/pale_flower_sparse",
+        "hub_first_set_sepulcher_vegetation_v2/dead_reed_small",
+        "hub_first_set_sepulcher_vegetation_v2/dead_reed_large",
+        "hub_first_set_sepulcher_vegetation_v2/chipped_lichen_overlay",
+        "hub_first_set_sepulcher_story_cues_v2/s1_arch_slit_telegraph",
+        "hub_first_set_sepulcher_story_cues_v2/s1_broken_register",
+        "hub_first_set_sepulcher_story_cues_v2/s2_pool_breach_telegraph",
+        "hub_first_set_sepulcher_story_cues_v2/s2_wet_registry_shard",
+        "hub_first_set_sepulcher_story_cues_v2/s3_rotunda_recess_telegraph",
+        "hub_first_set_sepulcher_story_cues_v2/s3_empty_offering_socket",
+        "hub_first_set_sepulcher_story_cues_v2/s4_sarcophagus_flank_telegraph",
+        "hub_first_set_sepulcher_story_cues_v2/s4_offering_cavity",
+        "hub_first_set_sepulcher_story_cues_v2/s5_orchard_low_screen",
+        "hub_first_set_sepulcher_story_cues_v2/s5_seed_votive_socket"
+      ],
+      "criterion": "Individually independent candidate artwork sources; later human source approval, normalization, Asset V2 and runtime placement required."
+    },
+    {
+      "code": "HUB-B2X",
+      "title": "Additional independent Hub architectural art",
+      "ids": [
+        "hub_first_set_civic_structures_v2/processional_broken_hero_footing",
+        "hub_first_set_civic_structures_v2/processional_law_pier",
+        "hub_first_set_civic_structures_v2/ashen_forum_outer_council_coping",
+        "hub_first_set_civic_structures_v2/ashen_forum_colonnade_relic",
+        "hub_first_set_civic_structures_v2/archive_rise_torn_terrace_wall",
+        "hub_first_set_civic_structures_v2/archive_rise_broken_registry_pier",
+        "hub_first_set_civic_structures_v2/crown_transfer_dead_causeway",
+        "hub_first_set_civic_structures_v2/crown_transfer_inactive_arc",
+        "hub_first_set_civic_structures_v2/muster_outer_rollcall_wall",
+        "hub_first_set_civic_structures_v2/muster_rank_stand_remnant",
+        "hub_first_set_civic_structures_v2/port_inactive_frame_footing",
+        "hub_first_set_civic_structures_v2/port_service_conduit_fascia"
+      ],
+      "criterion": "Individually independent candidate artwork sources; later human source approval, normalization, Asset V2 and runtime placement required."
+    },
+    {
+      "code": "AW-X",
+      "title": "Additional Awakening narrative staging",
+      "ids": [
+        "awakening_environment_story_v2/creche_cold_record_tray",
+        "awakening_environment_story_v2/ambulatory_broken_service_cabinet",
+        "awakening_environment_story_v2/attestation_blank_ledger_altar",
+        "awakening_environment_story_v2/locker_reliquary_iron_hooks",
+        "awakening_environment_story_v2/gate_of_dust_lost_civic_seal",
+        "awakening_environment_story_v2/south_reach_abandoned_marker"
+      ],
+      "criterion": "Individually independent candidate artwork sources; later human source approval, normalization, Asset V2 and runtime placement required."
+    },
+    {
+      "code": "DL-X",
+      "title": "Additional Dust Lung details owned by DL0",
+      "ids": [
+        "awakening_dust_lung_details_v2/north_pipe_bank_closed",
+        "awakening_dust_lung_details_v2/central_service_grate_failed",
+        "awakening_dust_lung_details_v2/western_lift_counterweight",
+        "awakening_dust_lung_details_v2/cistern_rim_broken_arc",
+        "awakening_dust_lung_details_v2/deep_cistern_distant_ring",
+        "awakening_dust_lung_details_v2/south_ingress_valve_bank"
+      ],
+      "criterion": "Individually independent candidate artwork sources; later human source approval, normalization, Asset V2 and runtime placement required."
     }
   ],
   "assets": [
@@ -11484,7 +11642,7 @@
         "notes": "Objective findings are an AI technical/art-direction audit; final aesthetic accept/reject remains human-owned."
       }
     ],
-    "geometry_reconciliation": "CAL-01 modular tile generation released; historical rejected candidate does NOT satisfy current prompt; CAL-02 architectural footprint remains blocked.",
+    "geometry_reconciliation": "CAL-01 512x512 opaque candidate staged; CAL-02 user-authorized D6-only 384x576 true-alpha candidate available, not human source-approved. No new collision or secret gameplay.",
     "paving_reference_status": "UNAPPROVED_MATERIAL_REFERENCE_ONLY; V3 approval receipt absent; human CAL-01 approval pending",
     "candidate_staging_receipts": [
       {
@@ -11618,7 +11776,7 @@
     "checkpoint_authority": "Use live origin/main plus actual source bytes, candidate staging file ID/revision/byte hash and stored candidate screening receipt. Candidate advancement and human-approved source advancement are separate independent cursors.",
     "current_initial_status": "User-approved full-world V2 candidate contract: CAL-01 is verified PASS_CANDIDATE staged (source still unapproved); CAL-02 D6 384x576 true-RGBA eligible next. 198 required core, 36 optional, 193 fixed one-state sets.",
     "floor_first_rule": "Flat ground-first sources, separate authorized true-alpha architecture/void/water scenery. CAL-01 is modular 512x512 floor material; CAL-02 is 384x576 D6-only true-alpha structure within existing nonwalkable D6; surrounding Hub B2 underlays are strictly floor-only, structurally separate. Gameplay/void masks/route access never owned by images.",
-    "geometry_reconciliation": "CAL-01 is eligible ONLY as 512x512 opaque modular ground tile per revised asset prompt; old 1152x1408 scene is permanently disallowed. CAL-02 still blocked. No skipped asset IDs or approvals.",
+    "geometry_reconciliation": "CAL-01 modular floor; CAL-02 384x576 true-RGBA D6 Root-choked Outer Arcade at (-1824,-4096), clipped to existing nonwalkable D6. Candidate screen and production source approvals remain separate.",
     "cal01_reference_gate": "No approved paving V3 style anchor established. Unapproved reference studies may inform the creative brief only; actual supplied image inputs must be evidenced. Human CAL-01 approval remains pending.",
     "production_source_completion_predicate": "All 198 required core states separately human-approved with immutable source master SHA and byte-level validated normalizations; Asset V2 registered/ingested and runtime presentation separately verified.",
     "codex_artwork_command_vocabulary": [
@@ -14876,7 +15034,7 @@
     "full_world_roadmap_2026_11_03": "V1 fixed 72 core/12 optional/67 sets and older prose described five calibration images though six exist. Superseded planning scope 198 required/36 optional/193 sets. Existing source human approvals remain zero; this is an art-source expansion, not a gameplay or Asset V2 implementation."
   },
   "geometry_expansion_2026_11_02": {
-    "status": "CAL01_MODULAR_GROUND_RECONCILED__CAL02_STRUCTURE_STILL_BLOCKED",
+    "status": "CAL01_MODULAR_GROUND_RECONCILED__CAL02_D6_CANDIDATE_ALLOWED__NO_RUNTIME_GEOMETRY_MUTATION",
     "runtime_geometry": "design/04_architecture/SEPULCHER_GARDENS_GEOMETRY_V1.json",
     "superseded_underlay_target": "Historic 1152x1408 full-scene plate permanently superseded; do NOT generate it",
     "current_walkable_geometry": "3072x2688 authoring rectangle with exact 96x84 irregular mask; E0-E5 and both east connectors unchanged",
@@ -14887,7 +15045,7 @@
   },
   "new_world_roadmap": {
     "version": 2,
-    "status": "AUTHORED_ART_SOURCE_ROADMAP__CANDIDATE_GENERATION_ELIGIBLE_WITH_PER_STATE_SCREENING",
+    "status": "FULL_SOURCE_INVENTORY_AUTHORED__CANDIDATE_QUEUE_ACTIVE",
     "authorized_on": "2026-11-03",
     "scope": "All existing Hub/Sepulcher/Awakening and DL0 candidate art plus expanded nonrectangular Gardens, four distinct architectural interiors, all ten landmarks, ponds, shoreline, nonwalkable boundaries, secrets, region support and optional polish. No gameplay changes implied.",
     "coverage": {
@@ -15322,6 +15480,22 @@
       "review": "For RGBA sprites report visual matte/checkerboard/uncertainty, then prove true alpha from bytes; for RGB opaque note alpha N/A; 3x3 repetition on repeatable materials, 1px/wu placements and exact join families",
       "scenarios": "D3/D4 full polygon mask overlays; north/south Gardens and Muster connector widths; P1-P8 routes; grave E0-E5; L01-L10 landmarks; I01-I04 separate spatial scene gates",
       "ownership": "Existing nine Awakening perimeter families and DL0 geometry/source cutover owners untouched"
-    }
+    },
+    "artwork_definition": "The 198 required core source states cover all legacy Hub/Awakening/DL0 states plus expanded Gardens materials, two water bodies, 20 shoreline components, seven solid/voids, ten landmarks, four interior suites, visual secrets and surrounding-world polish. Candidate art is not runtime implementation.",
+    "completion_tests": [
+      "198 unique core source IDs and 193 single-state ordered generation sets, retaining 67 prior IDs",
+      "36 optional prompt-defined extras excluded until user explicitly opts in",
+      "Each actual image individually screened, source bytes verified, candidate-only Dropbox receipt recorded before candidate advancement",
+      "Opaque sources: actual RGB/no alpha; transparent sources: actual byte-level RGBA/alpha and explicit visual matte/checkerboard/uncertainty",
+      "Repeatable floor/water materials: actual 3x3 repeats, edges and corners examined at 1:1 native scale, no recognizable motifs",
+      "20 shoreline pieces: formal/ruined/raw registered end profiles tested with 256px straight runs and 45-degree/90-degree D3/D4 corner contacts",
+      "D1-D7 nonwalkable, P1-P8 routes, both east connectors and grave interaction offsets remain unaltered by artwork",
+      "All ten L01-L10 landmark sites and four I01-I04 interior visual suites individually identifiable and scale-correct",
+      "S1-S5 clues remain artistic telegraphs, not actual item-grant or entrance authority",
+      "198 production source masters individually human-reviewed and approved before immutable source_work/inbox promotion",
+      "Asset Pipeline V2 schema, normalization, doctor/ingest and Godot scene rendering validated for each human-approved family",
+      "128px canonical Operator in-game comparison, no obstructed routes or unexpected overdraw, no DL0/AP ownership violations",
+      "Optional extras are supplemental only; core completeness does not depend on them"
+    ]
   }
 }
