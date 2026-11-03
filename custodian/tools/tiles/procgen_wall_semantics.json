@@ -1,5 +1,0 @@
-{
-  "notes": "Optional curated role overrides for tools/tiles/build_procgen_wall_atlas.py. Empty parts means the bridge uses conservative heuristics from wall_parts.json.",
-  "parts": {}
-}
-
