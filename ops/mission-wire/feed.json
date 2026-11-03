@@ -1,9 +1,155 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-03T14:07:14Z",
-  "source_main_sha": "394e05469659c9a024c0353bf1a727b83d4a49a5",
+  "generated_at": "2026-11-03T16:17:54Z",
+  "source_main_sha": "eef8a41f8e82fe47c346002087f52492d945322a",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "art-candidate-orchestrator-guide-eef8a41f",
+      "headline": "New art orchestration guide separates candidate production from game-ready approval",
+      "summary": "CUSTODIAN main now documents a controller-led artwork candidate workflow, including independent screening, verified Dropbox staging, retry limits and restart-safe receipts. This is an operating guide, not proof that the controller ran or any new artwork passed.",
+      "body": "The November 3 main commit adds ART_CANDIDATE_ORCHESTRATOR_GUIDE.md and routes explicitly authorized Hub/Sepulcher/Awakening candidate work through it. Codex selects assets from the authoritative manifest, asks ChatGPT to generate and screen them, checks actual image bytes and stages passing candidates separately from production. Failed geometry is deferred, not silently accepted. The guide prescribes persistent receipts and recovery, but the commit changes documentation only. No new candidate, independent acceptance, runtime integration or host execution is established. CI status endpoint returned no checks; CI health unknown.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "hub-sepulcher-awakening-art-v1",
+      "occurred_at": "2026-11-03T15:10:02Z",
+      "bullets": [
+        "Controller selects required assets from current manifest.",
+        "PASS_CANDIDATE requires visual and objective byte validation.",
+        "Verified candidate-only staging does not approve production art.",
+        "Execution, new candidates and runtime integration remain unverified."
+      ],
+      "links": [
+        {
+          "title": "Main commit: candidate orchestrator guide",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/eef8a41f8e82fe47c346002087f52492d945322a"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "The Sepulcher artwork effort now has a written operating playbook for moving from prompts to verified image candidates. It assigns asset selection and recovery to a controller rather than letting the image-generation conversation decide what happens next.",
+        "sections": [
+          {
+            "heading": "A controlled path from image to candidate",
+            "text": "The new guide requires the controller to select the next eligible required asset, check generated image dimensions and transparency from actual bytes, obtain a reasoned visual screen, and verify candidate-only Dropbox staging. Failures become explicit deferred obligations."
+          },
+          {
+            "heading": "The approval boundary remains intact",
+            "text": "A passing candidate is not automatically game-ready artwork. Human aesthetic approval, Asset Pipeline V2 ingestion, runtime registration and scene cutover remain separate gates. The guide also specifies durable receipts and restart reconciliation to avoid accidental regeneration."
+          },
+          {
+            "heading": "A guide is not a running service",
+            "text": "The inspected commit adds documentation and a root instruction link, not an executing controller or completed image. No fresh host receipt, independent acceptance or production integration was established."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The bottleneck is now observable in principle",
+            "explanation": "Candidate screening, transfer and human approval are explicitly different states. That separation should make failures such as CAL-02 easier to diagnose without counting unfinished art as complete."
+          },
+          {
+            "title": "Recovery is designed before scale-up",
+            "explanation": "The guide calls for persistent action journals and verification of prior uploads, reducing the risk of duplicate generations after interruptions. Its effectiveness still needs execution evidence."
+          }
+        ],
+        "takeaway": "The candidate-production procedure has landed on main; operational execution and production art approval have not.",
+        "next_watch": "Watch for an authorized controller run with verifiable image bytes, candidate-screening receipts and a confirmed staged object."
+      },
+      "details": {
+        "overview": "Commit eef8a41f8e82fe47c346002087f52492d945322a adds a 275-line art candidate orchestration guide and AGENTS.md routing. This is a documentation-only landing; no image, manifest, packet, runtime or production state was changed in this commit.",
+        "ledger": [
+          {
+            "stage": "Guide landing",
+            "status": "verified",
+            "evidence": "Main commit eef8a41f8e82fe47c346002087f52492d945322a includes new guide and AGENTS routing."
+          },
+          {
+            "stage": "Documentation validation",
+            "status": "reported",
+            "evidence": "Closeout note reports git diff --check; no test suite run."
+          },
+          {
+            "stage": "Candidate execution",
+            "status": "unknown",
+            "evidence": "No actual controller run or new image inspected."
+          },
+          {
+            "stage": "Independent review and production acceptance",
+            "status": "not established",
+            "evidence": "Candidate screen and human approval are distinct; neither evidenced by this commit."
+          },
+          {
+            "stage": "Runtime integration and teardown",
+            "status": "unknown",
+            "evidence": "No runtime or host evidence."
+          }
+        ],
+        "notes": [
+          "CI combined status returned no statuses; not proof of passing CI.",
+          "Full dispatcher and private operational observations unavailable."
+        ],
+        "unknowns": [
+          "Whether an authorized controller session has started.",
+          "Whether any new candidate bytes passed technical checks or were uploaded."
+        ],
+        "actions": [
+          "Art controller owner: on explicit candidate-production authorization, run the documented workflow and retain verifiable receipts."
+        ]
+      },
+      "scorecard": {
+        "stage": "Guide landed; candidate execution unverified",
+        "as_of": "2026-11-03T15:10:02Z",
+        "scope": "Art candidate orchestration documentation commit only",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Controller guide authored and landed",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Main commit eef8a41f8e82fe47c346002087f52492d945322a"
+          },
+          {
+            "label": "Authorized controller execution",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No execution receipt inspected"
+          },
+          {
+            "label": "Image-byte validation and candidate screening",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Requires actual generated image and checks"
+          },
+          {
+            "label": "Verified candidate-only staging",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Requires readback of uploaded object"
+          },
+          {
+            "label": "Human production approval",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Separate decision gate"
+          },
+          {
+            "label": "Asset V2 and runtime integration",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Separate downstream workstream"
+          }
+        ],
+        "next_gate": "Art controller owner: run only on explicit authorization, then verify the first eligible candidate and its staging receipt."
+      },
+      "related": [
+        {
+          "title": "Sepulcher arcade artwork deferred after three failed screens; CAL-03 becomes next candidate",
+          "context": "The earlier CAL-02 failure illustrates why this guide separates rejected candidates from approved production art.",
+          "story_id": "sepulcher-cal02-deferred-three-failed-394e0546"
+        }
+      ]
+    },
     {
       "id": "sepulcher-cal02-deferred-three-failed-394e0546",
       "headline": "Sepulcher arcade artwork deferred after three failed screens; CAL-03 becomes next candidate",
@@ -1592,173 +1738,6 @@
         "next_gate": "Implement and inspect one representative generated location under the revised causal-history rules."
       },
       "related": []
-    },
-    {
-      "id": "empty-convoy-security-correction-landed-09e15e23",
-      "headline": "Empty Convoy security fix lands; a full gameplay retest still stands between code and confidence",
-      "summary": "The Empty Convoy correction has landed on main after focused security, recovery and placement tests passed. Temporary spawn failures now keep the encounter unresolved rather than granting the custody trace. The original production trigger is still unknown, and neither an integrated GUI retest nor independent review is accepted.",
-      "body": "A targeted correction to Empty Convoy's defense state machine is now on main. Temporary ambient-capacity exhaustion, unsafe spawn positions, queue rejection and missing actors on reentry no longer count as an empty or defeated defense. The trace requires verified defender defeats or authoritative absence. The archived implementation packet reports focused security, recovery and placement smokes passing, including a generated-map seed-2 scenario that registered three defenders; canonical changed-file validation reported 4/4 passing. This is implementation and source-bound test evidence, not a new production gameplay PASS. The original trigger remains unknown; a coordinator-directed GUI retest and separate review decision remain outstanding. No host teardown or live-process state was verified.",
-      "severity": "milestone",
-      "verification": "verified",
-      "category": "gameplay-systems",
-      "workstream": "campaign-empty-convoy-security-integrated-correction-v1",
-      "occurred_at": "2026-11-02T13:55:08Z",
-      "bullets": [
-        "Correction landed on main; packet archived complete.",
-        "Transient spawn failures cannot unlock the custody trace.",
-        "Focused security, recovery and placement smokes reported PASS; changed-file validation 4/4.",
-        "Integrated GUI retest and independent review remain outstanding."
-      ],
-      "links": [
-        {
-          "title": "Correction landed on main",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/09e15e239da24757a9587b61314b4f62e08eba0e"
-        },
-        {
-          "title": "Validated implementation commit",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/c7bc91207a7b582b657c63785515f0aac19496e9e"
-        },
-        {
-          "title": "Archived correction packet",
-          "url": "https://github.com/braydio/CUSTODIAN/blob/09e15e239da24757a9587b61314b4f62e08eba0e/custodian/docs/ai_context/task_packets/archived/CAMPAIGN_EMPTY_CONVOY_SECURITY_INTEGRATED_CORRECTION_V1.md"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "Empty Convoy's defense loophole has received a targeted fix. Previously, temporary failures to produce enemies could leave the site looking cleared and allow the player to record the missing shipment's custody trace without a fight. The new implementation keeps that security state unresolved until the encounter has trustworthy evidence of clearance.",
-        "sections": [
-          {
-            "heading": "The encounter now distinguishes failure from victory",
-            "text": "Capacity limits, rejected spawn positions, failed queues and enemies missing after reentry no longer masquerade as a defeated defense. The trace opens only after verified defeats or a genuinely authoritative empty-defense result. This protects the event's salvage reward without changing its larger design."
-          },
-          {
-            "heading": "Tests passed, but the original gameplay failure needs another look",
-            "text": "The implementation packet reports passing security, recovery and placement smoke tests. A generated seed-2 map accepted three registered defenders, and the changed-file validation reported four passing checks. However, the exact cause of the original in-game failure remains unknown. A new production GUI retest and an independent review decision are still needed."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Security state must follow evidence, not absence",
-            "explanation": "No enemies visible is not the same as enemies defeated. This distinction protects both the encounter and its exactly-once salvage reward against temporary world-generation or spawning failures."
-          },
-          {
-            "title": "A headless PASS is not a gameplay PASS",
-            "explanation": "The corrected source passed targeted tests, but only a fresh integrated retest can establish that the originally observed player-facing bypass is gone."
-          }
-        ],
-        "takeaway": "The correction is landed and test-backed, but its player-facing resolution is not yet independently established.",
-        "next_watch": "A coordinator-directed production seed-2 GUI retest, followed by a separate review disposition."
-      },
-      "details": {
-        "overview": "Source main 09e15e239da24757a9587b61314b4f62e08eba0e. The implementation was validated at c7bc91207a7b582b657c63785515f0aac19496e9e and subsequently landed. The archived packet reports changed-file validation 4/4 and focused smoke PASS; no independent review was launched or accepted.",
-        "ledger": [
-          {
-            "stage": "Implementation",
-            "status": "verified landed",
-            "evidence": "Correction source commit c7bc9120; current main 09e15e239da24757a9587b61314b4f62e08eba0e."
-          },
-          {
-            "stage": "Validation",
-            "status": "reported PASS, source-bound",
-            "evidence": "Archived packet reports security/recovery/placement smoke PASS, generated seed-2 three registered defenders, changed-file 4/4; report digest 4adaac526829167ae300569f2e7af9e82bdee03106028c6924b26db819abf1db."
-          },
-          {
-            "stage": "Integrated GUI retest",
-            "status": "pending",
-            "evidence": "Archived completion explicitly requests production retest after landing."
-          },
-          {
-            "stage": "Independent review",
-            "status": "not accepted",
-            "evidence": "Review disposition deferred to separate coordinator control."
-          },
-          {
-            "stage": "Canonical teardown",
-            "status": "unknown",
-            "evidence": "No independently readable host cleanup receipt."
-          }
-        ],
-        "notes": [
-          "The original runtime trigger remains unconfirmed.",
-          "No GitHub commit statuses or PR-triggered workflow runs were returned for the latest main SHA."
-        ],
-        "unknowns": [
-          "Production GUI retest outcome",
-          "Independent review disposition",
-          "Host claim, lock, worktree and teardown state"
-        ],
-        "actions": [
-          "Coordinator: authorize and inspect the production seed-2 GUI retest after landing.",
-          "Coordinator: determine independent correction review disposition."
-        ]
-      },
-      "scorecard": {
-        "stage": "Landed implementation; awaiting integrated retest and review decision",
-        "as_of": "2026-11-02T13:55:08Z",
-        "scope": "Named Empty Convoy correction only, not global dispatcher queue",
-        "metrics": [
-          {
-            "id": "other-validation-checks",
-            "label": "CHANGED-FILE CHECKS",
-            "value": 4,
-            "verification": "reported",
-            "basis": "Archived packet reports 4/4 source-bound changed-file validation checks passed",
-            "url": "https://github.com/braydio/CUSTODIAN/blob/09e15e239da24757a9587b61314b4f62e08eba0e/custodian/docs/ai_context/task_packets/archived/CAMPAIGN_EMPTY_CONVOY_SECURITY_INTEGRATED_CORRECTION_V1.md"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Original bypass reproduced",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Integrated seed-2 QA finding documented in correction packet."
-          },
-          {
-            "label": "Correction implemented",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Source commit c7bc9120."
-          },
-          {
-            "label": "Focused validation",
-            "status": "done",
-            "verification": "reported",
-            "evidence": "Archived completion reports passing smoke tests and 4/4 changed-file checks."
-          },
-          {
-            "label": "Landed on main",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Current main 09e15e239da24757a9587b61314b4f62e08eba0e includes correction."
-          },
-          {
-            "label": "Production GUI retest",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Not yet evidenced after landing."
-          },
-          {
-            "label": "Independent review",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Requires separate coordinator decision."
-          },
-          {
-            "label": "Canonical cleanup",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "Host teardown evidence unavailable."
-          }
-        ],
-        "next_gate": "Coordinator authorizes a production seed-2 GUI retest on landed main; review disposition remains a separate control."
-      },
-      "related": [
-        {
-          "title": "Empty Convoy security can be bypassed when defenders fail to appear",
-          "context": "Earlier coverage of the original failure or its recovery foundation.",
-          "story_id": "convoy-security-integrated-correction-04a617c4"
-        }
-      ]
     }
   ],
   "snapshot": {
