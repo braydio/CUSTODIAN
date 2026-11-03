@@ -3,8 +3,8 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `ritualant-npc-silhouette-readability-shader-v1-recovery-1`
 - Category: `assets-art`
-- Status: `ready`
-- Dispatch: `auto`
+- Status: `blocked`
+- Dispatch: `manual`
 - Authoring handoff: `auto`
 - Priority: `P2`
 - Depends on: `none`
@@ -75,3 +75,8 @@
 ## Supersession and donor provenance
 
 This replacement is explicitly authorized by the project owner in https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae7eb07-c554-83e9-911a-1335e640e4d0. It supersedes unfinished `ritualant-npc-silhouette-readability-shader-v1`; it does not inherit or claim completion from that workstream, and it does not depend on `review-ritualant-npc-silhouette-readability-shader-v1`. The original workstream remains blocked/manual, not complete or accepted. Use its preserved remote donor at exact SHA `52e396976cb3a1444fac9377c58c2ae36cc48b41` only as read-only source material; build replacement history from current `origin/main`. The exact human sign-off remains the October 17 approval of candidate `03678c0af88caf911166040a06fba460bcf4d2e0` documented in `custodian/docs/ai_context/reports/ritualant_npc_silhouette_readability_shader_v1_human_visual_decision.md` and the original authoring conversation https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acb367f-4ca0-83e8-a226-31a3ae38da20.
+
+
+## Supersession disposition
+
+Project-owner disposition: this packet is superseded by `ritualant-npc-silhouette-readability-shader-v1-recovery-2` and is explicitly blocked/manual, not complete, not accepted, and not a PASS. Recovery-1 implementation source commit `8c9b115ec7caf512fa1e37f9dd3dade665363e8f` remains preserved as provenance. Its canonical finish merged historical main state `d06bde0800aa494e7c203ebbeff79bab6b920174`, whose 46 invalid PNG import sidecars made the required after-sync import preflight impossible. Those sidecars were repaired on current main at `ecd4ac324d42e7bc8183fcd7ea0d05732c75ec46`; recovery-2 starts from that repaired main and does not depend on this unfinished workstream or review. Preserve the historical trace and evidence; do not synthesize validation or acceptance. Authorizing conversation: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae7eb07-c554-83e9-911a-1335e640e4d0.

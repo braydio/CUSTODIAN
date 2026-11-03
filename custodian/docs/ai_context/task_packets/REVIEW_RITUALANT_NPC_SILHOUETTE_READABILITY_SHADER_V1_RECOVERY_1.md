@@ -4,8 +4,8 @@
 - Workstream: `review-ritualant-npc-silhouette-readability-shader-v1-recovery-1`
 - Category: `assets-art`
 - Kind: `review`
-- Status: `ready`
-- Dispatch: `auto`
+- Status: `blocked`
+- Dispatch: `manual`
 - Authoring handoff: `auto`
 - Priority: `P2`
 - Depends on: `ritualant-npc-silhouette-readability-shader-v1-recovery-1`
@@ -46,3 +46,8 @@
 ## Supersession and review boundary
 
 This review covers only `ritualant-npc-silhouette-readability-shader-v1-recovery-1` after it lands. The original `review-ritualant-npc-silhouette-readability-shader-v1` is explicitly superseded and blocked/manual, not accepted; its unaccepted dependency state must not be treated as review evidence or as a predecessor. The replacement implementation intentionally has no dependency on the original review. Verify the original human visual decision from `custodian/docs/ai_context/reports/ritualant_npc_silhouette_readability_shader_v1_human_visual_decision.md` and https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acb367f-4ca0-83e8-a226-31a3ae38da20, while independently checking objective alpha, atlas, scene binding, phase and runtime requirements against the replacement's exact landed source.
+
+
+## Supersession disposition
+
+Project-owner disposition: this packet is superseded by `ritualant-npc-silhouette-readability-shader-v1-recovery-2` and is explicitly blocked/manual, not complete, not accepted, and not a PASS. Recovery-1 implementation source commit `8c9b115ec7caf512fa1e37f9dd3dade665363e8f` remains preserved as provenance. Its canonical finish merged historical main state `d06bde0800aa494e7c203ebbeff79bab6b920174`, whose 46 invalid PNG import sidecars made the required after-sync import preflight impossible. Those sidecars were repaired on current main at `ecd4ac324d42e7bc8183fcd7ea0d05732c75ec46`; recovery-2 starts from that repaired main and does not depend on this unfinished workstream or review. Preserve the historical trace and evidence; do not synthesize validation or acceptance. Authorizing conversation: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae7eb07-c554-83e9-911a-1335e640e4d0.
