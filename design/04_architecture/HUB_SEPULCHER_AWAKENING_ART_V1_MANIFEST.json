@@ -12,7 +12,8 @@
     "command_amendment_2026_11_01": "The phrase 'generate the next set' now explicitly authorizes generation of the earliest eligible unfinished set under generation_sets. Its cardinality and exact image IDs are fixed; no bulk art approval. This does not replace individual review, Dropbox handoff or Asset V2 gates.",
     "floor_first_revision_2026_11_01": "Sepulcher floor first, separate structural alpha source added (72 core, 12 optional, 84 prompts and 67 sets). Original mixed CAL-01 candidate remains unapproved.",
     "modular_ground_revision_2026_11_02": "Explicitly supersedes CAL-01's historical 1152x1408 rectangular ground plate with one 512x512 opaque seamless modular material candidate, keeping the original asset ID and immutable rejected-candidate evidence. The existing paving candidates are unapproved material references, not established human-approved V3 sources, and no generator image conditioning is claimed. CAL-01 approval, Dropbox source promotion, family registration and runtime binding are all still pending.",
-    "candidate_only_auto_queue_amendment_2026_11_03": "User authorizes automatically producing, screening and candidate-staging every outstanding required core image without pausing between sets for separate human source approval; Codex artwork commands only generate/review/upload. Human approval is still needed before any production source handoff, Asset V2 ingest or scene cutover. Unresolved geometry-dependent required states must be explicitly deferred and revisited, never silently skipped or marked complete."
+    "candidate_only_auto_queue_amendment_2026_11_03": "User authorizes automatically producing, screening and candidate-staging every outstanding required core image without pausing between sets for separate human source approval; Codex artwork commands only generate/review/upload. Human approval is still needed before any production source handoff, Asset V2 ingest or scene cutover. Unresolved geometry-dependent required states must be explicitly deferred and revisited, never silently skipped or marked complete.",
+    "cal02_d6_lock_2026_11_03": "User approved existing D6 Root-choked Outer Arcade contract, 384x576 RGBA at (-1824,-4096); source limited to D6 nonwalkable polygon and no runtime or collision authority. Source/inbox promotion remains human gated."
   },
   "repo": {
     "repository": "braydio/CUSTODIAN",
@@ -554,12 +555,12 @@
       "consumer": "res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation",
       "registration_status": "proposed_not_registered",
       "normalized_canvas": {
-        "width": 1152,
-        "height": 1408
+        "width": 384,
+        "height": 576
       },
       "frame_size": {
-        "width": 1152,
-        "height": 1408
+        "width": 384,
+        "height": 576
       },
       "frames": 1,
       "layout": "copy",
@@ -568,11 +569,11 @@
       "direction": "omni",
       "auto_mirror": false,
       "layer": "structural_presentation",
-      "alpha": "True RGBA isolated architectural silhouettes, no floor matte",
-      "anchor": "Same 1152x1408 1:1 world/pixel origin, no per-layer transforms",
-      "placement_rule": "BLOCKED. 1152x1408 historic structure must NOT be generated/registered; require separately approved modular architectural footprints aligned to 96x84 current mask and preserved event/Forum connections. Artwork never grants collision.",
-      "image_generation_prompt": "Create one separately generated 1152x1408 TRUE RGBA transparent architectural presentation source for CUSTODIAN Sepulcher Gardens, exactly pixel-registered 1:1 over an approved flat floor, strict 90-degree orthographic north-up camera. Ruined institutional burial architecture: damaged cloister arches, retaining masonry, broken column bases, pale limestone and black basalt plinths, restrained bronze. NO ground texture or fully opaque scene. CRITICAL PRECONDITION: the current full Gardens envelope is walkable in HubFirstSetLayout. DO NOT place walls, tomb terraces or any other apparent blocking solids inside the playable floor unless a separately human-reviewed, approved geometry/collision and solid footprint map assigns their nonwalkable space. Preserve grave center (576,704), reading offsets (256,704),(1024,704),(1024,1216), choices (484,816),(668,816), east connector bands x1024..1152 at y576..832 and y1120..1376. Keep alpha truly transparent outside authorized architectural silhouettes. No camera tilt, art-only collision invention, readable inscriptions, UI, characters, fictional entrances or extra playable-looking corridors. If approved structural footprint is absent this requested source is BLOCKED and must not be generated.",
-      "prompt_authority": "Historical prompt retained for provenance ONLY; not authorized by current Gardens geometry. Replacement requires revised source contract and explicit geometry lock.",
+      "alpha": "TRUE RGBA; empty pixels outside D6 authorized structural silhouette; no baked floor, no background/checkerboard/matte",
+      "anchor": "SepulcherGardensGeometryV1 obstacle D6; world origin (-1824,-4096), 384x576 source canvas at 1 world px/image px, north up",
+      "placement_rule": "D6 Root-choked Outer Arcade ONLY: 32px world-grid canvas origin (-1824,-4096), extent (-1824..-1440,-4096..-3520); clip masonry alpha to D6 world polygon [(-1792,-4064),(-1632,-4032),(-1472,-3712),(-1568,-3552),(-1696,-3712)] after normalization. Every visible solid is within currently nonwalkable D6. Preserve all walkable P1-P8 route cells, grave evidence clearances and both east connectors. No new collision or gameplay rooms.",
+      "image_generation_prompt": "Produce EXACTLY ONE independent 384x576 one-frame true-RGBA architectural asset: CUSTODIAN Sepulcher Gardens Root-choked Outer Arcade D6, strictly vertical 90-degree orthographic overhead, north up, 32px geometry. Form a ruined institutional cloister along an irregular, tightly bounded nonwalkable wedge: pale weathered limestone crown/coping fragments, charcoal basalt piers, narrow oxidized-bronze registration lines, broken double arch foundations and a restrained root-bound seam. Use D6 source world polygon [(-1792,-4064),(-1632,-4032),(-1472,-3712),(-1568,-3552),(-1696,-3712)] within a 384x576 canvas registered at (-1824,-4096). Sprite art is a modular structural presentation, NOT a 1152x1408 full-Gardens plate, never a floor map. Keep exterior alpha truly 0, with no painted matte, checkerboard, shadow carpet, invented usable entrance or protrusion into walkable routes. No readable text, human, flowers, foliage carpet, UI, fake collision, invented room, roof perspective or isometric camera. Provide full object edges; renderer deterministically clips to authorized D6 polygon if needed after source normalization. Align material scale with the burial-civic weathering direction, not a claimed human-approved paving image. Candidate quality requires visual contour and byte alpha inspection; candidate staging is NOT production source approval.",
+      "prompt_authority": "User-approved CAL-02 D6 structural calibration 2026-11-03; design/04_architecture/SEPULCHER_GARDENS_GEOMETRY_V1.json D6 and current live SepulcherGardensGeometryV1",
       "source_sha256": null,
       "normalized_sha256": null,
       "dropbox_path": null,
@@ -582,8 +583,50 @@
       "live_status": "not_checked_at_publication",
       "human_image_approval": "pending",
       "handoff_review_status": null,
-      "current_spec_status": "BLOCKED_OBSOLETE_1152x1408_STRUCTURE_REAUTHORING_REQUIRED",
-      "geometry_block": "Previous registered 1152x1408 full-scene structure geometry is obsolete. Do not generate. Define per-landmark nonwalkable footprints and modular structural source inventory against the expanded Gardens and its 80px Operator clearance before revising this state."
+      "current_spec_status": "candidate_generation_allowed__D6_only__human_image_approval_pending",
+      "geometry_block": "Previous registered 1152x1408 full-scene structure geometry is obsolete. Do not generate. Define per-landmark nonwalkable footprints and modular structural source inventory against the expanded Gardens and its 80px Operator clearance before revising this state.",
+      "historical_canvas": {
+        "width": 1152,
+        "height": 1408
+      },
+      "historical_prompt": "Create one separately generated 1152x1408 TRUE RGBA transparent architectural presentation source for CUSTODIAN Sepulcher Gardens, exactly pixel-registered 1:1 over an approved flat floor, strict 90-degree orthographic north-up camera. Ruined institutional burial architecture: damaged cloister arches, retaining masonry, broken column bases, pale limestone and black basalt plinths, restrained bronze. NO ground texture or fully opaque scene. CRITICAL PRECONDITION: the current full Gardens envelope is walkable in HubFirstSetLayout. DO NOT place walls, tomb terraces or any other apparent blocking solids inside the playable floor unless a separately human-reviewed, approved geometry/collision and solid footprint map assigns their nonwalkable space. Preserve grave center (576,704), reading offsets (256,704),(1024,704),(1024,1216), choices (484,816),(668,816), east connector bands x1024..1152 at y576..832 and y1120..1376. Keep alpha truly transparent outside authorized architectural silhouettes. No camera tilt, art-only collision invention, readable inscriptions, UI, characters, fictional entrances or extra playable-looking corridors. If approved structural footprint is absent this requested source is BLOCKED and must not be generated.",
+      "geometry_authorization": {
+        "status": "USER_AUTHORIZED_ART_CANDIDATE_CONTRACT_ONLY",
+        "obstacle_id": "D6",
+        "source_world_origin": [
+          -1824,
+          -4096
+        ],
+        "source_dimensions_px": [
+          384,
+          576
+        ],
+        "polygon_world": [
+          [
+            -1792,
+            -4064
+          ],
+          [
+            -1632,
+            -4032
+          ],
+          [
+            -1472,
+            -3712
+          ],
+          [
+            -1568,
+            -3552
+          ],
+          [
+            -1696,
+            -3712
+          ]
+        ],
+        "clip_required": true,
+        "runtime_walkability_unchanged": true,
+        "interior_traversal_authorized": false
+      }
     },
     {
       "id": "hub_first_set_archive_rise_environment/underlay",
@@ -4116,24 +4159,13 @@
     "candidate_staged_set_ids": [
       "CAL-01"
     ],
-    "candidate_deferred_required_sets": [
-      {
-        "set_id": "CAL-02",
-        "asset_ids": [
-          "hub_first_set_sepulcher_gardens_environment/structural_presentation"
-        ],
-        "reason": "Historic 1152x1408 transparent whole-district structure contract conflicts with runtime 3072x2688 irregular mask; explicit spatial/solid footprint and modular source contract required before safe generation. Old prompt itself prohibits generation.",
-        "owner": "Human Gardens design lock plus ChatGPT manifest reconciliation; Codex artwork commands must NOT invent geometry",
-        "resolution": "Review new modular/nonwalkable architectural calibration footprint and updated source canvas/prompt, preserve Operator clearance and connectors, then re-enter the same CAL-02 set.",
-        "status": "DEFERRED_REQUIRED__NOT_COMPLETED__NO_CANDIDATE"
-      }
-    ],
-    "next_candidate_generation_set_id": "CAL-03",
-    "candidate_queue_status": "CAL-01 candidate staged, CAL-02 deferred required, CAL-03 next independent eligible candidate. Note production source queue still awaits individual human approvals.",
+    "candidate_deferred_required_sets": [],
+    "next_candidate_generation_set_id": "CAL-02",
+    "candidate_queue_status": "CAL-01 already staged PASS_CANDIDATE. User authorized D6-only modular CAL-02 source; CAL-02 is earliest next candidate. All source human approvals pending.",
     "candidate_only_progress": {
       "core_candidates_uploaded": 1,
       "core_required_total": 72,
-      "core_deferred_required": 1,
+      "core_deferred_required": 0,
       "core_remaining_not_staged": 71,
       "optional_not_authorized": 12
     }
@@ -4262,18 +4294,18 @@
       "set_id": "CAL-02",
       "phase": "CAL-A",
       "order": 2,
-      "title": "Gardens architecture RGBA, geometry-gated",
+      "title": "D6 Root-choked Outer Arcade modular architectural calibration",
       "asset_ids": [
         "hub_first_set_sepulcher_gardens_environment/structural_presentation"
       ],
       "generation_mode": "single",
-      "request_rule": "1 independently generated alpha-only structural image after approved floor and spatial lock",
-      "release_gate": "BLOCKED__obsolete_1152x1408_full_scene_architecture__await_modular_footprint_and_state_reauthoring",
+      "request_rule": "Generate exactly ONE independently screened D6-only true-alpha 384x576 structural module; no 1152x1408 scene and no new collision. Apply geometry polygon clip and byte-alpha verification.",
+      "release_gate": "OPEN__USER_AUTHORIZED_D6_ALPHA_STRUCTURAL_CANDIDATE_ONLY",
       "approval_rule": "Explicit human image decision before advancing",
       "source_handoff_rule": "No Dropbox or ingest until reviewed",
       "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
       "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished.",
-      "candidate_status": "DEFERRED_REQUIRED__OBSOLETE_STRUCTURAL_CANVAS"
+      "candidate_status": "NOT_GENERATED__ELIGIBLE__HUMAN_PRODUCTION_APPROVAL_PENDING"
     },
     {
       "set_id": "CAL-03",
@@ -5336,7 +5368,8 @@
     "geometry_runtime_status": "SEPULCHER_GARDENS_GEOMETRY_V1.json status remains human_design_draft_not_runtime_approved, but live HubFirstSetMap and SepulcherGardensGeometryV1 already consume its 96x84 irregular mask for walkability. Do not misrepresent this as explicit human approval of solid artwork footprints.",
     "hub_b2_floor_structure_mix": "Six other Hub district underlay prompts still paint terraces/stairs/architecture inside walkable rectangles. Before candidate-quality release, apply the approved floor-first separation, preserving current layout and independent assets; geometry-affecting source contracts cannot be accepted as production.",
     "calibration_count": "Six CAL-A images (CAL-01 through CAL-06), despite older prose describing five.",
-    "stale_connector_anchors_reconciled_2026_11_03": "The live HubFirstSetLayout connectors are north Rect2i(85,68,4,8), south Rect2i(85,85,4,8), muster Rect2i(169,70,4,10), not prior x=44/128 placeholders. JSON and Markdown corrected; candidate prompts forbid obstacles and require real neighbor seam validation."
+    "stale_connector_anchors_reconciled_2026_11_03": "The live HubFirstSetLayout connectors are north Rect2i(85,68,4,8), south Rect2i(85,85,4,8), muster Rect2i(169,70,4,10), not prior x=44/128 placeholders. JSON and Markdown corrected; candidate prompts forbid obstacles and require real neighbor seam validation.",
+    "expanded_roadmap_source_geometry": "Current geometry JSON says human_design_draft_not_runtime_approved although its walkability mask is already live in scene. CAL-02 art-only D6 is user-authorized, not a runtime geometry change."
   },
   "geometry_expansion_2026_11_02": {
     "status": "CAL01_MODULAR_GROUND_RECONCILED__CAL02_STRUCTURE_STILL_BLOCKED",
@@ -5344,8 +5377,200 @@
     "superseded_underlay_target": "Historic 1152x1408 full-scene plate permanently superseded; do NOT generate it",
     "current_walkable_geometry": "3072x2688 authoring rectangle with exact 96x84 irregular mask; E0-E5 and both east connectors unchanged",
     "cal01_generation_gate": "OPEN_FOR_ONE_512x512_OPAQUE_REPEATABLE_GROUND_CANDIDATE_ONLY",
-    "cal02_generation_gate": "DEFERRED_REQUIRED_FOR_CANDIDATE__BLOCKED_FOR_PRODUCTION__await_modular_footprint_contract",
+    "cal02_generation_gate": "OPEN_FOR_D6_ONLY_MODULAR_384x576_TRUE_RGBA_CANDIDATE",
     "masked_floor_rule": "Use currently approved authored walkability and collision; repeat and clip CAL-01 512x512 tile at origin (-4128,-4480), not a pre-painted rectangular region",
     "reconciliation_basis": "2026-11-02 live expanded HubFirstSetLayout and SEPULCHER_GARDENS_GEOMETRY_V1; separate existing approved four-asset material pilot"
+  },
+  "new_world_roadmap": {
+    "version": 2,
+    "status": "AUTHORING_MANIFEST_REBUILD_IN_PROGRESS",
+    "authorized_on": "2026-11-03",
+    "scope": "All existing Hub/Sepulcher/Awakening and DL0 candidate art plus expanded nonrectangular Gardens, four distinct architectural interiors, all ten landmarks, ponds, shoreline, nonwalkable boundaries, secrets, region support and optional polish. No gameplay changes implied.",
+    "coverage": {
+      "geometry_authority": "design/04_architecture/SEPULCHER_GARDENS_GEOMETRY_V1.json",
+      "runtime_mask_script": "custodian/game/world/hub/first_set/sepulcher_gardens_geometry_v1.gd",
+      "world_rect": [
+        -4128,
+        -4480,
+        3072,
+        2688
+      ],
+      "grid_wh": [
+        96,
+        84
+      ],
+      "cell_size": 32,
+      "landmark_ids": [
+        "L01",
+        "L02",
+        "L03",
+        "L04",
+        "L05",
+        "L06",
+        "L07",
+        "L08",
+        "L09",
+        "L10"
+      ],
+      "void_obstacle_ids": [
+        "D1",
+        "D2",
+        "D3",
+        "D4",
+        "D5",
+        "D6",
+        "D7"
+      ],
+      "path_ids": [
+        "P1",
+        "P2",
+        "P3",
+        "P4",
+        "P5",
+        "P6",
+        "P7",
+        "P8"
+      ],
+      "secret_proposal_ids": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5"
+      ],
+      "site_world_anchors": {
+        "L01": {
+          "name": "North Threshold Cloister",
+          "world": [
+            -1376,
+            -3296
+          ],
+          "zone": "A",
+          "kind": "entry"
+        },
+        "L02": {
+          "name": "South Threshold Cloister",
+          "world": [
+            -1376,
+            -2752
+          ],
+          "zone": "A",
+          "kind": "entry"
+        },
+        "L03": {
+          "name": "Cloister of Unreturned Names",
+          "world": [
+            -1632,
+            -3136
+          ],
+          "zone": "A",
+          "kind": "arcade"
+        },
+        "L04": {
+          "name": "Memorial Slab Court / grave",
+          "world": [
+            -1984,
+            -3200
+          ],
+          "zone": "B",
+          "kind": "event"
+        },
+        "L05": {
+          "name": "Bell-less Rotunda",
+          "world": [
+            -2080,
+            -3776
+          ],
+          "zone": "C",
+          "kind": "monument"
+        },
+        "L06": {
+          "name": "Witness Pool",
+          "world": [
+            -3040,
+            -3584
+          ],
+          "zone": "D",
+          "kind": "water"
+        },
+        "L07": {
+          "name": "Twin Sarcophagus Terrace",
+          "world": [
+            -3424,
+            -3104
+          ],
+          "zone": "D",
+          "kind": "terrace"
+        },
+        "L08": {
+          "name": "Sunken Blackwater Basin",
+          "world": [
+            -2624,
+            -2464
+          ],
+          "zone": "E",
+          "kind": "water"
+        },
+        "L09": {
+          "name": "Rootbound Reliquary Nook",
+          "world": [
+            -3392,
+            -2176
+          ],
+          "zone": "E",
+          "kind": "secret"
+        },
+        "L10": {
+          "name": "Pale Growth Orchard",
+          "world": [
+            -1920,
+            -2144
+          ],
+          "zone": "E",
+          "kind": "garden"
+        }
+      },
+      "anchors_preserved": true
+    },
+    "inner_architectural_zones": [
+      {
+        "id": "I01",
+        "name": "Root-choked Outer Arcade",
+        "binding": "D6",
+        "role": "off-route ruined cloister, cinematic depth and object fragments",
+        "source_canvas": [
+          384,
+          576
+        ],
+        "source_world_origin": [
+          -1824,
+          -4096
+        ],
+        "navigation": "NONWALKABLE_D6; CAL-02 locks only visual module"
+      },
+      {
+        "id": "I02",
+        "name": "Closed Crypt Garden",
+        "binding": "D5",
+        "role": "sealed internal ossuary court, barred crypt apertures, nonwalkable reveal",
+        "navigation": "NONWALKABLE_D5; no access, door or interaction authorized"
+      },
+      {
+        "id": "I03",
+        "name": "Bell-less Rotunda Undercroft",
+        "binding": "L05",
+        "role": "architecturally distinct abandoned record chamber below rotunda; independent presentation kit",
+        "navigation": "INTERIOR_LAYOUT_AND_PORTAL_NOT_RUNTIME_AUTHORIZED; no invented entrance"
+      },
+      {
+        "id": "I04",
+        "name": "Rootbound Reliquary",
+        "binding": "L09/S1",
+        "role": "hidden burial reliquary chamber with staged approach sightline and occlusion",
+        "navigation": "EXISTING_RELIQUARY_NOOK_ACCESS_ONLY; sealed interior scene/secret rewards not authorized"
+      }
+    ],
+    "coverage_principle": "Candidate image geometry and visual placement can be designed to known anchors; actual nav/collision, interior rooms, portals and secret pickups require separate human-approved runtime design and implementation.",
+    "data_maturity": "DESIGN_AND_ART_SOURCE_ROADMAP_NOT_ASSET_V2_AND_NOT_RUNTIME"
   }
 }
