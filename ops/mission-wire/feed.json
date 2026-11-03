@@ -1,9 +1,174 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-03T04:25:00Z",
-  "source_main_sha": "bb047a717945e4cdbb54430a6dfe002625eca345",
+  "generated_at": "2026-11-03T06:54:41Z",
+  "source_main_sha": "4b65fba48767c9634e37242981a1f955cc294de0",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "hub-art-candidate-staging-cal01-cal03-4b65fba4",
+      "headline": "Sepulcher art pipeline records its first staged candidate while keeping production approval separate",
+      "summary": "The Hub/Sepulcher/Awakening art plan now records a screened and Dropbox-staged CAL-01 paving candidate, without treating it as approved game artwork. CAL-02 architecture remains deferred for a geometry contract; the next independently eligible candidate is CAL-03's memorial slab. This is documentation and candidate-stage evidence, not a runtime deployment.",
+      "body": "The latest main-branch art protocol separates candidate screening and private staging from human source approval. Its recorded CAL-01 receipt identifies a screened 512×512 paving candidate and Dropbox revision, but the user has not approved it as production artwork. The CAL-02 structural layer still conflicts with the irregular Gardens footprint and is deferred, not skipped. CAL-03 memorial slab can be attempted independently while that design dependency is resolved. The manifest preserves 72 required states across 67 generation sets, with 12 optional states outside authorization. These are documented manifest counts, not dispatcher workload totals. No new runtime binding, independent production acceptance or host teardown is proven.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "assets-art",
+      "workstream": "hub-sepulcher-awakening-art-v1",
+      "occurred_at": "2026-11-03T06:13:47Z",
+      "bullets": [
+        "CAL-01 candidate screening and staging receipt documented; human approval pending.",
+        "CAL-02 remains deferred required until modular footprint design is locked.",
+        "CAL-03 memorial slab is next independently candidate-eligible set.",
+        "No production source promotion or gameplay binding authorized."
+      ],
+      "links": [
+        {
+          "title": "Candidate-only art staging protocol",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/4b65fba48767c9634e37242981a1f955cc294de0"
+        },
+        {
+          "title": "Art staging PR and evidence summary",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/108"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "Sepulcher Gardens now has a recorded paving candidate in the art staging lane, but not an approved floor in the game. The new protocol deliberately lets artwork be generated and screened without confusing that progress with a human decision to ship it.",
+        "sections": [
+          {
+            "heading": "A candidate is not a production asset",
+            "text": "The updated protocol records CAL-01 as screened and staged with a Dropbox receipt. That establishes a candidate milestone according to the documented workflow, not independent verification of its visual quality or permission to register it in Asset Pipeline V2."
+          },
+          {
+            "heading": "The Gardens' architectural problem remains",
+            "text": "CAL-02's old rectangular structure brief does not fit the current irregular map. It remains required but deferred until a modular footprint is approved. The memorial slab in CAL-03 can be produced independently without pretending the blocked architecture is finished."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Two progress tracks prevent false completion",
+            "explanation": "Candidate staging can advance while human source approval remains pending. That makes automated art work measurable without allowing an unapproved image to quietly enter gameplay."
+          },
+          {
+            "title": "Deferral is not deletion",
+            "explanation": "Keeping CAL-02 in the required set prevents a convenient staging cursor from disguising unresolved geometry as completed environment art."
+          }
+        ],
+        "takeaway": "The first candidate is documented as staged, and the next candidate is identified. Production approval and runtime integration remain separate, uncompleted gates.",
+        "next_watch": "An independently screened CAL-03 candidate receipt and a human-approved modular footprint for the deferred CAL-02 structure."
+      },
+      "details": {
+        "overview": "Commit 4b65fba48767c9634e37242981a1f955cc294de0 updates candidate-only orchestration documentation. CAL-01's SHA and Dropbox revision are recorded by the source, not independently revalidated by this watch. The 72 core states/67 sets are manifest inventory, not live dispatcher counts. Dropbox operational WIRE pilot pointer is unavailable; no full host audit was inspected.",
+        "ledger": [
+          {
+            "stage": "Candidate-only protocol",
+            "status": "verified landed",
+            "evidence": "4b65fba48767c9634e37242981a1f955cc294de0"
+          },
+          {
+            "stage": "CAL-01 candidate staging",
+            "status": "reported receipt in landed source",
+            "evidence": "Protocol records PASS_CANDIDATE and private staging; bytes not independently read here"
+          },
+          {
+            "stage": "Human source approval",
+            "status": "pending",
+            "evidence": "Protocol explicitly separates approval from candidate screening"
+          },
+          {
+            "stage": "CAL-02 architecture",
+            "status": "deferred required",
+            "evidence": "Modular footprint unresolved"
+          },
+          {
+            "stage": "CAL-03 candidate",
+            "status": "next",
+            "evidence": "Named next independent candidate in protocol"
+          },
+          {
+            "stage": "Production registration and runtime binding",
+            "status": "unverified",
+            "evidence": "No promotion or runtime proof"
+          },
+          {
+            "stage": "Host teardown",
+            "status": "unknown",
+            "evidence": "No canonical host receipt"
+          }
+        ],
+        "notes": [
+          "Commit combined status endpoint returned no checks; CI health not established."
+        ],
+        "unknowns": [
+          "Independent validation of candidate bytes and producer identity",
+          "Full dispatcher queue and live host recovery counts"
+        ],
+        "actions": [
+          "Art producer: screen one CAL-03 memorial slab candidate and record its actual staging receipt.",
+          "Design owner: lock CAL-02 modular structural footprints before generating that required layer."
+        ]
+      },
+      "scorecard": {
+        "stage": "Candidate staging recorded; production approval pending",
+        "as_of": "2026-11-03T06:13:47Z",
+        "scope": "Hub/Sepulcher/Awakening art manifest and CAL-01 through CAL-03 only",
+        "metrics": [
+          {
+            "id": "required-states",
+            "label": "REQUIRED ART STATES",
+            "value": 72,
+            "verification": "reported",
+            "basis": "Landed protocol's manifest inventory, not live task packets",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/4b65fba48767c9634e37242981a1f955cc294de0"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Reconcile Gardens floor geometry",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "bb047a717945e4cdbb54430a6dfe002625eca345"
+          },
+          {
+            "label": "Screen and stage CAL-01 candidate",
+            "status": "current",
+            "verification": "reported",
+            "evidence": "Staging receipt documented, private bytes not independently checked"
+          },
+          {
+            "label": "Human approval of CAL-01",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Explicitly pending"
+          },
+          {
+            "label": "Resolve CAL-02 structure footprint",
+            "status": "blocked",
+            "verification": "verified",
+            "evidence": "Deferred required geometry dependency"
+          },
+          {
+            "label": "Generate and stage CAL-03",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Next eligible candidate, no receipt yet"
+          },
+          {
+            "label": "Asset V2 and gameplay binding",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No production approval"
+          }
+        ],
+        "next_gate": "Art producer to create and screen the CAL-03 memorial slab; design owner separately resolves CAL-02 footprint."
+      },
+      "related": [
+        {
+          "title": "Sepulcher Gardens art plan shifts to modular paving, preserving the playable map",
+          "context": "The earlier Gardens geometry correction established the floor contract that the staged candidate follows.",
+          "story_id": "sepulcher-gardens-cal01-modular-floor-correction-bb047a71"
+        }
+      ]
+    },
     {
       "id": "sepulcher-gardens-cal01-modular-floor-correction-bb047a71",
       "headline": "Sepulcher Gardens art plan shifts to modular paving, preserving the playable map",
@@ -1596,125 +1761,6 @@
           }
         ],
         "next_gate": "Owner must separately authorize gameplay revisit verification if desired."
-      },
-      "related": []
-    },
-    {
-      "id": "sepulcher-expanded-geometry-6731baad",
-      "headline": "Sepulcher Gardens expands into an irregular playable district; artwork must follow the new footprint",
-      "summary": "A new geometry implementation replaces the Gardens' simple rectangular footprint with a connected irregular mask. The source report records passing smoke tests and 9/9 selected validation checks. Visual approval and revised artwork registration remain pending.",
-      "body": "Commit 6731baad changes the live Hub layout and introduces an irregular Gardens mask. Its committed summary reports 9/9 selected validation checks, smoke passes and Godot import. Six gameplay captures are described in a private review manifest but were not independently inspected here. No production artwork or reward assets were registered.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "general",
-      "workstream": "sepulcher-gardens-expanded-geometry-v1",
-      "occurred_at": "2026-11-02T07:52:09Z",
-      "bullets": [
-        "Geometry implementation and reported tests are complete; visual approval and art registration are not.",
-        "Look for human review of the matched gameplay captures and a revised irregular-mask art manifest."
-      ],
-      "links": [
-        {
-          "title": "Expanded geometry implementation",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/6731baadcb1495862ada57ac91519b3bcd36c348"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "Sepulcher Gardens now has a larger, irregular walkable footprint instead of its old rectangular blockout. The geometry is integrated with navigation and collision, while the intended artwork remains deliberately unregistered until it fits the new shape.",
-        "sections": [
-          {
-            "heading": "The district gains a real outline",
-            "text": "The new 96-by-84-cell envelope contains 3,977 connected walkable cells represented by 151 lossless row runs. Both Forum entrances retain their existing locations, as do surrounding Hub markers and Road modules."
-          },
-          {
-            "heading": "Art is the next constraint",
-            "text": "A debug-only overlay sketches proposed water, obstacles, routes and landmarks without altering gameplay. The old underlay dimensions no longer match the footprint, so visual approval and manifest reconciliation must precede production art."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Geometry now determines the art pipeline",
-            "explanation": "The new irregular mask makes the former underlay target obsolete. Asset registration before a reconciled manifest risks placing approved art against the wrong walkable boundaries."
-          }
-        ],
-        "takeaway": "Geometry implementation and reported tests are complete; visual approval and art registration are not.",
-        "next_watch": "Look for human review of the matched gameplay captures and a revised irregular-mask art manifest."
-      },
-      "details": {
-        "overview": "Commit 6731baad changes the live Hub layout and introduces an irregular Gardens mask. Its committed summary reports 9/9 selected validation checks, smoke passes and Godot import. Six gameplay captures are described in a private review manifest but were not independently inspected here. No production artwork or reward assets were registered.",
-        "ledger": [
-          {
-            "stage": "Geometry implementation",
-            "status": "verified source change",
-            "evidence": "Commit 6731baad"
-          },
-          {
-            "stage": "Validation",
-            "status": "reported passing",
-            "evidence": "9/9 selected checks in committed summary"
-          },
-          {
-            "stage": "Visual review",
-            "status": "pending",
-            "evidence": "No accepted human visual decision inspected"
-          },
-          {
-            "stage": "Production art",
-            "status": "blocked",
-            "evidence": "Old underlay target requires geometry reconciliation"
-          }
-        ],
-        "notes": [],
-        "unknowns": [
-          "Private gameplay captures not inspected.",
-          "No independent visual acceptance confirmed."
-        ],
-        "actions": [
-          "Art owner: reconcile underlay/manifest to irregular mask after human visual review."
-        ]
-      },
-      "scorecard": {
-        "stage": "Geometry landed; art approval pending",
-        "as_of": "2026-11-02T10:12:19Z",
-        "scope": "Named Sepulcher Gardens geometry implementation",
-        "metrics": [
-          {
-            "id": "other-walkable-cells",
-            "label": "WALKABLE CELLS",
-            "value": 3977,
-            "verification": "reported",
-            "basis": "Committed geometry summary's irregular Gardens mask; not total Hub cells",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/6731baadcb1495862ada57ac91519b3bcd36c348"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Irregular mask implemented",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Commit 6731baad"
-          },
-          {
-            "label": "Geometry smoke checks",
-            "status": "done",
-            "verification": "reported",
-            "evidence": "9/9 selected checks in source summary"
-          },
-          {
-            "label": "Human visual review",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No approval inspected"
-          },
-          {
-            "label": "Art manifest reconciliation",
-            "status": "blocked",
-            "verification": "verified",
-            "evidence": "Legacy underlay incompatible with new footprint"
-          }
-        ],
-        "next_gate": "Human reviewer evaluates captures; art owner then reconciles asset manifest."
       },
       "related": []
     }
