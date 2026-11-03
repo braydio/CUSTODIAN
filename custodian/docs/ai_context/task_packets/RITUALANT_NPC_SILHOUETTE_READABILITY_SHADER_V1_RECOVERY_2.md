@@ -43,6 +43,20 @@
 - Task overrides: `none`
 - Deferred: Any future character redraw or wider shader standardization is separate and out of scope; the existing approved treatment remains the target.
 
+## Exact task outputs
+
+These are implementation outputs to create or modify in the claimed recovery-2 worktree; they are not unpublished prerequisites. The `Publication inputs:` above are already-tracked design, source, evidence and validation dependencies on repaired main.
+
+- `custodian/game/world/events/ash_bell/forlorn_ritualant_site.tscn` (production AnimatedSprite2D binding only)
+- `custodian/game/world/events/ash_bell/materials/ritualant_silhouette_readability_material.tres`
+- `custodian/game/world/events/ash_bell/shaders/ritualant_silhouette_readability.gdshader`
+- `custodian/game/world/events/ash_bell/shaders/ritualant_silhouette_readability.gdshader.uid`
+- `custodian/tools/validation/forlorn_ritualant_presentation_smoke.gd`
+- `custodian/tools/validation/forlorn_ritualant_presentation_smoke.gd.uid`
+- `custodian/tools/validation/levels/forlorn_ritualant_underground_smoke.gd` (correct expected Ritualant spawn Y to 1696)
+- `custodian/tools/validation/validation_manifest.json` (register the focused presentation smoke)
+- `design/02_features/enemy_objective/FORLORN_RITUALANT_SHADER_FX.md`
+
 ## Completion Truth
 - Completion schema: `custodian.task_completion.v1`
 - Goal satisfied: `<fill>`
