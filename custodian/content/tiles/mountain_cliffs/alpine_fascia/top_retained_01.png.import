@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dmy3cvj3gaycg"
-path="res://.godot/imported/top_retained_01.png-3ec55d3eeeaac31038d9429415be7262.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/mountain_cliffs/alpine_fascia/top_retained_01.png"
-dest_files=["res://.godot/imported/top_retained_01.png-3ec55d3eeeaac31038d9429415be7262.ctex"]
 
 [params]
 

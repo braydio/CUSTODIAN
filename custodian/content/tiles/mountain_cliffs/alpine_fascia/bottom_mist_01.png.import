@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cn8akng8ct28v"
-path="res://.godot/imported/bottom_mist_01.png-0ce102e5a083ba2970486f53b578f22d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/mountain_cliffs/alpine_fascia/bottom_mist_01.png"
-dest_files=["res://.godot/imported/bottom_mist_01.png-0ce102e5a083ba2970486f53b578f22d.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cfyf0vkvx3y8j"
-path="res://.godot/imported/body_strata_01.png-e19cd0b2210488fa88d87cce1ab0c57e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/mountain_cliffs/alpine_fascia/body_strata_01.png"
-dest_files=["res://.godot/imported/body_strata_01.png-e19cd0b2210488fa88d87cce1ab0c57e.ctex"]
 
 [params]
 
