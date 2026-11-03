@@ -108,6 +108,17 @@ Human approval remains per image; the production manifest identifies exact
 prompts and source/inbox paths. See Asset Pipeline V2 for the *separate* intake
 and runtime authority. Specialized Operator art remains under its own tooling.
 
+For an explicitly requested candidate-production run of
+`hub-sepulcher-awakening-art-v1`, use
+[`ART_CANDIDATE_ORCHESTRATOR_GUIDE.md`](ART_CANDIDATE_ORCHESTRATOR_GUIDE.md).
+Read it after fetching current `origin/main` and before selecting or generating
+an asset. It governs the isolated candidate lane: candidate-only Dropbox
+staging may follow a verified `PASS_CANDIDATE`, while human source approval,
+Asset V2 ingestion, runtime registration and scene changes remain separate.
+Use the guide only for an authorized artwork candidate-production request or
+an explicit resume of that workflow; it does not authorize optional assets or
+replace current manifest, geometry, family, consumer or approval authority.
+
 ## Operator Main-Character Pixel-Art Resizing
 
 For any pixel-art conversion or resizing of the Operator main character's
