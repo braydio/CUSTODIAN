@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bmpa4ovtteefx"
-path="res://.godot/imported/body_retaining_01.png-f693ee0bb8a4bf1e150e8a0dd1c30b7d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/mountain_cliffs/alpine_fascia/body_retaining_01.png"
-dest_files=["res://.godot/imported/body_retaining_01.png-f693ee0bb8a4bf1e150e8a0dd1c30b7d.ctex"]
 
 [params]
 

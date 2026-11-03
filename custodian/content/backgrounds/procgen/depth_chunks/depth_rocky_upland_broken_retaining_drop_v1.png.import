@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://biruou20te65n"
-path="res://.godot/imported/depth_rocky_upland_broken_retaining_drop_v1.png-b30160292b2a1f66e516b1d013ef9028.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/procgen/depth_chunks/depth_rocky_upland_broken_retaining_drop_v1.png"
-dest_files=["res://.godot/imported/depth_rocky_upland_broken_retaining_drop_v1.png-b30160292b2a1f66e516b1d013ef9028.ctex"]
 
 [params]
 

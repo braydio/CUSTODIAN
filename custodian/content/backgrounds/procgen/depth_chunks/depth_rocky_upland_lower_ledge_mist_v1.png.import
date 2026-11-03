@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dbldgakljcg25"
-path="res://.godot/imported/depth_rocky_upland_lower_ledge_mist_v1.png-758eb31801b947198542b252264a09d1.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/procgen/depth_chunks/depth_rocky_upland_lower_ledge_mist_v1.png"
-dest_files=["res://.godot/imported/depth_rocky_upland_lower_ledge_mist_v1.png-758eb31801b947198542b252264a09d1.ctex"]
 
 [params]
 
