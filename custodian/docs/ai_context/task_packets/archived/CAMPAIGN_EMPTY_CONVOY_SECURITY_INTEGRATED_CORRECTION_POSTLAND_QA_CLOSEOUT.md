@@ -40,4 +40,3 @@
 - The correction packet is archived and the implementation is already landed. The canonical `origin/agent/campaign-empty-convoy-security-integrated-correction-v1` branch and dispatch claim are absent.
 - No claim, independent review, or lock was released by this closeout. Correction review disposition remains deferred.
 - The persistent root checkout was not modified or synchronized: it was dirty with 49 status entries and 52 commits behind at the closeout audit.
-
