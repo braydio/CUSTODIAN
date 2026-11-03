@@ -11671,13 +11671,29 @@
     "candidate_staged_set_ids": [
       "CAL-01"
     ],
-    "candidate_deferred_required_sets": [],
-    "next_candidate_generation_set_id": "CAL-02",
-    "candidate_queue_status": "1/198 required core candidates staged (CAL-01), CAL-02 D6 source contract now authorized for candidate generation. 0/198 human production source approvals evidenced. 36 optional sources excluded.",
+    "candidate_deferred_required_sets": [
+      {
+        "set_id": "CAL-02",
+        "asset_id": "hub_first_set_sepulcher_gardens_environment/structural_presentation",
+        "status": "DEFERRED_REQUIRED",
+        "reason": "Three attempted candidates failed mandatory screening; latest attempt has incorrect 1024x1536 dimensions, exterior D6 alpha overflow, non-overhead elevation, inconsistent 32px registration and room-like central silhouette.",
+        "resolution_owner": "Codex/CUSTODIAN artwork maintainer",
+        "attempts_used": 3,
+        "attempt_limit": 3,
+        "retry_authorized": false,
+        "release_gate_unchanged": true,
+        "human_image_approval": "PENDING",
+        "candidate_staged": false,
+        "production_source_approved": false,
+        "asset_v2_ready": false
+      }
+    ],
+    "next_candidate_generation_set_id": "CAL-03",
+    "candidate_queue_status": "CAL-01 verified candidate staged; CAL-02 DEFERRED_REQUIRED after 3/3 failed candidate reviews (no upload or human approval); CAL-03 next independent required set under blocked_set_rule. 1/198 candidate staged; 1 required candidate deferred. CAL-02 incomplete and must be revisited on resolution.",
     "candidate_only_progress": {
       "core_candidates_uploaded": 1,
       "core_required_total": 198,
-      "core_deferred_required": 0,
+      "core_deferred_required": 1,
       "core_remaining_not_staged": 197,
       "optional_not_authorized": 36,
       "original_legacy_core": 72,
@@ -11823,7 +11839,58 @@
       "source_handoff_rule": "No Dropbox or ingest until reviewed",
       "candidate_source_handoff_rule": "After PASS_CANDIDATE screen, stage independently verifiable PNG/source identity in authorized candidate-only Dropbox destination; preserve human_image_approval=pending; production handoff blocked without human source approval.",
       "candidate_order_rule": "One generation set retains same set_id and asset_ids; candidate-only queue may pass recorded DEFERRED_REQUIRED blockers with exact ledger, but never mark them finished.",
-      "candidate_status": "NOT_GENERATED__ELIGIBLE__HUMAN_PRODUCTION_APPROVAL_PENDING"
+      "candidate_status": "DEFERRED_REQUIRED__3_OF_3_FAILED__HUMAN_PENDING",
+      "candidate_failure_disposition": {
+        "status": "DEFERRED_REQUIRED",
+        "attempts_used": 3,
+        "attempt_limit": 3,
+        "latest_screening_verdict": "REGENERATE",
+        "failed_attempts": [
+          {
+            "attempt": 1,
+            "verdict": "REGENERATE",
+            "blocking_defects": [
+              "strict overhead projection",
+              "32px material registration",
+              "room-like center",
+              "D6 exterior alpha boundary"
+            ],
+            "artifact_status": "REJECTED_CANDIDATE_ONLY"
+          },
+          {
+            "attempt": 2,
+            "verdict": "REGENERATE",
+            "blocking_defects": [
+              "source dimensions 1024x1536 rather than 384x576",
+              "D6 contour/exterior alpha",
+              "strict overhead projection",
+              "32px construction registration",
+              "room-like central geometry"
+            ],
+            "artifact_status": "REJECTED_CANDIDATE_ONLY"
+          },
+          {
+            "attempt": 3,
+            "verdict": "REGENERATE",
+            "blocking_defects": [
+              "source dimensions 1024x1536 rather than 384x576",
+              "substantial nonzero alpha outside registered D6 polygon",
+              "oblique 3D wall/arch projection rather than strict 90-degree overhead",
+              "inconsistent native 32px construction grid",
+              "large enclosed central hollow suggesting usable room"
+            ],
+            "artifact_status": "REJECTED_CANDIDATE_ONLY"
+          }
+        ],
+        "resolution_owner": "Codex/CUSTODIAN artwork maintainer",
+        "resolution_required": "Reconcile generation/normalization to native 384x576 true-RGBA, D6 world-polygon zero-alpha clipping, strict overhead structural footprints and 32px registration; secure explicit user authorization to reopen retries after the 3/3 cap. Do not treat the image as approved source or modify gameplay collision.",
+        "user_retry_authorization": "NOT_GRANTED",
+        "human_image_approval": "PENDING",
+        "dropbox_uploaded": false,
+        "asset_v2_ready": false,
+        "authoring_chat": "https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae9c203-657c-83ea-b0db-a7d97877211c",
+        "evidence_note": "Conversation-based three candidate reviews; no previously unstaged artwork is represented as an immutable repository source."
+      }
     },
     {
       "set_id": "CAL-03",
