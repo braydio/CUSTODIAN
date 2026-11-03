@@ -67,6 +67,9 @@ jobs:
             custodian.tools.agent.test_queue_frontier \
             custodian.tools.agent.test_run_trace
 
+      - name: Validate full Hub artwork source roadmap
+        run: python3 custodian/tools/validation/validate_hub_art_manifest.py
+
       - name: Validate historical review acceptance regressions
         run: python3 custodian/tools/agent/test_review_outcome.py -v
 
