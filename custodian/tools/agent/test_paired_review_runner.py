@@ -9303,10 +9303,10 @@ class PairedReviewHostValidationTests(unittest.TestCase):
     ):
         """Build actual Git history for the exact Ritualant R2 post-hoc approval."""
         repository = Path(self.temp.name) / f"ritualant-recovery2-{outcome}-{include_target_receipt}"
-        base_main = subprocess.run(
-            ["git", "-C", str(ROOT), "rev-parse", "origin/main^{commit}"],
-            check=True, text=True, capture_output=True,
-        ).stdout.strip()
+        # Canonical finish archives the correction packet. Build this synthetic
+        # approval from the exact pre-archive main with the active source packet,
+        # not from moving origin/main after implementation closeout.
+        base_main = "27afd56f876ff63d7c084dea853189ecf5f8ae36"
         _prepare_historical_git_fixture(repository, base_main)
         subprocess.run(["git", "-C", str(repository), "config", "user.name", "test"], check=True)
         subprocess.run(["git", "-C", str(repository), "config", "user.email",
