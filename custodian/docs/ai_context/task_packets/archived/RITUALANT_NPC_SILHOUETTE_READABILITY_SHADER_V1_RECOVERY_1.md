@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `ritualant-npc-silhouette-readability-shader-v1-recovery-1`
 - Category: `assets-art`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P2`
@@ -44,21 +44,21 @@
 
 ## Completion Truth
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `<fill>`
-- Completion boundary satisfied: `<fill>`
-- Acceptance satisfied: `<fill>`
-- Superseded/legacy production path disposition: `<fill>`
-- Evidence: `<fill>`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: The production `NPCs/ForlornRitualant/AnimatedSprite2D` now owns the scene-local bounded readability material. The shader samples only the current atlas texel, preserves incoming alpha, and adds restrained value/rim treatment. Focused presentation smoke, existing completion smoke, underground smoke, and canonical changed-file validation passed (6/6 selected tests, complete coverage, no failures/timeouts/skips/infrastructure errors); `git diff --check` and manifest JSON parsing passed. The October 17 human-approved ROI candidate `03678c0af88caf911166040a06fba460bcf4d2e0` and its receipt were reused unchanged. The original unfinished workstream remains preserved as an exact-SHA donor archive, not represented as completed.
 
 ## Execution Feedback
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `<fill>`
-- Friction severity: `<fill>`
-- What went wrong: `<fill>`
-- Root cause / contributing factors: `<fill>`
-- Prevention / pipeline improvement: `<fill>`
-- Tooling / docs drift discovered: `<fill>`
-- Follow-up: `<fill>`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: A fresh disposable Godot checkout lacked imported class/font caches. The first direct script invocation failed before imports; the first canonical focused runner's Godot import process segfaulted in a worker thread while reimporting an unchanged font. Reusing the exact generated font cache already present in the persistent checkout let the canonical runner complete.
+- Root cause / contributing factors: Godot's fresh-checkout threaded import path failed on a host-generated cache rebuild; source font and import metadata matched the persistent checkout.
+- Prevention / pipeline improvement: Keep Godot import work serialized and reuse only verified matching generated cache inputs when the fresh-checkout import crashes; retain canonical validation as the acceptance evidence.
+- Tooling / docs drift discovered: `forlorn_ritualant_underground_smoke.gd` expected spawn Y=1670 while the unchanged production scene authors Y=1696; corrected the focused assertion to the source-of-truth value. The focused scene test also emits 17 pre-existing stale UID fallback warnings from unchanged scene resources.
+- Follow-up: `fixed-in-scope`
 
 ## Handoff
 - Next workstream: `review-ritualant-npc-silhouette-readability-shader-v1-recovery-1`
@@ -68,7 +68,7 @@
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae7eb07-c554-83e9-911a-1335e640e4d0
 - Summary backlink: Include this exact Authoring chat URL in every durable implementation/review/correction/recovery/closeout summary and final Next Handoff. Original visual-decision conversation: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acb367f-4ca0-83e8-a226-31a3ae38da20.
 - Refresh reason: `none`
-- Next action: After human acceptance and successful implementation closeout, independently review the landed shader, regression evidence, and approved ROI presentation.
+- Next action: After implementation landing and claim/worktree teardown are verified, confirm dispatcher eligibility and run the existing fresh-context paired review against the landed shader, regression evidence, and approved ROI presentation.
 - Blockers or open questions: The October 17 human visual decision is already recorded; objective validation and independent review remain required.
 
 

@@ -1,0 +1,10 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3]
+
+[ext_resource type="Shader" path="res://game/world/events/ash_bell/shaders/ritualant_silhouette_readability.gdshader" id="1_shader"]
+
+[resource]
+resource_local_to_scene = true
+shader = ExtResource("1_shader")
+shader_parameter/value_lift = 0.05
+shader_parameter/rim_strength = 0.22
+shader_parameter/rim_tint = Color(0.72, 0.79, 0.83, 1)
