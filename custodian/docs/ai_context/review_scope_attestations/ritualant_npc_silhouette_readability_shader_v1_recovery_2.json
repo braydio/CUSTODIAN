@@ -1,0 +1,40 @@
+{
+  "post_hoc": true,
+  "reason": "The immutable recovery-2 archive includes these exact two Markdown source files outside its Work surface.",
+  "schema": "custodian.review_source_scope_attestation.v1",
+  "source_archive_commit": "a45663a9b23d2e2818edd1531cbb5ac1aa231f58",
+  "source_archive_parent": "a70a234e58f2f5b298a840c88b43566a4c4555bb",
+  "source_archive_paths": [
+    "RITUALANT_NPC_SILHOUETTE_READABILITY_SHADER_V1_RECOVERY_2_CLAUDE_SUMMARY.md",
+    "custodian/docs/ai_context/BRANCH_ARCHIVE.md",
+    "custodian/docs/ai_context/task_packets/README.md",
+    "custodian/docs/ai_context/task_packets/RITUALANT_NPC_SILHOUETTE_READABILITY_SHADER_V1_RECOVERY_2.md",
+    "custodian/docs/ai_context/task_packets/archived/RITUALANT_NPC_SILHOUETTE_READABILITY_SHADER_V1_RECOVERY_2.md",
+    "custodian/game/world/events/ash_bell/forlorn_ritualant_site.tscn",
+    "custodian/game/world/events/ash_bell/materials/ritualant_silhouette_readability_material.tres",
+    "custodian/game/world/events/ash_bell/shaders/ritualant_silhouette_readability.gdshader",
+    "custodian/game/world/events/ash_bell/shaders/ritualant_silhouette_readability.gdshader.uid",
+    "custodian/tools/validation/forlorn_ritualant_presentation_smoke.gd",
+    "custodian/tools/validation/forlorn_ritualant_presentation_smoke.gd.uid",
+    "custodian/tools/validation/levels/forlorn_ritualant_underground_smoke.gd",
+    "custodian/tools/validation/validation_manifest.json",
+    "design/02_features/enemy_objective/FORLORN_RITUALANT_SHADER_FX.md"
+  ],
+  "source_archive_tree": "0cd4036479097394da9135d5cdd5b7d22289b7ef",
+  "source_files": [
+    {
+      "blob": "da34a093b39756807e0e5fd2962e7c599fe7725d",
+      "mode": "100644",
+      "path": "custodian/docs/ai_context/BRANCH_ARCHIVE.md"
+    },
+    {
+      "blob": "63a57f87ad16b88fc09d5290f8ae505cff336585",
+      "mode": "100644",
+      "path": "design/02_features/enemy_objective/FORLORN_RITUALANT_SHADER_FX.md"
+    }
+  ],
+  "source_packet_blob": "4e85a3da641f1b5ef0704e8acf43b4d251f09e30",
+  "source_packet_mode": "100644",
+  "source_packet_path": "custodian/docs/ai_context/task_packets/archived/RITUALANT_NPC_SILHOUETTE_READABILITY_SHADER_V1_RECOVERY_2.md",
+  "source_workstream": "ritualant-npc-silhouette-readability-shader-v1-recovery-2"
+}

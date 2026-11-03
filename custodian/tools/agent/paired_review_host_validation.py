@@ -206,6 +206,58 @@ _PROCESSION_SCOPE_REVIEW_PACKET = (
     f"{PACKET_ROOT}/archived/REVIEW_AGENT_PAIRED_REVIEW_PROCESSION_DOC_SCOPE_RECOVERY_V1.md"
 )
 
+_RITUALANT_RECOVERY2_SCOPE_ATTESTATION_PATH = (
+    "custodian/docs/ai_context/review_scope_attestations/"
+    "ritualant_npc_silhouette_readability_shader_v1_recovery_2.json"
+)
+_RITUALANT_RECOVERY2_SCOPE_SOURCE_WORKSTREAM = (
+    "ritualant-npc-silhouette-readability-shader-v1-recovery-2"
+)
+_RITUALANT_RECOVERY2_SCOPE_SOURCE_ARCHIVE = "a45663a9b23d2e2818edd1531cbb5ac1aa231f58"
+_RITUALANT_RECOVERY2_SCOPE_SOURCE_PARENT = "a70a234e58f2f5b298a840c88b43566a4c4555bb"
+_RITUALANT_RECOVERY2_SCOPE_SOURCE_TREE = "0cd4036479097394da9135d5cdd5b7d22289b7ef"
+_RITUALANT_RECOVERY2_SCOPE_SOURCE_PACKET = (
+    f"{PACKET_ROOT}/archived/RITUALANT_NPC_SILHOUETTE_READABILITY_SHADER_V1_RECOVERY_2.md"
+)
+_RITUALANT_RECOVERY2_SCOPE_SOURCE_PACKET_BLOB = "4e85a3da641f1b5ef0704e8acf43b4d251f09e30"
+_RITUALANT_RECOVERY2_SCOPE_SOURCE_FILES = {
+    "custodian/docs/ai_context/BRANCH_ARCHIVE.md":
+        "da34a093b39756807e0e5fd2962e7c599fe7725d",
+    "design/02_features/enemy_objective/FORLORN_RITUALANT_SHADER_FX.md":
+        "63a57f87ad16b88fc09d5290f8ae505cff336585",
+}
+_RITUALANT_RECOVERY2_SCOPE_SHADER_UID = (
+    "custodian/game/world/events/ash_bell/shaders/ritualant_silhouette_readability.gdshader.uid"
+)
+_RITUALANT_RECOVERY2_SCOPE_ARCHIVE_PATHS = frozenset({
+    "RITUALANT_NPC_SILHOUETTE_READABILITY_SHADER_V1_RECOVERY_2_CLAUDE_SUMMARY.md",
+    "custodian/docs/ai_context/BRANCH_ARCHIVE.md",
+    f"{PACKET_ROOT}/README.md",
+    f"{PACKET_ROOT}/RITUALANT_NPC_SILHOUETTE_READABILITY_SHADER_V1_RECOVERY_2.md",
+    _RITUALANT_RECOVERY2_SCOPE_SOURCE_PACKET,
+    "custodian/game/world/events/ash_bell/forlorn_ritualant_site.tscn",
+    "custodian/game/world/events/ash_bell/materials/ritualant_silhouette_readability_material.tres",
+    "custodian/game/world/events/ash_bell/shaders/ritualant_silhouette_readability.gdshader",
+    "custodian/game/world/events/ash_bell/shaders/ritualant_silhouette_readability.gdshader.uid",
+    "custodian/tools/validation/forlorn_ritualant_presentation_smoke.gd",
+    "custodian/tools/validation/forlorn_ritualant_presentation_smoke.gd.uid",
+    "custodian/tools/validation/levels/forlorn_ritualant_underground_smoke.gd",
+    "custodian/tools/validation/validation_manifest.json",
+    "design/02_features/enemy_objective/FORLORN_RITUALANT_SHADER_FX.md",
+})
+_RITUALANT_RECOVERY2_SCOPE_CORRECTION_WORKSTREAM = (
+    "agent-ritualant-recovery-2-source-scope-attestation-v1"
+)
+_RITUALANT_RECOVERY2_SCOPE_CORRECTION_PACKET = (
+    f"{PACKET_ROOT}/archived/AGENT_RITUALANT_RECOVERY_2_SOURCE_SCOPE_ATTESTATION_V1.md"
+)
+_RITUALANT_RECOVERY2_SCOPE_REVIEW_WORKSTREAM = (
+    "review-agent-ritualant-recovery-2-source-scope-attestation-v1"
+)
+_RITUALANT_RECOVERY2_SCOPE_REVIEW_PACKET = (
+    f"{PACKET_ROOT}/archived/REVIEW_AGENT_RITUALANT_RECOVERY_2_SOURCE_SCOPE_ATTESTATION_V1.md"
+)
+
 # Exact historical source-scope exceptions authorize PRELAUNCH only.
 # Neither historical case changes the mandatory independent review outcome.
 _PROCESSION_RECOVERY_ARCHIVE = "c0f9d325e75cdb121489898f9f34a5f5c47f3196"
@@ -1780,13 +1832,32 @@ def _attested_manifest_comparison(repo: Path, reviewed_main: str, source_span: d
     attested_paths = provenance.get("source_files")
     if not isinstance(archive, str) or not isinstance(attested_paths, dict):
         raise HostValidationError("changed validation manifest attestation identity is incomplete")
-    authenticated = _verified_procession_scope_attestation(
-        repo, reviewed_main, archive, set(attested_paths),
-    )
+    if archive == _PROCESSION_SCOPE_SOURCE_ARCHIVE:
+        authenticated = _verified_procession_scope_attestation(
+            repo, reviewed_main, archive, set(attested_paths),
+        )
+    elif archive == _RITUALANT_RECOVERY2_SCOPE_SOURCE_ARCHIVE:
+        authenticated = _verified_ritualant_recovery2_scope_attestation(
+            repo, reviewed_main, archive, set(attested_paths),
+        )
+    else:
+        # Keep the original exact Procession verifier as the fail-closed
+        # default. Besides rejecting unknown archives in production, this
+        # preserves existing callers that inject a verifier for their fixture.
+        authenticated = _verified_procession_scope_attestation(
+            repo, reviewed_main, archive, set(attested_paths),
+        )
     if authenticated != provenance:
         raise HostValidationError("changed validation manifest source attestation does not authenticate")
     source_files = provenance.get("source_files")
     binding = source_files.get(path) if isinstance(source_files, dict) else None
+    if archive == _RITUALANT_RECOVERY2_SCOPE_SOURCE_ARCHIVE:
+        if (source_span.get("head") != archive
+                or path not in _RITUALANT_RECOVERY2_SCOPE_ARCHIVE_PATHS):
+            raise HostValidationError("Ritualant recovery-2 manifest is outside the exact attested archive inventory")
+        source_entry_for_binding = _git_tree_entry(repo, archive, path)
+        if source_entry_for_binding is not None:
+            binding = {"mode": source_entry_for_binding[0], "blob": source_entry_for_binding[1]}
     if (path not in source_span.get("paths", []) or path not in changed_files
             or not isinstance(binding, dict) or binding.get("mode") != "100644"
             or not isinstance(binding.get("blob"), str)
@@ -2971,6 +3042,185 @@ def _verified_procession_scope_attestation(repo: Path, reviewed_main: str,
     }
 
 
+def _verified_ritualant_recovery2_scope_attestation(
+    repo: Path, reviewed_main: str, landing_commit: str,
+    extra_archive_paths: set[str],
+) -> dict:
+    """Authenticate the two omitted Markdown files for the exact Ritualant R2 archive."""
+    if landing_commit != _RITUALANT_RECOVERY2_SCOPE_SOURCE_ARCHIVE:
+        raise HostValidationError("Ritualant recovery-2 scope attestation names a different source archive")
+    if extra_archive_paths != set(_RITUALANT_RECOVERY2_SCOPE_SOURCE_FILES):
+        raise HostValidationError("Ritualant recovery-2 scope attestation must cover exactly the two pinned Markdown files")
+    try:
+        archive_parent = _git(repo, "rev-parse", f"{landing_commit}^1")
+        archive_tree = _git(repo, "rev-parse", f"{landing_commit}^{{tree}}")
+    except HostValidationError as exc:
+        raise HostValidationError("pinned Ritualant recovery-2 source archive is unavailable") from exc
+    if (archive_parent != _RITUALANT_RECOVERY2_SCOPE_SOURCE_PARENT
+            or archive_tree != _RITUALANT_RECOVERY2_SCOPE_SOURCE_TREE):
+        raise HostValidationError("pinned Ritualant recovery-2 archive parent or tree does not match")
+    archive_paths = set(_changed_paths(repo, f"{archive_parent}..{landing_commit}"))
+    if archive_paths != set(_RITUALANT_RECOVERY2_SCOPE_ARCHIVE_PATHS):
+        raise HostValidationError("Ritualant recovery-2 archive path inventory does not match its exact attestation")
+
+    packet_entry = _git_tree_entry(
+        repo, landing_commit, _RITUALANT_RECOVERY2_SCOPE_SOURCE_PACKET,
+    )
+    if packet_entry != ("100644", _RITUALANT_RECOVERY2_SCOPE_SOURCE_PACKET_BLOB):
+        raise HostValidationError("pinned Ritualant recovery-2 packet blob or mode does not match")
+    source_entries: dict[str, tuple[str, str]] = {}
+    for source_path, expected_blob in _RITUALANT_RECOVERY2_SCOPE_SOURCE_FILES.items():
+        entry = _git_tree_entry(repo, landing_commit, source_path)
+        if entry != ("100644", expected_blob):
+            raise HostValidationError(f"pinned Ritualant recovery-2 Markdown blob or mode does not match: {source_path}")
+        source_entries[source_path] = entry
+
+    approval_main = _git(repo, "rev-parse", "origin/main^{commit}")
+    if (not _is_ancestor(repo, reviewed_main, approval_main)
+            or not _is_ancestor(repo, landing_commit, approval_main)):
+        raise HostValidationError("Ritualant recovery-2 approval main does not contain the preserved source archive")
+    attestation_entry = _git_tree_entry(
+        repo, approval_main, _RITUALANT_RECOVERY2_SCOPE_ATTESTATION_PATH,
+    )
+    if attestation_entry is None or attestation_entry[0] != "100644":
+        raise HostValidationError("approved main lacks the regular-file Ritualant recovery-2 scope attestation")
+    try:
+        attestation_bytes = subprocess.run(
+            ["git", "show", f"{approval_main}:{_RITUALANT_RECOVERY2_SCOPE_ATTESTATION_PATH}"],
+            cwd=repo, capture_output=True, check=True,
+        ).stdout
+        attestation = json.loads(attestation_bytes)
+    except (subprocess.CalledProcessError, json.JSONDecodeError) as exc:
+        raise HostValidationError("Ritualant recovery-2 scope attestation is unreadable or invalid JSON") from exc
+    expected_attestation = {
+        "schema": "custodian.review_source_scope_attestation.v1",
+        "source_workstream": _RITUALANT_RECOVERY2_SCOPE_SOURCE_WORKSTREAM,
+        "source_archive_commit": _RITUALANT_RECOVERY2_SCOPE_SOURCE_ARCHIVE,
+        "source_archive_parent": _RITUALANT_RECOVERY2_SCOPE_SOURCE_PARENT,
+        "source_archive_tree": _RITUALANT_RECOVERY2_SCOPE_SOURCE_TREE,
+        "source_archive_paths": sorted(_RITUALANT_RECOVERY2_SCOPE_ARCHIVE_PATHS),
+        "source_packet_path": _RITUALANT_RECOVERY2_SCOPE_SOURCE_PACKET,
+        "source_packet_blob": _RITUALANT_RECOVERY2_SCOPE_SOURCE_PACKET_BLOB,
+        "source_packet_mode": "100644",
+        "source_files": [
+            {"path": path, "blob": blob, "mode": "100644"}
+            for path, blob in sorted(_RITUALANT_RECOVERY2_SCOPE_SOURCE_FILES.items())
+        ],
+        "reason": "The immutable recovery-2 archive includes these exact two Markdown source files outside its Work surface.",
+        "post_hoc": True,
+    }
+    canonical_bytes = (json.dumps(expected_attestation, indent=2, sort_keys=True) + "\n").encode("utf-8")
+    if attestation != expected_attestation or attestation_bytes != canonical_bytes:
+        raise HostValidationError("Ritualant recovery-2 attestation bytes do not match the exact post-hoc authorization")
+
+    origin_result = subprocess.run(
+        ["git", "log", "--format=%H", approval_main, "--", _RITUALANT_RECOVERY2_SCOPE_ATTESTATION_PATH],
+        cwd=repo, text=True, capture_output=True,
+    )
+    if origin_result.returncode:
+        raise HostValidationError("cannot resolve Ritualant recovery-2 attestation origin commit")
+    origins = [commit for commit in origin_result.stdout.splitlines()
+               if _git_tree_entry(repo, commit, _RITUALANT_RECOVERY2_SCOPE_ATTESTATION_PATH) == attestation_entry]
+    if len(origins) != 1:
+        raise HostValidationError("Ritualant recovery-2 attestation has missing or ambiguous exact-blob origin history")
+    origin_commit = origins[0]
+
+    try:
+        correction_text = read_git_text(repo, approval_main, _RITUALANT_RECOVERY2_SCOPE_CORRECTION_PACKET)
+        review_text = read_git_text(repo, approval_main, _RITUALANT_RECOVERY2_SCOPE_REVIEW_PACKET)
+    except ValueError as exc:
+        raise HostValidationError("Ritualant recovery-2 attestation lacks archived correction review evidence") from exc
+    correction = parse_packet(_RITUALANT_RECOVERY2_SCOPE_CORRECTION_PACKET, correction_text)
+    review = parse_packet(_RITUALANT_RECOVERY2_SCOPE_REVIEW_PACKET, review_text)
+    if (correction.error or correction.kind not in {"implementation", "correction"}
+            or correction.status != "complete"
+            or correction.workstream != _RITUALANT_RECOVERY2_SCOPE_CORRECTION_WORKSTREAM
+            or review.error or review.kind != "review" or review.status != "complete"
+            or review.workstream != _RITUALANT_RECOVERY2_SCOPE_REVIEW_WORKSTREAM
+            or review.review_target_workstream != _RITUALANT_RECOVERY2_SCOPE_CORRECTION_WORKSTREAM
+            or review.review_target_packet != _RITUALANT_RECOVERY2_SCOPE_CORRECTION_PACKET):
+        raise HostValidationError("Ritualant recovery-2 attestation correction/review packet identity is incomplete")
+    outcome, outcome_error = review_outcome.parse_review_outcome(review_text)
+    if outcome_error or outcome is None or outcome.get("Outcome") != "passed":
+        raise HostValidationError("Ritualant recovery-2 attestation has no canonical independent PASS outcome")
+    accepted, _, acceptance_reason = review_outcome.review_acceptance(
+        review_text, correction_text, _RITUALANT_RECOVERY2_SCOPE_REVIEW_WORKSTREAM,
+    )
+    if not accepted:
+        raise HostValidationError(f"Ritualant recovery-2 attestation review is not accepted: {acceptance_reason}")
+    review_baseline = read_git_text(
+        repo, outcome["Reviewed main"], _RITUALANT_RECOVERY2_SCOPE_CORRECTION_PACKET,
+    )
+    implementation_commit, identity_error = resolve_target_implementation_commit(
+        repo, outcome["Reviewed main"], _RITUALANT_RECOVERY2_SCOPE_CORRECTION_PACKET,
+        _RITUALANT_RECOVERY2_SCOPE_CORRECTION_WORKSTREAM, review_baseline,
+    )
+    if identity_error:
+        raise HostValidationError(f"Ritualant recovery-2 attestation target identity is invalid: {identity_error}")
+    if (not _is_ancestor(repo, origin_commit, implementation_commit)
+            or not _is_ancestor(repo, outcome["Reviewed main"], approval_main)
+            or not _is_ancestor(repo, implementation_commit, outcome["Reviewed main"])):
+        raise HostValidationError("Ritualant recovery-2 attestation review is not descended from its implementation")
+    receipt, receipt_error = verify_review_receipt_delta(
+        review_baseline, correction_text,
+        review_workstream=_RITUALANT_RECOVERY2_SCOPE_REVIEW_WORKSTREAM,
+        target_workstream=_RITUALANT_RECOVERY2_SCOPE_CORRECTION_WORKSTREAM,
+        reviewed_main=outcome["Reviewed main"], target_implementation_commit=implementation_commit,
+    )
+    if receipt_error or not receipt:
+        raise HostValidationError(f"Ritualant recovery-2 attestation target receipt is invalid: {receipt_error}")
+    identity_error = review_outcome.outcome_identity_error(
+        outcome, review_workstream=_RITUALANT_RECOVERY2_SCOPE_REVIEW_WORKSTREAM,
+        target_workstream=_RITUALANT_RECOVERY2_SCOPE_CORRECTION_WORKSTREAM,
+        reviewed_main=outcome["Reviewed main"], implementation_commit=implementation_commit,
+        run_id=outcome["Run ID"], review_cycle=review.review_cycle,
+    )
+    if identity_error:
+        raise HostValidationError(f"Ritualant recovery-2 attestation review identity is invalid: {identity_error}")
+    reviewer_receipt = _scope_review_receipt(review_text)
+    if reviewer_receipt is None:
+        raise HostValidationError("Ritualant recovery-2 attestation review lacks one canonical reviewer receipt")
+    expected_receipt = {
+        "Schema": "custodian.paired_review.v1",
+        "Review workstream": _RITUALANT_RECOVERY2_SCOPE_REVIEW_WORKSTREAM,
+        "Review target workstream": _RITUALANT_RECOVERY2_SCOPE_CORRECTION_WORKSTREAM,
+        "Status": "passed", "Blocking defects": "0", "Material gaps": "0",
+        "Reviewer context": "fresh", "Reviewed main": outcome["Reviewed main"],
+        "Reviewed implementation commit": implementation_commit,
+    }
+    if any(reviewer_receipt.get(field) != value for field, value in expected_receipt.items()) or (
+        reviewer_receipt.get("Reviewer provenance") not in {"different-agent", "same-agent-fresh-context"}
+    ):
+        raise HostValidationError("accepted Ritualant recovery-2 reviewer receipt does not match its PASS outcome")
+
+    return {
+        "kind": "accepted-post-hoc-exact-source-attestation",
+        "attestation_path": _RITUALANT_RECOVERY2_SCOPE_ATTESTATION_PATH,
+        "attestation_commit": origin_commit,
+        "attestation_blob": attestation_entry[1],
+        "attestation_sha256": _sha256(attestation_bytes),
+        "source_archive_commit": _RITUALANT_RECOVERY2_SCOPE_SOURCE_ARCHIVE,
+        "source_archive_parent": archive_parent,
+        "source_archive_tree": archive_tree,
+        "source_archive_paths": sorted(archive_paths),
+        "source_packet_path": _RITUALANT_RECOVERY2_SCOPE_SOURCE_PACKET,
+        "source_packet_blob": _RITUALANT_RECOVERY2_SCOPE_SOURCE_PACKET_BLOB,
+        "source_packet_mode": packet_entry[0],
+        "source_files": {
+            path: {"mode": mode, "blob": blob}
+            for path, (mode, blob) in source_entries.items()
+        },
+        "approval_review_workstream": _RITUALANT_RECOVERY2_SCOPE_REVIEW_WORKSTREAM,
+        "approval_review_packet": _RITUALANT_RECOVERY2_SCOPE_REVIEW_PACKET,
+        "approval_target_packet": _RITUALANT_RECOVERY2_SCOPE_CORRECTION_PACKET,
+        "approval_reviewed_main": outcome["Reviewed main"],
+        "approval_run_id": outcome["Run ID"],
+        "approval_implementation_commit": implementation_commit,
+        "approval_outcome": outcome["Outcome"],
+        "preserved_reviewed_main": reviewed_main,
+    }
+
+
 def _verify_split_landing_sync_merges(repo: Path, reviewed_main: str, landing_commit: str,
                                       source_base: str, source_head: str,
                                       commits: list[str],
@@ -3722,6 +3972,13 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
             scope_attestation = _verified_procession_scope_attestation(
                 repo, reviewed_main, landing_commit, extra_archive_paths,
             )
+        elif (target_workstream == _RITUALANT_RECOVERY2_SCOPE_SOURCE_WORKSTREAM
+                and (landing_commit == _RITUALANT_RECOVERY2_SCOPE_SOURCE_ARCHIVE
+                     or extra_archive_paths.intersection(_RITUALANT_RECOVERY2_SCOPE_SOURCE_FILES))):
+            scope_attestation = _verified_ritualant_recovery2_scope_attestation(
+                repo, reviewed_main, landing_commit,
+                extra_archive_paths.intersection(_RITUALANT_RECOVERY2_SCOPE_SOURCE_FILES),
+            )
         elif (target_workstream == "grunt-candidate-raster-workflow-v1"
                 and extra_archive_paths.intersection(_GRUNT_SCOPE_FILES)):
             if landing_commit != _GRUNT_SCOPE_SOURCE_ARCHIVE:
@@ -3733,6 +3990,12 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
             (set(scope_attestation["source_files"]) if scope_attestation else set())
             | historical_recovery_paths
         )
+        if (scope_attestation is not None
+                and target_workstream == _RITUALANT_RECOVERY2_SCOPE_SOURCE_WORKSTREAM
+                and landing_commit == _RITUALANT_RECOVERY2_SCOPE_SOURCE_ARCHIVE
+                and _RITUALANT_RECOVERY2_SCOPE_SHADER_UID in extra_archive_paths
+                and _RITUALANT_RECOVERY2_SCOPE_SHADER_UID.removesuffix(".uid") in extra_archive_paths):
+            uid_companion_paths.add(_RITUALANT_RECOVERY2_SCOPE_SHADER_UID)
         if any(Path(path).suffix.lower() not in _IMPLEMENTATION_SUFFIXES
                and path not in uid_companion_paths
                and path not in paired_review_metadata_paths

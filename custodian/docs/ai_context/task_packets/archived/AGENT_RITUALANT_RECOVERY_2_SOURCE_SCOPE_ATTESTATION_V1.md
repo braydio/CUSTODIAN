@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-ritualant-recovery-2-source-scope-attestation-v1`
 - Category: `agent-ops`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P1`
@@ -68,12 +68,32 @@
 - Task overrides: `none`
 - Deferred: After this correction's own accepted independent PASS lands, the coordinator resumes only run `20261103T022803Z-2fa8fee1b08c` with `paired_review_runner.py review-ritualant-npc-silhouette-readability-shader-v1-recovery-2 --continue-run 20261103T022803Z-2fa8fee1b08c --recover-host-validation --plan`. Apply only the exact new plan digest using the tool's current documented `--apply --authorize-fresh-reviewer-context` controls. The original reviewer then reports its own PASS, findings or `human_required` outcome.
 
+
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: The exact recovery-2 attestation and source-bound verifier are implemented; actual-Git positive/adversarial tests pass; the four existing administrator/Grunt history fixtures now pin synthetic provenance; `run_validation.py --changed --base origin/main --json` passed both selected groups with complete changed-file coverage, 0 failures, 0 skips, 0 timeouts and 0 infrastructure errors; Python compilation, packet-index check and `git diff --check` pass. Validation report: `/home/braydenchaffee/.cache/custodian/validation/ritualant-r2-final-20261103T091927Z.json`.
+
+## Execution Feedback
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: medium
+- What went wrong: The new exact source-attestation route initially intercepted generic fixture histories, and four legacy administrator/Grunt approval tests failed because their synthetic histories depended on moving `origin/main` or ambiguous attestation-blob origin. The production verifier compatibility path was restored, then the authorized fixture builders were repaired with pinned implementation/history identities.
+- Root cause / contributing factors: Historical test fixtures derived provenance from moving branch state and did not create a unique source-blob origin; test runs exposed the provenance ambiguity.
+- Prevention / pipeline improvement: Pin synthetic review targets and baseline commit identities, and build a unique introduction history for attested blobs.
+- Tooling / docs drift discovered: none
+- Follow-up: fixed in-scope
+- What worked: Real-Git historical acceptance and adversarial mutation tests exercised the unchanged fail-closed review predicates; canonical changed validation now passes all selected groups.
+
 ## Handoff
 - Next workstream: `review-agent-ritualant-recovery-2-source-scope-attestation-v1`
-- Next packet state: `ready/auto` after atomic publication and automatic authoring handoff; the shared provenance lock currently blocks claim.
+- Next packet state: `ready/auto`; implementation archive and landing now unblock dispatcher eligibility.
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae7eb07-c554-83e9-911a-1335e640e4d0
 - Refresh reason: `none`
-- Next action: Wait for normal dispatcher eligibility after `paired-review-source-provenance` is released; then claim and implement this exact correction, followed by its fresh paired review.
-- Blockers or open questions: The shared lock is held by `review-agent-paired-review-procession-doc-scope-recovery-v1`; do not interfere with it.
+- Next action: After implementation landing, re-audit dispatcher eligibility and launch the exact fresh paired reviewer through `paired_review_runner.py`; preserve original review run `20261103T022803Z-2fa8fee1b08c` until this correction receives canonical independent acceptance.
+- Blockers or open questions: Independent paired review is pending; original Ritualant review remains preserved and unresolved.

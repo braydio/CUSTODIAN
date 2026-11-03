@@ -4879,9 +4879,9 @@ class PairedReviewHostValidationTests(unittest.TestCase):
 
     def _build_admin_scope_approval_history(self, *, outcome="passed"):
         """Build a disposable, accepted one-path approval on top of the real pinned history."""
+        correction_implementation_commit = "b9b76f86c404b955291097e5a37407e6559cb9dd"
         repository = Path(self.temp.name) / "admin-approval"
-        base_main = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "origin/main^{commit}"],
-                                   check=True, text=True, capture_output=True).stdout.strip()
+        base_main = correction_implementation_commit
         _prepare_historical_git_fixture(repository, base_main)
         run = lambda *args, check=True: subprocess.run(
             ["git", *args], cwd=repository, check=check, text=True, capture_output=True,
@@ -4905,12 +4905,23 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                          "REVIEW_SCOPE_RECOVERY_V1.md")
         target_text = (repository / archive_target).read_text(encoding="utf-8")
         target_text = target_text.replace("- Status: `ready`", "- Status: `complete`", 1)
+        reviewed_main_line = re.search(r"(?m)^- Reviewed main:.*$", target_text)
+        if reviewed_main_line is None:
+            self.fail("the published administrator correction packet lacks its pinned Reviewed main")
+        target_text = target_text[:reviewed_main_line.end()] + (
+            f"\n- Implementation commit: `{correction_implementation_commit}`"
+        ) + target_text[reviewed_main_line.end():]
+        (repository / archive_target).write_text(target_text, encoding="utf-8")
+        run("add", "--", archive_target)
+        run("commit", "-qm", "pin synthetic administrator correction identity")
+        reviewed_main = run("rev-parse", "HEAD").stdout.strip()
         implementation_commit, identity_error = resolve_target_implementation_commit(
-            repository, base_main, archive_target, host_validation._ADMIN_SCOPE_CORRECTION_WORKSTREAM,
+            repository, reviewed_main, archive_target, host_validation._ADMIN_SCOPE_CORRECTION_WORKSTREAM,
             target_text,
         )
         if identity_error:
             self.fail(f"the published administrator correction identity is unavailable: {identity_error}")
+        self.assertEqual(implementation_commit, correction_implementation_commit)
 
         review_text = (repository / active_review).read_text(encoding="utf-8")
         review_text = review_text.replace("- Status: `ready`", "- Status: `complete`", 1)
@@ -4925,21 +4936,21 @@ class PairedReviewHostValidationTests(unittest.TestCase):
 - Material gaps: `0`
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent`
-- Reviewed main: `{implementation_commit}`
+- Reviewed main: `{reviewed_main}`
 - Reviewed implementation commit: `{implementation_commit}`
 """
         review_text += "\n" + runner.review_outcome.render_review_outcome(
             outcome=outcome, review_workstream=host_validation._ADMIN_SCOPE_REVIEW_WORKSTREAM,
             target_workstream=host_validation._ADMIN_SCOPE_CORRECTION_WORKSTREAM,
-            reviewed_main=implementation_commit, implementation_commit=implementation_commit,
+            reviewed_main=reviewed_main, implementation_commit=implementation_commit,
             provenance="different-agent", run_id="20261030T070000Z-abcdef123456",
             review_cycle=0, ids=("R0-01",) if outcome != "passed" else (),
         )
         updated_target = append_receipt(
-            (repository / archive_target).read_text(encoding="utf-8"),
+            target_text,
             review_workstream=host_validation._ADMIN_SCOPE_REVIEW_WORKSTREAM,
             target_workstream=host_validation._ADMIN_SCOPE_CORRECTION_WORKSTREAM,
-            reviewed_main=implementation_commit, implementation_commit=implementation_commit,
+            reviewed_main=reviewed_main, implementation_commit=implementation_commit,
         )
         (repository / archive_target).write_text(updated_target, encoding="utf-8")
         (repository / archive_review).parent.mkdir(parents=True, exist_ok=True)
@@ -9286,11 +9297,280 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                 implementation_commit, extra,
             )
 
+    def _build_ritualant_recovery2_attestation_approval_history(
+        self, *, outcome="passed", include_target_receipt=True,
+        outcome_target_workstream=None,
+    ):
+        """Build actual Git history for the exact Ritualant R2 post-hoc approval."""
+        repository = Path(self.temp.name) / f"ritualant-recovery2-{outcome}-{include_target_receipt}"
+        base_main = subprocess.run(
+            ["git", "-C", str(ROOT), "rev-parse", "origin/main^{commit}"],
+            check=True, text=True, capture_output=True,
+        ).stdout.strip()
+        _prepare_historical_git_fixture(repository, base_main)
+        subprocess.run(["git", "-C", str(repository), "config", "user.name", "test"], check=True)
+        subprocess.run(["git", "-C", str(repository), "config", "user.email",
+                        "test@example.invalid"], check=True)
+        source_trace_prefix = (
+            "refs/remotes/origin/agent-diagnostics/"
+            f"{host_validation._RITUALANT_RECOVERY2_SCOPE_SOURCE_WORKSTREAM}/"
+        )
+        source_traces = subprocess.run(
+            ["git", "for-each-ref", "--format=%(refname) %(objectname)", source_trace_prefix],
+            cwd=ROOT, check=True, text=True, capture_output=True,
+        ).stdout.splitlines()
+        if not source_traces:
+            self.fail("the immutable Ritualant recovery-2 lifecycle trace is unavailable")
+        for record in source_traces:
+            ref, commit = record.split()
+            subprocess.run(["git", "-C", str(repository), "update-ref", ref, commit], check=True)
+
+        attestation_path = host_validation._RITUALANT_RECOVERY2_SCOPE_ATTESTATION_PATH
+        attestation = (ROOT / attestation_path).read_bytes()
+        correction_path = host_validation._RITUALANT_RECOVERY2_SCOPE_CORRECTION_PACKET
+        active_correction = f"{runner.PACKET_ROOT}/AGENT_RITUALANT_RECOVERY_2_SOURCE_SCOPE_ATTESTATION_V1.md"
+        correction_text = subprocess.run(
+            ["git", "show", f"{base_main}:{active_correction}"], cwd=repository,
+            check=True, text=True, capture_output=True,
+        ).stdout.replace("- Status: `ready`", "- Status: `complete`", 1)
+        target_packet = repository / correction_path
+        target_packet.parent.mkdir(parents=True, exist_ok=True)
+        target_packet.write_text(correction_text, encoding="utf-8")
+        attestation_file = repository / attestation_path
+        attestation_file.parent.mkdir(parents=True, exist_ok=True)
+        attestation_file.write_bytes(attestation)
+        subprocess.run(["git", "-C", str(repository), "add", "--", attestation_path,
+                        correction_path], check=True)
+        subprocess.run(["git", "-C", str(repository), "commit", "-qm",
+                        "archive exact Ritualant source attestation"], check=True)
+        implementation_commit = subprocess.run(
+            ["git", "-C", str(repository), "rev-parse", "HEAD"], check=True,
+            text=True, capture_output=True,
+        ).stdout.strip()
+
+        review_workstream = host_validation._RITUALANT_RECOVERY2_SCOPE_REVIEW_WORKSTREAM
+        review_path = host_validation._RITUALANT_RECOVERY2_SCOPE_REVIEW_PACKET
+        active_review = f"{runner.PACKET_ROOT}/REVIEW_AGENT_RITUALANT_RECOVERY_2_SOURCE_SCOPE_ATTESTATION_V1.md"
+        review_text = subprocess.run(
+            ["git", "show", f"{base_main}:{active_review}"], cwd=repository,
+            check=True, text=True, capture_output=True,
+        ).stdout.replace("- Status: `ready`", "- Status: `complete`", 1)
+        review_text += f"""
+\n## Independent Review
+
+- Schema: `custodian.paired_review.v1`
+- Review workstream: `{review_workstream}`
+- Review target workstream: `{host_validation._RITUALANT_RECOVERY2_SCOPE_CORRECTION_WORKSTREAM}`
+- Status: `passed`
+- Blocking defects: `0`
+- Material gaps: `0`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Reviewed main: `{implementation_commit}`
+- Reviewed implementation commit: `{implementation_commit}`
+"""
+        review_text += "\n" + runner.review_outcome.render_review_outcome(
+            outcome=outcome, review_workstream=review_workstream,
+            target_workstream=(outcome_target_workstream
+                               or host_validation._RITUALANT_RECOVERY2_SCOPE_CORRECTION_WORKSTREAM),
+            reviewed_main=implementation_commit, implementation_commit=implementation_commit,
+            provenance="different-agent", run_id="20261103T090000Z-abcdef123456",
+            review_cycle=0, ids=("R0-01",) if outcome == "findings" else (),
+        )
+        if include_target_receipt:
+            correction_text = append_receipt(
+                correction_text, review_workstream=review_workstream,
+                target_workstream=host_validation._RITUALANT_RECOVERY2_SCOPE_CORRECTION_WORKSTREAM,
+                reviewed_main=implementation_commit, implementation_commit=implementation_commit,
+            )
+        target_packet.write_text(correction_text, encoding="utf-8")
+        archived_review = repository / review_path
+        archived_review.parent.mkdir(parents=True, exist_ok=True)
+        archived_review.write_text(review_text, encoding="utf-8")
+        subprocess.run(["git", "-C", str(repository), "add", "--", correction_path,
+                        review_path], check=True)
+        subprocess.run(["git", "-C", str(repository), "commit", "-qm",
+                        "record Ritualant attestation review"], check=True)
+        approval_main = subprocess.run(
+            ["git", "-C", str(repository), "rev-parse", "HEAD"], check=True,
+            text=True, capture_output=True,
+        ).stdout.strip()
+        subprocess.run(["git", "-C", str(repository), "update-ref",
+                        "refs/remotes/origin/main", approval_main], check=True)
+        return repository, base_main, implementation_commit, approval_main, attestation_path
+
+    def test_ritualant_recovery2_scope_attestation_only_activates_after_accepted_review(self):
+        repository, base_main, implementation_commit, approval_main, attestation_path = (
+            self._build_ritualant_recovery2_attestation_approval_history()
+        )
+        exact_paths = set(host_validation._RITUALANT_RECOVERY2_SCOPE_SOURCE_FILES)
+        subprocess.run(["git", "-C", str(repository), "update-ref", "refs/remotes/origin/main",
+                        implementation_commit], check=True)
+        with self.assertRaisesRegex(
+            host_validation.HostValidationError, "lacks archived correction review evidence",
+        ):
+            host_validation._verified_ritualant_recovery2_scope_attestation(
+                repository, base_main, host_validation._RITUALANT_RECOVERY2_SCOPE_SOURCE_ARCHIVE,
+                exact_paths,
+            )
+        with self.assertRaisesRegex(
+            host_validation.HostValidationError, "lacks archived correction review evidence",
+        ):
+            host_validation.resolve_validation_source_span(
+                repository, host_validation._RITUALANT_RECOVERY2_SCOPE_SOURCE_ARCHIVE,
+                host_validation._RITUALANT_RECOVERY2_SCOPE_SOURCE_ARCHIVE,
+                host_validation._RITUALANT_RECOVERY2_SCOPE_SOURCE_WORKSTREAM,
+                host_validation._RITUALANT_RECOVERY2_SCOPE_SOURCE_PACKET,
+            )
+
+        subprocess.run(["git", "-C", str(repository), "update-ref", "refs/remotes/origin/main",
+                        approval_main], check=True)
+        original_reviewed_main = host_validation._RITUALANT_RECOVERY2_SCOPE_SOURCE_ARCHIVE
+        provenance = host_validation._verified_ritualant_recovery2_scope_attestation(
+            repository, original_reviewed_main, host_validation._RITUALANT_RECOVERY2_SCOPE_SOURCE_ARCHIVE,
+            exact_paths,
+        )
+        self.assertEqual(provenance["approval_outcome"], "passed")
+        self.assertEqual(provenance["approval_implementation_commit"], implementation_commit)
+        self.assertEqual(provenance["source_archive_parent"],
+                         host_validation._RITUALANT_RECOVERY2_SCOPE_SOURCE_PARENT)
+        self.assertEqual(provenance["source_archive_tree"],
+                         host_validation._RITUALANT_RECOVERY2_SCOPE_SOURCE_TREE)
+        self.assertEqual(provenance["source_archive_paths"],
+                         sorted(host_validation._RITUALANT_RECOVERY2_SCOPE_ARCHIVE_PATHS))
+        self.assertEqual(set(provenance["source_files"]), exact_paths)
+        self.assertEqual(host_validation._git_tree_entry(
+            repository, provenance["attestation_commit"], attestation_path,
+        ), ("100644", provenance["attestation_blob"]))
+        self.assertTrue(host_validation._is_ancestor(repository, provenance["attestation_commit"],
+                                                     implementation_commit))
+
+        span = host_validation.resolve_validation_source_span(
+            repository, original_reviewed_main,
+            host_validation._RITUALANT_RECOVERY2_SCOPE_SOURCE_ARCHIVE,
+            host_validation._RITUALANT_RECOVERY2_SCOPE_SOURCE_WORKSTREAM,
+            host_validation._RITUALANT_RECOVERY2_SCOPE_SOURCE_PACKET,
+        )
+        self.assertEqual(set(span["paths"]), host_validation._RITUALANT_RECOVERY2_SCOPE_ARCHIVE_PATHS)
+        self.assertEqual(span["provenance"]["scope_attestation"]["approval_outcome"], "passed")
+        self.assertIn(host_validation._RITUALANT_RECOVERY2_SCOPE_SHADER_UID, span["paths"])
+        self.assertNotIn(host_validation._RITUALANT_RECOVERY2_SCOPE_SHADER_UID,
+                         span["provenance"]["scope_attestation"]["source_files"])
+        manifest_path = "custodian/tools/validation/validation_manifest.json"
+        manifest = host_validation._pinned_coverage_manifest(repository, original_reviewed_main)
+        revised, _, changed = host_validation._attested_manifest_comparison(
+            repository, original_reviewed_main, span, [manifest_path], manifest,
+        )
+        self.assertTrue(changed)
+        self.assertEqual(revised, manifest)
+
+        with self.assertRaisesRegex(host_validation.HostValidationError, "exactly the two pinned Markdown files"):
+            host_validation._verified_ritualant_recovery2_scope_attestation(
+                repository, base_main, host_validation._RITUALANT_RECOVERY2_SCOPE_SOURCE_ARCHIVE,
+                exact_paths | {"custodian/docs/unrelated.md"},
+            )
+        with self.assertRaisesRegex(host_validation.HostValidationError, "exactly the two pinned Markdown files"):
+            host_validation._verified_ritualant_recovery2_scope_attestation(
+                repository, base_main, host_validation._RITUALANT_RECOVERY2_SCOPE_SOURCE_ARCHIVE,
+                exact_paths - {next(iter(exact_paths))},
+            )
+        with self.assertRaisesRegex(host_validation.HostValidationError, "different source archive"):
+            host_validation._verified_ritualant_recovery2_scope_attestation(
+                repository, base_main, implementation_commit, exact_paths,
+            )
+
+    def test_ritualant_recovery2_scope_attestation_rejects_nonpass_and_missing_receipt(self):
+        for outcome, include_receipt, outcome_target, expected in (
+            ("findings", True, None, "no canonical independent PASS"),
+            ("passed", False, None, "not accepted"),
+            ("passed", True, "wrong-target", "review identity is invalid"),
+        ):
+            repository, base_main, _, approval_main, _ = (
+                self._build_ritualant_recovery2_attestation_approval_history(
+                    outcome=outcome, include_target_receipt=include_receipt,
+                    outcome_target_workstream=outcome_target,
+                )
+            )
+            with self.subTest(outcome=outcome, include_receipt=include_receipt,
+                              outcome_target=outcome_target), self.assertRaisesRegex(
+                host_validation.HostValidationError, expected,
+            ):
+                host_validation._verified_ritualant_recovery2_scope_attestation(
+                    repository, base_main, host_validation._RITUALANT_RECOVERY2_SCOPE_SOURCE_ARCHIVE,
+                    set(host_validation._RITUALANT_RECOVERY2_SCOPE_SOURCE_FILES),
+                )
+
+    def test_ritualant_recovery2_scope_attestation_rejects_attestation_identity_mutations(self):
+        repository, base_main, _, approval_main, attestation_path = (
+            self._build_ritualant_recovery2_attestation_approval_history()
+        )
+        original = json.loads(subprocess.run(
+            ["git", "show", f"{approval_main}:{attestation_path}"], cwd=repository,
+            check=True, capture_output=True,
+        ).stdout)
+        mutations = (
+            ("source_archive_commit", "0" * 40),
+            ("source_archive_parent", "0" * 40),
+            ("source_archive_tree", "0" * 40),
+            ("source_archive_paths", original["source_archive_paths"][:-1]),
+            ("source_packet_blob", "0" * 40),
+            ("source_packet_mode", "100755"),
+            ("source_files", original["source_files"][:-1]),
+            ("source_files", [{**original["source_files"][0], "blob": "0" * 40},
+                               original["source_files"][1]]),
+            ("source_files", [{**original["source_files"][0], "path": "custodian/docs/unrelated.md"},
+                               original["source_files"][1]]),
+            ("source_files", [{**original["source_files"][0], "mode": "100755"},
+                               original["source_files"][1]]),
+            ("source_files", original["source_files"] + [{
+                "path": "custodian/docs/unrelated.md", "blob": "0" * 40, "mode": "100644",
+            }]),
+        )
+        file_path = repository / attestation_path
+        for index, (field, value) in enumerate(mutations):
+            changed = dict(original)
+            changed[field] = value
+            file_path.write_text(json.dumps(changed, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+            subprocess.run(["git", "-C", str(repository), "add", "--", attestation_path], check=True)
+            if index == 5:
+                subprocess.run(["git", "-C", str(repository), "update-index", "--chmod=+x",
+                                "--", attestation_path], check=True)
+            subprocess.run(["git", "-C", str(repository), "commit", "-qm", f"mutate {field} {index}"],
+                           check=True)
+            tip = subprocess.run(["git", "-C", str(repository), "rev-parse", "HEAD"], check=True,
+                                 text=True, capture_output=True).stdout.strip()
+            subprocess.run(["git", "-C", str(repository), "update-ref",
+                            "refs/remotes/origin/main", tip], check=True)
+            expected_error = ("regular-file Ritualant recovery-2 scope attestation"
+                              if index == 5 else "exact post-hoc authorization")
+            with self.subTest(field=field, index=index), self.assertRaisesRegex(
+                host_validation.HostValidationError, expected_error,
+            ):
+                host_validation._verified_ritualant_recovery2_scope_attestation(
+                    repository, base_main, host_validation._RITUALANT_RECOVERY2_SCOPE_SOURCE_ARCHIVE,
+                    set(host_validation._RITUALANT_RECOVERY2_SCOPE_SOURCE_FILES),
+                )
+
+        file_path.write_text("{malformed json\n", encoding="utf-8")
+        subprocess.run(["git", "-C", str(repository), "add", "--", attestation_path], check=True)
+        subprocess.run(["git", "-C", str(repository), "commit", "-qm", "malform scope attestation"], check=True)
+        tip = subprocess.run(["git", "-C", str(repository), "rev-parse", "HEAD"], check=True,
+                             text=True, capture_output=True).stdout.strip()
+        subprocess.run(["git", "-C", str(repository), "update-ref",
+                        "refs/remotes/origin/main", tip], check=True)
+        with self.assertRaisesRegex(host_validation.HostValidationError, "unreadable or invalid JSON"):
+            host_validation._verified_ritualant_recovery2_scope_attestation(
+                repository, base_main, host_validation._RITUALANT_RECOVERY2_SCOPE_SOURCE_ARCHIVE,
+                set(host_validation._RITUALANT_RECOVERY2_SCOPE_SOURCE_FILES),
+            )
+
     def _build_grunt_attestation_approval_history(self):
         """Build a real Git history with canonical correction PASS receipts."""
         repository = Path(self.temp.name) / "grunt-attestation"
-        base_main = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "origin/main^{commit}"],
-                                   check=True, text=True, capture_output=True).stdout.strip()
+        # Start immediately before the canonical attestation publication. Later
+        # custodian tree restore commits reintroduced the same blob, so using a
+        # moving main made its exact origin ambiguous.
+        base_main = "08236e69087852cc8a2dfd96edd64a742685e662"
         _prepare_historical_git_fixture(repository, base_main)
         subprocess.run(["git", "-C", str(repository), "config", "user.name", "test"], check=True)
         subprocess.run(["git", "-C", str(repository), "config", "user.email",
@@ -9306,21 +9586,12 @@ class PairedReviewHostValidationTests(unittest.TestCase):
             subprocess.run(["git", "-C", str(repository), "update-ref", ref, commit], check=True)
         attestation_path = "custodian/docs/ai_context/review_scope_attestations/grunt_candidate_raster_v1.json"
         attestation_source = subprocess.run(
-            ["git", "show", f"{base_main}:{attestation_path}"], cwd=ROOT,
+            ["git", "show", f"ff48e1d0e1e847ae6db31b4a74eab8c5620951ae:{attestation_path}"], cwd=ROOT,
             check=True, capture_output=True,
         ).stdout
         target_path = ("custodian/docs/ai_context/task_packets/archived/"
                        "AGENT_GRUNT_RASTER_REVIEW_SCOPE_ATTESTATION_V1.md")
-        original_target = subprocess.run(
-            ["git", "show", f"{base_main}:{target_path}"], cwd=ROOT,
-            check=True, text=True, capture_output=True,
-        ).stdout
-        reviewed_base = re.search(r"(?im)^- Reviewed main:\s*`?([0-9a-f]{40,64})`?\s*$",
-                                  original_target).group(1)
-        correction_archive_commit = subprocess.run(
-            ["git", "log", "--diff-filter=AR", "--format=%H", base_main, "--", target_path],
-            cwd=ROOT, check=True, text=True, capture_output=True,
-        ).stdout.splitlines()[0]
+        reviewed_base = "217f41093802b8c74cf88f986076e4e26acc8e77"
         target = f"""# Correction packet
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-grunt-raster-review-scope-attestation-v1`
@@ -9335,14 +9606,30 @@ class PairedReviewHostValidationTests(unittest.TestCase):
 ## Goal
 Verify the exact post-hoc attestation.
 """
-        (repository / attestation_path).parent.mkdir(parents=True, exist_ok=True)
-        (repository / attestation_path).write_bytes(attestation_source)
-        (repository / target_path).parent.mkdir(parents=True, exist_ok=True)
-        (repository / target_path).write_text(target, encoding="utf-8")
-        subprocess.run(["git", "-C", str(repository), "add", "--", attestation_path, target_path],
+        attestation_file = repository / attestation_path
+        attestation_file.unlink()
+        subprocess.run(["git", "-C", str(repository), "add", "--", attestation_path], check=True)
+        subprocess.run(["git", "-C", str(repository), "commit", "-qm", "prepare synthetic Grunt approval"],
                        check=True)
+        attestation_file.parent.mkdir(parents=True, exist_ok=True)
+        attestation_file.write_bytes(attestation_source)
+        # The production verifier resolves the authorized Grunt blob from its
+        # historical file-origin path. Stage the same exact blob there so this
+        # synthetic history contains one unambiguous origin commit, without
+        # changing the production predicate under test.
+        admin_attestation_path = host_validation._ADMIN_SCOPE_ATTESTATION_PATH
+        admin_attestation_file = repository / admin_attestation_path
+        admin_attestation_file.parent.mkdir(parents=True, exist_ok=True)
+        admin_attestation_file.write_bytes(attestation_source)
+        subprocess.run(["git", "-C", str(repository), "add", "--", attestation_path,
+                        admin_attestation_path], check=True)
         subprocess.run(["git", "-C", str(repository), "commit", "-qm", "install exact attestation"],
                        check=True)
+        (repository / target_path).parent.mkdir(parents=True, exist_ok=True)
+        (repository / target_path).write_text(target, encoding="utf-8")
+        subprocess.run(["git", "-C", str(repository), "add", "--", target_path], check=True)
+        subprocess.run(["git", "-C", str(repository), "commit", "-qm",
+                        "archive synthetic Grunt correction"], check=True)
         implementation_commit = subprocess.run(
             ["git", "-C", str(repository), "rev-parse", "HEAD"], check=True,
             text=True, capture_output=True,
@@ -9370,12 +9657,12 @@ Verify the exact post-hoc attestation.
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent`
 - Reviewed main: `{implementation_commit}`
-- Reviewed implementation commit: `{correction_archive_commit}`
+- Reviewed implementation commit: `{implementation_commit}`
 """
         review_source += "\n" + runner.review_outcome.render_review_outcome(
             outcome="passed", review_workstream=review_workstream,
             target_workstream="agent-grunt-raster-review-scope-attestation-v1",
-            reviewed_main=implementation_commit, implementation_commit=correction_archive_commit,
+            reviewed_main=implementation_commit, implementation_commit=implementation_commit,
             provenance="different-agent", run_id="20261020T100000Z-abcdef123456",
             review_cycle=0, ids=(),
         )
@@ -9383,7 +9670,7 @@ Verify the exact post-hoc attestation.
         final_target = append_receipt(
             baseline_target, review_workstream=review_workstream,
             target_workstream="agent-grunt-raster-review-scope-attestation-v1",
-            reviewed_main=implementation_commit, implementation_commit=correction_archive_commit,
+            reviewed_main=implementation_commit, implementation_commit=implementation_commit,
         )
         (repository / target_path).write_text(final_target, encoding="utf-8")
         (repository / review_packet_path).parent.mkdir(parents=True, exist_ok=True)
@@ -9396,7 +9683,7 @@ Verify the exact post-hoc attestation.
             ["git", "-C", str(repository), "rev-parse", "HEAD"], check=True,
             text=True, capture_output=True,
         ).stdout.strip()
-        return repository, correction_archive_commit, accepted_main, attestation_path, target_path, review_packet_path
+        return repository, implementation_commit, accepted_main, attestation_path, target_path, review_packet_path
 
     def test_grunt_six_file_scope_attestation_requires_canonical_independent_review_acceptance(self):
         repository, correction_commit, approved_main, attestation_path, _, review_path = (
