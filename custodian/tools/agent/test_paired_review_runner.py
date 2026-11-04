@@ -44,6 +44,17 @@ from review_receipt_delta import (
 )
 
 ROOT = Path(__file__).resolve().parents[3]
+
+
+def _read_pinned_checkout_file(path: str) -> bytes:
+    """Read a tracked fixture from HEAD even when its sparse path is omitted."""
+    result = subprocess.run(
+        ["git", "show", f"HEAD:{path}"], cwd=ROOT,
+        capture_output=True,
+    )
+    if result.returncode:
+        raise AssertionError(f"tracked fixture is missing at checkout HEAD: {path}")
+    return result.stdout
 sys.path.insert(0, str(ROOT / "custodian/tools/validation"))
 import run_validation
 
@@ -5107,7 +5118,7 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         subprocess.run(["git", "-C", str(repository), "mv", correction_active, correction_archive], check=True)
         attestation_file = repository / attestation_path
         attestation_file.parent.mkdir(parents=True, exist_ok=True)
-        attestation_file.write_bytes((ROOT / attestation_path).read_bytes())
+        attestation_file.write_bytes(_read_pinned_checkout_file(attestation_path))
         subprocess.run(["git", "-C", str(repository), "add", "--", correction_archive, attestation_path], check=True)
         subprocess.run(["git", "-C", str(repository), "commit", "-qm", "archive exact scope correction"], check=True)
         implementation_commit = subprocess.run(
@@ -7517,6 +7528,9 @@ class PairedReviewHostValidationTests(unittest.TestCase):
     def _build_main_sync_landing(self, *, unrelated_archive_path=None,
                                  source_bearing_archive=False,
                                  executable_archive_path=None,
+                                 executable_source_path=None,
+                                 nonexecutable_source_path=None,
+                                 submodule_archive_path=None,
                                  nonregular_archive_path=None,
                                  archive_doc_path=None,
                                  declared_work_surface_path=None,
@@ -7565,6 +7579,10 @@ class PairedReviewHostValidationTests(unittest.TestCase):
             target = self.root / path
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text(f"source {reviewed_main}\n")
+            if path == executable_source_path:
+                target.chmod(0o755)
+            if path == nonexecutable_source_path:
+                target.chmod(0o644)
         subprocess.run(["git", "add", "-f", *code_paths], cwd=self.root, check=True)
         self._commit("implement source")
         source_head = self._git("rev-parse", "HEAD")
@@ -7599,7 +7617,16 @@ class PairedReviewHostValidationTests(unittest.TestCase):
             extra.parent.mkdir(parents=True, exist_ok=True)
             extra.write_text("unrelated\n")
         subprocess.run(["git", "add", "-A"], cwd=self.root, check=True)
-        self._commit("archive packet")
+        if submodule_archive_path:
+            gitlink = self._git("rev-parse", "HEAD")
+            subprocess.run([
+                "git", "update-index", "--add", "--cacheinfo",
+                f"160000,{gitlink},{submodule_archive_path}",
+            ], cwd=self.root, check=True)
+            subprocess.run(["git", "commit", "-qm", "archive packet"],
+                           cwd=self.root, check=True)
+        else:
+            self._commit("archive packet")
         archive_landing = self._git("rev-parse", "HEAD")
         summary_rename_commit = None
         if summary_rename:
@@ -9087,7 +9114,7 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         if ("- Status: `ready`" not in correction_file.read_text(encoding="utf-8")
                 or "- Status: `ready`" not in review_file.read_text(encoding="utf-8")):
             self.fail("historical Procession fixture packets must both be ready before synthetic archival")
-        source_attestation = (ROOT / attestation_path).read_text(encoding="utf-8")
+        source_attestation = _read_pinned_checkout_file(attestation_path).decode("utf-8")
         if attestation is not None:
             source_attestation = json.dumps(attestation, indent=2, sort_keys=True) + "\n"
 
@@ -9326,7 +9353,7 @@ class PairedReviewHostValidationTests(unittest.TestCase):
             subprocess.run(["git", "-C", str(repository), "update-ref", ref, commit], check=True)
 
         attestation_path = host_validation._RITUALANT_RECOVERY2_SCOPE_ATTESTATION_PATH
-        attestation = (ROOT / attestation_path).read_bytes()
+        attestation = _read_pinned_checkout_file(attestation_path)
         correction_path = host_validation._RITUALANT_RECOVERY2_SCOPE_CORRECTION_PACKET
         active_correction = f"{runner.PACKET_ROOT}/AGENT_RITUALANT_RECOVERY_2_SOURCE_SCOPE_ATTESTATION_V1.md"
         correction_text = subprocess.run(
@@ -9946,6 +9973,160 @@ Verify the exact post-hoc attestation.
                         self.root, fixture["reviewed_main"], fixture["archive_landing"],
                         fixture["workstream"], fixture["archive"],
                     )
+
+    def test_source_bearing_archive_accepts_authorized_preexisting_executable_python(self):
+        path = "custodian/tools/iteration/wire_pilot.py"
+        source = self.root / path
+        source.parent.mkdir(parents=True, exist_ok=True)
+        source.write_text("initial executable source\n")
+        source.chmod(0o755)
+        self._git("add", path)
+        self._commit("add preexisting executable source")
+        fixture = self._build_main_sync_landing(
+            source_bearing_archive=True,
+            code_paths=[path],
+            work_surface=[f"- `{path}`"],
+        )
+        span = host_validation.resolve_validation_source_span(
+            self.root, fixture["reviewed_main"], fixture["archive_landing"],
+            fixture["workstream"], fixture["archive"],
+        )
+        self.assertIn(path, span["paths"])
+        self.assertEqual(host_validation._git_tree_entry(self.root, span["base"], path)[0], "100755")
+        self.assertEqual(host_validation._git_tree_entry(self.root, fixture["archive_landing"], path)[0], "100755")
+
+    def test_source_bearing_archive_rejects_new_executable_python_source(self):
+        path = "custodian/tools/agent/new_source.py"
+        fixture = self._build_main_sync_landing(
+            source_bearing_archive=True,
+            code_paths=[path],
+            executable_source_path=path,
+            work_surface=[f"- `{path}`"],
+        )
+        with self.assertRaisesRegex(host_validation.HostValidationError, "mode changed"):
+            host_validation.resolve_validation_source_span(
+                self.root, fixture["reviewed_main"], fixture["archive_landing"],
+                fixture["workstream"], fixture["archive"],
+            )
+
+    def test_source_bearing_archive_rejects_100644_to_100755_transition(self):
+        path = "custodian/tools/iteration/wire_pilot.py"
+        source = self.root / path
+        source.parent.mkdir(parents=True, exist_ok=True)
+        source.write_text("initial ordinary source\n")
+        self._git("add", path)
+        self._commit("add ordinary source")
+        fixture = self._build_main_sync_landing(
+            source_bearing_archive=True,
+            code_paths=[path],
+            executable_source_path=path,
+            work_surface=[f"- `{path}`"],
+        )
+        with self.assertRaisesRegex(host_validation.HostValidationError, "mode changed"):
+            host_validation.resolve_validation_source_span(
+                self.root, fixture["reviewed_main"], fixture["archive_landing"],
+                fixture["workstream"], fixture["archive"],
+            )
+
+    def test_source_bearing_archive_rejects_removed_or_toggled_executable_mode(self):
+        path = "custodian/tools/iteration/wire_pilot.py"
+        source = self.root / path
+        source.parent.mkdir(parents=True, exist_ok=True)
+        source.write_text("initial executable source\n")
+        source.chmod(0o755)
+        self._git("add", path)
+        self._commit("add preexisting executable source")
+        fixture = self._build_main_sync_landing(
+            source_bearing_archive=True,
+            code_paths=[path],
+            nonexecutable_source_path=path,
+            work_surface=[f"- `{path}`"],
+        )
+        with self.assertRaisesRegex(host_validation.HostValidationError, "mode changed"):
+            host_validation.resolve_validation_source_span(
+                self.root, fixture["reviewed_main"], fixture["archive_landing"],
+                fixture["workstream"], fixture["archive"],
+            )
+
+    def test_source_bearing_archive_rejects_executable_metadata_and_undeclared_paths(self):
+        packet = f"{runner.PACKET_ROOT}/archived/SAMPLE_MAIN_SYNC.md"
+        index = f"{runner.PACKET_ROOT}/README.md"
+        summary = "SAMPLE_MAIN_SYNC_CLAUDE_SUMMARY.md"
+        review_receipt = f"{runner.PACKET_ROOT}/REVIEW_SAMPLE_MAIN_SYNC.md"
+        for index_case, path in enumerate((packet, index, summary, review_receipt)):
+            if index_case:
+                self.tearDown()
+                self.setUp()
+            surface = ["- `custodian/game/world/transfer.gd`",
+                       "- `custodian/tools/validation/transfer_smoke.gd`"]
+            if path == review_receipt:
+                surface.append(f"- `{path}`")
+            fixture = self._build_main_sync_landing(
+                source_bearing_archive=True,
+                archive_doc_path=review_receipt if path == review_receipt else None,
+                executable_archive_path=path,
+                work_surface=surface,
+            )
+            with self.subTest(executable_metadata=path):
+                with self.assertRaisesRegex(host_validation.HostValidationError, "executable or non-regular"):
+                    host_validation.resolve_validation_source_span(
+                        self.root, fixture["reviewed_main"], fixture["archive_landing"],
+                        fixture["workstream"], fixture["archive"],
+                    )
+
+        self.tearDown()
+        self.setUp()
+        rogue = "custodian/tools/agent/rogue.py"
+        fixture = self._build_main_sync_landing(
+            source_bearing_archive=True,
+            code_paths=[rogue],
+            executable_source_path=rogue,
+            mentioned_elsewhere_path=rogue,
+        )
+        with self.assertRaisesRegex(host_validation.HostValidationError, "executable or non-regular"):
+            host_validation.resolve_validation_source_span(
+                self.root, fixture["reviewed_main"], fixture["archive_landing"],
+                fixture["workstream"], fixture["archive"],
+            )
+
+    def test_source_bearing_archive_rejects_executable_non_python_and_submodule_paths(self):
+        source = "custodian/game/world/transfer.gd"
+        fixture = self._build_main_sync_landing(
+            source_bearing_archive=True, executable_archive_path=source,
+        )
+        with self.assertRaisesRegex(host_validation.HostValidationError, "executable or non-regular"):
+            host_validation.resolve_validation_source_span(
+                self.root, fixture["reviewed_main"], fixture["archive_landing"],
+                fixture["workstream"], fixture["archive"],
+            )
+
+        self.tearDown()
+        self.setUp()
+        fixture = self._build_main_sync_landing(
+            source_bearing_archive=True,
+            submodule_archive_path=source,
+        )
+        with self.assertRaisesRegex(host_validation.HostValidationError, "executable or non-regular"):
+            host_validation.resolve_validation_source_span(
+                self.root, fixture["reviewed_main"], fixture["archive_landing"],
+                fixture["workstream"], fixture["archive"],
+            )
+
+    def test_exact_historical_wire_source_bearing_landing_accepts_authenticated_executable_mode(self):
+        landing = "4b9a5b8de5d7aff148d5011771e4f7f7a65963e0"
+        workstream = "agent-wire-pilot-exporter-reconciliation-v1"
+        archive = (f"{runner.PACKET_ROOT}/archived/"
+                   "AGENT_WIRE_PILOT_EXPORTER_RECONCILIATION_V1.md")
+        path = "custodian/tools/iteration/wire_pilot.py"
+        with self._historical_claim_objects():
+            span = host_validation.resolve_validation_source_span(
+                ROOT, landing, landing, workstream, archive,
+            )
+        self.assertEqual(span["base"], "e93a75edcf37a28dde58bea61266df2389ba81ea")
+        self.assertEqual(span["provenance"]["archive_kind"], "source-bearing")
+        self.assertIn(path, span["paths"])
+        self.assertEqual(host_validation._git_tree_entry(ROOT, span["base"], path)[0], "100755")
+        self.assertEqual(host_validation._git_tree_entry(ROOT, landing, path)[0], "100755")
 
     def test_historical_source_bearing_archive_resolves_exact_source_and_landing(self):
         landing = "6519a2b2db0bad5f14d7a6993e17c92aca58d081"

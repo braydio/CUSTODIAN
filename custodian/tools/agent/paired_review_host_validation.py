@@ -1014,6 +1014,19 @@ def _expand_braced_work_surface_paths(work_surface: str) -> set[str]:
     return expanded
 
 
+def _work_surface_source_paths(target_packet_text: str) -> set[str]:
+    """Return exact implementation paths named by the archived Work surface."""
+    work_surface = header_field(target_packet_text, "Work surface") or ""
+    paths: set[str] = set()
+    for token in re.findall(r"custodian/[A-Za-z0-9_./{},-]+", work_surface):
+        token = token.rstrip(".")
+        if "{" in token or "}" in token:
+            paths.update(_expand_braced_work_surface_paths(f"`{token}`"))
+        elif Path(token).suffix.lower() in _IMPLEMENTATION_SUFFIXES:
+            paths.add(token)
+    return paths
+
+
 def _git(worktree: Path, *args: str) -> str:
     result = subprocess.run(["git", *args], cwd=worktree, text=True, capture_output=True)
     if result.returncode:
@@ -4021,17 +4034,30 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
     if (not has_path(archive_parent, active_packet) or has_path(landing_commit, active_packet)
             or has_path(archive_parent, target_packet_path) or not has_path(landing_commit, target_packet_path)):
         raise HostValidationError("archive-only landing does not delete the active packet and create its canonical archive")
-    # Archive closeout and source-bearing paths must all be regular, non-executable files.
+    # Archive closeout metadata stays non-executable. A source-bearing archive
+    # may retain an existing executable Python source only when the archived
+    # Work surface names that exact path; continuity across the source span is
+    # checked after the authenticated commit chain is resolved below.
+    work_surface_source_paths = _work_surface_source_paths(target_packet_text)
+    authorized_executable_sources = {
+        path for path in work_surface_source_paths
+        if Path(path).suffix.lower() == ".py"
+    }
     for revision in (archive_parent, landing_commit):
         for path in archive_paths:
-            result = subprocess.run(["git", "ls-tree", "-z", revision, "--", path],
-                                    cwd=repo, capture_output=True)
-            if result.returncode:
-                raise HostValidationError("could not inspect archive closeout file modes")
-            if result.stdout:
-                mode = result.stdout.split(b"\t", 1)[0].split()[0]
-                if mode != b"100644":
-                    raise HostValidationError("archive landing contains an executable or non-regular path")
+            entry = _git_tree_entry(repo, revision, path)
+            if entry is None:
+                continue
+            if entry[0] == "100644":
+                continue
+            allowed_executable_source = (
+                source_bearing_archive
+                and path in extra_archive_paths
+                and path in authorized_executable_sources
+                and entry[0] == "100755"
+            )
+            if not allowed_executable_source:
+                raise HostValidationError("archive landing contains an executable or non-regular path")
 
     # A source-bearing archive includes its final source/test edits. An archive-
     # only closeout ends at its parent. Neither span includes a later main-sync.
@@ -4049,6 +4075,24 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
     if followup is not None:
         commits.extend(followup.get("post_merge_followup_commits",
                                     [followup["post_merge_followup_commit"]]))
+    if source_bearing_archive:
+        source_span_paths: set[str] = set()
+        previous = source_base
+        for revision in commits:
+            source_span_paths.update(_changed_paths(repo, f"{previous}..{revision}"))
+            previous = revision
+        candidate_executables = {
+            path for path in authorized_executable_sources
+            if path in source_span_paths
+            and any((_git_tree_entry(repo, revision, path) or (None, None))[0] == "100755"
+                    for revision in [source_base, *commits])
+        }
+        for path in candidate_executables:
+            for revision in [source_base, *commits]:
+                if (_git_tree_entry(repo, revision, path) or (None, None))[0] != "100755":
+                    raise HostValidationError(
+                        "authorized executable source mode changed within authenticated source span"
+                    )
     merge_commits = []
     owned_paths = set()
     owned_paths_at_merge = {}
