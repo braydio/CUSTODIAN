@@ -1,0 +1,28 @@
+{
+  "schema": "custodian.worktree_checkout_profile.v1",
+  "include_paths": [
+    "AGENTS.md",
+    "custodian/AGENTS.md",
+    "custodian/project.godot",
+    "custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md",
+    "custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md",
+    "custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md",
+    "custodian/docs/ai_context/TASK_PACKET_CATEGORIES.json",
+    "custodian/docs/ai_context/TASK_PACKET_CATEGORY_AUTHORING.md",
+    "custodian/docs/ai_context/VALIDATION_RECIPES.md",
+    "custodian/docs/ai_context/task_packets/README.md",
+    "custodian/docs/ai_context/task_packets/AGENT_WIRE_PILOT_EXPORTER_RECONCILIATION_V1.md",
+    "custodian/docs/ai_context/task_packets/REVIEW_AGENT_WIRE_PILOT_EXPORTER_RECONCILIATION_V1.md",
+    "custodian/docs/ai_context/worktree_profiles/agent_ops_paired_review_bootstrap_v1.json",
+    "custodian/docs/ai_context/worktree_profiles/wire_pilot_exporter_reconciliation_v1.json",
+    "custodian/tools/agent",
+    "custodian/tools/validation",
+    "custodian/tools/iteration/wire_pilot.py",
+    "custodian/tools/iteration/dropbox_transport.py",
+    "custodian/tools/iteration/changed_file_router.py",
+    "custodian/tools/godot_project_lock.py",
+    "custodian/tools/pipelines/godot_import_preflight.py",
+    "tools/custodian_aliases.sh"
+  ],
+  "hydrate_lfs_paths": []
+}
