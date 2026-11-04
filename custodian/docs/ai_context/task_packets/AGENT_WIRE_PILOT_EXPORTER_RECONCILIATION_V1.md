@@ -39,7 +39,7 @@
   - Only after verified landing and destination identity confirmation, perform the separately authorized single private Dropbox publish/readback and verify immutable content plus the latest pointer. Do not enable the timer.
 - Validation:
   - `python3 -m unittest custodian.tools.agent.test_wire_observation_export -v`
-  - Focused pilot-consumer tests in `custodian/tools/agent/test_wire_pilot.py` for valid partial/complete coverage and adversarial integrity failures; register the module in `validation_manifest.json`.
+  - Focused pilot-consumer tests created by this workstream for valid partial/complete coverage and adversarial integrity failures; register the module in `validation_manifest.json`.
   - Parse the observation schema as JSON and run its existing strict exporter validation cases.
   - `python3 custodian/tools/validation/run_validation.py --changed --base origin/main --json` with complete changed-file coverage.
   - `git diff --check`
