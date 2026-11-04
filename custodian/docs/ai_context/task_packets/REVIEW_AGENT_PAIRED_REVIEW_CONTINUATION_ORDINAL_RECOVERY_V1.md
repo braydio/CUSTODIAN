@@ -4,8 +4,8 @@
 - Workstream: review-agent-paired-review-continuation-ordinal-recovery-v1
 - Category: agent-ops
 - Kind: review
-- Status: draft
-- Dispatch: manual
+- Status: `ready`
+- Dispatch: `auto`
 - Authoring handoff: auto
 - Priority: P1
 - Depends on: agent-paired-review-continuation-ordinal-recovery-v1
