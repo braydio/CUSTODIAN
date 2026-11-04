@@ -1,9 +1,164 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-04T06:29:18.138Z",
-  "source_main_sha": "461cf501ca467e5492426f8e402d68c018d28da2",
+  "generated_at": "2026-11-04T07:00:16Z",
+  "source_main_sha": "55fbb7ff2f26206490c296f0d65370caf4e621d2",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "continuation-ordinal-recovery-ready-55fbb7ff",
+      "headline": "A reviewer PASS is preserved, but missing session metadata blocks acceptance",
+      "summary": "A source-mode correction review has a preserved reviewer PASS message and successful host-validation recovery, but its continuation metadata lacks a required ordinal. CUSTODIAN has admitted a narrowly scoped repair and independent-review pair to the ready queue. No acceptance or recovery apply has occurred.",
+      "body": "The new continuation-ordinal recovery packet documents a reviewer session that exited successfully after host-validation attempt two, yet strict outcome verification rejects its missing continuation_number. The repair is designed to correct future metadata writing and authenticate the one historical run without editing original evidence or relaunching a reviewer. Commit 55fbb7ff marks the implementation and dependent independent review ready/auto. These are queue states, not proof of host execution. Independent acceptance of the earlier source-mode review remains unverified. The private observation pointer is dated earlier than the current main changes, so no fresh operational counts are admitted.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-paired-review-continuation-ordinal-recovery-v1",
+      "occurred_at": "2026-11-04T07:00:16Z",
+      "bullets": [
+        "New recovery implementation and dependent review are ready/auto.",
+        "Historical reviewer PASS message remains unaccepted pending strict authentication.",
+        "Recovery apply is explicitly deferred until independent review is archived complete.",
+        "Host process, teardown and full dispatcher counts remain unknown."
+      ],
+      "links": [
+        {
+          "title": "Recovery packet creation",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/bc1d4aebfb54de7e99220b43b4496f87318fc9f9"
+        },
+        {
+          "title": "Queue admission",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/55fbb7ff2f26206490c296f0d65370caf4e621d2"
+        },
+        {
+          "title": "Review authorization wording",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/a5a695d45373b9c7028ea42884a7b20ba8d87c8d"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN has uncovered a subtle reason a successful reviewer session still cannot count as an accepted review: its continuation record lacks a required sequence number. A narrowly bounded repair and a separate independent review have now entered the dispatch queue.",
+        "sections": [
+          {
+            "heading": "The verdict exists, but the proof chain is incomplete",
+            "text": "The recovery packet describes a reviewer process that exited successfully with a saved PASS message after host validation recovered. The strict verifier refuses to authenticate that result because continuation metadata omits the required ordinal. A PASS message alone cannot substitute for verified session provenance."
+          },
+          {
+            "heading": "A repair with a deliberately narrow scope",
+            "text": "The new implementation is intended to fix future metadata and reconstruct only the named historical session using authenticated evidence. Its paired reviewer must test tampering, replay and mismatched-session rejection before any protected recovery is authorized."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Review completion and review acceptance are different events",
+            "explanation": "A reviewer may finish and write a verdict while the coordinator still cannot safely establish which authenticated session produced it. The new packet addresses that evidence boundary, not the review's technical judgment."
+          },
+          {
+            "title": "Ready is not running",
+            "explanation": "The latest commit changes packet dispatch eligibility. It does not establish a worker claim, live execution, accepted PASS or clean teardown."
+          }
+        ],
+        "takeaway": "A bounded provenance repair is queued; the preserved review remains unaccepted until independently validated recovery proves the exact session.",
+        "next_watch": "Watch for the implementation landing, its independent acceptance, and only then a separately authorized exact-run recovery."
+      },
+      "details": {
+        "overview": "Main context 55fbb7ff. Packet authored bc1d4aeb, review override a5a695d, both packets admitted ready/auto by 55fbb7ff. The historical run and reviewer PASS are reported by the new packet, not independently authenticated by this watch. No fresh private pilot observation admitted.",
+        "ledger": [
+          {
+            "stage": "Recovery packet creation",
+            "status": "verified",
+            "evidence": "bc1d4aeb creates implementation and review packet."
+          },
+          {
+            "stage": "Queue admission",
+            "status": "verified",
+            "evidence": "55fbb7ff changes both packets to ready/auto."
+          },
+          {
+            "stage": "Historical reviewer outcome",
+            "status": "reported, not accepted",
+            "evidence": "Packet describes exited reviewer and saved PASS, but missing ordinal blocks strict verifier."
+          },
+          {
+            "stage": "Recovery implementation",
+            "status": "not yet verified landed",
+            "evidence": "No implementation landing in inspected commits."
+          },
+          {
+            "stage": "Independent review",
+            "status": "not accepted",
+            "evidence": "Dependent review only ready."
+          },
+          {
+            "stage": "Canonical teardown",
+            "status": "unknown",
+            "evidence": "No host evidence inspected."
+          }
+        ],
+        "notes": [
+          "Combined commit status contained no status checks; CI success is not established."
+        ],
+        "unknowns": [
+          "Host claims, worktrees, locks and disk usage.",
+          "Fresh exact-byte private observation validation."
+        ],
+        "actions": [
+          "Implementation owner: land and validate the ordinal fix without modifying historical evidence.",
+          "Independent reviewer: authenticate the bounded recovery design before historical apply."
+        ]
+      },
+      "scorecard": {
+        "stage": "Recovery pair ready; implementation and independent review outstanding",
+        "as_of": "2026-11-04T07:00:16Z",
+        "scope": "Two named continuation-ordinal recovery packets",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Recovery packet authored",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "bc1d4aeb"
+          },
+          {
+            "label": "Queue admission",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "55fbb7ff"
+          },
+          {
+            "label": "Implementation and validation",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No landing inspected"
+          },
+          {
+            "label": "Independent review",
+            "status": "blocked",
+            "verification": "verified",
+            "evidence": "Depends on implementation"
+          },
+          {
+            "label": "Exact-run historical recovery",
+            "status": "blocked",
+            "verification": "verified",
+            "evidence": "Requires accepted review and separate authorization"
+          },
+          {
+            "label": "Canonical teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No host proof"
+          }
+        ],
+        "next_gate": "Implementation owner: land the ordinal writer correction and exact-run read-only plan for independent review."
+      },
+      "related": [
+        {
+          "title": "Executable-source archive correction lands; independent review is next",
+          "context": "The preserved review of this earlier correction is the session affected by the missing ordinal.",
+          "story_id": "paired-review-source-mode-implementation-landed-cd1cff49"
+        }
+      ]
+    },
     {
       "id": "paired-review-source-mode-implementation-landed-cd1cff49",
       "headline": "Executable-source archive correction lands; independent review is next",
@@ -1606,151 +1761,6 @@
           "story_id": "ritualant-shader-recovery-handoff-3b06a904"
         }
       ]
-    },
-    {
-      "id": "ritualant-shader-recovery-handoff-3b06a904",
-      "headline": "Ritualant readability work gets a fresh recovery path, with implementation and review queued",
-      "summary": "CUSTODIAN has superseded an unfinished Ritualant silhouette shader workstream and published a replacement implementation/review pair as ready for automatic dispatch. The original is explicitly not accepted; no new shader implementation or independent PASS is established.",
-      "body": "Main now documents a supersession of the unfinished Ritualant silhouette readability shader and its original review. Replacement packets target restrained actor-local contrast in the production chapel without changing gameplay, source sprites, camera or collision. Commit 3b06a904 sets both replacement packets ready/auto; this is eligibility, not proof of claim or execution. The donor branch history was archived in the branch archive ledger. The latest commit a4e2930 changes Godot .import metadata, not evidence of a successful renderer preview. Next gate: a source-bound implementation and validation, followed by an independent review.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "assets-art",
-      "workstream": "ritualant-npc-silhouette-readability-shader-v1-recovery-1",
-      "occurred_at": "2026-11-03T01:11:01Z",
-      "bullets": [
-        "Original implementation and review explicitly superseded, not accepted.",
-        "Replacement implementation and paired review marked ready/auto in main packets.",
-        "No execution, shader landing, renderer acceptance or independent PASS verified.",
-        "Next: source-bound implementation and validation before paired review."
-      ],
-      "links": [
-        {
-          "title": "Supersession receipt",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/95384de10399ff8fe2ba51475a91f1e068f19d36"
-        },
-        {
-          "title": "Validation gate clarification",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/f8e674052158b929ca7b1be9d5acd063c6ca65ef"
-        },
-        {
-          "title": "Automatic handoff packet change",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/3b06a9042bc86e407be4d820aa02132ed8f626ae"
-        },
-        {
-          "title": "Archived donor history",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/518ff1c51dd863277a05db95bf99fe3563abcb83"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "A stalled Ritualant visibility improvement has a new route forward. CUSTODIAN has formally superseded the unfinished shader work and prepared a replacement implementation with its own independent review, without pretending the old attempt passed.",
-        "sections": [
-          {
-            "heading": "A narrow visual fix, not a redesign",
-            "text": "The replacement targets the Ritualant's silhouette against the busy chapel floor. Its packet preserves the existing sprites, encounter mechanics, camera and collision while asking for a restrained actor-local treatment."
-          },
-          {
-            "heading": "Ready to dispatch is not running",
-            "text": "Both replacement packets are now marked ready for automatic handoff in main. That records queue eligibility, not a claimed worker, finished shader or accepted review. The original work and review remain explicitly unaccepted."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Supersession preserves evidence without inheriting acceptance",
-            "explanation": "The donor history is archived while the replacement gets a clean implementation/review boundary. Old visual decisions can guide the new work, but cannot substitute for new source-bound validation."
-          },
-          {
-            "title": "The bottleneck moves from stale ownership to production proof",
-            "explanation": "The next useful evidence is a shader bound to the actual production actor, tested against alpha, atlas bleed and fade behavior, followed by an independent review."
-          }
-        ],
-        "takeaway": "The Ritualant recovery is now eligible for dispatch, but no new shader or accepted review has been demonstrated.",
-        "next_watch": "A landed replacement implementation with current-source validation, then a distinct independent review receipt."
-      },
-      "details": {
-        "overview": "Main inspected through a4e2930b8d979e705f8cdcec83be34836b1ecf48. Supersession 95384de, gate clarification f8e674, ready/auto handoff 3b06a904, archive record 518ff1c. Latest .import metadata changes do not establish gameplay or renderer success.",
-        "ledger": [
-          {
-            "stage": "Original shader and review",
-            "status": "verified superseded; not accepted",
-            "evidence": "95384de explicitly marks both unfinished."
-          },
-          {
-            "stage": "Replacement packet handoff",
-            "status": "verified ready/auto in GitHub",
-            "evidence": "3b06a904 packet changes; no host claim evidence."
-          },
-          {
-            "stage": "Implementation and validation",
-            "status": "unknown",
-            "evidence": "No replacement implementation landing or source-bound validation inspected."
-          },
-          {
-            "stage": "Independent review",
-            "status": "unknown",
-            "evidence": "No accepted independent PASS inspected."
-          },
-          {
-            "stage": "Donor archive",
-            "status": "verified archive ledger entry",
-            "evidence": "518ff1c documents preservation; host teardown not independently observed."
-          }
-        ],
-        "notes": [
-          "Private operational pilot pointer unavailable; full dispatcher counts not used."
-        ],
-        "unknowns": [
-          "Host claim, lock and execution state.",
-          "Current production render result and review outcome."
-        ],
-        "actions": [
-          "Implementation owner: execute only through existing authorized dispatcher process and record source-bound validation.",
-          "Independent reviewer: inspect exact replacement implementation after landing."
-        ]
-      },
-      "scorecard": {
-        "stage": "Replacement packets ready; implementation unverified",
-        "as_of": "2026-11-03T01:41:32Z",
-        "scope": "Two named replacement Ritualant packets on main only",
-        "metrics": [
-          {
-            "id": "replacement-packets-ready",
-            "label": "REPLACEMENT PACKETS READY",
-            "value": 2,
-            "verification": "verified",
-            "basis": "Named implementation and paired review both ready/auto in 3b06a904; review still depends on implementation",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/3b06a9042bc86e407be4d820aa02132ed8f626ae"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Original work superseded",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "95384de receipt"
-          },
-          {
-            "label": "Replacement packets prepared",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "3b06a904 ready/auto"
-          },
-          {
-            "label": "Implementation source and validation",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No landing or PASS inspected"
-          },
-          {
-            "label": "Independent paired review",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Dependent on implementation; no accepted receipt"
-          }
-        ],
-        "next_gate": "Implementation owner to produce source-bound shader validation before paired review."
-      },
-      "related": []
     }
   ],
   "snapshot": {
