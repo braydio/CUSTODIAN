@@ -4,8 +4,8 @@
 - Workstream: `review-agent-wire-pilot-exporter-reconciliation-v1`
 - Category: `agent-ops`
 - Kind: `review`
-- Status: `blocked`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `agent-wire-pilot-exporter-reconciliation-v1`
 - Locks: `none`
