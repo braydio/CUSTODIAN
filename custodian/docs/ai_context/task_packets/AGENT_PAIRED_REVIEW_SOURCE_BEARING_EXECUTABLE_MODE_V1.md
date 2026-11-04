@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-source-bearing-executable-mode-v1`
 - Category: `agent-ops`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -33,6 +33,15 @@
 - Validation: Run the targeted `test_paired_review_runner.py` cases and relevant host-validation tests in actual temporary Git repositories; run packet authoring and category checks for the pair; run the repository's required focused validation recipe for Python agent tooling. Record exact commands and results in the workstream evidence and closing summary. Do not apply the original WIRE recovery plan until this correction lands and its independent review is accepted.
 - Task overrides: `none`
 - Deferred: Resume the exact protected original WIRE review only after this correction is implemented, independently reviewed and accepted; then construct a fresh authenticated recovery plan from a clean coordination checkout. Root checkout synchronization and disk reconciliation remain deferred until protected review closeout permits them.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: The validator now requires authorized Python source executability at authenticated base, every source-span revision, and archive landing with no mode changes, while retaining existing regular-file, scope, hash, trace, identity, ancestry, and validation checks. The exact historical WIRE source-bearing archive and adversarial temporary-Git mode/path cases pass. Canonical changed-file validation reports complete coverage and both selected validation groups passed.
 
 ## Handoff
 
