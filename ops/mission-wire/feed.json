@@ -1,9 +1,127 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-03T20:29:10Z",
-  "source_main_sha": "eef8a41f8e82fe47c346002087f52492d945322a",
+  "generated_at": "2026-11-04T05:10:19.111Z",
+  "source_main_sha": "ed9ea2516b485769c8bb079908e32df8214d3e17",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "paired-review-executable-mode-ready-ed9ea251",
+      "headline": "Paired-review executable-mode correction moves into the ready queue",
+      "summary": "CUSTODIAN main now marks the source-bearing executable-mode correction ready for automatic dispatch, with its independent review dependent on implementation. This is admission to the queue, not evidence of execution or acceptance.",
+      "body": "Commit ed9ea251 changes the implementation and paired-review packets from draft/manual to ready/auto. The implementation addresses authenticated archived source files that were already executable, while maintaining restrictions on unauthorized executable changes. Its review packet depends on the implementation. No host claim, execution, passing independent review, or teardown was verified. Private WIRE pilot observations were inspected but not admitted as validated counts because exact-byte integrity and freshness could not both be established.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-paired-review-source-bearing-executable-mode-v1",
+      "occurred_at": "2026-11-04T04:47:06Z",
+      "bullets": [
+        "Implementation packet admitted ready/auto.",
+        "Independent review also ready/auto but dependency-gated.",
+        "No verified claim, execution, acceptance or teardown.",
+        "Pilot operational counts withheld pending exact-byte validation and freshness."
+      ],
+      "links": [
+        {
+          "title": "Main admission commit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/ed9ea2516b485769c8bb079908e32df8214d3e17"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "A narrow repair to CUSTODIAN’s paired-review archive validation has moved out of drafting and into the dispatch queue. The change is intended to preserve legitimate executable source files without opening the door to unauthorized executable changes.",
+        "sections": [
+          {
+            "heading": "Two packets, one dependency",
+            "text": "The implementation packet is now marked ready for automatic dispatch. Its independent review is also marked ready, but cannot legitimately complete before the implementation it is meant to scrutinize."
+          },
+          {
+            "heading": "Ready does not mean running",
+            "text": "The inspected change updates packet admission metadata. It does not establish a live worker, a successful implementation, an accepted review or clean host teardown."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The next gate is implementation evidence",
+            "explanation": "The queue can now consider this correction, but the meaningful progress signal will be a landed implementation with validation evidence, followed by a separate independent review."
+          }
+        ],
+        "takeaway": "The correction has entered the eligible queue; operational completion remains unverified.",
+        "next_watch": "Watch for a canonical implementation landing and an independently accepted review receipt."
+      },
+      "details": {
+        "overview": "Commit ed9ea251 modifies three packet/index files, switching implementation and review packet metadata from draft/manual to ready/auto. No live dispatcher audit was available. The private pilot pointer and referenced JSON were readable, but exact-byte SHA validation was not established from extracted text; therefore no pilot counts are published.",
+        "ledger": [
+          {
+            "stage": "Packet admission",
+            "status": "verified",
+            "evidence": "Commit ed9ea251 changes both packets to ready/auto."
+          },
+          {
+            "stage": "Implementation and validation",
+            "status": "unknown",
+            "evidence": "No implementation completion receipt inspected."
+          },
+          {
+            "stage": "Independent acceptance",
+            "status": "unknown",
+            "evidence": "Review packet depends on implementation; no PASS inspected."
+          },
+          {
+            "stage": "Host teardown",
+            "status": "unknown",
+            "evidence": "No canonical host evidence."
+          }
+        ],
+        "notes": [],
+        "unknowns": [
+          "Canonical host claims, locks, worktrees and resource state.",
+          "Exact-byte private pilot observation validation and bounded freshness."
+        ],
+        "actions": [
+          "Implementation owner: obtain canonical dispatch and validation evidence before paired review."
+        ]
+      },
+      "scorecard": {
+        "stage": "Ready for implementation dispatch; review dependency-gated",
+        "as_of": "2026-11-04T04:47:06Z",
+        "scope": "Two named source-bearing executable-mode packets only",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Packet admission",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Commit ed9ea251"
+          },
+          {
+            "label": "Implementation execution and validation",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No host or validation receipt inspected"
+          },
+          {
+            "label": "Implementation landing",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No completion receipt inspected"
+          },
+          {
+            "label": "Independent review acceptance",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Dependent review packet, no PASS"
+          },
+          {
+            "label": "Canonical cleanup",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "Host evidence unavailable"
+          }
+        ],
+        "next_gate": "Implementation owner: execute through canonical dispatcher and produce independently inspectable validation/landing evidence."
+      },
+      "related": []
+    },
     {
       "id": "art-field-notes-draft-pr111-69380262",
       "headline": "In-game art flagging reaches draft review, promising coordinate-stamped field notes",
@@ -1641,134 +1759,6 @@
           }
         ],
         "next_gate": "Gameplay coordinator to establish the exact scenario mismatch and run an integrated retest."
-      },
-      "related": []
-    },
-    {
-      "id": "operator-fast-attack-n-art-publish-4900dbee",
-      "headline": "Operator fast-attack artwork reaches main, with six sprite assets updated",
-      "summary": "A new Operator art publication updates six PNG assets for the north-facing fast unarmed attack: upper body, lower body and effects, each in source and runtime locations. The commit establishes asset publication, not animation playback, direction coverage or gameplay acceptance.",
-      "body": "Commit 4900dbee updates six binary sprite files in the Operator's fast unarmed attack animation family, north direction, six-frame, 96-pixel naming convention. Three layers (upper body, lower body, effects) were updated in both source and runtime asset trees. The available GitHub comparison confirms the files changed but does not independently establish visual quality, frame sequencing, integration, tests or review. Other directions and the approved full-body idle are outside this commit. Next: inspect the rendered animation in-engine and verify alignment, frame timing and directional coverage.",
-      "severity": "milestone",
-      "verification": "verified",
-      "category": "general",
-      "workstream": "",
-      "occurred_at": "2026-11-02T17:36:54Z",
-      "bullets": [
-        "Six PNG files updated across source and runtime Operator art trees.",
-        "Three fast-attack layers: upper body, lower body and effects.",
-        "North-facing, six-frame, 96-pixel asset family by filename.",
-        "In-engine playback and independent acceptance are not established."
-      ],
-      "links": [
-        {
-          "title": "Operator art publication",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/4900dbee03f3a9992391c5f985d1c35d819dc7ae"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "The Operator's unarmed fast attack has received a new art publication on main. The update touches the character's upper-body motion, lower-body motion and effects layers in both the source artwork and the runtime asset set, moving this particular attack direction forward without yet proving how it looks or behaves in play.",
-        "sections": [
-          {
-            "heading": "A layered attack update",
-            "text": "Six PNG files changed in the north-facing fast-attack family: three source assets and their three runtime counterparts. The filenames identify a six-frame, 96-pixel animation family, but the repository diff alone cannot establish what changed visually inside the sprites."
-          },
-          {
-            "heading": "Publication is not an animation sign-off",
-            "text": "The change provides assets for one facing direction. It does not demonstrate correct alignment between layers, playback timing, other directional variants or an integrated gameplay test. No independent review outcome or teardown evidence accompanies this observation."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Source and runtime art moved together",
-            "explanation": "Matching layer names changed in both trees, reducing the risk that only editable artwork was updated while the game kept an older runtime copy. Pixel equivalence and in-engine loading still need inspection."
-          },
-          {
-            "title": "Directional completeness remains a separate gate",
-            "explanation": "The commit targets the north-facing fast attack, not the full directional animation set. A successful publication here cannot establish complete combat-animation coverage."
-          }
-        ],
-        "takeaway": "The north-facing Operator fast-attack art assets are published on main; animation quality and gameplay integration remain unverified.",
-        "next_watch": "A rendered in-engine attack preview or source-bound validation showing layer alignment, timing and directional coverage."
-      },
-      "details": {
-        "overview": "Main commit 4900dbee03f3a9992391c5f985d1c35d819dc7ae changes six PNG assets under custodian/content/sprites/operator in source and runtime animations/unarmed/attack/fast_01. GitHub compare reports no other changed paths in this commit.",
-        "ledger": [
-          {
-            "stage": "Art publication",
-            "status": "verified landed",
-            "evidence": "Commit 4900dbee changes six sprite PNG paths in main."
-          },
-          {
-            "stage": "Visual inspection and validation",
-            "status": "unknown",
-            "evidence": "Binary diff metadata does not establish rendered frame content, playback or test outcomes."
-          },
-          {
-            "stage": "Independent acceptance",
-            "status": "unknown",
-            "evidence": "No independent PASS receipt inspected."
-          },
-          {
-            "stage": "Host cleanup",
-            "status": "unknown",
-            "evidence": "No private host teardown observation available."
-          }
-        ],
-        "notes": [
-          "Asset naming identifies north direction, six frames and 96-pixel family; these are filename conventions, not independently checked dimensions."
-        ],
-        "unknowns": [
-          "Whether runtime and source sprites match exactly.",
-          "Whether this animation is correctly loaded and timed in gameplay.",
-          "Whether other directions are complete."
-        ],
-        "actions": [
-          "Operator art/gameplay owner: capture an in-engine preview and check layer registration and frame timing."
-        ]
-      },
-      "scorecard": {
-        "stage": "Asset publication landed; integration unverified",
-        "as_of": "2026-11-02T17:36:54Z",
-        "scope": "North-facing Operator unarmed fast attack assets only",
-        "metrics": [
-          {
-            "id": "changed-art-files",
-            "label": "SPRITE FILES",
-            "value": 6,
-            "verification": "verified",
-            "basis": "Six changed PNG paths in main comparison",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/4900dbee03f3a9992391c5f985d1c35d819dc7ae"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Source and runtime sprites updated",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Six changed PNGs in main commit 4900dbee."
-          },
-          {
-            "label": "Visual and layer alignment inspection",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No rendered proof inspected."
-          },
-          {
-            "label": "In-engine animation test",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No gameplay playback evidence inspected."
-          },
-          {
-            "label": "Independent art/gameplay sign-off",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No accepted review receipt inspected."
-          }
-        ],
-        "next_gate": "Operator owner to validate the north-facing fast attack in engine with a captured preview."
       },
       "related": []
     }
