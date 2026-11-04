@@ -4,8 +4,8 @@
 - Workstream: `review-agent-paired-review-source-bearing-executable-mode-v1`
 - Category: `agent-ops`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `agent-paired-review-source-bearing-executable-mode-v1`
 - Locks: `none`
