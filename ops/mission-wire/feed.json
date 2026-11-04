@@ -1,9 +1,153 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-04T05:10:19.111Z",
-  "source_main_sha": "ed9ea2516b485769c8bb079908e32df8214d3e17",
+  "generated_at": "2026-11-04T06:29:18.138Z",
+  "source_main_sha": "461cf501ca467e5492426f8e402d68c018d28da2",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "paired-review-source-mode-implementation-landed-cd1cff49",
+      "headline": "Executable-source archive correction lands; independent review is next",
+      "summary": "CUSTODIAN has landed and archived a targeted correction for validating already-executable Python sources in paired-review archives. The implementation reports 294 passing tests, but independent acceptance and host cleanup remain unverified.",
+      "body": "The source-bearing archive validator now permits a Python source file to retain executable mode only when explicitly authorized and executable throughout its authenticated history. Commit cd1cff49 carries the implementation and reported validation; commits 814e6779 and a5275416 mark and archive the implementation packet complete. The separate review packet remains ready, not accepted. No full dispatcher audit, host teardown receipt, or CI conclusion was established. The private pilot pointer is older than the current main changes and exact-byte validation is unavailable, so no operational counts were admitted.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-paired-review-source-bearing-executable-mode-v1",
+      "occurred_at": "2026-11-04T05:27:53Z",
+      "bullets": [
+        "Validator correction landed on main and implementation packet archived.",
+        "Implementation summary reports 294 passing unit tests and complete changed-file validation.",
+        "Independent review remains ready and must independently verify historical WIRE trace.",
+        "No accepted PASS or canonical teardown confirmed."
+      ],
+      "links": [
+        {
+          "title": "Implementation and validation",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/cd1cff4969c10b4ea98de41197b8f8f880ef1ba2"
+        },
+        {
+          "title": "Completion metadata",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/814e677900e3c5146a2759fe211c2a7ce88c4d8c"
+        },
+        {
+          "title": "Archived packet",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/a52754162baeb7133d4a5b015c9f98153a840be6"
+        },
+        {
+          "title": "Review profile admission",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/461cf501ca467e5492426f8e402d68c018d28da2"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "A narrow repair to CUSTODIAN’s paired-review archive validator has reached main. It allows a legitimate Python source file to remain executable across an authenticated archive history without allowing new or unauthorized executable files through.",
+        "sections": [
+          {
+            "heading": "The repair is now part of main",
+            "text": "The implementation was committed and its task packet marked complete and archived. Its accompanying summary reports 294 passing tests and complete changed-file validation, including adversarial file-mode cases."
+          },
+          {
+            "heading": "Independent scrutiny still matters",
+            "text": "A separate review packet is ready with a source-specific checkout profile. That reviewer must independently reconstruct the historical WIRE archive case and test that unsafe mode changes remain rejected. Ready is not accepted, and neither proves a live worker or clean teardown."
+          }
+        ],
+        "insights": [
+          {
+            "title": "A file permission was blocking a larger recovery chain",
+            "explanation": "The validator previously treated an already-executable source file as disallowed archive content. This targeted exception may unblock review of the WIRE exporter without weakening restrictions on metadata and newly executable files, provided independent review confirms the implementation."
+          }
+        ],
+        "takeaway": "The correction is landed and its implementation packet is archived; independent review acceptance remains the decisive next gate.",
+        "next_watch": "Watch for an independently accepted review receipt, then an explicitly authorized recovery of the protected WIRE review."
+      },
+      "details": {
+        "overview": "Main context 461cf501. Implementation cd1cff49, completion 814e6779, archival a5275416, review profile 461cf501. Reported test results are from the implementation summary, not independently rerun by this watch. No full dispatcher audit or canonical host evidence.",
+        "ledger": [
+          {
+            "stage": "Implementation landing",
+            "status": "verified",
+            "evidence": "cd1cff49 on main contains validator and regression changes."
+          },
+          {
+            "stage": "Implementation tests",
+            "status": "reported",
+            "evidence": "Implementation summary reports 294 unit tests and complete changed-file validation."
+          },
+          {
+            "stage": "Packet archive",
+            "status": "verified",
+            "evidence": "814e6779 marks complete; a5275416 archives."
+          },
+          {
+            "stage": "Independent review",
+            "status": "not accepted",
+            "evidence": "Review packet remains ready; no independent PASS inspected."
+          },
+          {
+            "stage": "Canonical teardown",
+            "status": "unknown",
+            "evidence": "No host evidence."
+          }
+        ],
+        "notes": [
+          "Combined commit status returned no statuses, not a passing CI result."
+        ],
+        "unknowns": [
+          "Live dispatcher counts, claims, worktrees, locks and disk usage.",
+          "Independent review acceptance and host cleanup.",
+          "Pilot observation freshness and exact-byte integrity."
+        ],
+        "actions": [
+          "Review owner: independently inspect source-mode continuity and adversarial cases before any protected WIRE recovery."
+        ]
+      },
+      "scorecard": {
+        "stage": "Implementation landed and archived; independent review ready",
+        "as_of": "2026-11-04T05:38:14Z",
+        "scope": "One implementation and its paired review only",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Implementation landed",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "cd1cff49"
+          },
+          {
+            "label": "Implementation packet archived",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "a5275416"
+          },
+          {
+            "label": "Independent review acceptance",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Review packet ready, no PASS inspected"
+          },
+          {
+            "label": "Protected WIRE recovery",
+            "status": "blocked",
+            "verification": "verified",
+            "evidence": "Requires accepted independent review and separate authorization"
+          },
+          {
+            "label": "Canonical teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No host evidence"
+          }
+        ],
+        "next_gate": "Independent reviewer: verify historical WIRE trace and negative mode cases, then record an authentic review result."
+      },
+      "related": [
+        {
+          "title": "Paired-review executable-mode correction moves into the ready queue",
+          "context": "This earlier dispatch admission has now advanced to a landed implementation.",
+          "story_id": "paired-review-executable-mode-ready-ed9ea251"
+        }
+      ]
+    },
     {
       "id": "paired-review-executable-mode-ready-ed9ea251",
       "headline": "Paired-review executable-mode correction moves into the ready queue",
@@ -1605,160 +1749,6 @@
           }
         ],
         "next_gate": "Implementation owner to produce source-bound shader validation before paired review."
-      },
-      "related": []
-    },
-    {
-      "id": "empty-convoy-postland-qa-not-accepted-aea113b7",
-      "headline": "Empty Convoy fails its post-fix gameplay sign-off despite passing focused tests",
-      "summary": "A post-land manual check did not accept the Empty Convoy encounter correction. The Operator reached the prepared approach point, but the reviewer reported a possible scenario mismatch; the exact cause remains unknown. A separate documented QA checkout was safely retired, with host-reported disk recovery. Independent review remains outstanding.",
-      "body": "The security correction was previously landed and passed targeted headless tests. The subsequent authorized GUI check reached its prepared approach, but the human reviewer returned NOT_ACCEPTED and reported a possible encounter mismatch. No successful defense, custody trace or exactly-once salvage was confirmed. The post-land closeout receipt reports scoped evidence preservation and non-forced removal of one detached QA worktree, with disk free increasing by about 6.92 GiB. These are documented host observations, not independently remeasured by WIRE. The original gameplay failure is unresolved; no paired review PASS is established. Main also contains a subsequent whitespace-only receipt edit.",
-      "severity": "important",
-      "verification": "reported",
-      "category": "gameplay-systems",
-      "workstream": "campaign-empty-convoy-security-integrated-correction-v1",
-      "occurred_at": "2026-11-02T23:00:00Z",
-      "bullets": [
-        "Manual gameplay acceptance: NOT_ACCEPTED, per post-land QA receipt.",
-        "The prepared approach was reached; actual encounter success was not confirmed.",
-        "One detached QA worktree retired; 6.92 GiB disk recovery reported.",
-        "Root cause and independent review remain outstanding."
-      ],
-      "links": [
-        {
-          "title": "Post-land QA closeout receipt",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/aea113b72e261104bd7b3cad3cdf4078b593ef24"
-        },
-        {
-          "title": "Follow-up receipt formatting",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/392639adcf96fbfc9db591b4fc09ba462fb7906c"
-        },
-        {
-          "title": "Landed security correction",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/09e15e239da24757a9587b61314b4f62e08eba0e"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "Empty Convoy's security correction has met its first significant post-land obstacle: the human gameplay check did not accept it. The Operator reached the prepared encounter approach, but the reviewer still could not confirm that the intended scenario behaved correctly. Passing focused tests has not yet translated into a successful player-facing encounter.",
-        "sections": [
-          {
-            "heading": "The test reached the site, not the finish line",
-            "text": "The documented GUI run positioned the Operator for a manual check. The reviewer returned a possible scenario or encounter mismatch. No confirmed defender battle, custody trace or one-time salvage result followed, leaving the original failure unexplained."
-          },
-          {
-            "heading": "Cleanup succeeded on a narrower evidentiary footing",
-            "text": "The closeout record describes preservation of QA evidence, scoped cleanup and ordinary removal of a detached checkout. It reports one fewer attached worktree and about 6.92 GiB more free disk. WIRE has not independently inspected the host, so these are source-reported measurements, not live telemetry."
-          }
-        ],
-        "insights": [
-          {
-            "title": "A passing security test can miss a scenario mismatch",
-            "explanation": "The correction guards against treating failed enemy spawns as victory, but the manual outcome suggests the remaining problem may involve reaching or identifying the intended encounter. That possibility needs diagnosis, not an assumed fix."
-          },
-          {
-            "title": "A closed QA checkout does not close the gameplay issue",
-            "explanation": "The temporary test environment can be retired while the correction remains unaccepted. Cleanup and gameplay acceptance are distinct gates."
-          }
-        ],
-        "takeaway": "The fix is landed and test-backed, but the player-facing Empty Convoy outcome is not accepted; the root cause remains unconfirmed.",
-        "next_watch": "A source-bound diagnosis of the manual scenario mismatch, a fresh integrated retest and a separate independent review disposition."
-      },
-      "details": {
-        "overview": "Main SHA 392639adcf96fbfc9db591b4fc09ba462fb7906c. Post-land closeout published in aea113b7; later 392639ad removes a blank line only. The closeout reports manual acceptance NOT_ACCEPTED, source-bound QA checks passing, and scoped checkout removal. No independent host observation was obtained by this watch.",
-        "ledger": [
-          {
-            "stage": "Implementation and landing",
-            "status": "verified landed",
-            "evidence": "Correction commit c7bc9120 and landing 09e15e23 are ancestors of main."
-          },
-          {
-            "stage": "Focused tests",
-            "status": "reported PASS",
-            "evidence": "Source-bound security and startup validation in archived QA receipt."
-          },
-          {
-            "stage": "Manual gameplay acceptance",
-            "status": "reported NOT_ACCEPTED",
-            "evidence": "Human reviewer recorded possible scenario mismatch; no successful encounter recorded."
-          },
-          {
-            "stage": "Independent review",
-            "status": "unknown",
-            "evidence": "No accepted independent PASS receipt inspected."
-          },
-          {
-            "stage": "QA checkout cleanup",
-            "status": "reported completed",
-            "evidence": "Host-local receipt describes non-forced removal after evidence preservation; not independently remeasured."
-          }
-        ],
-        "notes": [
-          "Reported attached worktrees: 108 before and 107 after this specific QA closeout.",
-          "Reported disk free gain: 7,259,364 KiB (~6.92 GiB), scoped to that host operation."
-        ],
-        "unknowns": [
-          "Exact encounter mismatch and original failure cause.",
-          "Current host processes, other worktrees and claim/lock inventory."
-        ],
-        "actions": [
-          "Gameplay coordinator: diagnose scenario identity and reproduce player-facing behavior before accepting the correction.",
-          "Independent reviewer: issue separate review disposition after suitable evidence exists."
-        ]
-      },
-      "scorecard": {
-        "stage": "Landed; gameplay acceptance not achieved",
-        "as_of": "2026-11-03T01:05:27Z",
-        "scope": "Empty Convoy correction and one documented post-land QA checkout",
-        "metrics": [
-          {
-            "id": "qa-worktrees-retired",
-            "label": "QA WORKTREES RETIRED",
-            "value": 1,
-            "verification": "reported",
-            "basis": "One detached QA checkout removed, per post-land closeout receipt",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/aea113b72e261104bd7b3cad3cdf4078b593ef24"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Security correction landed",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "09e15e23 on main."
-          },
-          {
-            "label": "Focused source tests",
-            "status": "done",
-            "verification": "reported",
-            "evidence": "Archived source-bound PASS results."
-          },
-          {
-            "label": "Manual gameplay check",
-            "status": "blocked",
-            "verification": "reported",
-            "evidence": "Human acceptance NOT_ACCEPTED; mismatch possible."
-          },
-          {
-            "label": "Mismatch diagnosis and retest",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Root cause not yet confirmed."
-          },
-          {
-            "label": "Independent review acceptance",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No accepted review receipt."
-          },
-          {
-            "label": "Detached QA checkout cleanup",
-            "status": "done",
-            "verification": "reported",
-            "evidence": "Host-local closeout describes scoped non-forced retirement."
-          }
-        ],
-        "next_gate": "Gameplay coordinator to establish the exact scenario mismatch and run an integrated retest."
       },
       "related": []
     }
