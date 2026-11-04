@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-wire-pilot-exporter-reconciliation-v1`
 - Category: `agent-ops`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `manual`
 - Priority: `P1`
 - Depends on: `none`
@@ -47,6 +47,39 @@
   - Independently call the local observation validator; do not invoke `once`, `publish`, `verify`, rclone, or Dropbox before landing.
 - Task overrides: `none`
 - Deferred: The single private Dropbox publication/readback is permitted only after verified landing and destination validation. The recurring timer, public feed and ongoing telemetry remain disabled/out of scope.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: Exporter reconciliation and pilot compatibility changes are present in the six-file implementation diff; focused exporter and pilot suites pass 29/29; canonical changed-file validation reports complete coverage and 5/5 passing groups; local WIRE doctor is ready with 482 raw dispatcher rows, 421 managed/collector rows, partial detailed coverage and complete raw dispatch coverage; independent local observation validation passes. No network publication was attempted.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: The published lightweight profile omitted repository-wide validation scripts and task-packet files required by the canonical changed-file validator, agent workflow contract, and live collector. Initial validation failed until the exact dependencies and complete task-packet directory were added to this claimed checkout's sparse paths.
+- Root cause / contributing factors: Profile preflight validated packet-declared paths but did not detect global validator/collector reads outside those paths.
+- Prevention / pipeline improvement: Extend profile preflight to detect scripts read by canonical changed-file validation and packet paths enumerated by task administration; include only those exact files/directories in future profiles.
+- Tooling / docs drift discovered: `worktree_profiles/wire_pilot_exporter_reconciliation_v1.json` was insufficient for the packet's canonical validation and doctor requirements; local sparse expansion restored the required inputs without modifying the published profile.
+- Follow-up: `manual-follow-up`
+- What worked: The exact patch digest, three-file scope, baseline blobs, and resulting hashes were verified before transfer.
+
+## Handoff
+
+- Next workstream: `review-agent-wire-pilot-exporter-reconciliation-v1`
+- Next packet state: `dependency-gated`
+- Refresh owner: `execution-agent`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae98bea-2dfc-83e8-a5ff-863e52d79ac0`
+- Summary backlink: `include the exact Authoring chat URL in every durable summary and final Next Handoff`
+- Refresh reason: `none`
+- Next action: `After this implementation archives complete on origin/main, start the paired review through the canonical fresh-context runner; preserve the historical exporter review claim.`
+- Blockers or open questions: `Private Dropbox publication/readback remains authorized only after verified landing and destination identity confirmation; recurring timer remains disabled.`
 
 ## Host-private patch transfer prerequisite
 

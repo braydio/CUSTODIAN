@@ -150,7 +150,7 @@ def _validate_sources(snapshot: Any, now: datetime, max_age: int) -> tuple[dict,
     return source, dispatch, recovery, health, snapshot_time, recovery_time
 
 
-def _build_packet_rows(source: dict, dispatch: dict) -> tuple[list[dict], dict[str, int], dict[str, dict]]:
+def _build_packet_rows(source: dict, dispatch: dict) -> tuple[list[dict], dict[str, int], dict[str, dict], int, int, set[str]]:
     audit_rows = dispatch["packets"]
     admin_rows = source["packets"]
     raw_count = dispatch.get("raw_active_markdown_count")
@@ -158,17 +158,58 @@ def _build_packet_rows(source: dict, dispatch: dict) -> tuple[list[dict], dict[s
     claimable_count = dispatch.get("claimable_auto_count")
     if (not _integer(raw_count) or not _integer(managed_count) or not _integer(claimable_count)
             or raw_count < 0 or managed_count < 0 or managed_count > raw_count or claimable_count < 0
-            or raw_count != len(audit_rows) or len(admin_rows) != len(audit_rows)):
+            or raw_count != len(audit_rows)):
         raise ObservationError("dispatcher inventory totals are incomplete or inconsistent")
 
     audit_by_id: dict[str, dict] = {}
+    class_counts: dict[str, int] = {}
+    claimable_total = 0
+    unidentified_count = 0
+    aggregate_only_count = 0
+    aggregate_only_ids: set[str] = set()
     for row in audit_rows:
         if not isinstance(row, dict):
             raise ObservationError("dispatcher inventory contains a malformed record")
-        wid = _workstream(row.get("workstream"))
-        if wid in audit_by_id:
-            raise ObservationError("duplicate workstream identity in dispatcher inventory")
-        audit_by_id[wid] = row
+        actual_class = row.get("actual_class")
+        status = row.get("status")
+        dispatch_mode = row.get("dispatch")
+        eligible_now = row.get("eligible_now")
+        claim_next = row.get("claim_next_eligible")
+        claimed = row.get("claimed")
+        wid = row.get("workstream")
+        identified = isinstance(wid, str)
+        if identified:
+            wid = _workstream(wid)
+        if not isinstance(actual_class, str) or actual_class not in DISPATCH_CLASSES:
+            raise ObservationError("dispatcher inventory contains an unsupported classification")
+        if any(type(value) is not bool for value in (eligible_now, claim_next, claimed)):
+            raise ObservationError("dispatcher eligibility evidence is incomplete")
+        class_counts[actual_class] = class_counts.get(actual_class, 0) + 1
+        claimable_total += int(claim_next)
+
+        if identified:
+            if wid in audit_by_id:
+                raise ObservationError("duplicate workstream identity in dispatcher inventory")
+            audit_by_id[wid] = row
+            state_valid = (
+                isinstance(status, str) and status in {"draft", "ready", "in_progress", "blocked"}
+                and isinstance(dispatch_mode, str) and dispatch_mode in {"auto", "manual"}
+                and row.get("kind") in {"implementation", "review", "correction"}
+            )
+            if not state_valid:
+                if actual_class != "invalid_recovery" or eligible_now or claim_next or claimed:
+                    raise ObservationError("malformed identified dispatcher record is not safely aggregate-only")
+                aggregate_only_count += 1
+                aggregate_only_ids.add(wid)
+            continue
+        if (actual_class != "invalid_recovery" or eligible_now or claim_next or claimed):
+            raise ObservationError("unidentified dispatcher record has contradictory identity or eligibility evidence")
+        unidentified_count += 1
+        aggregate_only_count += 1
+
+    if claimable_total != claimable_count:
+        raise ObservationError("dispatcher claimable aggregate does not reconcile")
+
     admin_by_id: dict[str, dict] = {}
     for row in admin_rows:
         if not isinstance(row, dict):
@@ -177,11 +218,20 @@ def _build_packet_rows(source: dict, dispatch: dict) -> tuple[list[dict], dict[s
         if wid in admin_by_id:
             raise ObservationError("duplicate workstream identity in task-administrator inventory")
         admin_by_id[wid] = row
-    if set(audit_by_id) != set(admin_by_id):
+    if set(audit_by_id) != set(admin_by_id) or len(admin_rows) != len(audit_by_id):
         raise ObservationError("dispatcher and task-administrator inventories conflict")
 
-    class_counts: dict[str, int] = {}
-    claimable_total = 0
+    supplied_classes = dispatch.get("class_counts")
+    if not isinstance(supplied_classes, dict):
+        raise ObservationError("dispatcher class totals are unavailable")
+    normalized_classes = {}
+    for label, count in supplied_classes.items():
+        if not isinstance(label, str) or label not in DISPATCH_CLASSES or not _integer(count) or count < 0:
+            raise ObservationError("dispatcher class totals are malformed")
+        normalized_classes[label] = count
+    if normalized_classes != class_counts:
+        raise ObservationError("dispatcher class totals do not reconcile")
+
     result = []
     for wid in sorted(audit_by_id):
         row = audit_by_id[wid]
@@ -193,23 +243,28 @@ def _build_packet_rows(source: dict, dispatch: dict) -> tuple[list[dict], dict[s
         eligible_now = row.get("eligible_now")
         claim_next = row.get("claim_next_eligible")
         claimed = row.get("claimed")
-        if actual_class not in DISPATCH_CLASSES or kind not in {"implementation", "review", "correction"}:
+        if kind not in {"implementation", "review", "correction"}:
             raise ObservationError("dispatcher inventory contains an unsupported classification")
-        if status not in {"draft", "ready", "in_progress", "blocked"} or dispatch_mode not in {"auto", "manual"}:
-            raise ObservationError("dispatcher packet state is unsupported")
-        if any(type(value) is not bool for value in (eligible_now, claim_next, claimed)):
-            raise ObservationError("dispatcher eligibility evidence is incomplete")
         if (admin.get("classification") != actual_class
                 or admin.get("eligibility") != ("eligible" if claim_next else "blocked")
                 or admin.get("claimed") is not claimed):
             raise ObservationError("task-administrator and dispatcher evidence conflict")
-        class_counts[actual_class] = class_counts.get(actual_class, 0) + 1
-        claimable_total += int(claim_next)
+        state_valid = (
+            isinstance(status, str) and status in {"draft", "ready", "in_progress", "blocked"}
+            and isinstance(dispatch_mode, str) and dispatch_mode in {"auto", "manual"}
+            and kind in {"implementation", "review", "correction"}
+        )
+        if not state_valid:
+            continue
 
         dependencies = row.get("dependencies")
         if not isinstance(dependencies, list):
             raise ObservationError("dependency evidence is unavailable")
-        safe_dependencies = [_workstream(value) for value in dependencies]
+        safe_dependencies = []
+        for value in dependencies:
+            dependency = _workstream(value)
+            if dependency not in aggregate_only_ids:
+                safe_dependencies.append(dependency)
         if len(set(safe_dependencies)) != len(safe_dependencies):
             raise ObservationError("duplicate dependency identity")
         pair_id = row.get("paired_review_workstream")
@@ -219,10 +274,16 @@ def _build_packet_rows(source: dict, dispatch: dict) -> tuple[list[dict], dict[s
         if target_id is not None:
             target_id = _workstream(target_id)
         admin_pair = admin.get("review_workstream")
-        if admin_pair is not None:
+        if isinstance(admin_pair, str) and admin_pair.lower() == "none":
+            admin_pair = None
+        elif admin_pair is not None:
             admin_pair = _workstream(admin_pair)
         if pair_id != admin_pair:
             raise ObservationError("paired review evidence conflicts")
+        if pair_id in aggregate_only_ids:
+            pair_id = None
+        if target_id in aggregate_only_ids:
+            target_id = None
 
         category = admin.get("category_id")
         if category is not None and (not isinstance(category, str) or not ID_RE.fullmatch(category)):
@@ -244,22 +305,7 @@ def _build_packet_rows(source: dict, dispatch: dict) -> tuple[list[dict], dict[s
             "review_acceptance": "not_observed",
             "process_evidence": _process_evidence(admin.get("process_evidence")),
         })
-    if claimable_total != claimable_count:
-        raise ObservationError("dispatcher claimable aggregate does not reconcile")
-    supplied_classes = dispatch.get("class_counts")
-    if not isinstance(supplied_classes, dict):
-        raise ObservationError("dispatcher class totals are unavailable")
-    normalized_classes = {}
-    for label, count in supplied_classes.items():
-        if label not in DISPATCH_CLASSES or not _integer(count) or count < 0:
-            raise ObservationError("dispatcher class totals are malformed")
-        normalized_classes[label] = count
-    if normalized_classes != class_counts:
-        raise ObservationError("dispatcher class totals do not reconcile")
-    if not _integer(managed_count) or managed_count > len(result):
-        raise ObservationError("dispatcher managed packet total is invalid")
-    return result, class_counts, audit_by_id
-
+    return result, class_counts, audit_by_id, unidentified_count, aggregate_only_count, aggregate_only_ids
 
 def _schema_value_type(value: Any, expected: str) -> bool:
     if expected == "object":
@@ -332,6 +378,30 @@ def validate_observation(document: Any) -> None:
     if not isinstance(schema, dict) or schema.get("$schema") != "https://json-schema.org/draft/2020-12/schema":
         raise ObservationError("published observation schema is invalid")
     _validate_schema(document, schema)
+    scope = document["scope"]
+    packets = document["packets"]
+    coverage = document["coverage"]
+    raw_count = scope["active_packet_records"]
+    managed_count = scope["managed_packet_records"]
+    detailed_count = scope["detailed_packet_records"]
+    identified_count = scope["distinct_workstreams"]
+    unidentified_count = scope["unidentified_packet_records"]
+    aggregate_only_count = scope["aggregate_only_packet_records"]
+    malformed_count = aggregate_only_count - unidentified_count
+    if (managed_count > raw_count or detailed_count != len(packets)
+            or identified_count + unidentified_count != raw_count
+            or detailed_count + aggregate_only_count != raw_count
+            or malformed_count < 0
+            or identified_count < detailed_count
+            or identified_count != len({row["workstream"] for row in packets}) + malformed_count
+            or coverage["raw_dispatch_inventory"] != "complete"
+            or coverage["active_inventory"] != ("partial" if aggregate_only_count else "complete")
+            or (("unidentified_packet_records_aggregate_only" in coverage["limitations"]) != bool(unidentified_count))
+            or (("malformed_packet_records_aggregate_only" in coverage["limitations"]) != bool(malformed_count))
+            or sum(item["packet_count"] for item in document["classification_counts"]) != raw_count
+            or sum(row["claim_eligibility"]["claim_next_eligible"] for row in packets)
+               != scope["claimable_auto_packets"]):
+        raise ObservationError("observation aggregate coverage is inconsistent")
 
 
 def export_observation(snapshot: Any, *, now: datetime | None = None,
@@ -346,19 +416,26 @@ def export_observation(snapshot: Any, *, now: datetime | None = None,
     source, dispatch, recovery, health, snapshot_time, recovery_time = _validate_sources(
         snapshot, observed, max_source_age_seconds
     )
-    records, class_counts, _ = _build_packet_rows(source, dispatch)
+    records, class_counts, audit_by_id, unidentified_count, aggregate_only_count, _ = _build_packet_rows(source, dispatch)
     managed_count = dispatch["managed_packet_count"]
     scope = {
-        "active_packet_records": len(records),
+        "active_packet_records": dispatch["raw_active_markdown_count"],
         "managed_packet_records": managed_count,
-        "distinct_workstreams": len({row["workstream"] for row in records}),
+        "distinct_workstreams": len(audit_by_id),
+        "detailed_packet_records": len(records),
         "claimable_auto_packets": dispatch["claimable_auto_count"],
+        "unidentified_packet_records": unidentified_count,
+        "aggregate_only_packet_records": aggregate_only_count,
     }
     limitations = [
         "dispatcher_audit_does_not_supply_its_own_timestamp",
         "process_identifiers_and_host_details_are_redacted",
         "review_acceptance_is_not_observed_by_this_snapshot",
     ]
+    if unidentified_count:
+        limitations.append("unidentified_packet_records_aggregate_only")
+    if aggregate_only_count > unidentified_count:
+        limitations.append("malformed_packet_records_aggregate_only")
     stable_evidence = {
         "schema": SCHEMA,
         "revision": 1,
@@ -380,7 +457,8 @@ def export_observation(snapshot: Any, *, now: datetime | None = None,
         ],
         "packets": records,
         "coverage": {
-            "active_inventory": "complete",
+            "active_inventory": "partial" if aggregate_only_count else "complete",
+            "raw_dispatch_inventory": "complete",
             "limitations": limitations,
         },
     }

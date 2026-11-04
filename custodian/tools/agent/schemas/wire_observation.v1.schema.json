@@ -45,12 +45,15 @@
     },
     "scope": {
       "type": "object", "additionalProperties": false,
-      "required": ["active_packet_records", "managed_packet_records", "distinct_workstreams", "claimable_auto_packets"],
+      "required": ["active_packet_records", "managed_packet_records", "distinct_workstreams", "detailed_packet_records", "claimable_auto_packets", "unidentified_packet_records", "aggregate_only_packet_records"],
       "properties": {
         "active_packet_records": {"type": "integer", "minimum": 0},
         "managed_packet_records": {"type": "integer", "minimum": 0},
         "distinct_workstreams": {"type": "integer", "minimum": 0},
-        "claimable_auto_packets": {"type": "integer", "minimum": 0}
+        "detailed_packet_records": {"type": "integer", "minimum": 0},
+        "claimable_auto_packets": {"type": "integer", "minimum": 0},
+        "unidentified_packet_records": {"type": "integer", "minimum": 0},
+        "aggregate_only_packet_records": {"type": "integer", "minimum": 0}
       }
     },
     "classification_counts": {
@@ -97,10 +100,11 @@
     },
     "coverage": {
       "type": "object", "additionalProperties": false,
-      "required": ["active_inventory", "limitations"],
+      "required": ["active_inventory", "raw_dispatch_inventory", "limitations"],
       "properties": {
-        "active_inventory": {"const": "complete"},
-        "limitations": {"type": "array", "uniqueItems": true, "items": {"enum": ["dispatcher_audit_does_not_supply_its_own_timestamp", "process_identifiers_and_host_details_are_redacted", "review_acceptance_is_not_observed_by_this_snapshot"]}}
+        "active_inventory": {"enum": ["complete", "partial"]},
+        "raw_dispatch_inventory": {"const": "complete"},
+        "limitations": {"type": "array", "uniqueItems": true, "items": {"enum": ["dispatcher_audit_does_not_supply_its_own_timestamp", "process_identifiers_and_host_details_are_redacted", "review_acceptance_is_not_observed_by_this_snapshot", "unidentified_packet_records_aggregate_only", "malformed_packet_records_aggregate_only"]}}
       }
     },
     "evidence_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}

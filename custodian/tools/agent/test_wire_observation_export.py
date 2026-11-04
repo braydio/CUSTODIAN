@@ -42,6 +42,13 @@ def packet(workstream, *, kind="implementation", status="ready", dispatch="auto"
     }
 
 
+def unidentified_packet(**overrides):
+    row = packet(None, status="blocked", dispatch="manual", actual_class="invalid_recovery",
+                 eligible=False, claimable=False, claimed=False)
+    row.update(overrides)
+    return row
+
+
 def snapshot():
     dispatch_rows = [
         packet("agent-sample", paired_review="review-agent-sample"),
@@ -110,11 +117,16 @@ class WireObservationExportTests(unittest.TestCase):
         self.assertEqual(result["scope"]["active_packet_records"], 2)
         self.assertEqual(result["scope"]["distinct_workstreams"], 2)
         self.assertEqual(result["scope"]["managed_packet_records"], 2)
+        self.assertEqual(result["scope"]["detailed_packet_records"], 2)
+        self.assertEqual(result["scope"]["unidentified_packet_records"], 0)
+        self.assertEqual(result["scope"]["aggregate_only_packet_records"], 0)
+        self.assertEqual(result["coverage"]["active_inventory"], "complete")
+        self.assertEqual(result["coverage"]["raw_dispatch_inventory"], "complete")
         self.assertEqual(result["classification_counts"], [
             {"classification": "dependency_lock_blocked", "packet_count": 1},
             {"classification": "ready_auto", "packet_count": 1},
         ])
-        self.assertEqual(len(result["packets"]), result["scope"]["active_packet_records"])
+        self.assertEqual(len(result["packets"]), result["scope"]["managed_packet_records"])
         wire.validate_observation(result)
 
     def test_unavailable_process_evidence_stays_unknown_and_claim_is_not_running(self):
@@ -132,6 +144,10 @@ class WireObservationExportTests(unittest.TestCase):
         result = self.export(empty)
         self.assertEqual(result["scope"]["active_packet_records"], 0)
         self.assertEqual(result["scope"]["distinct_workstreams"], 0)
+        self.assertEqual(result["scope"]["detailed_packet_records"], 0)
+        self.assertEqual(result["scope"]["unidentified_packet_records"], 0)
+        self.assertEqual(result["scope"]["aggregate_only_packet_records"], 0)
+        self.assertEqual(result["coverage"]["active_inventory"], "complete")
         unavailable = snapshot()
         unavailable["dispatch"] = None
         unavailable["source_health"]["dispatch"] = "unknown"
@@ -150,6 +166,170 @@ class WireObservationExportTests(unittest.TestCase):
             mutate(source)
             with self.subTest(mutate=mutate), self.assertRaises(wire.ObservationError):
                 self.export(source)
+
+
+    def test_one_unidentified_invalid_record_preserves_raw_aggregate_and_partial_detail(self):
+        source = snapshot()
+        source["dispatch"]["packets"].append(unidentified_packet(status="complete"))
+        source["dispatch"]["raw_active_markdown_count"] = 3
+        source["dispatch"]["class_counts"]["invalid_recovery"] = 1
+        result = self.export(source)
+        self.assertEqual(result["scope"], {
+            "active_packet_records": 3,
+            "managed_packet_records": 2,
+            "distinct_workstreams": 2,
+            "detailed_packet_records": 2,
+            "claimable_auto_packets": 1,
+            "unidentified_packet_records": 1,
+            "aggregate_only_packet_records": 1,
+        })
+        self.assertEqual(len(result["packets"]), 2)
+        self.assertEqual(sum(x["packet_count"] for x in result["classification_counts"]), 3)
+        self.assertEqual(result["coverage"]["active_inventory"], "partial")
+        self.assertEqual(result["coverage"]["raw_dispatch_inventory"], "complete")
+        self.assertIn("unidentified_packet_records_aggregate_only", result["coverage"]["limitations"])
+        wire.validate_observation(result)
+
+    def test_live_480_419_61_reconciliation_and_raw_classification_totals(self):
+        source = snapshot()
+        dispatch_rows = []
+        admin_rows = []
+        for index in range(419):
+            wid = f"agent-fixture-{index:03d}"
+            dispatch_rows.append(packet(wid))
+            admin_rows.append({"workstream": wid, "classification": "ready_auto", "eligibility": "eligible",
+                              "claimed": False, "reasons": [], "review_workstream": None,
+                              "review_eligibility": None, "review_dispatch_reasons": [],
+                              "process_evidence": "UNKNOWN", "category_id": "agent-ops"})
+        dispatch_rows.extend(unidentified_packet() for _ in range(61))
+        source["dispatch"].update(raw_active_markdown_count=480, managed_packet_count=419,
+                                  claimable_auto_count=419,
+                                  class_counts={"ready_auto": 419, "invalid_recovery": 61},
+                                  packets=dispatch_rows)
+        source["packets"] = admin_rows
+        result = self.export(source)
+        self.assertEqual(result["scope"]["active_packet_records"], 480)
+        self.assertEqual(result["scope"]["managed_packet_records"], 419)
+        self.assertEqual(result["scope"]["distinct_workstreams"], 419)
+        self.assertEqual(result["scope"]["detailed_packet_records"], 419)
+        self.assertEqual(result["scope"]["unidentified_packet_records"], 61)
+        self.assertEqual(result["scope"]["aggregate_only_packet_records"], 61)
+        self.assertEqual(result["scope"]["claimable_auto_packets"], 419)
+        self.assertEqual(len(result["packets"]), 419)
+        self.assertEqual(result["classification_counts"], [
+            {"classification": "invalid_recovery", "packet_count": 61},
+            {"classification": "ready_auto", "packet_count": 419},
+        ])
+        self.assertEqual(result["coverage"]["active_inventory"], "partial")
+        self.assertEqual(result["coverage"]["raw_dispatch_inventory"], "complete")
+
+    def test_keyed_invalid_recovery_state_is_aggregate_only_and_redacts_its_identity(self):
+        source = snapshot()
+        malformed = source["dispatch"]["packets"][1]
+        malformed.update(status="complete", actual_class="invalid_recovery", dispatch="manual")
+        source["dispatch"]["class_counts"] = {"ready_auto": 1, "invalid_recovery": 1}
+        source["packets"][1]["classification"] = "invalid_recovery"
+        result = self.export(source)
+        self.assertEqual(result["scope"]["managed_packet_records"], 2)
+        self.assertEqual(result["scope"]["distinct_workstreams"], 2)
+        self.assertEqual(result["scope"]["detailed_packet_records"], 1)
+        self.assertEqual(result["scope"]["unidentified_packet_records"], 0)
+        self.assertEqual(result["scope"]["aggregate_only_packet_records"], 1)
+        self.assertEqual(len(result["packets"]), 1)
+        self.assertIsNone(result["packets"][0]["paired_review_workstream"])
+        self.assertNotIn("review-agent-sample", json.dumps(result))
+        self.assertIn("malformed_packet_records_aggregate_only", result["coverage"]["limitations"])
+        self.assertEqual(result["coverage"]["active_inventory"], "partial")
+        wire.validate_observation(result)
+
+    def test_review_pair_none_sentinel_normalizes_without_weakening_identity_checks(self):
+        source = snapshot()
+        source["packets"][1]["review_workstream"] = "NoNe"
+        result = self.export(source)
+        self.assertIsNone(result["packets"][1]["paired_review_workstream"])
+
+        conflicting = snapshot()
+        conflicting["packets"][0]["review_workstream"] = "review-other"
+        with self.assertRaises(wire.ObservationError):
+            self.export(conflicting)
+
+        missing_admin_pair = snapshot()
+        missing_admin_pair["packets"][0]["review_workstream"] = None
+        with self.assertRaises(wire.ObservationError):
+            self.export(missing_admin_pair)
+
+    def test_missing_null_and_nonstring_identities_are_aggregated_without_synthetic_ids(self):
+        for identity, remove in ((None, False), ("missing", True), (17, False)):
+            source = snapshot()
+            row = unidentified_packet()
+            if not remove:
+                row["workstream"] = identity
+            else:
+                row.pop("workstream")
+            source["dispatch"]["packets"].append(row)
+            source["dispatch"]["raw_active_markdown_count"] = 3
+            source["dispatch"]["class_counts"]["invalid_recovery"] = 1
+            result = self.export(source)
+            self.assertEqual(result["scope"]["unidentified_packet_records"], 1)
+            self.assertEqual(len(result["packets"]), 2)
+            self.assertEqual(result["coverage"]["active_inventory"], "partial")
+
+    def test_unidentified_rows_must_be_invalid_and_ineligible(self):
+        for changes in ({"claimed": True}, {"eligible_now": True}, {"claim_next_eligible": True},
+                        {"actual_class": "ready_auto"}, {"claimed": 0},
+                        {"eligible_now": None}, {"claim_next_eligible": "false"}):
+            source = snapshot()
+            source["dispatch"]["packets"].append(unidentified_packet(**changes))
+            source["dispatch"]["raw_active_markdown_count"] = 3
+            source["dispatch"]["class_counts"]["invalid_recovery"] = 1
+            with self.subTest(changes=changes), self.assertRaises(wire.ObservationError):
+                self.export(source)
+
+    def test_identified_rows_keep_strict_packet_state_and_identity_validation(self):
+        for changes in ({"status": "complete"}, {"dispatch": "invented"}, {"workstream": ""}):
+            source = snapshot()
+            source["dispatch"]["packets"][0].update(changes)
+            with self.subTest(changes=changes), self.assertRaises(wire.ObservationError):
+                self.export(source)
+
+    def test_unsafe_identity_extra_admin_and_malformed_raw_records_fail(self):
+        source = snapshot()
+        source["dispatch"]["packets"][0]["workstream"] = "/unsafe/id"
+        with self.assertRaises(wire.ObservationError):
+            self.export(source)
+        source = snapshot()
+        source["packets"].append(copy.deepcopy(source["packets"][0]))
+        source["packets"][-1]["workstream"] = "extra-admin-id"
+        with self.assertRaises(wire.ObservationError):
+            self.export(source)
+        source = snapshot()
+        source["dispatch"]["packets"].append("malformed")
+        source["dispatch"]["raw_active_markdown_count"] = 3
+        with self.assertRaises(wire.ObservationError):
+            self.export(source)
+
+    def test_mismatched_managed_or_class_aggregates_and_unsupported_state_fail(self):
+        for mutate in (
+            lambda s: s["dispatch"].update(managed_packet_count=3),
+            lambda s: s["dispatch"].update(class_counts={"ready_auto": 2}),
+            lambda s: s["dispatch"]["packets"][0].update(actual_class="invented"),
+            lambda s: s["dispatch"]["packets"][0].update(status="executing"),
+        ):
+            source = snapshot()
+            mutate(source)
+            with self.subTest(mutate=mutate), self.assertRaises(wire.ObservationError):
+                self.export(source)
+
+    def test_schema_rejects_inconsistent_partial_coverage_aggregates(self):
+        result = self.export()
+        invalid = copy.deepcopy(result)
+        invalid["scope"]["unidentified_packet_records"] = 1
+        with self.assertRaises(wire.ObservationError):
+            wire.validate_observation(invalid)
+        invalid = copy.deepcopy(result)
+        invalid["coverage"]["raw_dispatch_inventory"] = "partial"
+        with self.assertRaises(wire.ObservationError):
+            wire.validate_observation(invalid)
 
     def test_stale_or_future_snapshot_and_recovery_timestamps_fail(self):
         source = snapshot()

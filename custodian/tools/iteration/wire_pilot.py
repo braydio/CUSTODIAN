@@ -117,8 +117,11 @@ def validate_observation(document: Any, exporter, *, now: datetime | None = None
     if document.get("source_health") != {"snapshot": "ok", "dispatch": "ok",
                                          "recovery": "ok", "origin_main": "current"}:
         raise PilotError("source health is not complete/current")
-    if document.get("coverage", {}).get("active_inventory") != "complete":
-        raise PilotError("dispatcher inventory is not complete")
+    coverage = document["coverage"]
+    if coverage.get("active_inventory") not in {"partial", "complete"}:
+        raise PilotError("detailed inventory coverage is unsupported")
+    if coverage.get("raw_dispatch_inventory") != "complete":
+        raise PilotError("raw dispatcher inventory is not complete")
     if not isinstance(document.get("source_revision"), str) or not REVISION.fullmatch(document["source_revision"]):
         raise PilotError("source revision is invalid")
     stamps = document["source_timestamps"]

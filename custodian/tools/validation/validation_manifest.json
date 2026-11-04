@@ -7116,6 +7116,25 @@
       "needs_import": false
     },
     {
+      "id": "wire_pilot_unit",
+      "type": "python",
+      "script": "custodian/tools/agent/test_wire_pilot.py",
+      "tier": "unit",
+      "tags": [
+        "agent_workflow",
+        "wire",
+        "privacy",
+        "provenance"
+      ],
+      "owners": [
+        "custodian/tools/iteration/wire_pilot.py",
+        "custodian/tools/agent/test_wire_pilot.py",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 20,
+      "needs_import": false
+    },
+    {
       "id": "dispatch_claim_contract_unit",
       "type": "python",
       "script": "custodian/tools/agent/test_dispatch.py",
