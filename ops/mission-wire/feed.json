@@ -1,9 +1,142 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-05T02:53:28Z",
-  "source_main_sha": "f42cc51cb5689d6b8ae596e489eb995ac9cde46f",
+  "generated_at": "2026-11-05T13:28:31Z",
+  "source_main_sha": "0d41ea40266faa0f3a5ccb8faf251fd65cc883e4",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "creche-layered-pbr-manifest-v2-0d41ea40",
+      "headline": "Crèche gets a layered 3D-rendered art blueprint, but no new assets yet",
+      "summary": "A design-only Crèche manifest now defines 30 proposed visual states, including 22 required and eight optional, for a realistic PBR-rendered 2D scene. Existing gameplay and art registration remain unchanged; visual approvals and production are still ahead.",
+      "body": "Commit 0d41ea40 publishes a Crèche layered PBR design manifest with depth bands from exterior and floor through fixtures, local effects and foreground occlusion. It preserves Godot's existing 2D gameplay and collision ownership while specifying orthographic 3D-rendered art, source registration and animation states. The 30 states are design inventory, not completed assets. The commit explicitly says no Asset V2 registry change, human visual approval or runtime cutover occurred. Commit message reports GitHub Validate Repository PASS, but the combined status endpoint returned no checks; independent validation was not verified. Operational dispatcher totals remain unavailable.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "awakening-creche-layered-pbr-art",
+      "occurred_at": "2026-11-05T12:56:27Z",
+      "bullets": [
+        "30 proposed Crèche visual states: 22 required and eight optional.",
+        "Orthographic 3D/PBR rendering targets existing Godot 2D layers.",
+        "Existing runtime art and gameplay remain unchanged.",
+        "Human visual approval and Asset V2 registration are still pending."
+      ],
+      "links": [
+        {
+          "title": "Crèche layered PBR manifest V2",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/0d41ea40266faa0f3a5ccb8faf251fd65cc883e4"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "The Crèche of Answerless Names has a more precise visual production blueprint. A new manifest describes how to build realistic, depth-separated scenery and animation without replacing CUSTODIAN's existing 2D gameplay. It is a design milestone, not an art delivery.",
+        "sections": [
+          {
+            "heading": "Real depth without a gameplay-engine migration",
+            "text": "The proposal uses orthographic renders of modeled stone, metal and machinery, split into floor, structural, fixture, effect and foreground layers. Godot keeps ownership of movement, collision and interactions."
+          },
+          {
+            "heading": "A roadmap, not a runtime cutover",
+            "text": "The manifest specifies 30 proposed visual states, 22 required and eight optional. Existing asset families and gameplay are untouched; the new design has not been registered as production art or visually approved."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Layer separation makes animation practical",
+            "explanation": "Keeping machines, floor and foreground occlusion independent allows localized effects and character overlap without repainting the entire room for every animation frame."
+          },
+          {
+            "title": "The next bottleneck is approval and registration",
+            "explanation": "The plan is now detailed enough to guide production, but none of its new visual states should be counted as delivered or active in-game."
+          }
+        ],
+        "takeaway": "The Crèche's proposed art architecture is documented; asset creation, visual approval, registration and runtime validation remain distinct future gates.",
+        "next_watch": "Watch for approved first source plates, registered Asset V2 states and an in-game validation showing correct alpha, depth and interaction alignment."
+      },
+      "details": {
+        "overview": "Source commit 0d41ea40 adds design-only JSON and Markdown for layered PBR Crèche art. Main context inspected at this SHA. Commit text reports repository validation PASS; combined commit status returned no status entries. Canonical dispatcher and fresh pilot observations were not available.",
+        "ledger": [
+          {
+            "stage": "Design manifest landing",
+            "status": "verified",
+            "evidence": "0d41ea40 published the V2 proposal."
+          },
+          {
+            "stage": "Visual approval",
+            "status": "pending",
+            "evidence": "Manifest explicitly marks human visual approval pending."
+          },
+          {
+            "stage": "Asset registration and runtime",
+            "status": "not established",
+            "evidence": "No Asset V2 registration or cutover in this commit."
+          },
+          {
+            "stage": "Independent acceptance and host teardown",
+            "status": "unknown",
+            "evidence": "No relevant independent or host receipts inspected."
+          }
+        ],
+        "notes": [
+          "30 counts proposed visual states, not completed art or workstreams."
+        ],
+        "unknowns": [
+          "Current canonical dispatcher counts and host execution.",
+          "Independent validation beyond commit message."
+        ],
+        "actions": [
+          "Art owner: obtain human visual approval of a first registered source set before production cutover."
+        ]
+      },
+      "scorecard": {
+        "stage": "Design landed; production pending",
+        "as_of": "2026-11-05T13:28:31Z",
+        "scope": "Crèche layered PBR art design proposal only",
+        "metrics": [
+          {
+            "id": "proposed_states",
+            "label": "PROPOSED STATES",
+            "value": 30,
+            "verification": "verified",
+            "basis": "Manifest inventory; 22 required, eight optional",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/0d41ea40266faa0f3a5ccb8faf251fd65cc883e4"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Design manifest",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "0d41ea40"
+          },
+          {
+            "label": "Human visual approval",
+            "status": "next",
+            "verification": "verified",
+            "evidence": "Explicitly pending in manifest"
+          },
+          {
+            "label": "Source art production",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No new art registered by commit"
+          },
+          {
+            "label": "Asset V2 registration",
+            "status": "next",
+            "verification": "verified",
+            "evidence": "Explicitly not performed"
+          },
+          {
+            "label": "In-game layer and animation validation",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No runtime proof"
+          }
+        ],
+        "next_gate": "Art owner: approve a first source plate and its depth/alpha registration before any Asset V2 cutover."
+      },
+      "related": []
+    },
     {
       "id": "chatgpt-response-reader-v110-f42cc51c",
       "headline": "Browser reply reader lands with unfinished return paths",
@@ -1594,137 +1727,6 @@
           "story_id": "sepulcher-gardens-cal01-modular-floor-correction-bb047a71"
         }
       ]
-    },
-    {
-      "id": "sepulcher-gardens-cal01-modular-floor-correction-bb047a71",
-      "headline": "Sepulcher Gardens art plan shifts to modular paving, preserving the playable map",
-      "summary": "A new main-branch correction replaces the proposed rectangular Gardens ground painting with one 512×512 repeatable floor-material candidate. The existing irregular walkability mask remains authoritative. Earlier paving is explicitly unapproved, and the separate architecture layer remains blocked pending a footprint contract.",
-      "body": "CUSTODIAN's Sepulcher Gardens art guidance now calls for a 512×512 seamless opaque ground-material candidate, repeated and clipped to the existing irregular walkability mask rather than painted as an entire rectangular room. This prevents an art plate from silently redefining traversable terrain. Existing paving candidates are unapproved references, including one reported to fail a 3×3 tiling check. CAL-01 is still awaiting generation and individual human approval; CAL-02 structural presentation remains blocked on an approved footprint contract. This commit changes source-art instructions and manifest metadata, not the game renderer or an accepted asset.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "assets-art",
-      "workstream": "hub-first-set-sepulcher-gardens-environment",
-      "occurred_at": "2026-11-03T03:51:24Z",
-      "bullets": [
-        "CAL-01 target is now one 512×512 seamless opaque material candidate.",
-        "Existing irregular Gardens walkability mask retains geometry authority.",
-        "Earlier paving references remain unapproved; no human V3 acceptance verified.",
-        "CAL-02 architecture remains blocked on a modular solid-footprint contract.",
-        "Next: produce and screen one candidate, then obtain explicit human approval."
-      ],
-      "links": [
-        {
-          "title": "Gardens modular material correction",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/bb047a717945e4cdbb54430a6dfe002625eca345"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "The Sepulcher Gardens will no longer be illustrated as one rectangular floor painting. A new art-plan correction makes the first deliverable a repeatable paving material that follows the game's existing irregular walkable terrain, rather than rewriting it.",
-        "sections": [
-          {
-            "heading": "The map stays in charge",
-            "text": "The corrected CAL-01 brief calls for one opaque 512×512 seamless material. A future renderer would tile it at native scale and clip it to the authoritative Gardens walkability mask. This is a source-art contract change, not proof that the renderer has been changed."
-          },
-          {
-            "heading": "Existing paving is not approved artwork",
-            "text": "An earlier candidate remains a reference only, with a recorded failed repetition test. There is no verified human-approved V3 style anchor. The separate architectural layer remains blocked until its structural footprint is authorized."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Material and geometry are now separate decisions",
-            "explanation": "A repeating surface can be evaluated for visual continuity without giving a generated image authority over playable routes. This reduces the chance that attractive art creates false paths or blocked-looking traversable cells."
-          },
-          {
-            "title": "The next milestone is still a candidate",
-            "explanation": "Revising the manifest does not constitute source approval, pipeline promotion or runtime integration. The one-image calibration gate remains intact."
-          }
-        ],
-        "takeaway": "The Gardens art contract is more faithful to the existing map, but no new approved or runtime-bound paving asset is established.",
-        "next_watch": "A single CAL-01 candidate with a genuine tiling preview, explicit human approval and later Asset V2 handoff."
-      },
-      "details": {
-        "overview": "Main commit bb047a717945e4cdbb54430a6dfe002625eca345 revises the art-generation protocol and Gardens manifest. The correction preserves the irregular 96×84 walkability mask within a 3072×2688 authoring envelope. The previous 1152×1408 mixed plate is rejected. No canonical dispatcher audit or authenticated host relay was available.",
-        "ledger": [
-          {
-            "stage": "Art contract reconciliation",
-            "status": "verified landed",
-            "evidence": "bb047a717945e4cdbb54430a6dfe002625eca345"
-          },
-          {
-            "stage": "CAL-01 candidate",
-            "status": "not verified complete",
-            "evidence": "New 512×512 target defined; no approved candidate receipt"
-          },
-          {
-            "stage": "Human source approval",
-            "status": "pending",
-            "evidence": "Existing paving explicitly unapproved"
-          },
-          {
-            "stage": "CAL-02 architecture",
-            "status": "blocked",
-            "evidence": "Requires separate approved structural footprint"
-          },
-          {
-            "stage": "Runtime binding and independent acceptance",
-            "status": "unknown",
-            "evidence": "No runtime or independent PASS evidence inspected"
-          }
-        ],
-        "notes": [
-          "GitHub status API returned no combined status checks for the inspected commit."
-        ],
-        "unknowns": [
-          "Host execution, worktree disposition and cleanup",
-          "Current full dispatcher totals"
-        ],
-        "actions": [
-          "Art producer: generate and technically screen exactly one CAL-01 candidate.",
-          "Human approver: review tiling and source provenance before any promotion."
-        ]
-      },
-      "scorecard": {
-        "stage": "Reconciled art brief; candidate not yet approved",
-        "as_of": "2026-11-03T03:51:24Z",
-        "scope": "CAL-01 and CAL-02 Sepulcher Gardens art gates only",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Reconcile CAL-01 geometry contract",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "bb047a717945e4cdbb54430a6dfe002625eca345"
-          },
-          {
-            "label": "Generate and screen one repeatable material",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No new candidate receipt"
-          },
-          {
-            "label": "Obtain human source approval",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No approved V3 receipt"
-          },
-          {
-            "label": "Approve structural footprint for CAL-02",
-            "status": "blocked",
-            "verification": "verified",
-            "evidence": "Manifest retains footprint dependency"
-          },
-          {
-            "label": "Promote and bind through Asset V2",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No pipeline/runtime acceptance"
-          }
-        ],
-        "next_gate": "Art producer to create one CAL-01 material candidate with repeat-preview evidence for human review."
-      },
-      "related": []
     }
   ],
   "snapshot": {
