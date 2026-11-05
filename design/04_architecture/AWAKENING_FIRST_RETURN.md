@@ -1,5 +1,6 @@
 # Awakening: The First Return
 
+> **Crèche floor canonical target, approved 2026-11-05:** **1464×1074 RGBA** (1 frame, transparent outside the authored floor), source SHA-256 `00f7cdda4ef266ca688fe1396321fcb137ee74e80c133bfffcda0ef8d5405381`, supersedes the old 960×704 Crèche presentation size **when** the Asset V2/Godot runtime cutover is reviewed and landed. The entire transparent canvas is not a walkable rectangle; Zone01's floor and envelope must be reauthored from measured geometry. **Not yet installed:** current registered family remains 960×704, with 704×512 walkable floor in `awakening_layout.gd`. See [canonical size and Codex-first implementation brief](AWAKENING_CRECHE_FLOOR_1464X1074_CANONICAL_V1.md). Existing 960 statements below describe historical/current production until the cutover.\n\n
 **Status:** active opening, production plates in sections 01-09 and authored Road in section 10
 **Last Updated:** 2026-10-07
 **Runtime Target:** Godot 4.x (`custodian/`)

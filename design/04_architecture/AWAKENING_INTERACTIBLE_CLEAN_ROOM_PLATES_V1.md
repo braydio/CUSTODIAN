@@ -1,5 +1,6 @@
 # Awakening · Interactible Clean Room Plates V1
 
+> **Crèche-only approved supersession (2026-11-05):** The exact 1464×1074 RGBA floor PNG (SHA-256 `00f7cdda4ef266ca688fe1396321fcb137ee74e80c133bfffcda0ef8d5405381`) is the new canonical **target**; the 960×704 Crèche dimensions and unchanged foreground requirement below describe the **still-live, pre-cutover** implementation. Follow [AWAKENING_CRECHE_FLOOR_1464X1074_CANONICAL_V1.md](AWAKENING_CRECHE_FLOOR_1464X1074_CANONICAL_V1.md): retain source pixels, reauthor walkability separately, and measure a matching 1464×1074 wall before replacing both V2 states together. **No Godot cutover has landed**; Undergate remains 1536×1216.\n\n
 **Decision:** user approved authored, prop-free architectural room plates rather than mounting standalone interactible artwork over already-baked machines. **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166.
 
 ## Authoritative composition
