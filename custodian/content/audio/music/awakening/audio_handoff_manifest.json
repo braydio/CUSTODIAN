@@ -1,0 +1,46 @@
+{
+  "schema": "custodian.audio_handoff.v1",
+  "workstream_id": "awakening-command-still-speaking-runtime",
+  "authoring_chat": "https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae9bc56-9e1c-83ea-8ff9-285be4092acb",
+  "intake_family_id": "awakening_first_return_music",
+  "intake_route": "custodian.asset_requirements.v1 specialized audio handoff; not image Asset V2",
+  "artistic_approval": "user approved the composition; this is distinct from runtime validation and in-game listening approval",
+  "source": {
+    "path": "~/Downloads/Awakening_01_Command_Still_Speaking.wav",
+    "sha256": "36eb550377adf738f009b29565c9ec8bad7eb8ac9216b0bc9145f400639a2e6f",
+    "codec": "PCM signed 24-bit little-endian WAV",
+    "sample_rate_hz": 48000,
+    "channels": 2,
+    "duration_seconds": 120.0,
+    "integrated_lufs_measured": -17.3,
+    "true_peak_dbtp_measured": -6.8,
+    "peak_sample_dbfs_measured": -6.77,
+    "processing": "none; approved source preserved unchanged"
+  },
+  "cues": [
+    {
+      "cue_id": "awakening_01_command_still_speaking",
+      "title": "A Command Still Speaking",
+      "context": "awakening",
+      "role": "exploration",
+      "runtime_path": "custodian/content/audio/music/awakening/awakening_01_command_still_speaking.ogg",
+      "sha256": "fa7c8799efa5e91c171d908658a34f6818e682ed1fe37e537aaf12459c867bf4",
+      "codec": "Ogg Vorbis (libvorbis quality 8)",
+      "channels": 2,
+      "sample_rate_hz": 48000,
+      "loop": true,
+      "duration_seconds": 120.0,
+      "runtime_gain_db": -2.5,
+      "initial_fade_seconds": 0.35,
+      "departure_fade_seconds": 0.8,
+      "runtime_integrated_lufs_measured_approx": -17.3,
+      "runtime_true_peak_dbtp_measured_approx": -6.8,
+      "review_state": "user_artistic_approval_recorded; technical_runtime_validation_pending; in_game_listening_pending",
+      "loop_boundary_reconstructed_sample_delta_lr": [
+        0.0008223,
+        0.0007382
+      ],
+      "loop_boundary_assessment": "Decoded Ogg endpoint-to-start sample delta is below 0.001 per channel; technical metric only, in-game seamlessness audition pending."
+    }
+  ]
+}

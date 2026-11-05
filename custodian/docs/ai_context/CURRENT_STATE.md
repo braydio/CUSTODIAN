@@ -1,5 +1,22 @@
 # CURRENT STATE — CUSTODIAN
 
+## Awakening First Return soundtrack integration (2026-11-05)
+
+The production Awakening scene now starts the user-approved “A Command Still
+Speaking” cue through `AwakeningMusicDirector` and the existing two-deck
+`MusicManager` scoped lease. It loops across sections 01–10, uses an initial
+-2.5 dB runtime gain, and releases with a 0.8-second fade and no previous
+playlist restoration after successful Hub handoff. Failed handoff preserves
+the lease; ordinary release keeps MusicManager's prior playlist restoration
+default. The source WAV is 120 seconds, stereo 48 kHz 24-bit PCM, measured at
+-17.3 LUFS and -6.8 dBTP; it was encoded to Ogg Vorbis quality 8 without
+normalization or other mix processing. Provenance: `custodian/content/audio/music/awakening/audio_handoff_manifest.json`. The user approved the composition;
+technical runtime validation is recorded separately, and in-game listening and
+loop-seam audition remain pending. See
+`design/02_features/audio/AWAKENING_FIRST_RETURN_SCORE_INTEGRATION.md`.
+
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae9bc56-9e1c-83ea-8ff9-285be4092acb
+
 ## Operator chassis authority seal (implementation in progress, 2026-10-31)
 
 The existing `operator-chassis-authority-seal-v1` claim is implementing the
