@@ -1,9 +1,267 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-05T18:33:51Z",
-  "source_main_sha": "46d0ae14958502e6985dc0d1502456d8e72992d5",
+  "generated_at": "2026-11-05T20:10:40Z",
+  "source_main_sha": "90164bee80bbef535fe14d77c7ad7b51f100f861",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "process-ownership-scanner-hardening-90164bee",
+      "headline": "Process ownership scanner gets a narrowly guarded repair plan",
+      "summary": "A new implementation and independent-review pair targets a host-validation deadlock: a credential daemon with unreadable process directory was blocking ownership checks. The proposed fix must authenticate the service independently and continue rejecting spoofed or ambiguous processes. No scanner code changed.",
+      "body": "A new implementation and independent-review pair targets a host-validation deadlock: a credential daemon with unreadable process directory was blocking ownership checks. The proposed fix must authenticate the service independently and continue rejecting spoofed or ambiguous processes. No scanner code changed. Documentation and packet metadata do not prove runtime installation, dispatcher execution, independent acceptance, or canonical teardown. Host-wide counts and current CI remain unverified.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-paired-review-process-ownership-scanner-hardening-v1",
+      "occurred_at": "2026-11-05T20:10:40Z",
+      "bullets": [
+        "Author paired packets — done",
+        "Validate and promote packet — next",
+        "Implement scanner and adversarial tests — next",
+        "Independent review PASS — next",
+        "Canonical recovery and teardown — unknown"
+      ],
+      "links": [
+        {
+          "title": "Inspected source commit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/90164bee80bbef535fe14d77c7ad7b51f100f861"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "A new implementation and independent-review pair targets a host-validation deadlock: a credential daemon with unreadable process directory was blocking ownership checks. The proposed fix must authenticate the service independently and continue rejecting spoofed or ambiguous processes. No scanner code changed.",
+        "sections": [
+          {
+            "heading": "A safety check meets an unusual host process",
+            "text": "The existing review ownership scan can stop on a same-user credential service before deciding whether it belongs to a reviewer. The packet proposes checking trustworthy process identity first, without accepting a process name alone."
+          },
+          {
+            "heading": "The lock still matters",
+            "text": "The original protected review retains its claim and lock according to the packet. This documentation change neither frees that lock nor retries the review."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Fail closed, even for the exception",
+            "explanation": "A genuine supervised credential daemon may be excluded only with independent identity proof. A forged name, unreadable identity, or possible review owner must remain blocking."
+          }
+        ],
+        "takeaway": "The new source evidence establishes a defined next gate, not completed runtime or review acceptance.",
+        "next_watch": "Owner: validate/promote the paired packet through normal authoring and resolve the existing protected lock before any claim."
+      },
+      "details": {
+        "overview": "Inspected commit 90164bee80bbef535fe14d77c7ad7b51f100f861. Private pilot pointer is older than 40 hours, so no private counts were used. Host claims, CI, teardown and live status remain unknown.",
+        "ledger": [
+          {
+            "stage": "Author paired packets",
+            "status": "done",
+            "evidence": "90164bee commit"
+          },
+          {
+            "stage": "Validate and promote packet",
+            "status": "next",
+            "evidence": "Authoring handoff remains gated"
+          },
+          {
+            "stage": "Implement scanner and adversarial tests",
+            "status": "next",
+            "evidence": "No code change in this commit"
+          },
+          {
+            "stage": "Independent review PASS",
+            "status": "next",
+            "evidence": "No acceptance receipt"
+          },
+          {
+            "stage": "Canonical recovery and teardown",
+            "status": "unknown",
+            "evidence": "Requires later separate authorization and host evidence"
+          }
+        ],
+        "notes": [],
+        "unknowns": [
+          "Current canonical dispatcher audit",
+          "Independent acceptance and host teardown",
+          "Current CI conclusion"
+        ],
+        "actions": [
+          "Owner: validate/promote the paired packet through normal authoring and resolve the existing protected lock before any claim."
+        ]
+      },
+      "scorecard": {
+        "stage": "Documented, not executed",
+        "as_of": "2026-11-05T20:10:40Z",
+        "scope": "This named workstream only",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Author paired packets",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "90164bee commit"
+          },
+          {
+            "label": "Validate and promote packet",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Authoring handoff remains gated"
+          },
+          {
+            "label": "Implement scanner and adversarial tests",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No code change in this commit"
+          },
+          {
+            "label": "Independent review PASS",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No acceptance receipt"
+          },
+          {
+            "label": "Canonical recovery and teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "Requires later separate authorization and host evidence"
+          }
+        ],
+        "next_gate": "Owner: validate/promote the paired packet through normal authoring and resolve the existing protected lock before any claim."
+      },
+      "related": []
+    },
+    {
+      "id": "creche-canonical-floor-target-bf6baadc",
+      "headline": "Crèche floor approved at 1464×1074, with browser-to-runtime handoff specified",
+      "summary": "The Awakening Crèche now has an approved 1464×1074 transparent floor-art target, replacing the old 960×704 design only after a reviewed Asset V2 and Godot cutover. A follow-up specifies exact original-byte retrieval through the connected browser, with SHA verification. The playable room has not changed.",
+      "body": "The Awakening Crèche now has an approved 1464×1074 transparent floor-art target, replacing the old 960×704 design only after a reviewed Asset V2 and Godot cutover. A follow-up specifies exact original-byte retrieval through the connected browser, with SHA verification. The playable room has not changed. Documentation and packet metadata do not prove runtime installation, dispatcher execution, independent acceptance, or canonical teardown. Host-wide counts and current CI remain unverified.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "assets-art",
+      "workstream": "awakening-creche-console-sprite-reauthor-v1",
+      "occurred_at": "2026-11-05T19:38:38Z",
+      "bullets": [
+        "Approve canonical target — done",
+        "Specify exact-byte browser handoff — done",
+        "Verify source and foreground — next",
+        "Atomic Asset V2 and Godot cutover — next",
+        "Visual smoke and independent review — next"
+      ],
+      "links": [
+        {
+          "title": "Inspected source commit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/bf6baadcd5c1fef92464a5db32d6e20b9767d546"
+        },
+        {
+          "title": "Exact-byte browser handoff",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/56cc783004961c4c4df3d24795b409e27fadbb84"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "The Awakening Crèche now has an approved 1464×1074 transparent floor-art target, replacing the old 960×704 design only after a reviewed Asset V2 and Godot cutover. A follow-up specifies exact original-byte retrieval through the connected browser, with SHA verification. The playable room has not changed.",
+        "sections": [
+          {
+            "heading": "The room grows on paper first",
+            "text": "The new source artwork is larger, but transparent margins must not become walkable space. Zone01 geometry, navigation and the north passage need measurement before the floor and foreground change together."
+          },
+          {
+            "heading": "Original bytes, not a browser screenshot",
+            "text": "The follow-up source instruction prefers obtaining the original uploaded PNG via Chrome DevTools and verifying its SHA-256 before the Asset V2 ingest. If exact bytes cannot be obtained, the handoff must stop."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The floor and walls are one cutover",
+            "explanation": "The plan prohibits deploying the larger floor against the old foreground. Both visual layers and the measured collision geometry must be validated together."
+          },
+          {
+            "title": "Approval is not installation",
+            "explanation": "The registered runtime still uses the previous dimensions, and no Godot acceptance or independent review is established."
+          }
+        ],
+        "takeaway": "The new source evidence establishes a defined next gate, not completed runtime or review acceptance.",
+        "next_watch": "Owner: stage and hash-check the exact approved source and aligned foreground before a guarded atomic cutover."
+      },
+      "details": {
+        "overview": "Inspected commit bf6baadcd5c1fef92464a5db32d6e20b9767d546. Private pilot pointer is older than 40 hours, so no private counts were used. Host claims, CI, teardown and live status remain unknown.",
+        "ledger": [
+          {
+            "stage": "Approve canonical target",
+            "status": "done",
+            "evidence": "bf6baadc design commit"
+          },
+          {
+            "stage": "Specify exact-byte browser handoff",
+            "status": "done",
+            "evidence": "56cc7830 follow-up commit"
+          },
+          {
+            "stage": "Verify source and foreground",
+            "status": "next",
+            "evidence": "Source staging not proven"
+          },
+          {
+            "stage": "Atomic Asset V2 and Godot cutover",
+            "status": "next",
+            "evidence": "Runtime remains old size"
+          },
+          {
+            "stage": "Visual smoke and independent review",
+            "status": "next",
+            "evidence": "No PASS or gameplay proof"
+          }
+        ],
+        "notes": [],
+        "unknowns": [
+          "Current canonical dispatcher audit",
+          "Independent acceptance and host teardown",
+          "Current CI conclusion"
+        ],
+        "actions": [
+          "Owner: stage and hash-check the exact approved source and aligned foreground before a guarded atomic cutover."
+        ]
+      },
+      "scorecard": {
+        "stage": "Documented, not executed",
+        "as_of": "2026-11-05T19:38:38Z",
+        "scope": "This named workstream only",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Approve canonical target",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "bf6baadc design commit"
+          },
+          {
+            "label": "Specify exact-byte browser handoff",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "56cc7830 follow-up commit"
+          },
+          {
+            "label": "Verify source and foreground",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Source staging not proven"
+          },
+          {
+            "label": "Atomic Asset V2 and Godot cutover",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Runtime remains old size"
+          },
+          {
+            "label": "Visual smoke and independent review",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No PASS or gameplay proof"
+          }
+        ],
+        "next_gate": "Owner: stage and hash-check the exact approved source and aligned foreground before a guarded atomic cutover."
+      },
+      "related": []
+    },
     {
       "id": "sepulcher-memorial-slab-authoring-46d0ae14",
       "headline": "Approved Sepulcher memorial art gets a production installation plan, but the grave still uses drawn geometry",
@@ -1438,334 +1696,6 @@
           "title": "Sepulcher arcade artwork deferred after three failed screens; CAL-03 becomes next candidate",
           "context": "The earlier CAL-02 failure illustrates why this guide separates rejected candidates from approved production art.",
           "story_id": "sepulcher-cal02-deferred-three-failed-394e0546"
-        }
-      ]
-    },
-    {
-      "id": "sepulcher-cal02-deferred-three-failed-394e0546",
-      "headline": "Sepulcher arcade artwork deferred after three failed screens; CAL-03 becomes next candidate",
-      "summary": "The CAL-02 root-choked arcade failed all three recorded candidate screenings. Its source remains unapproved and unstaged, with further retries unauthorized. The artwork queue can move to independent CAL-03 work without treating CAL-02 as complete.",
-      "body": "Main now records CAL-02 as DEFERRED_REQUIRED after three failed candidate screens. The last image did not meet the 384×576 native source size, D6 alpha boundary, strict overhead projection, 32px registration or non-room-like silhouette. These are reported screening findings recorded in the manifest, not independently authenticated image bytes. CAL-01 remains the sole staged candidate among 198 required sources; none of the 198 has documented human production approval in this manifest. CAL-03 is next for independent candidate work. CAL-02 needs technical correction and explicit user permission before any retry. This is a manifest disposition, not a runtime asset release.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "general",
-      "workstream": "hub-sepulcher-awakening-art-v1",
-      "occurred_at": "2026-11-03T13:54:53Z",
-      "bullets": [
-        "CAL-02: three recorded failed screens; deferred, not completed.",
-        "CAL-01: one staged candidate out of 198 required sources.",
-        "CAL-03: next independent candidate set.",
-        "CAL-02 retries require correction and explicit user authorization."
-      ],
-      "links": [
-        {
-          "title": "CAL-02 deferred disposition on main",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/394e05469659c9a024c0353bf1a727b83d4a49a5"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "The Sepulcher's root-choked arcade has hit a visual-production gate. Three candidate attempts failed its geometry and presentation rules, so CUSTODIAN has formally deferred the artwork rather than quietly advancing an unsuitable image into the game.",
-        "sections": [
-          {
-            "heading": "Why the arcade did not pass",
-            "text": "The recorded screening found a source at 1024×1536 instead of the required 384×576, along with visible pixels outside the D6 footprint, an angled architectural view, inconsistent 32-pixel alignment and a central form that resembled an enterable room. The locked design calls for a strictly overhead, nonwalkable architectural feature."
-          },
-          {
-            "heading": "The queue can move without erasing the debt",
-            "text": "CAL-02 is now DEFERRED_REQUIRED, not approved or completed. The next independent set is CAL-03. CAL-01 remains the only staged candidate in the 198-source required inventory, and staging is still separate from human approval and game integration."
-          },
-          {
-            "heading": "A retry needs a different approach",
-            "text": "The artwork maintainer must resolve source sizing, transparent clipping, overhead geometry and grid registration. The three-attempt limit is exhausted, and another CAL-02 generation requires explicit user authorization."
-          }
-        ],
-        "insights": [
-          {
-            "title": "A failed image can still improve the production system",
-            "explanation": "The new disposition makes the failure measurable and preserves the obligation to revisit it, while allowing unrelated art to advance."
-          },
-          {
-            "title": "The failure is geometric, not merely stylistic",
-            "explanation": "The source conflicts with map footprint and nonwalkable-space constraints. Accepting it would risk depicting navigation that gameplay does not support."
-          }
-        ],
-        "takeaway": "CAL-02 has a documented blocker, not a production asset; CAL-03 may proceed independently.",
-        "next_watch": "Watch for CAL-03 candidate screening and a separately authorized, geometry-correct CAL-02 retry."
-      },
-      "details": {
-        "overview": "Main commit 394e05469659c9a024c0353bf1a727b83d4a49a5 updates the Hub/Sepulcher/Awakening manifest only. The manifest reports three rejected candidate attempts; original candidate image bytes were not independently inspected in this run. No production approval, Asset V2 ingest, independent acceptance or runtime change is established.",
-        "ledger": [
-          {
-            "stage": "CAL-02 disposition",
-            "status": "verified landed manifest record",
-            "evidence": "Main commit 394e0546 records DEFERRED_REQUIRED and three reported failed candidate screens."
-          },
-          {
-            "stage": "Candidate screening",
-            "status": "reported failures",
-            "evidence": "Three recorded REGENERATE verdicts; underlying images not independently validated here."
-          },
-          {
-            "stage": "Candidate staging",
-            "status": "reported not staged",
-            "evidence": "Manifest states CAL-02 upload false; CAL-01 is sole staged candidate."
-          },
-          {
-            "stage": "Human approval and Asset V2",
-            "status": "not established",
-            "evidence": "Approval pending, asset_v2_ready false."
-          },
-          {
-            "stage": "Runtime and independent review",
-            "status": "unknown",
-            "evidence": "No acceptance or gameplay cutover receipt inspected."
-          }
-        ],
-        "notes": [
-          "Counts are limited to the 198-source art manifest, not dispatcher workstream totals.",
-          "CI combined status endpoint returned no statuses; CI health remains unknown."
-        ],
-        "unknowns": [
-          "Underlying rejected image bytes and screening identity not independently verified.",
-          "Full dispatcher, host process, locks, teardown and disk observations unavailable."
-        ],
-        "actions": [
-          "Artwork maintainer: screen independent CAL-03 candidate under existing rules.",
-          "Artwork maintainer: correct CAL-02 geometry and request explicit user authorization before reopening its attempt cap."
-        ]
-      },
-      "scorecard": {
-        "stage": "CAL-02 deferred; CAL-03 next",
-        "as_of": "2026-11-03T13:54:53Z",
-        "scope": "Required Hub/Sepulcher/Awakening/Dust Lung art sources in manifest",
-        "metrics": [
-          {
-            "id": "required_sources",
-            "label": "REQUIRED SOURCES",
-            "value": 198,
-            "verification": "verified",
-            "basis": "Required source inventory in main manifest",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/394e05469659c9a024c0353bf1a727b83d4a49a5"
-          },
-          {
-            "id": "staged_candidates",
-            "label": "STAGED CANDIDATES",
-            "value": 1,
-            "verification": "reported",
-            "basis": "Manifest candidate-only count; CAL-01 only",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/394e05469659c9a024c0353bf1a727b83d4a49a5"
-          },
-          {
-            "id": "deferred_required",
-            "label": "DEFERRED REQUIRED",
-            "value": 1,
-            "verification": "verified",
-            "basis": "CAL-02 disposition in manifest",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/394e05469659c9a024c0353bf1a727b83d4a49a5"
-          }
-        ],
-        "steps": [
-          {
-            "label": "V2 source inventory",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Main b83e268b roadmap"
-          },
-          {
-            "label": "CAL-02 screening",
-            "status": "blocked",
-            "verification": "reported",
-            "evidence": "Three REGENERATE verdicts recorded, underlying images not independently inspected"
-          },
-          {
-            "label": "CAL-03 candidate screening",
-            "status": "next",
-            "verification": "verified",
-            "evidence": "Manifest cursor now CAL-03"
-          },
-          {
-            "label": "CAL-02 corrected retry authorization",
-            "status": "blocked",
-            "verification": "verified",
-            "evidence": "Attempt cap exhausted; explicit authorization absent"
-          },
-          {
-            "label": "Human production approval",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No approval established"
-          },
-          {
-            "label": "Asset V2 and runtime review",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No ingest or acceptance established"
-          }
-        ],
-        "next_gate": "Art owner: screen CAL-03 independently; CAL-02 requires corrected geometry and user retry authorization."
-      },
-      "related": [
-        {
-          "title": "Sepulcher art roadmap expands to 198 required sources, while production approval remains separate",
-          "context": "The roadmap defines the candidate sequence and production gates now governing CAL-02.",
-          "story_id": "hub-sepulcher-art-roadmap-v2-b83e268b"
-        }
-      ]
-    },
-    {
-      "id": "hub-sepulcher-art-roadmap-v2-b83e268b",
-      "headline": "Sepulcher art roadmap expands to 198 required sources, while production approval remains separate",
-      "summary": "A new main-branch roadmap defines 198 required art sources, 36 optional extras and 193 ordered candidate sets across the Hub, Sepulcher, Awakening and Dust Lung. It locks CAL-02's architectural geometry and adds a manifest validator, but does not approve or install production artwork.",
-      "body": "The expanded V2 plan retains 72 original core states and 67 generation-set IDs while specifying 126 new required states. It maps proposed artwork across grounds, shorelines, landmarks and interiors, and adds drift validation. CAL-01 remains a candidate-only paving reference; CAL-02 is next for candidate screening. No human production source approval, Asset V2 registration or gameplay cutover follows from the roadmap. The commit notes unrelated authored-level lifecycle validation failures; current CI success is not established.",
-      "severity": "milestone",
-      "verification": "verified",
-      "category": "general",
-      "workstream": "hub-sepulcher-awakening-art-v1",
-      "occurred_at": "2026-11-03T10:22:10Z",
-      "bullets": [
-        "198 required sources: 72 preserved plus 126 new.",
-        "36 optional sources and 193 candidate-generation sets.",
-        "CAL-02 D6 modular arcade geometry locked for candidate screening.",
-        "Human approval, Asset V2 ingest and gameplay integration remain future gates."
-      ],
-      "links": [
-        {
-          "title": "Expanded V2 roadmap and validator",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/b83e268b03aaeebf2ca6f10eb481d45760ed3ebd"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN's burial-city artwork plan has grown into a much more complete production map. The latest main-branch update specifies the individual sources needed to dress the Sepulcher, neighboring Hub and Awakening spaces, and Dust Lung, without confusing an art plan with finished game assets.",
-        "sections": [
-          {
-            "heading": "A larger map, with its original landmarks intact",
-            "text": "The roadmap now contains 198 required sources, preserving the original 72 and adding 126. Another 36 sources are optional. The 193 ordered candidate sets provide a screening sequence, while original identifiers remain stable for continuity."
-          },
-          {
-            "heading": "The next image is constrained by real geometry",
-            "text": "CAL-02 is a modular, root-choked arcade bound to an existing nonwalkable region. The plan explicitly forbids inventing an entrance or collision changes. CAL-01's paving image remains candidate-only, not approved production art."
-          },
-          {
-            "heading": "Validation is not a playable art release",
-            "text": "A new manifest drift validator helps keep the enlarged inventory coherent. The document still requires visual screening, human source approval, asset registration and in-game testing. Unrelated authored-level lifecycle failures are disclosed rather than hidden."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The bottleneck moves from naming to source approval",
-            "explanation": "A complete inventory reduces ambiguity, but the next meaningful throughput measure is independently screened and human-approved source art, not the number of prompts written."
-          },
-          {
-            "title": "Geometry constraints protect gameplay",
-            "explanation": "Binding the arcade to a nonwalkable polygon prevents attractive artwork from silently becoming a new route or collision surface."
-          }
-        ],
-        "takeaway": "The production blueprint is substantially more complete; production assets and playable integration have not been established.",
-        "next_watch": "Watch for CAL-02 candidate screening and explicit human source approval before Asset V2 ingestion."
-      },
-      "details": {
-        "overview": "Main b83e268b03aaeebf2ca6f10eb481d45760ed3ebd expands the retained artwork manifest and adds validate_hub_art_manifest.py. The roadmap itself states that authored-level lifecycle validation is not green for unrelated reasons. CI checks for this head were not confirmed by the available connector responses.",
-        "ledger": [
-          {
-            "stage": "Expanded manifest and validator",
-            "status": "verified landed",
-            "evidence": "Main commit b83e268b03aaeebf2ca6f10eb481d45760ed3ebd; 198 required, 36 optional, 193 candidate sets."
-          },
-          {
-            "stage": "CAL-01 candidate",
-            "status": "reported candidate only",
-            "evidence": "Manifest identifies a screened candidate but expressly withholds human production approval."
-          },
-          {
-            "stage": "CAL-02 source",
-            "status": "next",
-            "evidence": "D6 384x576 nonwalkable modular arcade geometry locked; image screening pending."
-          },
-          {
-            "stage": "Production approval and Asset V2",
-            "status": "not established",
-            "evidence": "No approval or ingest receipt in inspected change."
-          },
-          {
-            "stage": "Gameplay and independent acceptance",
-            "status": "unknown",
-            "evidence": "No playable cutover or accepted independent review established by this documentation commit."
-          }
-        ],
-        "notes": [
-          "Full canonical dispatcher counts and host execution are not available."
-        ],
-        "unknowns": [
-          "Current main CI conclusion unavailable; status API and PR-triggered run lookup returned no checks.",
-          "Host claims, disk, locks and teardown unverified."
-        ],
-        "actions": [
-          "Art owner: screen CAL-02 candidate against the D6 geometry, then obtain explicit human production-source approval before registration."
-        ]
-      },
-      "scorecard": {
-        "stage": "Expanded roadmap landed; production approval pending",
-        "as_of": "2026-11-03T10:22:10Z",
-        "scope": "Hub/Sepulcher/Awakening/Dust Lung V2 roadmap only",
-        "metrics": [
-          {
-            "id": "required_sources",
-            "label": "REQUIRED SOURCES",
-            "value": 198,
-            "verification": "verified",
-            "basis": "72 retained plus 126 new manifest core sources",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/b83e268b03aaeebf2ca6f10eb481d45760ed3ebd"
-          },
-          {
-            "id": "candidate_sets",
-            "label": "CANDIDATE SETS",
-            "value": 193,
-            "verification": "verified",
-            "basis": "Manifest ordered candidate-generation sets, not completed images",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/b83e268b03aaeebf2ca6f10eb481d45760ed3ebd"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Expanded inventory and validator",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Main commit b83e268b03aaeebf2ca6f10eb481d45760ed3ebd"
-          },
-          {
-            "label": "CAL-02 candidate screening",
-            "status": "next",
-            "verification": "verified",
-            "evidence": "Manifest cursor CAL-02; source not approved"
-          },
-          {
-            "label": "Human production source approval",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No receipt established"
-          },
-          {
-            "label": "Asset V2 ingest",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No ingest established"
-          },
-          {
-            "label": "Runtime and independent review",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No playable acceptance receipt"
-          }
-        ],
-        "next_gate": "Art screening owner: produce and independently screen CAL-02 to locked D6 geometry."
-      },
-      "related": [
-        {
-          "title": "Sepulcher art pipeline records its first staged candidate while keeping production approval separate",
-          "context": "The predecessor established candidate-only CAL-01 and the CAL-02 handoff.",
-          "story_id": "hub-art-candidate-staging-cal01-cal03-4b65fba4"
         }
       ]
     }
