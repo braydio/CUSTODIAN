@@ -1,9 +1,155 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-05T15:56:20Z",
-  "source_main_sha": "761ea68008e32305691d15ffd5de546289c6a6b0",
+  "generated_at": "2026-11-05T18:33:51Z",
+  "source_main_sha": "46d0ae14958502e6985dc0d1502456d8e72992d5",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "sepulcher-memorial-slab-authoring-46d0ae14",
+      "headline": "Approved Sepulcher memorial art gets a production installation plan, but the grave still uses drawn geometry",
+      "summary": "A paired implementation and independent-review packet now specifies how to replace Sepulcher's procedural memorial slab with the user's approved artwork. The packets are draft/manual, and source verification, Asset V2 ingest, actual Hub rendering and independent acceptance remain ahead.",
+      "body": "The newly authored implementation and review packets target one approved Memorial Slab image. The existing grave currently draws the slab with basic primitives. The plan preserves three evidence readings, progression gates, persistence and routes while adding a normalized 160×96 transparent sprite through Asset Pipeline V2. The original image's exact SHA-256 and alpha properties remain unverified. This commit authors work; it does not install the sprite, establish a host claim, or pass independent review.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "assets-art",
+      "workstream": "sepulcher-memorial-slab-production-art-v1",
+      "occurred_at": "2026-11-05T18:26:23Z",
+      "bullets": [
+        "Two named packets authored as draft/manual, not running.",
+        "Exact approved source must be hash-verified before ingest.",
+        "Production Hub rendering and unchanged grave interactions are acceptance gates.",
+        "Fresh independent post-land review is required."
+      ],
+      "links": [
+        {
+          "title": "Memorial Slab implementation and review packet commit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/46d0ae14958502e6985dc0d1502456d8e72992d5"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "The approved Sepulcher memorial slab now has a precise route into the playable game. New implementation and independent-review packets describe how to replace the grave's basic drawn stone with the accepted image, without disturbing its story interactions. The image has not been installed yet.",
+        "sections": [
+          {
+            "heading": "From approved illustration to live scene",
+            "text": "The plan calls for verifying the exact source image, converting it into a transparent 160×96 Asset Pipeline V2 sprite, registering it, and binding it to the existing grave controller. A production Hub rendering check must prove that the actual game displays the new stone exactly once."
+          },
+          {
+            "heading": "Preserve the grave's behavior",
+            "text": "Three separate evidence readings, return-growth gating, persistent choices, navigation and collision must remain unchanged. A fresh independent reviewer must test those boundaries after implementation lands; the new packets are currently draft/manual."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Art approval is only the first gate",
+            "explanation": "The accepted image identifies what to install, but neither its byte-level source digest nor its normalized alpha and runtime visibility has been established. This prevents a visually similar substitute from being mistaken for the approved asset."
+          },
+          {
+            "title": "A focused swap protects gameplay",
+            "explanation": "Only the memorial slab's drawing should change. The grave's existing evidence and progression logic are deliberately outside the implementation scope."
+          }
+        ],
+        "takeaway": "Production art installation is now specified, not completed. No independent acceptance or live rendering has been established.",
+        "next_watch": "Watch for validated source provenance, V2 ingest, actual Hub rendering, and a separate accepted independent review."
+      },
+      "details": {
+        "overview": "Main commit 46d0ae14958502e6985dc0d1502456d8e72992d5 adds paired draft/manual task packets. Source verification, execution, independent review, and canonical cleanup are not established. No fresh valid private operational observation was inspected; dispatcher-wide counts remain unknown.",
+        "ledger": [
+          {
+            "stage": "Implementation and review authoring",
+            "status": "verified",
+            "evidence": "Paired task packets in 46d0ae14958502e6985dc0d1502456d8e72992d5"
+          },
+          {
+            "stage": "Approved source SHA-256 and normalization",
+            "status": "unknown",
+            "evidence": "Explicit execution gate; not measured in authoring commit"
+          },
+          {
+            "stage": "Runtime asset installation",
+            "status": "not established",
+            "evidence": "No Asset V2 ingest or live Hub proof"
+          },
+          {
+            "stage": "Independent acceptance",
+            "status": "not established",
+            "evidence": "Review packet draft/manual; no PASS"
+          },
+          {
+            "stage": "Canonical teardown",
+            "status": "unknown",
+            "evidence": "No host evidence"
+          }
+        ],
+        "notes": [
+          "Source Dropbox content hash is not equivalent to source SHA-256."
+        ],
+        "unknowns": [
+          "Host dispatcher and claim state",
+          "Current workflow-run CI conclusions",
+          "Actual asset installation and visual acceptance"
+        ],
+        "actions": [
+          "Implementation owner: validate exact source and existing claims before installation.",
+          "Independent reviewer: assess landed implementation and production Hub rendering."
+        ]
+      },
+      "scorecard": {
+        "stage": "Approved art queued for production authoring",
+        "as_of": "2026-11-05T18:26:23Z",
+        "scope": "Two newly authored Memorial Slab packets only",
+        "metrics": [
+          {
+            "id": "draft_packets",
+            "label": "DRAFT PACKETS",
+            "value": 2,
+            "verification": "verified",
+            "basis": "Implementation and independent review packet files in inspected commit",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/46d0ae14958502e6985dc0d1502456d8e72992d5"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Author implementation/review packets",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "46d0ae14958502e6985dc0d1502456d8e72992d5"
+          },
+          {
+            "label": "Validate source and ingest V2 sprite",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Not yet verified"
+          },
+          {
+            "label": "Bind and test in production Hub",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No live render proof"
+          },
+          {
+            "label": "Land implementation",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No implementation landing"
+          },
+          {
+            "label": "Independent review acceptance",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No PASS"
+          },
+          {
+            "label": "Canonical teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No host evidence"
+          }
+        ],
+        "next_gate": "Implementation owner: verify exact source and host claims, then install and test the approved sprite."
+      },
+      "related": []
+    },
     {
       "id": "pixelplanets-retirement-landed-held-review-761ea680",
       "headline": "PixelPlanets legacy scene removed; independent review stalls at a provenance gate",
@@ -1619,155 +1765,6 @@
         {
           "title": "Sepulcher art pipeline records its first staged candidate while keeping production approval separate",
           "context": "The predecessor established candidate-only CAL-01 and the CAL-02 handoff.",
-          "story_id": "hub-art-candidate-staging-cal01-cal03-4b65fba4"
-        }
-      ]
-    },
-    {
-      "id": "alpine-cliff-bunker-design-manifest-27afd56f",
-      "headline": "Alpine cliff bunker gains a room-by-room design, but its entrance is not playable yet",
-      "summary": "A new locked design maps a reversible cliff-bunker entrance, antechamber and later service rooms. Its 26 planned art states span five proposed families, but geometry, source approvals, registration and runtime work remain pending.",
-      "body": "CUSTODIAN has committed a design and production plan for an enterable Alpine cliff bunker. The plan separates walkable ground, scenic walls, architecture, doors and dressing so the Operator can enter and exit a real space rather than a painted cutaway. The 26-state inventory is planning only: 14 initial, nine later and three optional. Two inspected transparent image references are composition guides, not approved production art. No room geometry, Asset V2 registration, runtime binding, independent review or playable entrance is established by this commit. The next gate is a no-art real-Operator blockout to establish reversible ingress, collision, floor masks and door anchors before producing final assets.",
-      "severity": "milestone",
-      "verification": "verified",
-      "category": "general",
-      "workstream": "alpine-cliff-bunker-v1",
-      "occurred_at": "2026-11-03T08:05:18Z",
-      "bullets": [
-        "Design and production plan landed on main.",
-        "26 planned states: 14 initial, nine later, three optional.",
-        "Five art families proposed, none registered.",
-        "No-art Operator blockout is the next gate.",
-        "No playable runtime or independent acceptance is claimed."
-      ],
-      "links": [
-        {
-          "title": "Design and manifest commit",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/27afd56f876ff63d7c084dea853189ecf5f8ae36"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "The Alpine cliff bunker now has a concrete plan for becoming somewhere the Operator can actually enter. The new design replaces the temptation to treat a dramatic cutaway as a playable room with a sequence of physical spaces, starting at the snowy approach and antechamber.",
-        "sections": [
-          {
-            "heading": "From scenery to a traversable place",
-            "text": "The design calls for reversible ingress, a physical threshold and antechamber, then service and control rooms in a later stage. Walkable floors and collision must be established independently of decorative scenery. That distinction matters because a beautiful cliff illustration alone cannot tell the game where a character may stand or pass."
-          },
-          {
-            "heading": "The art inventory is mapped, not delivered",
-            "text": "The manifest names 26 states across five proposed asset families: 14 for the initial pass, nine for expansion and three optional. Two transparent 1254-pixel references were inspected as composition guides, but are not approved source assets. Exact floor masks, room canvases and door anchors are still pending."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Geometry before paint",
-            "explanation": "A no-art blockout with the real Operator is the first production gate. It prevents later art from forcing fake entrances, mismatched floors or blocked traversal."
-          },
-          {
-            "title": "A manifest is not an asset shipment",
-            "explanation": "The commit locks scope and naming but does not register Asset V2 families, bind runtime resources or provide independently accepted gameplay."
-          }
-        ],
-        "takeaway": "The bunker has a credible production blueprint, not a playable implementation.",
-        "next_watch": "Watch for the no-art Operator traversal blockout and exact floor, collision and door-anchor geometry before source approval and asset registration."
-      },
-      "details": {
-        "overview": "Main commit 27afd56f introduces the Alpine Cliff Bunker enterable design, G0–G6 production plan and 26-state planning manifest. Source main SHA in the manifest references its preceding baseline. Two RGBA references are marked composition-only, unavailable in the repo and unapproved.",
-        "ledger": [
-          {
-            "stage": "Design and planning manifest",
-            "status": "verified landed",
-            "evidence": "Commit 27afd56f on main; 26 states and five proposed families."
-          },
-          {
-            "stage": "No-art Operator geometry blockout",
-            "status": "pending",
-            "evidence": "Floor masks, canvases, anchors and projection registration remain null."
-          },
-          {
-            "stage": "Source approval and Asset V2",
-            "status": "not completed",
-            "evidence": "No approved/uploaded production source or registered family."
-          },
-          {
-            "stage": "Runtime and independent acceptance",
-            "status": "not completed",
-            "evidence": "Manifest explicitly says runtime not implemented and review not performed."
-          }
-        ],
-        "notes": [
-          "Initial stage 14 states; later stage nine; optional three.",
-          "Existing Alpine Station and connected-bunker work are separate."
-        ],
-        "unknowns": [
-          "Host execution, locks, teardown and full dispatcher totals are not available.",
-          "No runtime traversal evidence or independent PASS."
-        ],
-        "actions": [
-          "Game/level implementation owner: build the reversible no-art Operator ingress blockout and capture exact geometry before art production."
-        ]
-      },
-      "scorecard": {
-        "stage": "Design locked; production not started",
-        "as_of": "2026-11-03T08:05:18Z",
-        "scope": "Alpine cliff bunker V1 planning manifest only",
-        "metrics": [
-          {
-            "id": "planned_states",
-            "label": "PLANNED ART STATES",
-            "value": 26,
-            "verification": "verified",
-            "basis": "26 manifest entries: 14 v1a, nine v1b, three optional",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/27afd56f876ff63d7c084dea853189ecf5f8ae36"
-          },
-          {
-            "id": "proposed_families",
-            "label": "PROPOSED FAMILIES",
-            "value": 5,
-            "verification": "verified",
-            "basis": "Five proposed-only family records in the manifest",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/27afd56f876ff63d7c084dea853189ecf5f8ae36"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Design and manifest",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Main commit 27afd56f."
-          },
-          {
-            "label": "No-art geometry and traversal",
-            "status": "next",
-            "verification": "verified",
-            "evidence": "Production plan G0–G6 requires real Operator blockout."
-          },
-          {
-            "label": "Human-approved source art",
-            "status": "unknown",
-            "verification": "verified",
-            "evidence": "Manifest says not approved or uploaded."
-          },
-          {
-            "label": "Asset V2 registration and runtime",
-            "status": "unknown",
-            "verification": "verified",
-            "evidence": "No family registration or runtime implementation."
-          },
-          {
-            "label": "Independent acceptance",
-            "status": "unknown",
-            "verification": "verified",
-            "evidence": "No review performed."
-          }
-        ],
-        "next_gate": "Level implementation owner: validate no-art reversible Operator traversal and exact door/floor geometry."
-      },
-      "related": [
-        {
-          "title": "Sepulcher art pipeline records its first staged candidate while keeping production approval separate",
-          "context": "Both programs distinguish candidate/reference imagery from approved runtime art.",
           "story_id": "hub-art-candidate-staging-cal01-cal03-4b65fba4"
         }
       ]
