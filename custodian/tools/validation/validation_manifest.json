@@ -5678,6 +5678,9 @@
         "authority"
       ],
       "owners": [
+        "custodian/autoload/music_manager.gd",
+        "custodian/game/world/awakening/awakening_music_director.gd",
+        "custodian/content/audio/music/awakening/**",
         "custodian/project.godot",
         "custodian/game/app/boot/runtime_entrypoint.gd",
         "custodian/game/systems/world/world_transition_*.gd",
