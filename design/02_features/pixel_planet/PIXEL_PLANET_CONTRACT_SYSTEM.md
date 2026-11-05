@@ -1,27 +1,25 @@
 # PIXEL_PLANET_CONTRACT_SYSTEM
 
-Status: in progress
+Status: active
 Owner: procgen/runtime
 Runtime target: Godot 4 (`custodian/`)
-Last Updated: 2026-04-08
+Last Updated: 2026-11-05
 Content Canon Authority: `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
 ## Purpose
 
-Pair PixelPlanets with `procgen/proc_gen_map` so one deterministic contract seed produces:
+Use one deterministic contract seed to produce:
 
-1. CUSTODIAN contracted planet
-2. CUSTODIAN map instance (plus level data)
+1. A planet identity, seed, and environmental profile.
+2. A CUSTODIAN map instance plus level data.
 
 This file is the planet/runtime coupling authority. For content-facing world identity, procedural lore stack targets, and the rule that the contracted world should feel like a recoverable place rather than a generic procgen slice, defer to `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
 
-## Integration Approach
+## Retired PixelPlanets Scene Integration
 
-PixelPlanets scenes are authored with `res://Planets/...` paths. To make those paths resolvable in the CUSTODIAN Godot project:
+The former runtime integration loaded external PixelPlanets scenes through `res://Planets/...` and a `custodian/Planets` symlink. That 2D scene dependency and symlink are retired; CUSTODIAN no longer installs or requires those files.
 
-- `custodian/Planets` is linked to `../PixelPlanets/Planets`
-
-This allows direct loading of PixelPlanets planet scenes from inside CUSTODIAN.
+The six planet identities and their world profiles remain owned by `CustodianContractMap`. The terminal globe is generated independently from the contract key and seed by `TerminalPlanetPreview`.
 
 ## Runtime Module
 
@@ -71,9 +69,8 @@ Payload structure:
   - `critter_variant_offset`
 - `planet`
   - `key`
-  - `scene_path`
   - `planet_seed`
-  - `instance`
+  - `world_profile`
 - `map`
   - `map_seed`
   - `instance`
@@ -106,32 +103,30 @@ A single seed initializes one RNG stream, then derives:
 
 This ensures stable planet+map pairing per contract seed.
 
-## Current Planet Library
+## Planet Identity Keys
 
-- `terran_wet` -> `res://Planets/Rivers/Rivers.tscn`
-- `terran_dry` -> `res://Planets/DryTerran/DryTerran.tscn`
-- `islands` -> `res://Planets/LandMasses/LandMasses.tscn`
-- `ice_world` -> `res://Planets/IceWorld/IceWorld.tscn`
-- `lava_world` -> `res://Planets/LavaWorld/LavaWorld.tscn`
-- `gas_giant` -> `res://Planets/GasPlanet/GasPlanet.tscn`
+- `terran_wet`
+- `terran_dry`
+- `islands`
+- `ice_world`
+- `lava_world`
+- `gas_giant`
 
 ## Notes
 
-- Planet instance methods are applied when available:
-  - `set_seed(...)`
-  - `set_rotates(false)`
-  - `set_light(...)`
+- The selected key and `planet_seed` are derived from one RNG stream before the map seed, preserving fixed-seed contract identity.
 - Procgen map generation uses `ProcGenTilemap.level_data_ready` and forwards resulting level data inside the contract payload.
 
 ## Implementation Status
 
-- `custodian/procgen/custodian_contract_map.gd` is implemented and wired.
-- `custodian/procgen/custodian_contract_map.tscn` provides `PlanetRoot` + `MapRoot`.
-- Single-seed deterministic contract payload validated in headless smoke test.
+- `custodian/game/world/procgen/custodian_contract_map.gd` owns the six planet identities and their world profiles.
+- `custodian/game/world/procgen/custodian_contract_map.tscn` provides the active `MapRoot`; it has no external planet scene root.
+- `custodian/game/ui/terminal/terminal_planet_preview.gd` renders a seeded 3D globe from the contract key and `planet_seed`.
+- The former PixelPlanets scene integration is retired; contract generation requires no `res://Planets` resources.
 
 ## Runtime Safety Fixes Included
 
-- `generate_contract(...)` waits for node readiness (`await ready`) so `PlanetRoot`/`MapRoot` are valid.
+- `generate_contract(...)` waits for node readiness (`await ready`) so `MapRoot` is valid.
 - Procgen startup race handled by waiting until `procgen_node.is_generating()` is false before map-driven generation.
 - Map-level-data await uses a one-shot callback + frame loop guard to avoid missed-signal hangs.
 

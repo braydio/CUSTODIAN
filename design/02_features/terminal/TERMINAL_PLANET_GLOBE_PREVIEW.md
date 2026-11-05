@@ -11,8 +11,8 @@ Replace the terminal's flat contracted-planet card preview with a terminal-only 
 
 ## Constraints
 
-- Do not try to convert the existing PixelPlanets 2D scenes into real geometry at runtime.
-- Keep the active world contract generation unchanged.
+- Generate the globe procedurally; do not depend on the retired PixelPlanets 2D scenes.
+- Preserve deterministic contract identity and world-profile behavior while keeping the globe in the terminal presentation layer.
 - Keep the 3D globe strictly as a terminal presentation layer.
 - Preserve deterministic appearance from `planet_seed`.
 
@@ -48,7 +48,7 @@ Use existing contract data from `CustodianContractMap`:
   - `lava_world`
   - `gas_giant`
 
-This does not need to visually match the old 2D PixelPlanets scenes one-to-one. It only needs to preserve contract identity and feel.
+The procedural globe is an independent terminal presentation. It uses contract identity and `planet_seed` without a legacy scene instance.
 
 ## Interaction
 

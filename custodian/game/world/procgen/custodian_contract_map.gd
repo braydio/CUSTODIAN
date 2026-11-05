@@ -2,7 +2,7 @@ extends Node2D
 class_name CustodianContractMap
 
 ## Deterministically generates a CUSTODIAN mission contract consisting of:
-## 1) a contracted PixelPlanets planet instance
+## 1) a deterministic planet identity and environmental profile
 ## 2) a procgen map instance + derived level data
 
 signal contract_generated(contract: Dictionary)
@@ -20,7 +20,6 @@ var _candidate_materializer: Variant = CANDIDATE_MATERIALIZER_SCRIPT.new()
 @export var contract_seed: int = 0
 @export var randomize_seed_on_ready: bool = true
 @export var map_scene: PackedScene = preload("res://game/world/procgen/proc_gen_map.tscn")
-@export var planet_offset: Vector2 = Vector2(-420, -320)
 @export var map_offset: Vector2 = Vector2.ZERO
 @export var map_generation_attempts: int = 12
 ## Explicit Region Frame selector. Empty is neutral: reusable generator code
@@ -55,15 +54,6 @@ enum MapGenerationMode {
 
 var _room_loader: RoomLoader
 var _room_graph: RoomGraph
-
-const PLANET_LIBRARY := {
-	"terran_wet": "res://Planets/Rivers/Rivers.tscn",
-	"terran_dry": "res://Planets/DryTerran/DryTerran.tscn",
-	"islands": "res://Planets/LandMasses/LandMasses.tscn",
-	"ice_world": "res://Planets/IceWorld/IceWorld.tscn",
-	"lava_world": "res://Planets/LavaWorld/LavaWorld.tscn",
-	"gas_giant": "res://Planets/GasPlanet/GasPlanet.tscn",
-}
 
 const PLANET_WORLD_PROFILES := {
 	"terran_wet": {
@@ -272,11 +262,9 @@ const PLANET_WORLD_PROFILES := {
 	},
 }
 
-@onready var planet_root: Node2D = $PlanetRoot
 @onready var map_root: Node2D = $MapRoot
 
 var _rng := RandomNumberGenerator.new()
-var _active_planet: Node = null
 var _active_map: ProcGenTilemap = null
 var _map_level_data_ready: bool = false
 var _map_level_data: Dictionary = {}
@@ -299,7 +287,6 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
-	_active_planet = null
 	_active_map = null
 	_map_level_data_ready = false
 	_map_level_data = {}
@@ -328,8 +315,6 @@ func generate_contract(seed_value: int) -> void:
 
 	await _clear_previous_instances()
 
-	var planet_instance: Node = _instantiate_contracted_planet(planet_key, planet_seed)
-	var planet_scene_path := _get_planet_scene_path(planet_key)
 	var map_instance: ProcGenTilemap = null
 	var level_data: Dictionary = {}
 	var map_generated := false
@@ -554,9 +539,7 @@ func generate_contract(seed_value: int) -> void:
 		"world_profile": world_profile.duplicate(true),
 		"planet": {
 			"key": planet_key,
-			"scene_path": planet_scene_path,
 			"planet_seed": planet_seed,
-			"instance": planet_instance,
 			"world_profile": world_profile.duplicate(true),
 		},
 		"map": {
@@ -584,8 +567,6 @@ func generate_edgar_contract(seed_value: int) -> Dictionary:
 	var planet_key: String = _pick_planet_key(_rng)
 	var planet_seed: int = int(_rng.randi())
 	var world_profile := _build_planet_world_profile(planet_key, planet_seed)
-	var planet_instance: Node = _instantiate_contracted_planet(planet_key, planet_seed)
-	var planet_scene_path := _get_planet_scene_path(planet_key)
 
 	var layout: Dictionary = _generate_edgar_layout()
 
@@ -606,9 +587,7 @@ func generate_edgar_contract(seed_value: int) -> Dictionary:
 		"world_profile": world_profile.duplicate(true),
 		"planet": {
 			"key": planet_key,
-			"scene_path": planet_scene_path,
 			"planet_seed": planet_seed,
-			"instance": planet_instance,
 			"world_profile": world_profile.duplicate(true),
 		},
 		"map": {
@@ -669,10 +648,6 @@ func get_last_contract_generation_report() -> Dictionary:
 
 
 func _clear_previous_instances() -> void:
-	if _active_planet and is_instance_valid(_active_planet):
-		await _dispose_node(_active_planet)
-	_active_planet = null
-
 	if _active_map and is_instance_valid(_active_map):
 		await _dispose_node(_active_map)
 	_active_map = null
@@ -692,53 +667,11 @@ func _dispose_node(node: Node) -> void:
 
 
 func _pick_planet_key(rng: RandomNumberGenerator) -> String:
-	var keys: Array = PLANET_LIBRARY.keys()
+	var keys: Array = PLANET_WORLD_PROFILES.keys()
 	keys.sort()
 	if keys.is_empty():
 		return "terran_dry"
 	return String(keys[rng.randi_range(0, keys.size() - 1)])
-
-
-func _instantiate_contracted_planet(planet_key: String, planet_seed: int) -> Node:
-	if not PLANET_LIBRARY.has(planet_key):
-		push_warning("[CustodianContractMap] Unknown planet key: %s" % planet_key)
-		return null
-
-	var scene_path := _get_planet_scene_path(planet_key)
-	if scene_path.is_empty():
-		return null
-
-	var scene_res = load(scene_path)
-	if not (scene_res is PackedScene):
-		push_warning("[CustodianContractMap] Planet resource is not a scene: %s" % scene_path)
-		return null
-
-	var planet = (scene_res as PackedScene).instantiate()
-	if planet == null:
-		return null
-
-	planet_root.add_child(planet)
-	if planet is CanvasItem:
-		(planet as CanvasItem).position = planet_offset
-
-	if planet.has_method("set_seed"):
-		planet.call("set_seed", planet_seed)
-	if planet.has_method("set_rotates"):
-		planet.call("set_rotates", false)
-	if planet.has_method("set_light"):
-		planet.call("set_light", Vector2(0.74, 0.28))
-
-	_active_planet = planet
-	return planet
-
-
-func _get_planet_scene_path(planet_key: String) -> String:
-	if not PLANET_LIBRARY.has(planet_key):
-		return ""
-	var scene_path: String = String(PLANET_LIBRARY[planet_key])
-	if not ResourceLoader.exists(scene_path):
-		return ""
-	return scene_path
 
 
 func _instantiate_map(map_seed: int, attempt_index: int = 0, planet_world_profile: Dictionary = {}) -> ProcGenTilemap:

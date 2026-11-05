@@ -883,6 +883,29 @@
       "needs_import": true
     },
     {
+      "id": "planet_contract_retirement",
+      "type": "godot_script",
+      "script": "res://tools/validation/planet_contract_retirement_smoke.gd",
+      "tier": "actor",
+      "tags": [
+        "procgen",
+        "determinism",
+        "planet_contract",
+        "terminal_preview"
+      ],
+      "owners": [
+        "custodian/Planets",
+        "custodian/game/world/procgen/custodian_contract_map.gd",
+        "custodian/game/world/procgen/custodian_contract_map.tscn",
+        "custodian/game/ui/terminal/terminal_planet_preview.gd",
+        "custodian/game/ui/hud/ui.gd",
+        "custodian/tools/validation/planet_contract_retirement_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 300,
+      "needs_import": true
+    },
+    {
       "id": "procgen_region_frame",
       "type": "godot_script",
       "script": "res://tools/validation/procgen_region_frame_smoke.gd",
