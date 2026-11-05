@@ -3,7 +3,7 @@
 - Packet schema: custodian.task_packet.v2
 - Workstream: procgen-pixelplanets-legacy-retirement-v1
 - Category: world-procgen
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Authoring handoff: auto
 - Priority: P1
@@ -45,3 +45,23 @@
 - Refresh reason: A fresh independent review of the actually landed deterministic migration is mandatory.
 - Next action: After canonical implementation finish and archival on origin/main, dispatch the paired fresh-context review against its exact landed commit and preserved baseline tests.
 - Blockers or open questions: No remaining human design decision; normal dispatch/claim, source validation and independent review gates remain authoritative. 
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: `fixed-seed profile/key/planet-seed/map-seed regression and both contract generation paths pass without PixelPlanets resources; terminal globe key/seed material regression passes; canonical changed-file validation passes 16/16 with complete coverage and no source change during validation; git diff --check is clean.`
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `The first Edgar contract smoke reached a pre-existing invalid command_post.tmj and RoomLoader emitted a fatal no-templates warning.`
+- Root cause / contributing factors: `The legacy-layout loader input is malformed in the current content tree and is unrelated to planet contract serialization.`
+- Prevention / pipeline improvement: `Use a small EdgarContractHarness with deterministic valid layout output to isolate the contract serialization path from unrelated room-template assets.`
+- Tooling / docs drift discovered: `none`
+- Follow-up: `review-procgen-pixelplanets-legacy-retirement-v1`
+- What worked: `The focused regression pins the pre-removal profile digest and fixed-seed RNG tuples while exercising seeded terminal globe construction without legacy art resources.`
