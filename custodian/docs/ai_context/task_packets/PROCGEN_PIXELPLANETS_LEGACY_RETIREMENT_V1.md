@@ -18,7 +18,7 @@
 - Max automatic review cycles: 2
 - Review rationale: Removing a Godot resource dependency from the seeded world-contract generator can silently change RNG selection or break runtime consumers; independently verify deterministic contract identity, scene loading, and absence of resource regressions.
 - Reviewed main: 0d41ea40266faa0f3a5ccb8faf251fd65cc883e4
-- Authoring chat: not-recorded
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6aeb925d-9748-83e9-ae97-11c4532466c2
 - Visual review: none
 - Goal: Retire the obsolete PixelPlanets 2D scene integration and tracked dangling symlink without changing deterministic planet identity, procedural world profiles, contract generation, or the existing independently rendered terminal globe.
 - Completion boundary: Land the bounded source, scene, symlink, focused regression, and current-tense documentation changes on origin/main through the canonical workstream lifecycle. A separate independent paired review follows implementation landing.
@@ -41,7 +41,7 @@
 - Next packet state: dependency-gated until implementation lands and archives complete
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: not-recorded
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6aeb925d-9748-83e9-ae97-11c4532466c2
 - Refresh reason: A fresh independent review of the actually landed deterministic migration is mandatory.
 - Next action: After canonical implementation finish and archival on origin/main, dispatch the paired fresh-context review against its exact landed commit and preserved baseline tests.
 - Blockers or open questions: No remaining human design decision; normal dispatch/claim, source validation and independent review gates remain authoritative. 

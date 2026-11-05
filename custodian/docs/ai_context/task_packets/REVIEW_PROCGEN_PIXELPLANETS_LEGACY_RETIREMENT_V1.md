@@ -14,7 +14,7 @@
 - Review target workstream: procgen-pixelplanets-legacy-retirement-v1
 - Review target packet: custodian/docs/ai_context/task_packets/archived/PROCGEN_PIXELPLANETS_LEGACY_RETIREMENT_V1.md
 - Reviewed main: 0d41ea40266faa0f3a5ccb8faf251fd65cc883e4
-- Authoring chat: not-recorded
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6aeb925d-9748-83e9-ae97-11c4532466c2
 - Visual review: none
 - Reviewer context: fresh
 - Reviewer provenance: different-agent
@@ -29,7 +29,7 @@
 - Review focus: Exact resource/symlink deletion boundary; no traversal of symlinks or external repository; seeded RNG parity; world-profile and map generation preservation; scene-tree and consumer migration; terminal preview continuity; current documentation truth; untouched protected declared-documentation review claim and artifacts.
 - Acceptance: Findings-first independent reviewer outcome. PASS requires zero blocking defects, zero material evidence gaps and genuine objective validation; otherwise record stable cycle-scoped R0-NN findings and use the bounded correction/re-review lifecycle. A review PASS is separate from mere implementation landing.
 - Non-goals: Implementing new source behavior, editing the reviewed implementation in the review context, adding new planet visuals, touching Asset V2, changing locks, parking claims, or cleaning old review worktrees.
-- Task overrides: TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.
+- Task overrides: TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.
 
 ## Procedure
 
@@ -46,7 +46,7 @@
 - Next packet state: n/a
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: not-recorded
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6aeb925d-9748-83e9-ae97-11c4532466c2
 - Refresh reason: none
 - Next action: On genuine accepted PASS, mark this retirement complete; do not resume the unrelated held declared-documentation review as an implied side effect.
 - Blockers or open questions: Original protected review remains independent and is not required for this migration.
