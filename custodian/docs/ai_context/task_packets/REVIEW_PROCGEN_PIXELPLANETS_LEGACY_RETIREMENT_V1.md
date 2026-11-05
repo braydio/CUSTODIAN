@@ -4,8 +4,8 @@
 - Workstream: review-procgen-pixelplanets-legacy-retirement-v1
 - Category: world-procgen
 - Kind: review
-- Status: draft
-- Dispatch: manual
+- Status: `ready`
+- Dispatch: `auto`
 - Authoring handoff: auto
 - Priority: P1
 - Depends on: procgen-pixelplanets-legacy-retirement-v1

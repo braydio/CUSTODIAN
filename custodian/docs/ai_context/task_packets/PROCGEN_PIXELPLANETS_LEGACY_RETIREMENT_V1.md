@@ -3,8 +3,8 @@
 - Packet schema: custodian.task_packet.v2
 - Workstream: procgen-pixelplanets-legacy-retirement-v1
 - Category: world-procgen
-- Status: draft
-- Dispatch: manual
+- Status: `ready`
+- Dispatch: `auto`
 - Authoring handoff: auto
 - Priority: P1
 - Depends on: none
