@@ -1,9 +1,177 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-06T19:26:46Z",
-  "source_main_sha": "611fc05cd70b8ad7d474e5f94a13c1394a091c6f",
+  "generated_at": "2026-11-06T20:31:43Z",
+  "source_main_sha": "fd706097f245274d5458bf920cef82f7dd2f3b83",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "creche-approved-source-publication-fd706097",
+      "headline": "Approved Crèche floor and wall artwork reaches main, clearing the source handoff gate",
+      "summary": "Two approved 1464×1074 Crèche artwork sources are now recorded on main as Git LFS objects, with a source receipt and corrected floor/foreground roles. The clean-room preparation packet changed from draft/manual to ready/auto. Runtime installation, object retrieval, gameplay review and actual dispatcher eligibility remain unverified.",
+      "body": "CUSTODIAN committed the approved Awakening Crèche underlay and foreground sources, recording exact LFS object IDs and a bounded pre-claim source receipt. The implementation evidence reports source-only validation of dimensions, RGBA and transparency. The clean-room plates packet is now marked ready/auto in GitHub, but still lists a review dependency, so this is not proof that the dispatcher can claim it. No Godot room cutover, Asset V2 ingestion, gameplay-scale review or host execution was verified. The separate G2 source-scope correction remains awaiting independent acceptance.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "assets-art",
+      "workstream": "awakening-interactible-clean-room-plates-v1",
+      "occurred_at": "2026-11-06T20:07:21Z",
+      "bullets": [
+        "Two approved 1464×1074 Crèche sources committed as Git LFS pointers",
+        "Exact source receipt and role mapping landed",
+        "Named clean-room plates packet changed to ready/auto",
+        "Runtime ingestion and gameplay-scale review remain ahead",
+        "Dispatcher eligibility and LFS object retrieval not independently verified"
+      ],
+      "links": [
+        {
+          "title": "Crèche source publication",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/fd706097f245274d5458bf920cef82f7dd2f3b83"
+        },
+        {
+          "title": "Bounded source publication procedure",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/3f19fc4c2e6ac9bc474a7afdac906f721a33e5e9"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "The Awakening Crèche has crossed a practical art-production threshold: its approved floor and foreground sources now have permanent identities in the project's main history. That gives the next implementation step a reproducible starting point, although the room itself has not yet been rebuilt in-game.",
+        "sections": [
+          {
+            "heading": "From browser artwork to tracked source",
+            "text": "The two 1464×1074 images were recorded with distinct Git LFS object IDs and a receipt identifying which is the floor and which is the foreground. The receipt reports source-only checks for image dimensions, RGBA format and transparency."
+          },
+          {
+            "heading": "A packet moves forward, but the game has not",
+            "text": "The clean-room plates packet changed from draft/manual to ready/auto. Its dependency still points to a review workstream, and no canonical dispatcher audit was available. Source publication is not the same as Asset V2 ingestion, Godot scene installation or a successful gameplay capture."
+          },
+          {
+            "heading": "What remains for the starting room",
+            "text": "The next useful proof is successful retrieval of both LFS objects followed by controlled source preparation, room cutover and direct gameplay-scale review. That is the bridge from approved artwork to a room the player can actually explore."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The asset handoff is now reproducible",
+            "explanation": "Exact object IDs and role assignments reduce the risk of installing the wrong image or a downscaled preview. They also give the implementation worker a concrete source boundary."
+          },
+          {
+            "title": "Ready on paper is not ready on the host",
+            "explanation": "The packet's ready/auto label is a repository state, not evidence of satisfied dependencies, a dispatcher claim or active Godot work."
+          }
+        ],
+        "takeaway": "Crèche source publication has landed; runtime integration and visual acceptance are still separate gates.",
+        "next_watch": "Verify the Git LFS objects are retrievable and the clean-room packet's dependency is satisfied before tracking a source-prep or Godot cutover claim."
+      },
+      "details": {
+        "overview": "Main source commit fd706097f245274d5458bf920cef82f7dd2f3b83 contains two Git LFS pointers, receipt and packet status change. Underlay OID 9ce70dff… (2,322,966 bytes); foreground OID 515b287f… (1,745,414 bytes). These are repository pointer records, not independently fetched image bytes. Combined commit statuses and PR-triggered workflow runs returned empty.",
+        "ledger": [
+          {
+            "stage": "Approved source publication",
+            "status": "verified landed",
+            "evidence": "Commit fd706097 includes two LFS pointers and source receipt"
+          },
+          {
+            "stage": "Source validation",
+            "status": "reported passing",
+            "evidence": "Receipt reports SHA, RGBA, alpha, dimensions and source-only install checks"
+          },
+          {
+            "stage": "Packet readiness",
+            "status": "verified GitHub declaration",
+            "evidence": "Clean-room plates packet changed draft/manual to ready/auto; review dependency remains"
+          },
+          {
+            "stage": "Runtime cutover",
+            "status": "unknown / not established",
+            "evidence": "No Godot installation or gameplay capture inspected"
+          },
+          {
+            "stage": "Direct gameplay review",
+            "status": "next",
+            "evidence": "User/ChatGPT review required after implementation"
+          },
+          {
+            "stage": "Host cleanup",
+            "status": "unknown",
+            "evidence": "No canonical host audit or teardown receipt"
+          }
+        ],
+        "notes": [
+          "Git LFS object pointers do not independently prove content availability to the runtime.",
+          "No full dispatcher inventory was available."
+        ],
+        "unknowns": [
+          "LFS object fetchability and host dispatcher eligibility",
+          "Actual scene integration and gameplay validation",
+          "Host claims, worktrees and teardown"
+        ],
+        "actions": [
+          "Art implementation owner: verify both exact LFS objects and source checks before preparing the room.",
+          "Runtime owner: complete Godot integration and collect gameplay-scale evidence.",
+          "User/ChatGPT: review the resulting gameplay-scale room."
+        ]
+      },
+      "scorecard": {
+        "stage": "Approved source identities landed; runtime preparation next",
+        "as_of": "2026-11-06T20:31:43Z",
+        "scope": "One named Crèche clean-room plates workstream, not a full queue audit",
+        "metrics": [
+          {
+            "id": "other-creche-sources",
+            "label": "TRACKED SOURCES",
+            "value": 2,
+            "verification": "verified",
+            "basis": "Two distinct Git LFS pointer files in commit fd706097; bytes not independently fetched",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/fd706097f245274d5458bf920cef82f7dd2f3b83"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Approve floor and foreground roles",
+            "status": "done",
+            "verification": "reported",
+            "evidence": "Owner approval recorded in source receipt"
+          },
+          {
+            "label": "Commit source identities and receipt",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Commit fd706097"
+          },
+          {
+            "label": "Verify fetchability and dependency eligibility",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No canonical dispatcher or LFS retrieval evidence"
+          },
+          {
+            "label": "Prepare and ingest Asset V2 sources",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No runtime ingestion inspected"
+          },
+          {
+            "label": "Install Godot room cutover",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No scene integration evidence"
+          },
+          {
+            "label": "Direct gameplay-scale visual review",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No gameplay captures or verdict"
+          }
+        ],
+        "next_gate": "Implementation owner: verify exact LFS retrieval and packet dependency before source preparation."
+      },
+      "related": [
+        {
+          "title": "Crèche art handoff corrected; direct visual review replaces paired Codex review",
+          "context": "Earlier correction established the approved source roles and direct gameplay review path.",
+          "story_id": "awakening-creche-direct-review-source-correction-be37e5c2"
+        }
+      ]
+    },
     {
       "id": "g2-source-scope-correction-611fc05c",
       "headline": "Sepulcher G2 review blocker gets a narrowly scoped fix, but independent approval is still ahead",
@@ -1565,176 +1733,24 @@
           "story_id": "paired-review-source-mode-implementation-landed-cd1cff49"
         }
       ]
-    },
-    {
-      "id": "paired-review-source-mode-implementation-landed-cd1cff49",
-      "headline": "Executable-source archive correction lands; independent review is next",
-      "summary": "CUSTODIAN has landed and archived a targeted correction for validating already-executable Python sources in paired-review archives. The implementation reports 294 passing tests, but independent acceptance and host cleanup remain unverified.",
-      "body": "The source-bearing archive validator now permits a Python source file to retain executable mode only when explicitly authorized and executable throughout its authenticated history. Commit cd1cff49 carries the implementation and reported validation; commits 814e6779 and a5275416 mark and archive the implementation packet complete. The separate review packet remains ready, not accepted. No full dispatcher audit, host teardown receipt, or CI conclusion was established. The private pilot pointer is older than the current main changes and exact-byte validation is unavailable, so no operational counts were admitted.",
-      "severity": "milestone",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-paired-review-source-bearing-executable-mode-v1",
-      "occurred_at": "2026-11-04T05:27:53Z",
-      "bullets": [
-        "Validator correction landed on main and implementation packet archived.",
-        "Implementation summary reports 294 passing unit tests and complete changed-file validation.",
-        "Independent review remains ready and must independently verify historical WIRE trace.",
-        "No accepted PASS or canonical teardown confirmed."
-      ],
-      "links": [
-        {
-          "title": "Implementation and validation",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/cd1cff4969c10b4ea98de41197b8f8f880ef1ba2"
-        },
-        {
-          "title": "Completion metadata",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/814e677900e3c5146a2759fe211c2a7ce88c4d8c"
-        },
-        {
-          "title": "Archived packet",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/a52754162baeb7133d4a5b015c9f98153a840be6"
-        },
-        {
-          "title": "Review profile admission",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/461cf501ca467e5492426f8e402d68c018d28da2"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "A narrow repair to CUSTODIAN’s paired-review archive validator has reached main. It allows a legitimate Python source file to remain executable across an authenticated archive history without allowing new or unauthorized executable files through.",
-        "sections": [
-          {
-            "heading": "The repair is now part of main",
-            "text": "The implementation was committed and its task packet marked complete and archived. Its accompanying summary reports 294 passing tests and complete changed-file validation, including adversarial file-mode cases."
-          },
-          {
-            "heading": "Independent scrutiny still matters",
-            "text": "A separate review packet is ready with a source-specific checkout profile. That reviewer must independently reconstruct the historical WIRE archive case and test that unsafe mode changes remain rejected. Ready is not accepted, and neither proves a live worker or clean teardown."
-          }
-        ],
-        "insights": [
-          {
-            "title": "A file permission was blocking a larger recovery chain",
-            "explanation": "The validator previously treated an already-executable source file as disallowed archive content. This targeted exception may unblock review of the WIRE exporter without weakening restrictions on metadata and newly executable files, provided independent review confirms the implementation."
-          }
-        ],
-        "takeaway": "The correction is landed and its implementation packet is archived; independent review acceptance remains the decisive next gate.",
-        "next_watch": "Watch for an independently accepted review receipt, then an explicitly authorized recovery of the protected WIRE review."
-      },
-      "details": {
-        "overview": "Main context 461cf501. Implementation cd1cff49, completion 814e6779, archival a5275416, review profile 461cf501. Reported test results are from the implementation summary, not independently rerun by this watch. No full dispatcher audit or canonical host evidence.",
-        "ledger": [
-          {
-            "stage": "Implementation landing",
-            "status": "verified",
-            "evidence": "cd1cff49 on main contains validator and regression changes."
-          },
-          {
-            "stage": "Implementation tests",
-            "status": "reported",
-            "evidence": "Implementation summary reports 294 unit tests and complete changed-file validation."
-          },
-          {
-            "stage": "Packet archive",
-            "status": "verified",
-            "evidence": "814e6779 marks complete; a5275416 archives."
-          },
-          {
-            "stage": "Independent review",
-            "status": "not accepted",
-            "evidence": "Review packet remains ready; no independent PASS inspected."
-          },
-          {
-            "stage": "Canonical teardown",
-            "status": "unknown",
-            "evidence": "No host evidence."
-          }
-        ],
-        "notes": [
-          "Combined commit status returned no statuses, not a passing CI result."
-        ],
-        "unknowns": [
-          "Live dispatcher counts, claims, worktrees, locks and disk usage.",
-          "Independent review acceptance and host cleanup.",
-          "Pilot observation freshness and exact-byte integrity."
-        ],
-        "actions": [
-          "Review owner: independently inspect source-mode continuity and adversarial cases before any protected WIRE recovery."
-        ]
-      },
-      "scorecard": {
-        "stage": "Implementation landed and archived; independent review ready",
-        "as_of": "2026-11-04T05:38:14Z",
-        "scope": "One implementation and its paired review only",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Implementation landed",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "cd1cff49"
-          },
-          {
-            "label": "Implementation packet archived",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "a5275416"
-          },
-          {
-            "label": "Independent review acceptance",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Review packet ready, no PASS inspected"
-          },
-          {
-            "label": "Protected WIRE recovery",
-            "status": "blocked",
-            "verification": "verified",
-            "evidence": "Requires accepted independent review and separate authorization"
-          },
-          {
-            "label": "Canonical teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No host evidence"
-          }
-        ],
-        "next_gate": "Independent reviewer: verify historical WIRE trace and negative mode cases, then record an authentic review result."
-      },
-      "related": [
-        {
-          "title": "Paired-review executable-mode correction moves into the ready queue",
-          "context": "This earlier dispatch admission has now advanced to a landed implementation.",
-          "story_id": "paired-review-executable-mode-ready-ed9ea251"
-        }
-      ]
     }
   ],
   "snapshot": {
-    "observed_at": "2026-11-02T00:45:38Z",
-    "source_main_sha": "b4a5fb6f745333b0206fcd3c970792affa21f144",
+    "observed_at": "2026-11-06T20:31:43Z",
+    "source_main_sha": "fd706097f245274d5458bf920cef82f7dd2f3b83",
     "coverage": "partial",
-    "scope": "Inspected named inherited-main R0-01 correction implementation/review packets and recent GitHub main/Actions; no canonical full dispatcher audit or private host observation.",
+    "scope": "Inspected Crèche source publication commit and one named packet transition on GitHub; no canonical dispatcher audit or validated private operational observation.",
     "metrics": [
       {
-        "id": "other-correction-archived",
-        "label": "CORRECTION ARCHIVED",
+        "id": "ready_auto",
+        "label": "NAMED PACKET READY",
         "value": 1,
         "verification": "verified",
-        "basis": "One named R0-01 implementation packet archived on main; excludes other workstreams",
-        "url": "https://github.com/braydio/CUSTODIAN/commit/b4a5fb6f745333b0206fcd3c970792affa21f144"
-      },
-      {
-        "id": "other-correction-review-ready",
-        "label": "REVIEW READY",
-        "value": 1,
-        "verification": "verified",
-        "basis": "One named R0-01 correction reviewer packet ready/auto on main; not a global ready count",
-        "url": "https://github.com/braydio/CUSTODIAN/blob/b4a5fb6f745333b0206fcd3c970792affa21f144/custodian/docs/ai_context/task_packets/REVIEW_AGENT_WORKSTREAM_INHERITED_MAIN_RESUME_PROVENANCE_V1_REVIEW_CORRECTIONS_1.md"
+        "basis": "One inspected clean-room plates packet declares ready/auto on main; not a global queue count or confirmed dispatch eligibility",
+        "url": "https://github.com/braydio/CUSTODIAN/commit/fd706097f245274d5458bf920cef82f7dd2f3b83"
       }
     ],
-    "focus": "Fresh independent review of the R0-01 consumer correction; only accepted PASS can unblock protected closeout.",
-    "note": "Correction implementation landed and archived; independent review not yet accepted. Full dispatcher and private WIRE telemetry unavailable."
+    "focus": "Verify Crèche source fetchability and packet dependency before runtime ingestion.",
+    "note": "Two tracked source identities landed; operational producer observation remains unvalidated and GitHub statuses are not a full CI assessment."
   }
 }
