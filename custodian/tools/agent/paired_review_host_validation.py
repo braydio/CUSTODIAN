@@ -104,6 +104,79 @@ _ADMIN_SCOPE_REVIEW_PACKET = (
     f"{PACKET_ROOT}/REVIEW_AGENT_PERSISTENT_TASK_ADMINISTRATOR_REVIEW_SCOPE_RECOVERY_V1.md"
 )
 
+_SEPULCHER_G2_SCOPE_ATTESTATION_PATH = (
+    "custodian/docs/ai_context/review_scope_attestations/"
+    "hub_sepulcher_grave_resolution_v1.json"
+)
+_SEPULCHER_G2_SCOPE_SOURCE_WORKSTREAM = "hub-sepulcher-grave-resolution-v1"
+_SEPULCHER_G2_SCOPE_SOURCE_ARCHIVE = "c8e3957628e5d453a7ca10d49517ee71b78fd2bf"
+_SEPULCHER_G2_SCOPE_SOURCE_ARCHIVE_PARENT = "b41c4d86b5bc40ec504b1e30fa3aadffd301cc9f"
+_SEPULCHER_G2_SCOPE_SOURCE_ARCHIVE_TREE = "8321317bbd04aa3d67d8612c836d5ff742eb99dc"
+_SEPULCHER_G2_SCOPE_SOURCE_PACKET = (
+    f"{PACKET_ROOT}/archived/HUB_SEPULCHER_GRAVE_RESOLUTION_V1.md"
+)
+_SEPULCHER_G2_SCOPE_SOURCE_PACKET_BLOB = "626362d96ae1ef1041951d97880ed226a0f33c18"
+_SEPULCHER_G2_SCOPE_SOURCE_BASE = _SEPULCHER_G2_SCOPE_SOURCE_ARCHIVE_PARENT
+_SEPULCHER_G2_SCOPE_SOURCE_HEAD = _SEPULCHER_G2_SCOPE_SOURCE_ARCHIVE
+_SEPULCHER_G2_SCOPE_CODE_FILES = {
+    "custodian/game/world/hub/events/sepulcher_grave/sepulcher_grave_evidence.gd":
+        "b663f7b18aa0d899c0e71f741633cc71988b6cc6",
+    "custodian/tools/validation/hub_sepulcher_grave_evidence_smoke.gd":
+        "920708278da065956b9365809f9242c0aad9ad40",
+    "custodian/tools/validation/hub_sepulcher_grave_resolution_smoke.gd":
+        "24eb6025712bbdd881eb08f7e8968276c34b2d13",
+    "custodian/tools/validation/validation_manifest.json":
+        "011399ed96b917038eeb403970be2f2c8edafa91",
+}
+_SEPULCHER_G2_SCOPE_ATTESTED_FILES = {
+    "custodian/docs/ai_context/VALIDATION_RECIPES.md":
+        "7d37cb4654f627808274df297e1b73e6c6a555f5",
+}
+_SEPULCHER_G2_SCOPE_ARCHIVE_INVENTORY = {
+    "HUB_SEPULCHER_GRAVE_RESOLUTION_V1_CLAUDE_SUMMARY.md":
+        (None, ("100644", "c14b1e38f6b1cbf89fe8d42f668ae9322b4acd1c")),
+    "custodian/docs/ai_context/VALIDATION_RECIPES.md":
+        (("100644", "950539e111e2511c8c8c456958f13b9110b8487c"),
+         ("100644", "7d37cb4654f627808274df297e1b73e6c6a555f5")),
+    "custodian/docs/ai_context/task_packets/HUB_SEPULCHER_GRAVE_RESOLUTION_V1.md":
+        (("100644", "6703f3c4754d64100c7fb035e0da49033e1bd582"), None),
+    f"{PACKET_ROOT}/README.md":
+        (("100644", "f6207602d405a0464b43bdadb2fc50d27e1eb595"),
+         ("100644", "582c22c2e9829f9afe41586576b7bc46cd012bdc")),
+    _SEPULCHER_G2_SCOPE_SOURCE_PACKET:
+        (None, ("100644", _SEPULCHER_G2_SCOPE_SOURCE_PACKET_BLOB)),
+    "custodian/game/world/hub/events/sepulcher_grave/sepulcher_grave_evidence.gd":
+        (("100644", "2f21e0bdc36b4ea77d305444e1afebe5ae941c5e"),
+         ("100644", "b663f7b18aa0d899c0e71f741633cc71988b6cc6")),
+    "custodian/tools/validation/hub_sepulcher_grave_evidence_smoke.gd":
+        (("100644", "53e9edc0ac012db5bbf086c5ec0de42685a8d592"),
+         ("100644", "920708278da065956b9365809f9242c0aad9ad40")),
+    "custodian/tools/validation/hub_sepulcher_grave_resolution_smoke.gd":
+        (None, ("100644", "24eb6025712bbdd881eb08f7e8968276c34b2d13")),
+    "custodian/tools/validation/hub_sepulcher_grave_resolution_smoke.gd.uid":
+        (None, ("100644", "c99f5b69312f219082cdd9b3081d61fbfbf141e7")),
+    "custodian/tools/validation/validation_manifest.json":
+        (("100644", "e91b149dbd79ae4ea1e9cc295ff4a1ff0d539578"),
+         ("100644", "011399ed96b917038eeb403970be2f2c8edafa91")),
+}
+_SEPULCHER_G2_SCOPE_EXTRA_ARCHIVE_PATHS = frozenset(
+    set(_SEPULCHER_G2_SCOPE_ARCHIVE_INVENTORY)
+    - {
+        f"{PACKET_ROOT}/README.md",
+        f"{PACKET_ROOT}/HUB_SEPULCHER_GRAVE_RESOLUTION_V1.md",
+        _SEPULCHER_G2_SCOPE_SOURCE_PACKET,
+        "HUB_SEPULCHER_GRAVE_RESOLUTION_V1_CLAUDE_SUMMARY.md",
+    }
+)
+_SEPULCHER_G2_SCOPE_CORRECTION_WORKSTREAM = "agent-paired-review-g2-source-scope-attestation-v1"
+_SEPULCHER_G2_SCOPE_CORRECTION_PACKET = (
+    f"{PACKET_ROOT}/archived/AGENT_PAIRED_REVIEW_G2_SOURCE_SCOPE_ATTESTATION_V1.md"
+)
+_SEPULCHER_G2_SCOPE_REVIEW_WORKSTREAM = "review-agent-paired-review-g2-source-scope-attestation-v1"
+_SEPULCHER_G2_SCOPE_REVIEW_PACKET = (
+    f"{PACKET_ROOT}/archived/REVIEW_AGENT_PAIRED_REVIEW_G2_SOURCE_SCOPE_ATTESTATION_V1.md"
+)
+
 _OPERATOR_3D_SCOPE_ATTESTATION_PATH = (
     "custodian/docs/ai_context/review_scope_attestations/operator_3d_model_to_sprite_v1.json"
 )
@@ -1849,6 +1922,10 @@ def _attested_manifest_comparison(repo: Path, reviewed_main: str, source_span: d
         authenticated = _verified_procession_scope_attestation(
             repo, reviewed_main, archive, set(attested_paths),
         )
+    elif archive == _SEPULCHER_G2_SCOPE_SOURCE_ARCHIVE:
+        authenticated = _verified_sepulcher_g2_scope_attestation(
+            repo, reviewed_main, archive, set(attested_paths),
+        )
     elif archive == _RITUALANT_RECOVERY2_SCOPE_SOURCE_ARCHIVE:
         authenticated = _verified_ritualant_recovery2_scope_attestation(
             repo, reviewed_main, archive, set(attested_paths),
@@ -1868,6 +1945,13 @@ def _attested_manifest_comparison(repo: Path, reviewed_main: str, source_span: d
         if (source_span.get("head") != archive
                 or path not in _RITUALANT_RECOVERY2_SCOPE_ARCHIVE_PATHS):
             raise HostValidationError("Ritualant recovery-2 manifest is outside the exact attested archive inventory")
+        source_entry_for_binding = _git_tree_entry(repo, archive, path)
+        if source_entry_for_binding is not None:
+            binding = {"mode": source_entry_for_binding[0], "blob": source_entry_for_binding[1]}
+    elif archive == _SEPULCHER_G2_SCOPE_SOURCE_ARCHIVE:
+        if (source_span.get("head") != archive
+                or path not in _SEPULCHER_G2_SCOPE_ARCHIVE_INVENTORY):
+            raise HostValidationError("Sepulcher G2 manifest is outside the exact attested archive inventory")
         source_entry_for_binding = _git_tree_entry(repo, archive, path)
         if source_entry_for_binding is not None:
             binding = {"mode": source_entry_for_binding[0], "blob": source_entry_for_binding[1]}
@@ -3055,6 +3139,176 @@ def _verified_procession_scope_attestation(repo: Path, reviewed_main: str,
     }
 
 
+def _verified_sepulcher_g2_scope_attestation(repo: Path, reviewed_main: str,
+                                             landing_commit: str,
+                                             extra_archive_paths: set[str]) -> dict:
+    """Authenticate the single omitted G2 recipe after this correction's PASS."""
+    if landing_commit != _SEPULCHER_G2_SCOPE_SOURCE_ARCHIVE:
+        raise HostValidationError("Sepulcher G2 scope attestation names a different source archive")
+    if frozenset(extra_archive_paths) not in {
+                frozenset(_SEPULCHER_G2_SCOPE_ATTESTED_FILES),
+                _SEPULCHER_G2_SCOPE_EXTRA_ARCHIVE_PATHS,
+            }:
+        raise HostValidationError("Sepulcher G2 attestation must cover exactly its pinned recipe Markdown")
+    if _git(repo, "rev-list", "--parents", "-n", "1", landing_commit).split() != [
+        landing_commit, _SEPULCHER_G2_SCOPE_SOURCE_ARCHIVE_PARENT,
+    ] or _git(repo, "rev-parse", f"{landing_commit}^{{tree}}") != _SEPULCHER_G2_SCOPE_SOURCE_ARCHIVE_TREE:
+        raise HostValidationError("Sepulcher G2 archive parent or tree differs from the pinned source")
+    archive_paths = set(_changed_paths(
+        repo, f"{_SEPULCHER_G2_SCOPE_SOURCE_ARCHIVE_PARENT}..{landing_commit}",
+    ))
+    if archive_paths != set(_SEPULCHER_G2_SCOPE_ARCHIVE_INVENTORY):
+        raise HostValidationError("Sepulcher G2 complete archive path inventory differs")
+    for path, expected in _SEPULCHER_G2_SCOPE_ARCHIVE_INVENTORY.items():
+        before, after = expected
+        if (_git_tree_entry(repo, _SEPULCHER_G2_SCOPE_SOURCE_ARCHIVE_PARENT, path) != before
+                or _git_tree_entry(repo, landing_commit, path) != after):
+            raise HostValidationError(f"Sepulcher G2 archive entry mode/blob differs: {path}")
+    if _git_tree_entry(repo, landing_commit, _SEPULCHER_G2_SCOPE_SOURCE_PACKET) != (
+        "100644", _SEPULCHER_G2_SCOPE_SOURCE_PACKET_BLOB,
+    ):
+        raise HostValidationError("Sepulcher G2 archived packet blob or mode differs")
+    source_entries = {}
+    for path, expected_blob in _SEPULCHER_G2_SCOPE_ATTESTED_FILES.items():
+        entry = _git_tree_entry(repo, landing_commit, path)
+        if entry != ("100644", expected_blob):
+            raise HostValidationError(f"Sepulcher G2 omitted recipe blob or mode differs: {path}")
+        source_entries[path] = {"mode": entry[0], "blob": entry[1]}
+    code_entries = {}
+    for path, expected_blob in _SEPULCHER_G2_SCOPE_CODE_FILES.items():
+        entry = _git_tree_entry(repo, landing_commit, path)
+        if entry != ("100644", expected_blob):
+            raise HostValidationError(f"Sepulcher G2 source-code blob or mode differs: {path}")
+        code_entries[path] = {"mode": entry[0], "blob": entry[1]}
+
+    approval_main = _git(repo, "rev-parse", "origin/main^{commit}")
+    if (not _is_ancestor(repo, reviewed_main, approval_main)
+            or not _is_ancestor(repo, landing_commit, approval_main)):
+        raise HostValidationError("Sepulcher G2 approval main does not contain the preserved reviewed main and archive")
+    attestation_entry = _git_tree_entry(repo, approval_main, _SEPULCHER_G2_SCOPE_ATTESTATION_PATH)
+    if attestation_entry is None or attestation_entry[0] != "100644":
+        raise HostValidationError("approved main lacks the regular-file Sepulcher G2 attestation")
+    expected_attestation = {
+        "schema": "custodian.review_source_scope_attestation.v1",
+        "source_workstream": _SEPULCHER_G2_SCOPE_SOURCE_WORKSTREAM,
+        "source_archive_commit": _SEPULCHER_G2_SCOPE_SOURCE_ARCHIVE,
+        "source_packet_path": _SEPULCHER_G2_SCOPE_SOURCE_PACKET,
+        "source_packet_blob": _SEPULCHER_G2_SCOPE_SOURCE_PACKET_BLOB,
+        "source_files": [
+            {"path": path, "blob": blob, "mode": "100644"}
+            for path, blob in sorted(_SEPULCHER_G2_SCOPE_ATTESTED_FILES.items())
+        ],
+        "reason": "The original archived G2 Work surface omitted this exact validation recipe path.",
+        "post_hoc": True,
+    }
+    try:
+        attestation_bytes = subprocess.run(
+            ["git", "show", f"{approval_main}:{_SEPULCHER_G2_SCOPE_ATTESTATION_PATH}"],
+            cwd=repo, capture_output=True, check=True,
+        ).stdout
+        attestation = json.loads(attestation_bytes)
+    except (subprocess.CalledProcessError, json.JSONDecodeError) as exc:
+        raise HostValidationError("Sepulcher G2 attestation is unreadable or invalid JSON") from exc
+    canonical_bytes = (json.dumps(expected_attestation, indent=2, sort_keys=True) + "\n").encode()
+    if attestation != expected_attestation or attestation_bytes != canonical_bytes:
+        raise HostValidationError("Sepulcher G2 attestation bytes do not match exact post-hoc authorization")
+    origins_result = subprocess.run(
+        ["git", "log", "--format=%H", approval_main, "--", _SEPULCHER_G2_SCOPE_ATTESTATION_PATH],
+        cwd=repo, text=True, capture_output=True,
+    )
+    origins = [commit for commit in origins_result.stdout.splitlines()
+               if _git_tree_entry(repo, commit, _SEPULCHER_G2_SCOPE_ATTESTATION_PATH) == attestation_entry]
+    if origins_result.returncode or len(origins) != 1:
+        raise HostValidationError("Sepulcher G2 attestation has missing or ambiguous exact-blob origin")
+    origin_commit = origins[0]
+    try:
+        correction_text = read_git_text(repo, approval_main, _SEPULCHER_G2_SCOPE_CORRECTION_PACKET)
+        review_text = read_git_text(repo, approval_main, _SEPULCHER_G2_SCOPE_REVIEW_PACKET)
+    except ValueError as exc:
+        raise HostValidationError("Sepulcher G2 attestation lacks archived correction review evidence") from exc
+    correction = parse_packet(_SEPULCHER_G2_SCOPE_CORRECTION_PACKET, correction_text)
+    review = parse_packet(_SEPULCHER_G2_SCOPE_REVIEW_PACKET, review_text)
+    if (correction.error or correction.kind not in {"implementation", "correction"}
+            or correction.status != "complete"
+            or correction.workstream != _SEPULCHER_G2_SCOPE_CORRECTION_WORKSTREAM
+            or review.error or review.kind != "review" or review.status != "complete"
+            or review.workstream != _SEPULCHER_G2_SCOPE_REVIEW_WORKSTREAM
+            or review.review_target_workstream != _SEPULCHER_G2_SCOPE_CORRECTION_WORKSTREAM
+            or review.review_target_packet != _SEPULCHER_G2_SCOPE_CORRECTION_PACKET):
+        raise HostValidationError("Sepulcher G2 correction/review packet identity is incomplete")
+    outcome, outcome_error = review_outcome.parse_review_outcome(review_text)
+    if outcome_error or outcome is None or outcome.get("Outcome") != "passed":
+        raise HostValidationError("Sepulcher G2 attestation has no canonical independent PASS outcome")
+    accepted, _, reason = review_outcome.review_acceptance(
+        review_text, correction_text, _SEPULCHER_G2_SCOPE_REVIEW_WORKSTREAM,
+    )
+    if not accepted:
+        raise HostValidationError(f"Sepulcher G2 attestation review is not accepted: {reason}")
+    baseline = read_git_text(repo, outcome["Reviewed main"], _SEPULCHER_G2_SCOPE_CORRECTION_PACKET)
+    implementation_commit, identity_error = resolve_target_implementation_commit(
+        repo, outcome["Reviewed main"], _SEPULCHER_G2_SCOPE_CORRECTION_PACKET,
+        _SEPULCHER_G2_SCOPE_CORRECTION_WORKSTREAM, baseline,
+    )
+    if identity_error:
+        raise HostValidationError(f"Sepulcher G2 attestation target identity is invalid: {identity_error}")
+    if (not _is_ancestor(repo, origin_commit, implementation_commit)
+            or not _is_ancestor(repo, outcome["Reviewed main"], approval_main)
+            or not _is_ancestor(repo, implementation_commit, outcome["Reviewed main"])):
+        raise HostValidationError("accepted Sepulcher G2 review does not authenticate the attestation lineage")
+    receipt, receipt_error = verify_review_receipt_delta(
+        baseline, correction_text, review_workstream=_SEPULCHER_G2_SCOPE_REVIEW_WORKSTREAM,
+        target_workstream=_SEPULCHER_G2_SCOPE_CORRECTION_WORKSTREAM,
+        reviewed_main=outcome["Reviewed main"], target_implementation_commit=implementation_commit,
+    )
+    if receipt_error or not receipt:
+        raise HostValidationError(f"accepted Sepulcher G2 target receipt is invalid: {receipt_error}")
+    identity_error = review_outcome.outcome_identity_error(
+        outcome, review_workstream=_SEPULCHER_G2_SCOPE_REVIEW_WORKSTREAM,
+        target_workstream=_SEPULCHER_G2_SCOPE_CORRECTION_WORKSTREAM,
+        reviewed_main=outcome["Reviewed main"], implementation_commit=implementation_commit,
+        run_id=outcome["Run ID"], review_cycle=review.review_cycle,
+    )
+    if identity_error:
+        raise HostValidationError(f"accepted Sepulcher G2 review identity is invalid: {identity_error}")
+    reviewer_receipt = _scope_review_receipt(review_text)
+    expected_receipt = {
+        "Schema": "custodian.paired_review.v1",
+        "Review workstream": _SEPULCHER_G2_SCOPE_REVIEW_WORKSTREAM,
+        "Review target workstream": _SEPULCHER_G2_SCOPE_CORRECTION_WORKSTREAM,
+        "Status": "passed", "Blocking defects": "0", "Material gaps": "0",
+        "Reviewer context": "fresh", "Reviewed main": outcome["Reviewed main"],
+        "Reviewed implementation commit": implementation_commit,
+    }
+    if (reviewer_receipt is None
+            or any(reviewer_receipt.get(field) != value for field, value in expected_receipt.items())
+            or reviewer_receipt.get("Reviewer provenance") not in {"different-agent", "same-agent-fresh-context"}):
+        raise HostValidationError("accepted Sepulcher G2 reviewer receipt does not match its PASS outcome")
+    return {
+        "kind": "accepted-post-hoc-exact-source-attestation",
+        "attestation_path": _SEPULCHER_G2_SCOPE_ATTESTATION_PATH,
+        "attestation_commit": origin_commit,
+        "attestation_blob": attestation_entry[1],
+        "attestation_sha256": _sha256(attestation_bytes),
+        "source_workstream": _SEPULCHER_G2_SCOPE_SOURCE_WORKSTREAM,
+        "source_archive_commit": _SEPULCHER_G2_SCOPE_SOURCE_ARCHIVE,
+        "source_archive_parent": _SEPULCHER_G2_SCOPE_SOURCE_ARCHIVE_PARENT,
+        "source_archive_tree": _SEPULCHER_G2_SCOPE_SOURCE_ARCHIVE_TREE,
+        "source_packet_path": _SEPULCHER_G2_SCOPE_SOURCE_PACKET,
+        "source_packet_blob": _SEPULCHER_G2_SCOPE_SOURCE_PACKET_BLOB,
+        "source_files": source_entries,
+        "source_code_files": code_entries,
+        "approval_main": approval_main,
+        "approval_review_workstream": _SEPULCHER_G2_SCOPE_REVIEW_WORKSTREAM,
+        "approval_review_packet": _SEPULCHER_G2_SCOPE_REVIEW_PACKET,
+        "approval_target_packet": _SEPULCHER_G2_SCOPE_CORRECTION_PACKET,
+        "approval_reviewed_main": outcome["Reviewed main"],
+        "approval_run_id": outcome["Run ID"],
+        "approval_implementation_commit": implementation_commit,
+        "approval_outcome": outcome["Outcome"],
+        "preserved_reviewed_main": reviewed_main,
+    }
+
+
 def _verified_ritualant_recovery2_scope_attestation(
     repo: Path, reviewed_main: str, landing_commit: str,
     extra_archive_paths: set[str],
@@ -3999,6 +4253,17 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
             scope_attestation = _verified_grunt_scope_attestation(
                 repo, reviewed_main, extra_archive_paths,
             )
+        elif (target_workstream == _SEPULCHER_G2_SCOPE_SOURCE_WORKSTREAM
+                and landing_commit == _SEPULCHER_G2_SCOPE_SOURCE_ARCHIVE):
+            if (target_packet_path != _SEPULCHER_G2_SCOPE_SOURCE_PACKET
+                    or extra_archive_paths != _SEPULCHER_G2_SCOPE_EXTRA_ARCHIVE_PATHS):
+                raise HostValidationError("Sepulcher G2 source archive has an unexpected packet or extra-path set")
+            if approval_main is None:
+                approval_main = _git(repo, "rev-parse", "--verify", "origin/main^{commit}")
+            scope_attestation = _verified_sepulcher_g2_scope_attestation(
+                repo, reviewed_main, landing_commit,
+                set(_SEPULCHER_G2_SCOPE_ATTESTED_FILES),
+            )
         attested_paths = (
             (set(scope_attestation["source_files"]) if scope_attestation else set())
             | historical_recovery_paths
@@ -4217,6 +4482,14 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
     code_paths = _source_code_paths(source_paths)
     if not code_paths:
         raise HostValidationError("split source span contains no implementation source or test files")
+    if (target_workstream == _SEPULCHER_G2_SCOPE_SOURCE_WORKSTREAM
+            and landing_commit == _SEPULCHER_G2_SCOPE_SOURCE_ARCHIVE):
+        if (source_base != _SEPULCHER_G2_SCOPE_SOURCE_BASE
+                or source_head != _SEPULCHER_G2_SCOPE_SOURCE_HEAD
+                or set(code_paths) != set(_SEPULCHER_G2_SCOPE_CODE_FILES)):
+            raise HostValidationError("Sepulcher G2 source span base/head/code paths differ from pinned inventory")
+        if scope_attestation is None:
+            raise HostValidationError("Sepulcher G2 source span lacks its accepted post-hoc scope attestation")
     if (target_workstream == _ADMIN_SCOPE_SOURCE_WORKSTREAM
             and landing_commit == _ADMIN_SCOPE_SOURCE_ARCHIVE):
         if approval_main is None:
@@ -4247,6 +4520,10 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
     documented.add(f"{target_workstream.upper().replace('-', '_')}_CLAUDE_SUMMARY.md")
     work_surface = header_field(target_packet_text, "Work surface") or ""
     documented.update(_expand_braced_work_surface_paths(work_surface))
+    if (target_workstream == _SEPULCHER_G2_SCOPE_SOURCE_WORKSTREAM
+            and landing_commit == _SEPULCHER_G2_SCOPE_SOURCE_ARCHIVE
+            and scope_attestation is not None):
+        documented.update(scope_attestation["source_code_files"])
     if archive_sync_followup is not None:
         documented.update(archive_sync_followup.get("authenticated_followup_paths", []))
     packet_terms = set(re.findall(r"[a-z0-9]+", target_packet_text.lower()))

@@ -49,3 +49,11 @@
 - Refresh reason: `none`
 - Next action: Launch the existing paired review for this correction after its implementation archives complete.
 - Blockers or open questions: The G2 source-scope exception remains inactive until the paired review passes.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: `paired_review_host_validation.py` now authenticates the exact G2 archive identity, complete changed-path/mode/blob inventory, the sole omitted recipe document, and the independent correction-review provenance required to activate the exception. The historical source-span gate checks the pinned base/head and four source-code blobs, while ordinary undeclared-path checks remain active. Regression coverage confirms the exception is inactive before a canonical correction review exists and rejects wrong archive, extra path, and wrong source identity. All 295 paired-review runner tests passed; changed-file validation selected both owned suites with complete coverage and passed; Python compilation and `git diff --check` passed. The original G2 review run, claim, worktree, and evidence remain unchanged.
