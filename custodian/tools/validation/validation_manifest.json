@@ -5614,7 +5614,8 @@
         "custodian/scenes/awakening_first_return.tscn",
         "custodian/tools/validation/awakening_creche_console_screen_anchor_smoke.gd",
         "custodian/tools/validation/validation_manifest.json",
-        "custodian/content/levels/awakening/01_creche/awakening_creche_underlay_960x704.png",
+        "custodian/content/levels/awakening/01_creche/**",
+        "custodian/content/sprites/environment/props/awakening/awakening_creche_console/runtime/body/awakening_creche_console__body__interaction__idle__omni__1f__128.png",
         "custodian/content/sprites/effects/awakening/runtime/awakening_creche_console_activation_fx/awakening_creche_console_activation_fx__fx__effect__activate__omni__8f__128.png"
       ],
       "timeout_sec": 45,
