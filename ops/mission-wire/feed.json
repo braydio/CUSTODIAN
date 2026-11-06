@@ -1,9 +1,149 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-06T19:00:56Z",
-  "source_main_sha": "be37e5c2ea021d64114e869439cda9992f7f33e5",
+  "generated_at": "2026-11-06T19:26:46Z",
+  "source_main_sha": "611fc05cd70b8ad7d474e5f94a13c1394a091c6f",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "g2-source-scope-correction-611fc05c",
+      "headline": "Sepulcher G2 review blocker gets a narrowly scoped fix, but independent approval is still ahead",
+      "summary": "CUSTODIAN landed and archived a correction to the G2 grave-resolution review validator. It accounts for one previously omitted validation-recipe file while preserving strict source checks. Local tests are reported passing; the independent correction review and original G2 review remain unverified.",
+      "body": "A new G2 source-scope attestation now binds the original grave-resolution archive, exact file identities, and the single omitted validation recipe. The validator rejects the exception until an independently accepted correction review and receipt exist. The implementation packet is archived complete, with 296 tests reported passing. The original G2 review, claim, worktree and evidence were expressly left untouched. Host inventory was incomplete because a CIFS mount was unavailable; no cleanup or runtime liveness is established. Next: independent correction review, then replan the original G2 review only if the required accepted receipt lands.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-paired-review-g2-source-scope-attestation-v1",
+      "occurred_at": "2026-11-06T19:24:25Z",
+      "bullets": [
+        "G2 source-scope correction code and attestation landed on main",
+        "Correction implementation packet archived complete",
+        "296 unit tests reported passing in implementation evidence",
+        "Exception remains inactive without independent accepted correction review",
+        "Original G2 review and host claims remain untouched"
+      ],
+      "links": [
+        {
+          "title": "G2 implementation and attestation",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/67f1cb5c898b939aeae09f851641dc6cce411924"
+        },
+        {
+          "title": "G2 correction archival transition",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/611fc05cd70b8ad7d474e5f94a13c1394a091c6f"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "The Sepulcher grave-resolution review has a more precise path out of its source-scope blocker. CUSTODIAN has landed a correction that accounts for one omitted validation document without opening the door to arbitrary file changes. The fix is implemented and archived, but it still needs independent approval.",
+        "sections": [
+          {
+            "heading": "One missing document, one bounded exception",
+            "text": "The original G2 work included a validation recipe that its archived review scope did not declare. The new attestation pins the exact archive, file identities and omitted recipe, while leaving normal undeclared-file rejection in place."
+          },
+          {
+            "heading": "Tests passed; review has not",
+            "text": "The implementation summary reports 296 passing paired-review tests, including a simulated approval path. That simulation is not a real independent reviewer PASS. The validator deliberately keeps the exception inactive until a canonical correction review and receipt are accepted."
+          },
+          {
+            "heading": "Host cleanup remains separate",
+            "text": "The archived packet records an unavailable network mount during a disk census. The original G2 review run, claim, worktree and evidence were preserved, so this landing does not demonstrate resource recovery or teardown."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The gate is provenance, not code completeness",
+            "explanation": "The new logic exists, but it only activates after a separate accepted review proves the correction itself is trustworthy. That keeps the historical review boundary meaningful."
+          },
+          {
+            "title": "A clean archive is not a clean host",
+            "explanation": "The packet's completion changes the documented workstream stage, not the state of the preserved review checkout or locks."
+          }
+        ],
+        "takeaway": "G2's source-scope correction is landed and archived; independent acceptance remains the next decisive gate.",
+        "next_watch": "Watch for an authentic accepted PASS and target receipt for the G2 correction review before any attempt to replan the preserved G2 review."
+      },
+      "details": {
+        "overview": "Main inspected at 611fc05cd70b8ad7d474e5f94a13c1394a091c6f. Commit 67f1cb5 introduces exact source-scope attestation and validator checks; commit 611fc05 archives implementation as complete. The implementation reports 296 tests passing. No canonical live dispatcher audit, host inventory, or independent review acceptance was available. CI combined statuses were empty, not green.",
+        "ledger": [
+          {
+            "stage": "Implementation and attestation",
+            "status": "verified landed",
+            "evidence": "Commit 67f1cb5; exact archive/file binding and fail-closed validator"
+          },
+          {
+            "stage": "Implementation archival",
+            "status": "verified landed",
+            "evidence": "Commit 611fc05; packet status complete and execution feedback"
+          },
+          {
+            "stage": "Validation",
+            "status": "reported passing",
+            "evidence": "Implementation summary reports 296 tests and changed-file validation"
+          },
+          {
+            "stage": "Independent correction review",
+            "status": "not verified",
+            "evidence": "No accepted reviewer PASS or target receipt inspected"
+          },
+          {
+            "stage": "Original G2 review and host cleanup",
+            "status": "unknown / preserved",
+            "evidence": "Summary explicitly leaves original run, claim, worktree and evidence untouched"
+          }
+        ],
+        "notes": [
+          "Host disk census encountered an unavailable CIFS mount; inventory remains incomplete."
+        ],
+        "unknowns": [
+          "Canonical dispatcher counts and host liveness",
+          "Accepted correction review receipt",
+          "Current GitHub Actions health and worktree/disk disposition"
+        ],
+        "actions": [
+          "Independent reviewer: inspect correction and issue canonical PASS only after actual review.",
+          "Owner: replan preserved G2 review only after accepted correction receipt."
+        ]
+      },
+      "scorecard": {
+        "stage": "Correction landed and archived; independent review pending",
+        "as_of": "2026-11-06T19:26:46Z",
+        "scope": "One named G2 source-scope correction workstream, not full dispatcher inventory",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Implement exact source-scope attestation",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Commit 67f1cb5"
+          },
+          {
+            "label": "Archive correction implementation",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Commit 611fc05"
+          },
+          {
+            "label": "Independently review correction",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No accepted PASS inspected"
+          },
+          {
+            "label": "Replan original G2 review",
+            "status": "blocked",
+            "verification": "unknown",
+            "evidence": "Requires accepted correction review and target receipt"
+          },
+          {
+            "label": "Verify canonical teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No host proof"
+          }
+        ],
+        "next_gate": "Independent reviewer: issue a genuine accepted correction review and target receipt before original G2 replan."
+      },
+      "related": []
+    },
     {
       "id": "awakening-creche-direct-review-source-correction-be37e5c2",
       "headline": "Crèche art handoff corrected; direct visual review replaces paired Codex review",
@@ -1569,124 +1709,6 @@
           "story_id": "paired-review-executable-mode-ready-ed9ea251"
         }
       ]
-    },
-    {
-      "id": "paired-review-executable-mode-ready-ed9ea251",
-      "headline": "Paired-review executable-mode correction moves into the ready queue",
-      "summary": "CUSTODIAN main now marks the source-bearing executable-mode correction ready for automatic dispatch, with its independent review dependent on implementation. This is admission to the queue, not evidence of execution or acceptance.",
-      "body": "Commit ed9ea251 changes the implementation and paired-review packets from draft/manual to ready/auto. The implementation addresses authenticated archived source files that were already executable, while maintaining restrictions on unauthorized executable changes. Its review packet depends on the implementation. No host claim, execution, passing independent review, or teardown was verified. Private WIRE pilot observations were inspected but not admitted as validated counts because exact-byte integrity and freshness could not both be established.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-paired-review-source-bearing-executable-mode-v1",
-      "occurred_at": "2026-11-04T04:47:06Z",
-      "bullets": [
-        "Implementation packet admitted ready/auto.",
-        "Independent review also ready/auto but dependency-gated.",
-        "No verified claim, execution, acceptance or teardown.",
-        "Pilot operational counts withheld pending exact-byte validation and freshness."
-      ],
-      "links": [
-        {
-          "title": "Main admission commit",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/ed9ea2516b485769c8bb079908e32df8214d3e17"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "A narrow repair to CUSTODIAN’s paired-review archive validation has moved out of drafting and into the dispatch queue. The change is intended to preserve legitimate executable source files without opening the door to unauthorized executable changes.",
-        "sections": [
-          {
-            "heading": "Two packets, one dependency",
-            "text": "The implementation packet is now marked ready for automatic dispatch. Its independent review is also marked ready, but cannot legitimately complete before the implementation it is meant to scrutinize."
-          },
-          {
-            "heading": "Ready does not mean running",
-            "text": "The inspected change updates packet admission metadata. It does not establish a live worker, a successful implementation, an accepted review or clean host teardown."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The next gate is implementation evidence",
-            "explanation": "The queue can now consider this correction, but the meaningful progress signal will be a landed implementation with validation evidence, followed by a separate independent review."
-          }
-        ],
-        "takeaway": "The correction has entered the eligible queue; operational completion remains unverified.",
-        "next_watch": "Watch for a canonical implementation landing and an independently accepted review receipt."
-      },
-      "details": {
-        "overview": "Commit ed9ea251 modifies three packet/index files, switching implementation and review packet metadata from draft/manual to ready/auto. No live dispatcher audit was available. The private pilot pointer and referenced JSON were readable, but exact-byte SHA validation was not established from extracted text; therefore no pilot counts are published.",
-        "ledger": [
-          {
-            "stage": "Packet admission",
-            "status": "verified",
-            "evidence": "Commit ed9ea251 changes both packets to ready/auto."
-          },
-          {
-            "stage": "Implementation and validation",
-            "status": "unknown",
-            "evidence": "No implementation completion receipt inspected."
-          },
-          {
-            "stage": "Independent acceptance",
-            "status": "unknown",
-            "evidence": "Review packet depends on implementation; no PASS inspected."
-          },
-          {
-            "stage": "Host teardown",
-            "status": "unknown",
-            "evidence": "No canonical host evidence."
-          }
-        ],
-        "notes": [],
-        "unknowns": [
-          "Canonical host claims, locks, worktrees and resource state.",
-          "Exact-byte private pilot observation validation and bounded freshness."
-        ],
-        "actions": [
-          "Implementation owner: obtain canonical dispatch and validation evidence before paired review."
-        ]
-      },
-      "scorecard": {
-        "stage": "Ready for implementation dispatch; review dependency-gated",
-        "as_of": "2026-11-04T04:47:06Z",
-        "scope": "Two named source-bearing executable-mode packets only",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Packet admission",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Commit ed9ea251"
-          },
-          {
-            "label": "Implementation execution and validation",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No host or validation receipt inspected"
-          },
-          {
-            "label": "Implementation landing",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No completion receipt inspected"
-          },
-          {
-            "label": "Independent review acceptance",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Dependent review packet, no PASS"
-          },
-          {
-            "label": "Canonical cleanup",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "Host evidence unavailable"
-          }
-        ],
-        "next_gate": "Implementation owner: execute through canonical dispatcher and produce independently inspectable validation/landing evidence."
-      },
-      "related": []
     }
   ],
   "snapshot": {
