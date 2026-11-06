@@ -1,9 +1,163 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-06T13:10:21Z",
-  "source_main_sha": "52f11a85a04ebd6401160ee2c33ebdf9763e9b04",
+  "generated_at": "2026-11-06T19:00:56Z",
+  "source_main_sha": "be37e5c2ea021d64114e869439cda9992f7f33e5",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "awakening-creche-direct-review-source-correction-be37e5c2",
+      "headline": "Crèche art handoff corrected; direct visual review replaces paired Codex review",
+      "summary": "CUSTODIAN's Awakening Crèche plan now identifies the approved 1464×1074 floor and wall sources with corrected roles. The user also withdrew paired Codex review for this specific art preparation and room-console cutover, replacing it with gameplay-scale user/ChatGPT review. The change is documentation and packet planning only; neither source staging nor the Godot cutover is verified.",
+      "body": "Two new main commits revise the Awakening Crèche art packets and design authority. The floor/underlay and foreground/wall source roles have been corrected, with source identity checks specified. For the Crèche preparation and atomic room-console cutover only, the user approved direct gameplay-scale review rather than a paired Codex reviewer. Existing review packets were removed without a fabricated PASS. The clean-source and console packets remain draft/manual. The production room is still documented at 960×704; the 1464×1074 target has not been ingested or installed. Objective Asset V2 validation, geometry, navigation, route continuity, console FX and gameplay captures remain required. A Sepulcher memorial slab art packet also drops paired-review requirements but retains source verification and runtime gates. No host liveness, teardown, or full dispatcher inventory is established.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "assets-art",
+      "workstream": "awakening-creche-console-sprite-reauthor-v1",
+      "occurred_at": "2026-11-06T19:00:56Z",
+      "bullets": [
+        "Approved Crèche floor and wall roles corrected in source authority",
+        "Crèche source-prep and cutover review changed to direct user/ChatGPT visual verdict",
+        "Two Crèche implementation packets remain draft/manual",
+        "Source staging, Asset V2 ingestion and Godot gameplay validation still pending",
+        "Removed review packets do not represent independent PASS"
+      ],
+      "links": [
+        {
+          "title": "Current Crèche source-prep packet",
+          "url": "https://github.com/braydio/CUSTODIAN/blob/be37e5c2ea021d64114e869439cda9992f7f33e5/custodian/docs/ai_context/task_packets/AWAKENING_INTERACTIBLE_CLEAN_ROOM_PLATES_V1.md"
+        },
+        {
+          "title": "Current Crèche console and room cutover packet",
+          "url": "https://github.com/braydio/CUSTODIAN/blob/be37e5c2ea021d64114e869439cda9992f7f33e5/custodian/docs/ai_context/task_packets/AWAKENING_CRECHE_CONSOLE_SPRITE_REAUTHOR_V1.md"
+        },
+        {
+          "title": "Main changes since previous WIRE report",
+          "url": "https://github.com/braydio/CUSTODIAN/compare/52f11a85a04ebd6401160ee2c33ebdf9763e9b04...be37e5c2ea021d64114e869439cda9992f7f33e5"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "The Awakening Crèche's art handoff has been corrected before installation: the approved floor and wall images now have their proper roles, and the final visual verdict will come from the user and ChatGPT rather than a paired Codex reviewer. The game itself has not changed.",
+        "sections": [
+          {
+            "heading": "A source mix-up resolved before cutover",
+            "text": "The updated packets identify separate approved 1464×1074 floor and foreground sources. Their previous labels were reversed. The documents explicitly preserve the existing 960×704 production room until source verification, registration and the scene cutover succeed."
+          },
+          {
+            "heading": "Fewer review handoffs, not fewer quality gates",
+            "text": "The Crèche-specific paired reviewer packets were withdrawn, not passed. Direct review will assess actual gameplay-scale captures, while asset provenance, walkability, the route into the next room, and console activation effects still require objective validation."
+          },
+          {
+            "heading": "The remaining work is in the game engine",
+            "text": "The clean-room plates must be durably staged and checked first. Only then can the floor, foreground, collision and independent console be switched together without leaving a broken or empty room."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Correct art identity prevents a wrong-layer release",
+            "explanation": "A floor and foreground swap could break both visibility and collision assumptions. Recording their distinct identities before ingestion makes the eventual scene transaction safer."
+          },
+          {
+            "title": "Review simplification is tightly scoped",
+            "explanation": "The direct-review exception applies only to Crèche source preparation and cutover. It does not certify runtime quality or remove unrelated Port review requirements."
+          }
+        ],
+        "takeaway": "The art and review decisions are now documented, but the playable Crèche remains unchanged until a verified cutover.",
+        "next_watch": "Look for durable source staging, Asset V2 receipts and real Godot gameplay captures showing the new room and its single console."
+      },
+      "details": {
+        "overview": "Inspected main be37e5c2 and two-commit diff from 52f11a85. Changes are packet/design documentation, including withdrawn Crèche reviewer packets. No canonical dispatcher audit or host execution evidence inspected. Dropbox pilot pointer metadata remains dated November 4; no private operational counts used. Combined commit statuses returned no checks, not evidence of green CI.",
+        "ledger": [
+          {
+            "stage": "Correct Crèche source identity and review authority",
+            "status": "verified in main documentation",
+            "evidence": "Crèche source-prep and console packets at be37e5c2"
+          },
+          {
+            "stage": "Durable source staging",
+            "status": "not verified",
+            "evidence": "Both packets remain draft/manual and describe local sources only"
+          },
+          {
+            "stage": "Asset V2 and Godot room cutover",
+            "status": "not verified",
+            "evidence": "Packets explicitly describe current production as 960×704"
+          },
+          {
+            "stage": "Direct gameplay-scale visual verdict",
+            "status": "pending",
+            "evidence": "No captured gameplay or user verdict inspected"
+          },
+          {
+            "stage": "Canonical host cleanup",
+            "status": "unknown",
+            "evidence": "No host proof available"
+          }
+        ],
+        "notes": [
+          "The Sepulcher memorial slab packet also changes review approach; it still requires exact source and Hub-runtime evidence.",
+          "No independent PASS is inferred from removed review packets."
+        ],
+        "unknowns": [
+          "Current full dispatcher queue and claim/lock state",
+          "Current CI Actions health",
+          "Host process, worktree and disk disposition"
+        ],
+        "actions": [
+          "Art implementation owner: validate and durably stage the approved source pair before attempting atomic Crèche cutover.",
+          "User/ChatGPT: review real gameplay captures after objective Godot validation."
+        ]
+      },
+      "scorecard": {
+        "stage": "Source identities approved in documentation; implementation not yet staged",
+        "as_of": "2026-11-06T19:00:56Z",
+        "scope": "Two named Crèche draft/manual implementation packets; not a full dispatcher count",
+        "metrics": [
+          {
+            "id": "other-creche-draft-packets",
+            "label": "CRÈCHE DRAFT PACKETS",
+            "value": 2,
+            "verification": "verified",
+            "basis": "The two inspected Crèche implementation packets both say Status: draft; excludes all other packets",
+            "url": "https://github.com/braydio/CUSTODIAN/blob/be37e5c2ea021d64114e869439cda9992f7f33e5/custodian/docs/ai_context/task_packets/AWAKENING_INTERACTIBLE_CLEAN_ROOM_PLATES_V1.md"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Record approved source roles",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Corrected main packets"
+          },
+          {
+            "label": "Validate and durably stage source images",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No durable staging receipt inspected"
+          },
+          {
+            "label": "Ingest and bind atomic room-console cutover",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Production still documented at legacy size"
+          },
+          {
+            "label": "Run objective Godot and route checks",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No cutover tests inspected"
+          },
+          {
+            "label": "Direct gameplay-scale visual verdict",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No actual capture or verdict inspected"
+          }
+        ],
+        "next_gate": "Art implementation owner: validate exact source bytes and durably stage both approved Crèche plates before room cutover."
+      },
+      "related": []
+    },
     {
       "id": "legacy-review-queue-retirement-52f11a85",
       "headline": "CUSTODIAN retires stranded review packets without claiming their reviews passed",
@@ -1531,144 +1685,6 @@
           }
         ],
         "next_gate": "Implementation owner: execute through canonical dispatcher and produce independently inspectable validation/landing evidence."
-      },
-      "related": []
-    },
-    {
-      "id": "art-field-notes-draft-pr111-69380262",
-      "headline": "In-game art flagging reaches draft review, promising coordinate-stamped field notes",
-      "summary": "Draft PR #111 proposes an opt-in I-key Art Inspector that records local screenshots and world coordinates, plus a read-only collector grouping missing-art flags. It is not merged, validated in Godot, or enabled in production.",
-      "body": "PR #111 introduces a proposed Art Field Notes workflow for recording missing art during gameplay. An opt-in I-key capture would save local PNG/JSON evidence with world coordinates and bounded visible actors; a Python collector groups flags by spatial stretch. Manifest instructions describe a human-approved, incremental installation lane. The PR is draft and explicitly requests Godot import and runtime smoke tests, privacy/security review and regression validation. It does not generate, approve or install art. Release-mode inspection currently requires broader DevMode flags, so a dedicated inspection-only gate is a material pre-release question. No passing CI or independent review was established. Main remains eef8a41f8e82fe47c346002087f52492d945322a.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "general",
-      "workstream": "art-field-notes-v1",
-      "occurred_at": "2026-11-03T18:21:31Z",
-      "bullets": [
-        "Draft PR #111 proposes I-key coordinate-stamped local screenshot/JSON capture.",
-        "Read-only collector groups flags into 256px stretches.",
-        "No production art approvals or runtime installations.",
-        "Godot smoke, privacy review and release gating remain required."
-      ],
-      "links": [
-        {
-          "title": "Draft PR #111",
-          "url": "https://github.com/braydio/CUSTODIAN/pull/111"
-        },
-        {
-          "title": "Latest PR commit",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/6938026260e432ab600720b5b67c38b1c3c26bb4"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "A practical bridge between spotting missing artwork and fixing it has reached draft review. Art Field Notes would let a developer press I while playing CUSTODIAN, capture where the problem occurs, and later group nearby observations into manageable installation stretches.",
-        "sections": [
-          {
-            "heading": "From visual annoyance to actionable coordinates",
-            "text": "The proposed inspector records a local screenshot and JSON with world coordinates and a bounded view of nearby actors. A separate read-only collector groups flags by location so artwork can be matched to the correct manifest entry rather than guessed from memory."
-          },
-          {
-            "heading": "Art approval stays deliberately separate",
-            "text": "The manifest adds a staged installation workflow, but neither the inspector nor collector approves images or alters gameplay art. A human-approved source and a separately reviewed Asset V2 integration are still required."
-          },
-          {
-            "heading": "The draft has a meaningful release-mode caveat",
-            "text": "The PR has not passed its requested Godot gameplay smoke tests or security review. Its release-mode opt-in currently uses broader developer flags, so a dedicated inspection-only gate should be considered before wider use."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The missing-art backlog could become spatially actionable",
-            "explanation": "Coordinate-stamped observations would give the art pipeline exact places to repair, connecting playtesting directly to incremental asset installation without automating aesthetic approval."
-          },
-          {
-            "title": "Developer-mode isolation is the key safety gate",
-            "explanation": "The proposed release opt-in also enables other DevMode features. Separating the inspector's permissions would reduce accidental exposure of unrelated debug capabilities."
-          }
-        ],
-        "takeaway": "A reviewable implementation candidate now exists, but no gameplay-tested or production-enabled art inspection feature has been established.",
-        "next_watch": "Watch for Godot capture smoke tests, local evidence privacy review, dedicated release gating and an independent acceptance decision."
-      },
-      "details": {
-        "overview": "Open draft PR #111 targets main eef8a41f and carries nine commits, with latest head 69380262. No combined commit statuses were returned. No canonical dispatcher audit or verified host evidence is available.",
-        "ledger": [
-          {
-            "stage": "Draft implementation",
-            "status": "verified on PR branch",
-            "evidence": "PR #111 describes inspector autoload, local screenshot/JSON and Python spatial collector."
-          },
-          {
-            "stage": "Focused validation",
-            "status": "not established",
-            "evidence": "PR explicitly requests Godot 4 parse/import, gameplay capture, rapid presses, Python unit tests and existing tool regressions."
-          },
-          {
-            "stage": "Independent review",
-            "status": "not established",
-            "evidence": "PR remains draft."
-          },
-          {
-            "stage": "Main landing",
-            "status": "not landed",
-            "evidence": "Main is eef8a41f; PR head is 69380262."
-          },
-          {
-            "stage": "Production activation and teardown",
-            "status": "unknown",
-            "evidence": "No host evidence; release opt-in has broad DevMode dependency."
-          }
-        ],
-        "notes": [
-          "F9/F10/F11 are intended to remain unchanged.",
-          "No new production artwork is approved by this PR."
-        ],
-        "unknowns": [
-          "Actual runtime capture behavior and privacy under gameplay conditions.",
-          "Host processes, claims, locks, worktrees and teardown."
-        ],
-        "actions": [
-          "PR owner: run the specified Godot and Python tests and review release-mode isolation before requesting independent acceptance."
-        ]
-      },
-      "scorecard": {
-        "stage": "Draft implementation awaiting validation",
-        "as_of": "2026-11-03T18:21:31Z",
-        "scope": "PR #111 only, not the complete dispatcher queue",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Implementation proposed in draft PR",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "PR #111 and head 69380262"
-          },
-          {
-            "label": "Godot gameplay capture and collector tests",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Required by PR; no passing receipt inspected"
-          },
-          {
-            "label": "Privacy and release gating review",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Broader DevMode enabled by current release opt-in"
-          },
-          {
-            "label": "Independent review acceptance",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Draft PR has no accepted review"
-          },
-          {
-            "label": "Merge and runtime rollout",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Not on main or verified deployed"
-          }
-        ],
-        "next_gate": "PR owner: complete gameplay smoke and privacy/release-gate review before independent acceptance."
       },
       "related": []
     }
