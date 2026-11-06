@@ -1,9 +1,134 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-05T20:10:40Z",
-  "source_main_sha": "90164bee80bbef535fe14d77c7ad7b51f100f861",
+  "generated_at": "2026-11-06T13:10:21Z",
+  "source_main_sha": "52f11a85a04ebd6401160ee2c33ebdf9763e9b04",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "legacy-review-queue-retirement-52f11a85",
+      "headline": "CUSTODIAN retires stranded review packets without claiming their reviews passed",
+      "summary": "An owner-directed cleanup removed obsolete active review packets and matching index entries, including PixelPlanets follow-ups and a process-scanner hardening proposal. This is administrative retirement, not an independent PASS or host cleanup; landed gameplay code and historical evidence remain distinct.",
+      "body": "An owner-directed cleanup removed obsolete active review packets and matching managed index entries. The commit explicitly says the change does not manufacture a reviewer PASS, preserves landed runtime and old implementation archives, and leaves host branch, claim and evidence cleanup to a separate exact-ref operation. This narrows the documented queue but does not prove any process stopped or lock cleared.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "",
+      "occurred_at": "2026-11-06T12:56:31Z",
+      "bullets": [
+        "Obsolete active packets and managed index entries removed on main",
+        "Landed runtime and historical implementation archive preserved",
+        "No independent PASS implied",
+        "Host claim, branch and evidence disposition still unverified"
+      ],
+      "links": [
+        {
+          "title": "Administrative retirement commit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/52f11a85a04ebd6401160ee2c33ebdf9763e9b04"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN has pruned a set of stranded review and follow-up packets from its active planning queue. The cleanup makes the documented workload smaller, but it deliberately does not pretend the retired reviews passed or that their host resources were released.",
+        "sections": [
+          {
+            "heading": "A queue cleanup, not a code rollback",
+            "text": "The owner-directed commit deletes obsolete review and correction packet entries, including PixelPlanets follow-ups and the process ownership scanner hardening proposal. The commit states that landed runtime and archived implementation evidence remain preserved."
+          },
+          {
+            "heading": "The host still needs separate accounting",
+            "text": "Removing a packet from Git does not prove its claimed review, execution lock, branch, or checkout was cleaned up. Those require exact-ref host evidence and separate authorization."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Retired is not accepted",
+            "explanation": "Administrative retirement reduces active documentation without supplying a missing independent review receipt. Any downstream gate requiring an accepted PASS must still be assessed on its own evidence."
+          },
+          {
+            "title": "The previous scanner plan is no longer an active packet",
+            "explanation": "Yesterday's scanner hardening pair was a proposed remedy. Its removal from the active queue changes the planning state, not the underlying host-validation behavior."
+          }
+        ],
+        "takeaway": "The documented queue has been simplified, while runtime behavior and protected host disposition remain unverified.",
+        "next_watch": "Watch for an independently evidenced disposition of any retained protected claims and for fresh, validated game or art milestones."
+      },
+      "details": {
+        "overview": "Main commit 52f11a85 removes obsolete or stranded active review packets and corresponding managed index entries. It explicitly distinguishes administrative retirement from reviewer PASS and host cleanup. Current CI combined statuses returned no entries; that is not a green result. Private observation pointer metadata dates to Nov 4, so pilot counts were not used.",
+        "ledger": [
+          {
+            "stage": "Administrative packet retirement",
+            "status": "verified landed",
+            "evidence": "Main commit 52f11a85 deletion diff and commit message"
+          },
+          {
+            "stage": "Independent review acceptance",
+            "status": "not established",
+            "evidence": "Commit explicitly disclaims manufactured PASS"
+          },
+          {
+            "stage": "Canonical host cleanup",
+            "status": "unknown",
+            "evidence": "Separate exact-ref host operation and evidence required"
+          }
+        ],
+        "notes": [
+          "No canonical full dispatcher audit inspected; no project-wide counts asserted."
+        ],
+        "unknowns": [
+          "Actual host claim and lock disposition",
+          "Full current dispatcher inventory",
+          "Current CI health"
+        ],
+        "actions": [
+          "Owner: reconcile retired packet identities against exact host claims and evidence before any authorized cleanup."
+        ]
+      },
+      "scorecard": {
+        "stage": "Administrative retirement landed; host disposition unknown",
+        "as_of": "2026-11-06T12:56:31Z",
+        "scope": "Retired legacy review and PixelPlanets follow-up packets changed by this commit",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Identify obsolete active packets",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Commit deletion inventory"
+          },
+          {
+            "label": "Remove packets and index entries",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "52f11a85 on main"
+          },
+          {
+            "label": "Establish independent acceptance where required",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No PASS receipt in this retirement"
+          },
+          {
+            "label": "Verify exact host claim and lock disposition",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Requires host evidence and separate authorization"
+          }
+        ],
+        "next_gate": "Owner: reconcile exact retained host claims and locks with retired packet identities before any authorized host cleanup."
+      },
+      "related": [
+        {
+          "title": "Process ownership scanner gets a narrowly guarded repair plan",
+          "context": "The newly retired scanner proposal was the subject of this earlier planning story.",
+          "story_id": "process-ownership-scanner-hardening-90164bee"
+        },
+        {
+          "title": "PixelPlanets retirement landed but review remains held",
+          "context": "Earlier landing and review blockage explain why the follow-up packets existed.",
+          "story_id": "pixelplanets-retirement-landed-held-review-761ea680"
+        }
+      ]
+    },
     {
       "id": "process-ownership-scanner-hardening-90164bee",
       "headline": "Process ownership scanner gets a narrowly guarded repair plan",
@@ -1545,159 +1670,7 @@
         ],
         "next_gate": "PR owner: complete gameplay smoke and privacy/release-gate review before independent acceptance."
       },
-      "related": [
-        {
-          "title": "New art orchestration guide separates candidate production from game-ready approval",
-          "context": "The field notes provide location-specific input to the separately documented candidate and installation workflow.",
-          "story_id": "art-candidate-orchestrator-guide-eef8a41f"
-        }
-      ]
-    },
-    {
-      "id": "art-candidate-orchestrator-guide-eef8a41f",
-      "headline": "New art orchestration guide separates candidate production from game-ready approval",
-      "summary": "CUSTODIAN main now documents a controller-led artwork candidate workflow, including independent screening, verified Dropbox staging, retry limits and restart-safe receipts. This is an operating guide, not proof that the controller ran or any new artwork passed.",
-      "body": "The November 3 main commit adds ART_CANDIDATE_ORCHESTRATOR_GUIDE.md and routes explicitly authorized Hub/Sepulcher/Awakening candidate work through it. Codex selects assets from the authoritative manifest, asks ChatGPT to generate and screen them, checks actual image bytes and stages passing candidates separately from production. Failed geometry is deferred, not silently accepted. The guide prescribes persistent receipts and recovery, but the commit changes documentation only. No new candidate, independent acceptance, runtime integration or host execution is established. CI status endpoint returned no checks; CI health unknown.",
-      "severity": "milestone",
-      "verification": "verified",
-      "category": "general",
-      "workstream": "hub-sepulcher-awakening-art-v1",
-      "occurred_at": "2026-11-03T15:10:02Z",
-      "bullets": [
-        "Controller selects required assets from current manifest.",
-        "PASS_CANDIDATE requires visual and objective byte validation.",
-        "Verified candidate-only staging does not approve production art.",
-        "Execution, new candidates and runtime integration remain unverified."
-      ],
-      "links": [
-        {
-          "title": "Main commit: candidate orchestrator guide",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/eef8a41f8e82fe47c346002087f52492d945322a"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "The Sepulcher artwork effort now has a written operating playbook for moving from prompts to verified image candidates. It assigns asset selection and recovery to a controller rather than letting the image-generation conversation decide what happens next.",
-        "sections": [
-          {
-            "heading": "A controlled path from image to candidate",
-            "text": "The new guide requires the controller to select the next eligible required asset, check generated image dimensions and transparency from actual bytes, obtain a reasoned visual screen, and verify candidate-only Dropbox staging. Failures become explicit deferred obligations."
-          },
-          {
-            "heading": "The approval boundary remains intact",
-            "text": "A passing candidate is not automatically game-ready artwork. Human aesthetic approval, Asset Pipeline V2 ingestion, runtime registration and scene cutover remain separate gates. The guide also specifies durable receipts and restart reconciliation to avoid accidental regeneration."
-          },
-          {
-            "heading": "A guide is not a running service",
-            "text": "The inspected commit adds documentation and a root instruction link, not an executing controller or completed image. No fresh host receipt, independent acceptance or production integration was established."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The bottleneck is now observable in principle",
-            "explanation": "Candidate screening, transfer and human approval are explicitly different states. That separation should make failures such as CAL-02 easier to diagnose without counting unfinished art as complete."
-          },
-          {
-            "title": "Recovery is designed before scale-up",
-            "explanation": "The guide calls for persistent action journals and verification of prior uploads, reducing the risk of duplicate generations after interruptions. Its effectiveness still needs execution evidence."
-          }
-        ],
-        "takeaway": "The candidate-production procedure has landed on main; operational execution and production art approval have not.",
-        "next_watch": "Watch for an authorized controller run with verifiable image bytes, candidate-screening receipts and a confirmed staged object."
-      },
-      "details": {
-        "overview": "Commit eef8a41f8e82fe47c346002087f52492d945322a adds a 275-line art candidate orchestration guide and AGENTS.md routing. This is a documentation-only landing; no image, manifest, packet, runtime or production state was changed in this commit.",
-        "ledger": [
-          {
-            "stage": "Guide landing",
-            "status": "verified",
-            "evidence": "Main commit eef8a41f8e82fe47c346002087f52492d945322a includes new guide and AGENTS routing."
-          },
-          {
-            "stage": "Documentation validation",
-            "status": "reported",
-            "evidence": "Closeout note reports git diff --check; no test suite run."
-          },
-          {
-            "stage": "Candidate execution",
-            "status": "unknown",
-            "evidence": "No actual controller run or new image inspected."
-          },
-          {
-            "stage": "Independent review and production acceptance",
-            "status": "not established",
-            "evidence": "Candidate screen and human approval are distinct; neither evidenced by this commit."
-          },
-          {
-            "stage": "Runtime integration and teardown",
-            "status": "unknown",
-            "evidence": "No runtime or host evidence."
-          }
-        ],
-        "notes": [
-          "CI combined status returned no statuses; not proof of passing CI.",
-          "Full dispatcher and private operational observations unavailable."
-        ],
-        "unknowns": [
-          "Whether an authorized controller session has started.",
-          "Whether any new candidate bytes passed technical checks or were uploaded."
-        ],
-        "actions": [
-          "Art controller owner: on explicit candidate-production authorization, run the documented workflow and retain verifiable receipts."
-        ]
-      },
-      "scorecard": {
-        "stage": "Guide landed; candidate execution unverified",
-        "as_of": "2026-11-03T15:10:02Z",
-        "scope": "Art candidate orchestration documentation commit only",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Controller guide authored and landed",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Main commit eef8a41f8e82fe47c346002087f52492d945322a"
-          },
-          {
-            "label": "Authorized controller execution",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No execution receipt inspected"
-          },
-          {
-            "label": "Image-byte validation and candidate screening",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Requires actual generated image and checks"
-          },
-          {
-            "label": "Verified candidate-only staging",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Requires readback of uploaded object"
-          },
-          {
-            "label": "Human production approval",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Separate decision gate"
-          },
-          {
-            "label": "Asset V2 and runtime integration",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Separate downstream workstream"
-          }
-        ],
-        "next_gate": "Art controller owner: run only on explicit authorization, then verify the first eligible candidate and its staging receipt."
-      },
-      "related": [
-        {
-          "title": "Sepulcher arcade artwork deferred after three failed screens; CAL-03 becomes next candidate",
-          "context": "The earlier CAL-02 failure illustrates why this guide separates rejected candidates from approved production art.",
-          "story_id": "sepulcher-cal02-deferred-three-failed-394e0546"
-        }
-      ]
+      "related": []
     }
   ],
   "snapshot": {
