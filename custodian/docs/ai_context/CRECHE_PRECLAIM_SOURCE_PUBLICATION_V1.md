@@ -87,11 +87,11 @@ receipt.parent.mkdir(parents=True, exist_ok=True)
 assert not receipt.exists(), "immutable receipt already exists"
 receipt.write_text(
     "# Crèche 1464×1074 pre-claim source publication (2026-11-06)\n\n"
-    f"- Base main: \`{base}\`\n"
+    f"- Base main: `{base}`\n"
     "- User approval: approved the two downloaded originals and corrected floor/wall roles.\n"
     "- Scope: **pre-claim source-only**; no Godot runtime/Asset V2 ingest/visual completion.\n"
     "- Review: direct user/ChatGPT gameplay review after implementation; no Crèche paired Codex review.\n"
-    + "".join(f"- \`{state}\`: \`{dest_root}/{state}_source.png\`, SHA-256 \`{digest}\`, 1464×1074 RGBA\n"
+    + "".join(f"- `{state}`: `{dest_root}/{state}_source.png`, SHA-256 `{digest}`, 1464×1074 RGBA\n"
               for state, _, digest in files)
     + "- Validation: the pre-claim publisher must add actual installer/LFS/push outcomes before asserting success.\n"
 )
