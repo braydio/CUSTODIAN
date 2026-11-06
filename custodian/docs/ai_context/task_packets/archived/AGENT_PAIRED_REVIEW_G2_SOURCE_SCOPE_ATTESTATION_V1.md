@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-g2-source-scope-attestation-v1`
 - Category: `agent-ops`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P0`
@@ -56,4 +56,16 @@
 - Goal satisfied: `yes`
 - Completion boundary satisfied: `yes`
 - Acceptance satisfied: `yes`
-- Evidence: `paired_review_host_validation.py` now authenticates the exact G2 archive identity, complete changed-path/mode/blob inventory, the sole omitted recipe document, and the independent correction-review provenance required to activate the exception. The historical source-span gate checks the pinned base/head and four source-code blobs, while ordinary undeclared-path checks remain active. Regression coverage confirms the exception is inactive before a canonical correction review exists and rejects wrong archive, extra path, and wrong source identity. All 295 paired-review runner tests passed; changed-file validation selected both owned suites with complete coverage and passed; Python compilation and `git diff --check` passed. The original G2 review run, claim, worktree, and evidence remain unchanged.
+- Evidence: `paired_review_host_validation.py` now authenticates the exact G2 archive identity, complete changed-path/mode/blob inventory, the sole omitted recipe document, and the independent correction-review provenance required to activate the exception. The historical source-span gate checks the pinned base/head and four source-code blobs, while ordinary undeclared-path checks remain active. Disposable-Git regression coverage confirms rejection before approval and acceptance only after a canonical independent PASS and target receipt. All 296 paired-review runner tests passed; changed-file validation selected both owned suites with complete coverage and passed; Python compilation and `git diff --check` passed. The original G2 review run, claim, worktree, and evidence remain unchanged.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: The finish preflight required the canonical completion/archive transition to be committed before teardown. The workstream disk census also encountered an unavailable CIFS mount.
+- Root cause / contributing factors: This lifecycle archives the packet as a distinct branch-tip transition; the host storage census resolves mountpoints across attached worktrees.
+- Prevention / pipeline improvement: Follow the run-artifact contract by preparing completion truth, execution feedback, summary, and archive transition before the final finish call. Treat unavailable mount inventory as unknown and preserve all checkouts.
+- Tooling / docs drift discovered: none
+- Follow-up: none
+- What worked: The synthetic approval replay exercised the source-span consumer and verified the activation boundary against real Git objects.
