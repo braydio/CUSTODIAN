@@ -100,7 +100,40 @@ python3 "$PKG/INSTALL_INTO_REPO.py" --repo "$WT" --dry-run
 python3 "$PKG/INSTALL_INTO_REPO.py" --repo "$WT"
 ```
 
-Now validate **without publishing** that the installed source files have the same expected hashes and that neither of the existing canonical source masters, inbox files, runtime art, family JSON or Godot files were edited. In this same disposable worktree, update only the clean-room packet's headers `Status: draft` → `ready` and `Dispatch: manual` → `auto`, and its `Reviewed main` field to the investigated full `BASE` SHA. Leave the console cutover packet `draft/manual`. The existing clean-room packet already carries `Publication inputs:` for the two immutable PNGs, receipt and this guide. Its implementation completion boundary remains unchanged.
+Now validate **without publishing** that the new source bytes match exactly. Update only the clean-room packet's `Status: draft` → `ready`, `Dispatch: manual` → `auto`, and `Reviewed main` to the investigated full `BASE` SHA. Leave the console cutover packet `draft/manual`. The prepared clean-room packet already declares the immutable source inputs and receipt in `Publication inputs:`; its scope and completion boundary do not change.
+
+```bash
+python3 - "$WT" "$BASE" <<'PY'
+import hashlib, re, sys
+from pathlib import Path
+
+wt, base = Path(sys.argv[1]), sys.argv[2]
+root = "custodian/asset_drop/source_work/awakening/awakening_creche_environment/preclaim_20261106"
+expected = {
+    "underlay": "9ce70dff57e7678234ff423643d255840ca66cf855067948763f73b2b426d77a",
+    "foreground": "515b287f877cf4cd940c11aeab6bfa05370ff651f06927ba46e13c212a252bfc",
+}
+for state, digest in expected.items():
+    path = wt / root / f"{state}_source.png"
+    assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, state
+p = wt / "custodian/docs/ai_context/task_packets/AWAKENING_INTERACTIBLE_CLEAN_ROOM_PLATES_V1.md"
+src = p.read_text(encoding="utf-8")
+def replace_one(text, old, new):
+    assert text.count(old) == 1, f"expected exactly one {old!r}"
+    return text.replace(old, new, 1)
+src = replace_one(src, "- Status: `draft`", "- Status: `ready`")
+src = replace_one(src, "- Dispatch: `manual`", "- Dispatch: `auto`")
+src, count = re.subn(r"(?m)^- Reviewed main: `[0-9a-f]{40}`$", f"- Reviewed main: `{base}`", src)
+assert count == 1
+p.write_text(src, encoding="utf-8")
+console = wt / "custodian/docs/ai_context/task_packets/AWAKENING_CRECHE_CONSOLE_SPRITE_REAUTHOR_V1.md"
+assert "- Status: `draft`" in console.read_text()
+assert "- Dispatch: `manual`" in console.read_text()
+print("Preclaim verified: two exact source hashes and clean-room metadata only")
+PY
+```
+
+Do not proceed if the rooted staging checkout contains unrelated tracked modifications or if any old canonical `underlay_source.png`/`foreground_source.png`, inbox, runtime, family schema, or scene file changed. This procedure does not execute an Asset V2 ingest.
 
 Run the ordinary authoring/category and queue checks before committing:
 
