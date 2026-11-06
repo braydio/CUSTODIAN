@@ -1,5 +1,10 @@
 # CURRENT STATE — CUSTODIAN
 
+## Crèche: source-only completion; 1464×1074 runtime cutover ready (2026-11-06)
+
+At main `0e6b081b18a8b2d9deed0a19157a7a4b376adbb5`, clean-room source workstream `awakening-interactible-clean-room-plates-v1` is archived complete. Approved Crèche canonical source_work floor `9ce70dff57e7678234ff423643d255840ca66cf855067948763f73b2b426d77a` and wall `515b287f877cf4cd940c11aeab6bfa05370ff651f06927ba46e13c212a252bfc` are 1464×1074 RGBA, with rollback receipt `custodian/docs/ai_context/asset_audits/AWAKENING_CRECHE_CANONICAL_SOURCE_STAGING_20261106.md`. The existing 128×128 idle console art (LFS `01716bcdf4a3d7169e52149f495f91830106df93f94736e3c2aee8d910a30acb`) is user-approved. **Godot is NOT yet cut over:** environment family and scene remain 960×704, Crèche inbox is absent, Zone01 has old 704×512 walkable geometry. The existing downstream packet `awakening-creche-console-sprite-reauthor-v1` is refreshed to `ready/auto` and owns exact inbox/family/scene/geometry/console integration and direct user/ChatGPT in-game review; Crèche paired Codex review is waived without affecting other workstreams.
+
+
 ## Operator chassis authority seal (implementation in progress, 2026-10-31)
 
 The existing `operator-chassis-authority-seal-v1` claim is implementing the
