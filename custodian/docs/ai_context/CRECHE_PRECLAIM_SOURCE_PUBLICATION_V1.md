@@ -162,10 +162,22 @@ I="custodian/docs/ai_context/task_packets/README.md"
 git -C "$WT" add -- "$P1" "$P2" "$R" "$P" "$I"
 git -C "$WT" diff --cached --check
 git -C "$WT" diff --cached --name-only
+python3 - "$WT" "$P1" "$P2" "$R" "$P" "$I" <<'PY'
+import subprocess, sys
+from pathlib import Path
+wt = Path(sys.argv[1])
+expected = set(sys.argv[2:6])
+allowed = set(sys.argv[2:])
+actual = set(subprocess.check_output(
+    ["git", "-C", str(wt), "diff", "--cached", "--name-only", "-z"]
+).decode().strip("\0").split("\0"))
+assert expected <= actual <= allowed, f"Unapproved staged paths: {actual ^ allowed}"
+print("Allowlisted source-only staged paths:", sorted(actual))
+PY
 git -C "$WT" show ":$P1" | grep -Fx "oid sha256:9ce70dff57e7678234ff423643d255840ca66cf855067948763f73b2b426d77a"
 git -C "$WT" show ":$P2" | grep -Fx "oid sha256:515b287f877cf4cd940c11aeab6bfa05370ff651f06927ba46e13c212a252bfc"
 git -C "$WT" commit -m "art: publish approved Crèche 1464 sources for dispatcher intake [skip render]"
-git -C "$WT" lfs push origin HEAD
+git -C "$WT" lfs push --object-id origin 9ce70dff57e7678234ff423643d255840ca66cf855067948763f73b2b426d77a 515b287f877cf4cd940c11aeab6bfa05370ff651f06927ba46e13c212a252bfc
 git -C "$WT" push origin HEAD:refs/heads/main
 git fetch origin main
 test "$(git rev-parse origin/main)" = "$(git -C "$WT" rev-parse HEAD)"
