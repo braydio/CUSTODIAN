@@ -2,8 +2,8 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `awakening-interactible-clean-room-plates-v1`
 - Category: `assets-art`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-awakening-creche-console-idle-fx-binding-v1`
 - Locks: `awakening-interaction-presentation, awakening-interactible-asset-contracts`
@@ -15,7 +15,7 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Review rationale: `Explicit user authorization for direct user/ChatGPT Crèche review, retaining tests and provenance`
-- Reviewed main: `52f11a85a04ebd6401160ee2c33ebdf9763e9b04`
+- Reviewed main: `3f19fc4c2e6ac9bc474a7afdac906f721a33e5e9`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Publication inputs: `custodian/asset_drop/source_work/awakening/awakening_creche_environment/preclaim_20261106/underlay_source.png`; `custodian/asset_drop/source_work/awakening/awakening_creche_environment/preclaim_20261106/foreground_source.png`; `custodian/docs/ai_context/asset_audits/AWAKENING_CRECHE_PRECLAIM_SOURCE_RECEIPT_20261106.md`; `custodian/docs/ai_context/CRECHE_PRECLAIM_SOURCE_PUBLICATION_V1.md`
 - Visual review: `required`
