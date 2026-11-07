@@ -944,7 +944,16 @@ def _source_span_sync_merge_witness_error(workstream_id: str, path: Path,
     ]
     if not merge_commits:
         return None
-    if (not isinstance(active_packet, str)
+    if active_packet is None:
+        if any(event.get("packet") not in (None, "") for event in events):
+            return "source-span packetless lifecycle trace contains packet metadata"
+        try:
+            associated_packets = _associated_task_packets(root_repo(path), workstream_id)
+        except WorkstreamError as exc:
+            return f"cannot verify packetless source-span ownership: {exc}"
+        if associated_packets:
+            return "source-span packetless lifecycle trace conflicts with an associated task packet"
+    elif (not isinstance(active_packet, str)
             or not active_packet.startswith(f"{TASK_PACKET_ROOT}/")
             or any(event.get("packet") != active_packet for event in events)):
         return "source-span lifecycle trace does not pin the active task packet"

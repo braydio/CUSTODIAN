@@ -103,17 +103,18 @@ class WorkstreamTests(unittest.TestCase):
         self.assertFalse(changed_report["passed"])
         self.assertTrue(changed_report["source_changed_during_validation"])
 
-    def _source_sync_merge_fixture(self, *, witness=True):
+    def _source_sync_merge_fixture(self, *, witness=True, packetless=False):
         workstream_id = "agent-source-sync-witness-fixture"
         branch = workstream.branch_for(workstream_id)
         active_packet = f"custodian/docs/ai_context/task_packets/{workstream_id.upper().replace('-', '_')}.md"
-        active_path = self.repo / active_packet
-        active_path.parent.mkdir(parents=True, exist_ok=True)
-        active_path.write_text(
-            f"# Fixture\n- Workstream: `{workstream_id}`\n- Status: `in_progress`\n"
-        )
-        git(self.repo, "add", active_packet)
-        git(self.repo, "commit", "-m", "publish fixture packet")
+        if not packetless:
+            active_path = self.repo / active_packet
+            active_path.parent.mkdir(parents=True, exist_ok=True)
+            active_path.write_text(
+                f"# Fixture\n- Workstream: `{workstream_id}`\n- Status: `in_progress`\n"
+            )
+            git(self.repo, "add", active_packet)
+            git(self.repo, "commit", "-m", "publish fixture packet")
         source_base = git(self.repo, "rev-parse", "HEAD")
         git(self.repo, "checkout", "-b", branch)
         (self.repo / "source.py").write_text("owned source\n")
@@ -137,7 +138,8 @@ class WorkstreamTests(unittest.TestCase):
             "-m", f"workstream claim {workstream_id} codex:{os.getpid()}:{run_id}",
         )
         trace = workstream.RunTrace.start(
-            self.repo, workstream_id, packet=active_packet, agent="codex", run_id=run_id,
+            self.repo, workstream_id, packet=None if packetless else active_packet,
+            agent="codex", run_id=run_id,
         )
         trace.record("remote_claim_acquired", remote_ref=f"refs/heads/dispatch-claims/{workstream_id}",
                      local_ref=f"refs/custodian/claims/{workstream_id}/{run_id}",
@@ -266,6 +268,37 @@ class WorkstreamTests(unittest.TestCase):
             workstream_id, self.repo, merge_commit, trace,
         )
         self.assertIsNone(error)
+
+    def test_finish_source_span_accepts_packetless_checkpoint_resume_merge_and_rejects_packet_drift(self):
+        workstream_id, _, merge_commit, _, trace = self._source_sync_merge_fixture(packetless=True)
+        self.assertIsNone(trace.packet)
+        self.assertIsNone(workstream._source_span_sync_merge_witness_error(
+            workstream_id, self.repo, merge_commit, trace,
+        ))
+
+        original = trace.path.read_text()
+        events = [json.loads(line) for line in original.splitlines()]
+        events[0]["packet"] = f"{workstream.TASK_PACKET_ROOT}/OTHER.md"
+        trace.path.write_text("".join(json.dumps(event) + "\n" for event in events))
+        self.assertIn("packetless lifecycle trace contains packet metadata",
+                      workstream._source_span_sync_merge_witness_error(
+                          workstream_id, self.repo, merge_commit, trace,
+                      ))
+        trace.path.write_text(original)
+
+        associated_packet = (self.repo / workstream.TASK_PACKET_ROOT
+                             / f"{workstream_id.upper().replace('-', '_')}.md")
+        associated_packet.parent.mkdir(parents=True, exist_ok=True)
+        associated_packet.write_text(
+            f"# Fixture\n- Workstream: `{workstream_id}`\n- Status: `in_progress`\n"
+        )
+        try:
+            self.assertIn("conflicts with an associated task packet",
+                          workstream._source_span_sync_merge_witness_error(
+                              workstream_id, self.repo, merge_commit, trace,
+                          ))
+        finally:
+            associated_packet.unlink()
 
     def test_finish_source_span_rejects_changed_main_sync_without_checkpoint(self):
         workstream_id, _, merge_commit, main_sha, trace = self._source_sync_merge_fixture(witness=False)
