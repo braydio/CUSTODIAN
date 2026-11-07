@@ -4058,13 +4058,13 @@
             "underlay",
             "omni"
           ],
-          "path": "content/levels/awakening/01_creche/awakening_creche_underlay_1464x1074.png",
+          "path": "content/levels/awakening/01_creche/awakening_creche_underlay_960x704.png",
           "frames": 1,
           "frame_size": [
-            1464,
-            1074
+            960,
+            704
           ],
-          "sha256": "9ce70dff57e7678234ff423643d255840ca66cf855067948763f73b2b426d77a",
+          "sha256": "2960b84744e8db82be62f4b284601ed70f0395102cc3f0311e62cbc8bc018874",
           "provenance": "authored",
           "source_asset": null
         },
@@ -4079,13 +4079,13 @@
             "foreground",
             "omni"
           ],
-          "path": "content/levels/awakening/01_creche/awakening_creche_foreground_1464x1074.png",
+          "path": "content/levels/awakening/01_creche/awakening_creche_foreground_960x704.png",
           "frames": 1,
           "frame_size": [
-            1464,
-            1074
+            960,
+            704
           ],
-          "sha256": "515b287f877cf4cd940c11aeab6bfa05370ff651f06927ba46e13c212a252bfc",
+          "sha256": "5fae745632eab60f2fa3dd7b322cbdd0afaec45bb43690870a775c36557ac064",
           "provenance": "authored",
           "source_asset": null
         }

@@ -33,7 +33,7 @@ const PRODUCTION_FOREGROUNDS := PRODUCTION_UNDERLAYS
 
 ## Locked in the design; the whole opening dungeon hangs off these.
 const LOCKED_ENVELOPES := {
-	1: Rect2(-704, -480, 1408, 800),
+	1: Rect2(-704, -480, 1408, 928),
 	2: Rect2(-512, -1280, 1024, 832),
 	3: Rect2(-352, -2144, 704, 800),
 	4: Rect2(416, -2272, 576, 576),
@@ -44,16 +44,16 @@ const LOCKED_ENVELOPES := {
 	9: Rect2(-1024, -6048, 576, 640),
 }
 const LOCKED_ENTRIES := {
-	1: Vector2(0, 160), 2: Vector2(0, -480), 3: Vector2(0, -1344), 4: Vector2(416, -1984),
+	1: Vector2(0, 160), 2: Vector2(416, -704), 3: Vector2(0, -1344), 4: Vector2(416, -1984),
 	5: Vector2(0, -2656), 6: Vector2(0, -3776), 7: Vector2(0, -4864), 8: Vector2(0, -5504),
 	9: Vector2(-448, -5760), 10: Vector2(0, -6144),
 }
 const LOCKED_EXITS := {
-	1: Vector2(0, -320), 2: Vector2(0, -1248), 3: Vector2(352, -1984), 4: Vector2(704, -2272),
+	1: Vector2(0, 352), 2: Vector2(0, -1248), 3: Vector2(352, -1984), 4: Vector2(704, -2272),
 	5: Vector2(0, -3744), 6: Vector2(0, -4864), 7: Vector2(0, -5504), 8: Vector2(0, -6144),
 }
 const LOCKED_CONNECTORS := {
-	"01_02": Rect2(-64, -480, 128, 160),
+	"01_02": Rect2(448, -768, 128, 128),
 	"02_03": Rect2(-64, -1344, 128, 96),
 	"03_04": Rect2(352, -2048, 64, 128),
 	"04_05_A": Rect2(640, -2432, 128, 160),
@@ -62,6 +62,10 @@ const LOCKED_CONNECTORS := {
 	"09_BRANCH": Rect2(-448, -5824, 288, 128),
 }
 const LOCKED_PASSAGES := {
+	"01_02_south_spine": Rect2(-64, 384, 128, 192),
+	"01_02_south_court": Rect2(-64, 480, 1024, 128),
+	"01_02_east_return": Rect2(832, -768, 128, 1376),
+	"01_02_east_approach": Rect2(544, -768, 416, 128),
 	"lower_upper_spine_05_06": Rect2(-64, -3840, 128, 96),
 }
 const LOCKED_CONNECTOR_ENVELOPE := Rect2(-64, -2656, 832, 384)
@@ -105,7 +109,7 @@ func _check_main_scene() -> void:
 ## The design is locked; these assertions are the one place coordinates are
 ## deliberately duplicated, so drift in awakening_layout.gd is caught.
 func _check_locked_layout() -> void:
-	if Layout.WORLD_BOUNDS != Rect2(-1088, -7328, 2176, 7680):
+	if Layout.WORLD_BOUNDS != Rect2(-1088, -7328, 2176, 8000):
 		_fail("WORLD_BOUNDS drifted: %s" % str(Layout.WORLD_BOUNDS))
 	if Layout.OPERATOR_WAKE_POSITION != Vector2(0, 160):
 		_fail("OPERATOR_WAKE_POSITION drifted: %s" % str(Layout.OPERATOR_WAKE_POSITION))
@@ -149,6 +153,8 @@ func _check_locked_layout() -> void:
 			_fail("semantic passage %s drifted: %s" % [key, str(Layout.PASSAGES[key])])
 	if Layout.CONNECTORS.has("05_06") or Layout.THRESHOLDS.has("z06_south_door"):
 		_fail("retired split 05→06 connector/door authority is still present")
+	if Layout.THRESHOLDS.has("z01_north_door"):
+		_fail("retired north doorway authority is still present")
 
 
 func _instantiate_scene() -> Node:
@@ -243,6 +249,26 @@ func _check_scene_skeleton(instance: Node) -> void:
 		_fail("Layout traversal authority is missing")
 	elif traversal != null and traversal.get_child_count() != Layout.traversal_rects().size() * 2:
 		_fail("traversal debug presentation no longer follows Layout traversal authority")
+	var return_blockout := instance.get_node_or_null(
+		"World/AwakeningZones/Traversal/CrecheReturnBlockout"
+	) as CanvasItem
+	if return_blockout == null or not return_blockout.visible:
+		_fail("temporary south/east route blockout must remain visible with production room art")
+	var boundary_body := instance.get_node_or_null(
+		"World/AwakeningZones/Traversal/CrecheReturnBoundaries"
+	) as StaticBody2D
+	var expected_boundaries := Layout.creche_return_boundary_rects()
+	if boundary_body == null or boundary_body.get_child_count() != expected_boundaries.size():
+		_fail("static south/east passage boundaries do not match the derived route union")
+	elif boundary_body != null:
+		for rect in expected_boundaries:
+			var shape := boundary_body.get_node_or_null(
+				"Boundary_%d_%d" % [int(rect.position.x), int(rect.position.y)]
+			) as CollisionShape2D
+			if shape == null or not shape.shape is RectangleShape2D:
+				_fail("derived route boundary collision missing at %s" % str(rect))
+			elif shape.position != rect.get_center() or (shape.shape as RectangleShape2D).size != rect.size:
+				_fail("derived route boundary collision drifted at %s" % str(rect))
 	_check_connector_art(instance)
 	var backdrop := instance.get_node_or_null("World/AwakeningVoidBackdrop") as Polygon2D
 	if backdrop == null or backdrop.polygon.size() != 4:

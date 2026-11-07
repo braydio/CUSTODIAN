@@ -22,6 +22,8 @@ func _run() -> void:
 		_check(not colliders.is_empty(), "instantiated collision contributors discovered")
 		_check(not _has_world_bounds_rail(colliders), "WORLD_BOUNDS rails are not misreported as colliders")
 		_check(_has_record_fragment(colliders, "Wall_"), "generated 32px occupancy wall colliders are enumerated")
+		_check(_count_record_fragment(colliders, "CrecheReturnBoundaries/Boundary_") == Layout.creche_return_boundary_rects().size(), "all generated south/east corridor boundary colliders reach the mapper")
+		_check(_has_record_fragment(colliders, "CrecheReturnBoundaries/Boundary_960_576"), "exterior east-return boundary is an actual mapped collider")
 		_check(_has_record_kind(colliders, "CollisionPolygon2D"), "instantiated void polygons are enumerated")
 		_check(_has_record_fragment(colliders, "SouthReachCollapseBody"), "temporary South Reach blocker is enumerated")
 		_check(_has_zone_record(colliders, "zone10_road_south_reach"), "Road/South Reach blockers carry their true zone identity")
@@ -222,6 +224,14 @@ func _has_record_fragment(records: Array[Dictionary], fragment: String) -> bool:
 	for record in records:
 		if str(record.id).contains(fragment): return true
 	return false
+
+
+func _count_record_fragment(records: Array[Dictionary], fragment: String) -> int:
+	var count := 0
+	for record in records:
+		if str(record.get("id", "")).contains(fragment):
+			count += 1
+	return count
 
 
 func _has_record_kind(records: Array[Dictionary], kind: String) -> bool:

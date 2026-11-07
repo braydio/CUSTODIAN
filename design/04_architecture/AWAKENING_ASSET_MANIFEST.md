@@ -1,6 +1,7 @@
 # Awakening / The First Return — Asset V2 Manifest
 
-> **Crèche floor canonical target, approved 2026-11-05:** **1464×1074 RGBA** (1 frame, transparent outside the authored floor), source SHA-256 `9ce70dff57e7678234ff423643d255840ca66cf855067948763f73b2b426d77a`, supersedes the old 960×704 Crèche presentation size **when** the Asset V2/Godot runtime cutover is reviewed and landed. The entire transparent canvas is not a walkable rectangle; Zone01's floor and envelope must be reauthored from measured geometry. **Not yet installed:** current registered family remains 960×704, with 704×512 walkable floor in `awakening_layout.gd`. See [canonical size and Codex-first implementation brief](AWAKENING_CRECHE_FLOOR_1464X1074_CANONICAL_V1.md). Existing 960 statements below describe historical/current production until the cutover.\n\n
+> **Crèche candidate runtime state, 2026-11-07:** The active claimed implementation branch has the newly supplied 960×704 RGBA floor and foreground registered at world origin, with the separately rendered console and existing 8-frame FX. Previous 1464×1074 source hashes remain in the rollback receipt. Its current route is the provisional south/east return to Zone02 documented in [AWAKENING_FIRST_RETURN.md](AWAKENING_FIRST_RETURN.md#crèche-south-east-return-blockout-2026-11-06). The previous north-facing connector is historical and closed. Direct gameplay-scale visual review remains pending; older 1464×1074 source statements below are historical/rollback evidence unless explicitly marked current.
+
 **Status:** active production art contract
 
 **Scope:** sections 01–10 of `awakening_first_return.tscn`

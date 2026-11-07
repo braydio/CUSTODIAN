@@ -52,6 +52,26 @@ Scale contract reference: `res://docs/WORLD_SCALE_CONTRACT.md`
 
 ## Expansion Targets
 
+## Awakening authored scene
+
+`res://scenes/awakening_first_return.tscn` is the active authored opening scene
+selected by App/Boot. `AwakeningFirstReturn` orchestrates progression and builds
+the `World/AwakeningZones` collision/presentation from
+`game/world/awakening/awakening_layout.gd`. The Crèche underlay and foreground
+are the paired 960×704 Asset V2 plates; the standalone console body and its
+screen-anchored 8-frame activation FX remain independent presentation nodes.
+
+The current provisional Zone01→Zone02 route leaves through the south doorway,
+uses the south spine and court, returns along the east exterior and approaches
+the Ambulatory from its east side. `Traversal/CrecheReturnBlockout` deliberately
+remains visible over production room art until the route receives direct visual
+approval and final connector art. `Traversal/CrecheReturnBoundaries` contains
+static collision generated from the same Layout route union. The older northern
+connector is closed. Exact dimensions and review state are maintained in
+`design/04_architecture/AWAKENING_FIRST_RETURN.md`.
+
+## Expansion Targets
+
 Near-term changes should preserve this split:
 
 - Procgen-authored compound structures promoted into dedicated runtime containers

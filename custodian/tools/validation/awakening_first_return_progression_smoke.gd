@@ -25,6 +25,7 @@ func _init() -> void:
 	await physics_frame
 	await process_frame
 
+	await _check_creche_return_traversal(awakening)
 	await _check_console(awakening)
 	_check_gate_presentation(awakening)
 	await _check_locker(awakening)
@@ -66,6 +67,95 @@ func _check_gate_presentation(awakening: Node) -> void:
 			_fail("Gate pylon collision missing: %s" % piece["id"])
 		elif shape.position != piece["position"] or (shape.shape as RectangleShape2D).size != piece["size"]:
 			_fail("Gate pylon collision differs from Layout: %s" % piece["id"])
+
+
+## Drive the actual Operator through the exterior route using the production
+## InputMap and CharacterBody2D physics, then walk the same waypoints in reverse.
+func _check_creche_return_traversal(awakening: Node) -> void:
+	var operator := awakening.get_node("World/Operator") as CharacterBody2D
+	var boundaries := Layout.creche_return_boundary_rects()
+	if boundaries.is_empty():
+		_fail("south/east route has no generated physical boundary cells")
+		return
+	var physics := operator.get_world_2d().direct_space_state
+	var body_shape := CircleShape2D.new()
+	body_shape.radius = Layout.OPERATOR_COLLISION_RADIUS
+	for point in [Vector2(976, 544), Vector2(896, -784), Vector2(896, 624)]:
+		var query := PhysicsShapeQueryParameters2D.new()
+		query.shape = body_shape
+		query.transform = Transform2D(0.0, point)
+		query.collision_mask = 1
+		query.collide_with_areas = false
+		if physics.intersect_shape(query, 8).is_empty():
+			_fail("outside-corridor location %s has no real static collision boundary" % str(point))
+	var original_sprint_multiplier := float(operator.get("sprint_multiplier"))
+	var original_acceleration := float(operator.get("move_acceleration"))
+	var original_deceleration := float(operator.get("move_deceleration"))
+	operator.set("sprint_multiplier", 4.0)
+	operator.set("move_acceleration", 12000.0)
+	operator.set("move_deceleration", 12000.0)
+	var waypoints := [
+		Vector2(0, 352), Vector2(0, 544), Vector2(896, 544),
+		Vector2(896, -704), Vector2(416, -704),
+	]
+	for index in range(waypoints.size()):
+		if not await _walk_operator_to(operator, waypoints[index]):
+			_fail("real Operator could not traverse south/east waypoint %s" % str(waypoints[index]))
+	if int(awakening.get("current_zone_index")) != 2:
+		_fail("south/east arrival did not enter Zone02 (zone=%d)" % int(awakening.get("current_zone_index")))
+	for index in range(waypoints.size() - 2, -1, -1):
+		if not await _walk_operator_to(operator, waypoints[index]):
+			_fail("real Operator could not return through south/east waypoint %s" % str(waypoints[index]))
+	if int(awakening.get("current_zone_index")) != 1:
+		var zone_one_region := awakening.get_node("World/AwakeningZones/Zone01_Creche/ZoneRegion") as Area2D
+		_fail("southbound return did not restore Zone01 progression (zone=%d position=%s overlaps=%s occupied=%s)" % [int(awakening.get("current_zone_index")), str(operator.global_position), str(zone_one_region.overlaps_body(operator)), str(awakening.get("_occupied_zones"))])
+	operator.set("sprint_multiplier", original_sprint_multiplier)
+	operator.set("move_acceleration", original_acceleration)
+	operator.set("move_deceleration", original_deceleration)
+
+
+func _walk_operator_to(operator: CharacterBody2D, target: Vector2) -> bool:
+	var delta := target - operator.global_position
+	Input.action_press(&"sprint")
+	var frame_limit := int(ceil(delta.length() / 600.0 * 60.0)) + 180
+	var frames := 0
+	while operator.global_position.distance_to(target) > 16.0 and frames < frame_limit:
+		delta = target - operator.global_position
+		var horizontal_major := absf(delta.x) > absf(delta.y)
+		var correction_axis := absf(delta.y) > 24.0 if horizontal_major else absf(delta.x) > 24.0
+		Input.action_release(&"move_left")
+		Input.action_release(&"move_right")
+		Input.action_release(&"move_up")
+		Input.action_release(&"move_down")
+		if horizontal_major and not correction_axis:
+			Input.action_press(&"move_right" if delta.x > 0.0 else &"move_left")
+		elif horizontal_major:
+			Input.action_press(&"move_down" if delta.y > 0.0 else &"move_up")
+		elif correction_axis:
+			Input.action_press(&"move_right" if delta.x > 0.0 else &"move_left")
+		else:
+			Input.action_press(&"move_down" if delta.y > 0.0 else &"move_up")
+		await physics_frame
+		frames += 1
+		if not Layout.is_point_walkable(operator.global_position):
+			push_warning("creche route left authored walkable union at %s while heading to %s" % [str(operator.global_position), str(target)])
+			Input.action_release(&"move_left")
+			Input.action_release(&"move_right")
+			Input.action_release(&"move_up")
+			Input.action_release(&"move_down")
+			Input.action_release(&"sprint")
+			return false
+	Input.action_release(&"move_left")
+	Input.action_release(&"move_right")
+	Input.action_release(&"move_up")
+	Input.action_release(&"move_down")
+	Input.action_release(&"sprint")
+	for _frame in 4:
+		await physics_frame
+	var reached := operator.global_position.distance_to(target) <= 48.0
+	if not reached:
+		push_warning("creche route stopped at %s, %s from waypoint %s after %d frames" % [str(operator.global_position), str(operator.global_position.distance_to(target)), str(target), frames])
+	return reached
 
 
 # --- Crèche console ----------------------------------------------------------

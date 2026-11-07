@@ -14,7 +14,7 @@ extends RefCounted
 const WORLD_TILE := 32.0
 const AWAKENING_ORIGIN := Vector2.ZERO
 const OPERATOR_WAKE_POSITION := Vector2(0, 160)
-const WORLD_BOUNDS := Rect2(-1088, -7328, 2176, 7680)
+const WORLD_BOUNDS := Rect2(-1088, -7328, 2176, 8000)
 
 const OPERATOR_COLLISION_RADIUS := 11.0
 
@@ -45,14 +45,14 @@ const ZONES: Array[Dictionary] = [
 	{
 		"id": &"zone01_creche", "index": 1, "node": "Zone01_Creche",
 		"location": "CRÈCHE OF ANSWERLESS NAMES", "phase": "RECOVERY",
-		"envelope": Rect2(-704, -480, 1408, 800),
-		"entry": Vector2(0, 160), "exit": Vector2(0, -320), "optional": false,
+		"envelope": Rect2(-480, -352, 960, 704),
+		"entry": Vector2(0, 160), "exit": Vector2(0, 352), "optional": false,
 	},
 	{
 		"id": &"zone02_ambulatory", "index": 2, "node": "Zone02_Ambulatory",
 		"location": "RECOVERY AMBULATORY", "phase": "PROCESSING",
 		"envelope": Rect2(-512, -1280, 1024, 832),
-		"entry": Vector2(0, -480), "exit": Vector2(0, -1248), "optional": false,
+		"entry": Vector2(416, -704), "exit": Vector2(0, -1248), "optional": false,
 	},
 	{
 		"id": &"zone03_attestation", "index": 3, "node": "Zone03_Attestation",
@@ -108,7 +108,7 @@ const ZONES: Array[Dictionary] = [
 # Verbatim from the design lock. Minimum critical-route width is 128px.
 
 const CONNECTORS := {
-	"01_02": Rect2(-64, -480, 128, 160),
+	"01_02": Rect2(448, -768, 128, 128),
 	"02_03": Rect2(-64, -1344, 128, 96),
 	"03_04": Rect2(352, -2048, 64, 128),
 	"04_05_A": Rect2(640, -2432, 128, 160),
@@ -120,6 +120,10 @@ const CONNECTORS := {
 ## The lower and upper Awakening share one semantic passage. This rectangle is
 ## the exact union of the former 05_06 connector and Zone06 south doorway.
 const PASSAGES := {
+	"01_02_south_spine": Rect2(-64, 384, 128, 192),
+	"01_02_south_court": Rect2(-64, 480, 1024, 128),
+	"01_02_east_return": Rect2(832, -768, 128, 1376),
+	"01_02_east_approach": Rect2(544, -768, 416, 128),
 	"lower_upper_spine_05_06": Rect2(-64, -3840, 128, 96),
 }
 
@@ -127,7 +131,7 @@ const PASSAGES := {
 ## walkable floor to a locked connector or to an adjoining zone edge. Like
 ## connectors, these always win over set-piece collision.
 const THRESHOLDS := {
-	"z01_north_door": Rect2(-64, -320, 128, 64),
+	"z01_south_door": Rect2(-64, 288, 128, 128),
 	"z03_south_door": Rect2(-64, -1376, 128, 32),
 	"z03_east_door": Rect2(256, -2048, 96, 128),
 	"z06_north_door": Rect2(-64, -4864, 128, 64),
@@ -154,17 +158,14 @@ const FLOOR_RECTS := {
 
 const FLOOR_POLYGONS := {
 	# Measured from the approved 1464x1074 Crèche underlay at 1 px/world-unit.
-	# The broad authored floor spans x≈±685 and y≈[-391,263] after registration;
-	# its central north passage and south spur continue to y≈-391 and y≈327.
-	# This 32px-snapped contour stays inside that art footprint while excluding
-	# transparent canvas corners. The 128px north throat overlaps Zone02 at -480.
+	# The headwall is closed in gameplay. Zone01 exits through the authored south
+	# opening; the native south/east return corridor is drawn as a temporary
+	# route blockout so it remains visible over both registered room plates.
 	&"zone01_creche": [[
-		Vector2(-608, -384), Vector2(-64, -384), Vector2(-64, -480),
-		Vector2(64, -480), Vector2(64, -384), Vector2(608, -384),
-		Vector2(672, -320), Vector2(672, 224), Vector2(608, 256),
+		Vector2(-416, -224), Vector2(-320, -256), Vector2(320, -256),
+		Vector2(416, -224), Vector2(416, 224), Vector2(320, 256),
 		Vector2(64, 256), Vector2(64, 320), Vector2(-64, 320),
-		Vector2(-64, 256), Vector2(-608, 256), Vector2(-672, 224),
-		Vector2(-672, -320),
+		Vector2(-64, 256), Vector2(-320, 256), Vector2(-416, 224),
 	]],
 	&"zone02_ambulatory": [[
 		Vector2(-288, -1248), Vector2(288, -1248), Vector2(480, -1056), Vector2(480, -672),
@@ -441,6 +442,58 @@ static func traversal_rects() -> Array[Rect2]:
 	for key in CONNECTORS: result.append(CONNECTORS[key])
 	for key in PASSAGES: result.append(PASSAGES[key])
 	for key in THRESHOLDS: result.append(THRESHOLDS[key])
+	return result
+
+
+## Exact walkable corridor union for the Crèche's provisional south/east return.
+## The route dimensions live only in CONNECTORS, PASSAGES and THRESHOLDS.
+static func creche_return_route_rects() -> Array[Rect2]:
+	var result: Array[Rect2] = [CONNECTORS["01_02"], THRESHOLDS["z01_south_door"]]
+	for key in ["01_02_south_spine", "01_02_south_court", "01_02_east_return", "01_02_east_approach"]:
+		result.append(PASSAGES[key])
+	return result
+
+
+## One-tile static boundary generated from the authored route union. Cells that
+## belong to an existing zone envelope are left to that zone's own wall geometry.
+static func creche_return_boundary_rects() -> Array[Rect2]:
+	var route_rects := creche_return_route_rects()
+	var route_cells := {}
+	var bounds := route_rects[0]
+	for rect in route_rects:
+		bounds = bounds.merge(rect)
+		var left := int(floor(rect.position.x / WORLD_TILE))
+		var top := int(floor(rect.position.y / WORLD_TILE))
+		var right := int(ceil(rect.end.x / WORLD_TILE))
+		var bottom := int(ceil(rect.end.y / WORLD_TILE))
+		for y in range(top, bottom):
+			for x in range(left, right):
+				route_cells[Vector2i(x, y)] = true
+	var result: Array[Rect2] = []
+	var left := int(floor(bounds.position.x / WORLD_TILE)) - 1
+	var top := int(floor(bounds.position.y / WORLD_TILE)) - 1
+	var right := int(ceil(bounds.end.x / WORLD_TILE)) + 1
+	var bottom := int(ceil(bounds.end.y / WORLD_TILE)) + 1
+	for y in range(top, bottom):
+		for x in range(left, right):
+			var cell := Vector2i(x, y)
+			if route_cells.has(cell):
+				continue
+			var adjacent := route_cells.has(cell + Vector2i(1, 0)) \
+				or route_cells.has(cell + Vector2i(-1, 0)) \
+				or route_cells.has(cell + Vector2i(0, 1)) \
+				or route_cells.has(cell + Vector2i(0, -1))
+			if not adjacent:
+				continue
+			var centre := Vector2((x + 0.5) * WORLD_TILE, (y + 0.5) * WORLD_TILE)
+			var inside_room_envelope := false
+			for zone in ZONES:
+				if (zone["envelope"] as Rect2).has_point(centre):
+					inside_room_envelope = true
+					break
+			if inside_room_envelope or is_point_walkable(centre):
+				continue
+			result.append(Rect2(Vector2(x, y) * WORLD_TILE, Vector2.ONE * WORLD_TILE))
 	return result
 
 static func set_piece_rect(piece: Dictionary) -> Rect2:

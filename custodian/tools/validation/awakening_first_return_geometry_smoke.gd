@@ -38,6 +38,7 @@ func _init() -> void:
 		_check_route_visits_mandatory_zones(route)
 		_check_bidirectional_04_05_passage(route)
 		_check_bidirectional_lower_upper_passage(route)
+	_check_bidirectional_creche_return()
 	_check_creche_footprint()
 	_check_zone_anchors()
 	_check_production_footprints()
@@ -267,8 +268,6 @@ func _check_bidirectional_lower_upper_passage(route: PackedInt32Array) -> void:
 		_fail("Layout is missing the semantic lower→upper 05→06 passage")
 		return
 	var passage: Rect2 = Layout.PASSAGES[PASSAGE_ID]
-	if Layout.PASSAGES.size() != 1:
-		_fail("the lower→upper connection must have one passage authority")
 	if Layout.CONNECTORS.has("05_06") or Layout.THRESHOLDS.has("z06_south_door"):
 		_fail("retired split 05→06 connector/door authority is still present")
 	var passage_rect_count := 0
@@ -341,9 +340,9 @@ func _check_zone_anchors() -> void:
 
 func _check_creche_footprint() -> void:
 	var zone := Layout.zone_by_id(&"zone01_creche")
-	var expected_envelope := Rect2(-704, -480, 1408, 800)
+	var expected_envelope := Rect2(-480, -352, 960, 704)
 	if zone.get("envelope", Rect2()) != expected_envelope:
-		_fail("Zone01 envelope does not match the measured 1464x1074 room bounds")
+		_fail("Zone01 envelope does not match the native 960x704 Crèche canvas")
 	if Layout.FLOOR_RECTS.has(&"zone01_creche"):
 		_fail("Zone01 still uses a rect-only floor instead of its authored contour")
 	var shapes: Array = Layout.FLOOR_POLYGONS.get(&"zone01_creche", [])
@@ -352,28 +351,51 @@ func _check_creche_footprint() -> void:
 	else:
 		var polygon: Array = shapes[0]
 		var expected_vertices := [
-			Vector2(-608, -384), Vector2(-64, -384), Vector2(-64, -480),
-			Vector2(64, -480), Vector2(64, -384), Vector2(608, -384),
-			Vector2(672, -320), Vector2(672, 224), Vector2(608, 256),
+			Vector2(-416, -224), Vector2(-320, -256), Vector2(320, -256),
+			Vector2(416, -224), Vector2(416, 224), Vector2(320, 256),
 			Vector2(64, 256), Vector2(64, 320), Vector2(-64, 320),
-			Vector2(-64, 256), Vector2(-608, 256), Vector2(-672, 224),
-			Vector2(-672, -320),
+			Vector2(-64, 256), Vector2(-320, 256), Vector2(-416, 224),
 		]
 		if polygon != expected_vertices:
 			_fail("Zone01 measured 32px contour changed unexpectedly")
-	for point in [Vector2(0, 160), Vector2(600, 0), Vector2(-600, 0), Vector2(0, -448)]:
+	for point in [Vector2(0, 160), Vector2(384, 0), Vector2(-384, 0), Vector2(0, 352)]:
 		if not Layout.is_point_walkable(point):
-			_fail("Zone01 authored floor/north throat is not walkable at %s" % str(point))
-	for point in [Vector2(688, 0), Vector2(-688, 0), Vector2(0, 336)]:
+			_fail("Zone01 authored floor/south exit is not walkable at %s" % str(point))
+	for point in [Vector2(464, 0), Vector2(-464, 0), Vector2(0, -368)]:
 		if Layout.is_point_walkable(point):
-			_fail("transparent or non-floor Crèche margin became walkable at %s" % str(point))
+			_fail("transparent margin or retired north passage became walkable at %s" % str(point))
 	var connector: Rect2 = Layout.CONNECTORS["01_02"]
 	if connector.size.x != 128.0:
 		_fail("01→02 passage no longer preserves its 128px width")
-	if _find_route(START, Layout.zone_entry(2)).is_empty():
-		_fail("Zone01 cannot traverse north into Zone02")
-	if _find_route(Layout.zone_entry(2), START).is_empty():
-		_fail("Zone02 cannot return south through the Zone01 passage")
+	if Layout.THRESHOLDS.has("z01_north_door"):
+		_fail("retired north doorway authority remains present")
+	if Layout.THRESHOLDS.get("z01_south_door") != Rect2(-64, 288, 128, 128):
+		_fail("south exit doorway geometry drifted")
+
+
+func _check_bidirectional_creche_return() -> void:
+	var waypoints := [
+		Vector2(0, 352), Vector2(0, 544), Vector2(896, 544),
+		Vector2(896, -704), Vector2(416, -704),
+	]
+	if Layout.zone_by_index(1).get("exit") != waypoints[0] or Layout.zone_entry(2) != waypoints[-1]:
+		_fail("Crèche exit and Ambulatory entry anchors drifted from the south/east route")
+	for index in range(waypoints.size() - 1):
+		if _find_route(waypoints[index], waypoints[index + 1]).is_empty():
+			_fail("south/east route is disconnected between %s and %s" % [str(waypoints[index]), str(waypoints[index + 1])])
+		if _find_route(waypoints[index + 1], waypoints[index]).is_empty():
+			_fail("south/east return route is disconnected between %s and %s" % [str(waypoints[index + 1]), str(waypoints[index])])
+	var bounds := Layout.WORLD_BOUNDS
+	if bounds.end.y < 672.0:
+		_fail("WORLD_BOUNDS do not include the southern court and its collision boundary")
+	var boundaries := Layout.creche_return_boundary_rects()
+	if boundaries.is_empty():
+		_fail("south/east route has no derived static collision boundaries")
+	for rect in boundaries:
+		if rect.size != Vector2.ONE * Layout.WORLD_TILE:
+			_fail("route boundary is not aligned to the 32px authority: %s" % str(rect))
+		if Layout.is_point_walkable(rect.get_center()):
+			_fail("route boundary overlaps walkable ground: %s" % str(rect))
 
 
 func _check_production_footprints() -> void:

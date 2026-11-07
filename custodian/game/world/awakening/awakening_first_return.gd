@@ -484,6 +484,46 @@ func _build_traversal_presentation() -> void:
 			Vector2(rect.get_center().x, rect.end.y),
 		])
 		presentation.add_child(inlay)
+	_build_creche_return_blockout(root)
+	_build_creche_return_boundaries(root)
+
+
+## This provisional exterior route must stay visible even when room plates exist:
+## no approved connector artwork currently covers the new south/east alignment.
+func _build_creche_return_blockout(root: Node2D) -> void:
+	var blockout := _ensure_child(root, "CrecheReturnBlockout", Node2D.new()) as Node2D
+	blockout.visible = build_blockout_presentation
+	for rect in Layout.creche_return_route_rects():
+		var floor := Polygon2D.new()
+		floor.name = "RouteFloor_%03d" % blockout.get_child_count()
+		floor.polygon = Layout.rect_to_polygon(rect)
+		floor.color = Color(0.12, 0.36, 0.34, 0.9)
+		floor.z_index = Layout.Z_FLOOR + 1
+		blockout.add_child(floor)
+		var edge := Line2D.new()
+		edge.name = "RouteEdge_%03d" % blockout.get_child_count()
+		edge.points = Layout.rect_to_polygon(rect)
+		edge.closed = true
+		edge.width = 4.0
+		edge.default_color = Color(0.68, 0.48, 0.23, 0.95)
+		edge.z_index = Layout.Z_WORLD_PROPS + 1
+		blockout.add_child(edge)
+
+
+## Physical exterior walls are generated from the same 32px occupancy union as
+## the route. The room envelopes retain their existing wall/collision owners.
+func _build_creche_return_boundaries(root: Node2D) -> void:
+	var body := _ensure_child(root, "CrecheReturnBoundaries", StaticBody2D.new()) as StaticBody2D
+	body.collision_layer = 1
+	body.collision_mask = 0
+	for rect in Layout.creche_return_boundary_rects():
+		var shape := CollisionShape2D.new()
+		shape.name = "Boundary_%d_%d" % [int(rect.position.x), int(rect.position.y)]
+		var rectangle := RectangleShape2D.new()
+		rectangle.size = rect.size
+		shape.shape = rectangle
+		shape.position = rect.get_center()
+		body.add_child(shape)
 
 
 func _has_production_traversal_art() -> bool:
@@ -892,13 +932,14 @@ func _on_zone_body_exited(body: Node, zone_id: StringName) -> void:
 func _resolve_occupied_zone() -> void:
 	var best_index := -1
 	var best_id := &""
-	var position := operator_ref.global_position if operator_ref != null else Vector2.ZERO
 	for zone_id in _occupied_zones.keys():
 		var zone := Layout.zone_by_id(zone_id)
-		# Debug teleports (and any other instant relocation) move the Operator
-		# without an exit event, so verify containment rather than trusting the
-		# region bookkeeping alone.
-		if zone.is_empty() or not (zone["envelope"] as Rect2).has_point(position):
+		var region := _zone_child_node(zone_id, "ZoneRegion") as Area2D
+		# Area2D reports entry when the Operator's collision shape first overlaps
+		# the envelope, which can happen just before its center crosses the edge.
+		# Query the live overlap to retain that valid entry and also discard stale
+		# occupancy after debug teleports.
+		if zone.is_empty() or region == null or operator_ref == null or not region.overlaps_body(operator_ref):
 			_occupied_zones.erase(zone_id)
 			continue
 		if int(zone["index"]) > best_index:

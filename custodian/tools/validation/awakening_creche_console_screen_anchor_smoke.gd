@@ -25,7 +25,7 @@ func _init() -> void:
 			or visible_body == null or visible_body.texture == null \
 			or visible_body.texture.resource_path != CONSOLE_BODY_PATH:
 		_fail("the approved independent console body is missing or duplicated/misidentified")
-	if underlay == null or underlay.texture.get_size() != Vector2(1464, 1074):
+	if underlay == null or underlay.texture.get_size() != Vector2(960, 704):
 		_fail("Crèche underlay identity or dimensions changed")
 	if body.position != Vector2(105, 118) or anchor.position != Vector2.ZERO:
 		_fail("screen anchor drifted from the preserved console world-space pivot")

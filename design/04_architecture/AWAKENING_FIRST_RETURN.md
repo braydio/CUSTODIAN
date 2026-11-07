@@ -1,6 +1,7 @@
 # Awakening: The First Return
 
-> **Crèche floor canonical target, approved 2026-11-05:** **1464×1074 RGBA** (1 frame, transparent outside the authored floor), source SHA-256 `9ce70dff57e7678234ff423643d255840ca66cf855067948763f73b2b426d77a`, supersedes the old 960×704 Crèche presentation size **when** the Asset V2/Godot runtime cutover is reviewed and landed. The entire transparent canvas is not a walkable rectangle; Zone01's floor and envelope must be reauthored from measured geometry. **Not yet installed:** current registered family remains 960×704, with 704×512 walkable floor in `awakening_layout.gd`. See [canonical size and Codex-first implementation brief](AWAKENING_CRECHE_FLOOR_1464X1074_CANONICAL_V1.md). Existing 960 statements below describe historical/current production until the cutover.\n\n
+> **Crèche candidate runtime correction, 2026-11-07:** The newly supplied 960×704 floor and foreground are now registered at world origin in the active Crèche implementation branch. The active route leaves Zone01 through its southern doorway and returns east/north into the Recovery Ambulatory. The previous north-facing `01_02` connection is historical and closed. Runtime source and gameplay-art approval remain subject to the existing workstream's validation and direct visual gate.
+
 **Status:** active opening, production plates in sections 01-09 and authored Road in section 10
 **Last Updated:** 2026-10-07
 **Runtime Target:** Godot 4.x (`custodian/`)
@@ -180,6 +181,34 @@ foreground mask. No new seam art was required: measured source pixels cover the
 walkable centerline and the foregrounds remain transparent there.
 
 The Road of Witnesses modular production plate pairs are already live.
+
+### Crèche south/east return blockout (2026-11-06)
+
+The Crèche's approved southern exit now defines the 01→02 route. This exact
+provisional blockout is owned by `awakening_layout.gd` and remains visible over
+the registered room plates until reviewed connector art exists:
+
+| Segment | Godot world `Rect2(x, y, width, height)` |
+|---|---|
+| Zone01 envelope | `(-704, -480, 1408, 928)` |
+| South doorway | `(-64, 288, 128, 128)` |
+| South departure spine | `(-64, 384, 128, 192)` |
+| South court | `(-64, 480, 1024, 128)` |
+| Eastern return | `(832, -768, 128, 1376)` |
+| East approach | `(544, -768, 416, 128)` |
+| `01_02` Ambulatory connector | `(448, -768, 128, 128)` |
+| Zone02 entry | `(416, -704)` |
+| World bounds | `(-1088, -7328, 2176, 8000)` |
+
+The Operator's five centerline waypoints are `(0,352) → (0,544) → (896,544) →
+(896,-704) → (416,-704)`, traversed in either direction without a transition
+or teleport. The former northern tongue has been removed from Zone01's floor
+polygon; the north headwall art remains, and `(0,-448)` is not walkable. Static
+32px corridor boundaries are derived from the same connector, passage and
+threshold rectangles, while each room envelope keeps its existing wall owner.
+The geometry is intentionally unfinished outside the rooms: the east approach
+through Zone02's eastern edge remains provisional, and the user/ChatGPT visual
+decision is still required before artistic closeout.
 
 `AwakeningFirstReturn` owns progression and HUD state, and assembles geometry and
 presentation from `AwakeningLayout`. It caches its zone-art fade targets and does
