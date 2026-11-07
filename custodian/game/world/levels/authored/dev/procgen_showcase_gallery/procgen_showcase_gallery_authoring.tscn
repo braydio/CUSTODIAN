@@ -1,9 +1,0 @@
-[gd_scene load_steps=2 format=3]
-
-[ext_resource type="PackedScene" path="res://scenes/debug/level_collision_poi_mapper.tscn" id="1_mapper"]
-
-[node name="ProcgenShowcaseGalleryAuthoring" instance=ExtResource("1_mapper")]
-target_scene_path = "res://game/world/levels/authored/dev/procgen_showcase_gallery/procgen_showcase_gallery.tscn"
-target_script_path = "res://game/world/levels/authored/dev/procgen_showcase_gallery/procgen_showcase_gallery.gd"
-target_instance_name = "ProcgenShowcaseGalleryUnderReview"
-mapper_title = "Procgen Showcase Gallery Collision / POI Mapper"

@@ -1,7 +1,0 @@
-interface:
-  display_name: "CUSTODIAN Next"
-  short_description: "Complete one CUSTODIAN implementation and its paired review by default; support explicitly bounded multi-packet runs."
-  default_prompt: "Resume the active CUSTODIAN workstream or claim one eligible packet, complete its paired review, and stop. Continue across packets only when explicitly given a positive max_pairs budget."
-
-policy:
-  allow_implicit_invocation: false

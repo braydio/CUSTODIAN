@@ -1,7 +1,0 @@
-[gd_scene format=3 uid="uid://c2d8j3nvkauu"]
-
-[ext_resource type="PackedScene" uid="uid://bfu5280xcjogu" path="res://game/actors/defense/turret.tscn" id="1_base"]
-
-[node name="TurretBlaster" unique_id=519051512 instance=ExtResource("1_base")]
-turret_name = "Blaster Turret"
-turret_type = 1

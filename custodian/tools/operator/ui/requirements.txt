@@ -1,3 +1,0 @@
-textual>=0.89,<1
-textual-image[textual]>=0.13.2,<0.14
-websockets>=15,<16
