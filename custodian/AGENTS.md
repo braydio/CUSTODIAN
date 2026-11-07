@@ -56,6 +56,7 @@ Use this map to land on the right material fast:
 | Scene/runtime structure | `docs/SCENE_HIERARCHY.md` | `scenes/`, `game/`, `project.godot` |
 | Migration or drift cleanup | `docs/AGENT_MIGRATION_PLAYBOOK.md` | this primer, `docs/ai_context/*` |
 | Validation command selection | `docs/ai_context/VALIDATION_RECIPES.md` | task packet acceptance checks when a packet exists |
+| 3D modeling, Meshy/Blender exports, 3D-to-sprite rendering, Operator 3D preview | `docs/ai_context/OPERATOR_3D_WORKSTREAM_STATE.md` (state, runtime-master status, review rules) | `docs/ai_context/OPERATOR_3D_BLENDER_PIPELINE.md` (Blender API traps, rig/export and render build) |
 | Reusable agent prompts | `docs/ai_context/prompts/README.md` | task-specific prompt template |
 | Agent workflow automation | `docs/ai_context/AGENT_AUTOMATION_BACKLOG.md` | `tools/agent/` when scripts exist |
 

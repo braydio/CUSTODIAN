@@ -151,7 +151,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** world (-1984,-3200); replace procedural rendering only; three readings, persistence, choice IDs and later-return growth gate remain unchanged  
 **Consumer:** res://game/world/hub/events/sepulcher_grave/sepulcher_grave_evidence.gd  
 **Provenance:** new Hub V1 proposal under owner-approved art program  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `awakening_creche_perimeter_support/structural_support`
 
