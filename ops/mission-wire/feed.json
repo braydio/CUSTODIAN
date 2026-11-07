@@ -1,9 +1,150 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-07T18:11:27Z",
-  "source_main_sha": "ab22bda8d66bcd123c23ca5cd4f16d08ae3fd394",
+  "generated_at": "2026-11-07T18:20:46Z",
+  "source_main_sha": "19661bc02ad8825451c4d5e3b21886d0744ab5b3",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "chassis-metadata-independent-pass-19661bc0",
+      "headline": "Independent reviewer passes chassis metadata correction; protected recovery remains gated",
+      "summary": "A fresh-context, different-agent review recorded PASS for the exact historical metadata source-scope correction. Its receipt and archived packet outcome are now on main. This clears the correction's review gate, not the held chassis-attestation review or any host recovery.",
+      "body": "The independent reviewer examined the pinned source span, historical metadata identity, adversarial tests and supplied immutable coordinator validation report. The review recorded no blocking defects or material gaps and the packet is marked complete. The reviewer relied on reported coordinator test execution rather than rerunning it. The next authorized step is a same-claim read-only host-validation recovery plan for the held chassis-attestation review. No recovery apply, new reviewer launch, original review acceptance or verified teardown is established.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "review-agent-paired-review-chassis-metadata-source-scope-v1",
+      "occurred_at": "2026-11-07T18:20:46Z",
+      "bullets": [
+        "Independent fresh-context different-agent PASS recorded for metadata correction.",
+        "Review receipt and completed packet outcome landed on main.",
+        "Held chassis-attestation review still needs a read-only recovery plan; apply requires separate authorization."
+      ],
+      "links": [
+        {
+          "title": "Independent review and closeout commit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/19661bc02ad8825451c4d5e3b21886d0744ab5b3"
+        },
+        {
+          "title": "Reviewed correction",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/ab22bda8d66bcd123c23ca5cd4f16d08ae3fd394"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "The narrow metadata correction blocking the Operator chassis review has now passed an independent review. A separate reviewer checked the exact historical source identities and recorded no blocking defects, moving the project past this correction gate while leaving the protected original review untouched.",
+        "sections": [
+          {
+            "heading": "What the reviewer accepted",
+            "text": "The reviewer verified the correction against pinned Git history, source-scope rules and adversarial tests. The accepted exception covers one historical packet-format change, not a general relaxation of source ownership. The published receipt records fresh reviewer context and different-agent provenance."
+          },
+          {
+            "heading": "The next gate is recovery planning, not execution",
+            "text": "The original chassis-attestation review remains held in host-validation recovery. Its next step is a same-claim, read-only recovery plan. Applying recovery or launching a reviewer still requires separate authorization and cannot be inferred from this PASS."
+          }
+        ],
+        "insights": [
+          {
+            "title": "A provenance bottleneck has cleared",
+            "explanation": "The accepted correction addresses historical review metadata, not gameplay logic. It removes one narrow validation obstacle while preserving the checks intended to prevent unrelated changes from slipping into review."
+          },
+          {
+            "title": "Review acceptance does not imply host cleanup",
+            "explanation": "The receipt establishes an independent verdict for the correction only. It supplies no proof that the original held review resumed or that local locks, worktrees and resources were cleaned up."
+          }
+        ],
+        "takeaway": "The metadata correction has an independently recorded PASS on main; protected recovery and original chassis review acceptance remain separate gates.",
+        "next_watch": "Watch for an authenticated read-only recovery plan for the held chassis-attestation review, followed only with separate authorization by any recovery apply."
+      },
+      "scorecard": {
+        "stage": "Independent correction PASS landed; original review held",
+        "as_of": "2026-11-07T18:20:46Z",
+        "scope": "Metadata correction paired review only, not full dispatcher or host",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Correction implemented and landed",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Main commit ab22bda8."
+          },
+          {
+            "label": "Coordinator validation",
+            "status": "done",
+            "verification": "reported",
+            "evidence": "Reviewer inspected supplied validation report; tests were not independently rerun."
+          },
+          {
+            "label": "Independent correction review",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "PASS receipt in 19661bc0; fresh, different-agent, no blocking findings."
+          },
+          {
+            "label": "Held original review recovery plan",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No read-only plan inspected."
+          },
+          {
+            "label": "Recovery apply and original acceptance",
+            "status": "blocked",
+            "verification": "unknown",
+            "evidence": "Separate authorization and genuine original review receipt required."
+          },
+          {
+            "label": "Canonical teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No host cleanup evidence inspected."
+          }
+        ],
+        "next_gate": "Original review owner: prepare same-claim read-only host-validation recovery plan, stop before apply."
+      },
+      "details": {
+        "overview": "Main commit 19661bc0 adds a fresh-context independent PASS review receipt for the exact metadata correction at ab22bda8 and marks the review packet complete. The reviewer inspected an immutable coordinator validation report rather than rerunning tests. No full dispatcher audit or host telemetry was available.",
+        "ledger": [
+          {
+            "stage": "Implementation landing",
+            "status": "verified",
+            "evidence": "ab22bda8 on main"
+          },
+          {
+            "stage": "Independent correction review",
+            "status": "verified receipt",
+            "evidence": "19661bc0, run 20261107T181211Z-4109dd47bbc3, PASS"
+          },
+          {
+            "stage": "Original held review",
+            "status": "not verified",
+            "evidence": "No resumed or accepted original review evidence"
+          },
+          {
+            "stage": "Canonical teardown",
+            "status": "unknown",
+            "evidence": "No host evidence"
+          }
+        ],
+        "notes": [
+          "Receipt reports no blocking defects or material gaps.",
+          "No commit status contexts were returned for the inspected main commit; CI health remains unknown."
+        ],
+        "unknowns": [
+          "Full dispatcher and recovery queue totals",
+          "Host locks, worktrees and disk status",
+          "Original chassis-attestation recovery and verdict"
+        ],
+        "actions": [
+          "Prepare read-only held-review recovery plan; obtain separate authorization before apply."
+        ]
+      },
+      "related": [
+        {
+          "title": "A second source-scope repair lands as chassis review waits for independent approval",
+          "context": "This is the independent verdict on that exact correction.",
+          "story_id": "paired-review-metadata-scope-ab22bda8"
+        }
+      ]
+    },
     {
       "id": "paired-review-metadata-scope-ab22bda8",
       "headline": "A second source-scope repair lands as chassis review waits for independent approval",
@@ -1467,181 +1608,7 @@
         ],
         "next_gate": "Runtime owner: establish dispatcher eligibility and verify exact approved source bytes before atomic cutover."
       },
-      "related": [
-        {
-          "title": "Approved Crèche floor and wall artwork reaches main, clearing the source handoff gate",
-          "context": "Earlier source publication established durable image identities before the final canonical staging and handoff.",
-          "story_id": "creche-approved-source-publication-fd706097"
-        }
-      ]
-    },
-    {
-      "id": "creche-approved-source-publication-fd706097",
-      "headline": "Approved Crèche floor and wall artwork reaches main, clearing the source handoff gate",
-      "summary": "Two approved 1464×1074 Crèche artwork sources are now recorded on main as Git LFS objects, with a source receipt and corrected floor/foreground roles. The clean-room preparation packet changed from draft/manual to ready/auto. Runtime installation, object retrieval, gameplay review and actual dispatcher eligibility remain unverified.",
-      "body": "CUSTODIAN committed the approved Awakening Crèche underlay and foreground sources, recording exact LFS object IDs and a bounded pre-claim source receipt. The implementation evidence reports source-only validation of dimensions, RGBA and transparency. The clean-room plates packet is now marked ready/auto in GitHub, but still lists a review dependency, so this is not proof that the dispatcher can claim it. No Godot room cutover, Asset V2 ingestion, gameplay-scale review or host execution was verified. The separate G2 source-scope correction remains awaiting independent acceptance.",
-      "severity": "milestone",
-      "verification": "verified",
-      "category": "assets-art",
-      "workstream": "awakening-interactible-clean-room-plates-v1",
-      "occurred_at": "2026-11-06T20:07:21Z",
-      "bullets": [
-        "Two approved 1464×1074 Crèche sources committed as Git LFS pointers",
-        "Exact source receipt and role mapping landed",
-        "Named clean-room plates packet changed to ready/auto",
-        "Runtime ingestion and gameplay-scale review remain ahead",
-        "Dispatcher eligibility and LFS object retrieval not independently verified"
-      ],
-      "links": [
-        {
-          "title": "Crèche source publication",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/fd706097f245274d5458bf920cef82f7dd2f3b83"
-        },
-        {
-          "title": "Bounded source publication procedure",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/3f19fc4c2e6ac9bc474a7afdac906f721a33e5e9"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "The Awakening Crèche has crossed a practical art-production threshold: its approved floor and foreground sources now have permanent identities in the project's main history. That gives the next implementation step a reproducible starting point, although the room itself has not yet been rebuilt in-game.",
-        "sections": [
-          {
-            "heading": "From browser artwork to tracked source",
-            "text": "The two 1464×1074 images were recorded with distinct Git LFS object IDs and a receipt identifying which is the floor and which is the foreground. The receipt reports source-only checks for image dimensions, RGBA format and transparency."
-          },
-          {
-            "heading": "A packet moves forward, but the game has not",
-            "text": "The clean-room plates packet changed from draft/manual to ready/auto. Its dependency still points to a review workstream, and no canonical dispatcher audit was available. Source publication is not the same as Asset V2 ingestion, Godot scene installation or a successful gameplay capture."
-          },
-          {
-            "heading": "What remains for the starting room",
-            "text": "The next useful proof is successful retrieval of both LFS objects followed by controlled source preparation, room cutover and direct gameplay-scale review. That is the bridge from approved artwork to a room the player can actually explore."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The asset handoff is now reproducible",
-            "explanation": "Exact object IDs and role assignments reduce the risk of installing the wrong image or a downscaled preview. They also give the implementation worker a concrete source boundary."
-          },
-          {
-            "title": "Ready on paper is not ready on the host",
-            "explanation": "The packet's ready/auto label is a repository state, not evidence of satisfied dependencies, a dispatcher claim or active Godot work."
-          }
-        ],
-        "takeaway": "Crèche source publication has landed; runtime integration and visual acceptance are still separate gates.",
-        "next_watch": "Verify the Git LFS objects are retrievable and the clean-room packet's dependency is satisfied before tracking a source-prep or Godot cutover claim."
-      },
-      "details": {
-        "overview": "Main source commit fd706097f245274d5458bf920cef82f7dd2f3b83 contains two Git LFS pointers, receipt and packet status change. Underlay OID 9ce70dff… (2,322,966 bytes); foreground OID 515b287f… (1,745,414 bytes). These are repository pointer records, not independently fetched image bytes. Combined commit statuses and PR-triggered workflow runs returned empty.",
-        "ledger": [
-          {
-            "stage": "Approved source publication",
-            "status": "verified landed",
-            "evidence": "Commit fd706097 includes two LFS pointers and source receipt"
-          },
-          {
-            "stage": "Source validation",
-            "status": "reported passing",
-            "evidence": "Receipt reports SHA, RGBA, alpha, dimensions and source-only install checks"
-          },
-          {
-            "stage": "Packet readiness",
-            "status": "verified GitHub declaration",
-            "evidence": "Clean-room plates packet changed draft/manual to ready/auto; review dependency remains"
-          },
-          {
-            "stage": "Runtime cutover",
-            "status": "unknown / not established",
-            "evidence": "No Godot installation or gameplay capture inspected"
-          },
-          {
-            "stage": "Direct gameplay review",
-            "status": "next",
-            "evidence": "User/ChatGPT review required after implementation"
-          },
-          {
-            "stage": "Host cleanup",
-            "status": "unknown",
-            "evidence": "No canonical host audit or teardown receipt"
-          }
-        ],
-        "notes": [
-          "Git LFS object pointers do not independently prove content availability to the runtime.",
-          "No full dispatcher inventory was available."
-        ],
-        "unknowns": [
-          "LFS object fetchability and host dispatcher eligibility",
-          "Actual scene integration and gameplay validation",
-          "Host claims, worktrees and teardown"
-        ],
-        "actions": [
-          "Art implementation owner: verify both exact LFS objects and source checks before preparing the room.",
-          "Runtime owner: complete Godot integration and collect gameplay-scale evidence.",
-          "User/ChatGPT: review the resulting gameplay-scale room."
-        ]
-      },
-      "scorecard": {
-        "stage": "Approved source identities landed; runtime preparation next",
-        "as_of": "2026-11-06T20:31:43Z",
-        "scope": "One named Crèche clean-room plates workstream, not a full queue audit",
-        "metrics": [
-          {
-            "id": "other-creche-sources",
-            "label": "TRACKED SOURCES",
-            "value": 2,
-            "verification": "verified",
-            "basis": "Two distinct Git LFS pointer files in commit fd706097; bytes not independently fetched",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/fd706097f245274d5458bf920cef82f7dd2f3b83"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Approve floor and foreground roles",
-            "status": "done",
-            "verification": "reported",
-            "evidence": "Owner approval recorded in source receipt"
-          },
-          {
-            "label": "Commit source identities and receipt",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Commit fd706097"
-          },
-          {
-            "label": "Verify fetchability and dependency eligibility",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No canonical dispatcher or LFS retrieval evidence"
-          },
-          {
-            "label": "Prepare and ingest Asset V2 sources",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No runtime ingestion inspected"
-          },
-          {
-            "label": "Install Godot room cutover",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No scene integration evidence"
-          },
-          {
-            "label": "Direct gameplay-scale visual review",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No gameplay captures or verdict"
-          }
-        ],
-        "next_gate": "Implementation owner: verify exact LFS retrieval and packet dependency before source preparation."
-      },
-      "related": [
-        {
-          "title": "Crèche art handoff corrected; direct visual review replaces paired Codex review",
-          "context": "Earlier correction established the approved source roles and direct gameplay review path.",
-          "story_id": "awakening-creche-direct-review-source-correction-be37e5c2"
-        }
-      ]
+      "related": []
     }
   ],
   "snapshot": {
