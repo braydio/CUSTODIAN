@@ -1,3 +1,5 @@
+> **Superseded runtime target (2026-11-07):** The user replaced this 1464×1074 candidate with a new 960×704 source pair. This document now records the preserved rollback artwork and historical geometry only. Current family, scene registration, Zone01 envelope/collision and approval state are tracked by `custodian/docs/ai_context/asset_audits/AWAKENING_CRECHE_960_CANDIDATE_CUTOVER_20261107.md` and the active workstream packet. The 1464×1074 originals remain in the parent Git LFS history.
+
 # Awakening Crèche: Canonical 1464×1074 Floor and Godot Cutover
 
 **Status:** APPROVED DESIGN TARGET, **NOT YET IN LIVE GODOT** (2026-11-05).  
