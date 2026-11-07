@@ -1,9 +1,128 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-06T21:24:49Z",
-  "source_main_sha": "95f1c7130c5dd819577c64a3cbafc9bcd9aeef65",
+  "generated_at": "2026-11-07T00:17:54Z",
+  "source_main_sha": "504658c312b5bbfc028eaec529acc391e37497ce",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "chatgpt-sender-attachment-guard-504658c3",
+      "headline": "ChatGPT sender gains attachment safeguards, but live delivery remains untested",
+      "summary": "A new CUSTODIAN browser automation helper checks staged attachment names before sending and requires visible confirmation of a submitted message. Python syntax and CLI dry-run checks passed, but no real browser submission was tested. The change is landed code, not proof that messages or files can now be delivered reliably.",
+      "body": "Main commit 504658c3 introduces a ChatGPT sender helper that targets one existing conversation tab, refuses mismatched or unexpected attachments, and checks that a submitted message appears while the composer clears. Its --stage and --submit paths are opt-in. The author's validation record reports Python AST and CLI dry-run success, but explicitly says no live submit occurred. The browser composer and staged files were left unchanged. A missing send confirmation is treated as uncertain rather than permission to retry. No independent review, host execution, runtime liveness, or teardown was established.",
+      "severity": "brief",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "chatgpt-sender-staged-attachment-verification",
+      "occurred_at": "2026-11-06T22:59:07Z",
+      "bullets": [
+        "Exact attachment-name matching and duplicate checks added",
+        "Submission waits for visible user message and cleared composer",
+        "Syntax and CLI dry-run validation reported; live send not tested",
+        "Next gate: controlled browser integration test with explicit authorization"
+      ],
+      "links": [
+        {
+          "title": "Sender attachment verification commit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/504658c312b5bbfc028eaec529acc391e37497ce"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN's ChatGPT messaging helper now takes a more cautious approach to attachments and sending. It can recognize files already staged in the composer and refuse an unsafe mismatch, while a send attempt is not considered confirmed until the conversation visibly changes. The safeguard has landed in code, but actual delivery is still untested.",
+        "sections": [
+          {
+            "heading": "A safer handoff to the browser",
+            "text": "The helper targets one existing ChatGPT conversation and checks the exact attachment names already staged. It rejects unexpected files, duplicate requested names and conflicting drafts rather than replacing them silently."
+          },
+          {
+            "heading": "Confirmation is not assumed",
+            "text": "After an explicitly requested send, the helper looks for the new user message and a cleared composer. If confirmation fails, it warns against automatic retries. The recorded checks were syntax and command-line dry runs, not a live browser submission."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Uncertain sends should not become duplicate sends",
+            "explanation": "The new confirmation rule addresses an important failure mode in automation: clicking Send is not the same as knowing a message arrived. Refusing blind retries reduces the risk of repeated messages or attachments."
+          }
+        ],
+        "takeaway": "The sender's safety logic is now present on main; real-world attachment and delivery behavior still needs a controlled test.",
+        "next_watch": "A specifically authorized browser integration test should confirm staged files, one submission, and the resulting conversation state."
+      },
+      "details": {
+        "overview": "Commit 504658c312b5bbfc028eaec529acc391e37497ce adds send_chatgpt_message.py and a verification summary. Validation is author-reported AST parsing and CLI dry run; no browser submit occurred. GitHub combined commit statuses returned no checks. Main SHA establishes landed code only, not host execution.",
+        "ledger": [
+          {
+            "stage": "Implementation on main",
+            "status": "verified landed",
+            "evidence": "Commit 504658c3 contains the sender helper and verification summary."
+          },
+          {
+            "stage": "Static and CLI validation",
+            "status": "reported pass",
+            "evidence": "Author summary records AST and dry-run success."
+          },
+          {
+            "stage": "Live browser send",
+            "status": "not tested",
+            "evidence": "Summary explicitly says no live submit was attempted."
+          },
+          {
+            "stage": "Independent review",
+            "status": "unknown",
+            "evidence": "No independent acceptance receipt inspected."
+          },
+          {
+            "stage": "Host cleanup",
+            "status": "unknown",
+            "evidence": "No canonical host audit or teardown proof."
+          }
+        ],
+        "notes": [
+          "Send confirmation requires a new matching user message and cleared composer/attachment state."
+        ],
+        "unknowns": [
+          "Actual browser attachment behavior",
+          "Independent review and host state"
+        ],
+        "actions": [
+          "Authorized runtime owner: run a bounded real-browser test only after separate execution approval."
+        ]
+      },
+      "scorecard": {
+        "stage": "Landed implementation; browser integration unverified",
+        "as_of": "2026-11-07T00:17:54Z",
+        "scope": "Named ChatGPT sender workstream only",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Implement staged attachment guards",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Main commit 504658c3."
+          },
+          {
+            "label": "Run syntax and CLI dry-run checks",
+            "status": "current",
+            "verification": "reported",
+            "evidence": "Author summary reports both checks passing."
+          },
+          {
+            "label": "Test real browser staging and send",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No live submission attempted."
+          },
+          {
+            "label": "Obtain independent review where required",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No acceptance receipt inspected."
+          }
+        ],
+        "next_gate": "Runtime owner: obtain explicit authorization for a bounded live-browser test."
+      },
+      "related": []
+    },
     {
       "id": "creche-source-staged-cutover-ready-95f1c713",
       "headline": "Crèche artwork staged and source task closed; full room cutover moves into the ready queue",
@@ -1621,130 +1740,6 @@
           }
         ],
         "next_gate": "Art owner: approve a first source plate and its depth/alpha registration before any Asset V2 cutover."
-      },
-      "related": []
-    },
-    {
-      "id": "chatgpt-response-reader-v110-f42cc51c",
-      "headline": "Browser reply reader lands with unfinished return paths",
-      "summary": "A new read-only ChatGPT browser adapter landed on main to help CUSTODIAN orchestration collect completed replies. Code inspection finds debugging return paths that break its stated output contract; validation and live operation are not established.",
-      "body": "Commit f42cc51 adds get_chatgpt_response.py v1.1.0, attaching through an existing local Chrome debugging endpoint and reading visible conversation DOM. The implementation documents a strict completed-text / RESPONSE IN PROGRESS / error contract, but read_once currently returns 'FIRST DOT GET BUSY' when generation is active, returns a page object when reply text is empty, and emits a debugging placeholder on an unexpected probe result. These paths contradict the documented interface and may confuse orchestration consumers. This is a verified source-level defect, not proof of an observed runtime failure. No tests, independent acceptance, running process, or teardown were verified. The private pilot observation pointer was last modified earlier than this commit and is not fresh evidence of this state.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "general",
-      "workstream": "chatgpt-browser-reply-reader",
-      "occurred_at": "2026-11-05T02:45:43Z",
-      "bullets": [
-        "Read-only browser reply adapter added to main.",
-        "Three return paths conflict with its documented stdout contract.",
-        "No runtime failure or CI success inferred from source alone.",
-        "Correct contract branches and validate before wiring into orchestration."
-      ],
-      "links": [
-        {
-          "title": "Browser reply reader source commit",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/f42cc51cb5689d6b8ae596e489eb995ac9cde46f"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN now has a browser-side reader intended to collect completed ChatGPT responses for its orchestration loop. The new script is on main, but its current source contains unfinished return paths that could mislead the next automation step.",
-        "sections": [
-          {
-            "heading": "A bridge from browser conversations to orchestration",
-            "text": "The adapter attaches to an existing Chrome debugging session, identifies a conversation and reads visible assistant text. It is designed to avoid private application APIs and report whether a reply has finished."
-          },
-          {
-            "heading": "The contract and the code diverge",
-            "text": "The script promises either completed text, a standard in-progress marker, or a nonzero error. Instead, an active reply can return a debugging phrase; an empty reply can return a browser page object; and an unexpected probe state returns a placeholder. These are source-confirmed inconsistencies, not observed production failures."
-          }
-        ],
-        "insights": [
-          {
-            "title": "A small protocol mismatch can stall a large art pipeline",
-            "explanation": "An orchestrator needs reliable completion signals before fetching and installing generated assets. Ambiguous output can turn a finished response into a false success or a stuck handoff."
-          },
-          {
-            "title": "Landing is not validation",
-            "explanation": "The commit proves the adapter exists on main. It does not establish tests, independent acceptance, or a running browser connection."
-          }
-        ],
-        "takeaway": "The new bridge is a useful integration point, but its response contract needs correction and tests before consumers rely on it.",
-        "next_watch": "Watch for a follow-up patch restoring the documented return values and a bounded test of completed, streaming, empty, and ambiguous replies."
-      },
-      "details": {
-        "overview": "Source inspection of f42cc51: custodian/tools/orchestration/get_chatgpt_response.py v1.1.0. Combined commit status returned no status entries, so CI health is unknown. No canonical dispatcher audit or fresh validated pilot observation.",
-        "ledger": [
-          {
-            "stage": "Source landing",
-            "status": "verified",
-            "evidence": "f42cc51 on main adds the adapter."
-          },
-          {
-            "stage": "Contract conformity",
-            "status": "source defect verified",
-            "evidence": "read_once returns FIRST DOT GET BUSY, page, or DEBUGGING_PLACEHOLDER on branches contrary to module contract."
-          },
-          {
-            "stage": "Validation and review",
-            "status": "unknown",
-            "evidence": "No relevant test or independent review receipt inspected."
-          },
-          {
-            "stage": "Host execution and teardown",
-            "status": "unknown",
-            "evidence": "No host evidence."
-          }
-        ],
-        "notes": [
-          "This source review does not prove the script has been executed."
-        ],
-        "unknowns": [
-          "Actual runtime behavior against the current browser DOM.",
-          "Canonical packet queue and host status."
-        ],
-        "actions": [
-          "Implementation owner: restore strict output and exit-code semantics, then add tests for busy, empty and unexpected probe states."
-        ]
-      },
-      "scorecard": {
-        "stage": "Landed source; contract correction needed",
-        "as_of": "2026-11-05T02:45:43Z",
-        "scope": "One browser reply reader implementation",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Adapter source landed",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "f42cc51"
-          },
-          {
-            "label": "Strict response contract",
-            "status": "blocked",
-            "verification": "verified",
-            "evidence": "Three inconsistent return paths in read_once"
-          },
-          {
-            "label": "Automated tests",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No test evidence inspected"
-          },
-          {
-            "label": "Independent review",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No accepted receipt"
-          },
-          {
-            "label": "Live integration",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No host observation"
-          }
-        ],
-        "next_gate": "Implementation owner: correct read_once return paths and validate the output contract before enabling consumers."
       },
       "related": []
     }
