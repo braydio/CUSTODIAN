@@ -1,9 +1,154 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-07T11:51:07Z",
-  "source_main_sha": "738be14d9582f44f6f58b444cb89e93afd55951f",
+  "generated_at": "2026-11-07T15:40:52Z",
+  "source_main_sha": "dc48e1e9e8511abe160aad266ed44493f11e8666",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "operator-preview-slice-a-dc48e1e9",
+      "headline": "Operator 3D animation gains an in-engine comparison preview, but production approval remains on hold",
+      "summary": "A focused Operator animation preview is now on main, allowing an unapproved 3D candidate to be compared against the accepted 2.5D source in Godot. The original batch-executor workstream is still incomplete, visual approval is absent, and a non-green lifecycle CI suite remains unresolved.",
+      "body": "Main commit dc48e1e9 adds a candidate-only Operator 3D preview scene and guarded request loader. The comparison pins the accepted 2.5D source and preserves the candidate_unapproved flag, with production approval and timing authority explicitly false. The commit reports baseline-equivalent authored-level CI errors documented in PR #119, but says the lifecycle suite remains non-green. Original executor ownership and remaining slices B–D are outstanding; independent paired acceptance and canonical teardown are not established.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "operator-3d-animation-batch-executor-v1",
+      "occurred_at": "2026-11-07T14:59:54Z",
+      "bullets": [
+        "Candidate-only Godot comparison preview landed on main.",
+        "Candidate remains unapproved; runtime timing authority remains false.",
+        "Remaining batch-executor/cache slices and paired review are not complete.",
+        "Lifecycle CI is not green; baseline-equivalent authored errors do not certify the suite."
+      ],
+      "links": [
+        {
+          "title": "Main preview salvage commit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/dc48e1e9e8511abe160aad266ed44493f11e8666"
+        },
+        {
+          "title": "PR #119 independent review context",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/119"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN can now inspect a proposed 3D Operator animation inside Godot alongside the accepted 2.5D reference. That gives artists and gameplay reviewers a more useful comparison surface, but it is deliberately a preview, not permission to replace the playable character animation.",
+        "sections": [
+          {
+            "heading": "A safer place to judge the animation",
+            "text": "The new scene loads an explicitly unapproved candidate, checks its request digest and preserves a fixed reference to the accepted 2.5D artwork. Reviewers can compare the motion without granting production status or changing gameplay timing."
+          },
+          {
+            "heading": "The larger animation pipeline is still unfinished",
+            "text": "This landing salvages only the first preview slice. Incremental batch execution, cache behavior and receipts remain unfinished. The original workstream is still open, and independent paired acceptance has not been established."
+          },
+          {
+            "heading": "A test caveat still matters",
+            "text": "The commit cites independent review evidence that authored-level CI errors match the main baseline. That narrows one regression concern, but the lifecycle suite is still not green. A baseline comparison is not a passing test result."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Reviewability improved before deployability",
+            "explanation": "An in-engine preview makes a difficult visual decision inspectable without prematurely promoting experimental frames into production."
+          },
+          {
+            "title": "Baseline-equivalent failures are still failures",
+            "explanation": "The review may establish that a particular error was already present, but it does not close the non-green lifecycle validation gate or finish the original executor."
+          }
+        ],
+        "takeaway": "The Operator 3D candidate is easier to evaluate, but remains unapproved and outside production animation authority.",
+        "next_watch": "Watch for human visual comparison, completion of the remaining executor/cache slices, a resolved lifecycle suite and an independent acceptance receipt."
+      },
+      "scorecard": {
+        "stage": "Preview landed; candidate not approved; original executor incomplete",
+        "as_of": "2026-11-07T15:40:52Z",
+        "scope": "One named Operator 3D animation workstream; no full dispatcher audit",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Create guarded in-engine preview",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Main commit dc48e1e9 adds preview scenes and script."
+          },
+          {
+            "label": "Preserve candidate-only boundary",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Loader enforces candidate_unapproved and false production/timing approval."
+          },
+          {
+            "label": "Resolve lifecycle CI failures",
+            "status": "blocked",
+            "verification": "reported",
+            "evidence": "Commit reports baseline-equivalent authored errors, but lifecycle suite remains non-green."
+          },
+          {
+            "label": "Finish executor and cache slices",
+            "status": "next",
+            "verification": "reported",
+            "evidence": "Slices B–D and original packet completion remain outstanding."
+          },
+          {
+            "label": "Human visual approval",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No visual acceptance evidence inspected."
+          },
+          {
+            "label": "Independent paired acceptance and canonical teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No accepted PASS or host teardown receipt inspected."
+          }
+        ],
+        "next_gate": "Operator workstream owner: resolve the outstanding lifecycle validation gate and finish the remaining executor/cache obligations before independent acceptance."
+      },
+      "details": {
+        "overview": "The inspected main commit establishes a guarded comparison preview only. Repository source and author notes do not establish host execution, acceptance or cleanup.",
+        "ledger": [
+          {
+            "stage": "Preview implementation landing",
+            "status": "verified on main",
+            "evidence": "Commit dc48e1e9 contains preview scenes and guarded script."
+          },
+          {
+            "stage": "Candidate production approval",
+            "status": "explicitly not granted",
+            "evidence": "Candidate-only loader rejects production approval and timing authority."
+          },
+          {
+            "stage": "CI lifecycle validation",
+            "status": "reported non-green",
+            "evidence": "Commit cites PR #119 review of baseline-equivalent authored errors; lifecycle suite remains outstanding."
+          },
+          {
+            "stage": "Independent acceptance",
+            "status": "unknown",
+            "evidence": "No canonical PASS receipt inspected."
+          },
+          {
+            "stage": "Host teardown",
+            "status": "unknown",
+            "evidence": "No host evidence inspected."
+          }
+        ],
+        "notes": [
+          "The source describes a 2,104-frame candidate; this is not an independently counted production frame inventory."
+        ],
+        "unknowns": [
+          "Full dispatcher packet counts",
+          "Independent accepted review and host cleanup",
+          "Human visual approval and production timing authority"
+        ],
+        "actions": [
+          "Operator workstream owner: finish lifecycle validation and remaining batch/cache slices.",
+          "Independent reviewer: evaluate completed work after prerequisites land."
+        ]
+      },
+      "related": []
+    },
     {
       "id": "awakening-score-runtime-738be14d",
       "headline": "Awakening gains its first production score, with transition-safe music handoff",
@@ -1558,140 +1703,15 @@
           "story_id": "pixelplanets-retirement-landed-held-review-761ea680"
         }
       ]
-    },
-    {
-      "id": "process-ownership-scanner-hardening-90164bee",
-      "headline": "Process ownership scanner gets a narrowly guarded repair plan",
-      "summary": "A new implementation and independent-review pair targets a host-validation deadlock: a credential daemon with unreadable process directory was blocking ownership checks. The proposed fix must authenticate the service independently and continue rejecting spoofed or ambiguous processes. No scanner code changed.",
-      "body": "A new implementation and independent-review pair targets a host-validation deadlock: a credential daemon with unreadable process directory was blocking ownership checks. The proposed fix must authenticate the service independently and continue rejecting spoofed or ambiguous processes. No scanner code changed. Documentation and packet metadata do not prove runtime installation, dispatcher execution, independent acceptance, or canonical teardown. Host-wide counts and current CI remain unverified.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-paired-review-process-ownership-scanner-hardening-v1",
-      "occurred_at": "2026-11-05T20:10:40Z",
-      "bullets": [
-        "Author paired packets — done",
-        "Validate and promote packet — next",
-        "Implement scanner and adversarial tests — next",
-        "Independent review PASS — next",
-        "Canonical recovery and teardown — unknown"
-      ],
-      "links": [
-        {
-          "title": "Inspected source commit",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/90164bee80bbef535fe14d77c7ad7b51f100f861"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "A new implementation and independent-review pair targets a host-validation deadlock: a credential daemon with unreadable process directory was blocking ownership checks. The proposed fix must authenticate the service independently and continue rejecting spoofed or ambiguous processes. No scanner code changed.",
-        "sections": [
-          {
-            "heading": "A safety check meets an unusual host process",
-            "text": "The existing review ownership scan can stop on a same-user credential service before deciding whether it belongs to a reviewer. The packet proposes checking trustworthy process identity first, without accepting a process name alone."
-          },
-          {
-            "heading": "The lock still matters",
-            "text": "The original protected review retains its claim and lock according to the packet. This documentation change neither frees that lock nor retries the review."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Fail closed, even for the exception",
-            "explanation": "A genuine supervised credential daemon may be excluded only with independent identity proof. A forged name, unreadable identity, or possible review owner must remain blocking."
-          }
-        ],
-        "takeaway": "The new source evidence establishes a defined next gate, not completed runtime or review acceptance.",
-        "next_watch": "Owner: validate/promote the paired packet through normal authoring and resolve the existing protected lock before any claim."
-      },
-      "details": {
-        "overview": "Inspected commit 90164bee80bbef535fe14d77c7ad7b51f100f861. Private pilot pointer is older than 40 hours, so no private counts were used. Host claims, CI, teardown and live status remain unknown.",
-        "ledger": [
-          {
-            "stage": "Author paired packets",
-            "status": "done",
-            "evidence": "90164bee commit"
-          },
-          {
-            "stage": "Validate and promote packet",
-            "status": "next",
-            "evidence": "Authoring handoff remains gated"
-          },
-          {
-            "stage": "Implement scanner and adversarial tests",
-            "status": "next",
-            "evidence": "No code change in this commit"
-          },
-          {
-            "stage": "Independent review PASS",
-            "status": "next",
-            "evidence": "No acceptance receipt"
-          },
-          {
-            "stage": "Canonical recovery and teardown",
-            "status": "unknown",
-            "evidence": "Requires later separate authorization and host evidence"
-          }
-        ],
-        "notes": [],
-        "unknowns": [
-          "Current canonical dispatcher audit",
-          "Independent acceptance and host teardown",
-          "Current CI conclusion"
-        ],
-        "actions": [
-          "Owner: validate/promote the paired packet through normal authoring and resolve the existing protected lock before any claim."
-        ]
-      },
-      "scorecard": {
-        "stage": "Documented, not executed",
-        "as_of": "2026-11-05T20:10:40Z",
-        "scope": "This named workstream only",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Author paired packets",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "90164bee commit"
-          },
-          {
-            "label": "Validate and promote packet",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Authoring handoff remains gated"
-          },
-          {
-            "label": "Implement scanner and adversarial tests",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No code change in this commit"
-          },
-          {
-            "label": "Independent review PASS",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No acceptance receipt"
-          },
-          {
-            "label": "Canonical recovery and teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "Requires later separate authorization and host evidence"
-          }
-        ],
-        "next_gate": "Owner: validate/promote the paired packet through normal authoring and resolve the existing protected lock before any claim."
-      },
-      "related": []
     }
   ],
   "snapshot": {
-    "observed_at": "2026-11-07T11:51:07Z",
-    "source_main_sha": "738be14d9582f44f6f58b444cb89e93afd55951f",
+    "observed_at": "2026-11-07T15:40:52Z",
+    "source_main_sha": "dc48e1e9e8511abe160aad266ed44493f11e8666",
     "coverage": "partial",
-    "scope": "Inspected main integration and named Awakening score evidence; no canonical full dispatcher audit or fresh validated private pilot.",
+    "scope": "Inspected main Operator preview landing and named review context only; no full dispatcher audit or validated fresh private pilot.",
     "metrics": [],
-    "focus": "Complete human listening validation and canonical closeout of the landed Awakening score.",
-    "note": "New Awakening score runtime integration landed. Existing queue totals remain unknown; pilot observation is stale."
+    "focus": "Resolve Operator lifecycle validation and finish remaining executor/cache slices before independent acceptance.",
+    "note": "New candidate-only preview landed; total packet and host counts unknown. Private pilot pointer metadata predates this observation by more than three days and was not used."
   }
 }
