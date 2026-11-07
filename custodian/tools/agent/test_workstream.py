@@ -269,6 +269,36 @@ class WorkstreamTests(unittest.TestCase):
         )
         self.assertIsNone(error)
 
+    def test_source_span_sync_merge_accepts_published_source_first_parent(self):
+        workstream_id, _, merge_commit, _, trace = self._source_sync_merge_fixture(packetless=True)
+        fields = git(self.repo, "rev-list", "--parents", "-n", "1", merge_commit).split()
+        first_parent, second_parent = fields[1:]
+        self.assertFalse(subprocess.run(
+            ["git", "merge-base", "--is-ancestor", first_parent, "origin/main"],
+            cwd=self.repo, capture_output=True,
+        ).returncode == 0)
+        self.assertTrue(subprocess.run(
+            ["git", "merge-base", "--is-ancestor", second_parent, "origin/main"],
+            cwd=self.repo, capture_output=True,
+        ).returncode == 0)
+        self.assertIsNone(workstream._source_span_sync_merge_witness_error(
+            workstream_id, self.repo, merge_commit, trace,
+        ))
+
+    def test_source_merge_resolution_rejects_unrelated_tree_changes(self):
+        base = self.repo / "merge-base.txt"
+        base.write_text("base\n")
+        git(self.repo, "add", "merge-base.txt")
+        git(self.repo, "commit", "-m", "add merge base fixture")
+        merge_base = git(self.repo, "rev-parse", "HEAD")
+        first_parent = git(self.repo, "rev-parse", "HEAD")
+        second_parent = git(self.repo, "rev-parse", "HEAD")
+        actual_tree = git(self.repo, "rev-parse", "HEAD^{tree}")
+        self.assertFalse(workstream._authenticated_source_merge_resolution(
+            self.repo, merge_base, first_parent, second_parent, first_parent,
+            actual_tree, actual_tree,
+        ))
+
     def test_finish_source_span_accepts_packetless_checkpoint_resume_merge_and_rejects_packet_drift(self):
         workstream_id, _, merge_commit, _, trace = self._source_sync_merge_fixture(packetless=True)
         self.assertIsNone(trace.packet)
