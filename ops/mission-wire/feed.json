@@ -1,9 +1,155 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-07T00:17:54Z",
-  "source_main_sha": "504658c312b5bbfc028eaec529acc391e37497ce",
+  "generated_at": "2026-11-07T01:42:27Z",
+  "source_main_sha": "50f20cd9efa6b73ab94e91049e9675b738311cc6",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "field-scout-playtest-discovery-50f20cd9",
+      "headline": "Field Scout playtest route clarified; finding and restoring the buggy still need proof",
+      "summary": "New CUSTODIAN documentation explains why the Field Scout does not appear in the default Awakening launch and how to enter its Contract sandbox. It also exposes unresolved gameplay gaps: the wreck may not be placed within reach, uses placeholder hover art, and charges raw resources instead of the approved fabricated assemblies. These are documented limitations, not new runtime fixes.",
+      "body": "Main commits 389df928 and 50f20cd9 update the current-state guide and Godot app README. The default F5 project run starts Awakening, which has no Field Scout; the authored wreck is in the Contract sandbox, entered through the explicit --custodian-start=contract-sandbox argument. F6 runs a selected scene rather than the project entrypoint. The vehicle loader seeks eligible parking, road or compound tiles but may leave the authored position when no candidate passes filtering. No fixed-seed reachability receipt was inspected. The wreck begins disabled, still renders hover compatibility frames, and uses a raw-resource recovery profile instead of the approved three fabricated assemblies. Existing recovery correction/review, Asset V2 vehicle family and vehicle-placement extraction packets own these gaps. Both new commits are documentation-only; no gameplay fix, independent review, canonical teardown or live host execution was established.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "vehicle-field-scout-buggy-asset-v2",
+      "occurred_at": "2026-11-07T01:35:54Z",
+      "bullets": [
+        "Default Awakening launch does not spawn the Scout; explicit Contract sandbox mode is needed",
+        "F5 runs project entrypoint; F6 runs the selected scene",
+        "Generated placement can fail to make the wreck discoverable",
+        "Placeholder hover art and raw-resource restoration remain unresolved",
+        "Next gate: bounded fixed-seed runtime discovery and reachability evidence"
+      ],
+      "links": [
+        {
+          "title": "Scout discovery and queued blockers",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/389df9281d41869992e0d4de39143e4dc9fd9652"
+        },
+        {
+          "title": "Corrected F5/F6 playtest guidance",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/50f20cd9efa6b73ab94e91049e9675b738311cc6"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN now explains how to find its first Field Scout buggy, and why players may still miss it. The vehicle belongs to a development-only Contract sandbox, not the default Awakening opening. New guidance also makes clear that spawning the wreck, seeing the right artwork and restoring it as designed are three different unfinished hurdles.",
+        "sections": [
+          {
+            "heading": "The right door into the sandbox",
+            "text": "The normal project launch opens Awakening, which has no Scout. An explicit Contract sandbox startup argument loads the scene containing the vehicle. The docs now distinguish Godot's F5 project run from F6's current-scene run, preventing a misleading playtest."
+          },
+          {
+            "heading": "A vehicle can exist without being discoverable",
+            "text": "The generated world attempts to relocate the authored wreck to eligible parking, road or compound space. If no tile qualifies, its original scene position can remain. Existing smoke tests do not establish that a player can find the Scout at a fixed seed."
+          },
+          {
+            "heading": "The wreck is not yet its final form",
+            "text": "The Scout starts disabled and uses placeholder hover art instead of its approved wheeled body. Its current repair recipe consumes raw resources rather than the three fabricated assemblies required by the approved restoration design. Separate queued workstreams own these changes."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Scene presence is not a playable encounter",
+            "explanation": "A node in the Godot scene tree proves neither that it lands on reachable terrain nor that players can discover it. The next useful proof is a fixed-seed runtime placement and reachability test."
+          },
+          {
+            "title": "Restoration and presentation are separate gates",
+            "explanation": "A working vehicle class does not establish the approved visual identity or resource economy. The Asset V2 family and recovery correction need their own implementation and review evidence."
+          }
+        ],
+        "takeaway": "The playtest route is documented more accurately, but this is not a new gameplay implementation or accepted Scout release.",
+        "next_watch": "Watch for a fixed-seed placement/reachability receipt, the fabricated-assembly recovery correction and canonical wheeled-body asset integration."
+      },
+      "details": {
+        "overview": "Commits 389df928 and 50f20cd9 modify only current-state documentation and custodian/game/app/README.md. Latest inspected main SHA 50f20cd9efa6b73ab94e91049e9675b738311cc6. Combined commit statuses returned no checks, which is not proof of passing CI. The private pilot pointer is older than the current observation window; no pilot counts used.",
+        "ledger": [
+          {
+            "stage": "Playtest documentation",
+            "status": "verified landed",
+            "evidence": "Both documentation commits on main."
+          },
+          {
+            "stage": "Runtime Scout class",
+            "status": "previously documented; not revalidated here",
+            "evidence": "Existing class/restoration smokes are described in current-state docs, not rerun."
+          },
+          {
+            "stage": "Guaranteed reachable placement",
+            "status": "unverified",
+            "evidence": "No fixed-seed runtime reachability evidence; fallback may retain authored position."
+          },
+          {
+            "stage": "Approved restoration recipe",
+            "status": "documented mismatch",
+            "evidence": "Current raw-resource profile differs from approved three-assembly R1 SERVICE."
+          },
+          {
+            "stage": "Canonical wheeled art",
+            "status": "not integrated",
+            "evidence": "Compatibility hover frames remain documented."
+          },
+          {
+            "stage": "Independent review and teardown",
+            "status": "unknown",
+            "evidence": "No independent acceptance or host audit inspected."
+          }
+        ],
+        "notes": [
+          "F5 runs the project; F6 runs the selected scene.",
+          "Production Awakening is not the Contract sandbox."
+        ],
+        "unknowns": [
+          "Live runtime placement and visibility",
+          "Review receipts for the queued correction and asset integration",
+          "Current host claims, locks, worktrees and disk"
+        ],
+        "actions": [
+          "Runtime owner: with separate authorization, run bounded fixed-seed Contract sandbox placement/reachability validation.",
+          "Recovery/asset owners: implement existing correction and Asset V2 packets, then obtain applicable independent acceptance."
+        ]
+      },
+      "scorecard": {
+        "stage": "Documentation landed; runtime discoverability and approved presentation pending",
+        "as_of": "2026-11-07T01:42:27Z",
+        "scope": "Named Field Scout gameplay integration only; no full dispatcher audit",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Document correct playtest route",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Main commits 389df928 and 50f20cd9."
+          },
+          {
+            "label": "Verify fixed-seed reachable placement",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No placement receipt or reachability regression."
+          },
+          {
+            "label": "Correct fabricated-assembly restoration",
+            "status": "blocked",
+            "verification": "reported",
+            "evidence": "Existing recovery correction/review pair owns mismatch."
+          },
+          {
+            "label": "Integrate canonical wheeled art",
+            "status": "next",
+            "verification": "reported",
+            "evidence": "Asset V2 packet owns the body family."
+          },
+          {
+            "label": "Independent review and canonical teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No receipt or host audit."
+          }
+        ],
+        "next_gate": "Authorized runtime owner: establish reproducible fixed-seed Scout discoverability before claiming a playable encounter."
+      },
+      "related": []
+    },
     {
       "id": "chatgpt-sender-attachment-guard-504658c3",
       "headline": "ChatGPT sender gains attachment safeguards, but live delivery remains untested",
@@ -1607,139 +1753,6 @@
           }
         ],
         "next_gate": "Dispatcher owner: verify eligibility and claim the implementation through the canonical lifecycle."
-      },
-      "related": []
-    },
-    {
-      "id": "creche-layered-pbr-manifest-v2-0d41ea40",
-      "headline": "Crèche gets a layered 3D-rendered art blueprint, but no new assets yet",
-      "summary": "A design-only Crèche manifest now defines 30 proposed visual states, including 22 required and eight optional, for a realistic PBR-rendered 2D scene. Existing gameplay and art registration remain unchanged; visual approvals and production are still ahead.",
-      "body": "Commit 0d41ea40 publishes a Crèche layered PBR design manifest with depth bands from exterior and floor through fixtures, local effects and foreground occlusion. It preserves Godot's existing 2D gameplay and collision ownership while specifying orthographic 3D-rendered art, source registration and animation states. The 30 states are design inventory, not completed assets. The commit explicitly says no Asset V2 registry change, human visual approval or runtime cutover occurred. Commit message reports GitHub Validate Repository PASS, but the combined status endpoint returned no checks; independent validation was not verified. Operational dispatcher totals remain unavailable.",
-      "severity": "milestone",
-      "verification": "verified",
-      "category": "general",
-      "workstream": "awakening-creche-layered-pbr-art",
-      "occurred_at": "2026-11-05T12:56:27Z",
-      "bullets": [
-        "30 proposed Crèche visual states: 22 required and eight optional.",
-        "Orthographic 3D/PBR rendering targets existing Godot 2D layers.",
-        "Existing runtime art and gameplay remain unchanged.",
-        "Human visual approval and Asset V2 registration are still pending."
-      ],
-      "links": [
-        {
-          "title": "Crèche layered PBR manifest V2",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/0d41ea40266faa0f3a5ccb8faf251fd65cc883e4"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "The Crèche of Answerless Names has a more precise visual production blueprint. A new manifest describes how to build realistic, depth-separated scenery and animation without replacing CUSTODIAN's existing 2D gameplay. It is a design milestone, not an art delivery.",
-        "sections": [
-          {
-            "heading": "Real depth without a gameplay-engine migration",
-            "text": "The proposal uses orthographic renders of modeled stone, metal and machinery, split into floor, structural, fixture, effect and foreground layers. Godot keeps ownership of movement, collision and interactions."
-          },
-          {
-            "heading": "A roadmap, not a runtime cutover",
-            "text": "The manifest specifies 30 proposed visual states, 22 required and eight optional. Existing asset families and gameplay are untouched; the new design has not been registered as production art or visually approved."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Layer separation makes animation practical",
-            "explanation": "Keeping machines, floor and foreground occlusion independent allows localized effects and character overlap without repainting the entire room for every animation frame."
-          },
-          {
-            "title": "The next bottleneck is approval and registration",
-            "explanation": "The plan is now detailed enough to guide production, but none of its new visual states should be counted as delivered or active in-game."
-          }
-        ],
-        "takeaway": "The Crèche's proposed art architecture is documented; asset creation, visual approval, registration and runtime validation remain distinct future gates.",
-        "next_watch": "Watch for approved first source plates, registered Asset V2 states and an in-game validation showing correct alpha, depth and interaction alignment."
-      },
-      "details": {
-        "overview": "Source commit 0d41ea40 adds design-only JSON and Markdown for layered PBR Crèche art. Main context inspected at this SHA. Commit text reports repository validation PASS; combined commit status returned no status entries. Canonical dispatcher and fresh pilot observations were not available.",
-        "ledger": [
-          {
-            "stage": "Design manifest landing",
-            "status": "verified",
-            "evidence": "0d41ea40 published the V2 proposal."
-          },
-          {
-            "stage": "Visual approval",
-            "status": "pending",
-            "evidence": "Manifest explicitly marks human visual approval pending."
-          },
-          {
-            "stage": "Asset registration and runtime",
-            "status": "not established",
-            "evidence": "No Asset V2 registration or cutover in this commit."
-          },
-          {
-            "stage": "Independent acceptance and host teardown",
-            "status": "unknown",
-            "evidence": "No relevant independent or host receipts inspected."
-          }
-        ],
-        "notes": [
-          "30 counts proposed visual states, not completed art or workstreams."
-        ],
-        "unknowns": [
-          "Current canonical dispatcher counts and host execution.",
-          "Independent validation beyond commit message."
-        ],
-        "actions": [
-          "Art owner: obtain human visual approval of a first registered source set before production cutover."
-        ]
-      },
-      "scorecard": {
-        "stage": "Design landed; production pending",
-        "as_of": "2026-11-05T13:28:31Z",
-        "scope": "Crèche layered PBR art design proposal only",
-        "metrics": [
-          {
-            "id": "proposed_states",
-            "label": "PROPOSED STATES",
-            "value": 30,
-            "verification": "verified",
-            "basis": "Manifest inventory; 22 required, eight optional",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/0d41ea40266faa0f3a5ccb8faf251fd65cc883e4"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Design manifest",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "0d41ea40"
-          },
-          {
-            "label": "Human visual approval",
-            "status": "next",
-            "verification": "verified",
-            "evidence": "Explicitly pending in manifest"
-          },
-          {
-            "label": "Source art production",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No new art registered by commit"
-          },
-          {
-            "label": "Asset V2 registration",
-            "status": "next",
-            "verification": "verified",
-            "evidence": "Explicitly not performed"
-          },
-          {
-            "label": "In-game layer and animation validation",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No runtime proof"
-          }
-        ],
-        "next_gate": "Art owner: approve a first source plate and its depth/alpha registration before any Asset V2 cutover."
       },
       "related": []
     }
