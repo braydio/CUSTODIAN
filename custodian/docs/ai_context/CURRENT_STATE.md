@@ -3142,3 +3142,17 @@ A draft west exterior Gate side-stair retaining terrace and rock-cut sealed reco
 ## Compound archetypes and assault/recovery planning (2026-10-15)
 
 Two user-authorized initial compound archetypes, walled_yard and connected_bunker, and a dependent assault, integrity damage, repair and new infrastructure loop are queued by design only. No runtime completion is claimed. See design/02_features/procgen/COMPOUND_ARCHETYPES_AND_SECURITY_V1.md, COMPOUND_ARCHETYPES_REQUIRED_ASSETS_V1.md and their review-gated task packet series. Carrow has three working named interiors and remains a donor only; its route migration and size calibration are separate.
+
+
+## Operator 3D candidate preview salvage (2026-11-07)
+
+The candidate-to-Godot preview from `operator-3d-animation-batch-executor-v1`
+has been selected for salvage as Slice A only. Its existing 2,104-frame
+candidate remains `candidate_unapproved`; production approval and runtime timing
+authority remain false. The accepted 2.5D comparison source is pinned to SHA-256
+`d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3`. This is
+technical preview evidence, not human visual approval. The incremental batch
+executor, cache invalidation/receipts (Slices B–D), original packet completion,
+and paired review remain outstanding.
+
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6aef1f35-9d0c-83ea-9916-59c5660da5fd

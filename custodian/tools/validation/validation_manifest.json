@@ -7740,6 +7740,32 @@
       ],
       "timeout_sec": 30,
       "needs_import": false
+    },
+    {
+      "id": "operator_3d_animation_preview_package",
+      "type": "python",
+      "script": "custodian/tools/validation/test_operator_3d_animation_preview_package.py",
+      "tier": "unit",
+      "tags": [
+        "operator",
+        "animation_preview",
+        "candidate_only"
+      ],
+      "owners": [
+        "custodian/scenes/debug/operator_3d_animation_preview.tscn",
+        "custodian/scenes/debug/operator_3d_animation_preview_awakening.tscn",
+        "custodian/tools/debug/operator_3d_animation_preview.gd",
+        "custodian/tools/debug/operator_3d_animation_preview_awakening.gd",
+        "custodian/tools/operator/animation_compiler/preview_package.py",
+        "custodian/tools/operator/animation_compiler/NEUTRAL_IDLE_AWAKENING_REVIEW.md",
+        "custodian/tools/validation/operator_3d_animation_preview_smoke.gd",
+        "custodian/tools/validation/operator_3d_animation_preview_awakening_smoke.gd",
+        "custodian/tools/validation/operator_3d_animation_comparison_smoke.gd",
+        "custodian/tools/validation/test_operator_3d_animation_preview_package.py",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 60,
+      "needs_import": false
     }
   ]
 }
