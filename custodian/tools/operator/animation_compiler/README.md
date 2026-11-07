@@ -106,3 +106,18 @@ Root motion distinguishes source world displacement from local sprite poses. The
 ## Task 002 proposal
 
 See [TASK_002_NEUTRAL_IDLE_PROPOSAL.md](TASK_002_NEUTRAL_IDLE_PROPOSAL.md). The first one-clip proof used the user-authorized experimental ITER005 master and verified Neutral Idle FBX. Its reusable local-motion artifact, root trajectory, eight-direction candidate, QA, receipt and human review handoff remain unapproved; no production timing or master approval was inferred.
+
+
+## Candidate-to-Godot preview (Slice A salvage)
+
+`preview_package.py` stages an existing hash-verified eight-direction candidate
+under ignored `custodian/.ai/operator_3d_animation_preview/` data and can launch
+the dev-only Sundered Keep or real Awakening preview. It does not render frames,
+write runtime assets, infer source FPS, grant timing authority, or approve art.
+The optional accepted-2.5D comparison smoke checks the pinned 1920×1024 source
+against 120 extracted frames at the explicit display-only preview cadence.
+
+The preview integration is a technical salvage of Slice A. Its candidate remains
+`candidate_unapproved`; aesthetic approval and runtime use are separate gates.
+The incremental batch executor, receipts, cache invalidation, and remaining
+executor slices are unfinished.
