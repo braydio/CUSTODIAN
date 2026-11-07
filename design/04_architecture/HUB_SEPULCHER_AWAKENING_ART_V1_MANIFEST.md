@@ -119,7 +119,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** Texture-grid origin world (-4128,-4480); repeat 512px at native scale, clip to SepulcherGardensGeometryV1's exact 96x84 walkable mask; artwork never authors mask/collision; Modular floor source only; repeat and clip to irregular walkable mask in current expanded Gardens (3072x2688 authoring envelope), preserving E0-E5 grave-event world anchors and both Forum connectors. No 1152x1408 rectangle; no pond, void or architectural paint.  
 **Consumer:** PLANNED res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation modular ground renderer; not yet registered or runtime-bound  
 **Provenance:** CAL-01 modular geometry reconciliation 2026-11-02; design/04_architecture/SEPULCHER_GARDENS_GEOMETRY_V1.json; AI_ART_GENERATION_REVIEW_PROTOCOL_V1.md  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `hub_first_set_sepulcher_gardens_environment/structural_presentation`
 
@@ -135,7 +135,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** SepulcherGardensGeometryV1 obstacle D6; world origin (-1824,-4096), 384x576 source canvas at 1 world px/image px, north up; D6 Root-choked Outer Arcade ONLY: 32px world-grid canvas origin (-1824,-4096), extent (-1824..-1440,-4096..-3520); clip masonry alpha to D6 world polygon [(-1792,-4064),(-1632,-4032),(-1472,-3712),(-1568,-3552),(-1696,-3712)] after normalization. Every visible solid is within currently nonwalkable D6. Preserve all walkable P1-P8 route cells, grave evidence clearances and both east connectors. No new collision or gameplay rooms.  
 **Consumer:** res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation  
 **Provenance:** User-approved CAL-02 D6 structural calibration 2026-11-03; design/04_architecture/SEPULCHER_GARDENS_GEOMETRY_V1.json D6 and current live SepulcherGardensGeometryV1  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `hub_sepulcher_grave_evidence_art/memorial_slab`
 
@@ -151,7 +151,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** world (-1984,-3200); replace procedural rendering only; three readings, persistence, choice IDs and later-return growth gate remain unchanged  
 **Consumer:** res://game/world/hub/events/sepulcher_grave/sepulcher_grave_evidence.gd  
 **Provenance:** new Hub V1 proposal under owner-approved art program  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `awakening_creche_perimeter_support/structural_support`
 
@@ -1874,7 +1874,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** sepulcher_north_connector Rect2i(85,68,4,8); underlay-floor blend only in the real open four-cell-wide connector; no architecture or obstacles inside corridor; test registered actual neighbor images before any runtime placement  
 **Consumer:** res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation  
 **Provenance:** Live HubFirstSetLayout.ENVELOPES 2026-11-03 connector-coordinate reconciliation; earlier B1/B2 anchor superseded  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `hub_first_set_connector_environment/garden_south_transition`
 
@@ -1890,7 +1890,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** sepulcher_south_connector Rect2i(85,85,4,8); underlay-floor blend only in the real open four-cell-wide connector; no architecture or obstacles inside corridor; test registered actual neighbor images before any runtime placement  
 **Consumer:** res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation  
 **Provenance:** Live HubFirstSetLayout.ENVELOPES 2026-11-03 connector-coordinate reconciliation; earlier B1/B2 anchor superseded  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `hub_sepulcher_grave_evidence_art/inspection_stone`
 
@@ -1906,7 +1906,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** three existing physical inspection offsets; replace procedural rendering only; three readings, persistence, choice IDs and later-return growth gate remain unchanged  
 **Consumer:** res://game/world/hub/events/sepulcher_grave/sepulcher_grave_evidence.gd  
 **Provenance:** new Hub V1 proposal under owner-approved art program  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `hub_sepulcher_grave_evidence_art/resolution_stone`
 
@@ -1922,7 +1922,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** two existing resolution points; replace procedural rendering only; three readings, persistence, choice IDs and later-return growth gate remain unchanged  
 **Consumer:** res://game/world/hub/events/sepulcher_grave/sepulcher_grave_evidence.gd  
 **Provenance:** new Hub V1 proposal under owner-approved art program  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `hub_sepulcher_grave_evidence_art/return_pale_growth`
 
@@ -1938,7 +1938,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** world grave + (42,18), visible only on subsequent visit after either resolution; replace procedural rendering only; three readings, persistence, choice IDs and later-return growth gate remain unchanged  
 **Consumer:** res://game/world/hub/events/sepulcher_grave/sepulcher_grave_evidence.gd  
 **Provenance:** new Hub V1 proposal under owner-approved art program  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `hub_first_set_sepulcher_gardens_dressing/grave_upright`
 
@@ -1954,7 +1954,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** visual anchor to registered scene; confirm in live context; dressing only; deterministic variation, limit repeats, clear minimum 128px route and physical event offsets  
 **Consumer:** res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation  
 **Provenance:** new Hub V1 proposal under owner-approved art program  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `hub_first_set_sepulcher_gardens_dressing/grave_fractured`
 
@@ -1970,7 +1970,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** visual anchor to registered scene; confirm in live context; dressing only; deterministic variation, limit repeats, clear minimum 128px route and physical event offsets  
 **Consumer:** res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation  
 **Provenance:** new Hub V1 proposal under owner-approved art program  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `hub_first_set_sepulcher_gardens_dressing/terraced_sarcophagus`
 
@@ -1986,7 +1986,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** visual anchor to registered scene; confirm in live context; dressing only; deterministic variation, limit repeats, clear minimum 128px route and physical event offsets  
 **Consumer:** res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation  
 **Provenance:** new Hub V1 proposal under owner-approved art program  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `hub_first_set_sepulcher_gardens_dressing/memorial_plinth`
 
@@ -2002,7 +2002,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** visual anchor to registered scene; confirm in live context; dressing only; deterministic variation, limit repeats, clear minimum 128px route and physical event offsets  
 **Consumer:** res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation  
 **Provenance:** new Hub V1 proposal under owner-approved art program  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `hub_first_set_sepulcher_gardens_dressing/cloister_arch_ruin`
 
@@ -2018,7 +2018,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** visual anchor to registered scene; confirm in live context; dressing only; deterministic variation, limit repeats, clear minimum 128px route and physical event offsets  
 **Consumer:** res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation  
 **Provenance:** new Hub V1 proposal under owner-approved art program  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `hub_first_set_sepulcher_gardens_dressing/retaining_wall_segment`
 
@@ -2034,7 +2034,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** visual anchor to registered scene; confirm in live context; dressing only; deterministic variation, limit repeats, clear minimum 128px route and physical event offsets  
 **Consumer:** res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation  
 **Provenance:** new Hub V1 proposal under owner-approved art program  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `hub_first_set_sepulcher_gardens_dressing/root_intrusion`
 
@@ -2050,7 +2050,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** visual anchor to registered scene; confirm in live context; dressing only; deterministic variation, limit repeats, clear minimum 128px route and physical event offsets  
 **Consumer:** res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation  
 **Provenance:** new Hub V1 proposal under owner-approved art program  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `hub_first_set_sepulcher_gardens_dressing/pale_flower_cluster`
 
@@ -2066,7 +2066,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** visual anchor to registered scene; confirm in live context; dressing only; deterministic variation, limit repeats, clear minimum 128px route and physical event offsets  
 **Consumer:** res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation  
 **Provenance:** new Hub V1 proposal under owner-approved art program  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 
 ### Original first-set Hub districts and fixtures
@@ -2085,7 +2085,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** HubFirstSetLayout.ENVELOPES.north_processional, 1px/world-unit candidate; Flat walkable-ground-only underlay within current HubFirstSetLayout.ENVELOPES.north_processional; architecture and solids separated into dedicated V2 props, preserve existing routes/markers and do not alter navigation  
 **Consumer:** res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation  
 **Provenance:** 2026-11-03 user-approved floor-first full-artwork roadmap; live HubFirstSetLayout.ENVELOPES.north_processional  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `hub_first_set_ashen_forum_environment/underlay`
 
@@ -2101,7 +2101,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** HubFirstSetLayout.ENVELOPES.ashen_forum, 1px/world-unit candidate; Flat walkable-ground-only underlay within current HubFirstSetLayout.ENVELOPES.ashen_forum; architecture and solids separated into dedicated V2 props, preserve existing routes/markers and do not alter navigation  
 **Consumer:** res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation  
 **Provenance:** 2026-11-03 user-approved floor-first full-artwork roadmap; live HubFirstSetLayout.ENVELOPES.ashen_forum  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `hub_first_set_archive_rise_environment/underlay`
 
@@ -2117,7 +2117,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** HubFirstSetLayout.ENVELOPES.archive_rise, 1px/world-unit candidate; Flat walkable-ground-only underlay within current HubFirstSetLayout.ENVELOPES.archive_rise; architecture and solids separated into dedicated V2 props, preserve existing routes/markers and do not alter navigation  
 **Consumer:** res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation  
 **Provenance:** 2026-11-03 user-approved floor-first full-artwork roadmap; live HubFirstSetLayout.ENVELOPES.archive_rise  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `hub_first_set_crown_transfer_environment/underlay`
 
@@ -2133,7 +2133,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** HubFirstSetLayout.ENVELOPES.crown_transfer, 1px/world-unit candidate; Flat walkable-ground-only underlay within current HubFirstSetLayout.ENVELOPES.crown_transfer; architecture and solids separated into dedicated V2 props, preserve existing routes/markers and do not alter navigation  
 **Consumer:** res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation  
 **Provenance:** 2026-11-03 user-approved floor-first full-artwork roadmap; live HubFirstSetLayout.ENVELOPES.crown_transfer  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `hub_first_set_muster_court_environment/underlay`
 
@@ -2149,7 +2149,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** HubFirstSetLayout.ENVELOPES.muster_court, 1px/world-unit candidate; Flat walkable-ground-only underlay within current HubFirstSetLayout.ENVELOPES.muster_court; architecture and solids separated into dedicated V2 props, preserve existing routes/markers and do not alter navigation  
 **Consumer:** res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation  
 **Provenance:** 2026-11-03 user-approved floor-first full-artwork roadmap; live HubFirstSetLayout.ENVELOPES.muster_court  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `hub_first_set_continuity_port_environment/underlay`
 
@@ -2165,7 +2165,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** HubFirstSetLayout.ENVELOPES.continuity_port, 1px/world-unit candidate; Flat walkable-ground-only underlay within current HubFirstSetLayout.ENVELOPES.continuity_port; architecture and solids separated into dedicated V2 props, preserve existing routes/markers and do not alter navigation  
 **Consumer:** res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation  
 **Provenance:** 2026-11-03 user-approved floor-first full-artwork roadmap; live HubFirstSetLayout.ENVELOPES.continuity_port  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `hub_first_set_connector_environment/road_north_transition`
 
@@ -2181,7 +2181,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** Road module north seam, measured before source lock; underlay blend only; preserve real connectors and Road plates  
 **Consumer:** res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation  
 **Provenance:** new Hub V1 proposal under owner-approved art program  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `hub_first_set_connector_environment/muster_transition`
 
@@ -2197,7 +2197,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** muster_connector Rect2i(169,70,4,10); underlay-floor blend only in the real open four-cell-wide connector; no architecture or obstacles inside corridor; test registered actual neighbor images before any runtime placement  
 **Consumer:** res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation  
 **Provenance:** Live HubFirstSetLayout.ENVELOPES 2026-11-03 connector-coordinate reconciliation; earlier B1/B2 anchor superseded  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `hub_first_set_perimeter_support/western_burial_depth`
 
@@ -2213,7 +2213,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** visual anchor to registered scene; confirm in live context; place ONLY after measured off-route camera coverage; no route/collision authority; lower contrast than playable floor  
 **Consumer:** res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation  
 **Provenance:** new Hub V1 proposal under owner-approved art program  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `hub_first_set_perimeter_support/eastern_civic_depth`
 
@@ -2229,7 +2229,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** visual anchor to registered scene; confirm in live context; place ONLY after measured off-route camera coverage; no route/collision authority; lower contrast than playable floor  
 **Consumer:** res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation  
 **Provenance:** new Hub V1 proposal under owner-approved art program  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `hub_first_set_perimeter_support/north_archive_horizon`
 
@@ -2245,7 +2245,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** visual anchor to registered scene; confirm in live context; place ONLY after measured off-route camera coverage; no route/collision authority; lower contrast than playable floor  
 **Consumer:** res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation  
 **Provenance:** new Hub V1 proposal under owner-approved art program  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `hub_first_set_perimeter_support/south_processional_falloff`
 
@@ -2261,7 +2261,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** visual anchor to registered scene; confirm in live context; place ONLY after measured off-route camera coverage; no route/collision authority; lower contrast than playable floor  
 **Consumer:** res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation  
 **Provenance:** new Hub V1 proposal under owner-approved art program  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `hub_first_set_perimeter_support/outer_court_fragments`
 
@@ -2277,7 +2277,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** visual anchor to registered scene; confirm in live context; place ONLY after measured off-route camera coverage; no route/collision authority; lower contrast than playable floor  
 **Consumer:** res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation  
 **Provenance:** new Hub V1 proposal under owner-approved art program  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `hub_first_set_processional_fixtures/oath_statue_base`
 
@@ -2293,7 +2293,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** visual anchor to registered scene; confirm in live context; visual dressing; never change Dais, route or Port mechanic ownership  
 **Consumer:** res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation  
 **Provenance:** new Hub V1 proposal under owner-approved art program  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `hub_first_set_processional_fixtures/law_statue_base`
 
@@ -2309,7 +2309,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** visual anchor to registered scene; confirm in live context; visual dressing; never change Dais, route or Port mechanic ownership  
 **Consumer:** res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation  
 **Provenance:** new Hub V1 proposal under owner-approved art program  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `hub_first_set_forum_fixtures/fractured_star_map_inlay`
 
@@ -2325,7 +2325,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** visual anchor to registered scene; confirm in live context; visual dressing; never change Dais, route or Port mechanic ownership  
 **Consumer:** res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation  
 **Provenance:** new Hub V1 proposal under owner-approved art program  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `hub_first_set_forum_fixtures/dais_dressing`
 
@@ -2341,7 +2341,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** visual anchor to registered scene; confirm in live context; visual dressing; never change Dais, route or Port mechanic ownership  
 **Consumer:** res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation  
 **Provenance:** new Hub V1 proposal under owner-approved art program  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `hub_first_set_archive_fixtures/collapsed_registry_arcade`
 
@@ -2357,7 +2357,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** visual anchor to registered scene; confirm in live context; visual dressing; never change Dais, route or Port mechanic ownership  
 **Consumer:** res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation  
 **Provenance:** new Hub V1 proposal under owner-approved art program  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `hub_first_set_crown_transfer_fixtures/route_anchor_shroud`
 
@@ -2373,7 +2373,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** visual anchor to registered scene; confirm in live context; visual dressing; never change Dais, route or Port mechanic ownership  
 **Consumer:** res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation  
 **Provenance:** new Hub V1 proposal under owner-approved art program  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `hub_first_set_muster_fixtures/muster_rollcall_plinth`
 
@@ -2389,7 +2389,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** visual anchor to registered scene; confirm in live context; visual dressing; never change Dais, route or Port mechanic ownership  
 **Consumer:** res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation  
 **Provenance:** new Hub V1 proposal under owner-approved art program  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 #### `hub_first_set_continuity_port_fixtures/port_frame_fascia`
 
@@ -2405,7 +2405,7 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Anchor/constraints:** visual anchor to registered scene; confirm in live context; visual dressing; never change Dais, route or Port mechanic ownership  
 **Consumer:** res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation  
 **Provenance:** new Hub V1 proposal under owner-approved art program  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: check live receipts separately.
+**Approval/registration:** human-approved by the project owner; registered and runtime-verified. Dropbox source revision `65f4aa8f42035915cdd61`; source SHA-256 `349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028`; normalized SHA-256 `374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312`; Asset V2 job `job_20261107T070300Z_3d825703`. Runtime binding and production Hub smoke evidence are recorded in the installation workstream summary.
 
 
 ### Additional Hub structural presentation
