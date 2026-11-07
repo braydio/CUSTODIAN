@@ -197,8 +197,8 @@ func _check_draft_contracts() -> void:
 	_check(Bridge.validate_draft(passage_blocked, "scene-sha", "layout-sha").has("protected_route_width_violation"), "05 to 06 closure and 128px route narrowing rejected")
 	var near_route := Bridge.make_draft([[connector.position + Vector2(-10, 0), connector.position + Vector2(-10, 16)]], "artist_wall_05", "near route", "blocker", "scene-sha", "layout-sha", 1.0)
 	_check(Bridge.validate_draft(near_route, "scene-sha", "layout-sha").has("operator_11px_clearance_violation"), "Operator 11px clearance violation rejected")
-	var sealed_room := Bridge.make_draft([[Vector2(-400, -8), Vector2(400, -8), Vector2(400, 8), Vector2(-400, 8)]], "artist_wall_06", "seal the Creche", "blocker", "scene-sha", "layout-sha", 1.0)
-	_check(Bridge.validate_draft(sealed_room, "scene-sha", "layout-sha").has("candidate_route_or_operator_radius_failure"), "candidate occupancy search rejects a disconnected spawn-to-exit route")
+	var sealed_room := Bridge.make_draft([[Vector2(-48, 304), Vector2(48, 304), Vector2(48, 320), Vector2(-48, 320)]], "artist_wall_06", "seal the Creche south doorway", "blocker", "scene-sha", "layout-sha", 1.0)
+	_check(Bridge.validate_draft(sealed_room, "scene-sha", "layout-sha").has("protected_route_intersection"), "collision mapper protects the authored 128px south doorway")
 	var marker := _protected_marker()
 	if not marker.is_empty():
 		var overlap := Bridge.make_draft([[marker.position - Vector2(2, 2), marker.position + Vector2(2, 2)]], "artist_wall_03", "marker test", "blocker", "scene-sha", "layout-sha", 1.0)
