@@ -251,6 +251,60 @@ _OPERATOR_3D_SCOPE_REVIEW_PACKET = (
     f"{PACKET_ROOT}/archived/REVIEW_AGENT_OPERATOR_3D_MODEL_TO_SPRITE_SOURCE_SCOPE_RECOVERY_V1.md"
 )
 
+_OPERATOR_CHASSIS_SCOPE_ATTESTATION_PATH = (
+    "custodian/docs/ai_context/review_scope_attestations/operator_chassis_seal_v1.json"
+)
+_OPERATOR_CHASSIS_SCOPE_SOURCE_WORKSTREAM = "operator-chassis-authority-seal-v1"
+_OPERATOR_CHASSIS_SCOPE_SOURCE_ARCHIVE = "5e250a1215cea536d3bf2030f7a82327f5a0ad58"
+_OPERATOR_CHASSIS_SCOPE_SOURCE_PARENT = "22b9e0e3090a5a4a3262643fab6d18aea641ea07"
+_OPERATOR_CHASSIS_SCOPE_SOURCE_TREE = "f5e14f734cba709ac5aa653eac41d96f80229a9d"
+_OPERATOR_CHASSIS_SCOPE_SOURCE_BASE = "4f90902381aabce73075258cb0baa803f703ac12"
+_OPERATOR_CHASSIS_SCOPE_SOURCE_HEAD = _OPERATOR_CHASSIS_SCOPE_SOURCE_PARENT
+_OPERATOR_CHASSIS_SCOPE_SOURCE_RUN_ID = "20261031T062307Z-8ac06d38113f"
+_OPERATOR_CHASSIS_SCOPE_SOURCE_TRACE_COMMIT = "11819970d252a61e7ad7f137738f87c9a75a013f"
+_OPERATOR_CHASSIS_SCOPE_SOURCE_CLAIM_OID = "bec929fcf18b584edb5dd169e728b95ad4825137"
+_OPERATOR_CHASSIS_SCOPE_SOURCE_BRANCH = "agent/operator-chassis-authority-seal-v1"
+_OPERATOR_CHASSIS_SCOPE_SOURCE_WORKTREE = (
+    "/home/braydenchaffee/Projects/.custodian-worktrees/"
+    "operator-chassis-authority-seal-v1-20261031T062307Z-8ac06d38113f"
+)
+_OPERATOR_CHASSIS_SCOPE_SOURCE_PACKET = (
+    f"{PACKET_ROOT}/archived/OPERATOR_CHASSIS_AUTHORITY_SEAL_V1.md"
+)
+_OPERATOR_CHASSIS_SCOPE_SOURCE_PACKET_BLOB = "addf03695a45f66ebf6e002ad39aa506c11403e4"
+_OPERATOR_CHASSIS_SCOPE_PRESERVED_REVIEW_WORKSTREAM = "review-operator-chassis-authority-seal-v1"
+_OPERATOR_CHASSIS_SCOPE_PRESERVED_REVIEW_RUN_ID = "20261031T074418Z-c57f04948b7c"
+_OPERATOR_CHASSIS_SCOPE_PRESERVED_REVIEW_CLAIM_RUN_ID = "20261031T074434Z-d7b1397e187e"
+_OPERATOR_CHASSIS_SCOPE_PRESERVED_REVIEW_BRANCH = "agent/review-operator-chassis-authority-seal-v1"
+_OPERATOR_CHASSIS_SCOPE_PRESERVED_REVIEW_WORKTREE = (
+    "/home/braydenchaffee/Projects/.custodian-worktrees/"
+    "review-operator-chassis-authority-seal-v1-20261031T074434Z-d7b1397e187e"
+)
+_OPERATOR_CHASSIS_SCOPE_CORRECTION_WORKSTREAM = (
+    "agent-operator-chassis-seal-source-scope-attestation-v1"
+)
+_OPERATOR_CHASSIS_SCOPE_CORRECTION_PACKET = (
+    f"{PACKET_ROOT}/archived/AGENT_OPERATOR_CHASSIS_SEAL_SOURCE_SCOPE_ATTESTATION_V1.md"
+)
+_OPERATOR_CHASSIS_SCOPE_REVIEW_WORKSTREAM = (
+    "review-agent-operator-chassis-seal-source-scope-attestation-v1"
+)
+_OPERATOR_CHASSIS_SCOPE_REVIEW_PACKET = (
+    f"{PACKET_ROOT}/archived/REVIEW_AGENT_OPERATOR_CHASSIS_SEAL_SOURCE_SCOPE_ATTESTATION_V1.md"
+)
+_OPERATOR_CHASSIS_SCOPE_CODE_BLOBS = {
+    "custodian/tools/agent/test_workstream.py": "8921da5e9b414642f0592fa78fee7e6079cc4215",
+    "custodian/tools/agent/workstream.py": "b64e43c784ba5a29681c2865fb924d38036472c4",
+    "custodian/tools/validation/operator_chassis_authority_budget.json": "43beabb56f475275d6f4bf09b077794352c9b3a7",
+    "custodian/tools/validation/operator_chassis_authority_guard.py": "d48573d5f4bd3929a251ea61d42441d7633c3a22",
+    "custodian/tools/validation/test_operator_chassis_authority_guard.py": "fe75ae1010ce52f83bdd3ca4016e12dceab4bce2",
+    "custodian/tools/validation/validation_manifest.json": "e91b149dbd79ae4ea1e9cc295ff4a1ff0d539578",
+}
+_OPERATOR_CHASSIS_SCOPE_ATTESTED_FILES = {
+    "custodian/tools/agent/test_workstream.py":
+        _OPERATOR_CHASSIS_SCOPE_CODE_BLOBS["custodian/tools/agent/test_workstream.py"],
+}
+
 _PROCESSION_SCOPE_ATTESTATION_PATH = (
     "custodian/docs/ai_context/review_scope_attestations/road_procession_p1_source_scope_v1.json"
 )
@@ -2875,6 +2929,216 @@ def _verified_operator_3d_scope_attestation(
     }
 
 
+def _verified_operator_chassis_scope_attestation(
+    repo: Path, reviewed_main: str, approval_main: str | None, landing_commit: str,
+    target_workstream: str, target_packet_path: str, source_base: str,
+    source_head: str, source_code_paths: set[str], source_run_id: str,
+    source_trace_ref: str, source_worktree: str, source_branch: str,
+    source_claim_oid: str,
+) -> dict | None:
+    """Authorize the single omitted test path after this correction's accepted PASS."""
+    if (target_workstream != _OPERATOR_CHASSIS_SCOPE_SOURCE_WORKSTREAM
+            or target_packet_path != _OPERATOR_CHASSIS_SCOPE_SOURCE_PACKET
+            or landing_commit != _OPERATOR_CHASSIS_SCOPE_SOURCE_ARCHIVE
+            or reviewed_main != _OPERATOR_CHASSIS_SCOPE_SOURCE_ARCHIVE
+            or source_base != _OPERATOR_CHASSIS_SCOPE_SOURCE_BASE
+            or source_head != _OPERATOR_CHASSIS_SCOPE_SOURCE_HEAD
+            or source_code_paths != set(_OPERATOR_CHASSIS_SCOPE_CODE_BLOBS)
+            or source_run_id != _OPERATOR_CHASSIS_SCOPE_SOURCE_RUN_ID
+            or source_trace_ref != (
+                f"refs/remotes/origin/agent-diagnostics/"
+                f"{_OPERATOR_CHASSIS_SCOPE_SOURCE_WORKSTREAM}/"
+                f"{_OPERATOR_CHASSIS_SCOPE_SOURCE_RUN_ID}"
+            )
+            or source_worktree != _OPERATOR_CHASSIS_SCOPE_SOURCE_WORKTREE
+            or source_branch != _OPERATOR_CHASSIS_SCOPE_SOURCE_BRANCH
+            or source_claim_oid != _OPERATOR_CHASSIS_SCOPE_SOURCE_CLAIM_OID):
+        raise HostValidationError("Operator chassis source-scope identity differs from the pinned review")
+    if _git(repo, "rev-parse", "--verify", f"{source_trace_ref}^{{commit}}") != (
+            _OPERATOR_CHASSIS_SCOPE_SOURCE_TRACE_COMMIT):
+        raise HostValidationError("Operator chassis source lifecycle trace commit differs from pinned evidence")
+    if (not _is_ancestor(repo, source_base, source_head)
+            or not _is_ancestor(repo, source_head, landing_commit)
+            or _git(repo, "rev-list", "--parents", "-n", "1", landing_commit).split() != [
+                landing_commit, _OPERATOR_CHASSIS_SCOPE_SOURCE_PARENT,
+            ]
+            or _git(repo, "rev-parse", f"{landing_commit}^{{tree}}")
+            != _OPERATOR_CHASSIS_SCOPE_SOURCE_TREE):
+        raise HostValidationError("Operator chassis source span or archive ancestry differs")
+    if _git_tree_entry(repo, landing_commit, _OPERATOR_CHASSIS_SCOPE_SOURCE_PACKET) != (
+            "100644", _OPERATOR_CHASSIS_SCOPE_SOURCE_PACKET_BLOB):
+        raise HostValidationError("pinned Operator chassis archived packet blob or mode differs")
+    source_entries = {}
+    for path, blob in _OPERATOR_CHASSIS_SCOPE_CODE_BLOBS.items():
+        entry = _git_tree_entry(repo, source_head, path)
+        if entry != ("100644", blob) or _git_tree_entry(repo, landing_commit, path) != entry:
+            raise HostValidationError(f"pinned Operator chassis source blob or mode differs: {path}")
+        source_entries[path] = {"path": path, "blob": blob, "mode": "100644"}
+
+    try:
+        approval_main = _git(repo, "rev-parse", "--verify", f"{approval_main or 'origin/main'}^{{commit}}")
+        current_main = _git(repo, "rev-parse", "--verify", "origin/main^{commit}")
+    except HostValidationError as exc:
+        raise HostValidationError("Operator chassis approval main is unavailable") from exc
+    if (not _is_ancestor(repo, reviewed_main, approval_main)
+            or not _is_ancestor(repo, landing_commit, approval_main)
+            or not _is_ancestor(repo, approval_main, current_main)):
+        raise HostValidationError("Operator chassis approval main does not descend from the preserved baseline")
+    attestation_entry = _git_tree_entry(repo, approval_main, _OPERATOR_CHASSIS_SCOPE_ATTESTATION_PATH)
+    if attestation_entry is None:
+        # Until the correction's independent PASS is accepted, preserve the
+        # original source-path rejection below rather than activating anything.
+        return None
+    if attestation_entry[0] != "100644":
+        raise HostValidationError("Operator chassis scope attestation is not a regular file")
+    try:
+        attestation_bytes = subprocess.run(
+            ["git", "show", f"{approval_main}:{_OPERATOR_CHASSIS_SCOPE_ATTESTATION_PATH}"],
+            cwd=repo, capture_output=True, check=True,
+        ).stdout
+        attestation = json.loads(attestation_bytes)
+    except (subprocess.CalledProcessError, json.JSONDecodeError) as exc:
+        raise HostValidationError("Operator chassis scope attestation is unreadable or invalid JSON") from exc
+    expected_attestation = {
+        "schema": "custodian.review_source_scope_attestation.v1",
+        "source_workstream": _OPERATOR_CHASSIS_SCOPE_SOURCE_WORKSTREAM,
+        "source_archive_commit": _OPERATOR_CHASSIS_SCOPE_SOURCE_ARCHIVE,
+        "source_archive_parent": _OPERATOR_CHASSIS_SCOPE_SOURCE_PARENT,
+        "source_archive_tree": _OPERATOR_CHASSIS_SCOPE_SOURCE_TREE,
+        "source_span_base": _OPERATOR_CHASSIS_SCOPE_SOURCE_BASE,
+        "source_span_head": _OPERATOR_CHASSIS_SCOPE_SOURCE_HEAD,
+        "source_run_id": _OPERATOR_CHASSIS_SCOPE_SOURCE_RUN_ID,
+        "source_trace_ref": source_trace_ref,
+        "source_trace_commit": _OPERATOR_CHASSIS_SCOPE_SOURCE_TRACE_COMMIT,
+        "source_claim_oid": _OPERATOR_CHASSIS_SCOPE_SOURCE_CLAIM_OID,
+        "source_branch": _OPERATOR_CHASSIS_SCOPE_SOURCE_BRANCH,
+        "source_worktree": _OPERATOR_CHASSIS_SCOPE_SOURCE_WORKTREE,
+        "source_packet_path": _OPERATOR_CHASSIS_SCOPE_SOURCE_PACKET,
+        "source_packet_blob": _OPERATOR_CHASSIS_SCOPE_SOURCE_PACKET_BLOB,
+        "source_packet_mode": "100644",
+        "preserved_review_workstream": _OPERATOR_CHASSIS_SCOPE_PRESERVED_REVIEW_WORKSTREAM,
+        "preserved_review_run_id": _OPERATOR_CHASSIS_SCOPE_PRESERVED_REVIEW_RUN_ID,
+        "preserved_review_claim_run_id": _OPERATOR_CHASSIS_SCOPE_PRESERVED_REVIEW_CLAIM_RUN_ID,
+        "preserved_review_branch": _OPERATOR_CHASSIS_SCOPE_PRESERVED_REVIEW_BRANCH,
+        "preserved_review_worktree": _OPERATOR_CHASSIS_SCOPE_PRESERVED_REVIEW_WORKTREE,
+        "preserved_reviewed_main": _OPERATOR_CHASSIS_SCOPE_SOURCE_ARCHIVE,
+        "source_code_paths": sorted(_OPERATOR_CHASSIS_SCOPE_CODE_BLOBS),
+        "source_code_files": [source_entries[path] for path in sorted(source_entries)],
+        "source_files": [
+            {"path": path, "blob": blob, "mode": "100644"}
+            for path, blob in sorted(_OPERATOR_CHASSIS_SCOPE_ATTESTED_FILES.items())
+        ],
+        "reason": "The original archived Operator chassis Work surface omitted this exact lifecycle regression test.",
+        "post_hoc": True,
+    }
+    canonical_bytes = (json.dumps(expected_attestation, indent=2, sort_keys=True) + "\n").encode("utf-8")
+    if attestation != expected_attestation or attestation_bytes != canonical_bytes:
+        raise HostValidationError("Operator chassis attestation bytes differ from the exact one-path authorization")
+
+    history = subprocess.run(
+        ["git", "log", "--format=%H", approval_main, "--", _OPERATOR_CHASSIS_SCOPE_ATTESTATION_PATH],
+        cwd=repo, text=True, capture_output=True,
+    )
+    if history.returncode:
+        raise HostValidationError("cannot resolve Operator chassis attestation origin commit")
+    origins = [commit for commit in history.stdout.splitlines()
+               if _git_tree_entry(repo, commit, _OPERATOR_CHASSIS_SCOPE_ATTESTATION_PATH) == attestation_entry]
+    if len(origins) != 1:
+        raise HostValidationError("Operator chassis attestation has missing or ambiguous exact-blob origin history")
+    origin_commit = origins[0]
+    try:
+        correction_text = read_git_text(repo, approval_main, _OPERATOR_CHASSIS_SCOPE_CORRECTION_PACKET)
+        review_text = read_git_text(repo, approval_main, _OPERATOR_CHASSIS_SCOPE_REVIEW_PACKET)
+    except ValueError:
+        return None
+    correction = parse_packet(_OPERATOR_CHASSIS_SCOPE_CORRECTION_PACKET, correction_text)
+    review = parse_packet(_OPERATOR_CHASSIS_SCOPE_REVIEW_PACKET, review_text)
+    if (correction.error or correction.kind not in {"implementation", "correction"}
+            or correction.status != "complete"
+            or correction.workstream != _OPERATOR_CHASSIS_SCOPE_CORRECTION_WORKSTREAM
+            or review.error or review.kind != "review" or review.status != "complete"
+            or review.workstream != _OPERATOR_CHASSIS_SCOPE_REVIEW_WORKSTREAM
+            or review.review_target_workstream != _OPERATOR_CHASSIS_SCOPE_CORRECTION_WORKSTREAM
+            or review.review_target_packet != _OPERATOR_CHASSIS_SCOPE_CORRECTION_PACKET):
+        return None
+    outcome, outcome_error = review_outcome.parse_review_outcome(review_text)
+    if outcome_error or outcome is None or outcome.get("Outcome") != "passed":
+        return None
+    accepted, _, acceptance_reason = review_outcome.review_acceptance(
+        review_text, correction_text, _OPERATOR_CHASSIS_SCOPE_REVIEW_WORKSTREAM,
+    )
+    if not accepted:
+        return None
+    review_baseline = read_git_text(repo, outcome["Reviewed main"], _OPERATOR_CHASSIS_SCOPE_CORRECTION_PACKET)
+    implementation_commit, identity_error = resolve_target_implementation_commit(
+        repo, outcome["Reviewed main"], _OPERATOR_CHASSIS_SCOPE_CORRECTION_PACKET,
+        _OPERATOR_CHASSIS_SCOPE_CORRECTION_WORKSTREAM, review_baseline,
+    )
+    if identity_error:
+        raise HostValidationError(f"Operator chassis attestation target identity is invalid: {identity_error}")
+    if (not _is_ancestor(repo, origin_commit, implementation_commit)
+            or not _is_ancestor(repo, outcome["Reviewed main"], approval_main)
+            or not _is_ancestor(repo, implementation_commit, outcome["Reviewed main"])):
+        raise HostValidationError("Operator chassis attestation review ancestry is invalid")
+    receipt, receipt_error = verify_review_receipt_delta(
+        review_baseline, correction_text, review_workstream=_OPERATOR_CHASSIS_SCOPE_REVIEW_WORKSTREAM,
+        target_workstream=_OPERATOR_CHASSIS_SCOPE_CORRECTION_WORKSTREAM,
+        reviewed_main=outcome["Reviewed main"], target_implementation_commit=implementation_commit,
+    )
+    if receipt_error or not receipt:
+        raise HostValidationError(f"accepted Operator chassis correction receipt is invalid: {receipt_error}")
+    identity_error = review_outcome.outcome_identity_error(
+        outcome, review_workstream=_OPERATOR_CHASSIS_SCOPE_REVIEW_WORKSTREAM,
+        target_workstream=_OPERATOR_CHASSIS_SCOPE_CORRECTION_WORKSTREAM,
+        reviewed_main=outcome["Reviewed main"], implementation_commit=implementation_commit,
+        run_id=outcome["Run ID"], review_cycle=review.review_cycle,
+    )
+    if identity_error:
+        raise HostValidationError(f"Operator chassis attestation review identity is invalid: {identity_error}")
+    reviewer_receipt = _scope_review_receipt(review_text)
+    if reviewer_receipt is None:
+        raise HostValidationError("accepted Operator chassis attestation lacks one canonical reviewer receipt")
+    expected_receipt = {
+        "Schema": "custodian.paired_review.v1",
+        "Review workstream": _OPERATOR_CHASSIS_SCOPE_REVIEW_WORKSTREAM,
+        "Review target workstream": _OPERATOR_CHASSIS_SCOPE_CORRECTION_WORKSTREAM,
+        "Status": "passed", "Blocking defects": "0", "Material gaps": "0",
+        "Reviewer context": "fresh", "Reviewed main": outcome["Reviewed main"],
+        "Reviewed implementation commit": implementation_commit,
+    }
+    if any(reviewer_receipt.get(field) != value for field, value in expected_receipt.items()) or (
+            reviewer_receipt.get("Reviewer provenance") not in review_outcome.PROVENANCE):
+        raise HostValidationError("Operator chassis reviewer receipt does not match its accepted PASS outcome")
+    return {
+        "kind": "accepted-post-hoc-exact-source-attestation",
+        "attestation_path": _OPERATOR_CHASSIS_SCOPE_ATTESTATION_PATH,
+        "attestation_commit": origin_commit,
+        "attestation_blob": attestation_entry[1],
+        "attestation_sha256": _sha256(attestation_bytes),
+        "source_files": {
+            path: {"mode": "100644", "blob": blob}
+            for path, blob in _OPERATOR_CHASSIS_SCOPE_ATTESTED_FILES.items()
+        },
+        "source_code_files": {
+            path: {"mode": "100644", "blob": blob}
+            for path, blob in _OPERATOR_CHASSIS_SCOPE_CODE_BLOBS.items()
+        },
+        "approval_review_workstream": _OPERATOR_CHASSIS_SCOPE_REVIEW_WORKSTREAM,
+        "approval_review_packet": _OPERATOR_CHASSIS_SCOPE_REVIEW_PACKET,
+        "approval_review_packet_blob": _git_tree_entry(
+            repo, approval_main, _OPERATOR_CHASSIS_SCOPE_REVIEW_PACKET,
+        )[1],
+        "approval_target_packet": _OPERATOR_CHASSIS_SCOPE_CORRECTION_PACKET,
+        "approval_target_packet_blob": _git_tree_entry(
+            repo, approval_main, _OPERATOR_CHASSIS_SCOPE_CORRECTION_PACKET,
+        )[1],
+        "approval_reviewed_main": outcome["Reviewed main"],
+        "approval_run_id": outcome["Run ID"],
+        "approval_implementation_commit": implementation_commit,
+        "approval_outcome": outcome["Outcome"],
+    }
+
+
 def _verified_procession_recovery_historical_scope(
     repo: Path, target_workstream: str, target_packet_path: str,
     landing_commit: str, extra_archive_paths: set[str],
@@ -4509,6 +4773,21 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
         if len(source_claim_oids) != 1:
             raise HostValidationError("Operator 3D lifecycle trace lacks its unique source claim identity")
         scope_attestation = _verified_operator_3d_scope_attestation(
+            repo, reviewed_main, approval_main, landing_commit, target_workstream,
+            target_packet_path, source_base, source_head, set(code_paths), run_id, ref,
+            claim_record["worktree"], claim_record["branch"], next(iter(source_claim_oids)),
+        )
+    elif target_workstream == _OPERATOR_CHASSIS_SCOPE_SOURCE_WORKSTREAM:
+        if approval_main is None:
+            approval_main = _git(repo, "rev-parse", "--verify", "origin/main^{commit}")
+        source_claim_oids = {
+            event.get("data", {}).get("claim_oid")
+            for event in events if event.get("event") == "remote_claim_acquired"
+            and isinstance(event.get("data"), dict)
+        }
+        if len(source_claim_oids) != 1:
+            raise HostValidationError("Operator chassis lifecycle trace lacks its unique source claim identity")
+        scope_attestation = _verified_operator_chassis_scope_attestation(
             repo, reviewed_main, approval_main, landing_commit, target_workstream,
             target_packet_path, source_base, source_head, set(code_paths), run_id, ref,
             claim_record["worktree"], claim_record["branch"], next(iter(source_claim_oids)),

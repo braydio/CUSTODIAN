@@ -5211,6 +5211,277 @@ class PairedReviewHostValidationTests(unittest.TestCase):
             "source_claim_oid": host_validation._OPERATOR_3D_SCOPE_SOURCE_CLAIM_OID,
         }
 
+    def _build_operator_chassis_scope_approval_history(self, *, review_outcome="passed"):
+        """Create an isolated accepted correction history over the pinned source archive."""
+        repository = Path(self.temp.name) / f"operator-chassis-scope-{len(list(Path(self.temp.name).glob('operator-chassis-scope-*')))}"
+        base_main = subprocess.run(
+            ["git", "-C", str(ROOT), "rev-parse", "HEAD"],
+            check=True, text=True, capture_output=True,
+        ).stdout.strip()
+        _prepare_historical_git_fixture(repository, base_main)
+        run = lambda *args: subprocess.run(
+            ["git", *args], cwd=repository, check=True, text=True, capture_output=True,
+        )
+        run("config", "user.name", "test")
+        run("config", "user.email", "test@example.invalid")
+        trace_prefix = (
+            "refs/remotes/origin/agent-diagnostics/"
+            f"{host_validation._OPERATOR_CHASSIS_SCOPE_SOURCE_WORKSTREAM}/"
+        )
+        trace_refs = subprocess.run(
+            ["git", "-C", str(ROOT), "for-each-ref", "--format=%(refname) %(objectname)", trace_prefix],
+            check=True, text=True, capture_output=True,
+        ).stdout.splitlines()
+        if len(trace_refs) != 1:
+            self.fail("the exact original Operator chassis lifecycle trace is unavailable or ambiguous")
+        ref, commit = trace_refs[0].split()
+        run("update-ref", ref, commit)
+
+        correction_active = f"{runner.PACKET_ROOT}/AGENT_OPERATOR_CHASSIS_SEAL_SOURCE_SCOPE_ATTESTATION_V1.md"
+        correction_archive = host_validation._OPERATOR_CHASSIS_SCOPE_CORRECTION_PACKET
+        review_active = f"{runner.PACKET_ROOT}/REVIEW_AGENT_OPERATOR_CHASSIS_SEAL_SOURCE_SCOPE_ATTESTATION_V1.md"
+        review_archive = host_validation._OPERATOR_CHASSIS_SCOPE_REVIEW_PACKET
+        correction_file = repository / correction_active
+        review_file = repository / review_active
+        if not correction_file.is_file() or not review_file.is_file():
+            self.fail("fixture base must contain the active correction and paired-review packets")
+        correction_text = correction_file.read_text(encoding="utf-8")
+        correction_text = correction_text.replace("- Status: `ready`", "- Status: `complete`", 1)
+        correction_text += """
+
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: disposable temporary-Git approval fixture
+"""
+        correction_file.write_text(correction_text, encoding="utf-8")
+        attestation_path = host_validation._OPERATOR_CHASSIS_SCOPE_ATTESTATION_PATH
+        destination = repository / attestation_path
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_bytes((ROOT / attestation_path).read_bytes())
+        run("mv", correction_active, correction_archive)
+        run("add", "--", correction_archive, attestation_path)
+        run("commit", "-qm", "archive exact Operator chassis source-scope correction")
+        implementation_commit = run("rev-parse", "HEAD").stdout.strip()
+
+        outcome = {
+            "Schema": "custodian.review_outcome.v1",
+            "Outcome": review_outcome,
+            "Review workstream": host_validation._OPERATOR_CHASSIS_SCOPE_REVIEW_WORKSTREAM,
+            "Review target workstream": host_validation._OPERATOR_CHASSIS_SCOPE_CORRECTION_WORKSTREAM,
+            "Reviewed main": implementation_commit,
+            "Reviewed implementation commit": implementation_commit,
+            "Reviewer context": "fresh",
+            "Reviewer provenance": "different-agent",
+            "Run ID": "20261107T000000Z-abcdef123456",
+            "Review cycle": "0",
+            "Finding IDs": "none" if review_outcome == "passed" else "R0-01",
+        }
+        review_text = review_file.read_text(encoding="utf-8")
+        review_text = review_text.replace("- Status: `ready`", "- Status: `complete`", 1)
+        review_text += f"""
+
+## Independent Review
+
+- Schema: `custodian.paired_review.v1`
+- Review workstream: `{host_validation._OPERATOR_CHASSIS_SCOPE_REVIEW_WORKSTREAM}`
+- Review target workstream: `{host_validation._OPERATOR_CHASSIS_SCOPE_CORRECTION_WORKSTREAM}`
+- Status: `{review_outcome}`
+- Blocking defects: `0`
+- Material gaps: `0`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Reviewed main: `{implementation_commit}`
+- Reviewed implementation commit: `{implementation_commit}`
+"""
+        review_text += "\n" + runner.review_outcome.render_review_outcome(
+            outcome=review_outcome,
+            review_workstream=host_validation._OPERATOR_CHASSIS_SCOPE_REVIEW_WORKSTREAM,
+            target_workstream=host_validation._OPERATOR_CHASSIS_SCOPE_CORRECTION_WORKSTREAM,
+            reviewed_main=implementation_commit, implementation_commit=implementation_commit,
+            provenance="different-agent", run_id=outcome["Run ID"], review_cycle=0,
+            ids=() if review_outcome == "passed" else ("R0-01",),
+        )
+        review_file.write_text(review_text, encoding="utf-8")
+        if review_outcome == "passed":
+            target_file = repository / correction_archive
+            target_file.write_text(
+                target_file.read_text(encoding="utf-8")
+                + "\n## Independent Review\n\n" + render_review_receipt(outcome),
+                encoding="utf-8",
+            )
+        run("mv", review_active, review_archive)
+        run("add", "--", correction_archive, review_archive)
+        run("commit", "-qm", "record Operator chassis correction review")
+        approval_main = run("rev-parse", "HEAD").stdout.strip()
+        run("update-ref", "refs/remotes/origin/main", approval_main)
+        return repository, implementation_commit, approval_main
+
+    def _operator_chassis_scope_arguments(self, repository, approval_main):
+        return {
+            "repo": repository,
+            "reviewed_main": host_validation._OPERATOR_CHASSIS_SCOPE_SOURCE_ARCHIVE,
+            "approval_main": approval_main,
+            "landing_commit": host_validation._OPERATOR_CHASSIS_SCOPE_SOURCE_ARCHIVE,
+            "target_workstream": host_validation._OPERATOR_CHASSIS_SCOPE_SOURCE_WORKSTREAM,
+            "target_packet_path": host_validation._OPERATOR_CHASSIS_SCOPE_SOURCE_PACKET,
+            "source_base": host_validation._OPERATOR_CHASSIS_SCOPE_SOURCE_BASE,
+            "source_head": host_validation._OPERATOR_CHASSIS_SCOPE_SOURCE_HEAD,
+            "source_code_paths": set(host_validation._OPERATOR_CHASSIS_SCOPE_CODE_BLOBS),
+            "source_run_id": host_validation._OPERATOR_CHASSIS_SCOPE_SOURCE_RUN_ID,
+            "source_trace_ref": (
+                "refs/remotes/origin/agent-diagnostics/"
+                f"{host_validation._OPERATOR_CHASSIS_SCOPE_SOURCE_WORKSTREAM}/"
+                f"{host_validation._OPERATOR_CHASSIS_SCOPE_SOURCE_RUN_ID}"
+            ),
+            "source_worktree": host_validation._OPERATOR_CHASSIS_SCOPE_SOURCE_WORKTREE,
+            "source_branch": host_validation._OPERATOR_CHASSIS_SCOPE_SOURCE_BRANCH,
+            "source_claim_oid": host_validation._OPERATOR_CHASSIS_SCOPE_SOURCE_CLAIM_OID,
+        }
+
+    def test_operator_chassis_scope_attestation_activates_only_after_accepted_review(self):
+        repository, implementation_commit, approval_main = self._build_operator_chassis_scope_approval_history()
+        args = self._operator_chassis_scope_arguments(repository, implementation_commit)
+        args["approval_main"] = host_validation._OPERATOR_CHASSIS_SCOPE_SOURCE_ARCHIVE
+        self.assertIsNone(host_validation._verified_operator_chassis_scope_attestation(**args))
+        with self.assertRaisesRegex(
+                host_validation.HostValidationError,
+                r"code/test paths not documented.*custodian/tools/agent/test_workstream\.py"):
+            host_validation.resolve_validation_source_span(
+                repository, host_validation._OPERATOR_CHASSIS_SCOPE_SOURCE_ARCHIVE,
+                host_validation._OPERATOR_CHASSIS_SCOPE_SOURCE_ARCHIVE,
+                host_validation._OPERATOR_CHASSIS_SCOPE_SOURCE_WORKSTREAM,
+                host_validation._OPERATOR_CHASSIS_SCOPE_SOURCE_PACKET,
+                approval_main=host_validation._OPERATOR_CHASSIS_SCOPE_SOURCE_ARCHIVE,
+            )
+        args["approval_main"] = implementation_commit
+        self.assertIsNone(host_validation._verified_operator_chassis_scope_attestation(**args))
+        args["approval_main"] = approval_main
+        provenance = host_validation._verified_operator_chassis_scope_attestation(**args)
+        self.assertEqual(provenance["approval_outcome"], "passed")
+        self.assertEqual(provenance["approval_implementation_commit"], implementation_commit)
+        self.assertEqual(set(provenance["source_files"]), set(host_validation._OPERATOR_CHASSIS_SCOPE_ATTESTED_FILES))
+        self.assertEqual(set(provenance["source_code_files"]), set(host_validation._OPERATOR_CHASSIS_SCOPE_CODE_BLOBS))
+        span = host_validation.resolve_validation_source_span(
+            repository, host_validation._OPERATOR_CHASSIS_SCOPE_SOURCE_ARCHIVE,
+            host_validation._OPERATOR_CHASSIS_SCOPE_SOURCE_ARCHIVE,
+            host_validation._OPERATOR_CHASSIS_SCOPE_SOURCE_WORKSTREAM,
+            host_validation._OPERATOR_CHASSIS_SCOPE_SOURCE_PACKET,
+            approval_main=approval_main,
+        )
+        self.assertEqual(span["provenance"]["scope_attestation"]["approval_outcome"], "passed")
+
+    def test_operator_chassis_scope_attestation_rejects_wrong_identity_and_path_sets(self):
+        repository, _, approval_main = self._build_operator_chassis_scope_approval_history()
+        exact = self._operator_chassis_scope_arguments(repository, approval_main)
+        for change in (
+            {"reviewed_main": "0" * 40},
+            {"landing_commit": "0" * 40},
+            {"source_base": "0" * 40},
+            {"source_head": "0" * 40},
+            {"source_run_id": "20261107T000000Z-000000000000"},
+            {"source_trace_ref": "refs/remotes/origin/agent-diagnostics/other/run"},
+            {"source_worktree": "/tmp/other"},
+            {"source_branch": "agent/other"},
+            {"source_claim_oid": "0" * 40},
+            {"source_code_paths": set(exact["source_code_paths"]) - {sorted(exact["source_code_paths"])[0]}},
+            {"source_code_paths": set(exact["source_code_paths"]) | {"custodian/tools/extra.py"}},
+            {"target_packet_path": "custodian/docs/ai_context/task_packets/archived/OTHER.md"},
+        ):
+            with self.subTest(change=change), self.assertRaises(host_validation.HostValidationError):
+                host_validation._verified_operator_chassis_scope_attestation(**{**exact, **change})
+
+    def test_operator_chassis_scope_attestation_rejects_nonpass_and_mutated_attestation(self):
+        repository, _, nonpass_main = self._build_operator_chassis_scope_approval_history(review_outcome="findings")
+        args = self._operator_chassis_scope_arguments(repository, nonpass_main)
+        self.assertIsNone(host_validation._verified_operator_chassis_scope_attestation(**args))
+
+        repository, _, approval_main = self._build_operator_chassis_scope_approval_history()
+        path = host_validation._OPERATOR_CHASSIS_SCOPE_ATTESTATION_PATH
+        content = json.loads(subprocess.run(
+            ["git", "show", f"{approval_main}:{path}"], cwd=repository,
+            check=True, capture_output=True,
+        ).stdout)
+        mutations = (
+            ("source_archive_commit", lambda data: data.update(source_archive_commit="0" * 40)),
+            ("source_archive_parent", lambda data: data.update(source_archive_parent="0" * 40)),
+            ("source_archive_tree", lambda data: data.update(source_archive_tree="0" * 40)),
+            ("source_span_base", lambda data: data.update(source_span_base="0" * 40)),
+            ("source_span_head", lambda data: data.update(source_span_head="0" * 40)),
+            ("source_run_id", lambda data: data.update(source_run_id="20261107T000000Z-000000000000")),
+            ("trace_ref", lambda data: data.update(source_trace_ref="refs/remotes/origin/other/run")),
+            ("trace_commit", lambda data: data.update(source_trace_commit="0" * 40)),
+            ("source_claim_oid", lambda data: data.update(source_claim_oid="0" * 40)),
+            ("source_branch", lambda data: data.update(source_branch="agent/other")),
+            ("source_worktree", lambda data: data.update(source_worktree="/tmp/other")),
+            ("packet_path", lambda data: data.update(source_packet_path="custodian/docs/other.md")),
+            ("packet_blob", lambda data: data.update(source_packet_blob="0" * 40)),
+            ("packet_mode", lambda data: data.update(source_packet_mode="100755")),
+            ("review_workstream", lambda data: data.update(preserved_review_workstream="review-other")),
+            ("review_run", lambda data: data.update(preserved_review_run_id="20261107T000000Z-000000000000")),
+            ("review_claim", lambda data: data.update(preserved_review_claim_run_id="20261107T000000Z-000000000000")),
+            ("review_branch", lambda data: data.update(preserved_review_branch="agent/review-other")),
+            ("review_worktree", lambda data: data.update(preserved_review_worktree="/tmp/other")),
+            ("reviewed_main", lambda data: data.update(preserved_reviewed_main="0" * 40)),
+            ("code_paths", lambda data: data.update(source_code_paths=data["source_code_paths"][:-1])),
+            ("code_blob", lambda data: data["source_code_files"][0].update(blob="0" * 40)),
+            ("code_mode", lambda data: data["source_code_files"][0].update(mode="100755")),
+            ("missing_source", lambda data: data["source_files"].pop()),
+            ("source_path", lambda data: data["source_files"][0].update(path="custodian/docs/other.py")),
+            ("source_blob", lambda data: data["source_files"][0].update(blob="0" * 40)),
+            ("source_mode", lambda data: data["source_files"][0].update(mode="100755")),
+            ("extra_source", lambda data: data["source_files"].append({
+                "path": "custodian/tools/agent/extra.py", "blob": "0" * 40, "mode": "100644",
+            })),
+            ("post_hoc", lambda data: data.update(post_hoc=False)),
+        )
+        for index, (field, mutate) in enumerate(mutations):
+            altered = copy.deepcopy(content)
+            mutate(altered)
+            (repository / path).write_text(json.dumps(altered, indent=2, sort_keys=True) + "\n")
+            subprocess.run(["git", "-C", str(repository), "add", "--", path], check=True)
+            subprocess.run(["git", "-C", str(repository), "commit", "-qm", f"mutate attestation {index}"], check=True)
+            mutated = subprocess.run(["git", "-C", str(repository), "rev-parse", "HEAD"], check=True,
+                                     text=True, capture_output=True).stdout.strip()
+            subprocess.run(["git", "-C", str(repository), "update-ref", "refs/remotes/origin/main", mutated], check=True)
+            args = self._operator_chassis_scope_arguments(repository, mutated)
+            with self.subTest(field=field), self.assertRaisesRegex(
+                    host_validation.HostValidationError, "exact one-path authorization"):
+                host_validation._verified_operator_chassis_scope_attestation(**args)
+            subprocess.run(["git", "-C", str(repository), "reset", "--hard", approval_main], check=True,
+                           stdout=subprocess.DEVNULL)
+            subprocess.run(["git", "-C", str(repository), "update-ref", "refs/remotes/origin/main", approval_main], check=True)
+
+    def test_operator_chassis_scope_attestation_rejects_invalid_receipt_and_foreign_approval(self):
+        repository, _, approval_main = self._build_operator_chassis_scope_approval_history()
+        target = repository / host_validation._OPERATOR_CHASSIS_SCOPE_CORRECTION_PACKET
+        text = target.read_text(encoding="utf-8")
+        receipt_start = text.index("\n## Independent Review\n")
+        target.write_text(text[:receipt_start] + "\n", encoding="utf-8")
+        subprocess.run(["git", "-C", str(repository), "add", "--",
+                        host_validation._OPERATOR_CHASSIS_SCOPE_CORRECTION_PACKET], check=True)
+        subprocess.run(["git", "-C", str(repository), "commit", "-qm", "remove target receipt"], check=True)
+        invalid_receipt_main = subprocess.run(
+            ["git", "-C", str(repository), "rev-parse", "HEAD"], check=True,
+            text=True, capture_output=True,
+        ).stdout.strip()
+        subprocess.run(["git", "-C", str(repository), "update-ref", "refs/remotes/origin/main",
+                        invalid_receipt_main], check=True)
+        args = self._operator_chassis_scope_arguments(repository, invalid_receipt_main)
+        self.assertIsNone(host_validation._verified_operator_chassis_scope_attestation(**args))
+
+        tree = subprocess.run(["git", "-C", str(repository), "rev-parse", f"{approval_main}^{{tree}}"],
+                              check=True, text=True, capture_output=True).stdout.strip()
+        foreign = subprocess.run(["git", "-C", str(repository), "commit-tree", tree, "-m",
+                                  "foreign approval history"], check=True,
+                                 text=True, capture_output=True).stdout.strip()
+        subprocess.run(["git", "-C", str(repository), "update-ref", "refs/remotes/origin/main", foreign], check=True)
+        args = self._operator_chassis_scope_arguments(repository, foreign)
+        with self.assertRaisesRegex(host_validation.HostValidationError, "does not descend from the preserved baseline"):
+            host_validation._verified_operator_chassis_scope_attestation(**args)
+
     def test_operator_3d_scope_attestation_activates_only_after_accepted_review(self):
         repository, implementation_commit, approval_main = self._build_operator_3d_scope_approval_history()
         arguments = self._operator_3d_scope_arguments(repository, implementation_commit)
