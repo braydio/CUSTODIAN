@@ -8,6 +8,8 @@ The CUSTODIAN chat relay uses Chrome's local Chrome DevTools Protocol endpoint a
 
 The `mcp__custodian_chat_relay__` MCP namespace provides page listing, snapshots, navigation, and visible-page interaction. A `mcp__chrome_devtools__` namespace may also be available for browser inspection. Use the CUSTODIAN relay namespace for its configured relay session. Verify the exact conversation URL and current composer from a fresh page list/snapshot before sending anything.
 
+If the user service has not been configured, this foreground command is a manual alternative. Once the service is enabled, use `systemctl --user` to manage Chrome instead.
+
 Example direct launch:
 
 ```bash
@@ -45,7 +47,7 @@ To re-enable startup after a stop, run `systemctl --user enable --now custodian-
 
 This unit and profile are host-local setup, not repository files. Keep the profile private because it contains the authenticated browser session. Do not launch another Chrome with the same profile or debugging port. The existing `odin-chatgpt-chrome.service` belongs to a different project and is configured for port 9222; do not use it for CUSTODIAN. Never fall back to port 9222.
 
-Never use port 9222 as a fallback for CUSTODIAN. Do not inspect cookies, authentication tokens, or private application internals. Operate on the visible conversation DOM and UI only.
+Do not inspect cookies, authentication tokens, or private application internals. Operate on the visible conversation DOM and UI only.
 
 ## Python send and receive scripts
 
