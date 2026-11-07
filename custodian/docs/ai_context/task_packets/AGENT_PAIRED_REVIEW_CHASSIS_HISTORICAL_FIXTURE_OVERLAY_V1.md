@@ -8,7 +8,7 @@
 - Authoring handoff: `auto`
 - Priority: `P0`
 - Depends on: `review-agent-paired-review-chassis-metadata-source-scope-v1`
-- Locks: `paired-review-source-provenance, paired-review-runner-tests`
+- Locks: `paired-review-chassis-historical-fixture-overlay-v1, paired-review-runner-tests`
 - Kind: `implementation`
 - Review: `auto`
 - Review stage: `post-land`

@@ -9,7 +9,7 @@
 - Authoring handoff: `auto`
 - Priority: `P0`
 - Depends on: `agent-paired-review-chassis-historical-fixture-overlay-v1`
-- Locks: `paired-review-source-provenance, paired-review-runner-tests`
+- Locks: `paired-review-chassis-historical-fixture-overlay-v1, paired-review-runner-tests`
 - Review: `none`
 - Review target workstream: `agent-paired-review-chassis-historical-fixture-overlay-v1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/AGENT_PAIRED_REVIEW_CHASSIS_HISTORICAL_FIXTURE_OVERLAY_V1.md`
