@@ -4,8 +4,8 @@
 - Workstream: `review-agent-paired-review-chassis-metadata-source-scope-v1`
 - Category: `agent-ops`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `agent-paired-review-chassis-metadata-source-scope-v1`
 - Locks: `paired-review-chassis-seal-metadata-source-scope-v1`
