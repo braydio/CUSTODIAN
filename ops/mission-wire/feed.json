@@ -1,9 +1,159 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-07T10:48:57Z",
-  "source_main_sha": "da01ebe7ad60f0a42f543eb3c021b90e4989c3d3",
+  "generated_at": "2026-11-07T11:51:07Z",
+  "source_main_sha": "738be14d9582f44f6f58b444cb89e93afd55951f",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "awakening-score-runtime-738be14d",
+      "headline": "Awakening gains its first production score, with transition-safe music handoff",
+      "summary": "The approved 'A Command Still Speaking' cue is now integrated into Awakening's production scene. New ownership logic keeps music through the ten-part sequence and releases it on successful Hub transition, while preserving playback after a failed handoff. The author reports 35/35 changed-file validations and an independent code recheck, but audible listening and canonical teardown remain unverified.",
+      "body": "Main now contains the Awakening score, music director, two-deck ownership handling, a production handoff regression and a preserved validation archive. The author reports 35/35 changed-file tests passing, a graphical Godot boot, and a code reviewer rechecking the corrected real-transition smoke with no remaining findings. This is not a formal paired-review acceptance receipt, nor proof of audible loop quality. The cue's in-game seam and mixing still require human listening; host cleanup remains unknown.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "awakening-command-still-speaking-runtime",
+      "occurred_at": "2026-11-07T10:55:24Z",
+      "bullets": [
+        "Production scene now references the Awakening cue and dedicated music director.",
+        "Successful Hub handoff releases the cue; failed handoff retains ownership.",
+        "Author-reported 35/35 validations and independent code recheck are not formal acceptance.",
+        "Next: human listening and canonical finish/teardown evidence."
+      ],
+      "links": [
+        {
+          "title": "Main integration commit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/738be14d9582f44f6f58b444cb89e93afd55951f"
+        },
+        {
+          "title": "Implementation and validation summary",
+          "url": "https://github.com/braydio/CUSTODIAN/blob/738be14d9582f44f6f58b444cb89e93afd55951f/AWAKENING_COMMAND_STILL_SPEAKING_RUNTIME_CLAUDE_SUMMARY.md"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "Awakening now has a production music cue. 'A Command Still Speaking' is wired into the opening sequence with rules that keep the score playing across scene beats and release it cleanly when the player reaches the Hub. The change reaches beyond adding an audio file: it handles failed transitions without abruptly losing the music.",
+        "sections": [
+          {
+            "heading": "Music that follows the scene, not the loading screen",
+            "text": "A dedicated director uses the existing two-deck music manager. It keeps the score through ten Awakening sections and optional Chapel content. On a successful Hub handoff, the cue fades without bringing back the prior playlist; a failed transition keeps the cue under Awakening's ownership."
+          },
+          {
+            "heading": "Tests cover the real transition",
+            "text": "The first focused test did not exercise the production handoff path. After an independent code-review finding, the author added a regression that runs the actual transition and rollback behavior. The implementation summary reports 35 passing changed-file validations and a successful graphical startup, but no audible playback check."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The transition boundary was the real risk",
+            "explanation": "The important fix is not just starting music, but preventing a successful transition from restoring an unwanted playlist and a failed transition from silencing the scene. The new regression targets that behavior."
+          },
+          {
+            "title": "Green audio tests cannot certify the listening experience",
+            "explanation": "Technical validation supports scene integration and ownership behavior. It cannot establish whether the loop seam is audible or the mix feels right during gameplay; that remains a human audition."
+          }
+        ],
+        "takeaway": "The Awakening score is integrated on main with meaningful regression coverage, while listening approval and verified host closeout remain separate gates.",
+        "next_watch": "Look for a human in-game listening check, a formal finish receipt if applicable, and trustworthy canonical cleanup evidence."
+      },
+      "scorecard": {
+        "stage": "Production integration landed; listening and closeout outstanding",
+        "as_of": "2026-11-07T11:51:07Z",
+        "scope": "One named packetless Awakening score workstream, not the full dispatcher queue",
+        "metrics": [
+          {
+            "id": "other-reported-validation-passes",
+            "label": "REPORTED TEST PASSES",
+            "value": 35,
+            "verification": "reported",
+            "basis": "Author summary reports 35/35 changed-file validations; not independently rerun by this watch.",
+            "url": "https://github.com/braydio/CUSTODIAN/blob/738be14d9582f44f6f58b444cb89e93afd55951f/AWAKENING_COMMAND_STILL_SPEAKING_RUNTIME_CLAUDE_SUMMARY.md"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Integrate approved score and director",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Main tree contains score, director and scene binding."
+          },
+          {
+            "label": "Add real handoff regression",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Production handoff smoke is committed."
+          },
+          {
+            "label": "Run technical validation",
+            "status": "current",
+            "verification": "reported",
+            "evidence": "Author reports 35/35 passing; independent rerun not inspected."
+          },
+          {
+            "label": "Independent code recheck",
+            "status": "current",
+            "verification": "reported",
+            "evidence": "Author summary reports no remaining findings; no canonical PASS receipt inspected."
+          },
+          {
+            "label": "Human loop and mix audition",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Audio output was not listened to."
+          },
+          {
+            "label": "Canonical finish and teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No trustworthy host closeout evidence."
+          }
+        ],
+        "next_gate": "Gameplay/audio owner: audition the cue and loop seam in the running Awakening scene; record any fixes and completion evidence."
+      },
+      "details": {
+        "overview": "Source and runtime music integration are present on inspected main. Validation and review outcomes are author-reported, not canonical acceptance. Main SHA anchors repository state only.",
+        "ledger": [
+          {
+            "stage": "Runtime integration",
+            "status": "verified landed",
+            "evidence": "Main SHA 738be14d contains director, OGG and transition changes."
+          },
+          {
+            "stage": "Validation",
+            "status": "reported passing",
+            "evidence": "Author summary 35/35 changed-file tests and graphical boot."
+          },
+          {
+            "stage": "Independent review",
+            "status": "reported code recheck",
+            "evidence": "Summary describes correction of real-transition coverage and reviewer recheck; no canonical PASS receipt."
+          },
+          {
+            "stage": "Listening approval",
+            "status": "unknown",
+            "evidence": "No audible playback observation."
+          },
+          {
+            "stage": "Host teardown",
+            "status": "unknown",
+            "evidence": "No canonical host evidence."
+          }
+        ],
+        "notes": [
+          "The production transition preserves the cue after rollback and fades it after a successful Hub commit."
+        ],
+        "unknowns": [
+          "Human listening approval and loop seam quality",
+          "Canonical workstream closeout and host cleanup",
+          "Full dispatcher state and CI check-run coverage"
+        ],
+        "actions": [
+          "Gameplay/audio owner: audition in game and record findings.",
+          "Workstream owner: complete canonical finish and provide teardown evidence if applicable."
+        ]
+      },
+      "related": []
+    },
     {
       "id": "memorial-court-ready-da01ebe7",
       "headline": "Sepulcher Memorial Court enters the automatic task queue, with independent art review queued behind it",
@@ -1533,148 +1683,15 @@
         "next_gate": "Owner: validate/promote the paired packet through normal authoring and resolve the existing protected lock before any claim."
       },
       "related": []
-    },
-    {
-      "id": "creche-canonical-floor-target-bf6baadc",
-      "headline": "Crèche floor approved at 1464×1074, with browser-to-runtime handoff specified",
-      "summary": "The Awakening Crèche now has an approved 1464×1074 transparent floor-art target, replacing the old 960×704 design only after a reviewed Asset V2 and Godot cutover. A follow-up specifies exact original-byte retrieval through the connected browser, with SHA verification. The playable room has not changed.",
-      "body": "The Awakening Crèche now has an approved 1464×1074 transparent floor-art target, replacing the old 960×704 design only after a reviewed Asset V2 and Godot cutover. A follow-up specifies exact original-byte retrieval through the connected browser, with SHA verification. The playable room has not changed. Documentation and packet metadata do not prove runtime installation, dispatcher execution, independent acceptance, or canonical teardown. Host-wide counts and current CI remain unverified.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "assets-art",
-      "workstream": "awakening-creche-console-sprite-reauthor-v1",
-      "occurred_at": "2026-11-05T19:38:38Z",
-      "bullets": [
-        "Approve canonical target — done",
-        "Specify exact-byte browser handoff — done",
-        "Verify source and foreground — next",
-        "Atomic Asset V2 and Godot cutover — next",
-        "Visual smoke and independent review — next"
-      ],
-      "links": [
-        {
-          "title": "Inspected source commit",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/bf6baadcd5c1fef92464a5db32d6e20b9767d546"
-        },
-        {
-          "title": "Exact-byte browser handoff",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/56cc783004961c4c4df3d24795b409e27fadbb84"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "The Awakening Crèche now has an approved 1464×1074 transparent floor-art target, replacing the old 960×704 design only after a reviewed Asset V2 and Godot cutover. A follow-up specifies exact original-byte retrieval through the connected browser, with SHA verification. The playable room has not changed.",
-        "sections": [
-          {
-            "heading": "The room grows on paper first",
-            "text": "The new source artwork is larger, but transparent margins must not become walkable space. Zone01 geometry, navigation and the north passage need measurement before the floor and foreground change together."
-          },
-          {
-            "heading": "Original bytes, not a browser screenshot",
-            "text": "The follow-up source instruction prefers obtaining the original uploaded PNG via Chrome DevTools and verifying its SHA-256 before the Asset V2 ingest. If exact bytes cannot be obtained, the handoff must stop."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The floor and walls are one cutover",
-            "explanation": "The plan prohibits deploying the larger floor against the old foreground. Both visual layers and the measured collision geometry must be validated together."
-          },
-          {
-            "title": "Approval is not installation",
-            "explanation": "The registered runtime still uses the previous dimensions, and no Godot acceptance or independent review is established."
-          }
-        ],
-        "takeaway": "The new source evidence establishes a defined next gate, not completed runtime or review acceptance.",
-        "next_watch": "Owner: stage and hash-check the exact approved source and aligned foreground before a guarded atomic cutover."
-      },
-      "details": {
-        "overview": "Inspected commit bf6baadcd5c1fef92464a5db32d6e20b9767d546. Private pilot pointer is older than 40 hours, so no private counts were used. Host claims, CI, teardown and live status remain unknown.",
-        "ledger": [
-          {
-            "stage": "Approve canonical target",
-            "status": "done",
-            "evidence": "bf6baadc design commit"
-          },
-          {
-            "stage": "Specify exact-byte browser handoff",
-            "status": "done",
-            "evidence": "56cc7830 follow-up commit"
-          },
-          {
-            "stage": "Verify source and foreground",
-            "status": "next",
-            "evidence": "Source staging not proven"
-          },
-          {
-            "stage": "Atomic Asset V2 and Godot cutover",
-            "status": "next",
-            "evidence": "Runtime remains old size"
-          },
-          {
-            "stage": "Visual smoke and independent review",
-            "status": "next",
-            "evidence": "No PASS or gameplay proof"
-          }
-        ],
-        "notes": [],
-        "unknowns": [
-          "Current canonical dispatcher audit",
-          "Independent acceptance and host teardown",
-          "Current CI conclusion"
-        ],
-        "actions": [
-          "Owner: stage and hash-check the exact approved source and aligned foreground before a guarded atomic cutover."
-        ]
-      },
-      "scorecard": {
-        "stage": "Documented, not executed",
-        "as_of": "2026-11-05T19:38:38Z",
-        "scope": "This named workstream only",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Approve canonical target",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "bf6baadc design commit"
-          },
-          {
-            "label": "Specify exact-byte browser handoff",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "56cc7830 follow-up commit"
-          },
-          {
-            "label": "Verify source and foreground",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Source staging not proven"
-          },
-          {
-            "label": "Atomic Asset V2 and Godot cutover",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Runtime remains old size"
-          },
-          {
-            "label": "Visual smoke and independent review",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No PASS or gameplay proof"
-          }
-        ],
-        "next_gate": "Owner: stage and hash-check the exact approved source and aligned foreground before a guarded atomic cutover."
-      },
-      "related": []
     }
   ],
   "snapshot": {
-    "observed_at": "2026-11-07T07:47:12Z",
-    "source_main_sha": "abcf35bf5518259162a6547a87ce7a7297279b5a",
+    "observed_at": "2026-11-07T11:51:07Z",
+    "source_main_sha": "738be14d9582f44f6f58b444cb89e93afd55951f",
     "coverage": "partial",
-    "scope": "Inspected named Sepulcher art and finish-first policy commits on GitHub; no full dispatcher audit or fresh validated pilot observation.",
+    "scope": "Inspected main integration and named Awakening score evidence; no canonical full dispatcher audit or fresh validated private pilot.",
     "metrics": [],
-    "focus": "Correct blocked selected-workstream general fallback under protected review.",
-    "note": "Memorial slab archived; finish-first guidance landed but enforcement gap remains. Private pilot pointer last modified Nov 4 and not accepted as fresh."
+    "focus": "Complete human listening validation and canonical closeout of the landed Awakening score.",
+    "note": "New Awakening score runtime integration landed. Existing queue totals remain unknown; pilot observation is stale."
   }
 }
