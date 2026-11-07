@@ -941,6 +941,33 @@ _RESUMED_PROVENANCE_README_BLOBS = (
     "e8a77211b5fa4ec43451b45911d98fec1f356d84",
 )
 
+_CHASSIS_METADATA_SOURCE_WORKSTREAM = (
+    "agent-operator-chassis-seal-source-scope-attestation-v1"
+)
+_CHASSIS_METADATA_SOURCE_ARCHIVE = "7e1458d13a93619db4631d54b1ef217412b6d34e"
+_CHASSIS_METADATA_SOURCE_PARENT = "dc48e1e9e8511abe160aad266ed44493f11e8666"
+_CHASSIS_METADATA_SOURCE_TREE = "d3c79bda78283b2ecd17b0ce4b2088fa47d278de"
+_CHASSIS_METADATA_SOURCE_PACKET = (
+    f"{PACKET_ROOT}/archived/AGENT_OPERATOR_CHASSIS_SEAL_SOURCE_SCOPE_ATTESTATION_V1.md"
+)
+_CHASSIS_METADATA_REVIEW_PACKET = (
+    f"{PACKET_ROOT}/REVIEW_AGENT_OPERATOR_CHASSIS_SEAL_SOURCE_SCOPE_ATTESTATION_V1.md"
+)
+_CHASSIS_METADATA_REVIEW_WORKSTREAM = (
+    "review-agent-operator-chassis-seal-source-scope-attestation-v1"
+)
+_CHASSIS_METADATA_REVIEWED_MAIN = "5e250a1215cea536d3bf2030f7a82327f5a0ad58"
+_CHASSIS_METADATA_REVIEW_BLOBS = (
+    "715b2551122294eb3451165a2ea88ceceaf3e97e",
+    "c252ea91434bff599ad5dee6d2dd2ad92ac43733",
+)
+_CHASSIS_METADATA_EXTRA_ARCHIVE_PATHS = {
+    _CHASSIS_METADATA_REVIEW_PACKET,
+    "custodian/docs/ai_context/review_scope_attestations/operator_chassis_seal_v1.json",
+    "custodian/tools/agent/paired_review_host_validation.py",
+    "custodian/tools/agent/test_paired_review_runner.py",
+}
+
 
 def _managed_packet_index_additive_reconciliation(first_parent: bytes,
                                                   second_parent: bytes,
@@ -2250,6 +2277,86 @@ def _canonical_review_packet_metadata_path(
     new_field = f"- Authoring chat: `{canonical_url}`".encode("utf-8")
     if before.count(old_field) != 2 or after != before.replace(old_field, new_field):
         raise HostValidationError("paired-review archive changes fields beyond canonical authoring chat metadata")
+    return review_path
+
+
+def _chassis_attestation_review_metadata_path(
+    repo: Path, archive_parent: str, landing_commit: str, target_workstream: str,
+    target_packet_path: str, target_packet_text: str, changed_paths: set[str],
+) -> str | None:
+    """Admit only the pinned chassis correction's historical delimiter repair."""
+    if target_workstream != _CHASSIS_METADATA_SOURCE_WORKSTREAM:
+        return None
+    review_path = _CHASSIS_METADATA_REVIEW_PACKET
+    if review_path not in changed_paths:
+        return None
+    if (landing_commit != _CHASSIS_METADATA_SOURCE_ARCHIVE
+            or archive_parent != _CHASSIS_METADATA_SOURCE_PARENT
+            or target_packet_path != _CHASSIS_METADATA_SOURCE_PACKET
+            or changed_paths != _CHASSIS_METADATA_EXTRA_ARCHIVE_PATHS
+            or header_field(target_packet_text, "Workstream") != _CHASSIS_METADATA_SOURCE_WORKSTREAM):
+        raise HostValidationError("chassis metadata archive identity or path set changed")
+
+    parents = _git(repo, "show", "-s", "--format=%P", landing_commit).split()
+    tree = _git(repo, "rev-parse", f"{landing_commit}^{{tree}}")
+    if parents != [_CHASSIS_METADATA_SOURCE_PARENT] or tree != _CHASSIS_METADATA_SOURCE_TREE:
+        raise HostValidationError("chassis metadata archive parent or tree changed")
+
+    before_entry = _git_tree_entry(repo, archive_parent, review_path)
+    after_entry = _git_tree_entry(repo, landing_commit, review_path)
+    if (before_entry != ("100644", _CHASSIS_METADATA_REVIEW_BLOBS[0])
+            or after_entry != ("100644", _CHASSIS_METADATA_REVIEW_BLOBS[1])):
+        raise HostValidationError("chassis metadata review packet blob or mode changed")
+
+    active_packet = target_packet_path.replace("/archived/", "/", 1)
+    if (_git_tree_entry(repo, archive_parent, active_packet) is None
+            or _git_tree_entry(repo, landing_commit, target_packet_path) is None):
+        raise HostValidationError("chassis metadata archive target packet is missing")
+    before = _git(repo, "show", f"{archive_parent}:{review_path}").encode("utf-8")
+    after = _git(repo, "show", f"{landing_commit}:{review_path}").encode("utf-8")
+    before_text, after_text = before.decode("utf-8"), after.decode("utf-8")
+    expected_identity = {
+        "Workstream": _CHASSIS_METADATA_REVIEW_WORKSTREAM,
+        "Review target workstream": _CHASSIS_METADATA_SOURCE_WORKSTREAM,
+        "Review target packet": _CHASSIS_METADATA_SOURCE_PACKET,
+        "Reviewed main": _CHASSIS_METADATA_REVIEWED_MAIN,
+    }
+    if any(header_field(before_text, field) != value
+           or header_field(after_text, field) != value
+           for field, value in expected_identity.items()):
+        raise HostValidationError("chassis metadata file is not the exact paired review packet")
+
+    before_lines = before.splitlines(keepends=True)
+    after_lines = after.splitlines(keepends=True)
+    differences = [index for index, (old, new) in enumerate(zip(before_lines, after_lines))
+                   if old != new]
+    if len(before_lines) != len(after_lines) or len(differences) != 1:
+        raise HostValidationError("chassis metadata review packet has unexpected byte changes")
+    line_index = differences[0]
+    old_line, new_line = before_lines[line_index], after_lines[line_index]
+    prefix = b"- Publication inputs: "
+    if not old_line.startswith(prefix) or not new_line.startswith(prefix):
+        raise HostValidationError("chassis metadata edit is outside Publication inputs")
+
+    def entries(line: bytes, separator: bytes) -> list[bytes]:
+        body = line[len(prefix):]
+        if body.endswith(b"\r\n"):
+            body = body[:-2]
+        elif body.endswith(b"\n"):
+            body = body[:-1]
+        values = body.split(separator)
+        if values and values[-1].endswith(b"."):
+            values[-1] = values[-1][:-1]
+        if not values or any(not value.startswith(b"`") or not value.endswith(b"`")
+                             for value in values):
+            raise HostValidationError("chassis metadata Publication inputs are malformed")
+        return values
+
+    old_entries = entries(old_line, b", ")
+    new_entries = entries(new_line, b"; ")
+    if (old_entries != new_entries
+            or new_line != old_line.replace(b", ", b"; ")):
+        raise HostValidationError("chassis metadata changed Publication inputs beyond delimiters")
     return review_path
 
 
@@ -4465,7 +4572,7 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
     if pinned_reset_archive and archive_paths != _RESET_ARCHIVE_PATHS:
         raise HostValidationError("reset canonical archive has an unpinned closeout path set")
     source_bearing_archive = bool(extra_archive_paths) and not pinned_reset_archive
-    paired_review_metadata_path = None
+    paired_review_metadata_paths: set[str] = set()
     source_artifact = _verified_blender_source_artifact(
         repo, landing_commit, target_packet_text, extra_archive_paths,
     ) if target_workstream == _BLENDER_SOURCE_WORKSTREAM else None
@@ -4489,13 +4596,18 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
         )
     )
     if source_bearing_archive:
-        paired_review_metadata_path = _canonical_review_packet_metadata_path(
-            repo, archive_parent, landing_commit, target_workstream, target_packet_path,
-            target_packet_text, extra_archive_paths,
-        )
-        paired_review_metadata_paths = (
-            {paired_review_metadata_path} if paired_review_metadata_path else set()
-        )
+        paired_review_metadata_paths = {
+            path for path in (
+                _canonical_review_packet_metadata_path(
+                    repo, archive_parent, landing_commit, target_workstream,
+                    target_packet_path, target_packet_text, extra_archive_paths,
+                ),
+                _chassis_attestation_review_metadata_path(
+                    repo, archive_parent, landing_commit, target_workstream,
+                    target_packet_path, target_packet_text, extra_archive_paths,
+                ),
+            ) if path is not None
+        }
         work_surface = header_field(target_packet_text, "Work surface") or ""
         declared_markdown_paths = set(_REPOSITORY_MARKDOWN_PATH_RE.findall(work_surface))
         if (target_workstream == _PROCESSION_SCOPE_SOURCE_WORKSTREAM
@@ -4741,8 +4853,8 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
     else:
         source_paths = sorted(owned_paths) if synchronization_merges or inherited_main_merges else _changed_paths(
             repo, f"{source_base}..{source_head}")
-    if paired_review_metadata_path is not None:
-        source_paths = [path for path in source_paths if path != paired_review_metadata_path]
+    if paired_review_metadata_paths:
+        source_paths = [path for path in source_paths if path not in paired_review_metadata_paths]
     code_paths = _source_code_paths(source_paths)
     if not code_paths:
         raise HostValidationError("split source span contains no implementation source or test files")
@@ -4807,8 +4919,8 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
         documented.update(archive_sync_followup.get("authenticated_followup_paths", []))
     packet_terms = set(re.findall(r"[a-z0-9]+", target_packet_text.lower()))
     archive_source_paths = set(extra_archive_paths) if source_bearing_archive else set()
-    if paired_review_metadata_path is not None:
-        archive_source_paths.discard(paired_review_metadata_path)
+    if paired_review_metadata_paths:
+        archive_source_paths.difference_update(paired_review_metadata_paths)
 
     attested_source_paths = (
         (set(scope_attestation["source_files"]) if scope_attestation is not None else set())
@@ -4941,6 +5053,8 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
         provenance["post_merge_followup"] = followup
     if source_artifact is not None:
         provenance["source_artifact"] = source_artifact
+    if paired_review_metadata_paths:
+        provenance["paired_review_metadata_paths"] = sorted(paired_review_metadata_paths)
     return {"base": source_base, "head": source_head, "commits": commits,
             "paths": source_paths, "provenance": provenance}
 

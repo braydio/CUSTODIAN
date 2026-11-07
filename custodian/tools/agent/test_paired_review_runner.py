@@ -5214,10 +5214,7 @@ class PairedReviewHostValidationTests(unittest.TestCase):
     def _build_operator_chassis_scope_approval_history(self, *, review_outcome="passed"):
         """Create an isolated accepted correction history over the pinned source archive."""
         repository = Path(self.temp.name) / f"operator-chassis-scope-{len(list(Path(self.temp.name).glob('operator-chassis-scope-*')))}"
-        base_main = subprocess.run(
-            ["git", "-C", str(ROOT), "rev-parse", "HEAD"],
-            check=True, text=True, capture_output=True,
-        ).stdout.strip()
+        base_main = host_validation._CHASSIS_METADATA_SOURCE_PARENT
         _prepare_historical_git_fixture(repository, base_main)
         run = lambda *args: subprocess.run(
             ["git", *args], cwd=repository, check=True, text=True, capture_output=True,
@@ -5241,6 +5238,16 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         correction_archive = host_validation._OPERATOR_CHASSIS_SCOPE_CORRECTION_PACKET
         review_active = f"{runner.PACKET_ROOT}/REVIEW_AGENT_OPERATOR_CHASSIS_SEAL_SOURCE_SCOPE_ATTESTATION_V1.md"
         review_archive = host_validation._OPERATOR_CHASSIS_SCOPE_REVIEW_PACKET
+        # The real predecessor implementation has already landed and archived;
+        # reconstruct its ready/active packet state so this fixture can exercise
+        # the synthetic correction landing and review lifecycle.
+        if not (repository / correction_active).is_file() and (repository / correction_archive).is_file():
+            run("mv", correction_archive, correction_active)
+            correction_file = repository / correction_active
+            correction_text = correction_file.read_text(encoding="utf-8")
+            correction_text = correction_text.replace("- Status: `complete`", "- Status: `ready`", 1)
+            correction_text = re.sub(r"\n## Completion Truth\n.*?(?=\n## |\Z)", "", correction_text, flags=re.S)
+            correction_file.write_text(correction_text, encoding="utf-8")
         correction_file = repository / correction_active
         review_file = repository / review_active
         if not correction_file.is_file() or not review_file.is_file():
@@ -11334,6 +11341,141 @@ Verify the exact post-hoc attestation.
             "custodian/tools/agent/paired_review_host_validation.py",
             "custodian/tools/agent/test_paired_review_runner.py",
         })
+
+    def test_historical_chassis_attestation_archive_excludes_exact_review_metadata(self):
+        workstream = "agent-operator-chassis-seal-source-scope-attestation-v1"
+        archive = (f"{runner.PACKET_ROOT}/archived/"
+                   "AGENT_OPERATOR_CHASSIS_SEAL_SOURCE_SCOPE_ATTESTATION_V1.md")
+        landing = "7e1458d13a93619db4631d54b1ef217412b6d34e"
+        reviewed_main = "0d074c73343a4695994b01d545f5cbf96e5d54c2"
+        with self._historical_claim_objects():
+            span = host_validation.resolve_validation_source_span(
+                ROOT, reviewed_main, landing, workstream, archive,
+            )
+        review_path = (f"{runner.PACKET_ROOT}/REVIEW_"
+                       "AGENT_OPERATOR_CHASSIS_SEAL_SOURCE_SCOPE_ATTESTATION_V1.md")
+        self.assertNotIn(review_path, span["paths"])
+        self.assertEqual(span["provenance"]["paired_review_metadata_paths"], [review_path])
+        self.assertEqual(set(host_validation._source_code_paths(span["paths"])), {
+            "custodian/docs/ai_context/review_scope_attestations/operator_chassis_seal_v1.json",
+            "custodian/tools/agent/paired_review_host_validation.py",
+            "custodian/tools/agent/test_paired_review_runner.py",
+        })
+        self.assertIn(
+            "custodian/docs/ai_context/review_scope_attestations/operator_chassis_seal_v1.json",
+            span["paths"],
+        )
+
+    def test_chassis_metadata_exception_rejects_wrong_identity_and_path_sets(self):
+        workstream = host_validation._CHASSIS_METADATA_SOURCE_WORKSTREAM
+        landing = host_validation._CHASSIS_METADATA_SOURCE_ARCHIVE
+        parent = host_validation._CHASSIS_METADATA_SOURCE_PARENT
+        target = host_validation._CHASSIS_METADATA_SOURCE_PACKET
+        review_path = host_validation._CHASSIS_METADATA_REVIEW_PACKET
+        expected_paths = set(host_validation._CHASSIS_METADATA_EXTRA_ARCHIVE_PATHS)
+        target_text = subprocess.run(
+            ["git", "show", f"{landing}:{target}"], cwd=ROOT, check=True,
+            text=True, capture_output=True,
+        ).stdout
+        gate = host_validation._chassis_attestation_review_metadata_path
+
+        self.assertEqual(gate(
+            ROOT, parent, landing, workstream, target, target_text, expected_paths,
+        ), review_path)
+        self.assertIsNone(gate(
+            ROOT, parent, landing, "agent-substitute", target, target_text, expected_paths,
+        ))
+        for kwargs in (
+            {"archive_parent": "0" * 40},
+            {"landing_commit": "0" * 40},
+            {"target_packet_path": f"{runner.PACKET_ROOT}/archived/OTHER.md"},
+            {"changed_paths": expected_paths | {f"{runner.PACKET_ROOT}/UNRELATED.md"}},
+        ):
+            with self.subTest(kwargs=kwargs), self.assertRaisesRegex(
+                host_validation.HostValidationError, "identity or path set changed",
+            ):
+                gate(
+                    ROOT, kwargs.get("archive_parent", parent),
+                    kwargs.get("landing_commit", landing), workstream,
+                    kwargs.get("target_packet_path", target), target_text,
+                    kwargs.get("changed_paths", expected_paths),
+                )
+
+        real_tree_entry = host_validation._git_tree_entry
+        for changed_revision, replacement in (
+            (parent, ("100755", host_validation._CHASSIS_METADATA_REVIEW_BLOBS[0])),
+            (landing, ("100644", "0" * 40)),
+        ):
+            def mutated_tree_entry(repo, revision, path):
+                if revision == changed_revision and path == review_path:
+                    return replacement
+                return real_tree_entry(repo, revision, path)
+            with self.subTest(revision=changed_revision), patch.object(
+                host_validation, "_git_tree_entry", side_effect=mutated_tree_entry,
+            ), self.assertRaisesRegex(host_validation.HostValidationError,
+                                     "review packet blob or mode changed"):
+                gate(ROOT, parent, landing, workstream, target, target_text, expected_paths)
+
+    def test_chassis_metadata_exception_rejects_mutated_real_git_archives(self):
+        workstream = host_validation._CHASSIS_METADATA_SOURCE_WORKSTREAM
+        landing = host_validation._CHASSIS_METADATA_SOURCE_ARCHIVE
+        parent = host_validation._CHASSIS_METADATA_SOURCE_PARENT
+        target = host_validation._CHASSIS_METADATA_SOURCE_PACKET
+        review_path = host_validation._CHASSIS_METADATA_REVIEW_PACKET
+        target_text = subprocess.run(
+            ["git", "show", f"{landing}:{target}"], cwd=ROOT, check=True,
+            text=True, capture_output=True,
+        ).stdout
+
+        for mutation in ("extra-field", "input-path", "mode", "extra-path"):
+            with self.subTest(mutation=mutation):
+                repository = Path(self.temp.name) / f"chassis-metadata-{mutation}"
+                _prepare_historical_git_fixture(repository, parent)
+                subprocess.run(["git", "-C", str(repository), "config",
+                                "user.name", "Fixture"], check=True)
+                subprocess.run(["git", "-C", str(repository), "config",
+                                "user.email", "fixture@example.invalid"], check=True)
+                review_file = repository / review_path
+                contents = review_file.read_text()
+                if mutation == "extra-field":
+                    review_file.write_text(contents + "\nUnrelated: altered\n")
+                elif mutation == "input-path":
+                    review_file.write_text(contents.replace(
+                        "custodian/tools/agent/paired_review_host_validation.py",
+                        "custodian/tools/agent/forged_validator.py", 1,
+                    ))
+                elif mutation == "mode":
+                    review_file.chmod(0o755)
+                elif mutation == "extra-path":
+                    review_file.write_text("".join(
+                        line.replace(", ", "; ")
+                        if line.startswith("- Publication inputs: ") else line
+                        for line in contents.splitlines(keepends=True)
+                    ))
+                    extra = repository / f"{runner.PACKET_ROOT}/UNRELATED.md"
+                    extra.write_text("extra archive metadata\n")
+                subprocess.run(["git", "-C", str(repository), "add", "-A"], check=True)
+                tree = subprocess.run(
+                    ["git", "-C", str(repository), "write-tree"], check=True,
+                    text=True, capture_output=True,
+                ).stdout.strip()
+                forged_landing = subprocess.run(
+                    ["git", "-C", str(repository), "commit-tree", tree, "-p", parent],
+                    input=f"forged {mutation}\n", check=True, text=True,
+                    capture_output=True,
+                ).stdout.strip()
+                changed_paths = set(subprocess.run(
+                    ["git", "-C", str(repository), "diff", "--name-only",
+                     parent, forged_landing], check=True, text=True,
+                    capture_output=True,
+                ).stdout.splitlines())
+                with self.assertRaisesRegex(
+                    host_validation.HostValidationError, "identity or path set changed",
+                ):
+                    host_validation._chassis_attestation_review_metadata_path(
+                        repository, parent, forged_landing, workstream, target,
+                        target_text, changed_paths,
+                    )
 
     def test_es1_exact_historical_readme_reconciliation_and_adversarial_mutations(self):
         # This original ES-1 merge legitimately removes five archived-complete
