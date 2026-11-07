@@ -63,7 +63,7 @@ Ready/Auto view, never selection authority.
 - Evidence:
 - Task-specific authority:
 - Work surface:
-- Publication inputs: `<comma-separated repository paths already required at claim time | none>`
+- Publication inputs: `custodian/path/to/input_a.py`; `custodian/path/to/input_b.py`
 - Change:
 - Preserve:
 - Non-goals:
@@ -106,8 +106,9 @@ This is an **input-publication exception**, not a new dispatcher, new task packe
 A packet is executable only when every **existing input it requires at claim**
 is published to `origin/main` atomically with that packet and its paired
 review, including necessary scripts, tests, data contracts, schemas, manifests,
-and working notes. List exact repo-relative paths in `Publication inputs:`;
-use `none` only when no additional claim-time artifacts are needed. Files the
+and working notes. List exact repo-relative paths in `Publication inputs:` as
+individually backticked paths separated by semicolons; use exactly `none` when
+no additional claim-time artifacts are needed. Files the
 packet *plans to create* are outputs, not pre-existing publication inputs.
 
 Do not use an exclusively chat-hosted ZIP, sandbox file, screenshot or snippet

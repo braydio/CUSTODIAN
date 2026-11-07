@@ -711,6 +711,35 @@ disposable candidate, or unclassified. The agent must explicitly commit durable
 material or remove disposable material; ambiguous files are never silently
 removed.
 
+## Finish-first and completion truth
+
+An explicitly named or selected unfinished workstream remains the current
+objective until its acceptance evidence is complete or a genuine blocker is
+recorded. Reconcile and resume its existing claim when safe; otherwise claim
+that exact workstream through the dispatcher. Do not substitute global
+`claim-next` for unfinished selected work; a blocker does not authorize an
+unrelated fallback. A blocked handoff records the exact
+failed prerequisite and one concrete next action for the same workstream.
+
+Keep lifecycle claims distinct: authored, ready, dispatcher-eligible, claimed,
+implemented, landed, validated, and closed are separate states. Packet
+publication, compilation, or branch landing alone does not establish the
+user-visible outcome; close only with the acceptance evidence defined by the
+workstream. Preserve claims, branches, worktrees, review decisions, and unique
+evidence. Never reset or forge review disposition to release a lock.
+
+Use focused validation by default for bounded reversible work whose acceptance
+can be directly proven. Keep independent review and protected gates for
+consequential changes under the risk policy in `custodian/AGENTS.md`. Fix real
+workflow defects in their existing owner and do not create speculative task
+managers or packet chains.
+
+Known follow-up: `next_execution_boundary.py` currently allows an explicitly
+requested global fallback to be returned from a `blocked` phase when the caller
+also marks a general candidate eligible. Correcting this routing behavior
+changes dispatch-boundary enforcement and therefore needs its protected review
+path; this policy/documentation change does not alter the helper.
+
 ## Bounded Successor Continuation
 
 A successful packet finish is a pair boundary, not an unlimited continuation

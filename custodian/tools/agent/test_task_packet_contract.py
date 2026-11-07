@@ -17,6 +17,7 @@ SPEC = importlib.util.spec_from_file_location("custodian_task_packet_contract_te
 tpc = importlib.util.module_from_spec(SPEC)
 sys.modules[SPEC.name] = tpc
 SPEC.loader.exec_module(tpc)
+ROOT = Path(__file__).resolve().parents[3]
 
 
 def legacy_packet(workstream_id: str, status: str = "ready", dispatch: str = "auto", extra: str = "") -> str:
@@ -261,6 +262,15 @@ class ReviewPairingTests(unittest.TestCase):
 
 
 class PublicationInputTests(unittest.TestCase):
+    def test_template_publication_inputs_example_matches_parser(self):
+        template = (ROOT / "custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md").read_text()
+        field = next(line for line in template.splitlines() if line.startswith("- Publication inputs:"))
+        parsed = tpc.parse_publication_inputs(field + "\n", "template")
+        self.assertEqual(
+            parsed,
+            {"custodian/path/to/input_a.py", "custodian/path/to/input_b.py"},
+        )
+
     def test_paths_allow_one_period_after_only_the_final_backtick(self):
         self.assertEqual(
             tpc.parse_publication_inputs(
