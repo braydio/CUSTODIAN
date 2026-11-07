@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import hashlib
 import json
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
 import sys
+from unittest.mock import patch
 
 from PIL import Image
 
@@ -162,6 +164,24 @@ class PreviewPackageTests(unittest.TestCase):
 		second = build_package(self.proof, self.project, Path("candidate/receipt.json"), run_import=False)
 		self.assertEqual(first["request_sha256"], second["request_sha256"])
 		self.assertEqual(first["package_path"], second["package_path"])
+
+	def test_preview_smoke_status_never_claims_or_inherits_import_verification(self) -> None:
+		first = build_package(self.proof, self.project, Path("candidate/receipt.json"), run_import=False)
+		package = self.project / ".ai" / "operator_3d_animation_preview" / first["package_path"].split("/")[-1]
+		manifest_path = package / "package_manifest.json"
+		manifest_path.write_text(json.dumps({"godot_import": "passed", "preview_smoke": "passed"}))
+
+		packaged_only = build_package(self.proof, self.project, Path("candidate/receipt.json"), run_import=False)
+		self.assertEqual(packaged_only["godot_import"], "not_verified")
+		self.assertEqual(packaged_only["preview_smoke"], "not_requested")
+
+		completed = subprocess.CompletedProcess(args=["godot"], returncode=0, stdout="", stderr="")
+		with patch("custodian.tools.operator.animation_compiler.preview_package.shutil.which", return_value="/usr/bin/godot"), \
+				patch("custodian.tools.operator.animation_compiler.preview_package.subprocess.run", return_value=completed):
+			smoked = build_package(self.proof, self.project, Path("candidate/receipt.json"), run_import=True)
+		self.assertEqual(smoked["godot_import"], "not_verified")
+		self.assertEqual(smoked["preview_smoke"], "passed")
+		self.assertEqual(json.loads(manifest_path.read_text()), smoked)
 
 	def test_long_source_range_over_two_hundred_frames_is_supported(self) -> None:
 		self._write_fixture(frame_count=263)

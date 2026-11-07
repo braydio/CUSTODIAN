@@ -341,17 +341,9 @@ def build_package(proof_root: Path, project_root: Path, receipt_path: Path, *, r
         "authored_fps": source["authored_fps"],
         "timing_authority_granted": False,
         "candidate_state": "candidate_unapproved",
+        "godot_import": "not_verified",
+        "preview_smoke": "not_requested",
     }
-    (output_root / "package_manifest.json").write_bytes(_canonical_json_bytes(manifest))
-
-    prior_manifest_path = output_root / "package_manifest.json"
-    prior_import = "not_requested"
-    if prior_manifest_path.is_file():
-        try:
-            prior_import = str(_load_json(prior_manifest_path, "PACKAGE_MANIFEST_INVALID").get("godot_import", "not_requested"))
-        except PackageError:
-            prior_import = "not_requested"
-    import_result = prior_import if not run_import else "not_requested"
     if run_import:
         resolved_godot = shutil.which(godot) or (godot if Path(godot).is_file() else None)
         if resolved_godot is None:
@@ -369,8 +361,7 @@ def build_package(proof_root: Path, project_root: Path, receipt_path: Path, *, r
         )
         if result.returncode != 0:
             raise PackageError("GODOT_PREVIEW_SMOKE_FAILED", (result.stderr or result.stdout)[-3000:])
-        import_result = "passed"
-    manifest["godot_import"] = import_result
+        manifest["preview_smoke"] = "passed"
     (output_root / "package_manifest.json").write_bytes(_canonical_json_bytes(manifest))
     return manifest
 
@@ -384,7 +375,7 @@ def main(argv: list[str] | None = None) -> int:
     prepare.add_argument("--receipt", type=Path, default=Path("candidate/neutral_idle_candidate_receipt.v1.json"))
     prepare.add_argument("--godot", default="godot")
     prepare.add_argument("--smoke-script", default="res://tools/validation/operator_3d_animation_preview_smoke.gd")
-    prepare.add_argument("--skip-import", action="store_true", help="package only; do not run the Godot editor import pass")
+    prepare.add_argument("--skip-import", action="store_true", help="package only; skip the preview smoke (Godot import remains unverified)")
     args = parser.parse_args(argv)
     try:
         result = build_package(args.proof_root, args.project_root, args.receipt, run_import=not args.skip_import,
