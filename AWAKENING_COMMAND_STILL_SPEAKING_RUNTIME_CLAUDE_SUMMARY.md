@@ -24,7 +24,7 @@ The dedicated provenance record is `custodian/content/audio/music/awakening/audi
 
 ## Preserved validation evidence
 
-The six capture-free Awakening Moment Forge traversal runs produced 72 ignored report files (532943 uncompressed bytes). They are preserved in the tracked repository archive `custodian/docs/ai_context/validation_evidence/awakening_command_still_speaking_moment_forge_20261105.tar.gz`; SHA-256: `49993fd2347affd15e4122b22438c8011176661a570394040ccfe398dd0db170`.
+The twelve capture-free Awakening Moment Forge traversal runs produced 144 ignored report files (1063696 uncompressed bytes). They are preserved in the tracked repository archive `custodian/docs/ai_context/validation_evidence/awakening_command_still_speaking_moment_forge_20261105.tar.gz`; SHA-256: `093afb8503e802245f8e471de1de5d0ef320b37c46f7a462dd6eb116a9dc6c86`.
 
 ## Independent review
 
