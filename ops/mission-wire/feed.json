@@ -1,9 +1,140 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-07T15:40:52Z",
-  "source_main_sha": "dc48e1e9e8511abe160aad266ed44493f11e8666",
+  "generated_at": "2026-11-07T16:42:00Z",
+  "source_main_sha": "7e1458d13a93619db4631d54b1ef217412b6d34e",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "chassis-source-scope-attestation-7e1458d1",
+      "headline": "Operator chassis review gets a narrow source-scope repair, but acceptance remains gated",
+      "summary": "A correction for the Operator chassis-seal review has landed on main. It permits exactly one previously omitted test file only after the correction itself receives an authentic independent PASS. Focused and broader tests are reported passing, but the protected original review remains blocked and no recovery or cleanup is verified.",
+      "body": "The new source-scope attestation pins original source and archived packet identities, limiting the correction to one omitted lifecycle test file. The validator is designed to remain fail-closed until an independent accepted review of the correction is recorded. The implementation notes report four focused tests and a 300-test paired-review runner suite among broader passing checks. These are reported validations, not a new acceptance receipt. The protected original chassis review is still blocked; no host recovery, verdict or teardown is established.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-operator-chassis-seal-source-scope-attestation-v1",
+      "occurred_at": "2026-11-07T16:12:04Z",
+      "bullets": [
+        "Narrow correction landed; original review identities remain preserved.",
+        "One omitted lifecycle test path is permitted only after authentic independent correction PASS.",
+        "Author reports four focused tests and a 300-test runner suite passing.",
+        "Next: fresh-context independent review of the correction, then read-only recovery planning for the original review."
+      ],
+      "links": [
+        {
+          "title": "Main correction commit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/7e1458d13a93619db4631d54b1ef217412b6d34e"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "The blocked Operator chassis review now has a tightly scoped repair on main. Instead of bypassing the review system, the change documents one lifecycle test file that the original source declaration missed, then keeps the exception inactive until a separate reviewer accepts the correction.",
+        "sections": [
+          {
+            "heading": "A repair that does not waive review",
+            "text": "The attestation binds the original source archive, packet and code identities. Its validator rejects extra paths, changed source files and unapproved review states. The original chassis review stays blocked until the correction earns its own independent PASS."
+          },
+          {
+            "heading": "Tests support the guard, not the final verdict",
+            "text": "Implementation notes report four focused tests and broader changed-file validation, including a 300-test review-runner suite. The watch did not rerun those tests, and no accepted correction receipt or original review verdict was inspected."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The missing declaration was the bottleneck",
+            "explanation": "The review was stopped by an omitted lifecycle test in the declared source scope, not by permission to alter the original implementation. The correction targets that mismatch while retaining source identity checks."
+          },
+          {
+            "title": "Approval is deliberately a separate switch",
+            "explanation": "Landing the correction does not activate the exception. Requiring a fresh independent PASS prevents a successful implementation commit from silently becoming review authority."
+          }
+        ],
+        "takeaway": "The correction is published and narrowly bounded, but the original chassis review remains blocked until independently accepted correction evidence exists.",
+        "next_watch": "Watch for an authentic independent PASS on the correction, followed by a fresh read-only recovery plan for the preserved chassis review."
+      },
+      "scorecard": {
+        "stage": "Correction landed; independent acceptance pending",
+        "as_of": "2026-11-07T16:12:04Z",
+        "scope": "One named chassis source-scope correction and its protected original review; no full dispatcher audit",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Pin original source and omitted test",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Main commit contains bounded attestation and validator."
+          },
+          {
+            "label": "Add fail-closed adversarial tests",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Test changes landed; passing execution is author-reported."
+          },
+          {
+            "label": "Independent review of correction",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No accepted independent PASS inspected."
+          },
+          {
+            "label": "Prepare original review recovery plan",
+            "status": "blocked",
+            "verification": "reported",
+            "evidence": "Requires correction's accepted PASS and fresh read-only host validation."
+          },
+          {
+            "label": "Original review acceptance and canonical teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No original verdict or trustworthy host cleanup receipt."
+          }
+        ],
+        "next_gate": "Independent reviewer: inspect the correction in fresh context and issue authentic accepted PASS before any original-review recovery plan."
+      },
+      "details": {
+        "overview": "Main commit adds a post-hoc source-scope attestation and gated host validator for exactly one omitted lifecycle regression test. Its code is published; activation is conditioned on accepted independent review evidence.",
+        "ledger": [
+          {
+            "stage": "Implementation landing",
+            "status": "verified",
+            "evidence": "Main commit 7e1458d13a93619db4631d54b1ef217412b6d34e."
+          },
+          {
+            "stage": "Focused and broader tests",
+            "status": "reported passing",
+            "evidence": "Author notes four focused tests and paired-review runner suite of 300 tests; not independently rerun."
+          },
+          {
+            "stage": "Correction independent acceptance",
+            "status": "unknown",
+            "evidence": "No canonical accepted PASS inspected."
+          },
+          {
+            "stage": "Original review recovery",
+            "status": "blocked",
+            "evidence": "Requires accepted correction before fresh read-only recovery plan."
+          },
+          {
+            "stage": "Host teardown",
+            "status": "unknown",
+            "evidence": "No host evidence inspected."
+          }
+        ],
+        "notes": [
+          "Original implementation and protected review identities were documented as unchanged."
+        ],
+        "unknowns": [
+          "Current full dispatcher counts and host resource state.",
+          "Correction independent acceptance receipt.",
+          "Original review recovery and teardown."
+        ],
+        "actions": [
+          "Independent reviewer: evaluate correction and produce authentic PASS if warranted.",
+          "Coordinator: only after acceptance, prepare read-only original review recovery plan."
+        ]
+      },
+      "related": []
+    },
     {
       "id": "operator-preview-slice-a-dc48e1e9",
       "headline": "Operator 3D animation gains an in-engine comparison preview, but production approval remains on hold",
@@ -1578,140 +1709,15 @@
         "next_gate": "Art implementation owner: validate exact source bytes and durably stage both approved Crèche plates before room cutover."
       },
       "related": []
-    },
-    {
-      "id": "legacy-review-queue-retirement-52f11a85",
-      "headline": "CUSTODIAN retires stranded review packets without claiming their reviews passed",
-      "summary": "An owner-directed cleanup removed obsolete active review packets and matching index entries, including PixelPlanets follow-ups and a process-scanner hardening proposal. This is administrative retirement, not an independent PASS or host cleanup; landed gameplay code and historical evidence remain distinct.",
-      "body": "An owner-directed cleanup removed obsolete active review packets and matching managed index entries. The commit explicitly says the change does not manufacture a reviewer PASS, preserves landed runtime and old implementation archives, and leaves host branch, claim and evidence cleanup to a separate exact-ref operation. This narrows the documented queue but does not prove any process stopped or lock cleared.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "",
-      "occurred_at": "2026-11-06T12:56:31Z",
-      "bullets": [
-        "Obsolete active packets and managed index entries removed on main",
-        "Landed runtime and historical implementation archive preserved",
-        "No independent PASS implied",
-        "Host claim, branch and evidence disposition still unverified"
-      ],
-      "links": [
-        {
-          "title": "Administrative retirement commit",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/52f11a85a04ebd6401160ee2c33ebdf9763e9b04"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN has pruned a set of stranded review and follow-up packets from its active planning queue. The cleanup makes the documented workload smaller, but it deliberately does not pretend the retired reviews passed or that their host resources were released.",
-        "sections": [
-          {
-            "heading": "A queue cleanup, not a code rollback",
-            "text": "The owner-directed commit deletes obsolete review and correction packet entries, including PixelPlanets follow-ups and the process ownership scanner hardening proposal. The commit states that landed runtime and archived implementation evidence remain preserved."
-          },
-          {
-            "heading": "The host still needs separate accounting",
-            "text": "Removing a packet from Git does not prove its claimed review, execution lock, branch, or checkout was cleaned up. Those require exact-ref host evidence and separate authorization."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Retired is not accepted",
-            "explanation": "Administrative retirement reduces active documentation without supplying a missing independent review receipt. Any downstream gate requiring an accepted PASS must still be assessed on its own evidence."
-          },
-          {
-            "title": "The previous scanner plan is no longer an active packet",
-            "explanation": "Yesterday's scanner hardening pair was a proposed remedy. Its removal from the active queue changes the planning state, not the underlying host-validation behavior."
-          }
-        ],
-        "takeaway": "The documented queue has been simplified, while runtime behavior and protected host disposition remain unverified.",
-        "next_watch": "Watch for an independently evidenced disposition of any retained protected claims and for fresh, validated game or art milestones."
-      },
-      "details": {
-        "overview": "Main commit 52f11a85 removes obsolete or stranded active review packets and corresponding managed index entries. It explicitly distinguishes administrative retirement from reviewer PASS and host cleanup. Current CI combined statuses returned no entries; that is not a green result. Private observation pointer metadata dates to Nov 4, so pilot counts were not used.",
-        "ledger": [
-          {
-            "stage": "Administrative packet retirement",
-            "status": "verified landed",
-            "evidence": "Main commit 52f11a85 deletion diff and commit message"
-          },
-          {
-            "stage": "Independent review acceptance",
-            "status": "not established",
-            "evidence": "Commit explicitly disclaims manufactured PASS"
-          },
-          {
-            "stage": "Canonical host cleanup",
-            "status": "unknown",
-            "evidence": "Separate exact-ref host operation and evidence required"
-          }
-        ],
-        "notes": [
-          "No canonical full dispatcher audit inspected; no project-wide counts asserted."
-        ],
-        "unknowns": [
-          "Actual host claim and lock disposition",
-          "Full current dispatcher inventory",
-          "Current CI health"
-        ],
-        "actions": [
-          "Owner: reconcile retired packet identities against exact host claims and evidence before any authorized cleanup."
-        ]
-      },
-      "scorecard": {
-        "stage": "Administrative retirement landed; host disposition unknown",
-        "as_of": "2026-11-06T12:56:31Z",
-        "scope": "Retired legacy review and PixelPlanets follow-up packets changed by this commit",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Identify obsolete active packets",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Commit deletion inventory"
-          },
-          {
-            "label": "Remove packets and index entries",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "52f11a85 on main"
-          },
-          {
-            "label": "Establish independent acceptance where required",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No PASS receipt in this retirement"
-          },
-          {
-            "label": "Verify exact host claim and lock disposition",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Requires host evidence and separate authorization"
-          }
-        ],
-        "next_gate": "Owner: reconcile exact retained host claims and locks with retired packet identities before any authorized host cleanup."
-      },
-      "related": [
-        {
-          "title": "Process ownership scanner gets a narrowly guarded repair plan",
-          "context": "The newly retired scanner proposal was the subject of this earlier planning story.",
-          "story_id": "process-ownership-scanner-hardening-90164bee"
-        },
-        {
-          "title": "PixelPlanets retirement landed but review remains held",
-          "context": "Earlier landing and review blockage explain why the follow-up packets existed.",
-          "story_id": "pixelplanets-retirement-landed-held-review-761ea680"
-        }
-      ]
     }
   ],
   "snapshot": {
-    "observed_at": "2026-11-07T15:40:52Z",
-    "source_main_sha": "dc48e1e9e8511abe160aad266ed44493f11e8666",
+    "observed_at": "2026-11-07T16:42:00Z",
+    "source_main_sha": "7e1458d13a93619db4631d54b1ef217412b6d34e",
     "coverage": "partial",
-    "scope": "Inspected main Operator preview landing and named review context only; no full dispatcher audit or validated fresh private pilot.",
+    "scope": "Inspected named Operator chassis correction and main commit; no canonical full dispatcher audit or fresh validated private pilot.",
     "metrics": [],
-    "focus": "Resolve Operator lifecycle validation and finish remaining executor/cache slices before independent acceptance.",
-    "note": "New candidate-only preview landed; total packet and host counts unknown. Private pilot pointer metadata predates this observation by more than three days and was not used."
+    "focus": "Obtain authentic independent PASS for chassis source-scope correction before original review recovery planning.",
+    "note": "New bounded correction landed; packet totals and host state remain unknown. Private pilot pointer is dated November 4 and stale."
   }
 }
