@@ -94,6 +94,13 @@ coordination checkout. Do not use broad patterns such as `custodian/**` when
 the packet can name the actual owners/consumers/tests. The pack is a convenience
 snapshot; exact live files and the current worktree diff remain authority.
 
+
+### Owner-authorized bounded pre-claim input publication (Crèche pilot, 2026-11-06)
+
+**Circularity resolution:** A source-preparation packet may need externally approved binary source files to be available before `dispatch.py` will accept a claim. This does **not** authorize `workstream.py start` on the draft or an unclaimed runtime edit. For the explicitly user-authorized Crèche pilot ONLY, the owner may use a separate detached scratch Git worktree and the existing `custodian.asset_handoff.v1` source-only installer to validate exact user-approved PNGs, publish them at **new non-colliding immutable `source_work` paths under Git LFS**, commit a corresponding source receipt and switch the existing source-prep packet from `draft/manual` to `ready/auto` in the **same fast-forward-only main publication**. After publication, only `dispatch.py claim` owns implementation work. The procedure may not touch old canonical source masters, runtime/inbox states, family schemas, consumers or locks. Failed/unknown byte hashes, any active overlapping claim, or a failed non-force main update must stop the attempt. The user/ChatGPT retain final Crèche gameplay-scale visual review; no independent Codex reviewer is required for this slice. Exact paths, SHA-256 values, commands and rollback are in [CRECHE_PRECLAIM_SOURCE_PUBLICATION_V1.md](CRECHE_PRECLAIM_SOURCE_PUBLICATION_V1.md).
+
+This is an **input-publication exception**, not a new dispatcher, new task packet, general source-art self-approval process or authorization to bypass review in unrelated workstreams. The two approved files and their receipt are `Publication inputs`; they must be present on published `origin/main` before the prepared source packet is marked ready. Normal packet outputs (inbox normalization, runtime ingest and measured geometry) still belong to the claimed workstream(s).
+
 ### Publication completeness
 
 A packet is executable only when every **existing input it requires at claim**

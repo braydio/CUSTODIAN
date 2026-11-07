@@ -65,6 +65,13 @@ import run_validation
 # developer's accumulated remote-tracking refs.
 _PINNED_HISTORICAL_DIAGNOSTIC_REFS = (
     (
+        "refs/heads/agent-diagnostics/hub-sepulcher-grave-resolution-v1/"
+        "20261031T122002Z-026bd258c3db",
+        "226add1b2ddee460b5f561bf96f6ef6dc3dc0e2d",
+        "4bf178ada06f75ee0408d7b54c2491595156ef47",
+        "0b185016e9bc2f7b90976fdde148e85ba23413a0d7ed8a484c7da631cf239756",
+    ),
+    (
         "refs/heads/agent-diagnostics/agent-execution-reset-v1/"
         "20261020T135839Z-db96534ed3a7",
         "826ce081626a0aa2980408728dbc8bc89a0a8811",
@@ -5430,6 +5437,10 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                 "d210ddced9e282cce63e32e0e58cb1acf3b43af6",
                 "cfa1c476e054a68eaf139b8a05610726ffc6cb92", 1793412363,
                 "workstream claim operator-3d-model-to-sprite-tooling-integration-v1 codex:4076206:20261031T020602Z-9e1691d59e2e"),
+            "04426d4006927cb7750adcc9ae96f254f148013f": (
+                "dc92812793e0f6dda155d06171c5a5a98f3ccff0",
+                "b41c4d86b5bc40ec504b1e30fa3aadffd301cc9f", 1793449203,
+                "workstream claim hub-sepulcher-grave-resolution-v1 codex:1557941:20261031T122002Z-026bd258c3db"),
             "e6ba1d7d33a54bfffe3e27446743ab969379dfd3": (
                 "2e7fe81a9eff9d32fc5ec5d101f5e2f6772fdfc1",
                 "b5a46e82913455cb341c84811fd9be66b78ed138", 1792507524,
@@ -9323,6 +9334,133 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                 repository, host_validation._PROCESSION_SCOPE_SOURCE_ARCHIVE,
                 implementation_commit, extra,
             )
+
+    def _build_sepulcher_g2_scope_approval_history(self):
+        repository = Path(self.temp.name) / "sepulcher-g2-scope-approval"
+        base_main = "be37e5c2ea021d64114e869439cda9992f7f33e5"
+        _prepare_historical_git_fixture(repository, base_main)
+        subprocess.run(["git", "-C", str(repository), "config", "user.name", "test"], check=True)
+        subprocess.run(["git", "-C", str(repository), "config", "user.email",
+                        "test@example.invalid"], check=True)
+        correction_active = f"{runner.PACKET_ROOT}/AGENT_PAIRED_REVIEW_G2_SOURCE_SCOPE_ATTESTATION_V1.md"
+        correction_archive = host_validation._SEPULCHER_G2_SCOPE_CORRECTION_PACKET
+        review_active = f"{runner.PACKET_ROOT}/REVIEW_AGENT_PAIRED_REVIEW_G2_SOURCE_SCOPE_ATTESTATION_V1.md"
+        review_archive = host_validation._SEPULCHER_G2_SCOPE_REVIEW_PACKET
+        attestation_path = host_validation._SEPULCHER_G2_SCOPE_ATTESTATION_PATH
+        correction_file = repository / correction_active
+        review_file = repository / review_active
+        self.assertTrue(correction_file.is_file() and review_file.is_file())
+        self.assertFalse((repository / attestation_path).exists())
+        correction_text = correction_file.read_text(encoding="utf-8").replace(
+            "- Status: `ready`", "- Status: `complete`", 1,
+        )
+        correction_text += """
+
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: disposable Git approval fixture
+"""
+        correction_file.write_text(correction_text, encoding="utf-8")
+        (repository / correction_archive).parent.mkdir(parents=True, exist_ok=True)
+        subprocess.run(["git", "-C", str(repository), "mv", correction_active, correction_archive], check=True)
+        attestation_file = repository / attestation_path
+        attestation_file.parent.mkdir(parents=True, exist_ok=True)
+        attestation_file.write_bytes((ROOT / attestation_path).read_bytes())
+        subprocess.run(["git", "-C", str(repository), "add", "--", correction_archive, attestation_path], check=True)
+        subprocess.run(["git", "-C", str(repository), "commit", "-qm", "archive G2 scope correction"], check=True)
+        implementation_commit = subprocess.run(
+            ["git", "-C", str(repository), "rev-parse", "HEAD"], check=True,
+            text=True, capture_output=True,
+        ).stdout.strip()
+
+        review_text = review_file.read_text(encoding="utf-8").replace(
+            "- Status: `ready`", "- Status: `complete`", 1,
+        )
+        review_text += f"""
+
+## Independent Review
+
+- Schema: `custodian.paired_review.v1`
+- Review workstream: `{host_validation._SEPULCHER_G2_SCOPE_REVIEW_WORKSTREAM}`
+- Review target workstream: `{host_validation._SEPULCHER_G2_SCOPE_CORRECTION_WORKSTREAM}`
+- Status: `passed`
+- Blocking defects: `0`
+- Material gaps: `0`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Reviewed main: `{implementation_commit}`
+- Reviewed implementation commit: `{implementation_commit}`
+"""
+        review_text += "\n" + runner.review_outcome.render_review_outcome(
+            outcome="passed",
+            review_workstream=host_validation._SEPULCHER_G2_SCOPE_REVIEW_WORKSTREAM,
+            target_workstream=host_validation._SEPULCHER_G2_SCOPE_CORRECTION_WORKSTREAM,
+            reviewed_main=implementation_commit, implementation_commit=implementation_commit,
+            provenance="different-agent", run_id="20261106T000000Z-aabbccddeeff",
+            review_cycle=0, ids=(),
+        )
+        review_file.write_text(review_text, encoding="utf-8")
+        archived_correction = repository / correction_archive
+        archived_correction.write_text(append_receipt(
+            archived_correction.read_text(encoding="utf-8"),
+            review_workstream=host_validation._SEPULCHER_G2_SCOPE_REVIEW_WORKSTREAM,
+            target_workstream=host_validation._SEPULCHER_G2_SCOPE_CORRECTION_WORKSTREAM,
+            reviewed_main=implementation_commit, implementation_commit=implementation_commit,
+        ), encoding="utf-8")
+        (repository / review_archive).parent.mkdir(parents=True, exist_ok=True)
+        subprocess.run(["git", "-C", str(repository), "mv", review_active, review_archive], check=True)
+        subprocess.run(["git", "-C", str(repository), "add", "--", correction_archive, review_archive], check=True)
+        subprocess.run(["git", "-C", str(repository), "commit", "-qm", "record G2 scope review"], check=True)
+        approval_main = subprocess.run(
+            ["git", "-C", str(repository), "rev-parse", "HEAD"], check=True,
+            text=True, capture_output=True,
+        ).stdout.strip()
+        subprocess.run(["git", "-C", str(repository), "update-ref", "refs/remotes/origin/main",
+                        implementation_commit], check=True)
+        return repository, implementation_commit, approval_main
+
+    def test_sepulcher_g2_source_span_activates_only_after_accepted_correction_review(self):
+        repository, implementation_commit, approval_main = self._build_sepulcher_g2_scope_approval_history()
+        with self._historical_claim_objects():
+            with self.assertRaisesRegex(host_validation.HostValidationError, "lacks archived correction review"):
+                host_validation.resolve_validation_source_span(
+                    repository, "c8e3957628e5d453a7ca10d49517ee71b78fd2bf",
+                    host_validation._SEPULCHER_G2_SCOPE_SOURCE_ARCHIVE,
+                    host_validation._SEPULCHER_G2_SCOPE_SOURCE_WORKSTREAM,
+                    host_validation._SEPULCHER_G2_SCOPE_SOURCE_PACKET,
+                )
+            subprocess.run(["git", "-C", str(repository), "update-ref", "refs/remotes/origin/main",
+                            approval_main], check=True)
+            span = host_validation.resolve_validation_source_span(
+                repository, "c8e3957628e5d453a7ca10d49517ee71b78fd2bf",
+                host_validation._SEPULCHER_G2_SCOPE_SOURCE_ARCHIVE,
+                host_validation._SEPULCHER_G2_SCOPE_SOURCE_WORKSTREAM,
+                host_validation._SEPULCHER_G2_SCOPE_SOURCE_PACKET,
+            )
+        scope = span["provenance"]["scope_attestation"]
+        self.assertEqual(scope["approval_implementation_commit"], implementation_commit)
+        self.assertEqual(scope["approval_outcome"], "passed")
+        self.assertEqual(scope["preserved_reviewed_main"], "c8e3957628e5d453a7ca10d49517ee71b78fd2bf")
+        self.assertEqual(set(scope["source_files"]), set(host_validation._SEPULCHER_G2_SCOPE_ATTESTED_FILES))
+        self.assertEqual(set(scope["source_code_files"]), set(host_validation._SEPULCHER_G2_SCOPE_CODE_FILES))
+        self.assertEqual(scope["approval_main"], approval_main)
+
+    def test_sepulcher_g2_scope_attestation_is_inactive_until_correction_review(self):
+        source_reviewed_main = "6e75b57ea828f5d90679ae737052a4acdefce361"
+        source_archive = host_validation._SEPULCHER_G2_SCOPE_SOURCE_ARCHIVE
+        attested = set(host_validation._SEPULCHER_G2_SCOPE_ATTESTED_FILES)
+        provenance = host_validation._verified_sepulcher_g2_scope_attestation
+        with self.assertRaises(host_validation.HostValidationError) as inactive:
+            provenance(ROOT, source_reviewed_main, source_archive, attested)
+        self.assertRegex(str(inactive.exception), "lacks (the regular-file|archived correction review)")
+        with self.assertRaisesRegex(host_validation.HostValidationError, "exactly its pinned recipe"):
+            provenance(ROOT, source_reviewed_main, source_archive,
+                       attested | {"custodian/docs/ai_context/OTHER.md"})
+        with self.assertRaisesRegex(host_validation.HostValidationError, "different source archive"):
+            provenance(ROOT, source_reviewed_main, "0" * 40, attested)
 
     def _build_ritualant_recovery2_attestation_approval_history(
         self, *, outcome="passed", include_target_receipt=True,

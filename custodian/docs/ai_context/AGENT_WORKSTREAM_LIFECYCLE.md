@@ -1,5 +1,10 @@
 # Agent Workstream Lifecycle
 
+
+## Crèche-only pre-claim source publication (2026-11-06)
+
+A parked packet is **not** claimable and `workstream.py start` must not be used to bypass the dispatcher. In the bounded user-approved Crèche exception, publish the exact already-approved original input PNG bytes into *new* Git LFS source-work paths from a detached scratch checkout, using `asset_handoff_installer.py` in source-only mode, with a Git source receipt and an atomic status promotion for `awakening-interactible-clean-room-plates-v1`. This is **not implementation or a queued claim**. The operation is limited to the two new immutable files, one source receipt, that packet's metadata and the generated queue index. Do not touch the pre-existing canonical source masters, runtime assets, family contracts, console or other workstreams. After fast-forward-only main publication and explicit LFS verification, resume the normal `dispatch.py claim <workstream> --agent codex` flow. Exact command/abort contract: [CRECHE_PRECLAIM_SOURCE_PUBLICATION_V1.md](CRECHE_PRECLAIM_SOURCE_PUBLICATION_V1.md). No general pre-claim bypass is created for other projects.
+
 Normal implementation runs use an isolated ephemeral worktree. For queued
 packet work, prefer `dispatch.py claim-next --agent <agent-id>` (for example
 `--agent claude` or `--agent codex`), or use `dispatch.py claim <id> --agent
