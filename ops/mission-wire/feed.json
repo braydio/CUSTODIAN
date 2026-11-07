@@ -1,9 +1,168 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-07T07:47:12Z",
-  "source_main_sha": "abcf35bf5518259162a6547a87ce7a7297279b5a",
+  "generated_at": "2026-11-07T10:48:57Z",
+  "source_main_sha": "da01ebe7ad60f0a42f543eb3c021b90e4989c3d3",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "memorial-court-ready-da01ebe7",
+      "headline": "Sepulcher Memorial Court enters the automatic task queue, with independent art review queued behind it",
+      "summary": "CUSTODIAN authored and promoted a Memorial Court integration packet and its paired independent review to ready/automatic dispatch. The proposed scene would surround the existing Memorial Slab with verified paving, ring and wall art while preserving gameplay paths. No implementation landing or accepted review is established.",
+      "body": "Commit 30e1d8bc created the implementation and review packets; 3404f3a corrected a premature validation-script reference; da01ebe7 marked both ready/auto. The review depends on the implementation, so two ready packet labels do not mean two immediately executable tasks. The production court, validation, independent review and host teardown remain unverified. Existing source constraints exclude the hash-mismatched full strip, forbid presenting a 256x128 wall as the planned 512x192 state, and leave footings pending approved art.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "assets-art",
+      "workstream": "sepulcher-memorial-court-existing-art-v1",
+      "occurred_at": "2026-11-07T10:37:19Z",
+      "bullets": [
+        "Implementation and paired review packets are ready for automatic handoff, not proven claimed or running.",
+        "Implementation must land and archive before the independent review can proceed.",
+        "Watch for source-byte checks, focused Hub smoke evidence and the independent review receipt."
+      ],
+      "links": [
+        {
+          "title": "Packet authoring",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/30e1d8bc6287ca5c2d6fcb118d4339164948532d"
+        },
+        {
+          "title": "Validation reference correction",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/3404f3a057702d0bb483f12cf4b29007753f668e"
+        },
+        {
+          "title": "Automatic handoff",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/da01ebe7ad60f0a42f543eb3c021b90e4989c3d3"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN's Sepulcher memorial is moving toward a fuller environment. New task packets now authorize an automatic handoff to integrate existing paving, a witness-ring inlay and a masonry wall around the already-installed Memorial Slab. The work itself has not yet landed.",
+        "sections": [
+          {
+            "heading": "A court built around an existing memorial",
+            "text": "The plan reuses source-checked art and keeps the grave's interaction points, routes and collision untouched. This is a presentation upgrade rather than a rewrite of the memorial encounter."
+          },
+          {
+            "heading": "Review follows the implementation",
+            "text": "Both the build packet and its independent review were promoted to ready/automatic dispatch. The review explicitly depends on the implementation's completed landing and archival, so its ready label does not make it executable yet."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Ready is a handoff state, not a running worker",
+            "explanation": "The repository confirms packet eligibility but provides no live dispatcher claim or host execution evidence. The next meaningful milestone is an actual landed integration with validation."
+          },
+          {
+            "title": "Art provenance is the hard boundary",
+            "explanation": "The packet excludes a source strip with inconsistent hashes and forbids treating a smaller verified wall module as a full-sized production asset. That prevents visual progress from outrunning evidence."
+          }
+        ],
+        "takeaway": "The Memorial Court is now queued as a defined, independently reviewable workstream, not yet a completed game feature.",
+        "next_watch": "Look for the implementation landing, focused engine captures and then a fresh independent review receipt."
+      },
+      "scorecard": {
+        "stage": "Implementation ready; independent review dependent",
+        "as_of": "2026-11-07T10:48:57Z",
+        "scope": "Two named Memorial Court packets only, not full dispatcher queue",
+        "metrics": [
+          {
+            "id": "other-memorial-court-packets",
+            "label": "NAMED PACKETS",
+            "value": 2,
+            "verification": "verified",
+            "basis": "One implementation and one dependent review packet in commit da01ebe7",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/da01ebe7ad60f0a42f543eb3c021b90e4989c3d3"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Author implementation and review packets",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "30e1d8bc"
+          },
+          {
+            "label": "Correct validation reference",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "3404f3a"
+          },
+          {
+            "label": "Promote both packets to ready",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "da01ebe7"
+          },
+          {
+            "label": "Implement and validate Memorial Court",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No implementation landing inspected"
+          },
+          {
+            "label": "Land and archive implementation",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Required before review"
+          },
+          {
+            "label": "Independent review acceptance",
+            "status": "blocked",
+            "verification": "verified",
+            "evidence": "Review packet depends on implementation"
+          },
+          {
+            "label": "Canonical host teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No host evidence"
+          }
+        ],
+        "next_gate": "Implementation owner: claim eligible packet under dispatcher authority, verify source bytes, build and validate, then land and archive."
+      },
+      "details": {
+        "overview": "Two packets added to main, then changed from draft/manual to ready/auto. This is packet-state evidence only. No canonical live audit was available.",
+        "ledger": [
+          {
+            "stage": "Packet authoring",
+            "status": "verified",
+            "evidence": "30e1d8bc"
+          },
+          {
+            "stage": "Packet readiness",
+            "status": "verified",
+            "evidence": "da01ebe7"
+          },
+          {
+            "stage": "Implementation",
+            "status": "not verified",
+            "evidence": "No implementation landing in inspected commits"
+          },
+          {
+            "stage": "Independent review",
+            "status": "not accepted",
+            "evidence": "Dependent review packet remains gated"
+          },
+          {
+            "stage": "Host cleanup",
+            "status": "unknown",
+            "evidence": "No trustworthy host evidence"
+          }
+        ],
+        "notes": [
+          "Existing wall module 256x128 is not the planned 512x192 wall state."
+        ],
+        "unknowns": [
+          "Dispatcher claims and host execution",
+          "Full live queue counts and CI checks",
+          "Canonical teardown"
+        ],
+        "actions": [
+          "Implementation owner: complete and land the bounded integration with exact art provenance and focused smoke evidence.",
+          "Independent reviewer: assess landed implementation only after archive."
+        ]
+      },
+      "related": []
+    },
     {
       "id": "finish-first-routing-gap-abcf35bf",
       "headline": "Finish-first agent policy lands, but a dispatcher fallback loophole remains",
@@ -1505,152 +1664,6 @@
           }
         ],
         "next_gate": "Owner: stage and hash-check the exact approved source and aligned foreground before a guarded atomic cutover."
-      },
-      "related": []
-    },
-    {
-      "id": "sepulcher-memorial-slab-authoring-46d0ae14",
-      "headline": "Approved Sepulcher memorial art gets a production installation plan, but the grave still uses drawn geometry",
-      "summary": "A paired implementation and independent-review packet now specifies how to replace Sepulcher's procedural memorial slab with the user's approved artwork. The packets are draft/manual, and source verification, Asset V2 ingest, actual Hub rendering and independent acceptance remain ahead.",
-      "body": "The newly authored implementation and review packets target one approved Memorial Slab image. The existing grave currently draws the slab with basic primitives. The plan preserves three evidence readings, progression gates, persistence and routes while adding a normalized 160×96 transparent sprite through Asset Pipeline V2. The original image's exact SHA-256 and alpha properties remain unverified. This commit authors work; it does not install the sprite, establish a host claim, or pass independent review.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "assets-art",
-      "workstream": "sepulcher-memorial-slab-production-art-v1",
-      "occurred_at": "2026-11-05T18:26:23Z",
-      "bullets": [
-        "Two named packets authored as draft/manual, not running.",
-        "Exact approved source must be hash-verified before ingest.",
-        "Production Hub rendering and unchanged grave interactions are acceptance gates.",
-        "Fresh independent post-land review is required."
-      ],
-      "links": [
-        {
-          "title": "Memorial Slab implementation and review packet commit",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/46d0ae14958502e6985dc0d1502456d8e72992d5"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "The approved Sepulcher memorial slab now has a precise route into the playable game. New implementation and independent-review packets describe how to replace the grave's basic drawn stone with the accepted image, without disturbing its story interactions. The image has not been installed yet.",
-        "sections": [
-          {
-            "heading": "From approved illustration to live scene",
-            "text": "The plan calls for verifying the exact source image, converting it into a transparent 160×96 Asset Pipeline V2 sprite, registering it, and binding it to the existing grave controller. A production Hub rendering check must prove that the actual game displays the new stone exactly once."
-          },
-          {
-            "heading": "Preserve the grave's behavior",
-            "text": "Three separate evidence readings, return-growth gating, persistent choices, navigation and collision must remain unchanged. A fresh independent reviewer must test those boundaries after implementation lands; the new packets are currently draft/manual."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Art approval is only the first gate",
-            "explanation": "The accepted image identifies what to install, but neither its byte-level source digest nor its normalized alpha and runtime visibility has been established. This prevents a visually similar substitute from being mistaken for the approved asset."
-          },
-          {
-            "title": "A focused swap protects gameplay",
-            "explanation": "Only the memorial slab's drawing should change. The grave's existing evidence and progression logic are deliberately outside the implementation scope."
-          }
-        ],
-        "takeaway": "Production art installation is now specified, not completed. No independent acceptance or live rendering has been established.",
-        "next_watch": "Watch for validated source provenance, V2 ingest, actual Hub rendering, and a separate accepted independent review."
-      },
-      "details": {
-        "overview": "Main commit 46d0ae14958502e6985dc0d1502456d8e72992d5 adds paired draft/manual task packets. Source verification, execution, independent review, and canonical cleanup are not established. No fresh valid private operational observation was inspected; dispatcher-wide counts remain unknown.",
-        "ledger": [
-          {
-            "stage": "Implementation and review authoring",
-            "status": "verified",
-            "evidence": "Paired task packets in 46d0ae14958502e6985dc0d1502456d8e72992d5"
-          },
-          {
-            "stage": "Approved source SHA-256 and normalization",
-            "status": "unknown",
-            "evidence": "Explicit execution gate; not measured in authoring commit"
-          },
-          {
-            "stage": "Runtime asset installation",
-            "status": "not established",
-            "evidence": "No Asset V2 ingest or live Hub proof"
-          },
-          {
-            "stage": "Independent acceptance",
-            "status": "not established",
-            "evidence": "Review packet draft/manual; no PASS"
-          },
-          {
-            "stage": "Canonical teardown",
-            "status": "unknown",
-            "evidence": "No host evidence"
-          }
-        ],
-        "notes": [
-          "Source Dropbox content hash is not equivalent to source SHA-256."
-        ],
-        "unknowns": [
-          "Host dispatcher and claim state",
-          "Current workflow-run CI conclusions",
-          "Actual asset installation and visual acceptance"
-        ],
-        "actions": [
-          "Implementation owner: validate exact source and existing claims before installation.",
-          "Independent reviewer: assess landed implementation and production Hub rendering."
-        ]
-      },
-      "scorecard": {
-        "stage": "Approved art queued for production authoring",
-        "as_of": "2026-11-05T18:26:23Z",
-        "scope": "Two newly authored Memorial Slab packets only",
-        "metrics": [
-          {
-            "id": "draft_packets",
-            "label": "DRAFT PACKETS",
-            "value": 2,
-            "verification": "verified",
-            "basis": "Implementation and independent review packet files in inspected commit",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/46d0ae14958502e6985dc0d1502456d8e72992d5"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Author implementation/review packets",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "46d0ae14958502e6985dc0d1502456d8e72992d5"
-          },
-          {
-            "label": "Validate source and ingest V2 sprite",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Not yet verified"
-          },
-          {
-            "label": "Bind and test in production Hub",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No live render proof"
-          },
-          {
-            "label": "Land implementation",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No implementation landing"
-          },
-          {
-            "label": "Independent review acceptance",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No PASS"
-          },
-          {
-            "label": "Canonical teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No host evidence"
-          }
-        ],
-        "next_gate": "Implementation owner: verify exact source and host claims, then install and test the approved sprite."
       },
       "related": []
     }
