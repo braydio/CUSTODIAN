@@ -12,13 +12,15 @@
 - Source of truth: `project.godot` selects `boot/runtime_entrypoint.tscn`; the entrypoint selects the fixed target scenes while existing scene/bootstrap authorities retain their behavior.
 ## Field Scout Buggy playtest (development-only)
 
-The normal F6/project launch and `--custodian-start=awakening` load
+The default **Run Project** (F5) entrypoint and
+`--custodian-start=awakening` load
 `res://scenes/awakening_first_return.tscn`, which does **not** contain the
 Field Scout. The first live Scout is scene-authored under
 `res://scenes/game.tscn`, not registered as a spawn in Awakening.
 
-From the **repository root**, launch the Contract sandbox (a normal Godot editor
-F6 run without the explicit startup argument will not select this mode):
+From the **repository root**, launch the Contract sandbox. Godot's **Run
+Current Scene** (F6) bypasses the project entrypoint if another scene is
+selected; use the explicit project startup argument below:
 
 ```sh
 godot --path custodian -- --custodian-start=contract-sandbox --contract-seed=123456
@@ -27,8 +29,9 @@ godot --path custodian -- --custodian-start=contract-sandbox --contract-seed=123
 The seed is optional; supply the same nonzero seed when reproducing placement.
 The authored node is `/root/GameRoot/World/FieldScoutBuggyMk1` at
 `Vector2(872, -486)` before generation. On a successful Contract install,
-`ContractWorldLoader._position_vehicles()` attempts to move existing vehicle
-nodes to an open parking tile, then the main road, then a compound tile.
+`ContractWorldLoader._position_vehicles()` prefers walkable parking-zone
+tiles (or main-road tiles when the raw parking list is empty), then eligible
+compound tiles if the selected parking/road candidates fail the open-tile filter.
 The fallback currently may leave the authored position unchanged when no
 candidate is available; **do not** treat the authored coordinates as a reliable
 in-world destination after generation.
