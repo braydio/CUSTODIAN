@@ -18,9 +18,13 @@ The dedicated provenance record is `custodian/content/audio/music/awakening/audi
 - `awakening_first_return`: passed.
 - `world_transition_handoff`: passed with an end-to-end production-scene assertion that rollback retains the cue and successful Hub commit fades/releases it without restoring Return Causeway.
 - `ritualant_four_cue_music`: passed; existing scoped cue behavior remains green.
-- `run_validation.py --changed --base origin/main --json`: passed 35/35, no timeouts/skips/failures, complete changed-file coverage. Report: `/tmp/custodian-awakening-changed-validation-final.json`.
+- `run_validation.py --changed --base origin/main --json`: passed 35/35, no timeouts/skips/failures, complete changed-file coverage. Report: `/tmp/custodian-awakening-after-sync-validation.json` (merged-tree validation: 35/35).
 - `asset.py needs --check`, `asset_requirements_smoke.py`, `check_ai_context.py`, and `git diff --check`: passed.
 - Graphical project boot: Godot 4.7.2 rendered with Vulkan on NVIDIA GeForce GTX 1650 SUPER and exited after 180 iterations without errors. This confirms graphical startup; audio output was not observed/listened to.
+
+## Preserved validation evidence
+
+The six capture-free Awakening Moment Forge traversal runs produced 72 ignored report files (532943 uncompressed bytes). They are preserved in the tracked repository archive `custodian/docs/ai_context/validation_evidence/awakening_command_still_speaking_moment_forge_20261105.tar.gz`; SHA-256: `49993fd2347affd15e4122b22438c8011176661a570394040ccfe398dd0db170`.
 
 ## Independent review
 
