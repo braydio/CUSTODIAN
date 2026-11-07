@@ -141,6 +141,88 @@
       "dropbox_content_hash": "fa15ca085092805147abfdd73bdfef0053d4f7344c84ac9bea7cd73e0052ad39",
       "dropbox_path": "/CUSTODIAN/implementation_inputs/custodian_sepulcher_memorial_slab_refined_v2_source_20261102.png",
       "package_size_bytes": 2252263
+    },
+    {
+      "batch_id": "custodian-sepulcher-modular-assembly-pilot-v1-runtime-source-art-v1",
+      "sha256": "f7fa7f7adef078ab2bce8386a8e69b9c979b56bba9ea521a9e7c95d6ac8d5d18",
+      "decision": "approved",
+      "reviewed_by": "user",
+      "reviewed_at": "2026-11-07T10:48:30Z",
+      "authoring_chat": "https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae9a2f9-cf10-83e8-bffe-5f16e079abac",
+      "review_note": "Project owner explicitly authorized reuse of the original Sepulcher modular pilot artwork for L04 in the current task. The linked review exchange approved the exact existing 512x512 floor and ring runtime outputs unchanged, and accepted the verified 256x128 wall module only for native-scale preview/placement. The 512x192 wall production state and hash-mismatched full strip are excluded. Original authored archive SHA-256 bb7e2677ed46366ade16e0234a378fadc2785898afa865ade6093de2513ee694; source master hashes and target output hashes are pinned per source below. This receipt approves only these three mappings.",
+      "sources": [
+        {
+          "entry": "custodian/asset_drop/source_work/hub/first_set/hub_first_set_sepulcher_floor_materials_v2/memorial_court_worn_source.png",
+          "family_id": "hub_first_set_sepulcher_floor_materials_v2",
+          "state_id": "memorial_court_worn",
+          "sha256": "414b017edbcc1ba53e4d277e32b4dfb42752552a4be2a1a2ad764a3706eeb960",
+          "source_dimensions": [
+            1254,
+            1254
+          ],
+          "source_mode": "RGB",
+          "frames": 1,
+          "target_frame_size": [
+            512,
+            512
+          ],
+          "target_sha256": "ea3cd7805a43eb72a0227a38fdf17e80bdc6ade78bd1d9969d7a22cab03f6c0b",
+          "target_mode": "RGB",
+          "state_decision": "approved_runtime",
+          "target_fps": null,
+          "loop": false
+        },
+        {
+          "entry": "custodian/asset_drop/source_work/hub/first_set/hub_first_set_sepulcher_landmark_architecture_v2/memorial_court_index_ring_source.png",
+          "family_id": "hub_first_set_sepulcher_landmark_architecture_v2",
+          "state_id": "memorial_court_index_ring",
+          "sha256": "800de773be5ef49333b4d2568a2c1d7160f36320c9ed251462bbb9d20ed10797",
+          "source_dimensions": [
+            1254,
+            1254
+          ],
+          "source_mode": "RGBA",
+          "frames": 1,
+          "target_frame_size": [
+            512,
+            512
+          ],
+          "target_sha256": "ecad5b82071921d0b6d3dfda39a3b531744e154f29520f490264b8c0959ebf77",
+          "target_mode": "RGBA",
+          "state_decision": "approved_runtime",
+          "target_fps": null,
+          "loop": false
+        },
+        {
+          "entry": "custodian/asset_drop/source_work/hub/first_set/hub_first_set_sepulcher_landmark_architecture_v2/memorial_court_low_side_wall_module_preview_source.png",
+          "family_id": "hub_first_set_sepulcher_landmark_architecture_v2",
+          "state_id": "memorial_court_low_side_wall_module_preview",
+          "sha256": "94b172344d5d4e73329ba86135af6554563833eb7c21eb998e6e253af34e7a4c",
+          "source_dimensions": [
+            1766,
+            891
+          ],
+          "source_mode": "RGBA",
+          "frames": 1,
+          "target_frame_size": [
+            256,
+            128
+          ],
+          "target_sha256": "ad8f830cd4c4edef87c1c78408f9fca2fdb11f6d2f488f9585b1084dd7887d6d",
+          "target_mode": "RGBA",
+          "preview_only": true,
+          "state_decision": "approved_runtime",
+          "target_fps": null,
+          "loop": false
+        }
+      ],
+      "dropbox_file_id": "id:8NXqdXuW6GUAAAAAAAAGdw",
+      "dropbox_content_hash": "dab43b67b9b9f2176119f43a268f5e759bfabdbdb0643c49922cd4d93467b0a6",
+      "dropbox_path": "/CUSTODIAN/asset_batches/sepulcher-modular-assembly-pilot-v1-runtime-source/custodian_sepulcher_modular_assembly_pilot_v1_runtime_source_art_v1.zip",
+      "package_size_bytes": 7986645,
+      "original_authoring_chat": "https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae9a2f9-cf10-83e8-bffe-5f16e079abac",
+      "original_dropbox_path": "/CUSTODIAN/implementation_inputs/CUSTODIAN_sep_mats_four_asset_pilot_v1_20261101.zip",
+      "original_archive_sha256": "bb7e2677ed46366ade16e0234a378fadc2785898afa865ade6093de2513ee694"
     }
   ]
 }

@@ -1528,7 +1528,7 @@
       "inbox_path": "custodian/asset_drop/inbox/hub_sepulcher_grave_evidence_art/memorial_slab.png",
       "family_contract_path": "custodian/content/metadata/assets/families/hub_sepulcher_grave_evidence_art.asset.json",
       "consumer": "res://game/world/hub/events/sepulcher_grave/sepulcher_grave_evidence.gd",
-      "registration_status": "already_registered",
+      "registration_status": "proposed_not_registered",
       "normalized_canvas": {
         "width": 160,
         "height": 96
@@ -1549,14 +1549,14 @@
       "placement_rule": "replace procedural rendering only; three readings, persistence, choice IDs and later-return growth gate remain unchanged",
       "image_generation_prompt": "Create one professional CUSTODIAN top-down 2D game art image, overhead orthographic, world north at image top, 32px construction rhythm, near-black civic basalt, pale weathered limestone, charcoal, aged brass, ash and restrained cold environmental light. Match existing Road of Witnesses, Hub and Awakening production-camera scale. Architecture must be physically plausible with consistent light and material logic. No people, loot, monsters, UI, legible lettering, watermarks, new entrances, fake navigation, baked global lighting, rectangular background matte, checkerboard or AI-mirrored pseudo-architecture. Target 160×96 pixels as a one-frame image. Singular low memorial slab with aged charcoal base, pale inset fractured limestone and bronze registration/date cutlines too abstract to read. The fixed CYCLE 184 date and contradictory records remain in interaction text, not visible etched identities. No living flowers or growth. isolated object PNG true RGBA, no floor or matte.",
       "prompt_authority": "new Hub V1 proposal under owner-approved art program",
-      "source_sha256": "349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028",
-      "normalized_sha256": "374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312",
-      "dropbox_path": "/CUSTODIAN/implementation_inputs/custodian_sepulcher_memorial_slab_refined_v2_source_20261102.png",
-      "dropbox_file_id": "id:8NXqdXuW6GUAAAAAAAAGsw",
-      "dropbox_revision": "65f4aa8f42035915cdd61",
-      "asset_v2_job": "job_20261107T070300Z_3d825703",
-      "live_status": "runtime_verified",
-      "human_image_approval": "approved",
+      "source_sha256": null,
+      "normalized_sha256": null,
+      "dropbox_path": null,
+      "dropbox_file_id": null,
+      "dropbox_revision": null,
+      "asset_v2_job": null,
+      "live_status": "not_checked_at_publication",
+      "human_image_approval": "pending",
       "handoff_review_status": null
     },
     {
@@ -3990,8 +3990,8 @@
       "source_work_path": "custodian/asset_drop/source_work/hub/first_set/hub_first_set_sepulcher_floor_materials_v2/memorial_court_worn_source.png",
       "inbox_path": "custodian/asset_drop/inbox/hub_first_set_sepulcher_floor_materials_v2/memorial_court_worn.png",
       "family_contract_path": "custodian/content/metadata/assets/families/hub_first_set_sepulcher_floor_materials_v2.asset.json",
-      "consumer": "PLANNED res://game/world/hub/first_set/hub_first_set_map.tscn:independent_geometry_registered_presentation",
-      "registration_status": "proposed_not_registered",
+      "consumer": "res://game/world/hub/first_set/sepulcher_memorial_court_presentation.gd",
+      "registration_status": "asset_v2_ingested_imported_bound; runtime verification evidence is external to catalog",
       "normalized_canvas": {
         "width": 512,
         "height": 512
@@ -4012,21 +4012,21 @@
       "placement_rule": "Do not paint the active memorial slab or any of its interaction locations. Use only authored footprint or off-route presentation after registration; visual candidate may be staged before gameplay placement approval; never invent navigable interior, water boundary or loot.",
       "image_generation_prompt": "Create exactly ONE 512x512 one-frame opaque RGB CUSTODIAN pixel-art style candidate for state hub_first_set_sepulcher_floor_materials_v2/memorial_court_worn. Strict orthographic 90-degree overhead, north up, 32px architecture, consistent visual scale with the 128px Operator. CUSTODIAN burial-civic palette: weathered chalk limestone, charcoal basalt, ash, oxidized bronze, aged stone joints, restrained cold-grey light. EXACTLY ONE independent PNG source, no contact sheet, labels, UI, characters, readable writing, borrowed image conditioning claim, directional vignette or scenic picture frame. Composition and unique subject: Pale institutional setting slabs rubbed smooth by centuries of readings, minimal charcoal aggregate grout, faint broken longitudinal indexing marks. Spatial authority: L04 Memorial Slab Court, world (-1984,-3200). This is flat repeatable ground/water material; make every edge continuous, native 3x3 repeatable without rotating to conceal seams; no raised structures or collision-marking visual blocks. Placement safeguard: Do not paint the active memorial slab or any of its interaction locations. No art-owned walkability, event offsets, water collision, connector widths, invented entrance or extra gameplay. Check actual native-size readability and separate visual assessment from byte-level PNG/alpha/seam checks. Existing paving, blackwater and shoreline chat candidates are NOT automatically production-approved or verified image conditioning.",
       "prompt_authority": "design/04_architecture/SEPULCHER_GARDENS_GEOMETRY_V1.json + user-authorized full-artwork roadmap 2026-11-03",
-      "source_sha256": null,
-      "normalized_sha256": null,
-      "dropbox_path": null,
-      "dropbox_file_id": null,
+      "source_sha256": "414b017edbcc1ba53e4d277e32b4dfb42752552a4be2a1a2ad764a3706eeb960",
+      "normalized_sha256": "ea3cd7805a43eb72a0227a38fdf17e80bdc6ade78bd1d9969d7a22cab03f6c0b",
+      "dropbox_path": "/CUSTODIAN/asset_batches/sepulcher-modular-assembly-pilot-v1-runtime-source/custodian_sepulcher_modular_assembly_pilot_v1_runtime_source_art_v1.zip",
+      "dropbox_file_id": "id:8NXqdXuW6GUAAAAAAAAGdw",
       "dropbox_revision": null,
-      "asset_v2_job": null,
-      "live_status": "not_checked_at_publication",
-      "human_image_approval": "pending",
-      "handoff_review_status": null,
+      "asset_v2_job": "job_20261107T105354Z_c800b281",
+      "live_status": "1/1 required; imported=true; bound=true; runtime_verified=false in Asset V2 catalog; production Hub presentation smoke and Vulkan capture passed.",
+      "human_image_approval": "source_approved",
+      "handoff_review_status": "RUNTIME_READY",
       "roadmap_phase": "SG-GROUND",
       "geometry_binding": "L04 Memorial Slab Court, world (-1984,-3200)",
-      "candidate_production_status": "NOT_GENERATED",
-      "production_placement_gate": "GAMEPLAY_OR_GEOMETRY_APPROVAL_SEPARATE_FROM_CANDIDATE_STAGING",
+      "candidate_production_status": "EXISTING_SOURCE_REUSED; DO_NOT_REGENERATE",
+      "production_placement_gate": "PRESENTED_IN_PRODUCTION_HUB; HUMAN_COMPOSITION_REVIEW_REMAINS_SEPARATE",
       "procedural_variant_policy": "deterministic offsets/rotation only after actual join review; keep authored canonical source unchanged",
-      "source_provenance": "new state; earlier concept/chat references not production receipts"
+      "source_provenance": "Reused without regeneration from the owner-authorized Sepulcher modular pilot runtime-source handoff; exact package SHA-256 f7fa7f7adef078ab2bce8386a8e69b9c979b56bba9ea521a9e7c95d6ac8d5d18; original four-asset archive SHA-256 bb7e2677ed46366ade16e0234a378fadc2785898afa865ade6093de2513ee694; source review receipt custodian-sepulcher-modular-assembly-pilot-v1-runtime-source-art-v1; owner authorization recorded in https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae9a2f9-cf10-83e8-bffe-5f16e079abac. Source master hash 414b017edbcc1ba53e4d277e32b4dfb42752552a4be2a1a2ad764a3706eeb960; approved 512x512 RGB target hash ea3cd7805a43eb72a0227a38fdf17e80bdc6ade78bd1d9969d7a22cab03f6c0b. The measured unrotated 3x3 seam boundary mean RGB jump is 10.437 (median 8.667, p95 26.333, max 47.667); internal adjacent-pixel mean is 11.223. This supports the single court placement only; no general repeatability certification is claimed."
     },
     {
       "id": "hub_first_set_sepulcher_floor_materials_v2/west_terrace_grit",
@@ -5803,8 +5803,8 @@
       "source_work_path": "custodian/asset_drop/source_work/hub/first_set/hub_first_set_sepulcher_landmark_architecture_v2/memorial_court_index_ring_source.png",
       "inbox_path": "custodian/asset_drop/inbox/hub_first_set_sepulcher_landmark_architecture_v2/memorial_court_index_ring.png",
       "family_contract_path": "custodian/content/metadata/assets/families/hub_first_set_sepulcher_landmark_architecture_v2.asset.json",
-      "consumer": "PLANNED res://game/world/hub/first_set/hub_first_set_map.tscn:independent_geometry_registered_presentation",
-      "registration_status": "proposed_not_registered",
+      "consumer": "res://game/world/hub/first_set/sepulcher_memorial_court_presentation.gd",
+      "registration_status": "asset_v2_ingested_imported_bound; runtime verification evidence is external to catalog",
       "normalized_canvas": {
         "width": 512,
         "height": 512
@@ -5825,21 +5825,21 @@
       "placement_rule": "Flat decoration, preserve grave slab and inspection/choice clearance. Use only authored footprint or off-route presentation after registration; visual candidate may be staged before gameplay placement approval; never invent navigable interior, water boundary or loot.",
       "image_generation_prompt": "Create exactly ONE 512x512 one-frame true RGBA CUSTODIAN pixel-art style candidate for state hub_first_set_sepulcher_landmark_architecture_v2/memorial_court_index_ring. Strict orthographic 90-degree overhead, north up, 32px architecture, consistent visual scale with the 128px Operator. CUSTODIAN burial-civic palette: weathered chalk limestone, charcoal basalt, ash, oxidized bronze, aged stone joints, restrained cold-grey light. EXACTLY ONE independent PNG source, no contact sheet, labels, UI, characters, readable writing, borrowed image conditioning claim, directional vignette or scenic picture frame. Composition and unique subject: One damaged concentric pavement registry band in two thin nested arcs with gaps and minimalist oxidized-bronze linear markings. Spatial authority: L04 Memorial Slab Court world (-1984,-3200). Isolate only the described object/overlay with clean fully transparent exterior, physically plausible top-down silhouette, consistent pixel scale, no painted floor or solid background; no fake alpha/checkerboard. Placement safeguard: Flat decoration, preserve grave slab and inspection/choice clearance. No art-owned walkability, event offsets, water collision, connector widths, invented entrance or extra gameplay. Check actual native-size readability and separate visual assessment from byte-level PNG/alpha/seam checks. Existing paving, blackwater and shoreline chat candidates are NOT automatically production-approved or verified image conditioning.",
       "prompt_authority": "design/04_architecture/SEPULCHER_GARDENS_GEOMETRY_V1.json + user-authorized full-artwork roadmap 2026-11-03",
-      "source_sha256": null,
-      "normalized_sha256": null,
-      "dropbox_path": null,
-      "dropbox_file_id": null,
+      "source_sha256": "800de773be5ef49333b4d2568a2c1d7160f36320c9ed251462bbb9d20ed10797",
+      "normalized_sha256": "ecad5b82071921d0b6d3dfda39a3b531744e154f29520f490264b8c0959ebf77",
+      "dropbox_path": "/CUSTODIAN/asset_batches/sepulcher-modular-assembly-pilot-v1-runtime-source/custodian_sepulcher_modular_assembly_pilot_v1_runtime_source_art_v1.zip",
+      "dropbox_file_id": "id:8NXqdXuW6GUAAAAAAAAGdw",
       "dropbox_revision": null,
-      "asset_v2_job": null,
-      "live_status": "not_checked_at_publication",
-      "human_image_approval": "pending",
-      "handoff_review_status": null,
+      "asset_v2_job": "job_20261107T105354Z_dcc9eba8",
+      "live_status": "1/2 required architecture states; ring imported=true and bound=true; runtime_verified=false in Asset V2 catalog; smoke and production capture passed. Wall target remains pending.",
+      "human_image_approval": "source_approved",
+      "handoff_review_status": "RUNTIME_READY",
       "roadmap_phase": "SG-LANDMARK",
       "geometry_binding": "L04 Memorial Slab Court world (-1984,-3200)",
-      "candidate_production_status": "NOT_GENERATED",
-      "production_placement_gate": "GAMEPLAY_OR_GEOMETRY_APPROVAL_SEPARATE_FROM_CANDIDATE_STAGING",
+      "candidate_production_status": "EXISTING_SOURCE_REUSED; DO_NOT_REGENERATE",
+      "production_placement_gate": "PRESENTED_IN_PRODUCTION_HUB; HUMAN_COMPOSITION_REVIEW_REMAINS_SEPARATE",
       "procedural_variant_policy": "deterministic offsets/rotation only after actual join review; keep authored canonical source unchanged",
-      "source_provenance": "new state; earlier concept/chat references not production receipts"
+      "source_provenance": "Reused without regeneration from the owner-authorized Sepulcher modular pilot runtime-source handoff; exact package SHA-256 f7fa7f7adef078ab2bce8386a8e69b9c979b56bba9ea521a9e7c95d6ac8d5d18; original four-asset archive SHA-256 bb7e2677ed46366ade16e0234a378fadc2785898afa865ade6093de2513ee694; source review receipt custodian-sepulcher-modular-assembly-pilot-v1-runtime-source-art-v1; owner authorization recorded in https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae9a2f9-cf10-83e8-bffe-5f16e079abac. Source master hash 800de773be5ef49333b4d2568a2c1d7160f36320c9ed251462bbb9d20ed10797; approved 512x512 RGBA target hash ecad5b82071921d0b6d3dfda39a3b531744e154f29520f490264b8c0959ebf77. Alpha is byte-verified and retained."
     },
     {
       "id": "hub_first_set_sepulcher_landmark_architecture_v2/memorial_court_low_side_wall",
@@ -5852,8 +5852,8 @@
       "source_work_path": "custodian/asset_drop/source_work/hub/first_set/hub_first_set_sepulcher_landmark_architecture_v2/memorial_court_low_side_wall_source.png",
       "inbox_path": "custodian/asset_drop/inbox/hub_first_set_sepulcher_landmark_architecture_v2/memorial_court_low_side_wall.png",
       "family_contract_path": "custodian/content/metadata/assets/families/hub_first_set_sepulcher_landmark_architecture_v2.asset.json",
-      "consumer": "PLANNED res://game/world/hub/first_set/hub_first_set_map.tscn:independent_geometry_registered_presentation",
-      "registration_status": "proposed_not_registered",
+      "consumer": "res://game/world/hub/first_set/sepulcher_memorial_court_presentation.gd (separate 256x128 preview state only)",
+      "registration_status": "512x192 target pending; no target Asset V2 runtime asset; separate module preview is ingested",
       "normalized_canvas": {
         "width": 512,
         "height": 192
@@ -5876,19 +5876,19 @@
       "prompt_authority": "design/04_architecture/SEPULCHER_GARDENS_GEOMETRY_V1.json + user-authorized full-artwork roadmap 2026-11-03",
       "source_sha256": null,
       "normalized_sha256": null,
-      "dropbox_path": null,
-      "dropbox_file_id": null,
+      "dropbox_path": "/CUSTODIAN/asset_batches/sepulcher-modular-assembly-pilot-v1-runtime-source/custodian_sepulcher_modular_assembly_pilot_v1_runtime_source_art_v1.zip",
+      "dropbox_file_id": "id:8NXqdXuW6GUAAAAAAAAGdw",
       "dropbox_revision": null,
       "asset_v2_job": null,
-      "live_status": "not_checked_at_publication",
+      "live_status": "512x192 production target pending dimensionally valid source and review. Separate 256x128 RGBA module preview is installed in job_20261107T105354Z_dcc9eba8 and placed at native scale.",
       "human_image_approval": "pending",
-      "handoff_review_status": null,
+      "handoff_review_status": "SOURCE_APPROVED_FOR_PREVIEW_ONLY",
       "roadmap_phase": "SG-LANDMARK",
       "geometry_binding": "L04 court outer margin",
-      "candidate_production_status": "NOT_GENERATED",
-      "production_placement_gate": "GAMEPLAY_OR_GEOMETRY_APPROVAL_SEPARATE_FROM_CANDIDATE_STAGING",
+      "candidate_production_status": "TARGET_PENDING; EXISTING_MODULE_PREVIEW_ONLY; DO_NOT_STRETCH_OR_REGENERATE",
+      "production_placement_gate": "512x192 TARGET_PENDING; 256x128 PREVIEW PLACED AT NATIVE SCALE",
       "procedural_variant_policy": "deterministic offsets/rotation only after actual join review; keep authored canonical source unchanged",
-      "source_provenance": "new state; earlier concept/chat references not production receipts"
+      "source_provenance": "Reused without regeneration from the owner-authorized Sepulcher modular pilot runtime-source handoff; exact package SHA-256 f7fa7f7adef078ab2bce8386a8e69b9c979b56bba9ea521a9e7c95d6ac8d5d18; original four-asset archive SHA-256 bb7e2677ed46366ade16e0234a378fadc2785898afa865ade6093de2513ee694; source review receipt custodian-sepulcher-modular-assembly-pilot-v1-runtime-source-art-v1; owner authorization recorded in https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae9a2f9-cf10-83e8-bffe-5f16e079abac. The 1766x891 wall source master hash is 94b172344d5d4e73329ba86135af6554563833eb7c21eb998e6e253af34e7a4c; exact 256x128 preview output hash is ad8f830cd4c4edef87c1c78408f9fca2fdb11f6d2f488f9585b1084dd7887d6d. The 512x192 target is not derived or approved; the hash-mismatched full strip is excluded."
     },
     {
       "id": "hub_first_set_sepulcher_landmark_architecture_v2/memorial_court_marker_footing",
@@ -11999,13 +11999,13 @@
         "hub_first_set_sepulcher_floor_materials_v2/memorial_court_worn"
       ],
       "generation_mode": "single",
-      "request_rule": "Produce exactly one independent candidate for hub_first_set_sepulcher_floor_materials_v2/memorial_court_worn; 512x512, OPAQUE RGB, one frame, no transparency, no black or checkerboard borders. Use full per-state image_generation_prompt and geometry_binding. No contact sheet or inferred image-condition input.",
+      "request_rule": "Do not generate or regenerate: this state is fulfilled by the exact owner-approved existing pilot source/runtime handoff recorded in source_review_receipts.v1.json. Keep the 512x512 RGB bytes and installed Asset V2 target unchanged; placement is restricted to the single L04 court and does not certify general 3x3 repeatability.",
       "release_gate": "CANDIDATE_ONLY_READY__PRODUCTION_PLACEMENT_SEPARATE",
-      "approval_rule": "AI PASS_CANDIDATE may advance to verified candidate Dropbox only; individual human image-source approval still required for production",
+      "approval_rule": "The exact existing source and target are owner-approved for reuse; this does not certify general repeatability or approve other paving states.",
       "source_handoff_rule": "Never promote source_work/inbox or Asset V2 without human explicit source approval plus immutable bytes and hash",
       "candidate_source_handoff_rule": "Upload only PASS_CANDIDATE to /CUSTODIAN/candidate_staging/hub-sepulcher-awakening-art-v1, verify real file ID, revision, bytes and hash",
       "candidate_order_rule": "Preserve each required state ID; any actual geometry-dependent integration remains separately gated",
-      "candidate_status": "NOT_GENERATED__HUMAN_APPROVAL_PENDING"
+      "candidate_status": "EXISTING_SOURCE_REUSED__SINGLE_COURT_PLACEMENT__NO_REGENERATION"
     },
     {
       "set_id": "SG-GROUND-004",
@@ -12798,13 +12798,13 @@
         "hub_first_set_sepulcher_landmark_architecture_v2/memorial_court_index_ring"
       ],
       "generation_mode": "single",
-      "request_rule": "Produce exactly one independent candidate for hub_first_set_sepulcher_landmark_architecture_v2/memorial_court_index_ring; 512x512, TRUE RGBA with genuinely transparent exterior pixels, no simulated checkerboard/matte; verify alpha bytes. Use full per-state image_generation_prompt and geometry_binding. No contact sheet or inferred image-condition input.",
+      "request_rule": "Do not generate or regenerate: use the exact owner-approved existing 512x512 RGBA ring source/runtime output recorded in source_review_receipts.v1.json; keep its geometry and target bytes unchanged.",
       "release_gate": "CANDIDATE_ONLY_READY__PRODUCTION_PLACEMENT_SEPARATE",
-      "approval_rule": "AI PASS_CANDIDATE may advance to verified candidate Dropbox only; individual human image-source approval still required for production",
+      "approval_rule": "The exact existing source and target are owner-approved for reuse; no approval is implied for other landmark assets.",
       "source_handoff_rule": "Never promote source_work/inbox or Asset V2 without human explicit source approval plus immutable bytes and hash",
       "candidate_source_handoff_rule": "Upload only PASS_CANDIDATE to /CUSTODIAN/candidate_staging/hub-sepulcher-awakening-art-v1, verify real file ID, revision, bytes and hash",
       "candidate_order_rule": "Preserve each required state ID; any actual geometry-dependent integration remains separately gated",
-      "candidate_status": "NOT_GENERATED__HUMAN_APPROVAL_PENDING"
+      "candidate_status": "EXISTING_SOURCE_REUSED__NO_REGENERATION"
     },
     {
       "set_id": "SG-LANDMARK-009",
@@ -12815,13 +12815,13 @@
         "hub_first_set_sepulcher_landmark_architecture_v2/memorial_court_low_side_wall"
       ],
       "generation_mode": "single",
-      "request_rule": "Produce exactly one independent candidate for hub_first_set_sepulcher_landmark_architecture_v2/memorial_court_low_side_wall; 512x192, TRUE RGBA with genuinely transparent exterior pixels, no simulated checkerboard/matte; verify alpha bytes. Use full per-state image_generation_prompt and geometry_binding. No contact sheet or inferred image-condition input.",
+      "request_rule": "Do not stretch, regenerate or claim completion from the existing 256x128 wall module. It may appear only as a separately identified native-scale preview. The 512x192 target remains pending a dimensionally valid reviewed source.",
       "release_gate": "CANDIDATE_ONLY_READY__PRODUCTION_PLACEMENT_SEPARATE",
-      "approval_rule": "AI PASS_CANDIDATE may advance to verified candidate Dropbox only; individual human image-source approval still required for production",
+      "approval_rule": "The existing wall master is approved only for a separate native-size preview state; the 512x192 target is not approved or installed.",
       "source_handoff_rule": "Never promote source_work/inbox or Asset V2 without human explicit source approval plus immutable bytes and hash",
       "candidate_source_handoff_rule": "Upload only PASS_CANDIDATE to /CUSTODIAN/candidate_staging/hub-sepulcher-awakening-art-v1, verify real file ID, revision, bytes and hash",
       "candidate_order_rule": "Preserve each required state ID; any actual geometry-dependent integration remains separately gated",
-      "candidate_status": "NOT_GENERATED__HUMAN_APPROVAL_PENDING"
+      "candidate_status": "SOURCE_DIMENSION_MISMATCH__512X192_TARGET_PENDING__NATIVE_MODULE_PREVIEW_ONLY"
     },
     {
       "set_id": "SG-LANDMARK-010",

@@ -247,11 +247,10 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Source:** `custodian/asset_drop/source_work/hub/first_set/hub_first_set_sepulcher_floor_materials_v2/memorial_court_worn_source.png`  
 **Inbox:** `custodian/asset_drop/inbox/hub_first_set_sepulcher_floor_materials_v2/memorial_court_worn.png`  
 **Family schema:** `custodian/content/metadata/assets/families/hub_first_set_sepulcher_floor_materials_v2.asset.json`  
-**Anchor/constraints:** Spatial source: L04 Memorial Slab Court, world (-1984,-3200). Absolute placement on 32px world grid; artist cannot add collision or change path availability.; Do not paint the active memorial slab or any of its interaction locations. Use only authored footprint or off-route presentation after registration; visual candidate may be staged before gameplay placement approval; never invent navigable interior, water boundary or loot.  
-**Consumer:** PLANNED res://game/world/hub/first_set/hub_first_set_map.tscn:independent_geometry_registered_presentation  
-**Provenance:** design/04_architecture/SEPULCHER_GARDENS_GEOMETRY_V1.json + user-authorized full-artwork roadmap 2026-11-03  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: NOT_GENERATED.
-
+**Anchor/constraints:** Spatial source: L04 Memorial Slab Court, world (-1984,-3200); one native 512x512 placement. Geometry/navigation remain authoritative; no repeatability certification is inferred from this placement.
+**Consumer:** res://game/world/hub/first_set/sepulcher_memorial_court_presentation.gd
+**Provenance:** Existing pilot source reused without regeneration. Dropbox handoff `/CUSTODIAN/asset_batches/sepulcher-modular-assembly-pilot-v1-runtime-source/custodian_sepulcher_modular_assembly_pilot_v1_runtime_source_art_v1.zip`, package SHA-256 `f7fa7f7adef078ab2bce8386a8e69b9c979b56bba9ea521a9e7c95d6ac8d5d18`; original archive SHA-256 `bb7e2677ed46366ade16e0234a378fadc2785898afa865ade6093de2513ee694`; source review receipt `custodian-sepulcher-modular-assembly-pilot-v1-runtime-source-art-v1`. Source SHA-256 `414b017edbcc1ba53e4d277e32b4dfb42752552a4be2a1a2ad764a3706eeb960`; approved RGB target SHA-256 `ea3cd7805a43eb72a0227a38fdf17e80bdc6ade78bd1d9969d7a22cab03f6c0b`.
+**Approval/registration:** Owner-approved existing source reuse; Asset V2 installed (job `job_20261107T105354Z_c800b281`), imported and bound to the production helper. Asset V2 catalog `runtime_verified` remains false. Unrotated 3x3 seam sample: boundary mean RGB jump 10.437, median 8.667, p95 26.333, max 47.667; internal adjacent-pixel mean 11.223. Single court use only; no general repeatability claim.
 #### `hub_first_set_sepulcher_floor_materials_v2/west_terrace_grit`
 
 **Set:** `SG-GROUND-004`, order 10; **family:** `hub_first_set_sepulcher_floor_materials_v2`; **core:** yes; **kind:** backdrop; **priority:** P1.
@@ -1011,11 +1010,10 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Source:** `custodian/asset_drop/source_work/hub/first_set/hub_first_set_sepulcher_landmark_architecture_v2/memorial_court_index_ring_source.png`  
 **Inbox:** `custodian/asset_drop/inbox/hub_first_set_sepulcher_landmark_architecture_v2/memorial_court_index_ring.png`  
 **Family schema:** `custodian/content/metadata/assets/families/hub_first_set_sepulcher_landmark_architecture_v2.asset.json`  
-**Anchor/constraints:** Spatial source: L04 Memorial Slab Court world (-1984,-3200). Absolute placement on 32px world grid; artist cannot add collision or change path availability.; Flat decoration, preserve grave slab and inspection/choice clearance. Use only authored footprint or off-route presentation after registration; visual candidate may be staged before gameplay placement approval; never invent navigable interior, water boundary or loot.  
-**Consumer:** PLANNED res://game/world/hub/first_set/hub_first_set_map.tscn:independent_geometry_registered_presentation  
-**Provenance:** design/04_architecture/SEPULCHER_GARDENS_GEOMETRY_V1.json + user-authorized full-artwork roadmap 2026-11-03  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: NOT_GENERATED.
-
+**Anchor/constraints:** Spatial source: L04 Memorial Slab Court, world (-1984,-3200); ring centered on the unchanged grave anchor. Flat decoration only; grave interactions and geometry remain authoritative.
+**Consumer:** res://game/world/hub/first_set/sepulcher_memorial_court_presentation.gd
+**Provenance:** Existing pilot source reused without regeneration. Dropbox handoff `/CUSTODIAN/asset_batches/sepulcher-modular-assembly-pilot-v1-runtime-source/custodian_sepulcher_modular_assembly_pilot_v1_runtime_source_art_v1.zip`, package SHA-256 `f7fa7f7adef078ab2bce8386a8e69b9c979b56bba9ea521a9e7c95d6ac8d5d18`; original archive SHA-256 `bb7e2677ed46366ade16e0234a378fadc2785898afa865ade6093de2513ee694`; source review receipt `custodian-sepulcher-modular-assembly-pilot-v1-runtime-source-art-v1`. Source SHA-256 `800de773be5ef49333b4d2568a2c1d7160f36320c9ed251462bbb9d20ed10797`; approved RGBA target SHA-256 `ecad5b82071921d0b6d3dfda39a3b531744e154f29520f490264b8c0959ebf77`.
+**Approval/registration:** Owner-approved existing source reuse; Asset V2 installed (job `job_20261107T105354Z_dcc9eba8`), imported and bound to the production helper; byte-level RGBA alpha retained. Asset V2 catalog `runtime_verified` remains false. The 512x192 production wall remains pending; its separate 256x128 module preview is installed.
 #### `hub_first_set_sepulcher_landmark_architecture_v2/memorial_court_low_side_wall`
 
 **Set:** `SG-LANDMARK-009`, order 57; **family:** `hub_first_set_sepulcher_landmark_architecture_v2`; **core:** yes; **kind:** world_prop; **priority:** P1.
@@ -1027,11 +1025,10 @@ All individual source prompts below are copied from the authoritative JSON entry
 **Source:** `custodian/asset_drop/source_work/hub/first_set/hub_first_set_sepulcher_landmark_architecture_v2/memorial_court_low_side_wall_source.png`  
 **Inbox:** `custodian/asset_drop/inbox/hub_first_set_sepulcher_landmark_architecture_v2/memorial_court_low_side_wall.png`  
 **Family schema:** `custodian/content/metadata/assets/families/hub_first_set_sepulcher_landmark_architecture_v2.asset.json`  
-**Anchor/constraints:** Spatial source: L04 court outer margin. Absolute placement on 32px world grid; artist cannot add collision or change path availability.; Off event approaches and outside required grave clearance. Use only authored footprint or off-route presentation after registration; visual candidate may be staged before gameplay placement approval; never invent navigable interior, water boundary or loot.  
-**Consumer:** PLANNED res://game/world/hub/first_set/hub_first_set_map.tscn:independent_geometry_registered_presentation  
-**Provenance:** design/04_architecture/SEPULCHER_GARDENS_GEOMETRY_V1.json + user-authorized full-artwork roadmap 2026-11-03  
-**Approval/registration:** pending; proposed_not_registered. Candidate status: NOT_GENERATED.
-
+**Anchor/constraints:** L04 outer margin. Existing wall art appears only as one 256x128 native-scale preview module at the north court edge; no collision or navigation authority.
+**Consumer:** res://game/world/hub/first_set/sepulcher_memorial_court_presentation.gd (separate 256x128 preview state only)
+**Provenance:** The verified wall master is from the same owner-authorized handoff (package SHA-256 `f7fa7f7adef078ab2bce8386a8e69b9c979b56bba9ea521a9e7c95d6ac8d5d18`; original archive SHA-256 `bb7e2677ed46366ade16e0234a378fadc2785898afa865ade6093de2513ee694`). Wall source SHA-256 `94b172344d5d4e73329ba86135af6554563833eb7c21eb998e6e253af34e7a4c`; preview output SHA-256 `ad8f830cd4c4edef87c1c78408f9fca2fdb11f6d2f488f9585b1084dd7887d6d`. Source approval is limited to the separate native-size preview.
+**Approval/registration:** 512x192 production target remains pending; no runtime output or completion is claimed for that state. The separate 256x128 RGBA module preview is installed in Asset V2 job `job_20261107T105354Z_dcc9eba8` and placed at native scale. The hash-mismatched full strip is excluded.
 #### `hub_first_set_sepulcher_landmark_architecture_v2/memorial_court_marker_footing`
 
 **Set:** `SG-LANDMARK-010`, order 58; **family:** `hub_first_set_sepulcher_landmark_architecture_v2`; **core:** yes; **kind:** world_prop; **priority:** P1.

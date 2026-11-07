@@ -1,0 +1,46 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20261107T105354Z_c800b281",
+  "timestamp": "2026-11-07T10:53:54.433600+00:00",
+  "family": "hub_first_set_sepulcher_floor_materials_v2",
+  "kind": "tile",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/hub_first_set_sepulcher_floor_materials_v2/memorial_court_worn.png",
+      "sha256": "ea3cd7805a43eb72a0227a38fdf17e80bdc6ade78bd1d9969d7a22cab03f6c0b"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "memorial_court_worn",
+      "direction": "omni",
+      "semantic_identity": [
+        "hub_first_set_sepulcher_floor_materials_v2",
+        "tile",
+        "ground",
+        "environment",
+        "memorial_court_worn",
+        "omni"
+      ],
+      "path": "content/tiles/hub/sepulcher_gardens/hub_first_set_sepulcher_floor_materials_v2_memorial_court_worn_512.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "ea3cd7805a43eb72a0227a38fdf17e80bdc6ade78bd1d9969d7a22cab03f6c0b",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "retired_states": [],
+  "retired_files": [],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": false,
+    "ok": null
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

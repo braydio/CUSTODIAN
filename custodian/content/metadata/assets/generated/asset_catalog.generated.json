@@ -15092,6 +15092,79 @@
           ]
         }
       }
+    },
+    "hub_first_set_sepulcher_floor_materials_v2": {
+      "kind": "tile",
+      "assets": {
+        "memorial_court_worn::omni": {
+          "state_id": "memorial_court_worn",
+          "direction": "omni",
+          "semantic_identity": [
+            "hub_first_set_sepulcher_floor_materials_v2",
+            "tile",
+            "ground",
+            "environment",
+            "memorial_court_worn",
+            "omni"
+          ],
+          "path": "content/tiles/hub/sepulcher_gardens/hub_first_set_sepulcher_floor_materials_v2_memorial_court_worn_512.png",
+          "frames": 1,
+          "frame_size": [
+            512,
+            512
+          ],
+          "sha256": "ea3cd7805a43eb72a0227a38fdf17e80bdc6ade78bd1d9969d7a22cab03f6c0b",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "hub_first_set_sepulcher_landmark_architecture_v2": {
+      "kind": "world_prop",
+      "assets": {
+        "memorial_court_index_ring::omni": {
+          "state_id": "memorial_court_index_ring",
+          "direction": "omni",
+          "semantic_identity": [
+            "hub_first_set_sepulcher_landmark_architecture_v2",
+            "world_prop",
+            "overlay",
+            "landmark",
+            "memorial_court_index_ring",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/hub/sepulcher_gardens/hub_first_set_sepulcher_landmark_architecture_v2/runtime/overlay/hub_first_set_sepulcher_landmark_architecture_v2__overlay__landmark__memorial_court_index_ring__omni__1f__512.png",
+          "frames": 1,
+          "frame_size": [
+            512,
+            512
+          ],
+          "sha256": "ecad5b82071921d0b6d3dfda39a3b531744e154f29520f490264b8c0959ebf77",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "memorial_court_low_side_wall_module_preview::omni": {
+          "state_id": "memorial_court_low_side_wall_module_preview",
+          "direction": "omni",
+          "semantic_identity": [
+            "hub_first_set_sepulcher_landmark_architecture_v2",
+            "world_prop",
+            "structure",
+            "landmark",
+            "memorial_court_low_side_wall_module_preview",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/hub/sepulcher_gardens/hub_first_set_sepulcher_landmark_architecture_v2/runtime/structure/hub_first_set_sepulcher_landmark_architecture_v2__structure__landmark__memorial_court_low_side_wall_module_preview__omni__1f__256x128.png",
+          "frames": 1,
+          "frame_size": [
+            256,
+            128
+          ],
+          "sha256": "ad8f830cd4c4edef87c1c78408f9fca2fdb11f6d2f488f9585b1084dd7887d6d",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
     }
   }
 }

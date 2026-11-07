@@ -16,6 +16,9 @@ const ROAD_PROCESSION_SCRIPT := preload(
 const SEPULCHER_GRAVE_SCRIPT := preload(
 	"res://game/world/hub/events/sepulcher_grave/sepulcher_grave_evidence.gd"
 )
+const SEPULCHER_MEMORIAL_COURT_SCRIPT := preload(
+	"res://game/world/hub/first_set/sepulcher_memorial_court_presentation.gd"
+)
 const CROWN_TRANSFER_ROUTE := &"hub_twin_solaria"
 const CROWN_TRANSFER_PROFILE := &"production"
 
@@ -40,6 +43,7 @@ func _ready() -> void:
 	_build_crown_transfer_ingress()
 	_build_adjudication_dais()
 	call_deferred("_build_road_procession_sequence")
+	_build_sepulcher_memorial_court_presentation()
 	call_deferred("_build_sepulcher_grave_evidence")
 
 
@@ -238,3 +242,11 @@ func _build_sepulcher_grave_evidence() -> void:
 	event.name = "SepulcherGraveEvidence"
 	event.call("configure", authority.get("hub_state") as HubState, self)
 	add_child(event)
+
+
+func _build_sepulcher_memorial_court_presentation() -> void:
+	if get_node_or_null("SepulcherMemorialCourtPresentation") != null:
+		return
+	var presentation := SEPULCHER_MEMORIAL_COURT_SCRIPT.new() as Node2D
+	presentation.name = "SepulcherMemorialCourtPresentation"
+	add_child(presentation)

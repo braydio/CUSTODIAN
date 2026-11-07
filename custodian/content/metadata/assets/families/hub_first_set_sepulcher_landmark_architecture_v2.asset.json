@@ -1,0 +1,65 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "hub_first_set_sepulcher_landmark_architecture_v2",
+  "kind": "world_prop",
+  "runtime": {
+    "domain": "sprites/environment/props/hub/sepulcher_gardens",
+    "owner": "hub_first_set_sepulcher_landmark_architecture_v2"
+  },
+  "canvas": {
+    "width": 512,
+    "height": 512
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "memorial_court_index_ring": {
+      "required": true,
+      "layer": "overlay",
+      "action_group": "landmark",
+      "variant": "memorial_court_index_ring",
+      "layout": "copy",
+      "frames": 1,
+      "frame_width": 512,
+      "frame_height": 512
+    },
+    "memorial_court_low_side_wall": {
+      "required": true,
+      "layer": "structure",
+      "action_group": "landmark",
+      "variant": "memorial_court_low_side_wall",
+      "layout": "copy",
+      "frames": 1,
+      "frame_width": 512,
+      "frame_height": 192
+    },
+    "memorial_court_marker_footing": {
+      "required": true,
+      "layer": "structure",
+      "action_group": "landmark",
+      "variant": "memorial_court_marker_footing",
+      "layout": "copy",
+      "frames": 1,
+      "frame_width": 256,
+      "frame_height": 192
+    },
+    "memorial_court_low_side_wall_module_preview": {
+      "required": false,
+      "recommended": true,
+      "layer": "structure",
+      "action_group": "landmark",
+      "variant": "memorial_court_low_side_wall_module_preview",
+      "layout": "copy",
+      "frames": 1,
+      "frame_width": 256,
+      "frame_height": 128
+    }
+  },
+  "aliases": {},
+  "consumers": [
+    {
+      "type": "script",
+      "path": "res://game/world/hub/first_set/sepulcher_memorial_court_presentation.gd"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "hub_first_set_sepulcher_floor_materials_v2",
+  "kind": "tile",
+  "runtime": {
+    "domain": "tiles/hub/sepulcher_gardens",
+    "owner": "hub_first_set_sepulcher_floor_materials_v2"
+  },
+  "canvas": {
+    "width": 512,
+    "height": 512
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "memorial_court_worn": {
+      "required": true,
+      "layer": "ground",
+      "action_group": "environment",
+      "variant": "memorial_court_worn",
+      "layout": "copy",
+      "frames": 1,
+      "frame_width": 512,
+      "frame_height": 512
+    }
+  },
+  "aliases": {},
+  "consumers": [
+    {
+      "type": "script",
+      "path": "res://game/world/hub/first_set/sepulcher_memorial_court_presentation.gd"
+    }
+  ]
+}
