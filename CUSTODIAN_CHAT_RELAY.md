@@ -22,7 +22,28 @@ google-chrome-stable \
 
 Use a dedicated Chrome profile so Chrome can start with the debugging flag and the session does not collide with a regular Chrome instance. Sign in to ChatGPT in that profile when prompted. Keep the Chrome process alive while the MCP or scripts use it. Confirm the endpoint with `curl http://127.0.0.1:9223/json/version` and confirm pages with `mcp__custodian_chat_relay__list_pages`.
 
-The port-9223 Chrome instance used for this relay has been launched directly as a foreground process. The existing user service found on this host, `odin-chatgpt-chrome.service`, belongs to a different project and is configured for port 9222; it is not the CUSTODIAN relay service and must not be used as one. No CUSTODIAN-specific systemd user unit is defined here. If persistent supervision is needed, create a separate user unit that launches Chrome with port 9223 and a dedicated persistent profile, then verify that only the intended Chrome owns the port. Do not point multiple services at the same debugging port or profile.
+The authenticated relay is supervised by a host-local systemd user service:
+
+- Unit: `custodian-chat-chrome.service`
+- Unit file: `~/.config/systemd/user/custodian-chat-chrome.service`
+- Profile: `~/.config/custodian-chat-chrome` (private directory, mode 0700)
+- Endpoint: `127.0.0.1:9223`
+- Restart policy: `Restart=always`, with a five-second delay
+- Startup target: the user's `default.target`
+
+The unit opens the exact conversation URL in the dedicated profile. On this host, that profile was copied from the prior authenticated temporary profile and the MCP confirmed the supplied conversation loaded, so no additional login was needed. The user systemd manager has lingering enabled, allowing enabled user services to continue when no interactive login session is open. Check that locally with `loginctl show-user "$USER" -p Linger`.
+
+Manage the service with:
+
+```bash
+systemctl --user status custodian-chat-chrome.service
+systemctl --user restart custodian-chat-chrome.service
+systemctl --user stop custodian-chat-chrome.service
+```
+
+To re-enable startup after a stop, run `systemctl --user enable --now custodian-chat-chrome.service`. After editing the host-local unit, run `systemctl --user daemon-reload`, then restart it. Verify the endpoint with `curl http://127.0.0.1:9223/json/version` and the exact tab with `mcp__custodian_chat_relay__list_pages`. The MCP connects to Chrome; systemd owns Chrome's lifetime.
+
+This unit and profile are host-local setup, not repository files. Keep the profile private because it contains the authenticated browser session. Do not launch another Chrome with the same profile or debugging port. The existing `odin-chatgpt-chrome.service` belongs to a different project and is configured for port 9222; do not use it for CUSTODIAN. Never fall back to port 9222.
 
 Never use port 9222 as a fallback for CUSTODIAN. Do not inspect cookies, authentication tokens, or private application internals. Operate on the visible conversation DOM and UI only.
 
