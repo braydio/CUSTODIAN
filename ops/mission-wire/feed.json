@@ -1,9 +1,236 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-07T16:42:00Z",
-  "source_main_sha": "7e1458d13a93619db4631d54b1ef217412b6d34e",
+  "generated_at": "2026-11-07T18:11:27Z",
+  "source_main_sha": "ab22bda8d66bcd123c23ca5cd4f16d08ae3fd394",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "paired-review-metadata-scope-ab22bda8",
+      "headline": "A second source-scope repair lands as chassis review waits for independent approval",
+      "summary": "A tightly bounded metadata exception is now on main, addressing a review preflight rejection caused by a historical packet delimiter edit. Tests are reported passing, but independent acceptance and original review recovery remain outstanding.",
+      "body": "The correction authenticates one historical comma-to-semicolon metadata edit against exact Git identities, excluding it from implementation source ownership without relaxing general source checks. Its packet is marked complete on main; the paired independent review remains the next gate. The author reports 303 runner tests and 3 changed-file checks passing. No accepted PASS or host teardown was inspected.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-paired-review-chassis-metadata-source-scope-v1",
+      "occurred_at": "2026-11-07T18:09:01Z",
+      "bullets": [
+        "Exact-history metadata exception landed on main.",
+        "Author reports 303 runner tests and 3 changed-file checks passing.",
+        "Independent review remains required before read-only held-run recovery planning."
+      ],
+      "links": [
+        {
+          "title": "Metadata exception landing",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/ab22bda8d66bcd123c23ca5cd4f16d08ae3fd394"
+        },
+        {
+          "title": "Automatic review handoff",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/e9162b335519e66bd9eb6f4ec275a2eecfb5484a"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "The Operator chassis review has encountered another narrowly defined source-history obstacle. A new main-branch correction now recognizes one exact historical packet-format edit without granting broader permission to change implementation sources. The fix is published, but its independent approval is still outstanding.",
+        "sections": [
+          {
+            "heading": "Why a punctuation change blocked a review",
+            "text": "The preserved review preflight rejected a historical review-packet Markdown edit as unrelated source. The new validator recognizes only the pinned comma-to-semicolon transition, checking the original Git objects and exact bytes. Other undeclared paths remain rejected."
+          },
+          {
+            "heading": "What remains between landing and recovery",
+            "text": "The implementation packet is complete on main, with author-reported positive and adversarial checks. A different reviewer must still accept the correction. Only then may the held review's same-claim read-only recovery plan be prepared; applying recovery requires separate authorization."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Provenance, not gameplay code, is the current bottleneck",
+            "explanation": "The review cannot reach its independent verdict while exact historical metadata fails source-span validation. Fixing that identity mismatch preserves the stronger rule against unrelated implementation changes."
+          }
+        ],
+        "takeaway": "A narrow validator repair has landed; it does not constitute independent acceptance or permission to restart the preserved review.",
+        "next_watch": "Look for an authenticated independent PASS on the metadata correction, followed by a read-only plan for the held review."
+      },
+      "scorecard": {
+        "stage": "Landed; independent review pending",
+        "as_of": "2026-11-07T18:09:01Z",
+        "scope": "One metadata correction and its held predecessor review, not full dispatcher coverage",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Historical metadata exception implemented",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Main commit ab22bda8."
+          },
+          {
+            "label": "Tests executed",
+            "status": "current",
+            "verification": "reported",
+            "evidence": "Author reports 303 runner and 3 changed-file tests passing."
+          },
+          {
+            "label": "Independent correction review",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No accepted PASS inspected."
+          },
+          {
+            "label": "Held-run recovery plan",
+            "status": "blocked",
+            "verification": "reported",
+            "evidence": "Requires accepted correction review."
+          },
+          {
+            "label": "Original review acceptance and teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No canonical receipts or host evidence."
+          }
+        ],
+        "next_gate": "Independent reviewer: verify exact historical exception and issue an authentic accepted review result."
+      },
+      "details": {
+        "overview": "Historical Git metadata exception is pinned to exact source identities; no dispatcher or host audit was available.",
+        "ledger": [
+          {
+            "stage": "Landing",
+            "status": "verified",
+            "evidence": "ab22bda8 on main"
+          },
+          {
+            "stage": "Validation",
+            "status": "author reported",
+            "evidence": "303 runner tests and 3 changed-file tests"
+          },
+          {
+            "stage": "Independent review",
+            "status": "not verified",
+            "evidence": "No accepted PASS inspected"
+          },
+          {
+            "stage": "Canonical teardown",
+            "status": "unknown",
+            "evidence": "No host receipt"
+          }
+        ],
+        "notes": [],
+        "unknowns": [
+          "Current full dispatcher and host resource counts",
+          "Independent acceptance and held-run recovery"
+        ],
+        "actions": [
+          "Independent reviewer: assess correction before recovery planning."
+        ]
+      },
+      "related": [
+        {
+          "title": "Operator chassis review gets a narrow source-scope repair, but acceptance remains gated",
+          "context": "The preceding correction is the exact archive now awaiting source-history validation.",
+          "story_id": "chassis-source-scope-attestation-7e1458d1"
+        }
+      ]
+    },
+    {
+      "id": "hub-camera-bounds-0d074c73",
+      "headline": "Hub transition now resets camera bounds after Awakening",
+      "summary": "A main-branch gameplay fix resets the reused camera's authored bounds when entering the Hub and adds a regression check for two Hub markers. This addresses a specific handoff bug, not a verified production deployment.",
+      "body": "The world transition manager now applies the destination map's camera bounds before rebinding the reused camera. The smoke test checks both authored and runtime bounds and verifies named Hub markers fall inside the region. No independent runtime acceptance or host deployment was inspected.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "",
+      "occurred_at": "2026-11-07T17:13:00Z",
+      "bullets": [
+        "Destination camera bounds now reset during the handoff.",
+        "Smoke test asserts bounds and two named Hub markers.",
+        "Runtime validation and production deployment remain unverified."
+      ],
+      "links": [
+        {
+          "title": "Hub camera fix",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/0d074c73343a4695994b01d545f5cbf96e5d54c2"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "The journey from Awakening into the Hub now has a targeted camera fix on main. Previously, the camera could carry the previous area's boundaries into the next map, potentially constraining its view in the wrong place.",
+        "sections": [
+          {
+            "heading": "The destination takes control",
+            "text": "The transition manager now replaces the camera's authored bounds with the Hub map's bounds before completing the camera rebind. This makes the map handoff explicit rather than relying on retained camera state."
+          },
+          {
+            "heading": "A regression check guards the handoff",
+            "text": "The smoke test verifies that both camera bound representations match the Hub and that two named destinations are inside them. The new assertions are visible in source; this watch did not execute the game."
+          }
+        ],
+        "insights": [
+          {
+            "title": "A reused camera needs new map authority",
+            "explanation": "Keeping the same camera object across scenes is efficient, but its old bounds must not survive a world transition. The fix targets that ownership boundary directly."
+          }
+        ],
+        "takeaway": "The handoff fix and its regression assertions are landed, with runtime behavior still awaiting independent observation.",
+        "next_watch": "Watch for passing Hub transition validation or a reproducible in-engine confirmation."
+      },
+      "scorecard": {
+        "stage": "Source fix landed; runtime confirmation unknown",
+        "as_of": "2026-11-07T17:13:00Z",
+        "scope": "Hub camera transition code and smoke-test assertions",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Destination bounds reset implemented",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Main commit 0d074c73."
+          },
+          {
+            "label": "Regression assertions added",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Smoke test source changed."
+          },
+          {
+            "label": "Runtime validation",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No executed test receipt inspected."
+          },
+          {
+            "label": "Production acceptance",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No acceptance evidence."
+          }
+        ],
+        "next_gate": "Gameplay validator: run the Hub transition smoke test and capture a passing result."
+      },
+      "details": {
+        "overview": "Source diff inspected at 0d074c73; no host execution evidence.",
+        "ledger": [
+          {
+            "stage": "Implementation",
+            "status": "verified",
+            "evidence": "Main commit 0d074c73"
+          },
+          {
+            "stage": "Runtime validation",
+            "status": "unknown",
+            "evidence": "No test execution inspected"
+          }
+        ],
+        "notes": [],
+        "unknowns": [
+          "Runtime and gameplay acceptance"
+        ],
+        "actions": [
+          "Run the Hub handoff smoke test in the appropriate validation environment."
+        ]
+      },
+      "related": []
+    },
     {
       "id": "chassis-source-scope-attestation-7e1458d1",
       "headline": "Operator chassis review gets a narrow source-scope repair, but acceptance remains gated",
@@ -1415,300 +1642,6 @@
           "story_id": "awakening-creche-direct-review-source-correction-be37e5c2"
         }
       ]
-    },
-    {
-      "id": "g2-source-scope-correction-611fc05c",
-      "headline": "Sepulcher G2 review blocker gets a narrowly scoped fix, but independent approval is still ahead",
-      "summary": "CUSTODIAN landed and archived a correction to the G2 grave-resolution review validator. It accounts for one previously omitted validation-recipe file while preserving strict source checks. Local tests are reported passing; the independent correction review and original G2 review remain unverified.",
-      "body": "A new G2 source-scope attestation now binds the original grave-resolution archive, exact file identities, and the single omitted validation recipe. The validator rejects the exception until an independently accepted correction review and receipt exist. The implementation packet is archived complete, with 296 tests reported passing. The original G2 review, claim, worktree and evidence were expressly left untouched. Host inventory was incomplete because a CIFS mount was unavailable; no cleanup or runtime liveness is established. Next: independent correction review, then replan the original G2 review only if the required accepted receipt lands.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-paired-review-g2-source-scope-attestation-v1",
-      "occurred_at": "2026-11-06T19:24:25Z",
-      "bullets": [
-        "G2 source-scope correction code and attestation landed on main",
-        "Correction implementation packet archived complete",
-        "296 unit tests reported passing in implementation evidence",
-        "Exception remains inactive without independent accepted correction review",
-        "Original G2 review and host claims remain untouched"
-      ],
-      "links": [
-        {
-          "title": "G2 implementation and attestation",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/67f1cb5c898b939aeae09f851641dc6cce411924"
-        },
-        {
-          "title": "G2 correction archival transition",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/611fc05cd70b8ad7d474e5f94a13c1394a091c6f"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "The Sepulcher grave-resolution review has a more precise path out of its source-scope blocker. CUSTODIAN has landed a correction that accounts for one omitted validation document without opening the door to arbitrary file changes. The fix is implemented and archived, but it still needs independent approval.",
-        "sections": [
-          {
-            "heading": "One missing document, one bounded exception",
-            "text": "The original G2 work included a validation recipe that its archived review scope did not declare. The new attestation pins the exact archive, file identities and omitted recipe, while leaving normal undeclared-file rejection in place."
-          },
-          {
-            "heading": "Tests passed; review has not",
-            "text": "The implementation summary reports 296 passing paired-review tests, including a simulated approval path. That simulation is not a real independent reviewer PASS. The validator deliberately keeps the exception inactive until a canonical correction review and receipt are accepted."
-          },
-          {
-            "heading": "Host cleanup remains separate",
-            "text": "The archived packet records an unavailable network mount during a disk census. The original G2 review run, claim, worktree and evidence were preserved, so this landing does not demonstrate resource recovery or teardown."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The gate is provenance, not code completeness",
-            "explanation": "The new logic exists, but it only activates after a separate accepted review proves the correction itself is trustworthy. That keeps the historical review boundary meaningful."
-          },
-          {
-            "title": "A clean archive is not a clean host",
-            "explanation": "The packet's completion changes the documented workstream stage, not the state of the preserved review checkout or locks."
-          }
-        ],
-        "takeaway": "G2's source-scope correction is landed and archived; independent acceptance remains the next decisive gate.",
-        "next_watch": "Watch for an authentic accepted PASS and target receipt for the G2 correction review before any attempt to replan the preserved G2 review."
-      },
-      "details": {
-        "overview": "Main inspected at 611fc05cd70b8ad7d474e5f94a13c1394a091c6f. Commit 67f1cb5 introduces exact source-scope attestation and validator checks; commit 611fc05 archives implementation as complete. The implementation reports 296 tests passing. No canonical live dispatcher audit, host inventory, or independent review acceptance was available. CI combined statuses were empty, not green.",
-        "ledger": [
-          {
-            "stage": "Implementation and attestation",
-            "status": "verified landed",
-            "evidence": "Commit 67f1cb5; exact archive/file binding and fail-closed validator"
-          },
-          {
-            "stage": "Implementation archival",
-            "status": "verified landed",
-            "evidence": "Commit 611fc05; packet status complete and execution feedback"
-          },
-          {
-            "stage": "Validation",
-            "status": "reported passing",
-            "evidence": "Implementation summary reports 296 tests and changed-file validation"
-          },
-          {
-            "stage": "Independent correction review",
-            "status": "not verified",
-            "evidence": "No accepted reviewer PASS or target receipt inspected"
-          },
-          {
-            "stage": "Original G2 review and host cleanup",
-            "status": "unknown / preserved",
-            "evidence": "Summary explicitly leaves original run, claim, worktree and evidence untouched"
-          }
-        ],
-        "notes": [
-          "Host disk census encountered an unavailable CIFS mount; inventory remains incomplete."
-        ],
-        "unknowns": [
-          "Canonical dispatcher counts and host liveness",
-          "Accepted correction review receipt",
-          "Current GitHub Actions health and worktree/disk disposition"
-        ],
-        "actions": [
-          "Independent reviewer: inspect correction and issue canonical PASS only after actual review.",
-          "Owner: replan preserved G2 review only after accepted correction receipt."
-        ]
-      },
-      "scorecard": {
-        "stage": "Correction landed and archived; independent review pending",
-        "as_of": "2026-11-06T19:26:46Z",
-        "scope": "One named G2 source-scope correction workstream, not full dispatcher inventory",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Implement exact source-scope attestation",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Commit 67f1cb5"
-          },
-          {
-            "label": "Archive correction implementation",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Commit 611fc05"
-          },
-          {
-            "label": "Independently review correction",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No accepted PASS inspected"
-          },
-          {
-            "label": "Replan original G2 review",
-            "status": "blocked",
-            "verification": "unknown",
-            "evidence": "Requires accepted correction review and target receipt"
-          },
-          {
-            "label": "Verify canonical teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No host proof"
-          }
-        ],
-        "next_gate": "Independent reviewer: issue a genuine accepted correction review and target receipt before original G2 replan."
-      },
-      "related": []
-    },
-    {
-      "id": "awakening-creche-direct-review-source-correction-be37e5c2",
-      "headline": "Crèche art handoff corrected; direct visual review replaces paired Codex review",
-      "summary": "CUSTODIAN's Awakening Crèche plan now identifies the approved 1464×1074 floor and wall sources with corrected roles. The user also withdrew paired Codex review for this specific art preparation and room-console cutover, replacing it with gameplay-scale user/ChatGPT review. The change is documentation and packet planning only; neither source staging nor the Godot cutover is verified.",
-      "body": "Two new main commits revise the Awakening Crèche art packets and design authority. The floor/underlay and foreground/wall source roles have been corrected, with source identity checks specified. For the Crèche preparation and atomic room-console cutover only, the user approved direct gameplay-scale review rather than a paired Codex reviewer. Existing review packets were removed without a fabricated PASS. The clean-source and console packets remain draft/manual. The production room is still documented at 960×704; the 1464×1074 target has not been ingested or installed. Objective Asset V2 validation, geometry, navigation, route continuity, console FX and gameplay captures remain required. A Sepulcher memorial slab art packet also drops paired-review requirements but retains source verification and runtime gates. No host liveness, teardown, or full dispatcher inventory is established.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "assets-art",
-      "workstream": "awakening-creche-console-sprite-reauthor-v1",
-      "occurred_at": "2026-11-06T19:00:56Z",
-      "bullets": [
-        "Approved Crèche floor and wall roles corrected in source authority",
-        "Crèche source-prep and cutover review changed to direct user/ChatGPT visual verdict",
-        "Two Crèche implementation packets remain draft/manual",
-        "Source staging, Asset V2 ingestion and Godot gameplay validation still pending",
-        "Removed review packets do not represent independent PASS"
-      ],
-      "links": [
-        {
-          "title": "Current Crèche source-prep packet",
-          "url": "https://github.com/braydio/CUSTODIAN/blob/be37e5c2ea021d64114e869439cda9992f7f33e5/custodian/docs/ai_context/task_packets/AWAKENING_INTERACTIBLE_CLEAN_ROOM_PLATES_V1.md"
-        },
-        {
-          "title": "Current Crèche console and room cutover packet",
-          "url": "https://github.com/braydio/CUSTODIAN/blob/be37e5c2ea021d64114e869439cda9992f7f33e5/custodian/docs/ai_context/task_packets/AWAKENING_CRECHE_CONSOLE_SPRITE_REAUTHOR_V1.md"
-        },
-        {
-          "title": "Main changes since previous WIRE report",
-          "url": "https://github.com/braydio/CUSTODIAN/compare/52f11a85a04ebd6401160ee2c33ebdf9763e9b04...be37e5c2ea021d64114e869439cda9992f7f33e5"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "The Awakening Crèche's art handoff has been corrected before installation: the approved floor and wall images now have their proper roles, and the final visual verdict will come from the user and ChatGPT rather than a paired Codex reviewer. The game itself has not changed.",
-        "sections": [
-          {
-            "heading": "A source mix-up resolved before cutover",
-            "text": "The updated packets identify separate approved 1464×1074 floor and foreground sources. Their previous labels were reversed. The documents explicitly preserve the existing 960×704 production room until source verification, registration and the scene cutover succeed."
-          },
-          {
-            "heading": "Fewer review handoffs, not fewer quality gates",
-            "text": "The Crèche-specific paired reviewer packets were withdrawn, not passed. Direct review will assess actual gameplay-scale captures, while asset provenance, walkability, the route into the next room, and console activation effects still require objective validation."
-          },
-          {
-            "heading": "The remaining work is in the game engine",
-            "text": "The clean-room plates must be durably staged and checked first. Only then can the floor, foreground, collision and independent console be switched together without leaving a broken or empty room."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Correct art identity prevents a wrong-layer release",
-            "explanation": "A floor and foreground swap could break both visibility and collision assumptions. Recording their distinct identities before ingestion makes the eventual scene transaction safer."
-          },
-          {
-            "title": "Review simplification is tightly scoped",
-            "explanation": "The direct-review exception applies only to Crèche source preparation and cutover. It does not certify runtime quality or remove unrelated Port review requirements."
-          }
-        ],
-        "takeaway": "The art and review decisions are now documented, but the playable Crèche remains unchanged until a verified cutover.",
-        "next_watch": "Look for durable source staging, Asset V2 receipts and real Godot gameplay captures showing the new room and its single console."
-      },
-      "details": {
-        "overview": "Inspected main be37e5c2 and two-commit diff from 52f11a85. Changes are packet/design documentation, including withdrawn Crèche reviewer packets. No canonical dispatcher audit or host execution evidence inspected. Dropbox pilot pointer metadata remains dated November 4; no private operational counts used. Combined commit statuses returned no checks, not evidence of green CI.",
-        "ledger": [
-          {
-            "stage": "Correct Crèche source identity and review authority",
-            "status": "verified in main documentation",
-            "evidence": "Crèche source-prep and console packets at be37e5c2"
-          },
-          {
-            "stage": "Durable source staging",
-            "status": "not verified",
-            "evidence": "Both packets remain draft/manual and describe local sources only"
-          },
-          {
-            "stage": "Asset V2 and Godot room cutover",
-            "status": "not verified",
-            "evidence": "Packets explicitly describe current production as 960×704"
-          },
-          {
-            "stage": "Direct gameplay-scale visual verdict",
-            "status": "pending",
-            "evidence": "No captured gameplay or user verdict inspected"
-          },
-          {
-            "stage": "Canonical host cleanup",
-            "status": "unknown",
-            "evidence": "No host proof available"
-          }
-        ],
-        "notes": [
-          "The Sepulcher memorial slab packet also changes review approach; it still requires exact source and Hub-runtime evidence.",
-          "No independent PASS is inferred from removed review packets."
-        ],
-        "unknowns": [
-          "Current full dispatcher queue and claim/lock state",
-          "Current CI Actions health",
-          "Host process, worktree and disk disposition"
-        ],
-        "actions": [
-          "Art implementation owner: validate and durably stage the approved source pair before attempting atomic Crèche cutover.",
-          "User/ChatGPT: review real gameplay captures after objective Godot validation."
-        ]
-      },
-      "scorecard": {
-        "stage": "Source identities approved in documentation; implementation not yet staged",
-        "as_of": "2026-11-06T19:00:56Z",
-        "scope": "Two named Crèche draft/manual implementation packets; not a full dispatcher count",
-        "metrics": [
-          {
-            "id": "other-creche-draft-packets",
-            "label": "CRÈCHE DRAFT PACKETS",
-            "value": 2,
-            "verification": "verified",
-            "basis": "The two inspected Crèche implementation packets both say Status: draft; excludes all other packets",
-            "url": "https://github.com/braydio/CUSTODIAN/blob/be37e5c2ea021d64114e869439cda9992f7f33e5/custodian/docs/ai_context/task_packets/AWAKENING_INTERACTIBLE_CLEAN_ROOM_PLATES_V1.md"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Record approved source roles",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Corrected main packets"
-          },
-          {
-            "label": "Validate and durably stage source images",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No durable staging receipt inspected"
-          },
-          {
-            "label": "Ingest and bind atomic room-console cutover",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Production still documented at legacy size"
-          },
-          {
-            "label": "Run objective Godot and route checks",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No cutover tests inspected"
-          },
-          {
-            "label": "Direct gameplay-scale visual verdict",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No actual capture or verdict inspected"
-          }
-        ],
-        "next_gate": "Art implementation owner: validate exact source bytes and durably stage both approved Crèche plates before room cutover."
-      },
-      "related": []
     }
   ],
   "snapshot": {
