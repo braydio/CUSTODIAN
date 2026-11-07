@@ -15062,6 +15062,36 @@
           ]
         }
       }
+    },
+    "hub_sepulcher_grave_evidence_art": {
+      "kind": "world_prop",
+      "assets": {
+        "memorial_slab::omni": {
+          "state_id": "memorial_slab",
+          "direction": "omni",
+          "semantic_identity": [
+            "hub_sepulcher_grave_evidence_art",
+            "world_prop",
+            "body",
+            "environment",
+            "memorial_slab",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/hub/sepulcher_grave/hub_sepulcher_grave_evidence_art/runtime/body/hub_sepulcher_grave_evidence_art__body__environment__memorial_slab__omni__1f__160x96.png",
+          "frames": 1,
+          "frame_size": [
+            160,
+            96
+          ],
+          "sha256": "374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312",
+          "provenance": "authored",
+          "source_asset": null,
+          "validation_evidence": [
+            "tools/validation/hub_sepulcher_grave_evidence_smoke.gd",
+            "/home/braydenchaffee/custodian-memorial-slab-evidence/sepulcher-memorial-slab-runtime.png"
+          ]
+        }
+      }
     }
   }
 }

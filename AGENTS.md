@@ -8,6 +8,8 @@ This repository contains multiple eras of the project. For all active Godot work
 
 Active Godot feature specifications live under `design/02_features/`. Do not add new work to the retired `design/20_features/` tree.
 
+For authenticated ChatGPT browser relay setup, see [`CUSTODIAN_CHAT_RELAY.md`](CUSTODIAN_CHAT_RELAY.md).
+
 ## Historical Archive Boundary
 
 `python-sim/` is a historical pre-Godot archive. It is not an active runtime,

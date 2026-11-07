@@ -8,6 +8,7 @@ const EVENT_ID: StringName = &"hub_sepulcher_grave_v1"
 const RECORD_SCHEMA := "custodian.hub_authored_event.sepulcher_grave.v1"
 const INTERACTION_DISTANCE := 80.0
 const GRAVE_POSITION: Vector2 = Vector2(-1984.0, -3200.0)
+const MEMORIAL_SLAB_TEXTURE: Texture2D = preload("res://content/sprites/environment/props/hub/sepulcher_grave/hub_sepulcher_grave_evidence_art/runtime/body/hub_sepulcher_grave_evidence_art__body__environment__memorial_slab__omni__1f__160x96.png")
 const READING_OFFSETS: Array[Vector2] = [
 	Vector2(-320.0, 0.0),
 	Vector2(448.0, 0.0),
@@ -262,10 +263,7 @@ func _ready() -> void:
 
 
 func _draw() -> void:
-	draw_rect(Rect2(GRAVE_POSITION + Vector2(-62.0, -34.0), Vector2(124.0, 68.0)), Color("343b38"), true)
-	draw_rect(Rect2(GRAVE_POSITION + Vector2(-50.0, -24.0), Vector2(100.0, 48.0)), Color("898878"), true)
-	draw_line(GRAVE_POSITION + Vector2(-39.0, -8.0), GRAVE_POSITION + Vector2(39.0, -8.0), Color("d0c9a8"), 2.0)
-	draw_line(GRAVE_POSITION + Vector2(-26.0, 8.0), GRAVE_POSITION + Vector2(26.0, 8.0), Color("676b61"), 2.0)
+	draw_texture(MEMORIAL_SLAB_TEXTURE, GRAVE_POSITION - Vector2(MEMORIAL_SLAB_TEXTURE.get_size()) * 0.5)
 	if _growth_visible_on_arrival:
 		_draw_returning_growth()
 	var font := ThemeDB.fallback_font

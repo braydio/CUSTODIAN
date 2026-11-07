@@ -402,6 +402,27 @@ Task packet workflow:
 
 Task packets do not replace design docs. Use `../design/` as implementation authority, and use task packets to make the current agent slice explicit.
 
+### Finish-first execution
+
+When the user names or selects an unfinished workstream, keep it as the current
+objective until its acceptance evidence is complete or a genuine blocker is
+recorded. Resume its verified claim/branch when safe; if it has no active claim,
+claim that exact workstream through the dispatcher. Do not substitute
+`claim-next` or an unrelated packet for unfinished selected work. A blocked
+handoff must state the exact failed prerequisite and one concrete next action
+for the same workstream.
+
+Report lifecycle stages truthfully: authored, ready, dispatcher-eligible,
+claimed, implemented, landed, validated, and closed are distinct states. A
+packet publication, successful compile, or landed branch alone does not prove
+the user-visible acceptance outcome. Close only when the packet's stated
+acceptance evidence exists. Preserve existing claims, branches, worktrees,
+reviews, and unique evidence; never reset or forge a disposition to release a
+lock. Fix workflow defects in their existing owner and avoid speculative task
+managers or packet chains. Review remains consequence-based under the risk
+policy above: focused checks are the default for bounded reversible changes,
+while protected review gates remain mandatory for consequential changes.
+
 ## Instruction Inheritance And Prompt Compression
 
 Repository defaults live in this file and the active authority chain. Prompt

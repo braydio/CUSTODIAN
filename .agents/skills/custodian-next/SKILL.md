@@ -34,41 +34,58 @@ eligibility. Print a short stage update at boundaries; do not dump the queue.
 
 ## Routing
 
-1. Inspect the current branch and workstream lifecycle. If already in an
+1. Resolve any workstream the user explicitly named or selected before generic
+   routing. Keep that unfinished objective current until its acceptance is
+   complete or it reaches a documented genuine blocker. Reconcile and resume
+   its existing verified claim when safe; if unclaimed, request its exact
+   dispatcher claim. Never replace it with `claim-next` or an unrelated packet.
+   For a blocked result, record the exact failed prerequisite and one next
+   action that advances the same workstream.
+2. Inspect the current branch and workstream lifecycle. If already in an
    `agent/<workstream>` checkout, verify its packet, dispatch receipt, branch,
    worktree, and remote state, then resume that workstream. Do not infer ownership
    from `last-claim` alone. A stale or ambiguous receipt requires reconciliation
    or an explicit stop; never create a duplicate claim.
-2. If no workstream is active, use the exact immediate successor from the most
-   recent durable `Next Handoff`. For a named dependency chain, claim only the
+3. If no workstream is active or explicitly selected, use the exact immediate
+   successor from the most recent durable `Next Handoff`. For a named dependency chain, claim only the
    dispatcher-confirmed eligible predecessor needed to reach that successor.
    Do not jump to unrelated lanes or edit packet metadata to manufacture
    eligibility. `Refresh owner: execution-agent` permits a bounded live-main
    refresh unless it exposes a new human decision.
-3. Respect planning refresh, human visual/design/canon decision, manual-dispatch,
+4. Respect planning refresh, human visual/design/canon decision, manual-dispatch,
    failed-validation, and safety gates. Stop at the gate and provide the exact
    recorded Authoring/Refresh chat URL where present.
-4. A paired post-land review is part of the same pair and must run in a fresh
+5. A paired post-land review is part of the same pair and must run in a fresh
    reviewer context. Once eligible, invoke
    `python3 custodian/tools/agent/paired_review_runner.py <review-workstream-id>`
    from the coordination checkout. Do not directly claim the review from the
    implementation context. Preserve its recovery worktree and run evidence if
    execution fails after claim.
-5. Follow the packet and normal `workstream.py` lifecycle through validation,
+6. Follow the packet and normal `workstream.py` lifecycle through validation,
    summary, commit, landing, and safe root synchronization. Complete and archive
    the associated packet and write its required root closing summary before
    finish. Record the exact landing SHA and accepted review in the boundary
    receipt.
-6. After the pair is accepted, inspect its durable `Next Handoff`. In
+7. After the pair is accepted, inspect its durable `Next Handoff`. In
    `single-pair`, stop even when that successor is ready. In explicit
    `continuous-chain`, continue only to an eligible named successor within the
    requested scope and remaining budget. A paired review or correction cycle
    never consumes an additional pair.
-7. Use global `dispatch.py claim-next --agent codex` only when the user
-   explicitly requested general-next execution and the current pair is complete
-   or blocked. It may select exactly one eligible implementation for the next
-   available pair. Never use global fallback to bypass an unresolved review,
-   human gate, stale ownership, or validation blocker.
+8. Use global `dispatch.py claim-next --agent codex` only when the user
+   explicitly requested general-next execution and there is no unfinished
+   specifically selected workstream. It may select exactly one eligible
+   implementation for the next available pair. A blocker on selected work does
+   not authorize an unrelated fallback. Never use global fallback to bypass an
+   unresolved review, human gate, stale ownership, or validation blocker.
+
+Readiness is not execution: authored, ready, dispatcher-eligible, claimed,
+implemented, landed, validated, and closed describe separate lifecycle stages.
+Report only the stage supported by current evidence. A successful publication,
+compile, or branch landing is insufficient when the packet's user-visible
+acceptance evidence is still missing. Preserve original claims, branches,
+worktrees, and evidence; never erase or forge review disposition to clear a
+lock. Correct defects in their existing workflow owner without speculative
+workflow expansion.
 
 ## Newly authorized packet pair (publication before claim)
 

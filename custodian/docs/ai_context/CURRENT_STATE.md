@@ -422,6 +422,26 @@ explicit compatibility presentation until the Asset V2 vehicle-family slice.
 The `vehicle_field_scout_class` smoke covers the semantic class, both spawn paths,
 restoration/repair integration, and restored entry.
 
+**Playtest availability and presentation:** The production startup mode is
+Awakening and does not include the Field Scout. The authored vehicle exists in
+`res://scenes/game.tscn` only, which is reached through the explicit
+`--custodian-start=contract-sandbox` argument. The generated Contract loader
+repositions it toward parking/road/compound tile candidates; if none is
+eligible it can retain the old scene-authored position, so reliable on-map
+discoverability is **not yet proven** by current class/restoration smokes.
+The live Scout begins as a disabled wreck and retains hover compatibility
+frames rather than its approved 156px wheeled body family. Its current
+`field_scout_recovery_light` profile charges raw resources, while the approved
+R1 SERVICE flow requires three fabricated assemblies. That discrepancy is
+already owned by the existing Scout recovery correction/review pair. The
+canonical vehicle body family and runtime importer are owned by the separate
+`vehicle-field-scout-buggy-asset-v2` packet; do not treat local handoff art as
+shipped runtime presentation. Repro and Remote tree investigation are documented
+in `custodian/game/app/README.md`. Vehicle placement service extraction remains
+owned by `contract-world-vehicle-placement-extraction`; a guaranteed nearby
+encounter, explicit placement receipt, and fixed-seed reachability regression
+are additional implementation/proof requirements, not silently finished work.
+
 ## Operator Dependency Injection F0 (2026-10-05)
 
 `OperatorRuntimeDependencies` is now the facade's explicit typed reference bundle.
