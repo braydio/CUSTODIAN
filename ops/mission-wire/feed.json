@@ -1,9 +1,166 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-07T18:20:46Z",
-  "source_main_sha": "19661bc02ad8825451c4d5e3b21886d0744ab5b3",
+  "generated_at": "2026-11-07T20:06:51Z",
+  "source_main_sha": "ee2d0c829b3d5860f5d20a6be46e3d94693fe518",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "chassis-historical-fixture-overlay-ee2d0c82",
+      "headline": "Chassis review hits an obsolete test fixture; a narrowly scoped repair is queued",
+      "summary": "A preserved Operator chassis review reports four failing historical fixture tests after its implementation packet was archived. A new ready implementation packet proposes a disposable-checkout-only correction. No implementation, independent approval, or recovery apply is established.",
+      "body": "The preserved chassis-attestation review's continuation is reported at host_validation_failed: three of four validation entries passed, while four tests expected an active packet that had already been archived. New main-branch packets specify an exact-identity test fixture overlay confined to a disposable checkout. Automatic handoff marks the implementation ready, and a later commit narrows its lock declaration. Ready is not claimed or running. The repair must be implemented, validated and independently reviewed before even a read-only recovery plan; recovery apply requires separate authorization. No host teardown evidence is available.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-paired-review-chassis-historical-fixture-overlay-v1",
+      "occurred_at": "2026-11-07T18:58:13Z",
+      "bullets": [
+        "New implementation and review packets landed, with exact historical source constraints.",
+        "Automatic handoff marks both packets ready; the review remains dependency-gated.",
+        "Held chassis review has reported historical fixture failures; no recovery apply authorized.",
+        "Next gate: implement and validate the disposable-only overlay, then independent review."
+      ],
+      "links": [
+        {
+          "title": "Historical fixture repair packets",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/d5f1743b5837d695813a0361c33cb77a0170bf60"
+        },
+        {
+          "title": "Automatic ready handoff",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/e4ddfca68486c65737137a86819e2daef5e3dad6"
+        },
+        {
+          "title": "Narrowed lock scope",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/ee2d0c829b3d5860f5d20a6be46e3d94693fe518"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "The Operator chassis review has cleared one provenance correction only to encounter a different obstacle: historical tests still expect a task packet to be active even though that packet was already archived. CUSTODIAN now has a narrowly scoped repair packet ready, but the held review has not resumed.",
+        "sections": [
+          {
+            "heading": "A historical test, not a new gameplay failure",
+            "text": "The new packet records a failed host-validation continuation: four tests could not reconcile the old fixture with the archived packet. The proposed repair changes only the temporary validation checkout, leaving the original reviewed source and held evidence intact."
+          },
+          {
+            "heading": "A ready handoff with deliberate limits",
+            "text": "Automatic handoff changed the implementation packet to ready. A follow-up commit narrowed its lock name to avoid unnecessary conflict with the held review. Neither commit implements the overlay or proves a live worker claimed it. Independent review and separately authorized recovery remain ahead."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The bottleneck is historical validation fidelity",
+            "explanation": "A previously valid fixture assumes a lifecycle state that no longer exists. Fixing that assumption in an isolated checkout can preserve strict source identity checks instead of weakening them."
+          },
+          {
+            "title": "A narrower lock is not proof of execution",
+            "explanation": "The latest commit changes packet coordination metadata. It may improve eligibility, but without a dispatcher audit it cannot establish a claim, running process, or host cleanup."
+          }
+        ],
+        "takeaway": "A targeted fixture-repair workstream is now ready on main; the original chassis review remains held pending independently accepted repair and separately authorized recovery.",
+        "next_watch": "Watch for a landed disposable-checkout overlay with complete historical validation and a fresh independent PASS."
+      },
+      "scorecard": {
+        "stage": "Ready for implementation; held review unresolved",
+        "as_of": "2026-11-07T20:06:51Z",
+        "scope": "Two named fixture-overlay packets and the preserved chassis review, not full dispatcher coverage",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Metadata source-scope correction independently accepted",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Previous PASS receipt on main 19661bc0."
+          },
+          {
+            "label": "Historical fixture overlay packet prepared",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "d5f1743b and e4ddfca6."
+          },
+          {
+            "label": "Overlay implementation and validation",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No implementation landing inspected."
+          },
+          {
+            "label": "Independent overlay review",
+            "status": "blocked",
+            "verification": "unknown",
+            "evidence": "Depends on implementation."
+          },
+          {
+            "label": "Read-only held-review recovery plan",
+            "status": "blocked",
+            "verification": "unknown",
+            "evidence": "Requires accepted overlay review."
+          },
+          {
+            "label": "Recovery apply and original review acceptance",
+            "status": "blocked",
+            "verification": "unknown",
+            "evidence": "Separate authorization and original receipt required."
+          },
+          {
+            "label": "Canonical teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No host proof."
+          }
+        ],
+        "next_gate": "Implementation owner: claim only when dispatcher permits, implement and validate exact temporary fixture overlay."
+      },
+      "details": {
+        "overview": "New packet records preserved chassis-attestation review continuation host_validation_failed, with 3/4 validation entries passing and four historical fixture tests failing. This is packet-reported host evidence, not independently observed runtime. No canonical audit or trusted teardown available.",
+        "ledger": [
+          {
+            "stage": "Metadata correction independent PASS",
+            "status": "verified",
+            "evidence": "19661bc0"
+          },
+          {
+            "stage": "Fixture overlay packet",
+            "status": "verified ready metadata",
+            "evidence": "d5f1743b; e4ddfca6; ee2d0c82"
+          },
+          {
+            "stage": "Overlay implementation",
+            "status": "not verified",
+            "evidence": "No landing"
+          },
+          {
+            "stage": "Original chassis review",
+            "status": "held, packet-reported",
+            "evidence": "Preserved continuation described in new packet"
+          },
+          {
+            "stage": "Teardown",
+            "status": "unknown",
+            "evidence": "No host evidence"
+          }
+        ],
+        "notes": [
+          "CI commit status contexts were not available; no green-CI claim.",
+          "Ready packet metadata does not establish active execution."
+        ],
+        "unknowns": [
+          "Full dispatcher counts",
+          "Current host claim and lock ownership",
+          "Worktree and disk state"
+        ],
+        "actions": [
+          "Implement overlay only after canonical dispatcher eligibility; independently review before read-only recovery planning."
+        ]
+      },
+      "related": [
+        {
+          "title": "Independent reviewer passes chassis metadata correction; protected recovery remains gated",
+          "context": "The accepted metadata correction is the predecessor gate for this new historical fixture repair.",
+          "story_id": "chassis-metadata-independent-pass-19661bc0"
+        }
+      ]
+    },
     {
       "id": "chassis-metadata-independent-pass-19661bc0",
       "headline": "Independent reviewer passes chassis metadata correction; protected recovery remains gated",
@@ -1444,169 +1601,6 @@
           }
         ],
         "next_gate": "Runtime owner: obtain explicit authorization for a bounded live-browser test."
-      },
-      "related": []
-    },
-    {
-      "id": "creche-source-staged-cutover-ready-95f1c713",
-      "headline": "Crèche artwork staged and source task closed; full room cutover moves into the ready queue",
-      "summary": "Approved 1464×1074 Crèche floor and wall masters have been staged with rollback evidence, and the source-only task is archived. A separate room-and-console integration packet is now marked ready/auto. The actual Godot room still uses its old 960×704 layout, and dispatcher eligibility, runtime validation and direct visual acceptance remain unverified.",
-      "body": "CUSTODIAN's source staging closeout records exact approved floor and wall LFS identities, alpha bounds and rollback references. The source-only packet was archived complete. A subsequent main commit promoted the separate Crèche room-and-console cutover packet to ready/auto, explicitly assigning the environment family, inbox, Asset V2 ingestion, scene, Zone01 geometry, passage and console integration. The existing Godot room remains 960×704 with old walkability; the approved 1464×1074 art has not been installed. The source-only Asset V2 plan saw zero inbox sources, so can_apply=true is not proof of runtime readiness. No canonical dispatcher audit, live claim, gameplay capture, direct user approval or host teardown was verified.",
-      "severity": "milestone",
-      "verification": "verified",
-      "category": "assets-art",
-      "workstream": "awakening-creche-console-sprite-reauthor-v1",
-      "occurred_at": "2026-11-06T20:53:57Z",
-      "bullets": [
-        "Source-only Crèche task archived with exact rollback receipt",
-        "Room/console cutover packet declared ready/auto on main",
-        "Existing Godot room still 960×704; new art not ingested",
-        "Next gate: verify dependencies and exact LFS source hydration",
-        "Require measured geometry, focused Godot smokes and direct visual approval"
-      ],
-      "links": [
-        {
-          "title": "Approved source staging closeout",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/0e6b081b18a8b2d9deed0a19157a7a4b376adbb5"
-        },
-        {
-          "title": "Room and console cutover readiness",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/95f1c7130c5dd819577c64a3cbafc9bcd9aeef65"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "The Awakening Crèche has finished preparing its approved artwork and handed the next job to runtime integration. The source-only task is archived, and a separate packet now identifies how to rebuild the room around its larger floor and wall images. The game itself has not changed yet.",
-        "sections": [
-          {
-            "heading": "Artwork is registered, not installed",
-            "text": "The approved 1464×1074 floor and wall masters now occupy their canonical source locations, with exact content identities and rollback evidence. The current game scene and environment family still use 960×704 artwork; the new inbox and runtime assets have not been created."
-          },
-          {
-            "heading": "The next packet owns the whole room",
-            "text": "A newly ready/auto packet covers the paired environment ingestion, scene replacement, authored walkable floor, 01→02 passage and one existing interactive console. Keeping these changes together avoids a misleading half-finished room with mismatched art and collision."
-          },
-          {
-            "heading": "A readiness label still needs proof",
-            "text": "The repository says the packet is ready, but there is no canonical dispatcher audit proving it can be claimed. The source-only dry-run saw an empty inbox. Actual Godot tests, gameplay captures and direct visual approval are still required."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The remaining bottleneck is integration, not image selection",
-            "explanation": "Approved image identities and rollback receipts now exist. The highest-leverage next work is reconciling canvas size, scene placement and walkability without breaking the route or console."
-          },
-          {
-            "title": "A successful empty plan is not an ingestion test",
-            "explanation": "The source-only plan reported no sources because the inbox was intentionally absent. Its success must not be mistaken for validating the new room."
-          }
-        ],
-        "takeaway": "Source preparation is closed and the room cutover is queued on paper; there is no evidence of a completed in-game rebuild.",
-        "next_watch": "Look for a verified dispatcher eligibility check, exact source hydration and a single controlled room cutover with focused Godot validation and gameplay-scale captures."
-      },
-      "details": {
-        "overview": "Main 95f1c713 promotes the downstream cutover packet to ready/auto. Parent 0e6b081b archives source-only staging and records floor LFS SHA-256 9ce70dff… and foreground 515b287f…, both 1464×1074 RGBA. GitHub combined statuses for main were empty. The private pilot pointer is dated November 4 and is too old for current operational counts.",
-        "ledger": [
-          {
-            "stage": "Approved source staging",
-            "status": "verified landed",
-            "evidence": "Commit 0e6b081b records canonical source_work replacements and rollback receipt"
-          },
-          {
-            "stage": "Source task closeout",
-            "status": "verified GitHub archival",
-            "evidence": "Source-only packet archived at 0e6b081b; no runtime change"
-          },
-          {
-            "stage": "Runtime cutover readiness",
-            "status": "verified GitHub declaration",
-            "evidence": "Commit 95f1c713 changes separate packet to ready/auto; actual eligibility unknown"
-          },
-          {
-            "stage": "Asset V2 ingestion and scene cutover",
-            "status": "not established",
-            "evidence": "Inbox absent, family and scene still 960×704"
-          },
-          {
-            "stage": "Gameplay-scale approval",
-            "status": "not established",
-            "evidence": "No capture or user verdict inspected"
-          },
-          {
-            "stage": "Canonical host teardown",
-            "status": "unknown",
-            "evidence": "No live host audit"
-          }
-        ],
-        "notes": [
-          "Source-only plan reported can_apply=true with zero sources and outputs.",
-          "Direct user/ChatGPT Crèche visual review is required; paired Codex review waived for this specific packet."
-        ],
-        "unknowns": [
-          "Dispatcher eligibility and active host claim",
-          "LFS byte retrieval and runtime import",
-          "Gameplay appearance and walkability",
-          "Live worktrees, locks, disk and teardown"
-        ],
-        "actions": [
-          "Runtime owner: verify source hydration and packet dependencies before any guarded Asset V2 ingestion.",
-          "Runtime owner: implement atomic room/console cutover and capture gameplay-scale evidence.",
-          "User/ChatGPT: directly review in-game visuals after tests."
-        ]
-      },
-      "scorecard": {
-        "stage": "Source staging closed; full room cutover ready on GitHub",
-        "as_of": "2026-11-06T21:24:49Z",
-        "scope": "Two named Crèche workstreams only; no canonical dispatcher audit",
-        "metrics": [
-          {
-            "id": "other-approved-source-masters",
-            "label": "APPROVED MASTERS",
-            "value": 2,
-            "verification": "reported",
-            "basis": "Two LFS source identities in staging receipt; raw image bytes not independently fetched",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/0e6b081b18a8b2d9deed0a19157a7a4b376adbb5"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Approve source roles",
-            "status": "done",
-            "verification": "reported",
-            "evidence": "Owner approval in staging receipt"
-          },
-          {
-            "label": "Stage canonical source masters",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "0e6b081b source pointer changes"
-          },
-          {
-            "label": "Archive source-only task",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "0e6b081b packet transition"
-          },
-          {
-            "label": "Verify cutover eligibility and hydrate sources",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No dispatcher audit or fetched LFS bytes"
-          },
-          {
-            "label": "Ingest and install complete room",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Old 960×704 scene remains"
-          },
-          {
-            "label": "Run Godot smokes and direct visual review",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No runtime receipt or capture"
-          }
-        ],
-        "next_gate": "Runtime owner: establish dispatcher eligibility and verify exact approved source bytes before atomic cutover."
       },
       "related": []
     }
