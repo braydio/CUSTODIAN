@@ -152,6 +152,15 @@ func _run() -> void:
 	if camera.call("get_runtime_map") != map:
 		_fail("Hub runtime camera map was not bound")
 		return
+	var hub_bounds: Rect2 = map.call("get_camera_bounds")
+	if camera.get("authored_map_bounds") != hub_bounds or camera.get("map_bounds") != hub_bounds:
+		_fail("Hub camera retained Awakening bounds after transition")
+		return
+	for marker_name: StringName in [&"WestGardenThreshold", &"SepulcherInteriorSample"]:
+		var marker_position: Vector2 = map.call("get_spawn_position", marker_name)
+		if not hub_bounds.has_point(marker_position):
+			_fail("Hub camera bounds exclude %s" % marker_name)
+			return
 	var order: Array = success.get("binding_order", [])
 	if order.find(&"navigation_bound") < 0 or order.find(&"camera_bound") <= order.find(&"navigation_bound") or order.find(&"authority_committed") <= order.find(&"camera_bound") or order.find(&"input_unlocked") <= order.find(&"authority_committed"):
 		_fail("Hub bindings and input unlock did not occur in the required order")

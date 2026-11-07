@@ -293,6 +293,8 @@ func _run_transition(request: WorldTransitionRequest) -> void:
 		return
 	camera.set("operator_ref", operator)
 	camera.set("follow_target", operator)
+	# The camera is reused from Awakening; replace its authored clamp before rebinding.
+	camera.call("set_authored_map_bounds", map.call("get_camera_bounds"))
 	camera.call("set_runtime_map", map)
 	camera.make_current()
 	var bounds: Variant = camera.get("map_bounds")
