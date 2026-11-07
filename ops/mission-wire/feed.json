@@ -1,9 +1,234 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-07T01:42:27Z",
-  "source_main_sha": "50f20cd9efa6b73ab94e91049e9675b738311cc6",
+  "generated_at": "2026-11-07T07:47:12Z",
+  "source_main_sha": "abcf35bf5518259162a6547a87ce7a7297279b5a",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "finish-first-routing-gap-abcf35bf",
+      "headline": "Finish-first agent policy lands, but a dispatcher fallback loophole remains",
+      "summary": "New agent instructions prioritize a user-selected unfinished workstream over generic next-task routing, and fix task-packet publication-input syntax. The author reports passing checks, but explicitly leaves a protected dispatch-boundary loophole for a separate reviewed correction.",
+      "body": "Main commit abcf35bf changes agent guidance and task-packet template syntax, plus a parser regression test. Its summary reports 32 task-packet tests, 18 routing tests, context checks and 8 selected validations passing. However, the existing next_execution_boundary.py still permits general fallback from a blocked selected workstream in a specific path. This is a documentation and template fix, not a completed runtime enforcement fix or independently accepted protected correction.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "finish-first-execution-policy-v1",
+      "occurred_at": "2026-11-07T07:37:50Z",
+      "bullets": [
+        "Finish-first policy and parser coverage landed, while blocked-task fallback enforcement remains unresolved.",
+        "Watch for the focused protected routing correction and its independent review receipt."
+      ],
+      "links": [
+        {
+          "title": "Finish-first policy and test",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/abcf35bf5518259162a6547a87ce7a7297279b5a"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN has tightened its written execution rules so an explicitly selected unfinished task stays the priority instead of being silently replaced by another job. The change also fixes a task-packet syntax mismatch, but it identifies one remaining routing behavior that needs a protected code correction.",
+        "sections": [
+          {
+            "heading": "A clearer definition of finished",
+            "text": "The agent guidance now separates claimed, implemented, landed, validated and accepted work. A selected task should remain current until its acceptance is complete or its exact blocker is recorded."
+          },
+          {
+            "heading": "One gap still lives in code",
+            "text": "The routing helper can still fall through to a general task when a selected task is blocked under certain conditions. The author intentionally did not modify this protected enforcement path without a separate reviewed workstream."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Policy text is not an enforcement gate",
+            "explanation": "A documented rule can guide agents without changing the code that chooses the next workstream. The protected helper remains the important next fix."
+          }
+        ],
+        "takeaway": "Finish-first policy and parser coverage landed, while blocked-task fallback enforcement remains unresolved.",
+        "next_watch": "Watch for the focused protected routing correction and its independent review receipt."
+      },
+      "scorecard": {
+        "stage": "Guidance landed; enforcement correction pending",
+        "as_of": "2026-11-07T07:47:12Z",
+        "scope": "Named finish-first policy change only",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Update agent guidance",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Main commit abcf35bf."
+          },
+          {
+            "label": "Correct publication-input template",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Template and parser regression committed."
+          },
+          {
+            "label": "Validate policy changes",
+            "status": "current",
+            "verification": "reported",
+            "evidence": "Author reports unit and selected checks passing."
+          },
+          {
+            "label": "Fix protected dispatch fallback",
+            "status": "next",
+            "verification": "verified",
+            "evidence": "Summary explicitly leaves helper unchanged."
+          },
+          {
+            "label": "Independent protected review",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No receipt inspected."
+          }
+        ],
+        "next_gate": "Workflow owner: authorize focused protected helper correction with independent review."
+      },
+      "details": {
+        "overview": "Documentation and template/test changes landed. Summary explicitly notes blocked selected-workstream fallback remains in next_execution_boundary.py; no protected runtime fix was made.",
+        "ledger": [
+          {
+            "stage": "Policy landing",
+            "status": "verified",
+            "evidence": "abcf35bf"
+          },
+          {
+            "stage": "Validation",
+            "status": "author reported PASS",
+            "evidence": "32+18 tests and selected validation in summary"
+          },
+          {
+            "stage": "Runtime enforcement",
+            "status": "not changed",
+            "evidence": "Protected helper intentionally left unchanged"
+          }
+        ],
+        "notes": [],
+        "unknowns": [
+          "Independent protected review",
+          "Current dispatcher host state"
+        ],
+        "actions": [
+          "Workflow owner: correct blocked-to-general fallback under protected review."
+        ]
+      },
+      "related": []
+    },
+    {
+      "id": "memorial-slab-hub-install-695179d2",
+      "headline": "Memorial Slab artwork reaches the playable Hub; packet archived",
+      "summary": "CUSTODIAN landed the approved Sepulcher Memorial Slab as an Asset Pipeline V2 world prop bound to the Hub grave scene, then marked its packet complete and archived it. The implementation reports focused validation; independent visual/runtime acceptance and host cleanup were not independently observed.",
+      "body": "The approved slab image was normalized and registered as one world_prop state and wired into SepulcherGraveEvidence drawing while retaining reading positions and gameplay behavior. The implementation summary reports focused tests and a HubRuntimeHost rendering check. Subsequent archival commit marks the packet complete. The packet did not require paired review. GitHub evidence proves code and asset landing, not current host execution or verified teardown.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "sepulcher-memorial-slab-production-art-v1",
+      "occurred_at": "2026-11-07T07:23:06Z",
+      "bullets": [
+        "The approved memorial artwork is landed and the task packet archived; live-host and cleanup claims remain unverified.",
+        "Watch for a separately evidenced in-game visual acceptance or a reported regression in the Hub."
+      ],
+      "links": [
+        {
+          "title": "Art installation",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/02f2b285dac0fab09b62ee22f77177809b0d2e9c"
+        },
+        {
+          "title": "Packet archival",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/695179d2ba6c9233147984f427ba5476e3f47475"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "The Sepulcher's memorial grave now has its approved illustrated slab integrated into the Hub's game scene. This replaces the earlier procedural drawing without changing the grave's interaction points or story logic.",
+        "sections": [
+          {
+            "heading": "Artwork becomes a game asset",
+            "text": "The approved image was normalized into the Asset Pipeline V2 world-prop format and connected to the existing grave renderer. The implementation deliberately leaves dialogue, collision, reading markers and persistence behavior alone."
+          },
+          {
+            "heading": "The packet is closed in the repository",
+            "text": "A follow-up commit marks the implementation packet complete and archives it. The author records focused validation, but the GitHub landing does not independently establish a currently running host or clean teardown."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Visual upgrades need not disturb gameplay",
+            "explanation": "The change is isolated to the slab drawing, reducing the chance that art replacement changes the memorial's established interactions."
+          }
+        ],
+        "takeaway": "The approved memorial artwork is landed and the task packet archived; live-host and cleanup claims remain unverified.",
+        "next_watch": "Watch for a separately evidenced in-game visual acceptance or a reported regression in the Hub."
+      },
+      "scorecard": {
+        "stage": "Landed and archived; host state unknown",
+        "as_of": "2026-11-07T07:47:12Z",
+        "scope": "Named Sepulcher Memorial Slab packet, not full queue",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Approve art source",
+            "status": "done",
+            "verification": "reported",
+            "evidence": "Packet records human approval and source receipt."
+          },
+          {
+            "label": "Install Hub asset binding",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Implementation commit 02f2b285."
+          },
+          {
+            "label": "Run focused checks",
+            "status": "current",
+            "verification": "reported",
+            "evidence": "Author summary reports validation."
+          },
+          {
+            "label": "Archive packet",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Commit 695179d2."
+          },
+          {
+            "label": "Verify host cleanup",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No canonical host audit."
+          }
+        ],
+        "next_gate": "Runtime owner: provide bounded in-game visual evidence if further acceptance is required."
+      },
+      "details": {
+        "overview": "Main installation and archival commits inspected. Packet says no paired review required. Host worktree, process, disk and lock states not inspected.",
+        "ledger": [
+          {
+            "stage": "Asset installation",
+            "status": "verified landed",
+            "evidence": "02f2b285 on main"
+          },
+          {
+            "stage": "Packet archive",
+            "status": "verified landed",
+            "evidence": "695179d2 on main"
+          },
+          {
+            "stage": "Host teardown",
+            "status": "unknown",
+            "evidence": "No host audit"
+          }
+        ],
+        "notes": [],
+        "unknowns": [
+          "Current host state and canonical teardown"
+        ],
+        "actions": [
+          "Runtime owner: obtain direct Hub visual evidence if needed."
+        ]
+      },
+      "related": []
+    },
     {
       "id": "field-scout-playtest-discovery-50f20cd9",
       "headline": "Field Scout playtest route clarified; finding and restoring the buggy still need proof",
@@ -1428,351 +1653,15 @@
         "next_gate": "Implementation owner: verify exact source and host claims, then install and test the approved sprite."
       },
       "related": []
-    },
-    {
-      "id": "pixelplanets-retirement-landed-held-review-761ea680",
-      "headline": "PixelPlanets legacy scene removed; independent review stalls at a provenance gate",
-      "summary": "The obsolete PixelPlanets scene integration and dangling symlink were removed, with deterministic contract smoke coverage added. The implementation packet was archived, but its preserved independent review is held by strict source-scope validation. A separate narrowly scoped correction/review pair has now entered ready/auto metadata.",
-      "body": "The source migration landed at 25a7f6d1 and its implementation packet was archived at 5991a89b. It removes the obsolete PixelPlanets scene dependency while retaining deterministic planet identity and world profiles, and adds a focused smoke test. The preserved independent review did not obtain a PASS: its documented source scope omitted the new smoke and validation-manifest paths, so host pre-launch validation stopped. A dedicated exact-scope attestation correction and independent review were authored at 98c2b7f5 and marked ready/auto at 761ea680. Those states are GitHub metadata, not proof of running or acceptance. No host teardown was verified. Canonical dispatcher totals and fresh private operational observations are unavailable.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "world-procgen",
-      "workstream": "procgen-pixelplanets-legacy-retirement-v1",
-      "occurred_at": "2026-11-05T15:19:02Z",
-      "bullets": [
-        "Legacy 2D planet scene coupling removed in source.",
-        "Implementation packet archived; independent acceptance remains outstanding.",
-        "Original review stopped before launch on two undocumented source paths.",
-        "Exact-scope correction and paired review now ready/auto in GitHub metadata."
-      ],
-      "links": [
-        {
-          "title": "Source migration",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/25a7f6d1c1d6e995d8cefed2a5b0865de481b217"
-        },
-        {
-          "title": "Implementation archival",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/5991a89b7aa52c2fd87d00d3032ed506453e9a54"
-        },
-        {
-          "title": "Correction packet evidence",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/98c2b7f531815617338340c1b683ff84d3dfab5f"
-        },
-        {
-          "title": "Correction ready/auto handoff",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/761ea68008e32305691d15ffd5de546289c6a6b0"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN has removed the obsolete PixelPlanets 2D scene dependency from its procedural-world contract. The implementation is on main and archived, but independent acceptance is still waiting: a strict review gate rejected two source paths that the original packet had not named.",
-        "sections": [
-          {
-            "heading": "The migration is real, not merely queued",
-            "text": "The landed change removes the legacy planet scene and dangling symlink, retains deterministic planet selection and environmental profiles, and adds a focused contract smoke test. The implementation packet was subsequently archived. That establishes a source landing, not an accepted independent review."
-          },
-          {
-            "heading": "A narrow evidence correction is now queued",
-            "text": "The preserved review stopped at host validation before launching its reviewer. A new correction must attest exactly the missing smoke-test and validation-manifest paths without weakening the broader source-integrity gate. Its own independent reviewer is a separate required step. Both correction packets are now marked ready/auto, not verified running."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The blocker is evidence provenance, not a requested planet redesign",
-            "explanation": "The code migration has landed. The immediate obstacle is demonstrating that the exact new validation files belong to the immutable reviewed source span, so a generic retry would not solve it."
-          },
-          {
-            "title": "The correction must itself pass independent scrutiny",
-            "explanation": "A narrowly scoped attestation can unblock the original review only after the correction receives its own genuine independent acceptance. Neither ready/auto metadata nor successful implementation tests substitute for that verdict."
-          }
-        ],
-        "takeaway": "The old scene dependency is removed from main; the independent review remains held pending an exact, separately accepted provenance correction.",
-        "next_watch": "Look for the correction implementation landing, its distinct accepted PASS, then authorized same-run recovery and eventual acceptance of the original PixelPlanets review."
-      },
-      "details": {
-        "overview": "Inspected main at 761ea68008e32305691d15ffd5de546289c6a6b0. Source migration 25a7f6d1; implementation archival 5991a89b; correction pair 98c2b7f5; ready/auto handoff 761ea680. The correction packet reports original review pre-launch source-scope rejection for exactly two paths. No canonical host audit or fresh validated pilot observation; combined status endpoint returned no status entries.",
-        "ledger": [
-          {
-            "stage": "Source implementation",
-            "status": "verified landed",
-            "evidence": "25a7f6d1 removes obsolete scene coupling and adds focused smoke."
-          },
-          {
-            "stage": "Implementation packet archival",
-            "status": "verified GitHub archival",
-            "evidence": "5991a89b moves named packet into archived inventory."
-          },
-          {
-            "stage": "Original independent review",
-            "status": "reported held before launch",
-            "evidence": "98c2b7f5 packet documents exact missing source-path and manifest gates; no PASS."
-          },
-          {
-            "stage": "Attestation correction authoring",
-            "status": "verified",
-            "evidence": "98c2b7f5 adds bounded correction and paired review packets."
-          },
-          {
-            "stage": "Correction handoff",
-            "status": "verified metadata only",
-            "evidence": "761ea680 marks both ready/auto; not a host claim."
-          },
-          {
-            "stage": "Independent correction acceptance",
-            "status": "unknown",
-            "evidence": "No passing independent receipt inspected."
-          },
-          {
-            "stage": "Canonical cleanup",
-            "status": "unknown",
-            "evidence": "No host teardown evidence."
-          }
-        ],
-        "notes": [
-          "The latest private pilot pointer was accessible but its 2026-11-04 observation is stale for this run; no operational counts used."
-        ],
-        "unknowns": [
-          "Current dispatcher-wide packet totals, claims and running processes.",
-          "Actual host execution, original review outcome and canonical teardown.",
-          "Current CI workflow conclusions; combined status API has no entries."
-        ],
-        "actions": [
-          "Correction owner: land the exact-source attestation and obtain a separate independent accepted PASS before requesting protected original-review recovery."
-        ]
-      },
-      "scorecard": {
-        "stage": "Migration landed; independent review held",
-        "as_of": "2026-11-05T15:19:02Z",
-        "scope": "Named PixelPlanets retirement and provenance-correction workstreams; GitHub evidence only",
-        "metrics": [
-          {
-            "id": "correction_packets_ready_metadata",
-            "label": "CORRECTION PACKETS READY",
-            "value": 2,
-            "verification": "verified",
-            "basis": "Two named correction/review packet metadata records changed to ready/auto; not dispatcher-wide",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/761ea68008e32305691d15ffd5de546289c6a6b0"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Land legacy scene migration",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "25a7f6d1"
-          },
-          {
-            "label": "Archive implementation packet",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "5991a89b"
-          },
-          {
-            "label": "Original independent review",
-            "status": "blocked",
-            "verification": "reported",
-            "evidence": "Held by exact source-scope pre-launch gate documented at 98c2b7f5"
-          },
-          {
-            "label": "Land exact-scope correction",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Only packet handoff verified"
-          },
-          {
-            "label": "Accept correction independently",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No independent PASS"
-          },
-          {
-            "label": "Recover and accept original review",
-            "status": "blocked",
-            "verification": "unknown",
-            "evidence": "Requires separate authorization and correction PASS"
-          },
-          {
-            "label": "Verify canonical teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No host evidence"
-          }
-        ],
-        "next_gate": "Correction owner: land exact-source attestation, then obtain independent correction PASS before any original-review recovery."
-      },
-      "related": [
-        {
-          "title": "PixelPlanets retirement enters the automatic task queue, with review still gated",
-          "context": "Earlier handoff story described eligibility before the actual migration landed.",
-          "story_id": "pixelplanets-retirement-ready-a9ee71d7"
-        }
-      ]
-    },
-    {
-      "id": "pixelplanets-retirement-ready-a9ee71d7",
-      "headline": "PixelPlanets retirement enters the automatic task queue, with review still gated",
-      "summary": "Two new procgen packets now mark the obsolete PixelPlanets scene retirement and its independent review as ready/auto. This is a dispatch eligibility change, not evidence that either job ran or that legacy files were removed.",
-      "body": "A new implementation/review packet pair targets the old PixelPlanets 2D scene dependency and tracked dangling symlink while preserving deterministic planet contracts, six world profiles and the separate procedural 3D terminal globe. Commit a9ee71d7 promotes both packets from draft/manual to ready/auto and updates the packet index. The review depends on implementation landing and archival. No actual source migration, claim, host execution, passing review, or cleanup is established by these commits. Canonical dispatcher totals and fresh pilot observation remain unavailable.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "world-procgen",
-      "workstream": "procgen-pixelplanets-legacy-retirement-v1",
-      "occurred_at": "2026-11-05T14:24:14Z",
-      "bullets": [
-        "Two named packets promoted to ready/auto in GitHub metadata.",
-        "Implementation removes obsolete 2D scene dependency without changing seeded planet identity.",
-        "Independent review remains gated on landed and archived implementation.",
-        "No host claim, runtime change or accepted review verified."
-      ],
-      "links": [
-        {
-          "title": "Retirement and review packets authored",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/4721b7ea6ac121de2329f1ea25ecfa883370ae3f"
-        },
-        {
-          "title": "Ready/auto handoff",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/a9ee71d72fbbf20f5a485cc2cb0bdf6614ee4381"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN has queued a targeted cleanup of its obsolete PixelPlanets integration. The implementation and independent-review tasks are now marked ready for automatic dispatch, but the change is a handoff, not a completed migration.",
-        "sections": [
-          {
-            "heading": "Retire the old scene, preserve the planets",
-            "text": "The proposed migration removes an obsolete 2D scene dependency and a tracked dangling symlink. It must preserve all six planet profiles, deterministic seed selection and the separately rendered 3D globe in the terminal."
-          },
-          {
-            "heading": "Ready is not running",
-            "text": "GitHub metadata now labels both packets ready/auto. The implementation has no declared packet dependency, while the review explicitly waits for the implementation to land and archive. No live dispatcher claim, execution or review receipt was observed."
-          }
-        ],
-        "insights": [
-          {
-            "title": "A bounded cleanup avoids a planet redesign",
-            "explanation": "The packet confines the work to removing legacy resource coupling. The actual procedural world and terminal presentation are meant to remain behaviorally identical."
-          },
-          {
-            "title": "Automatic eligibility does not bypass independent review",
-            "explanation": "The paired review has its own acceptance gate, so a successful implementation commit would still leave a separate verification step."
-          }
-        ],
-        "takeaway": "The retirement workflow is authored and marked eligible, but neither the removal nor independent acceptance is verified.",
-        "next_watch": "Watch for a canonical implementation claim, landed fixed-seed parity evidence and then a distinct independent review receipt."
-      },
-      "details": {
-        "overview": "Main inspected at a9ee71d72fbbf20f5a485cc2cb0bdf6614ee4381. 4721b7ea authors two draft/manual packets; dd87d3d repairs metadata; a9ee71d7 promotes both to ready/auto. Combined status endpoint has no checks. No canonical host audit or fresh validated private observation.",
-        "ledger": [
-          {
-            "stage": "Packet authoring",
-            "status": "verified",
-            "evidence": "4721b7ea: implementation and review packets added."
-          },
-          {
-            "stage": "Automatic handoff metadata",
-            "status": "verified",
-            "evidence": "a9ee71d7: both packets ready/auto; review retains implementation dependency."
-          },
-          {
-            "stage": "Implementation and regression validation",
-            "status": "not established",
-            "evidence": "No migration or focused test evidence in inspected changes."
-          },
-          {
-            "stage": "Independent acceptance",
-            "status": "unknown",
-            "evidence": "No independent review receipt."
-          },
-          {
-            "stage": "Host execution and canonical teardown",
-            "status": "unknown",
-            "evidence": "No fresh host evidence."
-          }
-        ],
-        "notes": [
-          "Ready/auto is a packet metadata state, not proof of execution."
-        ],
-        "unknowns": [
-          "Canonical dispatcher eligibility and host claim state.",
-          "CI checks, runtime parity and cleanup evidence."
-        ],
-        "actions": [
-          "Dispatcher owner: establish legitimate implementation claim and bounded validation before paired review."
-        ]
-      },
-      "scorecard": {
-        "stage": "Packet ready; implementation not verified",
-        "as_of": "2026-11-05T14:45:10Z",
-        "scope": "Two named PixelPlanets retirement packets on inspected main",
-        "metrics": [
-          {
-            "id": "packets_ready_metadata",
-            "label": "READY PACKETS (NAMED)",
-            "value": 2,
-            "verification": "verified",
-            "basis": "Two specific packet files changed to ready/auto in a9ee71d7; not a dispatcher-wide count",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/a9ee71d72fbbf20f5a485cc2cb0bdf6614ee4381"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Author implementation and review packets",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "4721b7ea"
-          },
-          {
-            "label": "Promote packet metadata",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "a9ee71d7"
-          },
-          {
-            "label": "Canonical implementation claim and execution",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No host audit"
-          },
-          {
-            "label": "Land and archive migration",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No landed migration evidence"
-          },
-          {
-            "label": "Independent review acceptance",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Depends on landed implementation"
-          },
-          {
-            "label": "Canonical teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No host receipts"
-          }
-        ],
-        "next_gate": "Dispatcher owner: verify eligibility and claim the implementation through the canonical lifecycle."
-      },
-      "related": []
     }
   ],
   "snapshot": {
-    "observed_at": "2026-11-06T21:24:49Z",
-    "source_main_sha": "95f1c7130c5dd819577c64a3cbafc9bcd9aeef65",
+    "observed_at": "2026-11-07T07:47:12Z",
+    "source_main_sha": "abcf35bf5518259162a6547a87ce7a7297279b5a",
     "coverage": "partial",
-    "scope": "Two named Crèche packet transitions inspected on GitHub; no full dispatcher audit or fresh validated pilot observation.",
-    "metrics": [
-      {
-        "id": "ready_auto",
-        "label": "NAMED CUTOVER READY",
-        "value": 1,
-        "verification": "verified",
-        "basis": "One inspected downstream Crèche cutover packet declares ready/auto on main; not a global ready count or dispatcher eligibility",
-        "url": "https://github.com/braydio/CUSTODIAN/commit/95f1c7130c5dd819577c64a3cbafc9bcd9aeef65"
-      }
-    ],
-    "focus": "Verify Crèche cutover packet dependency and exact LFS hydration before runtime integration.",
-    "note": "Source-only Crèche workstream archived; operational counts unavailable because the private pilot pointer is stale and no canonical host audit was inspected."
+    "scope": "Inspected named Sepulcher art and finish-first policy commits on GitHub; no full dispatcher audit or fresh validated pilot observation.",
+    "metrics": [],
+    "focus": "Correct blocked selected-workstream general fallback under protected review.",
+    "note": "Memorial slab archived; finish-first guidance landed but enforcement gap remains. Private pilot pointer last modified Nov 4 and not accepted as fresh."
   }
 }
