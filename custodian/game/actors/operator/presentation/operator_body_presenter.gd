@@ -28,6 +28,9 @@ enum Owner {
 	VIGIL_POSTURE_TRANSITION,
 	VIGIL_FAST_STARTUP,
 	VIGIL_GUARD,
+	## Dev-only playable preview of corrected 3D-rendered candidates. Appended last so
+	## existing owner values are unchanged. Never acquired by gameplay code.
+	PREVIEW_3D_CANDIDATE,
 }
 
 ## Owners whose rig is a complete authored body composition. While one holds the
