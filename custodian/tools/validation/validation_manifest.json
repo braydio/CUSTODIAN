@@ -5455,6 +5455,29 @@
       "needs_import": true
     },
     {
+      "id": "awakening_music_smoke",
+      "type": "godot_script",
+      "script": "res://tools/validation/awakening_music_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "awakening",
+        "audio",
+        "scene_lifecycle"
+      ],
+      "owners": [
+        "custodian/autoload/music_manager.gd",
+        "custodian/game/world/awakening/awakening_music_director.gd",
+        "custodian/game/world/awakening/awakening_first_return.gd",
+        "custodian/game/systems/world/world_transition_manager.gd",
+        "custodian/scenes/awakening_first_return.tscn",
+        "custodian/content/audio/music/awakening/**",
+        "custodian/tools/validation/awakening_music_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 60,
+      "needs_import": true
+    },
+    {
       "id": "awakening_first_return",
       "type": "godot_script",
       "script": "res://tools/validation/awakening_first_return_smoke.gd",
@@ -5678,6 +5701,9 @@
         "authority"
       ],
       "owners": [
+        "custodian/autoload/music_manager.gd",
+        "custodian/game/world/awakening/awakening_music_director.gd",
+        "custodian/content/audio/music/awakening/**",
         "custodian/project.godot",
         "custodian/game/app/boot/runtime_entrypoint.gd",
         "custodian/game/systems/world/world_transition_*.gd",

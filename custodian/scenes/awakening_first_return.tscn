@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://fxo77x8sii2s"]
 
 [ext_resource type="Script" uid="uid://i5sl1dpc4fyt" path="res://game/world/awakening/awakening_first_return.gd" id="1_awakening"]
+[ext_resource type="Script" path="res://game/world/awakening/awakening_music_director.gd" id="2_awakening_music"]
 [ext_resource type="PackedScene" uid="uid://d3xbaxlif3364" path="res://game/actors/operator/operator.tscn" id="3_operator"]
 [ext_resource type="Script" uid="uid://cyoadqv7g5hc6" path="res://game/world/camera.gd" id="4_camera"]
 [ext_resource type="Script" uid="uid://bqt6lkdd6nniw" path="res://game/systems/core/player_controller.gd" id="5_player_controller"]
@@ -251,3 +252,6 @@ position = Vector2(0, 160)
 script = ExtResource("4_camera")
 
 [node name="CustodianHUD" parent="." unique_id=158560382 instance=ExtResource("8_hud")]
+
+[node name="AwakeningMusicDirector" type="Node" parent="."]
+script = ExtResource("2_awakening_music")

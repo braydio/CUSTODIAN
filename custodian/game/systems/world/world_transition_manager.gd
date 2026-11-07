@@ -322,6 +322,8 @@ func _run_transition(request: WorldTransitionRequest) -> void:
 	active_context_root = target_root
 	active_world_root = target_world
 	current_context = HUB_CONTEXT
+	if source_root.has_method("complete_hub_handoff"):
+		source_root.call("complete_hub_handoff")
 	source_root.queue_free()
 	await get_tree().process_frame
 	if is_instance_valid(source_root) or count_authoritative_worlds() != 1:

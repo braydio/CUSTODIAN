@@ -336,6 +336,12 @@ Last updated: 2026-10-02
 - `custodian/content/metadata/assets/families/twin_solaria_v1_environment.asset.json` and `twin_solaria_v1_fidelity_underlay.asset.json` — current Asset V2 contracts for the eight required gameplay plates and temporary fidelity underlay; consumers intentionally remain unbound until the production runtime packet.
 - `custodian/content/levels/hub/twin_solaria/v1/` — current-pipeline runtime copies of the eight exact 2048×1536-source gameplay plates and exact fidelity underlay; no standalone V1-A Node2D runtime is published.
 
+## Audio Ownership
+
+- `custodian/autoload/music_manager.gd` — authoritative two-deck playback, crossfades, scoped music leases, playlist snapshots, and independently managed ducks; scoped release restores the snapshot by default, with an explicit no-restore option for committed Awakening-to-Hub handoff.
+- `custodian/game/world/awakening/awakening_music_director.gd` and `custodian/content/audio/music/awakening/audio_handoff_manifest.json` — Awakening cue catalog/scene lease adapter and specialized audio source/runtime provenance; no duplicate player or image Asset V2 intake.
+- `design/02_features/audio/AWAKENING_FIRST_RETURN_SCORE_INTEGRATION.md` and `custodian/tools/validation/awakening_music_smoke.gd` — score lifecycle contract and focused runtime ownership regression.
+
 ## Active Runtime Systems
 
 - `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md` — canonical tracked 11-slice procgen generation/streaming optimization program, including dependencies, invariants, per-slice status/evidence, and mandatory roadmap reconciliation at slice closeout.
