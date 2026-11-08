@@ -113,8 +113,10 @@ enemy position and velocity, root and shadow positions, visible body count and d
 
 - The idle is a labelled fallback, not an authored 3D idle.
 - Attacks and reactions show the held locomotion pose. They are not authored in this preview.
-- The combat playground spawns ally drones that log `combat_drone.gd:602` null `add_child` errors. This
-  is pre-existing playground behaviour and is not caused by the candidate.
+- Ally drones in the playground log `combat_drone.gd:602` null `add_child` errors when they fire. The
+  drone's fallback path needs `/root/GameRoot/World/Projectiles` or `get_tree().current_scene`. The playground
+  has no `World/Projectiles` node, and this preview is not the current scene. The candidate does not
+  cause it. The playground alone logs none in 300 frames, so the errors appear only once drones engage.
 - Direction naming (`S` faces the camera, `E` is screen-right) follows the render camera convention.
   It is verified only by the capture screenshots, not by an automated check.
 - The source metadata labels endpoint and root residual values as metres. They are armature-local units
