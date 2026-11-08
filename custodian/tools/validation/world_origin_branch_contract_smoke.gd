@@ -8,6 +8,7 @@ const REQUIRED_ORIGIN_BRANCHES := [
 	"NavigationDebug",
 	"Sectors",
 	"Enemies",
+	"Ambient", # Ambient actors belong to the original generated world.
 	"SpawnNodes",
 	"Projectiles",
 	"Allies",
@@ -30,6 +31,7 @@ const PERSISTENT_WORLD_NODES := [
 	"CanvasModulate",
 	"DirectionalLight2D",
 	"WorldLightingDirector",
+	"WorldEnvironmentDirector", # Climate/clock owner persists across authored routes.
 	"Operator",
 	"PlayerController",
 	"Camera2D",

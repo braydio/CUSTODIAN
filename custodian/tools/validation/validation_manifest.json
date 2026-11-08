@@ -4657,6 +4657,26 @@
       "needs_import": true
     },
     {
+      "id": "world_origin_branch_contract",
+      "type": "godot_script",
+      "script": "res://tools/validation/world_origin_branch_contract_smoke.gd",
+      "tier": "unit",
+      "tags": [
+        "world_origin",
+        "route",
+        "scene_contract"
+      ],
+      "owners": [
+        "custodian/scenes/game.tscn",
+        "custodian/game/world/levels/level_loader.gd",
+        "custodian/game/systems/core/systems/contract_world_loader.gd",
+        "custodian/tools/validation/world_origin_branch_contract_smoke.gd",
+        ".github/workflows/godot-level-pipeline.yml"
+      ],
+      "timeout_sec": 60,
+      "needs_import": true
+    },
+    {
       "id": "procgen_showcase_gallery_shell",
       "type": "godot_script",
       "script": "res://tools/validation/levels/procgen_showcase_gallery_shell_smoke.gd",
