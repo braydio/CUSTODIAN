@@ -1,9 +1,164 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-08T14:21:47Z",
-  "source_main_sha": "98314aa169095b812817e968fced521c5c9339c2",
+  "generated_at": "2026-11-08T18:44:38Z",
+  "source_main_sha": "5b74eb565b47b1b9c7f7edcf4fadffc1e65f62db",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "presentation-libraries-plan-e217115f",
+      "headline": "Four presentation libraries enter CUSTODIAN's task queue, with first implementation packets ready",
+      "summary": "CUSTODIAN added plans and 26 paired implementation/review packets across rope and cloth, sprite normal/height maps, visual hitbox inspection, and weather presentation. A subsequent handoff marked four implementation packets and their paired reviews ready. These are planning and dispatch-state changes, not finished features or accepted reviews.",
+      "body": "The main branch now documents four presentation libraries divided into 13 implementation workstreams with 13 paired independent-review packets. Rope/cloth targets deterministic motion; surface maps target reproducible lighting inputs; the hitbox lab targets visual inspection of combat contact; weather V2 targets layered presentation without altering V1 scheduling by default. A later automatic handoff promoted four initial implementation packets and their four paired reviews from draft/manual to ready/auto. Ready indicates packet eligibility metadata, not a claimed worker, executed implementation, or independent PASS. The review packets remain dependent on their implementation workstreams. No canonical dispatcher audit or host process evidence was available. The separate WIRE private pointer is stale and its exact referenced bytes were not validated, so no operational totals were imported.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "",
+      "occurred_at": "2026-11-08T18:00:39Z",
+      "bullets": [
+        "Four library designs and 13 implementation/review pairs landed as plans.",
+        "Four first-stage implementations and their four paired reviews changed to ready/auto.",
+        "No evidence establishes execution, accepted review, or host teardown.",
+        "Next gate: verify first-stage implementation landings and independent review receipts."
+      ],
+      "links": [
+        {
+          "title": "Four library designs and paired packets",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/e217115f5369e8b1e968b16e5e6fef3a7c46cac8"
+        },
+        {
+          "title": "Automatic packet handoff",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/5b74eb565b47b1b9c7f7edcf4fadffc1e65f62db"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN has laid out a new layer of visual tooling: animated rope and cloth, more expressive surface lighting, frame-accurate hitbox inspection, and richer weather. The plans now have paired implementation and review packets, and the first packets have been marked ready for dispatch.",
+        "sections": [
+          {
+            "heading": "Four libraries, different kinds of polish",
+            "text": "Rope and cloth would add deterministic environmental motion. Normal and height maps would improve how approved sprites respond to light. A hitbox lab would expose attack reach and contact timing without changing combat. Weather V2 would expand visual effects while preserving existing weather behavior by default."
+          },
+          {
+            "heading": "The queue has advanced, not the runtime",
+            "text": "The planning commit created 13 implementation packets and 13 matching independent reviews. A follow-up handoff marked four initial implementations and their four paired reviews ready/auto. That is a documented dispatch-state change, not evidence of a worker claim, a completed feature, or a passing review."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Review is designed into each feature",
+            "explanation": "Every implementation has a separate review packet, making acceptance a distinct gate instead of treating landed code as finished."
+          },
+          {
+            "title": "The initial work is deliberately foundational",
+            "explanation": "The four promoted implementations establish core solvers, data contracts or probes before dependent visual integration. Later stages remain gated on predecessor evidence."
+          }
+        ],
+        "takeaway": "The presentation roadmap is materially broader and the first packet states have advanced, but feature delivery and independent acceptance are still unproven.",
+        "next_watch": "Watch for an actual first-stage implementation landing, focused validation, and a separate independent review receipt."
+      },
+      "scorecard": {
+        "stage": "Planned; initial packets ready, execution unverified",
+        "as_of": "2026-11-08T18:44:38Z",
+        "scope": "13 new implementation packets and 13 paired reviews introduced in one planning commit; eight status promotions in the next commit, not full dispatcher inventory",
+        "metrics": [
+          {
+            "id": "planned-pairs",
+            "label": "NEW PAIRED WORKSTREAMS",
+            "value": 13,
+            "verification": "verified",
+            "basis": "13 implementation plus 13 review packet files in e217115f; scoped to this commit only",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/e217115f5369e8b1e968b16e5e6fef3a7c46cac8"
+          },
+          {
+            "id": "ready-promotions",
+            "label": "PACKETS PROMOTED READY",
+            "value": 8,
+            "verification": "verified",
+            "basis": "Four implementation and four review packet status changes in 5b74eb56; review dependency still applies",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/5b74eb565b47b1b9c7f7edcf4fadffc1e65f62db"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Library designs and paired packets authored",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "e217115f creates four design documents and 26 packet files."
+          },
+          {
+            "label": "Initial packet handoff",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "5b74eb56 marks four implementation and four paired review packets ready/auto."
+          },
+          {
+            "label": "Initial implementation and focused tests",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No corresponding implementation landing or focused test result inspected."
+          },
+          {
+            "label": "Independent paired review",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No independent PASS receipts inspected."
+          },
+          {
+            "label": "Dependent visual integration and human review",
+            "status": "blocked",
+            "verification": "reported",
+            "evidence": "Later packets specify predecessor review and visual acceptance dependencies."
+          }
+        ],
+        "next_gate": "Implementation owners: land and validate the initial library foundations before independent reviewers assess them."
+      },
+      "details": {
+        "overview": "Inspected main commits e217115f and 5b74eb56. The former creates 26 task packet files and four architecture/roadmap documents; the latter changes eight packet statuses and updates the managed index. GitHub combined status returned no status contexts for the latter. Private pilot pointer observed_at is 2026-11-08T13:40:47Z, beyond the 600-second freshness window at this check; no pilot counts used.",
+        "ledger": [
+          {
+            "stage": "Plans and packet authoring",
+            "status": "verified landed",
+            "evidence": "e217115f on main"
+          },
+          {
+            "stage": "First packet promotion",
+            "status": "verified metadata change",
+            "evidence": "5b74eb56 on main"
+          },
+          {
+            "stage": "Implementation execution",
+            "status": "unknown",
+            "evidence": "Ready is not a host claim or process observation"
+          },
+          {
+            "stage": "Validation",
+            "status": "unknown",
+            "evidence": "No focused PASS inspected"
+          },
+          {
+            "stage": "Independent acceptance",
+            "status": "unknown",
+            "evidence": "No PASS receipt inspected"
+          },
+          {
+            "stage": "Canonical cleanup",
+            "status": "unknown",
+            "evidence": "No host evidence"
+          }
+        ],
+        "notes": [
+          "Counts are bounded to files and status changes in two commits, not a dispatcher-wide queue."
+        ],
+        "unknowns": [
+          "Full dispatcher counts, active claims, host worktrees and disk usage",
+          "CI workflow conclusions and accepted independent review"
+        ],
+        "actions": [
+          "Verify first implementation landing and focused validation before reporting delivery."
+        ]
+      },
+      "related": []
+    },
     {
       "id": "procgen-tilesetless-ingress-98314aa1",
       "headline": "Procgen ingress gets a coordinate fix for maps without a TileSet",
@@ -1465,152 +1620,6 @@
         "actions": [
           "Runtime owner: obtain direct Hub visual evidence if needed."
         ]
-      },
-      "related": []
-    },
-    {
-      "id": "field-scout-playtest-discovery-50f20cd9",
-      "headline": "Field Scout playtest route clarified; finding and restoring the buggy still need proof",
-      "summary": "New CUSTODIAN documentation explains why the Field Scout does not appear in the default Awakening launch and how to enter its Contract sandbox. It also exposes unresolved gameplay gaps: the wreck may not be placed within reach, uses placeholder hover art, and charges raw resources instead of the approved fabricated assemblies. These are documented limitations, not new runtime fixes.",
-      "body": "Main commits 389df928 and 50f20cd9 update the current-state guide and Godot app README. The default F5 project run starts Awakening, which has no Field Scout; the authored wreck is in the Contract sandbox, entered through the explicit --custodian-start=contract-sandbox argument. F6 runs a selected scene rather than the project entrypoint. The vehicle loader seeks eligible parking, road or compound tiles but may leave the authored position when no candidate passes filtering. No fixed-seed reachability receipt was inspected. The wreck begins disabled, still renders hover compatibility frames, and uses a raw-resource recovery profile instead of the approved three fabricated assemblies. Existing recovery correction/review, Asset V2 vehicle family and vehicle-placement extraction packets own these gaps. Both new commits are documentation-only; no gameplay fix, independent review, canonical teardown or live host execution was established.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "general",
-      "workstream": "vehicle-field-scout-buggy-asset-v2",
-      "occurred_at": "2026-11-07T01:35:54Z",
-      "bullets": [
-        "Default Awakening launch does not spawn the Scout; explicit Contract sandbox mode is needed",
-        "F5 runs project entrypoint; F6 runs the selected scene",
-        "Generated placement can fail to make the wreck discoverable",
-        "Placeholder hover art and raw-resource restoration remain unresolved",
-        "Next gate: bounded fixed-seed runtime discovery and reachability evidence"
-      ],
-      "links": [
-        {
-          "title": "Scout discovery and queued blockers",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/389df9281d41869992e0d4de39143e4dc9fd9652"
-        },
-        {
-          "title": "Corrected F5/F6 playtest guidance",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/50f20cd9efa6b73ab94e91049e9675b738311cc6"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN now explains how to find its first Field Scout buggy, and why players may still miss it. The vehicle belongs to a development-only Contract sandbox, not the default Awakening opening. New guidance also makes clear that spawning the wreck, seeing the right artwork and restoring it as designed are three different unfinished hurdles.",
-        "sections": [
-          {
-            "heading": "The right door into the sandbox",
-            "text": "The normal project launch opens Awakening, which has no Scout. An explicit Contract sandbox startup argument loads the scene containing the vehicle. The docs now distinguish Godot's F5 project run from F6's current-scene run, preventing a misleading playtest."
-          },
-          {
-            "heading": "A vehicle can exist without being discoverable",
-            "text": "The generated world attempts to relocate the authored wreck to eligible parking, road or compound space. If no tile qualifies, its original scene position can remain. Existing smoke tests do not establish that a player can find the Scout at a fixed seed."
-          },
-          {
-            "heading": "The wreck is not yet its final form",
-            "text": "The Scout starts disabled and uses placeholder hover art instead of its approved wheeled body. Its current repair recipe consumes raw resources rather than the three fabricated assemblies required by the approved restoration design. Separate queued workstreams own these changes."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Scene presence is not a playable encounter",
-            "explanation": "A node in the Godot scene tree proves neither that it lands on reachable terrain nor that players can discover it. The next useful proof is a fixed-seed runtime placement and reachability test."
-          },
-          {
-            "title": "Restoration and presentation are separate gates",
-            "explanation": "A working vehicle class does not establish the approved visual identity or resource economy. The Asset V2 family and recovery correction need their own implementation and review evidence."
-          }
-        ],
-        "takeaway": "The playtest route is documented more accurately, but this is not a new gameplay implementation or accepted Scout release.",
-        "next_watch": "Watch for a fixed-seed placement/reachability receipt, the fabricated-assembly recovery correction and canonical wheeled-body asset integration."
-      },
-      "details": {
-        "overview": "Commits 389df928 and 50f20cd9 modify only current-state documentation and custodian/game/app/README.md. Latest inspected main SHA 50f20cd9efa6b73ab94e91049e9675b738311cc6. Combined commit statuses returned no checks, which is not proof of passing CI. The private pilot pointer is older than the current observation window; no pilot counts used.",
-        "ledger": [
-          {
-            "stage": "Playtest documentation",
-            "status": "verified landed",
-            "evidence": "Both documentation commits on main."
-          },
-          {
-            "stage": "Runtime Scout class",
-            "status": "previously documented; not revalidated here",
-            "evidence": "Existing class/restoration smokes are described in current-state docs, not rerun."
-          },
-          {
-            "stage": "Guaranteed reachable placement",
-            "status": "unverified",
-            "evidence": "No fixed-seed runtime reachability evidence; fallback may retain authored position."
-          },
-          {
-            "stage": "Approved restoration recipe",
-            "status": "documented mismatch",
-            "evidence": "Current raw-resource profile differs from approved three-assembly R1 SERVICE."
-          },
-          {
-            "stage": "Canonical wheeled art",
-            "status": "not integrated",
-            "evidence": "Compatibility hover frames remain documented."
-          },
-          {
-            "stage": "Independent review and teardown",
-            "status": "unknown",
-            "evidence": "No independent acceptance or host audit inspected."
-          }
-        ],
-        "notes": [
-          "F5 runs the project; F6 runs the selected scene.",
-          "Production Awakening is not the Contract sandbox."
-        ],
-        "unknowns": [
-          "Live runtime placement and visibility",
-          "Review receipts for the queued correction and asset integration",
-          "Current host claims, locks, worktrees and disk"
-        ],
-        "actions": [
-          "Runtime owner: with separate authorization, run bounded fixed-seed Contract sandbox placement/reachability validation.",
-          "Recovery/asset owners: implement existing correction and Asset V2 packets, then obtain applicable independent acceptance."
-        ]
-      },
-      "scorecard": {
-        "stage": "Documentation landed; runtime discoverability and approved presentation pending",
-        "as_of": "2026-11-07T01:42:27Z",
-        "scope": "Named Field Scout gameplay integration only; no full dispatcher audit",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Document correct playtest route",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Main commits 389df928 and 50f20cd9."
-          },
-          {
-            "label": "Verify fixed-seed reachable placement",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No placement receipt or reachability regression."
-          },
-          {
-            "label": "Correct fabricated-assembly restoration",
-            "status": "blocked",
-            "verification": "reported",
-            "evidence": "Existing recovery correction/review pair owns mismatch."
-          },
-          {
-            "label": "Integrate canonical wheeled art",
-            "status": "next",
-            "verification": "reported",
-            "evidence": "Asset V2 packet owns the body family."
-          },
-          {
-            "label": "Independent review and canonical teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No receipt or host audit."
-          }
-        ],
-        "next_gate": "Authorized runtime owner: establish reproducible fixed-seed Scout discoverability before claiming a playable encounter."
       },
       "related": []
     }
