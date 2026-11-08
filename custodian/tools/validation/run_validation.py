@@ -41,7 +41,9 @@ RESULT_PREFIX = "CUSTODIAN_TEST_RESULT_JSON:"
 EXIT_CONFIG, EXIT_PREFLIGHT, EXIT_FAILED, EXIT_TIMEOUT, EXIT_COVERAGE = 2, 3, 4, 5, 6
 EXIT_LOCK = 7
 TAIL_LINES = 40
-IMPORT_TIMEOUT_SEC = 120
+# Hydrated production projects need time to import their actual LFS textures/audio.
+# A real CI import exceeded 200 seconds; keep a bounded six-minute ceiling.
+IMPORT_TIMEOUT_SEC = 360
 FATAL_DIAGNOSTICS = (
     re.compile(r"\bERROR:"),
     re.compile(r"\bSCRIPT ERROR:"),
