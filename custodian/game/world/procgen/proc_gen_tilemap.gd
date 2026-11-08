@@ -11865,9 +11865,18 @@ func _add_horizontal_wall_endcap_sprite(parent: Node2D, region: Rect2, position:
 
 
 func _global_to_tile(global_position: Vector2) -> Vector2i:
-	if floor_tilemap != null:
-		return floor_tilemap.local_to_map(floor_tilemap.to_local(global_position))
-	return Vector2i.ZERO
+	if floor_tilemap == null:
+		return Vector2i.ZERO
+	var local_position := floor_tilemap.to_local(global_position)
+	# Candidate evaluation can lack a hydrated visual TileSet. Convert through
+	# the same native-32px structural grid used by minimap_tile_to_global().
+	if floor_tilemap.tile_set == null:
+		var tile_size := _get_tile_size()
+		return Vector2i(
+			floori(local_position.x / tile_size.x),
+			floori(local_position.y / tile_size.y)
+		)
+	return floor_tilemap.local_to_map(local_position)
 
 
 func global_to_minimap_tile(global_position: Vector2) -> Vector2i:
