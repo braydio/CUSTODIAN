@@ -3,8 +3,8 @@
 - Workstream: `rope-cloth-fixed-step-core-v1`
 - Category: `world-procgen`
 - Kind: `implementation`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P1`
 - Depends on: `none`

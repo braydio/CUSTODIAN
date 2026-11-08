@@ -3,8 +3,8 @@
 - Workstream: `review-weather-v2-presentation-contract-v1`
 - Category: `assets-art`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P1`
 - Depends on: `weather-v2-presentation-contract-v1`

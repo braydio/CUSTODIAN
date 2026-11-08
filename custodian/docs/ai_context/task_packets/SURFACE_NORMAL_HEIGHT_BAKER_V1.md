@@ -3,8 +3,8 @@
 - Workstream: `surface-normal-height-baker-v1`
 - Category: `assets-art`
 - Kind: `implementation`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P2`
 - Depends on: `none`

@@ -3,8 +3,8 @@
 - Workstream: `review-visual-hitbox-lab-runtime-probe-v1`
 - Category: `tools-ux`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P1`
 - Depends on: `visual-hitbox-lab-runtime-probe-v1`
