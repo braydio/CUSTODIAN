@@ -53,11 +53,17 @@ permissions:
 jobs:
   authored-level-lifecycle:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    # Full project import requires materializing the tracked Git LFS assets.
+    timeout-minutes: 45
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Verify Godot asset hydration
+        run: python3 custodian/tools/pipelines/godot_import_preflight.py --project-dir custodian
 
       - name: Install Godot 4.7
         uses: chickensoft-games/setup-godot@v2
