@@ -1,0 +1,42 @@
+# SURFACE MATERIAL LAB: NORMAL & HEIGHT MAPS | SOURCE-SAFE DETERMINISTIC MAP BAKER
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `surface-normal-height-baker-v1`
+- Category: `assets-art`
+- Kind: `implementation`
+- Status: `draft`
+- Dispatch: `manual`
+- Authoring handoff: `auto`
+- Priority: `P2`
+- Depends on: `none`
+- Locks: `surface-map-baker`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, architecture, asset-pipeline`
+- Paired review workstream: `review-surface-normal-height-baker-v1`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Review rationale: The reusable library boundary and source/geometry invariants require fresh-context independent falsification.
+- Reviewed main: `ebfe3810eec146d7202a4378324b0f32c9e12fee`
+- Authoring chat: `not-recorded`
+- Visual review: `conditional`
+- Goal: Create a testable, reproducible normal/height-map baker from approved source art without publishing or changing runtime assets.
+- Completion boundary: Two synthetic relief fixtures and one selected real approved input yield repeatable byte-identical maps; same width/height/frame grid/alpha masks, no channel overflow or matte, intentional flat-height produces neutral normal, corrupted/ambiguous path is refused, runtime unchanged.
+- Current measured state: 2D lighting and asset intake exist; no verified production normal-height map authoring utility or accepted height-source contract exists.
+- Evidence: Main@ebfe3810eec146d7202a4378324b0f32c9e12fee; WorldLightingDirector, LightingProfile, LightRig2D and Godot 4.7 CanvasItem rendering exist. Existing asset import is non-Operator Asset V2 and Operator specialized Workbench. Search did not establish any authored production-normal/heightmap pipeline; .png.import normal-map fields are import metadata, not proof of real approved surface maps.
+- Task-specific authority: design/04_architecture/SPRITE_NORMAL_HEIGHT_MAP_LIBRARY_V1.md; design/04_architecture/ASSET_PIPELINE_V2.md; design/02_features/lighting/CUSTODIAN_LIGHTING_SYSTEM.md.
+- Work surface: New custodian/tools/art/surface_map_baker/ CLI/service, reports and ignored .ai/surface_material_lab/ samples; inspect current Asset V2 and pixel art normalization helpers.
+- Publication inputs: `design/04_architecture/SPRITE_NORMAL_HEIGHT_MAP_LIBRARY_V1.md`
+- Change: Add strict source hash + geometry verification, optional grayscale relief input, signed normal-gradient conversion, alpha/edge safety, nearest-neighbor pixel semantics, reproducible PNG/JSON outputs and three read-only comparison modes. Expose inspect/plan/bake/report with dry-run; never mutate approved diffuse/input files.
+- Preserve: Original RGBA source masters and canonical runtime names, Operator source/animation authority, Asset V2 family schema and catalog, light rig behavior, nearest-neighbor pixel art, collision/traversal and no per-tile unique materials.
+- Non-goals: No replacement for 3D sculpting, no automatic artistic approval, no true geometry displacement, no global lighting rewrite, no per-frame lighting animation authored in source PNGs, no gameplay changes.
+- Acceptance: Two synthetic relief fixtures and one selected real approved input yield repeatable byte-identical maps; same width/height/frame grid/alpha masks, no channel overflow or matte, intentional flat-height produces neutral normal, corrupted/ambiguous path is refused, runtime unchanged.
+- Validation: custodian/tools/validation/asset_pipeline_cli_ux_smoke.py; custodian/tools/validation/asset_workbench_review_smoke.py; new pure baker gradient/channel/hash/alpha tests; changed-file validation.
+- Task overrides: `none`
+- Deferred: Godot lighting trial and production Asset V2 map role; no parallax.
+
+## Promotion and dependencies
+- Refresh required: this newly authored draft/manual pair must pass the targeted authoring handoff action and publish verified ready/auto state before dispatch. The marker is opt-in and does not claim or execute Codex.
+- Existing input identity and technical authority are published in design/04_architecture/SPRITE_NORMAL_HEIGHT_MAP_LIBRARY_V1.md; no external tool, ZIP, fixture or asset is available exclusively in chat.
+- Independent paired review: review-surface-normal-height-baker-v1 in a fresh context after implementation lands; do not self-record review PASS.
+- Next workstream: surface-normal-height-lighting-proof-v1.
+- Authoring chat: not-recorded; replace with the exact URL if supplied before durable completion summaries.

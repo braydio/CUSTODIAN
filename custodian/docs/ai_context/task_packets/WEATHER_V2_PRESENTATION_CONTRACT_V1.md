@@ -1,0 +1,42 @@
+# WEATHER V2: ATMOSPHERIC PRESENTATION EXPANSION | PROFILES, DETERMINISTIC SAMPLE TIME AND BASELINE
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `weather-v2-presentation-contract-v1`
+- Category: `assets-art`
+- Kind: `implementation`
+- Status: `draft`
+- Dispatch: `manual`
+- Authoring handoff: `auto`
+- Priority: `P1`
+- Depends on: `none`
+- Locks: `weather-profile, world-environment`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, architecture, runtime`
+- Paired review workstream: `review-weather-v2-presentation-contract-v1`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Review rationale: The reusable library boundary and source/geometry invariants require fresh-context independent falsification.
+- Reviewed main: `ebfe3810eec146d7202a4378324b0f32c9e12fee`
+- Authoring chat: `not-recorded`
+- Visual review: `conditional`
+- Goal: Introduce reusable V2 weather presentation profiles and deterministic visual samples without changing V1 gameplay/weather scheduling or visuals by default.
+- Completion boundary: At equal contract seed/step sequence, V1 weather IDs, transition sequence, director lighting modifiers and indoor exposure remain byte/semantically identical; absent profile invokes exact current V1 rendering; visual sampling stable across camera paths/pause policy; baseline cost documented.
+- Current measured state: Eight states and deterministic clock/schedule already live; shader motion uses TIME and profile tuning remains largely embedded.
+- Evidence: Main@ebfe3810eec146d7202a4378324b0f32c9e12fee; WorldEnvironmentDirector owns 1440-second day, seeded 8-state weather schedule (90–240s holds, 8–15s transitions) and weather/indoor exposure. WorldLightingDirector composes base profiles and weather. WorldAtmosphere2D owns one fullscreen world pass; shader uses TIME for visual motion and currently gives precipitation mostly one procedural layer. WorldEnvironment V1 excludes puddles, lightning and accumulation. Existing static world-atmosphere and environment smokes protect this.
+- Task-specific authority: design/02_features/environment/WEATHER_PRESENTATION_V2_ROADMAP.md; design/02_features/environment/WORLD_ENVIRONMENT_BIOME_DAYNIGHT_WEATHER.md; design/02_features/visuals/WORLD_ATMOSPHERE_SHADER_SYSTEM.md.
+- Work surface: New weather presentation profile Resource/service under custodian/game/world/environment/ or presentation subdir, read-only WorldEnvironmentDirector projection, baseline validation and sampling fixtures.
+- Publication inputs: `design/02_features/environment/WEATHER_PRESENTATION_V2_ROADMAP.md`
+- Change: Build a data/config-driven visual profile with explicit quality fallback, climate/zone overrides and stable visual time/seed/wind. Extend only the presentation state contract where needed, with no weather schedule or biome changes. Add deterministic state fixtures and profile compatibility/legacy-off tests; measure p50/p95 baseline on one representative scene.
+- Preserve: Eight IDs, existing world profile weights, schedule/timing, fixed-step simulation, authored zone lighting, weather neutrality for gameplay, indoor visibility/weather exposure, shared foliage wind/material variants, existing layer ordering and atmosphere singleton, generated procgen map acceptance and weather director ownership.
+- Non-goals: No climate sim reboot, no second weather director, no global weather damage, no physically accumulated snow/surface wetness state, no replacing lighting profiles, no breakage of Alpine profile or other existing locked art integration.
+- Acceptance: At equal contract seed/step sequence, V1 weather IDs, transition sequence, director lighting modifiers and indoor exposure remain byte/semantically identical; absent profile invokes exact current V1 rendering; visual sampling stable across camera paths/pause policy; baseline cost documented.
+- Validation: custodian/tools/validation/world_environment_smoke.gd; custodian/tools/validation/world_atmosphere_smoke.gd; custodian/tools/validation/lighting_system_smoke.gd; new weather V2 profile/sampling/baseline fixture; changed-file validation.
+- Task overrides: `none`
+- Deferred: New precipitation layers, surface contact and artistic tuning.
+
+## Promotion and dependencies
+- Refresh required: this newly authored draft/manual pair must pass the targeted authoring handoff action and publish verified ready/auto state before dispatch. The marker is opt-in and does not claim or execute Codex.
+- Existing input identity and technical authority are published in design/02_features/environment/WEATHER_PRESENTATION_V2_ROADMAP.md; no external tool, ZIP, fixture or asset is available exclusively in chat.
+- Independent paired review: review-weather-v2-presentation-contract-v1 in a fresh context after implementation lands; do not self-record review PASS.
+- Next workstream: weather-v2-layered-precipitation-v1.
+- Authoring chat: not-recorded; replace with the exact URL if supplied before durable completion summaries.

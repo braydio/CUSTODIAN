@@ -1,0 +1,41 @@
+# SURFACE MATERIAL LAB: NORMAL & HEIGHT MAPS | REVIEW-GATED PRODUCTION MATERIAL BINDING
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `surface-normal-height-asset-v2-handoff-v1`
+- Category: `assets-art`
+- Kind: `implementation`
+- Status: `draft`
+- Dispatch: `manual`
+- Priority: `P3`
+- Depends on: `review-surface-normal-height-lighting-proof-v1`
+- Locks: `surface-map-asset-v2, asset-pipeline`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, architecture, asset-pipeline`
+- Paired review workstream: `review-surface-normal-height-asset-v2-handoff-v1`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Review rationale: The reusable library boundary and source/geometry invariants require fresh-context independent falsification.
+- Reviewed main: `ebfe3810eec146d7202a4378324b0f32c9e12fee`
+- Authoring chat: `not-recorded`
+- Visual review: `required`
+- Goal: Make approved auxiliary surface maps traceable, reproducible and maintainable in the existing Asset V2 lifecycle.
+- Completion boundary: One explicitly approved non-Operator asset round-trips from immutable diffuse through accepted auxiliary-map contract to runtime CanvasTexture; stale source forces re-review; missing normal restores diffuse; all undo/rollback and generated/catalog checks pass. No unauthorized new schema.
+- Current measured state: Baker and lighting proof are predecessors; whether auxiliary-map semantic roles exist in the live Asset V2 family schema must be re-audited after their review.
+- Evidence: Main@ebfe3810eec146d7202a4378324b0f32c9e12fee; WorldLightingDirector, LightingProfile, LightRig2D and Godot 4.7 CanvasItem rendering exist. Existing asset import is non-Operator Asset V2 and Operator specialized Workbench. Search did not establish any authored production-normal/heightmap pipeline; .png.import normal-map fields are import metadata, not proof of real approved surface maps.
+- Task-specific authority: design/04_architecture/SPRITE_NORMAL_HEIGHT_MAP_LIBRARY_V1.md; design/04_architecture/ASSET_PIPELINE_V2.md; design/02_features/lighting/CUSTODIAN_LIGHTING_SYSTEM.md.
+- Work surface: Current custodian/tools/assets/ semantic family schema/catalog, selected approved non-Operator family, new auxiliary-map build/review adapter if required.
+- Publication inputs: `design/04_architecture/SPRITE_NORMAL_HEIGHT_MAP_LIBRARY_V1.md`
+- Change: Audit actual family support for normal/height roles. If supported, implement hash-bound diffuse-to-normal dependency, atomic review/ingest/status/doctor and consumer binding with rollback. If unsupported, stop at a proposed versioned schema amendment, validate compatibility and return for authoring approval before changing family files. Use the real Asset V2 owner; keep Operator specialized.
+- Preserve: Original RGBA source masters and canonical runtime names, Operator source/animation authority, Asset V2 family schema and catalog, light rig behavior, nearest-neighbor pixel art, collision/traversal and no per-tile unique materials.
+- Non-goals: No replacement for 3D sculpting, no automatic artistic approval, no true geometry displacement, no global lighting rewrite, no per-frame lighting animation authored in source PNGs, no gameplay changes.
+- Acceptance: One explicitly approved non-Operator asset round-trips from immutable diffuse through accepted auxiliary-map contract to runtime CanvasTexture; stale source forces re-review; missing normal restores diffuse; all undo/rollback and generated/catalog checks pass. No unauthorized new schema.
+- Validation: custodian/tools/validation/asset_pipeline_cli_ux_smoke.py; custodian/tools/validation/asset_workbench_review_smoke.py; custodian/tools/validation/lighting_system_smoke.gd; new contract/consumer/rollback smoke; changed-file validation.
+- Task overrides: `none`
+- Deferred: Parallax/displacement, broad automated conversions and unreviewed bulk art.
+
+## Promotion and dependencies
+- Refresh required: after the prior paired review archives PASS, re-audit main, claims, touched paths, live consumers and documentation drift before promoting this intentionally parked draft/manual pair. Recheck any changed F2/Alpine/Asset V2 ownership and human visual gates.
+- Existing input identity and technical authority are published in design/04_architecture/SPRITE_NORMAL_HEIGHT_MAP_LIBRARY_V1.md; no external tool, ZIP, fixture or asset is available exclusively in chat.
+- Independent paired review: review-surface-normal-height-asset-v2-handoff-v1 in a fresh context after implementation lands; do not self-record review PASS.
+- Next workstream: none.
+- Authoring chat: not-recorded; replace with the exact URL if supplied before durable completion summaries.

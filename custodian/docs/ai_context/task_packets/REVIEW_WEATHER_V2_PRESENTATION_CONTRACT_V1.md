@@ -1,0 +1,39 @@
+# REVIEW | WEATHER V2: ATMOSPHERIC PRESENTATION EXPANSION | PROFILES, DETERMINISTIC SAMPLE TIME AND BASELINE
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `review-weather-v2-presentation-contract-v1`
+- Category: `assets-art`
+- Kind: `review`
+- Status: `draft`
+- Dispatch: `manual`
+- Authoring handoff: `auto`
+- Priority: `P1`
+- Depends on: `weather-v2-presentation-contract-v1`
+- Locks: `none`
+- Review: `none`
+- Review target workstream: `weather-v2-presentation-contract-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/WEATHER_V2_PRESENTATION_CONTRACT_V1.md`
+- Reviewed main: `ebfe3810eec146d7202a4378324b0f32c9e12fee`
+- Authoring chat: `not-recorded`
+- Visual review: `conditional`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture, runtime`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Goal: Independently falsify implementation acceptance for weather-v2-presentation-contract-v1 on landed main and documented evidence; no review self-certification.
+- Publication inputs: `design/02_features/environment/WEATHER_PRESENTATION_V2_ROADMAP.md`
+- Reviewed implementation acceptance: At equal contract seed/step sequence, V1 weather IDs, transition sequence, director lighting modifiers and indoor exposure remain byte/semantically identical; absent profile invokes exact current V1 rendering; visual sampling stable across camera paths/pause policy; baseline cost documented.
+- Review evidence: Archive target custodian/docs/ai_context/task_packets/archived/WEATHER_V2_PRESENTATION_CONTRACT_V1.md, landed diff, source/probe identities, focused run logs, and corresponding design/02_features/environment/WEATHER_PRESENTATION_V2_ROADMAP.md.
+- Correction threshold: Material geometry, deterministic regression, source/authority confusion, incomplete validation, memory/budget failure or non-visual claims contradicted by runtime require findings IDs R0-NN and bounded correction/re-review; subjective presentation goes to human review.
+- Focused validation: custodian/tools/validation/world_environment_smoke.gd; custodian/tools/validation/world_atmosphere_smoke.gd; custodian/tools/validation/lighting_system_smoke.gd; new weather V2 profile/sampling/baseline fixture; changed-file validation.
+- Review focus: Diff determinism, no new weather owner, profile schema versioning, no uncontrolled shader TIME authority for pinned renders and exact legacy fallback.
+- Acceptance: Record findings-first PASS/FAIL with source SHA, negative controls, exact tested outputs and remaining human gates. Review cannot edit production implementation; findings require a correction packet preserving the original workstream sequence.
+- Non-goals: No new feature, no art promotion, no source code fixes during review.
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+
+## Handoff
+- Refresh required: the draft/manual pair is awaiting automatic targeted authoring validation and promotion; no dispatch before main receipts.
+- Next workstream: weather-v2-layered-precipitation-v1.
+- Next packet state: dependency-gated.
+- Authoring chat: not-recorded.
+- Blockers: No additional human aesthetics required for technical acceptance; respect conditional review triggers.

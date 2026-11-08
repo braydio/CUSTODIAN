@@ -1,0 +1,41 @@
+# WEATHER V2: ATMOSPHERIC PRESENTATION EXPANSION | WEATHER LAB, QUALITY TIERS AND FINAL STYLE APPROVAL
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `weather-v2-polish-tooling-v1`
+- Category: `assets-art`
+- Kind: `implementation`
+- Status: `draft`
+- Dispatch: `manual`
+- Priority: `P1`
+- Depends on: `review-weather-v2-surface-events-v1`
+- Locks: `weather-workbench, world-atmosphere`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, architecture, runtime`
+- Paired review workstream: `review-weather-v2-polish-tooling-v1`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Review rationale: The reusable library boundary and source/geometry invariants require fresh-context independent falsification.
+- Reviewed main: `ebfe3810eec146d7202a4378324b0f32c9e12fee`
+- Authoring chat: `not-recorded`
+- Visual review: `required`
+- Goal: Ship a tunable, measurable and visually accepted Weather V2 presentation library across authored and procedural scenes.
+- Completion boundary: One reproducible dev gallery covers eight states and transitions; baseline CPU/GPU and quality tier tradeoffs documented; no normal gameplay change; low/off matches legacy policy, no per-frame telemetry flood; user accepts final style on representative keyframes/short motion loops.
+- Current measured state: Profiles, multi-depth shader and contact events must pass paired reviews first.
+- Evidence: Main@ebfe3810eec146d7202a4378324b0f32c9e12fee; WorldEnvironmentDirector owns 1440-second day, seeded 8-state weather schedule (90–240s holds, 8–15s transitions) and weather/indoor exposure. WorldLightingDirector composes base profiles and weather. WorldAtmosphere2D owns one fullscreen world pass; shader uses TIME for visual motion and currently gives precipitation mostly one procedural layer. WorldEnvironment V1 excludes puddles, lightning and accumulation. Existing static world-atmosphere and environment smokes protect this.
+- Task-specific authority: design/02_features/environment/WEATHER_PRESENTATION_V2_ROADMAP.md; design/02_features/environment/WORLD_ENVIRONMENT_BIOME_DAYNIGHT_WEATHER.md; design/02_features/visuals/WORLD_ATMOSPHERE_SHADER_SYSTEM.md.
+- Work surface: Dev-only Weather Lab scene/UI, existing environment/lighting/atmosphere owners and selective authored/procgen demos; focused validation and active V1/V2 documentation.
+- Publication inputs: `design/02_features/environment/WEATHER_PRESENTATION_V2_ROADMAP.md`
+- Change: Provide weather/time/seed/zone presets, before/after toggle, ROI capture metadata, adaptive low/medium/high quality controls, stable default settings, performance counters and inspectable effect budget. Prove clear, overcast, rain, mist, snow, dust and ash; test indoor, cinematics and combat. Coordinate rope-cloth winds only if that library independently landed; no hard dependency. Update authoritative docs and clear stale V1-as-current wording without rewriting history.
+- Preserve: Eight IDs, existing world profile weights, schedule/timing, fixed-step simulation, authored zone lighting, weather neutrality for gameplay, indoor visibility/weather exposure, shared foliage wind/material variants, existing layer ordering and atmosphere singleton, generated procgen map acceptance and weather director ownership.
+- Non-goals: No climate sim reboot, no second weather director, no global weather damage, no physically accumulated snow/surface wetness state, no replacing lighting profiles, no breakage of Alpine profile or other existing locked art integration.
+- Acceptance: One reproducible dev gallery covers eight states and transitions; baseline CPU/GPU and quality tier tradeoffs documented; no normal gameplay change; low/off matches legacy policy, no per-frame telemetry flood; user accepts final style on representative keyframes/short motion loops.
+- Validation: custodian/tools/validation/world_environment_smoke.gd; custodian/tools/validation/world_atmosphere_smoke.gd; custodian/tools/validation/lighting_system_smoke.gd; new Weather Lab scene/state/quality regression and representative measured profile; changed-file validation.
+- Task overrides: `none`
+- Deferred: Future gameplay wetness/accumulation/damage and biome-specific simulation remain separate proposals.
+
+## Promotion and dependencies
+- Refresh required: after the prior paired review archives PASS, re-audit main, claims, touched paths, live consumers and documentation drift before promoting this intentionally parked draft/manual pair. Recheck any changed F2/Alpine/Asset V2 ownership and human visual gates.
+- Existing input identity and technical authority are published in design/02_features/environment/WEATHER_PRESENTATION_V2_ROADMAP.md; no external tool, ZIP, fixture or asset is available exclusively in chat.
+- Independent paired review: review-weather-v2-polish-tooling-v1 in a fresh context after implementation lands; do not self-record review PASS.
+- Next workstream: none.
+- Authoring chat: not-recorded; replace with the exact URL if supplied before durable completion summaries.
