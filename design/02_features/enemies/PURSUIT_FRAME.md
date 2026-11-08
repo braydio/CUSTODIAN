@@ -70,6 +70,11 @@ Apply only after reviewing the plan. Runtime actor wiring and ambient procgen pr
   enemy slot, so the standard two-actor active cap exposes both families.
 - Missing specialized actions fall back through the existing semantic
   presentation controller without changing combat timing.
+- A 3D candidate body exists only in the dev-only preview scene
+  (`res://scenes/debug/pursuit_frame_3d_playable_preview.tscn`). It is an
+  experimental proof, not a runtime cutover: the production actor, its 96 px
+  Asset V2 family and its four-direction mirroring policy are unchanged. See
+  `custodian/docs/ai_context/PURSUIT_FRAME_3D_PLAYABLE_PREVIEW_V1.md`.
 
 ## Deferred Families and Runtime Work
 

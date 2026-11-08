@@ -3831,6 +3831,26 @@
       "needs_import": false
     },
     {
+      "id": "pursuit_frame_3d_playable_preview",
+      "type": "godot_script",
+      "script": "res://tools/validation/pursuit_frame_3d_playable_preview_smoke.gd",
+      "tier": "actor",
+      "tags": [
+        "enemy",
+        "pursuit_frame",
+        "debug_preview",
+        "candidate_3d"
+      ],
+      "owners": [
+        "custodian/scenes/debug/pursuit_frame_3d_playable_preview.tscn",
+        "custodian/tools/debug/pursuit_frame_3d_*",
+        "custodian/tools/validation/pursuit_frame_3d_playable_preview_smoke.gd",
+        "custodian/docs/ai_context/PURSUIT_FRAME_3D_PLAYABLE_PREVIEW_V1.md"
+      ],
+      "timeout_sec": 180,
+      "needs_import": true
+    },
+    {
       "id": "enemy_grunt_behavior_presentation",
       "type": "godot_script",
       "script": "res://tools/validation/enemy_grunt_behavior_presentation_smoke.gd",
