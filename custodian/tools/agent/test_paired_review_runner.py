@@ -1222,11 +1222,18 @@ class PairedReviewRunnerTests(unittest.TestCase):
         # checking the current manifest's other fields precisely.
         actual_pair = pair_record(actual)
         published_pair = pair_record(published_target)
+        # The current ordinary CI entrypoint intentionally excludes historical
+        # Git archaeology; the historical two-commit timeout comparison above
+        # remains exact and does not depend on today's CI entrypoint.
+        self.assertEqual(actual_pair["script"],
+                         "custodian/tools/agent/test_paired_review_ci.py")
+        self.assertEqual(actual_pair["tags"],
+                         [*published_pair["tags"], "fast_ci"])
         self.assertEqual(
             {key: value for key, value in actual_pair.items()
-             if key not in {"owners", "timeout_sec"}},
+             if key not in {"owners", "timeout_sec", "script", "tags"}},
             {key: value for key, value in published_pair.items()
-             if key not in {"owners", "timeout_sec"}},
+             if key not in {"owners", "timeout_sec", "script", "tags"}},
         )
         self.assertEqual(actual_pair["timeout_sec"], 480)
         self.assertTrue(set(published_pair["owners"]).issubset(actual_pair["owners"]))
