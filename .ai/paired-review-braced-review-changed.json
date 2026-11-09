@@ -1,0 +1,22 @@
+{
+  "schema": "custodian.validation.result.v1",
+  "passed": true,
+  "changed_files": [],
+  "coverage": {
+    "covered_files": [],
+    "uncovered_files": [],
+    "excluded_files": [],
+    "covered_by": {},
+    "complete": true
+  },
+  "selected": [],
+  "tests": [],
+  "summary": {
+    "selected": 0,
+    "passed": 0,
+    "failed": 0,
+    "timed_out": 0,
+    "skipped": 0,
+    "infrastructure_errors": 0
+  }
+}

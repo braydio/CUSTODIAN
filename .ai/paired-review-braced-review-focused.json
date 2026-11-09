@@ -1,0 +1,67 @@
+{
+  "schema": "custodian.validation.result.v1",
+  "passed": true,
+  "changed_files": [],
+  "coverage": {
+    "covered_files": [],
+    "uncovered_files": [],
+    "excluded_files": [],
+    "covered_by": {},
+    "complete": true
+  },
+  "selected": [
+    "paired_review_runner_unit"
+  ],
+  "tests": [
+    {
+      "id": "paired_review_runner_unit",
+      "tier": "unit",
+      "status": "passed",
+      "exit_code": 0,
+      "duration_ms": 9150,
+      "timeout_sec": null,
+      "selection_reasons": [
+        "explicit_filter"
+      ],
+      "failures": [],
+      "structured_result": null,
+      "warnings": [],
+      "stdout_tail": [
+        "paired_review_runner: COMPLETE review-sample",
+        "landed commit: ffffffffffffffffffffffffffffffffffffffff",
+        "paired_review_runner: FINDINGS review-sample; original claim and worktree preserved",
+        "paired_review_runner: COMPLETE review-sample (resumed coordinator closeout)",
+        "landed commit: ffffffffffffffffffffffffffffffffffffffff",
+        "paired_review_runner: FINDINGS review-sample; original claim and worktree preserved",
+        "paired_review_runner: COMPLETE review-sample",
+        "landed commit: ffffffffffffffffffffffffffffffffffffffff",
+        "paired_review_runner: COMPLETE review-sample (verified existing continuation)",
+        "landed commit: ffffffffffffffffffffffffffffffffffffffff",
+        "paired_review_runner: COMPLETE review-sample",
+        "persistent summary: REVIEW_SAMPLE_CLAUDE_SUMMARY.md",
+        "## Next Handoff",
+        "- Next workstream: none",
+        "- Next action: done"
+      ],
+      "stderr_tail": [
+        "......................................................paired_review_runner: BLOCKED: host recovery apply requires --apply, --authorize-fresh-reviewer-context, and --plan-sha256",
+        ".............paired_review_runner: BLOCKED: invalid-disposition recovery requires only its exact workstream and --continue-run ID",
+        "......................paired_review_runner: BLOCKED: continuation requires both --continue-run and --authorize-fresh-reviewer-context",
+        "paired_review_runner: BLOCKED: continuation requires both --continue-run and --authorize-fresh-reviewer-context",
+        "............",
+        "----------------------------------------------------------------------",
+        "Ran 101 tests in 9.040s",
+        "",
+        "OK"
+      ]
+    }
+  ],
+  "summary": {
+    "selected": 1,
+    "passed": 1,
+    "failed": 0,
+    "timed_out": 0,
+    "skipped": 0,
+    "infrastructure_errors": 0
+  }
+}
