@@ -1,0 +1,116 @@
+[
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"name": "at_north",
+				"tick": 5.0
+			},
+			"moment_tick": 5,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": {
+					"ok": true
+				},
+				"tick": 5
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 5
+	},
+	{
+		"data": {
+			"from": "ARMED",
+			"to": "CAPTURING"
+		},
+		"kind": "performance_incident_state_changed",
+		"tick": 28
+	},
+	{
+		"data": {
+			"phase": "baseline",
+			"preroll_samples": 30,
+			"trigger": "automatic"
+		},
+		"kind": "performance_incident_started",
+		"tick": 28
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"name": "at_east",
+				"tick": 35.0
+			},
+			"moment_tick": 35,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": {
+					"ok": true
+				},
+				"tick": 35
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 35
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"name": "at_south",
+				"tick": 65.0
+			},
+			"moment_tick": 65,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": {
+					"ok": true
+				},
+				"tick": 65
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 65
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"name": "at_west",
+				"tick": 95.0
+			},
+			"moment_tick": 95,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": {
+					"ok": true
+				},
+				"tick": 95
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 95
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "finish",
+				"tick": 128.0
+			},
+			"moment_tick": 128,
+			"result": {
+				"action": "finish",
+				"finish": true,
+				"ok": true,
+				"tick": 128
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 128
+	}
+]

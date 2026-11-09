@@ -1,0 +1,1959 @@
+{
+	"counters": {},
+	"engine": {
+		"frames_per_second": 60.0,
+		"time_scale": 1.0,
+		"version": {
+			"build": "arch_linux",
+			"hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+			"hex": 263938,
+			"major": 4,
+			"minor": 7,
+			"patch": 2,
+			"status": "stable",
+			"string": "4.7.2-stable (arch_linux)",
+			"timestamp": 1786929518
+		}
+	},
+	"events": [
+		{
+			"data": {},
+			"kind": "observatory_cleared",
+			"time_msec": 39828,
+			"uptime_sec": 34.014
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "fixture_command",
+					"name": "at_north",
+					"tick": 5.0
+				},
+				"moment_tick": 5,
+				"result": {
+					"action": "fixture_command",
+					"ok": true,
+					"response": {
+						"ok": true
+					},
+					"tick": 5
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 39912,
+			"uptime_sec": 34.098
+		},
+		{
+			"data": {
+				"from": "ARMED",
+				"to": "CAPTURING"
+			},
+			"kind": "performance_incident_state_changed",
+			"time_msec": 40592,
+			"uptime_sec": 34.778
+		},
+		{
+			"data": {
+				"phase": "baseline",
+				"preroll_samples": 30,
+				"trigger": "automatic"
+			},
+			"kind": "performance_incident_started",
+			"time_msec": 40594,
+			"uptime_sec": 34.78
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "fixture_command",
+					"name": "at_east",
+					"tick": 35.0
+				},
+				"moment_tick": 35,
+				"result": {
+					"action": "fixture_command",
+					"ok": true,
+					"response": {
+						"ok": true
+					},
+					"tick": 35
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 40599,
+			"uptime_sec": 34.785
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "fixture_command",
+					"name": "at_south",
+					"tick": 65.0
+				},
+				"moment_tick": 65,
+				"result": {
+					"action": "fixture_command",
+					"ok": true,
+					"response": {
+						"ok": true
+					},
+					"tick": 65
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 40996,
+			"uptime_sec": 35.182
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "fixture_command",
+					"name": "at_west",
+					"tick": 95.0
+				},
+				"moment_tick": 95,
+				"result": {
+					"action": "fixture_command",
+					"ok": true,
+					"response": {
+						"ok": true
+					},
+					"tick": 95
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 41318,
+			"uptime_sec": 35.504
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "finish",
+					"tick": 128.0
+				},
+				"moment_tick": 128,
+				"result": {
+					"action": "finish",
+					"finish": true,
+					"ok": true,
+					"tick": 128
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 41905,
+			"uptime_sec": 36.091
+		},
+		{
+			"data": {
+				"from": "CAPTURING",
+				"to": "DEGRADED_LATCHED"
+			},
+			"kind": "performance_incident_state_changed",
+			"time_msec": 41907,
+			"uptime_sec": 36.093
+		},
+		{
+			"data": {
+				"reason": "manual",
+				"samples": 128,
+				"worst_frames": 7
+			},
+			"kind": "performance_incident_stopped",
+			"time_msec": 41907,
+			"uptime_sec": 36.093
+		}
+	],
+	"export_path": "/home/braydenchaffee/Projects/.custodian-worktrees/procgen-alpine-cliff-final-capture/reports/moment_forge/procgen/procgen/alpine_plateau_edge_review/20261014T-socket-embed-verified-14148e47/telemetry.json",
+	"exported_at": "2026-10-14 15:50:34",
+	"gauges": {
+		"active_combat_audio": 0,
+		"active_enemies": 0,
+		"active_projectiles": 0,
+		"active_vfx": 0,
+		"ambient_critters": 0,
+		"collision_shape_count": 1888,
+		"collision_shape_count_enemies": 0,
+		"collision_shape_count_foliage": 0,
+		"collision_shape_count_peak": 1888,
+		"collision_shape_count_projectiles": 0,
+		"collision_shape_count_ruin_props": 0,
+		"collision_shape_count_runtime_walls": 1887,
+		"corpse_enemies": 0,
+		"director_behavior_agents": 0,
+		"enemy_tier_active": 0,
+		"enemy_tier_active_physics_enabled": 0,
+		"enemy_tier_background": 0,
+		"enemy_tier_background_physics_enabled": 0,
+		"enemy_tier_dormant": 0,
+		"enemy_tier_dormant_physics_enabled": 0,
+		"enemy_tier_nearby": 0,
+		"enemy_tier_nearby_physics_enabled": 0,
+		"fps": 60.0,
+		"heat_player_presence_cells": 4,
+		"heatmap_cells": 4,
+		"heatmap_samples": 4,
+		"interest_active": 0,
+		"interest_background": 0,
+		"interest_dormant": 0,
+		"interest_nearby": 0,
+		"legacy_combat_agents": 0,
+		"living_enemies": 0,
+		"loaded_procgen_root_count": 1,
+		"loaded_world_branch_count": 1,
+		"node_class_histogram": {
+			"Area2D": 19,
+			"AudioStreamPlayer": 2,
+			"Camera2D": 1,
+			"CanvasLayer": 3,
+			"CollisionShape2D": 1888,
+			"Label": 1,
+			"Line2D": 1,
+			"MarginContainer": 1,
+			"Marker2D": 1,
+			"MultiMeshInstance2D": 1,
+			"NavigationRegion2D": 1,
+			"Node": 31,
+			"Node2D": 28,
+			"Panel": 1,
+			"Polygon2D": 2,
+			"RichTextLabel": 1,
+			"Sprite2D": 371,
+			"StaticBody2D": 35,
+			"TileMapLayer": 6,
+			"Window": 1
+		},
+		"node_count": 2395,
+		"node_count_collision": 1942,
+		"node_count_peak": 2395,
+		"node_count_procgen": 2350,
+		"node_count_props": 1,
+		"node_count_ui": 7,
+		"node_count_vfx": 0,
+		"node_count_world": 0,
+		"observatory_full_tree_scan_count": 1,
+		"observatory_scan_usec": 23809,
+		"performance_draw_calls": 415,
+		"performance_frame_ms_average": 16.1926797940396,
+		"performance_frame_ms_current": 1.18700003623962,
+		"performance_frame_ms_p95": 73.7239990234375,
+		"performance_frame_ms_p99": 338.109008789062,
+		"performance_frame_ms_worst": 372.18,
+		"performance_frame_sample_count": 128,
+		"performance_hitch_count": 7,
+		"performance_incident_auto_trigger_count": 1,
+		"performance_incident_external_stall_count": 0,
+		"performance_incident_manual_trigger_count": 0,
+		"performance_incident_rearm_progress_sec": 0.0,
+		"performance_incident_state": "DEGRADED_LATCHED",
+		"performance_physics_ms": 371.445,
+		"performance_process_ms": 2.453,
+		"performance_rendered_objects": 1819,
+		"performance_severe_hitch_count": 7,
+		"physics_body_count": 35,
+		"physics_body_count_foliage": 0,
+		"physics_body_count_peak": 35,
+		"physics_body_count_ruin_props": 0,
+		"physics_body_count_runtime_walls": 35,
+		"physics_process_enabled_node_count": 0,
+		"player_alive": true,
+		"player_dead": false,
+		"player_material": "unknown",
+		"player_material_footstep_noise_mult": 1.0,
+		"player_position": {
+			"x": 1616,
+			"y": 4048
+		},
+		"process_enabled_node_count": 16,
+		"procgen_archive_resolve": {
+			"active_instance_count": 0,
+			"committed_ready_count": 0,
+			"custom_data_enabled": true,
+			"echo_class_counts": [
+				0,
+				0,
+				0,
+				0,
+				0
+			],
+			"echo_identity_hash": 0,
+			"echo_write_count": 0,
+			"effect_enabled": true,
+			"first_resolve_age_avg": 0.0,
+			"first_resolve_age_max": 0.0,
+			"first_resolve_count": 0,
+			"first_resolve_settle_count": 0,
+			"forced_safety_settle_count": 0,
+			"frontier": {
+				"eligible": 0,
+				"ineligible_camera": 0,
+				"ineligible_distance": 0,
+				"ineligible_occlusion": 0,
+				"mask_rebuild_usec": 0,
+				"mask_rebuilds": 0,
+				"visible_cells": 0
+			},
+			"frontier_burst_max": 0,
+			"frontier_halo_blocked_count": 0,
+			"frontier_start_tokens": 0.0,
+			"frontier_started_count": 0,
+			"identity_mismatch_count": 0,
+			"identity_write_count": 0,
+			"ingress_active": false,
+			"ingress_begin_count": 0,
+			"ingress_pending_count": 0,
+			"ingress_veiled_count": 0,
+			"overflow_count": 0,
+			"presentation_time": 0.0,
+			"reacquisition_age_avg": 0.0,
+			"reacquisition_age_max": 0.0,
+			"reacquisition_count": 0,
+			"reacquisition_settle_count": 0,
+			"reduced_effects": false,
+			"requested_total_count": 0,
+			"requested_uncommitted_count": 0,
+			"resolving_count": 0,
+			"settled_count": 0,
+			"shader_enabled": true,
+			"shared_material_count": 1,
+			"slot_capacity": 8192,
+			"unveiled_commit_count": 0
+		},
+		"procgen_chunk_lifecycle": {
+			"by_state": {
+				"DORMANT": 0,
+				"PREPARED": 0,
+				"QUEUED": 0,
+				"REVEALING": 0,
+				"UNLOADED": 0,
+				"UNSEEN": 0,
+				"VISIBLE": 0
+			},
+			"chunk_count": 0,
+			"illegal_transition_count": 0,
+			"transition_count": 0
+		},
+		"procgen_chunk_payload_cache": {
+			"cached_chunk_count": 0,
+			"cached_tile_record_count": 0,
+			"evicted_tile_record_count": 0,
+			"eviction_count": 0,
+			"generation_id": 0,
+			"hit_count": 0,
+			"invalidation_count": 30924,
+			"miss_count": 0,
+			"reset_count": 0,
+			"stale_refresh_count": 0
+		},
+		"procgen_chunk_residency_policy": {
+			"cancelled_count": 0,
+			"evicted_count": 0,
+			"pending_count": 0,
+			"protected_rejected_count": 0,
+			"refresh_count": 0,
+			"selected_total": 0
+		},
+		"procgen_derived_rebuild_scheduler": {
+			"pending": [],
+			"systems": {
+				"collision": {
+					"coalesced": 0,
+					"committed": 1,
+					"duration_usec_total": 34029,
+					"requested": 1
+				},
+				"navigation": {
+					"coalesced": 1,
+					"committed": 1,
+					"duration_usec_total": 2785,
+					"requested": 2
+				},
+				"presentation": {
+					"coalesced": 2,
+					"committed": 1,
+					"duration_usec_total": 13,
+					"requested": 3
+				},
+				"shadows": {
+					"coalesced": 2,
+					"committed": 1,
+					"duration_usec_total": 13,
+					"requested": 3
+				},
+				"topology": {
+					"coalesced": 0,
+					"committed": 0,
+					"duration_usec_total": 0,
+					"requested": 0
+				},
+				"walkable_boundary": {
+					"coalesced": 0,
+					"committed": 1,
+					"duration_usec_total": 19332,
+					"requested": 1
+				}
+			}
+		},
+		"procgen_floor_cells": 9707,
+		"procgen_foliage_sprite_count": 0,
+		"procgen_fruit_sprite_count": 0,
+		"procgen_generation_id": 1,
+		"procgen_interior_prop_count": 0,
+		"procgen_last_mutation_duration_usec": 19332,
+		"procgen_last_mutation_kind": "procgen_walkable_boundary_rebuilt",
+		"procgen_last_mutation_uptime_sec": 33.863,
+		"procgen_macro_stamp_count": 7,
+		"procgen_navigation_rebuild_completed_count": 1,
+		"procgen_navigation_rebuild_pending": false,
+		"procgen_navigation_rebuild_requested_count": 1,
+		"procgen_navigation_revision": 1,
+		"procgen_painted_floor_cell_count": 9707,
+		"procgen_painted_wall_cell_count": 1305,
+		"procgen_pause_aware_streaming": {
+			"committed": 0,
+			"deferred": 0,
+			"prepared": 0,
+			"prepared_pending": 0,
+			"requested": 0,
+			"resumed": 0
+		},
+		"procgen_residency_effective_unload_distance": 4,
+		"procgen_residency_unload_budget_per_frame": 1,
+		"procgen_residency_unload_enabled": true,
+		"procgen_reveal_queue": 0,
+		"procgen_road_decal_count": 147,
+		"procgen_runtime_connector_commit_count": 0,
+		"procgen_runtime_terrain_commit_count": 0,
+		"procgen_runtime_topology_repair_count": 0,
+		"procgen_runtime_wall_body_count": 34,
+		"procgen_runtime_wall_chunk_count": 34,
+		"procgen_runtime_wall_collision_isolation_enabled": true,
+		"procgen_runtime_wall_rebuild_count": 3,
+		"procgen_runtime_wall_shape_count": 1305,
+		"procgen_shadow_last_rebuild_usec": 13,
+		"procgen_shadow_rebuild_requested_count": 3,
+		"procgen_snapshot_active": true,
+		"procgen_snapshot_captured_uptime_sec": 36.093,
+		"procgen_snapshot_source": "/root/AlpinePlateauEdgeMoment/ProcGenRuntime/ProcGenMap",
+		"procgen_unloaded_chunk_count": 0,
+		"procgen_void_cliff_cells_per_frontier": 2.87164750957854,
+		"procgen_void_cliff_frontier_cells": 1044,
+		"procgen_void_cliff_painted_cells": 2998,
+		"procgen_walkable_boundary_body_count": 1,
+		"procgen_walkable_boundary_chunk_count": 1,
+		"procgen_walkable_boundary_rebuild_count": 1,
+		"procgen_walkable_boundary_shape_count": 582,
+		"procgen_wall_cells": 1305,
+		"procgen_wall_shadow_isolation_enabled": true,
+		"render_atmosphere_enabled": false,
+		"render_directional_light_enabled": false,
+		"render_isolation_mode": "lighting_reduced",
+		"render_point_light_count": 0,
+		"render_procgen_depth_backdrop_enabled": true,
+		"render_procgen_floor_enabled": true,
+		"render_procgen_major_visuals_enabled": true,
+		"render_procgen_walls_enabled": true,
+		"top_level_subtree_counts": {
+			"ARRNManager": 1,
+			"AlpinePlateauEdgeMoment": 2358,
+			"BuildInventory": 1,
+			"CognitiveState": 1,
+			"DebugBus": 1,
+			"DebugSnapshotCollector": 1,
+			"DevConsole": 1,
+			"DevMode": 3,
+			"DevObservatory": 1,
+			"DevObservatoryOverlay": 4,
+			"EnemyEngagementCoordinator": 1,
+			"FabPipeline": 1,
+			"GameState": 1,
+			"GameStats": 1,
+			"InfrastructureRegistry": 1,
+			"InputPromptService": 1,
+			"InstantReplayRecorder": 1,
+			"InventoryManager": 1,
+			"MaterialIntelligence": 1,
+			"MusicManager": 2,
+			"NoiseEventBus": 1,
+			"ResourceLedger": 1,
+			"SectorHeatmap": 1,
+			"SimulationInterestManager": 1,
+			"VaultManager": 1,
+			"WorldContractBootstrap": 1,
+			"WorldEventMemory": 1,
+			"WorldHistory": 1,
+			"WorldStateGraph": 1,
+			"WorldTransitionManager": 1,
+			"_mcp_game_helper": 1,
+			"root": 1
+		},
+		"uptime_sec": 36.09
+	},
+	"heatmap": {
+		"cell_count": 4,
+		"cell_size_px": 64.0,
+		"cells": {
+			"25,63": {
+				"by_type": {
+					"presence": 1.0
+				},
+				"cell": {
+					"x": 25,
+					"y": 63
+				},
+				"first_seen_sec": 35.806,
+				"last_seen_sec": 35.806,
+				"sample_count": 1,
+				"total": 1.0,
+				"world": {
+					"x": 1600.0,
+					"y": 4032.0
+				}
+			},
+			"77,35": {
+				"by_type": {
+					"presence": 1.0
+				},
+				"cell": {
+					"x": 77,
+					"y": 35
+				},
+				"first_seen_sec": 35.176,
+				"last_seen_sec": 35.176,
+				"sample_count": 1,
+				"total": 1.0,
+				"world": {
+					"x": 4928.0,
+					"y": 2240.0
+				}
+			},
+			"81,87": {
+				"by_type": {
+					"presence": 1.0
+				},
+				"cell": {
+					"x": 81,
+					"y": 87
+				},
+				"first_seen_sec": 34.777,
+				"last_seen_sec": 34.777,
+				"sample_count": 1,
+				"total": 1.0,
+				"world": {
+					"x": 5184.0,
+					"y": 5568.0
+				}
+			},
+			"82,95": {
+				"by_type": {
+					"presence": 1.0
+				},
+				"cell": {
+					"x": 82,
+					"y": 95
+				},
+				"first_seen_sec": 35.5,
+				"last_seen_sec": 35.5,
+				"sample_count": 1,
+				"total": 1.0,
+				"world": {
+					"x": 5248.0,
+					"y": 6080.0
+				}
+			}
+		},
+		"event_type_counts": {
+			"presence": 4.0
+		},
+		"schema": "custodian.sector_heatmap.v1",
+		"total_samples": 4
+	},
+	"material_intelligence": {
+		"contact_counts_by_kind": {},
+		"contact_counts_by_material": {},
+		"default_cell_size_px": 64.0,
+		"material_counts": {},
+		"override_cell_count": 0,
+		"schema": "custodian.material_intelligence.summary.v1",
+		"total_contacts": 0
+	},
+	"metadata": {
+		"project_name": "CUSTODIAN",
+		"project_version": ""
+	},
+	"performance": {
+		"frame_ms_average": 16.1926797940396,
+		"frame_ms_current": 1.18700003623962,
+		"frame_ms_p95": 73.7239990234375,
+		"frame_ms_p99": 338.109008789062,
+		"frame_ms_worst": 372.18,
+		"hitch_count": 7,
+		"incident_active": false,
+		"incident_phase": "baseline",
+		"incident_sample_count": 128,
+		"sample_capacity": 600,
+		"sample_count": 128,
+		"severe_hitch_count": 7
+	},
+	"performance_incident": {
+		"aggregate_spans": {},
+		"deltas": {
+			"active_audio_delta": 0,
+			"active_audio_players_delta": 0,
+			"active_vfx_delta": 0,
+			"corpse_enemies_delta": 0,
+			"draw_calls_delta": 162,
+			"living_enemies_delta": 0,
+			"node_count_delta": 0,
+			"rendered_objects_delta": 772
+		},
+		"end_snapshot": {
+			"application_focused": true,
+			"gauges": {
+				"heat_player_presence_cells": 4,
+				"interest_active": 0,
+				"interest_background": 0,
+				"interest_dormant": 0,
+				"interest_nearby": 0,
+				"performance_incident_state": "CAPTURING",
+				"procgen_foliage_sprite_count": 0,
+				"procgen_fruit_sprite_count": 0,
+				"procgen_interior_prop_count": 0,
+				"procgen_macro_stamp_count": 7,
+				"procgen_road_decal_count": 147
+			},
+			"overlay_visible": false,
+			"procgen_runtime_health": {
+				"archive_resolve": {
+					"active_instance_count": 0,
+					"committed_ready_count": 0,
+					"custom_data_enabled": true,
+					"echo_class_counts": [
+						0,
+						0,
+						0,
+						0,
+						0
+					],
+					"echo_identity_hash": 0,
+					"echo_write_count": 0,
+					"effect_enabled": true,
+					"first_resolve_age_avg": 0.0,
+					"first_resolve_age_max": 0.0,
+					"first_resolve_count": 0,
+					"first_resolve_settle_count": 0,
+					"forced_safety_settle_count": 0,
+					"frontier": {
+						"eligible": 0,
+						"ineligible_camera": 0,
+						"ineligible_distance": 0,
+						"ineligible_occlusion": 0,
+						"mask_rebuild_usec": 0,
+						"mask_rebuilds": 0,
+						"visible_cells": 0
+					},
+					"frontier_burst_max": 0,
+					"frontier_halo_blocked_count": 0,
+					"frontier_start_tokens": 0.0,
+					"frontier_started_count": 0,
+					"identity_mismatch_count": 0,
+					"identity_write_count": 0,
+					"ingress_active": false,
+					"ingress_begin_count": 0,
+					"ingress_pending_count": 0,
+					"ingress_veiled_count": 0,
+					"overflow_count": 0,
+					"presentation_time": 0.0,
+					"reacquisition_age_avg": 0.0,
+					"reacquisition_age_max": 0.0,
+					"reacquisition_count": 0,
+					"reacquisition_settle_count": 0,
+					"reduced_effects": false,
+					"requested_total_count": 0,
+					"requested_uncommitted_count": 0,
+					"resolving_count": 0,
+					"settled_count": 0,
+					"shader_enabled": true,
+					"shared_material_count": 1,
+					"slot_capacity": 8192,
+					"unveiled_commit_count": 0
+				},
+				"chunk_lifecycle": {
+					"by_state": {
+						"DORMANT": 0,
+						"PREPARED": 0,
+						"QUEUED": 0,
+						"REVEALING": 0,
+						"UNLOADED": 0,
+						"UNSEEN": 0,
+						"VISIBLE": 0
+					},
+					"chunk_count": 0,
+					"illegal_transition_count": 0,
+					"transition_count": 0
+				},
+				"chunk_payload_cache": {
+					"cached_chunk_count": 0,
+					"cached_tile_record_count": 0,
+					"evicted_tile_record_count": 0,
+					"eviction_count": 0,
+					"generation_id": 0,
+					"hit_count": 0,
+					"invalidation_count": 30924,
+					"miss_count": 0,
+					"reset_count": 0,
+					"stale_refresh_count": 0
+				},
+				"chunk_residency_policy": {
+					"cancelled_count": 0,
+					"evicted_count": 0,
+					"pending_count": 0,
+					"protected_rejected_count": 0,
+					"refresh_count": 0,
+					"selected_total": 0
+				},
+				"derived_rebuild_scheduler": {
+					"pending": [],
+					"systems": {
+						"collision": {
+							"coalesced": 0,
+							"committed": 1,
+							"duration_usec_total": 34029,
+							"requested": 1
+						},
+						"navigation": {
+							"coalesced": 1,
+							"committed": 1,
+							"duration_usec_total": 2785,
+							"requested": 2
+						},
+						"presentation": {
+							"coalesced": 2,
+							"committed": 1,
+							"duration_usec_total": 13,
+							"requested": 3
+						},
+						"shadows": {
+							"coalesced": 2,
+							"committed": 1,
+							"duration_usec_total": 13,
+							"requested": 3
+						},
+						"topology": {
+							"coalesced": 0,
+							"committed": 0,
+							"duration_usec_total": 0,
+							"requested": 0
+						},
+						"walkable_boundary": {
+							"coalesced": 0,
+							"committed": 1,
+							"duration_usec_total": 19332,
+							"requested": 1
+						}
+					}
+				},
+				"floor_cells": 9707,
+				"generation_id": 1,
+				"last_mutation_duration_usec": 19332,
+				"last_mutation_kind": "procgen_walkable_boundary_rebuilt",
+				"last_mutation_uptime_sec": 33.863,
+				"map_size": {
+					"x": 224,
+					"y": 224
+				},
+				"navigation_rebuild_completed_count": 1,
+				"navigation_rebuild_pending": false,
+				"navigation_rebuild_requested_count": 1,
+				"navigation_revision": 1,
+				"painted_floor_cell_count": 9707,
+				"painted_wall_cell_count": 1305,
+				"pause_aware_streaming": {
+					"committed": 0,
+					"deferred": 0,
+					"prepared": 0,
+					"prepared_pending": 0,
+					"requested": 0,
+					"resumed": 0
+				},
+				"residency_effective_unload_distance": 4,
+				"residency_unload_budget_per_frame": 1,
+				"residency_unload_enabled": true,
+				"runtime_connector_commit_count": 0,
+				"runtime_terrain_commit_count": 0,
+				"runtime_topology_repair_count": 0,
+				"runtime_wall_body_count": 34,
+				"runtime_wall_chunk_count": 34,
+				"runtime_wall_rebuild_count": 3,
+				"runtime_wall_shape_count": 1305,
+				"shadow_last_rebuild_usec": 13,
+				"shadow_rebuild_requested_count": 3,
+				"snapshot_active": true,
+				"snapshot_captured_uptime_sec": 36.093,
+				"snapshot_source": "/root/AlpinePlateauEdgeMoment/ProcGenRuntime/ProcGenMap",
+				"unloaded_chunk_count": 0,
+				"void_cliff_cells_per_frontier": 2.87164750957854,
+				"void_cliff_frontier_cells": 1044,
+				"void_cliff_painted_cells": 2998,
+				"walkable_boundary_body_count": 1,
+				"walkable_boundary_chunk_count": 1,
+				"walkable_boundary_rebuild_count": 1,
+				"walkable_boundary_shape_count": 582,
+				"wall_cells": 1305
+			},
+			"time_scale": 1.0,
+			"tree_paused": false,
+			"uptime_sec": 36.092
+		},
+		"ended_uptime_sec": 36.092,
+		"external_stalls": [],
+		"lifetime_deltas": {
+			"active_audio_delta": 0,
+			"active_audio_players_delta": 0,
+			"active_vfx_delta": 0,
+			"corpse_enemies_delta": 0,
+			"draw_calls_delta": 162,
+			"living_enemies_delta": 0,
+			"node_count_delta": 0,
+			"rendered_objects_delta": 772
+		},
+		"likely_owner": {
+			"classification": "physics monitor elevated — collision remains a hypothesis",
+			"evidence": []
+		},
+		"phase_snapshots": [
+			{
+				"deltas": {},
+				"gauges": {
+					"heat_player_presence_cells": 1,
+					"interest_active": 0,
+					"interest_background": 0,
+					"interest_dormant": 0,
+					"interest_nearby": 0,
+					"performance_incident_state": "CAPTURING",
+					"procgen_foliage_sprite_count": 0,
+					"procgen_fruit_sprite_count": 0,
+					"procgen_interior_prop_count": 0,
+					"procgen_macro_stamp_count": 7,
+					"procgen_road_decal_count": 147
+				},
+				"phase": "baseline",
+				"uptime_sec": 34.78
+			}
+		],
+		"phase_summaries": {
+			"baseline": {
+				"average_ms": 16.1926797940396,
+				"p95_ms": 73.7239990234375,
+				"p99_ms": 338.109008789062,
+				"physics_ms": 315.1775859375,
+				"process_ms": 10.422015625,
+				"unaccounted_ms": 0.0
+			}
+		},
+		"recent_procgen_mutations": [],
+		"samples_dropped": 0,
+		"samples_retained": 128,
+		"schema": "custodian.dev_observatory.performance_incident.v1",
+		"start_snapshot": {
+			"application_focused": true,
+			"gauges": {
+				"heat_player_presence_cells": 1,
+				"interest_active": 0,
+				"interest_background": 0,
+				"interest_dormant": 0,
+				"interest_nearby": 0,
+				"performance_incident_state": "CAPTURING",
+				"procgen_foliage_sprite_count": 0,
+				"procgen_fruit_sprite_count": 0,
+				"procgen_interior_prop_count": 0,
+				"procgen_macro_stamp_count": 7,
+				"procgen_road_decal_count": 147
+			},
+			"overlay_visible": false,
+			"procgen_runtime_health": {
+				"archive_resolve": {
+					"active_instance_count": 0,
+					"committed_ready_count": 0,
+					"custom_data_enabled": true,
+					"echo_class_counts": [
+						0,
+						0,
+						0,
+						0,
+						0
+					],
+					"echo_identity_hash": 0,
+					"echo_write_count": 0,
+					"effect_enabled": true,
+					"first_resolve_age_avg": 0.0,
+					"first_resolve_age_max": 0.0,
+					"first_resolve_count": 0,
+					"first_resolve_settle_count": 0,
+					"forced_safety_settle_count": 0,
+					"frontier": {
+						"eligible": 0,
+						"ineligible_camera": 0,
+						"ineligible_distance": 0,
+						"ineligible_occlusion": 0,
+						"mask_rebuild_usec": 0,
+						"mask_rebuilds": 0,
+						"visible_cells": 0
+					},
+					"frontier_burst_max": 0,
+					"frontier_halo_blocked_count": 0,
+					"frontier_start_tokens": 0.0,
+					"frontier_started_count": 0,
+					"identity_mismatch_count": 0,
+					"identity_write_count": 0,
+					"ingress_active": false,
+					"ingress_begin_count": 0,
+					"ingress_pending_count": 0,
+					"ingress_veiled_count": 0,
+					"overflow_count": 0,
+					"presentation_time": 0.0,
+					"reacquisition_age_avg": 0.0,
+					"reacquisition_age_max": 0.0,
+					"reacquisition_count": 0,
+					"reacquisition_settle_count": 0,
+					"reduced_effects": false,
+					"requested_total_count": 0,
+					"requested_uncommitted_count": 0,
+					"resolving_count": 0,
+					"settled_count": 0,
+					"shader_enabled": true,
+					"shared_material_count": 1,
+					"slot_capacity": 8192,
+					"unveiled_commit_count": 0
+				},
+				"chunk_lifecycle": {
+					"by_state": {
+						"DORMANT": 0,
+						"PREPARED": 0,
+						"QUEUED": 0,
+						"REVEALING": 0,
+						"UNLOADED": 0,
+						"UNSEEN": 0,
+						"VISIBLE": 0
+					},
+					"chunk_count": 0,
+					"illegal_transition_count": 0,
+					"transition_count": 0
+				},
+				"chunk_payload_cache": {
+					"cached_chunk_count": 0,
+					"cached_tile_record_count": 0,
+					"evicted_tile_record_count": 0,
+					"eviction_count": 0,
+					"generation_id": 0,
+					"hit_count": 0,
+					"invalidation_count": 30924,
+					"miss_count": 0,
+					"reset_count": 0,
+					"stale_refresh_count": 0
+				},
+				"chunk_residency_policy": {
+					"cancelled_count": 0,
+					"evicted_count": 0,
+					"pending_count": 0,
+					"protected_rejected_count": 0,
+					"refresh_count": 0,
+					"selected_total": 0
+				},
+				"derived_rebuild_scheduler": {
+					"pending": [],
+					"systems": {
+						"collision": {
+							"coalesced": 0,
+							"committed": 1,
+							"duration_usec_total": 34029,
+							"requested": 1
+						},
+						"navigation": {
+							"coalesced": 1,
+							"committed": 1,
+							"duration_usec_total": 2785,
+							"requested": 2
+						},
+						"presentation": {
+							"coalesced": 2,
+							"committed": 1,
+							"duration_usec_total": 13,
+							"requested": 3
+						},
+						"shadows": {
+							"coalesced": 2,
+							"committed": 1,
+							"duration_usec_total": 13,
+							"requested": 3
+						},
+						"topology": {
+							"coalesced": 0,
+							"committed": 0,
+							"duration_usec_total": 0,
+							"requested": 0
+						},
+						"walkable_boundary": {
+							"coalesced": 0,
+							"committed": 1,
+							"duration_usec_total": 19332,
+							"requested": 1
+						}
+					}
+				},
+				"floor_cells": 9707,
+				"generation_id": 1,
+				"last_mutation_duration_usec": 19332,
+				"last_mutation_kind": "procgen_walkable_boundary_rebuilt",
+				"last_mutation_uptime_sec": 33.863,
+				"map_size": {
+					"x": 224,
+					"y": 224
+				},
+				"navigation_rebuild_completed_count": 1,
+				"navigation_rebuild_pending": false,
+				"navigation_rebuild_requested_count": 1,
+				"navigation_revision": 1,
+				"painted_floor_cell_count": 9707,
+				"painted_wall_cell_count": 1305,
+				"pause_aware_streaming": {
+					"committed": 0,
+					"deferred": 0,
+					"prepared": 0,
+					"prepared_pending": 0,
+					"requested": 0,
+					"resumed": 0
+				},
+				"residency_effective_unload_distance": 4,
+				"residency_unload_budget_per_frame": 1,
+				"residency_unload_enabled": true,
+				"runtime_connector_commit_count": 0,
+				"runtime_terrain_commit_count": 0,
+				"runtime_topology_repair_count": 0,
+				"runtime_wall_body_count": 34,
+				"runtime_wall_chunk_count": 34,
+				"runtime_wall_rebuild_count": 3,
+				"runtime_wall_shape_count": 1305,
+				"shadow_last_rebuild_usec": 13,
+				"shadow_rebuild_requested_count": 3,
+				"snapshot_active": true,
+				"snapshot_captured_uptime_sec": 34.78,
+				"snapshot_source": "/root/AlpinePlateauEdgeMoment/ProcGenRuntime/ProcGenMap",
+				"unloaded_chunk_count": 0,
+				"void_cliff_cells_per_frontier": 2.87164750957854,
+				"void_cliff_frontier_cells": 1044,
+				"void_cliff_painted_cells": 2998,
+				"walkable_boundary_body_count": 1,
+				"walkable_boundary_chunk_count": 1,
+				"walkable_boundary_rebuild_count": 1,
+				"walkable_boundary_shape_count": 582,
+				"wall_cells": 1305
+			},
+			"time_scale": 1.0,
+			"tree_paused": false,
+			"uptime_sec": 34.778
+		},
+		"started_uptime_sec": 34.778,
+		"state": "DEGRADED_LATCHED",
+		"summary": {
+			"frame_ms_average": 16.1926797940396,
+			"frame_ms_p95": 73.7239990234375,
+			"frame_ms_p99": 338.109008789062,
+			"frame_ms_worst": 372.179992675781,
+			"hitch_count": 7,
+			"sample_count": 128,
+			"severe_hitch_count": 7
+		},
+		"top_spans": [],
+		"trigger": "automatic",
+		"worst_frames": [
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 675,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 2397,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 337.01,
+				"process_ms": 3.039,
+				"recent_transition_events": [
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "at_east",
+								"tick": 35.0
+							},
+							"moment_tick": 35,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": {
+									"ok": true
+								},
+								"tick": 35
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 40599,
+						"uptime_sec": 34.785
+					},
+					{
+						"data": {
+							"phase": "baseline",
+							"preroll_samples": 30,
+							"trigger": "automatic"
+						},
+						"kind": "performance_incident_started",
+						"time_msec": 40594,
+						"uptime_sec": 34.78
+					},
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 40592,
+						"uptime_sec": 34.778
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "at_north",
+								"tick": 5.0
+							},
+							"moment_tick": 5,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": {
+									"ok": true
+								},
+								"tick": 5
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 39912,
+						"uptime_sec": 34.098
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 39828,
+						"uptime_sec": 34.014
+					}
+				],
+				"rendered_objects": 2938,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 32.131,
+				"uptime_sec": 35.173,
+				"wall_frame_ms": 372.18
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 253,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 2397,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 2.119,
+				"process_ms": 72.843,
+				"recent_transition_events": [
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 40592,
+						"uptime_sec": 34.778
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "at_north",
+								"tick": 5.0
+							},
+							"moment_tick": 5,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": {
+									"ok": true
+								},
+								"tick": 5
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 39912,
+						"uptime_sec": 34.098
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 39828,
+						"uptime_sec": 34.014
+					}
+				],
+				"rendered_objects": 1047,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 263.147,
+				"uptime_sec": 34.443,
+				"wall_frame_ms": 338.109
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 253,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 2397,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 337.01,
+				"process_ms": 3.039,
+				"recent_transition_events": [
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 40592,
+						"uptime_sec": 34.778
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "at_north",
+								"tick": 5.0
+							},
+							"moment_tick": 5,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": {
+									"ok": true
+								},
+								"tick": 5
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 39912,
+						"uptime_sec": 34.098
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 39828,
+						"uptime_sec": 34.014
+					}
+				],
+				"rendered_objects": 1047,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 0.0,
+				"uptime_sec": 34.776,
+				"wall_frame_ms": 318.936
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 241,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 2397,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 371.445,
+				"process_ms": 2.453,
+				"recent_transition_events": [
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "at_south",
+								"tick": 65.0
+							},
+							"moment_tick": 65,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": {
+									"ok": true
+								},
+								"tick": 65
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 40996,
+						"uptime_sec": 35.182
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "at_east",
+								"tick": 35.0
+							},
+							"moment_tick": 35,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": {
+									"ok": true
+								},
+								"tick": 35
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 40599,
+						"uptime_sec": 34.785
+					},
+					{
+						"data": {
+							"phase": "baseline",
+							"preroll_samples": 30,
+							"trigger": "automatic"
+						},
+						"kind": "performance_incident_started",
+						"time_msec": 40594,
+						"uptime_sec": 34.78
+					},
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 40592,
+						"uptime_sec": 34.778
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "at_north",
+								"tick": 5.0
+							},
+							"moment_tick": 5,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": {
+									"ok": true
+								},
+								"tick": 5
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 39912,
+						"uptime_sec": 34.098
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 39828,
+						"uptime_sec": 34.014
+					}
+				],
+				"rendered_objects": 1013,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 0.0,
+				"uptime_sec": 35.497,
+				"wall_frame_ms": 303.415
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 415,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 2397,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 371.445,
+				"process_ms": 2.453,
+				"recent_transition_events": [
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "at_west",
+								"tick": 95.0
+							},
+							"moment_tick": 95,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": {
+									"ok": true
+								},
+								"tick": 95
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 41318,
+						"uptime_sec": 35.504
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "at_south",
+								"tick": 65.0
+							},
+							"moment_tick": 65,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": {
+									"ok": true
+								},
+								"tick": 65
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 40996,
+						"uptime_sec": 35.182
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "at_east",
+								"tick": 35.0
+							},
+							"moment_tick": 35,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": {
+									"ok": true
+								},
+								"tick": 35
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 40599,
+						"uptime_sec": 34.785
+					},
+					{
+						"data": {
+							"phase": "baseline",
+							"preroll_samples": 30,
+							"trigger": "automatic"
+						},
+						"kind": "performance_incident_started",
+						"time_msec": 40594,
+						"uptime_sec": 34.78
+					},
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 40592,
+						"uptime_sec": 34.778
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "at_north",
+								"tick": 5.0
+							},
+							"moment_tick": 5,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": {
+									"ok": true
+								},
+								"tick": 5
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 39912,
+						"uptime_sec": 34.098
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 39828,
+						"uptime_sec": 34.014
+					}
+				],
+				"rendered_objects": 1819,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 0.0,
+				"uptime_sec": 35.802,
+				"wall_frame_ms": 286.124
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 415,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 2397,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 371.445,
+				"process_ms": 2.453,
+				"recent_transition_events": [
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "at_west",
+								"tick": 95.0
+							},
+							"moment_tick": 95,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": {
+									"ok": true
+								},
+								"tick": 95
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 41318,
+						"uptime_sec": 35.504
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "at_south",
+								"tick": 65.0
+							},
+							"moment_tick": 65,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": {
+									"ok": true
+								},
+								"tick": 65
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 40996,
+						"uptime_sec": 35.182
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "at_east",
+								"tick": 35.0
+							},
+							"moment_tick": 35,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": {
+									"ok": true
+								},
+								"tick": 35
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 40599,
+						"uptime_sec": 34.785
+					},
+					{
+						"data": {
+							"phase": "baseline",
+							"preroll_samples": 30,
+							"trigger": "automatic"
+						},
+						"kind": "performance_incident_started",
+						"time_msec": 40594,
+						"uptime_sec": 34.78
+					},
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 40592,
+						"uptime_sec": 34.778
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "at_north",
+								"tick": 5.0
+							},
+							"moment_tick": 5,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": {
+									"ok": true
+								},
+								"tick": 5
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 39912,
+						"uptime_sec": 34.098
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 39828,
+						"uptime_sec": 34.014
+					}
+				],
+				"rendered_objects": 1819,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 0.0,
+				"uptime_sec": 36.09,
+				"wall_frame_ms": 280.682
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 253,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 2397,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 2.119,
+				"process_ms": 72.843,
+				"recent_transition_events": [
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 40592,
+						"uptime_sec": 34.778
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "fixture_command",
+								"name": "at_north",
+								"tick": 5.0
+							},
+							"moment_tick": 5,
+							"result": {
+								"action": "fixture_command",
+								"ok": true,
+								"response": {
+									"ok": true
+								},
+								"tick": 5
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 39912,
+						"uptime_sec": 34.098
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 39828,
+						"uptime_sec": 34.014
+					}
+				],
+				"rendered_objects": 1047,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 0.0,
+				"uptime_sec": 34.089,
+				"wall_frame_ms": 73.724
+			}
+		]
+	},
+	"procgen_runtime_health": {
+		"archive_resolve": {
+			"active_instance_count": 0,
+			"committed_ready_count": 0,
+			"custom_data_enabled": true,
+			"echo_class_counts": [
+				0,
+				0,
+				0,
+				0,
+				0
+			],
+			"echo_identity_hash": 0,
+			"echo_write_count": 0,
+			"effect_enabled": true,
+			"first_resolve_age_avg": 0.0,
+			"first_resolve_age_max": 0.0,
+			"first_resolve_count": 0,
+			"first_resolve_settle_count": 0,
+			"forced_safety_settle_count": 0,
+			"frontier": {
+				"eligible": 0,
+				"ineligible_camera": 0,
+				"ineligible_distance": 0,
+				"ineligible_occlusion": 0,
+				"mask_rebuild_usec": 0,
+				"mask_rebuilds": 0,
+				"visible_cells": 0
+			},
+			"frontier_burst_max": 0,
+			"frontier_halo_blocked_count": 0,
+			"frontier_start_tokens": 0.0,
+			"frontier_started_count": 0,
+			"identity_mismatch_count": 0,
+			"identity_write_count": 0,
+			"ingress_active": false,
+			"ingress_begin_count": 0,
+			"ingress_pending_count": 0,
+			"ingress_veiled_count": 0,
+			"overflow_count": 0,
+			"presentation_time": 0.0,
+			"reacquisition_age_avg": 0.0,
+			"reacquisition_age_max": 0.0,
+			"reacquisition_count": 0,
+			"reacquisition_settle_count": 0,
+			"reduced_effects": false,
+			"requested_total_count": 0,
+			"requested_uncommitted_count": 0,
+			"resolving_count": 0,
+			"settled_count": 0,
+			"shader_enabled": true,
+			"shared_material_count": 1,
+			"slot_capacity": 8192,
+			"unveiled_commit_count": 0
+		},
+		"chunk_lifecycle": {
+			"by_state": {
+				"DORMANT": 0,
+				"PREPARED": 0,
+				"QUEUED": 0,
+				"REVEALING": 0,
+				"UNLOADED": 0,
+				"UNSEEN": 0,
+				"VISIBLE": 0
+			},
+			"chunk_count": 0,
+			"illegal_transition_count": 0,
+			"transition_count": 0
+		},
+		"chunk_payload_cache": {
+			"cached_chunk_count": 0,
+			"cached_tile_record_count": 0,
+			"evicted_tile_record_count": 0,
+			"eviction_count": 0,
+			"generation_id": 0,
+			"hit_count": 0,
+			"invalidation_count": 30924,
+			"miss_count": 0,
+			"reset_count": 0,
+			"stale_refresh_count": 0
+		},
+		"chunk_residency_policy": {
+			"cancelled_count": 0,
+			"evicted_count": 0,
+			"pending_count": 0,
+			"protected_rejected_count": 0,
+			"refresh_count": 0,
+			"selected_total": 0
+		},
+		"derived_rebuild_scheduler": {
+			"pending": [],
+			"systems": {
+				"collision": {
+					"coalesced": 0,
+					"committed": 1,
+					"duration_usec_total": 34029,
+					"requested": 1
+				},
+				"navigation": {
+					"coalesced": 1,
+					"committed": 1,
+					"duration_usec_total": 2785,
+					"requested": 2
+				},
+				"presentation": {
+					"coalesced": 2,
+					"committed": 1,
+					"duration_usec_total": 13,
+					"requested": 3
+				},
+				"shadows": {
+					"coalesced": 2,
+					"committed": 1,
+					"duration_usec_total": 13,
+					"requested": 3
+				},
+				"topology": {
+					"coalesced": 0,
+					"committed": 0,
+					"duration_usec_total": 0,
+					"requested": 0
+				},
+				"walkable_boundary": {
+					"coalesced": 0,
+					"committed": 1,
+					"duration_usec_total": 19332,
+					"requested": 1
+				}
+			}
+		},
+		"floor_cells": 9707,
+		"generation_id": 1,
+		"last_mutation_duration_usec": 19332,
+		"last_mutation_kind": "procgen_walkable_boundary_rebuilt",
+		"last_mutation_uptime_sec": 33.863,
+		"map_size": {
+			"x": 224,
+			"y": 224
+		},
+		"navigation_rebuild_completed_count": 1,
+		"navigation_rebuild_pending": false,
+		"navigation_rebuild_requested_count": 1,
+		"navigation_revision": 1,
+		"painted_floor_cell_count": 9707,
+		"painted_wall_cell_count": 1305,
+		"pause_aware_streaming": {
+			"committed": 0,
+			"deferred": 0,
+			"prepared": 0,
+			"prepared_pending": 0,
+			"requested": 0,
+			"resumed": 0
+		},
+		"residency_effective_unload_distance": 4,
+		"residency_unload_budget_per_frame": 1,
+		"residency_unload_enabled": true,
+		"runtime_connector_commit_count": 0,
+		"runtime_terrain_commit_count": 0,
+		"runtime_topology_repair_count": 0,
+		"runtime_wall_body_count": 34,
+		"runtime_wall_chunk_count": 34,
+		"runtime_wall_rebuild_count": 3,
+		"runtime_wall_shape_count": 1305,
+		"shadow_last_rebuild_usec": 13,
+		"shadow_rebuild_requested_count": 3,
+		"snapshot_active": true,
+		"snapshot_captured_uptime_sec": 36.121,
+		"snapshot_source": "/root/AlpinePlateauEdgeMoment/ProcGenRuntime/ProcGenMap",
+		"unloaded_chunk_count": 0,
+		"void_cliff_cells_per_frontier": 2.87164750957854,
+		"void_cliff_frontier_cells": 1044,
+		"void_cliff_painted_cells": 2998,
+		"walkable_boundary_body_count": 1,
+		"walkable_boundary_chunk_count": 1,
+		"walkable_boundary_rebuild_count": 1,
+		"walkable_boundary_shape_count": 582,
+		"wall_cells": 1305
+	},
+	"scene": {
+		"name": "AlpinePlateauEdgeMoment",
+		"path": "res://scenes/debug/alpine_plateau_edge_moment.tscn"
+	},
+	"schema": "custodian.dev_observatory.session.v1",
+	"session": {
+		"boot_time_msec": 5814,
+		"counter_count": 0,
+		"dropped_event_count": 0,
+		"event_buffer_saturated": false,
+		"event_capacity": 300,
+		"event_count": 10,
+		"gauge_count": 133,
+		"observatory_enabled": false,
+		"total_events_logged": 10,
+		"uptime_sec": 36.117,
+		"warning_count": 0
+	},
+	"warnings": []
+}
