@@ -74,17 +74,16 @@ jobs:
             echo 'run_levels=true' >> "$GITHUB_OUTPUT"
             exit 0
           fi
+          base="$PUSH_BEFORE_SHA"
           if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
             base="$PR_BASE_SHA"
-          else
-            base="$PUSH_BEFORE_SHA"
           fi
           if [[ -z "$base" || "$base" =~ ^0+$ ]]; then
             base="$(git rev-parse HEAD^)"
           fi
           changed="$(git diff --name-only "$base" HEAD)"
-          # The validation manifest changes for agent/browser tests too.
-          relevant="$(printf '%s\n' "$changed" | grep -v -E '^(custodian/tools/validation/validation_manifest\.json|\.github/workflows/godot-level-pipeline\.yml)
+          relevant="$(printf '%s\\n' "$changed" | grep -v -E '^(custodian/tools/validation/validation_manifest\\.json|\\.github/workflows/godot-level-pipeline\\.yml)      - name: Install Godot 4.7
+        if: steps.level_scope.outputs.run_levels == 'true'
         uses: chickensoft-games/setup-godot@v2
         with:
           version: 4.7.0
@@ -132,7 +131,7 @@ jobs:
         shell: bash
         run: bash tools/validation/run_route_pipeline_suite.sh
  || true)"
-          if printf '%s\n' "$relevant" | grep -Eq '^(custodian/(game/world/levels/|game/world/procgen/ingress/|game/world/approaches/sundered_keep/|game/world/sundered_keep/|game/world/routes/|game/systems/core/systems/contract_world_loader\.gd$|scenes/game\.tscn$|content/(levels/|routes/|backgrounds/sundered_keep/)|tools/level_authoring/|tools/validation/)|design/04_architecture/ROUTE_TRAVERSAL_SYSTEM\.md$|design/05_levels/SUNDERED_KEEP_(VISTA_APPROACH|ROUTE_STAGES)\.md$|custodian/docs/SCENE_HIERARCHY\.md$)'; then
+          if printf '%s\\n' "$relevant" | grep -Eq '^(custodian/(game/world/levels/|game/world/procgen/ingress/|game/world/approaches/sundered_keep/|game/world/sundered_keep/|game/world/routes/|game/systems/core/systems/contract_world_loader\\.gd$|scenes/game\\.tscn$|content/(levels/|routes/|backgrounds/sundered_keep/)|tools/level_authoring/|tools/validation/)|design/04_architecture/ROUTE_TRAVERSAL_SYSTEM\\.md$|design/05_levels/SUNDERED_KEEP_(VISTA_APPROACH|ROUTE_STAGES)\\.md$|custodian/docs/SCENE_HIERARCHY\\.md$)'; then
             echo 'run_levels=true' >> "$GITHUB_OUTPUT"
           else
             echo 'run_levels=false' >> "$GITHUB_OUTPUT"
@@ -144,7 +143,6 @@ jobs:
         run: git lfs pull --include="custodian/content/**"
 
       - name: Install Godot 4.7
-        if: steps.level_scope.outputs.run_levels == 'true'
         uses: chickensoft-games/setup-godot@v2
         with:
           version: 4.7.0
