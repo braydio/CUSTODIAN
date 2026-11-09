@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-isometric-2-5d-presentation-foundation`
 - Kind: `review`
-- Status: `ready`
+- Status: `blocked`
 - Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `isometric-2-5d-presentation-foundation`
@@ -31,11 +31,51 @@
 
 ## Handoff
 
-- Next workstream: `isometric-2-5d-forum-vertical-slice, sundered-keep-overlook-alternate-vertical-slice`
-- Next packet state: `dependency-gated`
+- Next workstream: `isometric-2-5d-presentation-foundation-review-corrections-1`
+- Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
 - Refresh reason: `none`
-- Next action: A clean review releases the Sundered consumer immediately; the Forum consumer still waits for the Operator 2.5D animation audit and human refresh.
-- Blockers or open questions: none.
+- Next action: Claim the bounded sort-anchor correction after this findings review lands and archives; then obtain its fresh paired re-review before downstream consumers proceed.
+- Blockers or open questions: The parent foundation remains unaccepted until R0-01 and R0-02 are corrected and re-reviewed.
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-isometric-2-5d-presentation-foundation`
+- Reviewed on main: `675ccf726bb79397b7242ef3059971a6f1a39448` (implementation commit `25db20fdcb0715b1b7d85ebc51524c717fb2b7b7`)
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, runtime`
+- Blocking defects: `1`
+- Material evidence gaps: `1`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01, R0-02`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_ISOMETRIC_2_5D_PRESENTATION_FOUNDATION_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `isometric-2-5d-presentation-foundation-review-corrections-1`
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4
+
+### Review Notes
+
+- R0-01 — `blocking_defect`, domain `implementation`, disposition `correction`, affected acceptance: actual draw sorting follows the ground/base anchor and configured sort offset. `isometric_visual_anchor_2d.gd:55-57` adds `profile.sort_anchor_offset` only in `get_sort_world_position()`. `apply_profile()` does not write the offset into Godot's Y-sort input or another renderer-consumed hierarchy value; the repository has no runtime caller of the helper. Thus a profile offset changes the helper's return but cannot change effective draw order. Wire the supported offset component into the real sort authority, with ground position and gameplay unchanged.
+- R0-02 — `evidence_gap`, domain `pipeline`, disposition `correction`, affected acceptance: the focused smoke proves actual ordering from ground/base roots. The smoke at lines 72-82 checks `y_sort_enabled`, a helper comparison, and elevation geometry, but it never reads rendered order. Its fixture rear polygon spans world Y 20-60 and front polygon spans Y 90-130, so they do not overlap and cannot reveal which draws on top. Add overlapping distinguishable geometry and an engine-backed/rendered order oracle, including a negative control that fails when effective sort-offset wiring is removed.
+
+- Import/validation evidence: registered `run_validation.py --test isometric_2d_presentation_foundation --json` was blocked during Godot import by `TLS handshake error: -27648`; the direct headless smoke passed (`isometric_2_5d_presentation_foundation_smoke: OK`) but did not cover either finding. Historical changed-file validation against the implementation's parent selected 259 checks (88 passed, 2 failed, 169 skipped; coverage incomplete); failures were the already-observed Operator source-strip baseline assertion and unavailable `websockets` package for `operator_live_bridge`, neither of which resolves these focused review findings.
+
+## Review Outcome
+
+- Schema: `custodian.review_outcome.v1`
+- Outcome: `findings`
+- Review workstream: `review-isometric-2-5d-presentation-foundation`
+- Review target workstream: `isometric-2-5d-presentation-foundation`
+- Reviewed main: `675ccf726bb79397b7242ef3059971a6f1a39448`
+- Reviewed implementation commit: `25db20fdcb0715b1b7d85ebc51524c717fb2b7b7`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Run ID: `20261017T033653Z-96c8a2cff3ef`
+- Review cycle: `0`
+- Finding IDs: `R0-01, R0-02`

@@ -1,0 +1,31 @@
+# REVIEW: Isometric 2.5D Presentation Foundation Review Corrections 1
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `review-isometric-2-5d-presentation-foundation-review-corrections-1`
+- Authoring handoff: `auto`
+- Status: `draft`
+- Dispatch: `manual`
+- Priority: `P2`
+- Depends on: `isometric-2-5d-presentation-foundation-review-corrections-1`
+- Locks: `world-presentation, presentation-experiments`
+- Kind: `review`
+- Review: `none`
+- Review target workstream: `isometric-2-5d-presentation-foundation-review-corrections-1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/ISOMETRIC_2_5D_PRESENTATION_FOUNDATION_REVIEW_CORRECTIONS_1.md`
+- Reviewed main: `675ccf726bb79397b7242ef3059971a6f1a39448`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
+- Visual review: `none`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, runtime`
+- Review cycle: `1`
+- Max automatic review cycles: `2`
+- Goal: Independently prove that correction cycle 1 makes profile sort offsets affect actual renderer order and adds a fixture that fails if that behavior is removed.
+- Reviewed implementation acceptance: `ISOMETRIC_2_5D_PRESENTATION_FOUNDATION_REVIEW_CORRECTIONS_1.md`, especially Findings addressed R0-01 and R0-02.
+- Review evidence: Parent archived review findings; corrected anchor/fixture/smoke; focused registered and direct smoke output; sort-offset and elevation mutation controls; changed-file validation.
+- Correction threshold: Keep R0-01 unresolved if the offset only changes reported values or fails to reach the actual draw-sort key. Keep R0-02 unresolved if overlapping output and a meaningful negative control do not prove effective order. New correction work is limited to newly confirmed defects within cycle cap; no edits to reviewed implementation.
+- Focused validation: Run the focused isometric validation and direct runtime smoke; inspect engine-effective ordering with overlapping sprites/polygons, altered profile sort offset, reversed sibling order and a negative control that bypasses the offset application. Recheck ground XY/elevation separation, bands, roof occlusion, and 2D-only authority; run pairing and diff checks.
+- Review focus: Verify the offset controls the engine's sort input, not merely the helper; ensure the overlap test discriminates actual order and can fail when the correction is absent; confirm elevation still moves only the visual child.
+- Acceptance: Produce a findings-first fresh-context review. Report parent R0-01 and R0-02 as fixed, unresolved or regressed, and record any new findings as R1-NN. Do not patch reviewed implementation code. If either finding remains unresolved/regressed, create only the next bounded correction pair within the inherited cycle cap; otherwise record the correction review result and release downstream eligibility according to the parent DAG.
+- Non-goals: Do not implement consumer scenes, redesign the isometric presentation contract, add art or change gameplay/camera/physics/navigation.
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
