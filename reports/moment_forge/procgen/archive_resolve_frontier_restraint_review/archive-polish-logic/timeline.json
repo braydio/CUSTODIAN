@@ -1,0 +1,1044 @@
+[
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"name": "begin_ingress",
+				"tick": 2.0
+			},
+			"moment_tick": 2,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": {
+					"ok": true,
+					"snapshot": {
+						"active_instance_count": 5057,
+						"committed_ready_count": 1201,
+						"custom_data_enabled": true,
+						"echo_class_counts": [
+							0,
+							0,
+							0,
+							0,
+							0
+						],
+						"echo_identity_hash": 0,
+						"echo_write_count": 0,
+						"effect_enabled": true,
+						"first_resolve_age_avg": 0.0,
+						"first_resolve_age_max": 0.0,
+						"first_resolve_count": 5057,
+						"first_resolve_settle_count": 0,
+						"forced_safety_settle_count": 0,
+						"frontier": {
+							"eligible": 0,
+							"ineligible_camera": 0,
+							"ineligible_distance": 3970,
+							"ineligible_occlusion": 0,
+							"mask_rebuild_usec": 5589,
+							"mask_rebuilds": 2,
+							"visible_cells": 164
+						},
+						"frontier_burst_max": 0,
+						"frontier_halo_blocked_count": 0,
+						"frontier_start_tokens": 4.0,
+						"frontier_started_count": 0,
+						"identity_mismatch_count": 0,
+						"identity_write_count": 5057,
+						"ingress_active": true,
+						"ingress_begin_count": 1,
+						"ingress_pending_count": 0,
+						"ingress_veiled_count": 0,
+						"overflow_count": 0,
+						"presentation_time": 0.0833333333333333,
+						"reacquisition_age_avg": 0.0,
+						"reacquisition_age_max": 0.0,
+						"reacquisition_count": 0,
+						"reacquisition_settle_count": 0,
+						"reduced_effects": false,
+						"requested_total_count": 5057,
+						"requested_uncommitted_count": 3856,
+						"resolving_count": 0,
+						"settled_count": 0,
+						"shader_enabled": true,
+						"shared_material_count": 1,
+						"slot_capacity": 8192,
+						"unveiled_commit_count": 0
+					}
+				},
+				"tick": 2
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 2
+	},
+	{
+		"data": {
+			"after_count": 30,
+			"before_count": 30,
+			"changed_cells": 0,
+			"duration_usec": 1946,
+			"floor_cell_count": 9714,
+			"generation_id": 1,
+			"reason": "visible_wall_sync",
+			"wall_cell_count": 1298
+		},
+		"kind": "procgen_runtime_wall_rebuilt",
+		"tick": 5
+	},
+	{
+		"data": {
+			"after_count": 6,
+			"before_count": 5,
+			"changed_cells": 0,
+			"duration_usec": 7,
+			"floor_cell_count": 9714,
+			"generation_id": 1,
+			"reason": "terrain_or_wall_refresh",
+			"wall_cell_count": 1298
+		},
+		"kind": "procgen_shadow_rebuild_requested",
+		"tick": 5
+	},
+	{
+		"data": {
+			"after_count": 120,
+			"before_count": 120,
+			"changed_cells": 0,
+			"duration_usec": 2455,
+			"floor_cell_count": 9714,
+			"generation_id": 1,
+			"reason": "visible_wall_sync",
+			"wall_cell_count": 1298
+		},
+		"kind": "procgen_runtime_wall_rebuilt",
+		"tick": 14
+	},
+	{
+		"data": {
+			"after_count": 7,
+			"before_count": 6,
+			"changed_cells": 0,
+			"duration_usec": 7,
+			"floor_cell_count": 9714,
+			"generation_id": 1,
+			"reason": "terrain_or_wall_refresh",
+			"wall_cell_count": 1298
+		},
+		"kind": "procgen_shadow_rebuild_requested",
+		"tick": 14
+	},
+	{
+		"data": {
+			"after_count": 246,
+			"before_count": 246,
+			"changed_cells": 0,
+			"duration_usec": 2870,
+			"floor_cell_count": 9714,
+			"generation_id": 1,
+			"reason": "visible_wall_sync",
+			"wall_cell_count": 1298
+		},
+		"kind": "procgen_runtime_wall_rebuilt",
+		"tick": 23
+	},
+	{
+		"data": {
+			"after_count": 8,
+			"before_count": 7,
+			"changed_cells": 0,
+			"duration_usec": 6,
+			"floor_cell_count": 9714,
+			"generation_id": 1,
+			"reason": "terrain_or_wall_refresh",
+			"wall_cell_count": 1298
+		},
+		"kind": "procgen_shadow_rebuild_requested",
+		"tick": 23
+	},
+	{
+		"data": {
+			"from": "ARMED",
+			"to": "CAPTURING"
+		},
+		"kind": "performance_incident_state_changed",
+		"tick": 28
+	},
+	{
+		"data": {
+			"phase": "baseline",
+			"preroll_samples": 30,
+			"trigger": "automatic"
+		},
+		"kind": "performance_incident_started",
+		"tick": 28
+	},
+	{
+		"data": {
+			"after_count": 536,
+			"before_count": 536,
+			"changed_cells": 0,
+			"duration_usec": 3917,
+			"floor_cell_count": 9714,
+			"generation_id": 1,
+			"reason": "visible_wall_sync",
+			"wall_cell_count": 1298
+		},
+		"kind": "procgen_runtime_wall_rebuilt",
+		"tick": 32
+	},
+	{
+		"data": {
+			"after_count": 9,
+			"before_count": 8,
+			"changed_cells": 0,
+			"duration_usec": 6,
+			"floor_cell_count": 9714,
+			"generation_id": 1,
+			"reason": "terrain_or_wall_refresh",
+			"wall_cell_count": 1298
+		},
+		"kind": "procgen_shadow_rebuild_requested",
+		"tick": 32
+	},
+	{
+		"data": {
+			"after_count": 1021,
+			"before_count": 1021,
+			"changed_cells": 0,
+			"duration_usec": 5770,
+			"floor_cell_count": 9714,
+			"generation_id": 1,
+			"reason": "visible_wall_sync",
+			"wall_cell_count": 1298
+		},
+		"kind": "procgen_runtime_wall_rebuilt",
+		"tick": 41
+	},
+	{
+		"data": {
+			"after_count": 10,
+			"before_count": 9,
+			"changed_cells": 0,
+			"duration_usec": 5,
+			"floor_cell_count": 9714,
+			"generation_id": 1,
+			"reason": "terrain_or_wall_refresh",
+			"wall_cell_count": 1298
+		},
+		"kind": "procgen_shadow_rebuild_requested",
+		"tick": 41
+	},
+	{
+		"data": {
+			"flagged": 0,
+			"remediated": 0,
+			"seed": 424242
+		},
+		"kind": "procgen_stuck_pocket_validation",
+		"tick": 42
+	},
+	{
+		"data": {
+			"after_count": 1037,
+			"before_count": 1037,
+			"changed_cells": 0,
+			"duration_usec": 5015,
+			"floor_cell_count": 9714,
+			"generation_id": 1,
+			"reason": "visible_wall_sync",
+			"wall_cell_count": 1298
+		},
+		"kind": "procgen_runtime_wall_rebuilt",
+		"tick": 42
+	},
+	{
+		"data": {
+			"after_count": 11,
+			"before_count": 10,
+			"changed_cells": 0,
+			"duration_usec": 4,
+			"floor_cell_count": 9714,
+			"generation_id": 1,
+			"reason": "terrain_or_wall_refresh",
+			"wall_cell_count": 1298
+		},
+		"kind": "procgen_shadow_rebuild_requested",
+		"tick": 42
+	},
+	{
+		"data": {
+			"after_count": 0,
+			"before_count": 0,
+			"changed_cells": 0,
+			"duration_usec": 0,
+			"floor_cell_count": 9714,
+			"generation_id": 1,
+			"reason": "wall_change",
+			"wall_cell_count": 1298
+		},
+		"kind": "procgen_navigation_rebuild_started",
+		"tick": 42
+	},
+	{
+		"data": {
+			"after_count": 2,
+			"before_count": 1,
+			"changed_cells": 0,
+			"duration_usec": 2182,
+			"floor_cell_count": 9714,
+			"generation_id": 1,
+			"reason": "wall_change",
+			"wall_cell_count": 1298
+		},
+		"kind": "procgen_navigation_rebuild_finished",
+		"tick": 42
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"name": "walk_east",
+				"tick": 100.0
+			},
+			"moment_tick": 100,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": {
+					"ok": true,
+					"snapshot": {
+						"active_instance_count": 4360,
+						"committed_ready_count": 3829,
+						"custom_data_enabled": true,
+						"echo_class_counts": [
+							0,
+							0,
+							0,
+							26,
+							0
+						],
+						"echo_identity_hash": 45649684,
+						"echo_write_count": 26,
+						"effect_enabled": true,
+						"first_resolve_age_avg": 0.508829404851832,
+						"first_resolve_age_max": 0.575924255950622,
+						"first_resolve_count": 5057,
+						"first_resolve_settle_count": 107,
+						"forced_safety_settle_count": 0,
+						"frontier": {
+							"eligible": 186,
+							"ineligible_camera": 547,
+							"ineligible_distance": 102651,
+							"ineligible_occlusion": 36490,
+							"mask_rebuild_usec": 25865,
+							"mask_rebuilds": 9,
+							"visible_cells": 164
+						},
+						"frontier_burst_max": 0,
+						"frontier_halo_blocked_count": 482,
+						"frontier_start_tokens": 9.0,
+						"frontier_started_count": 0,
+						"identity_mismatch_count": 0,
+						"identity_write_count": 5057,
+						"ingress_active": true,
+						"ingress_begin_count": 1,
+						"ingress_pending_count": 531,
+						"ingress_veiled_count": 0,
+						"overflow_count": 0,
+						"presentation_time": 1.71666666666667,
+						"reacquisition_age_avg": 0.0,
+						"reacquisition_age_max": 0.0,
+						"reacquisition_count": 0,
+						"reacquisition_settle_count": 0,
+						"reduced_effects": false,
+						"requested_total_count": 5057,
+						"requested_uncommitted_count": 0,
+						"resolving_count": 0,
+						"settled_count": 163,
+						"shader_enabled": true,
+						"shared_material_count": 1,
+						"slot_capacity": 8192,
+						"unveiled_commit_count": 0
+					}
+				},
+				"tick": 100
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 100
+	},
+	{
+		"data": {
+			"flagged": 0,
+			"remediated": 0,
+			"seed": 424242
+		},
+		"kind": "procgen_stuck_pocket_validation",
+		"tick": 113
+	},
+	{
+		"data": {
+			"after_count": 1037,
+			"before_count": 1037,
+			"changed_cells": 0,
+			"duration_usec": 5428,
+			"floor_cell_count": 9714,
+			"generation_id": 1,
+			"reason": "visible_wall_sync",
+			"wall_cell_count": 1298
+		},
+		"kind": "procgen_runtime_wall_rebuilt",
+		"tick": 113
+	},
+	{
+		"data": {
+			"after_count": 12,
+			"before_count": 11,
+			"changed_cells": 0,
+			"duration_usec": 7,
+			"floor_cell_count": 9714,
+			"generation_id": 1,
+			"reason": "terrain_or_wall_refresh",
+			"wall_cell_count": 1298
+		},
+		"kind": "procgen_shadow_rebuild_requested",
+		"tick": 113
+	},
+	{
+		"data": {
+			"after_count": 0,
+			"before_count": 0,
+			"changed_cells": 0,
+			"duration_usec": 0,
+			"floor_cell_count": 9714,
+			"generation_id": 1,
+			"reason": "wall_change",
+			"wall_cell_count": 1298
+		},
+		"kind": "procgen_navigation_rebuild_started",
+		"tick": 113
+	},
+	{
+		"data": {
+			"after_count": 3,
+			"before_count": 2,
+			"changed_cells": 0,
+			"duration_usec": 2270,
+			"floor_cell_count": 9714,
+			"generation_id": 1,
+			"reason": "wall_change",
+			"wall_cell_count": 1298
+		},
+		"kind": "procgen_navigation_rebuild_finished",
+		"tick": 113
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"name": "walk_south",
+				"tick": 220.0
+			},
+			"moment_tick": 220,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": {
+					"ok": true,
+					"snapshot": {
+						"active_instance_count": 3817,
+						"committed_ready_count": 3392,
+						"custom_data_enabled": true,
+						"echo_class_counts": [
+							0,
+							0,
+							0,
+							72,
+							0
+						],
+						"echo_identity_hash": 2077866200,
+						"echo_write_count": 72,
+						"effect_enabled": true,
+						"first_resolve_age_avg": 1.12311275845703,
+						"first_resolve_age_max": 2.93320652408864,
+						"first_resolve_count": 5057,
+						"first_resolve_settle_count": 281,
+						"forced_safety_settle_count": 10,
+						"frontier": {
+							"eligible": 678,
+							"ineligible_camera": 790,
+							"ineligible_distance": 224688,
+							"ineligible_occlusion": 85597,
+							"mask_rebuild_usec": 76840,
+							"mask_rebuilds": 25,
+							"visible_cells": 296
+						},
+						"frontier_burst_max": 4,
+						"frontier_halo_blocked_count": 1062,
+						"frontier_start_tokens": 0.200000000000004,
+						"frontier_started_count": 77,
+						"identity_mismatch_count": 0,
+						"identity_write_count": 5057,
+						"ingress_active": true,
+						"ingress_begin_count": 1,
+						"ingress_pending_count": 398,
+						"ingress_veiled_count": 0,
+						"overflow_count": 0,
+						"presentation_time": 3.71666666666666,
+						"reacquisition_age_avg": 0.0,
+						"reacquisition_age_max": 0.0,
+						"reacquisition_count": 0,
+						"reacquisition_settle_count": 0,
+						"reduced_effects": false,
+						"requested_total_count": 5057,
+						"requested_uncommitted_count": 0,
+						"resolving_count": 27,
+						"settled_count": 358,
+						"shader_enabled": true,
+						"shared_material_count": 1,
+						"slot_capacity": 8192,
+						"unveiled_commit_count": 0
+					}
+				},
+				"tick": 220
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 220
+	},
+	{
+		"data": {
+			"flagged": 0,
+			"remediated": 0,
+			"seed": 424242
+		},
+		"kind": "procgen_stuck_pocket_validation",
+		"tick": 236
+	},
+	{
+		"data": {
+			"after_count": 1037,
+			"before_count": 1037,
+			"changed_cells": 0,
+			"duration_usec": 5441,
+			"floor_cell_count": 9714,
+			"generation_id": 1,
+			"reason": "visible_wall_sync",
+			"wall_cell_count": 1298
+		},
+		"kind": "procgen_runtime_wall_rebuilt",
+		"tick": 236
+	},
+	{
+		"data": {
+			"after_count": 13,
+			"before_count": 12,
+			"changed_cells": 0,
+			"duration_usec": 6,
+			"floor_cell_count": 9714,
+			"generation_id": 1,
+			"reason": "terrain_or_wall_refresh",
+			"wall_cell_count": 1298
+		},
+		"kind": "procgen_shadow_rebuild_requested",
+		"tick": 236
+	},
+	{
+		"data": {
+			"after_count": 0,
+			"before_count": 0,
+			"changed_cells": 0,
+			"duration_usec": 0,
+			"floor_cell_count": 9714,
+			"generation_id": 1,
+			"reason": "wall_change",
+			"wall_cell_count": 1298
+		},
+		"kind": "procgen_navigation_rebuild_started",
+		"tick": 236
+	},
+	{
+		"data": {
+			"after_count": 4,
+			"before_count": 3,
+			"changed_cells": 0,
+			"duration_usec": 2252,
+			"floor_cell_count": 9714,
+			"generation_id": 1,
+			"reason": "wall_change",
+			"wall_cell_count": 1298
+		},
+		"kind": "procgen_navigation_rebuild_finished",
+		"tick": 236
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"name": "stop",
+				"tick": 340.0
+			},
+			"moment_tick": 340,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": {
+					"ok": true,
+					"snapshot": {
+						"active_instance_count": 3809,
+						"committed_ready_count": 3413,
+						"custom_data_enabled": true,
+						"echo_class_counts": [
+							0,
+							0,
+							0,
+							79,
+							0
+						],
+						"echo_identity_hash": 1438233128,
+						"echo_write_count": 79,
+						"effect_enabled": true,
+						"first_resolve_age_avg": 1.02531104234334,
+						"first_resolve_age_max": 3.26909156130015,
+						"first_resolve_count": 5109,
+						"first_resolve_settle_count": 339,
+						"forced_safety_settle_count": 12,
+						"frontier": {
+							"eligible": 928,
+							"ineligible_camera": 2146,
+							"ineligible_distance": 364324,
+							"ineligible_occlusion": 114780,
+							"mask_rebuild_usec": 114245,
+							"mask_rebuilds": 39,
+							"visible_cells": 152
+						},
+						"frontier_burst_max": 4,
+						"frontier_halo_blocked_count": 2622,
+						"frontier_start_tokens": 9.0,
+						"frontier_started_count": 107,
+						"identity_mismatch_count": 0,
+						"identity_write_count": 5109,
+						"ingress_active": true,
+						"ingress_begin_count": 1,
+						"ingress_pending_count": 396,
+						"ingress_veiled_count": 0,
+						"overflow_count": 0,
+						"presentation_time": 5.71666666666665,
+						"reacquisition_age_avg": 0.0,
+						"reacquisition_age_max": 0.0,
+						"reacquisition_count": 0,
+						"reacquisition_settle_count": 0,
+						"reduced_effects": false,
+						"requested_total_count": 5109,
+						"requested_uncommitted_count": 0,
+						"resolving_count": 0,
+						"settled_count": 418,
+						"shader_enabled": true,
+						"shared_material_count": 1,
+						"slot_capacity": 8192,
+						"unveiled_commit_count": 0
+					}
+				},
+				"tick": 340
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 340
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"name": "unload_adjacent_west_chunk",
+				"tick": 360.0
+			},
+			"moment_tick": 360,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": {
+					"ok": true,
+					"snapshot": {
+						"active_instance_count": 3685,
+						"committed_ready_count": 3388,
+						"custom_data_enabled": true,
+						"echo_class_counts": [
+							0,
+							0,
+							0,
+							79,
+							0
+						],
+						"echo_identity_hash": 1438233128,
+						"echo_write_count": 79,
+						"effect_enabled": true,
+						"first_resolve_age_avg": 1.02531104234334,
+						"first_resolve_age_max": 3.26909156130015,
+						"first_resolve_count": 5109,
+						"first_resolve_settle_count": 339,
+						"forced_safety_settle_count": 12,
+						"frontier": {
+							"eligible": 928,
+							"ineligible_camera": 2486,
+							"ineligible_distance": 387316,
+							"ineligible_occlusion": 119848,
+							"mask_rebuild_usec": 116575,
+							"mask_rebuilds": 40,
+							"visible_cells": 152
+						},
+						"frontier_burst_max": 4,
+						"frontier_halo_blocked_count": 3062,
+						"frontier_start_tokens": 9.0,
+						"frontier_started_count": 107,
+						"identity_mismatch_count": 0,
+						"identity_write_count": 5109,
+						"ingress_active": true,
+						"ingress_begin_count": 1,
+						"ingress_pending_count": 297,
+						"ingress_veiled_count": 0,
+						"overflow_count": 0,
+						"presentation_time": 6.04999999999998,
+						"reacquisition_age_avg": 0.0,
+						"reacquisition_age_max": 0.0,
+						"reacquisition_count": 0,
+						"reacquisition_settle_count": 0,
+						"reduced_effects": false,
+						"requested_total_count": 5109,
+						"requested_uncommitted_count": 0,
+						"resolving_count": 0,
+						"settled_count": 418,
+						"shader_enabled": true,
+						"shared_material_count": 1,
+						"slot_capacity": 8192,
+						"unveiled_commit_count": 0
+					}
+				},
+				"tick": 360
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 360
+	},
+	{
+		"data": {
+			"flagged": 0,
+			"remediated": 0,
+			"seed": 424242
+		},
+		"kind": "procgen_stuck_pocket_validation",
+		"tick": 368
+	},
+	{
+		"data": {
+			"after_count": 1037,
+			"before_count": 1037,
+			"changed_cells": 0,
+			"duration_usec": 4549,
+			"floor_cell_count": 9714,
+			"generation_id": 1,
+			"reason": "visible_wall_sync",
+			"wall_cell_count": 1298
+		},
+		"kind": "procgen_runtime_wall_rebuilt",
+		"tick": 368
+	},
+	{
+		"data": {
+			"after_count": 14,
+			"before_count": 13,
+			"changed_cells": 0,
+			"duration_usec": 6,
+			"floor_cell_count": 9714,
+			"generation_id": 1,
+			"reason": "terrain_or_wall_refresh",
+			"wall_cell_count": 1298
+		},
+		"kind": "procgen_shadow_rebuild_requested",
+		"tick": 368
+	},
+	{
+		"data": {
+			"after_count": 0,
+			"before_count": 0,
+			"changed_cells": 0,
+			"duration_usec": 0,
+			"floor_cell_count": 9714,
+			"generation_id": 1,
+			"reason": "wall_change",
+			"wall_cell_count": 1298
+		},
+		"kind": "procgen_navigation_rebuild_started",
+		"tick": 368
+	},
+	{
+		"data": {
+			"after_count": 5,
+			"before_count": 4,
+			"changed_cells": 0,
+			"duration_usec": 2131,
+			"floor_cell_count": 9714,
+			"generation_id": 1,
+			"reason": "wall_change",
+			"wall_cell_count": 1298
+		},
+		"kind": "procgen_navigation_rebuild_finished",
+		"tick": 368
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"name": "walk_west",
+				"tick": 380.0
+			},
+			"moment_tick": 380,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": {
+					"ok": true,
+					"snapshot": {
+						"active_instance_count": 3685,
+						"committed_ready_count": 3388,
+						"custom_data_enabled": true,
+						"echo_class_counts": [
+							0,
+							0,
+							0,
+							79,
+							0
+						],
+						"echo_identity_hash": 1438233128,
+						"echo_write_count": 79,
+						"effect_enabled": true,
+						"first_resolve_age_avg": 1.02531104234334,
+						"first_resolve_age_max": 3.26909156130015,
+						"first_resolve_count": 5109,
+						"first_resolve_settle_count": 339,
+						"forced_safety_settle_count": 12,
+						"frontier": {
+							"eligible": 928,
+							"ineligible_camera": 2586,
+							"ineligible_distance": 409460,
+							"ineligible_occlusion": 124024,
+							"mask_rebuild_usec": 121235,
+							"mask_rebuilds": 42,
+							"visible_cells": 152
+						},
+						"frontier_burst_max": 4,
+						"frontier_halo_blocked_count": 3502,
+						"frontier_start_tokens": 9.0,
+						"frontier_started_count": 107,
+						"identity_mismatch_count": 0,
+						"identity_write_count": 5109,
+						"ingress_active": true,
+						"ingress_begin_count": 1,
+						"ingress_pending_count": 297,
+						"ingress_veiled_count": 0,
+						"overflow_count": 0,
+						"presentation_time": 6.38333333333332,
+						"reacquisition_age_avg": 0.0,
+						"reacquisition_age_max": 0.0,
+						"reacquisition_count": 0,
+						"reacquisition_settle_count": 0,
+						"reduced_effects": false,
+						"requested_total_count": 5109,
+						"requested_uncommitted_count": 0,
+						"resolving_count": 0,
+						"settled_count": 418,
+						"shader_enabled": true,
+						"shared_material_count": 1,
+						"slot_capacity": 8192,
+						"unveiled_commit_count": 0
+					}
+				},
+				"tick": 380
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 380
+	},
+	{
+		"data": {
+			"flagged": 0,
+			"remediated": 0,
+			"seed": 424242
+		},
+		"kind": "procgen_stuck_pocket_validation",
+		"tick": 453
+	},
+	{
+		"data": {
+			"after_count": 1037,
+			"before_count": 1037,
+			"changed_cells": 0,
+			"duration_usec": 5760,
+			"floor_cell_count": 9714,
+			"generation_id": 1,
+			"reason": "visible_wall_sync",
+			"wall_cell_count": 1298
+		},
+		"kind": "procgen_runtime_wall_rebuilt",
+		"tick": 453
+	},
+	{
+		"data": {
+			"after_count": 15,
+			"before_count": 14,
+			"changed_cells": 0,
+			"duration_usec": 6,
+			"floor_cell_count": 9714,
+			"generation_id": 1,
+			"reason": "terrain_or_wall_refresh",
+			"wall_cell_count": 1298
+		},
+		"kind": "procgen_shadow_rebuild_requested",
+		"tick": 453
+	},
+	{
+		"data": {
+			"after_count": 0,
+			"before_count": 0,
+			"changed_cells": 0,
+			"duration_usec": 0,
+			"floor_cell_count": 9714,
+			"generation_id": 1,
+			"reason": "wall_change",
+			"wall_cell_count": 1298
+		},
+		"kind": "procgen_navigation_rebuild_started",
+		"tick": 453
+	},
+	{
+		"data": {
+			"after_count": 6,
+			"before_count": 5,
+			"changed_cells": 0,
+			"duration_usec": 2332,
+			"floor_cell_count": 9714,
+			"generation_id": 1,
+			"reason": "wall_change",
+			"wall_cell_count": 1298
+		},
+		"kind": "procgen_navigation_rebuild_finished",
+		"tick": 453
+	},
+	{
+		"data": {
+			"from": "CAPTURING",
+			"to": "DEGRADED_LATCHED"
+		},
+		"kind": "performance_incident_state_changed",
+		"tick": 508
+	},
+	{
+		"data": {
+			"reason": "manual",
+			"samples": 509,
+			"worst_frames": 20
+		},
+		"kind": "performance_incident_stopped",
+		"tick": 508
+	},
+	{
+		"data": {
+			"from": "DEGRADED_LATCHED",
+			"to": "REARMING"
+		},
+		"kind": "performance_incident_state_changed",
+		"tick": 510
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"name": "stop",
+				"tick": 560.0
+			},
+			"moment_tick": 560,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": {
+					"ok": true,
+					"snapshot": {
+						"active_instance_count": 4008,
+						"committed_ready_count": 3789,
+						"custom_data_enabled": true,
+						"echo_class_counts": [
+							0,
+							0,
+							0,
+							101,
+							0
+						],
+						"echo_identity_hash": 1297641689,
+						"echo_write_count": 101,
+						"effect_enabled": true,
+						"first_resolve_age_avg": 2.28354016251989,
+						"first_resolve_age_max": 8.82673640700307,
+						"first_resolve_count": 5346,
+						"first_resolve_settle_count": 437,
+						"forced_safety_settle_count": 48,
+						"frontier": {
+							"eligible": 2201,
+							"ineligible_camera": 4274,
+							"ineligible_distance": 583190,
+							"ineligible_occlusion": 176811,
+							"mask_rebuild_usec": 187298,
+							"mask_rebuilds": 64,
+							"visible_cells": 368
+						},
+						"frontier_burst_max": 6,
+						"frontier_halo_blocked_count": 4566,
+						"frontier_start_tokens": 0.600000000000001,
+						"frontier_started_count": 189,
+						"identity_mismatch_count": 0,
+						"identity_write_count": 5602,
+						"ingress_active": true,
+						"ingress_begin_count": 1,
+						"ingress_pending_count": 197,
+						"ingress_veiled_count": 0,
+						"overflow_count": 0,
+						"presentation_time": 9.38333333333338,
+						"reacquisition_age_avg": 0.203703703703711,
+						"reacquisition_age_max": 0.216666666666667,
+						"reacquisition_count": 256,
+						"reacquisition_settle_count": 36,
+						"reduced_effects": false,
+						"requested_total_count": 5602,
+						"requested_uncommitted_count": 0,
+						"resolving_count": 22,
+						"settled_count": 588,
+						"shader_enabled": true,
+						"shared_material_count": 1,
+						"slot_capacity": 8192,
+						"unveiled_commit_count": 0
+					}
+				},
+				"tick": 560
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 560
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "finish",
+				"tick": 590.0
+			},
+			"moment_tick": 590,
+			"result": {
+				"action": "finish",
+				"finish": true,
+				"ok": true,
+				"tick": 590
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 590
+	}
+]

@@ -309,6 +309,20 @@ consistency and fail-closed behavior, so ordinary game-feel confirmation is unbl
 Do not reopen or retune Archive Resolve as part of startup integrity; its visual
 disposition remains the human playtest decision.
 
+## Archive Resolve Playtest Polish Candidate (2026-10-12)
+
+The active `procgen-archive-resolve-playtest-polish-v1` packet responds to a
+later gameplay review and is still pending explicit visual disposition. Its
+implementation candidate uses an 18-tile cached LOS frontier, 48 starts/sec,
+0.48 s first-resolve, 0.20 s reacquisition, deterministic connected READY-cell
+cascades, a map-bounded abstract underfield, absolute world veil layering, and
+read-only cliff-fascia companion coverage. These values and visuals are not an
+approved production baseline until the linked authoring-chat review is recorded.
+The renderer fixture measured 64 cached mask rebuilds and 195.8 ms cumulative
+over 9.4 s (about 3.1 ms/rebuild); the focused smoke now enforces an 8 ms average
+rebuild budget and no more than seven static-window refreshes per second.
+AR1-AR4 lifecycle and S1 fingerprint authority remain unchanged.
+
 ## Contract World Placement Foundation (2026-10-02)
 
 `WorldPlacementContext` is the accepted-world read seam for focused placement

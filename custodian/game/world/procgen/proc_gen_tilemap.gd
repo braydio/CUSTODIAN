@@ -1150,6 +1150,7 @@ func _on_procgen_finished() -> void:
 	])
 	var _t_start := Time.get_ticks_msec()
 	_fill_tilemaps()
+	_sync_archive_resolve_underfield_bounds()
 	# Re-apply the presentation profile after the accepted generation result is
 	# fully available. This makes the backdrop seed handoff explicit and keeps
 	# candidate promotion/final runtime presentation on the same seed authority.
@@ -10305,6 +10306,27 @@ func _refresh_depth_backdrop() -> void:
 		depth_backdrop.configure_from_cells(_generated_floor_cells.keys())
 
 
+## Keep the abstract unrequested field inside the generated map rectangle. It
+## follows the canonical floor grid transform and never fabricates terrain.
+func _sync_archive_resolve_underfield_bounds() -> void:
+	var underfield := get_node_or_null("ArchiveResolveUnrequestedUnderfield") as ColorRect
+	if underfield == null or floor_tilemap == null or procgen_node == null:
+		return
+	var map_size := procgen_node.map_size
+	var tile_size := Vector2(_get_tile_size())
+	if map_size.x <= 0 or map_size.y <= 0 or tile_size.x <= 0.0 or tile_size.y <= 0.0:
+		underfield.visible = false
+		return
+	var first_center_global := floor_tilemap.to_global(floor_tilemap.map_to_local(Vector2i.ZERO))
+	var underfield_parent := underfield.get_parent() as Node2D
+	if underfield_parent == null:
+		return
+	var first_center_local: Vector2 = underfield_parent.global_transform.affine_inverse() * first_center_global
+	underfield.position = first_center_local - tile_size * 0.5
+	underfield.size = Vector2(map_size) * tile_size
+	underfield.visible = true
+
+
 func get_region_frame_debug_snapshot() -> Dictionary:
 	var state := _resolve_region_frame_state()
 	return {
@@ -10346,6 +10368,8 @@ func _refresh_void_cliff_face() -> void:
 	if _generated_floor_cells.is_empty() or _chasm_cells.is_empty():
 		void_cliff_face.clear()
 		void_cliff_face.visible = false
+		if _reveal_presentation != null:
+			_reveal_presentation.set_cliff_companion_cells({})
 		return
 	void_cliff_face.configure_from_surface_cells(
 		_generated_floor_cells,
@@ -10353,6 +10377,10 @@ func _refresh_void_cliff_face() -> void:
 		_get_generation_seed(),
 		_generated_wall_cells
 	)
+	if _reveal_presentation != null:
+		_reveal_presentation.set_cliff_companion_cells(
+			void_cliff_face.get_presentation_companion_cells()
+		)
 
 
 func _get_chasm_presentation_cells() -> Array:

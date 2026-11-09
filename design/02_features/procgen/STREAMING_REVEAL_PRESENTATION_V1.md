@@ -72,6 +72,15 @@ numeric target** and any older instructions to preserve the exact AR4 distance
 without human permission; it does not retroactively claim the new behavior is
 already in production.
 
+### 2026-10-12 Candidate Status
+
+The active playtest-polish packet has an implementation candidate using the
+initial values above, a deterministic connected cascade scheduler, a map-bounded
+abstract underfield, absolute world concealment, and a read-only fascia-owner
+adapter. Focused state/frontier/shader/cliff checks are being run before the
+required renderer handoff. This candidate is not an approved visual baseline;
+the exact authoring-chat verdict remains part of the completion contract.
+
 ## Core Design Lock
 
 > **Chunks are logistics. They must never be choreography.**

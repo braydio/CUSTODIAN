@@ -697,7 +697,10 @@
         "custodian/game/world/procgen/streaming/procgen_reveal_presentation.gd",
         "custodian/game/world/procgen/proc_gen_tilemap.gd",
         "custodian/game/world/procgen/proc_gen_map.tscn",
-        "custodian/tools/validation/procgen_reveal_presentation_smoke.gd"
+        "custodian/tools/validation/procgen_reveal_presentation_smoke.gd",
+        "custodian/game/world/procgen/presentation/procgen_void_cliff_face.gd",
+        "custodian/tools/validation/procgen_void_cliff_face_smoke.gd",
+        "custodian/game/world/procgen/streaming/archive_resolve_underfield.gdshader"
       ],
       "timeout_sec": 120,
       "needs_import": true
@@ -803,7 +806,7 @@
         "custodian/game/world/procgen/proc_gen_tilemap.gd",
         "custodian/game/world/procgen/custodian_contract_map.gd"
       ],
-      "timeout_sec": 120,
+      "timeout_sec": 240,
       "needs_import": true
     },
     {

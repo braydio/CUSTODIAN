@@ -128,6 +128,7 @@ func _test_pure_owner() -> void:
 	var trace_a := _frontier_trace()
 	var trace_b := _frontier_trace()
 	_check(trace_a == trace_b and not trace_a.is_empty(), "same committed sequence produced a different frontier trace")
+	_test_connected_cascade()
 
 	# Disabled fallback: no veil, committed presentation settles immediately.
 	var off_owner := _make_owner()
@@ -147,6 +148,121 @@ func _test_pure_owner() -> void:
 	_check(int(small["active_instance_count"]) <= 64 and int(small["overflow_count"]) == 8, "slot pool is not bounded or overflow was not counted")
 	small_owner.queue_free()
 	owner_node.queue_free()
+
+
+func _test_connected_cascade() -> void:
+	var owner_node := PRESENTATION_SCRIPT.new() as ProcGenRevealPresentation
+	owner_node.slot_capacity = 128
+	owner_node.safety_halo_tiles = 0
+	owner_node.resolve_starts_per_sec = 600.0
+	owner_node.resolve_burst_cap = 8
+	owner_node.resolve_duration_sec = 2.0
+	owner_node.visual_resolve_radius_tiles = 18
+	owner_node.cascade_neighbor_stagger_sec = 0.03
+	root.add_child(owner_node)
+	owner_node.configure(func(tile: Vector2i) -> Vector2: return Vector2(tile) * 32.0 + Vector2(16, 16))
+	var tiles: Array[Vector2i] = []
+	for x in range(20, 27):
+		for y in range(20, 27):
+			var tile := Vector2i(x, y)
+			tiles.append(tile)
+	owner_node.note_tiles_requested(Vector2i(3, 3), tiles, false)
+	for tile in tiles:
+		owner_node.note_tile_committed(tile)
+	for _i in range(30):
+		owner_node.advance(0.02, Vector2i(23, 23), CHUNK)
+	var starts: Dictionary = owner_node._resolve_start
+	var waves: Dictionary = {}
+	for tile_variant: Variant in starts.keys():
+		var tile := tile_variant as Vector2i
+		var wave := int(owner_node._cascade_wave_by_tile.get(tile, 0))
+		waves[wave] = true
+		if wave == 0:
+			_check(false, "connected cascade start has no cascade identity")
+			continue
+		var has_earlier_parent := false
+		for offset in [Vector2i.UP, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT]:
+			var neighbor: Vector2i = tile + offset
+			if starts.has(neighbor) and int(owner_node._cascade_wave_by_tile.get(neighbor, 0)) == wave \
+					and float(starts.get(neighbor, 1e9)) < float(starts[tile]):
+				has_earlier_parent = true
+				break
+		if not has_earlier_parent and float(starts[tile]) > 0.03:
+			_check(false, "non-origin cascade start is not four-connected to an earlier start")
+	_check(waves.size() <= owner_node.cascade_max_origins, "connected patch exceeded bounded origin count")
+	_check(starts.size() > 12, "connected cascade did not traverse the committed patch")
+	owner_node.queue_free()
+	var late_owner := PRESENTATION_SCRIPT.new() as ProcGenRevealPresentation
+	late_owner.slot_capacity = 8
+	late_owner.safety_halo_tiles = 0
+	late_owner.resolve_starts_per_sec = 600.0
+	late_owner.resolve_duration_sec = 2.0
+	root.add_child(late_owner)
+	late_owner.configure(func(tile: Vector2i) -> Vector2: return Vector2(tile) * 32.0 + Vector2(16, 16))
+	var seed_tile := Vector2i(20, 20)
+	var late_tile := seed_tile + Vector2i.RIGHT
+	late_owner.note_tiles_requested(Vector2i(3, 3), [seed_tile] as Array[Vector2i], false)
+	late_owner.note_tile_committed(seed_tile)
+	late_owner.advance(0.02, seed_tile, CHUNK)
+	late_owner.note_tiles_requested(Vector2i(3, 3), [late_tile] as Array[Vector2i], false)
+	late_owner.note_tile_committed(late_tile)
+	for _i in range(8):
+		late_owner.advance(0.02, seed_tile, CHUNK)
+	_check(late_owner.get_tile_state(late_tile) == ProcGenRevealPresentation.TileState.RESOLVING, "late committed neighbor did not join an active cascade")
+	_check(late_owner._cascade_wave_by_tile.get(late_tile, 0) == late_owner._cascade_wave_by_tile.get(seed_tile, -1), "late neighbor joined a different cascade origin")
+	var onset_delta := float(late_owner._resolve_start[late_tile]) - float(late_owner._resolve_start[seed_tile])
+	_check(onset_delta >= 0.03 and onset_delta <= 0.09, "late neighbor onset stagger is outside the bounded near-neighbor window")
+	late_owner.queue_free()
+	var companion_owner := PRESENTATION_SCRIPT.new() as ProcGenRevealPresentation
+	companion_owner.slot_capacity = 8
+	companion_owner.safety_halo_tiles = 0
+	companion_owner.resolve_starts_per_sec = 600.0
+	companion_owner.resolve_duration_sec = 2.0
+	root.add_child(companion_owner)
+	companion_owner.configure(func(tile: Vector2i) -> Vector2: return Vector2(tile) * 32.0 + Vector2(16, 16))
+	var frontier_tile := Vector2i(30, 30)
+	var fascia_tile := frontier_tile + Vector2i(0, 1)
+	companion_owner.set_cliff_companion_cells({frontier_tile: [fascia_tile]})
+	companion_owner.note_tiles_requested(Vector2i(5, 5), [frontier_tile] as Array[Vector2i], false)
+	_check(companion_owner.has_veil(frontier_tile) and companion_owner.has_veil(fascia_tile), "cliff companion was not veiled through the owner frontier request")
+	companion_owner.note_tile_committed(frontier_tile)
+	companion_owner.advance(0.02, frontier_tile, CHUNK)
+	_check(companion_owner.get_tile_state(frontier_tile) == ProcGenRevealPresentation.TileState.RESOLVING, "visible cliff owner frontier did not begin resolving")
+	_check(companion_owner.get_tile_state(fascia_tile) == ProcGenRevealPresentation.TileState.RESOLVING, "cliff companion did not resolve with its existing owner frontier")
+	_check(is_equal_approx(float(companion_owner._resolve_start[frontier_tile]), float(companion_owner._resolve_start[fascia_tile])), "cliff companion diverged from owner frontier timing")
+	companion_owner.queue_free()
+
+	# A true singleton gets one deterministic age-based fallback instead of
+	# remaining READY forever, while the initial independent origin budget stays bounded.
+	var isolated := PRESENTATION_SCRIPT.new() as ProcGenRevealPresentation
+	isolated.slot_capacity = 8
+	isolated.safety_halo_tiles = 0
+	isolated.resolve_starts_per_sec = 600.0
+	isolated.resolve_duration_sec = 2.0
+	isolated.visual_resolve_radius_tiles = 18
+	isolated.cascade_isolated_fallback_sec = 0.75
+	root.add_child(isolated)
+	isolated.configure(func(tile: Vector2i) -> Vector2: return Vector2(tile) * 32.0 + Vector2(16, 16))
+	var lone := Vector2i(30, 30)
+	var disconnected: Array[Vector2i] = [Vector2i(10, 10), Vector2i(30, 10), Vector2i(10, 30), lone]
+	isolated.note_tiles_requested(Vector2i(3, 3), disconnected, false)
+	for tile in disconnected:
+		isolated.note_tile_committed(tile)
+	for _i in range(30):
+		isolated.advance(0.02, Vector2i(20, 20), CHUNK)
+	var resolving_before_fallback := 0
+	var fallback_tile := Vector2i(999999, 999999)
+	for tile in disconnected:
+		if isolated.get_tile_state(tile) == ProcGenRevealPresentation.TileState.RESOLVING:
+			resolving_before_fallback += 1
+		elif isolated.get_tile_state(tile) == ProcGenRevealPresentation.TileState.READY:
+			fallback_tile = tile
+	_check(resolving_before_fallback == isolated.cascade_max_origins, "disconnected wave origins exceeded the bounded initial origin budget")
+	_check(fallback_tile != Vector2i(999999, 999999), "isolated fallback started before its bounded age")
+	for _i in range(15):
+		isolated.advance(0.02, Vector2i(20, 20), CHUNK)
+	_check(isolated.get_tile_state(fallback_tile) == ProcGenRevealPresentation.TileState.RESOLVING, "isolated eligible cell never entered bounded fallback")
+	isolated.queue_free()
 
 
 func _frontier_trace() -> Array:
@@ -221,7 +337,19 @@ func _test_runtime_integration() -> void:
 	var map := await _make_map(true, 1)
 	var presentation := map.debug_get_reveal_presentation()
 	_check(presentation != null and presentation.get_parent() == map, "the veil owner is not integrated under the procgen map")
-	_check(presentation.z_index == 2 and presentation.multimesh != null, "veil layer is not a batched MultiMesh at the actor-below presentation layer")
+	_check(presentation.z_index == 200 and not presentation.z_as_relative and presentation.multimesh != null, "veil is not an absolute batched world-presentation layer above ordinary world content")
+	var underfield := map.get_node_or_null("ArchiveResolveUnrequestedUnderfield") as ColorRect
+	_check(underfield != null and underfield.material is ShaderMaterial, "unrequested in-bounds world has no shared graphite underfield")
+	var underfield_material := underfield.material as ShaderMaterial if underfield != null else null
+	_check(underfield_material != null and underfield_material.shader.resource_path.ends_with("archive_resolve_underfield.gdshader"), "unrequested underfield is not the Archive Resolve world-space shader")
+	if underfield != null:
+		var first_center := map.floor_tilemap.to_global(map.floor_tilemap.map_to_local(Vector2i.ZERO))
+		var underfield_parent := underfield.get_parent() as Node2D
+		var expected_position: Vector2 = underfield_parent.global_transform.affine_inverse() * first_center - Vector2(map._get_tile_size()) * 0.5
+		var expected_size := Vector2(map.procgen_node.map_size) * Vector2(map._get_tile_size())
+		_check(underfield.visible, "in-bounds underfield was hidden after generation")
+		_check(underfield.position.is_equal_approx(expected_position), "underfield origin does not align to the first world tile")
+		_check(underfield.size.is_equal_approx(expected_size), "underfield spills beyond or stops short of the generated map bounds")
 	var snap := presentation.get_snapshot()
 
 	# Request-before-commit on both paths: any commit lacking a veil record

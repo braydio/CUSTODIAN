@@ -10,8 +10,12 @@
 [ext_resource type="Resource" path="res://content/procgen/presentation/terrain_stamp_catalog_v1.tres" id="macro_stamp_catalog"]
 [ext_resource type="Script" path="res://game/world/procgen/surfaces/surface_material_overlay.gd" id="5_surface_material_overlay"]
 [ext_resource type="Script" path="res://game/world/procgen/streaming/procgen_reveal_presentation.gd" id="6_reveal_presentation"]
+[ext_resource type="Shader" path="res://game/world/procgen/streaming/archive_resolve_underfield.gdshader" id="7_archive_underfield_shader"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_1"]
+
+[sub_resource type="ShaderMaterial" id="ArchiveResolveUnderfieldMaterial"]
+shader = ExtResource("7_archive_underfield_shader")
 
 [node name="ProcGenMap" type="Node2D" unique_id=531661722 node_paths=PackedStringArray("procgen_node", "floor_tilemap", "walls_tilemap", "nav_region", "depth_backdrop", "void_cliff_face", "nonwalkable_surface_base_tilemap", "nonwalkable_surface_overlay_tilemap", "surface_material_overlay", "macro_presentation_back", "macro_presentation_ground", "macro_presentation_front")]
 scale = Vector2(1, 1)
@@ -102,6 +106,11 @@ z_index = -300
 script = ExtResource("depth_backdrop_script")
 underlay_profile = ExtResource("forest_underlay_profile")
 
+[node name="ArchiveResolveUnrequestedUnderfield" type="ColorRect" parent="."]
+material = SubResource("ArchiveResolveUnderfieldMaterial")
+z_index = -250
+z_as_relative = false
+
 [node name="VoidCliffFace" type="TileMapLayer" parent="." unique_id=927911932]
 z_index = -120
 z_as_relative = false
@@ -168,5 +177,6 @@ auto_generate_on_ready = false
 metadata/_custom_type_script = "uid://dhph4w3w8vsll"
 
 [node name="ArchiveResolveVeil" type="MultiMeshInstance2D" parent="."]
-z_index = 2
+z_index = 200
+z_as_relative = false
 script = ExtResource("6_reveal_presentation")

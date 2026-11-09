@@ -152,6 +152,9 @@ func _test_wall_destruction_invalidation() -> void:
 	_run_for(o2, 1.0, 0.016)
 	var rb := int((o2.get_snapshot()["frontier"] as Dictionary)["mask_rebuilds"])
 	_check(rb <= 7, "visibility mask rebuilt %d times in 1 s static (per-frame rebuild)" % rb)
+	var frontier_metrics: Dictionary = o2.get_snapshot()["frontier"]
+	var average_rebuild_usec := float(frontier_metrics["mask_rebuild_usec"]) / maxf(1.0, float(frontier_metrics["mask_rebuilds"]))
+	_check(average_rebuild_usec <= 8000.0, "18-tile cached LOS rebuild averaged %.0f us (budget 8000 us)" % average_rebuild_usec)
 	o.queue_free()
 	o2.queue_free()
 
@@ -177,7 +180,7 @@ func _test_camera_margin() -> void:
 func _pace(step: float) -> Dictionary:
 	var o := _make()
 	_walls.clear()
-	o.visual_resolve_radius_tiles = 14
+	o.visual_resolve_radius_tiles = 18
 	var tiles := _rect(OP, 13)
 	_commit(o, tiles)
 	var max_frame := 0
@@ -195,7 +198,7 @@ func _pace(step: float) -> Dictionary:
 func _test_pacing_cadence_invariance() -> void:
 	var a := _pace(1.0 / 30.0)
 	var b := _pace(1.0 / 144.0)
-	var expected := 84.0 * 2.0
+	var expected := 48.0 * 2.0
 	for r in [a, b]:
 		_check(absf(float(r["started"]) - expected) <= 12.0, "start count %d not ~%d over 2 s" % [int(r["started"]), int(expected)])
 		_check(int(r["max_frame"]) <= 8, "per-frame burst %d exceeds cap" % int(r["max_frame"]))
@@ -294,9 +297,10 @@ func _test_echo_and_reacquisition_gate() -> void:
 func _test_ingress_eligibility() -> void:
 	var o := _make()
 	_walls.clear()
-	var ring_far := Vector2i(OP.x + 13, OP.y)
+	var ring_far := Vector2i(OP.x + 20, OP.y)
 	var ring_near := Vector2i(OP.x + 6, OP.y)
 	var cells: Array[Vector2i] = [ring_far, ring_near]
+	o.ingress_radius_tiles = 24
 	o.begin_ingress_resolve(OP, cells, CHUNK)
 	_run_for(o, 2.0, 0.016)
 	_check(not o.has_veil(ring_near), "eligible ingress ring cell did not resolve")
@@ -327,6 +331,7 @@ func _test_ingress_pocket_occlusion() -> void:
 
 	var resolving := _make()
 	resolving.safety_halo_tiles = 0
+	resolving.resolve_starts_per_sec = 100.0
 	_walls.clear()
 	_commit(resolving, [target])
 	resolving.advance(0.016, OP, CHUNK)

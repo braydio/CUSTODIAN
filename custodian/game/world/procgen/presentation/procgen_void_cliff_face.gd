@@ -219,6 +219,24 @@ func get_debug_state() -> Dictionary:
 	}
 
 
+## Read-only Archive Resolve coverage map, grouped by this paint plan's existing
+## owning frontier cell. No cliff classification or paint decisions are made
+## by the consumer.
+func get_presentation_companion_cells() -> Dictionary:
+	var result: Dictionary = {}
+	for cell_variant: Variant in _last_paint_plan:
+		if not cell_variant is Vector2i:
+			continue
+		var data := _last_paint_plan[cell_variant] as Dictionary
+		var owner: Vector2i = data.get("frontier_cell", Vector2i.ZERO)
+		var cells: Array = result.get(owner, [])
+		cells.append(cell_variant as Vector2i)
+		result[owner] = cells
+	for owner: Vector2i in result.keys():
+		(result[owner] as Array).sort()
+	return result
+
+
 func get_debug_paint_plan() -> Dictionary:
 	return _last_paint_plan.duplicate(true)
 

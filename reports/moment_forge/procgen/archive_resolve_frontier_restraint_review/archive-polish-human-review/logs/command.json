@@ -1,0 +1,50 @@
+{
+  "argv": [
+    "/usr/bin/godot",
+    "--path",
+    "/home/braydenchaffee/Projects/.custodian-worktrees/procgen-archive-resolve-playtest-polish-v1-20261012T030652Z-0a89277ae869/custodian",
+    "--fixed-fps",
+    "60",
+    "--write-movie",
+    "/home/braydenchaffee/Projects/.custodian-worktrees/procgen-archive-resolve-playtest-polish-v1-20261012T030652Z-0a89277ae869/reports/moment_forge/procgen/archive_resolve_frontier_restraint_review/archive-polish-human-review/raw/capture.png",
+    "--script",
+    "res://tools/iteration/godot/moment_runner.gd",
+    "--",
+    "--custodian-dev",
+    "--observe",
+    "--moment-forge",
+    "--moment-scenario",
+    "/home/braydenchaffee/Projects/.custodian-worktrees/procgen-archive-resolve-playtest-polish-v1-20261012T030652Z-0a89277ae869/reports/moment_forge/procgen/archive_resolve_frontier_restraint_review/archive-polish-human-review/scenario.snapshot.json",
+    "--moment-output",
+    "/home/braydenchaffee/Projects/.custodian-worktrees/procgen-archive-resolve-playtest-polish-v1-20261012T030652Z-0a89277ae869/reports/moment_forge/procgen/archive_resolve_frontier_restraint_review/archive-polish-human-review",
+    "--moment-capture-mode",
+    "full"
+  ],
+  "capture_mode": "full",
+  "repository": {
+    "branch": "agent/procgen-archive-resolve-playtest-polish-v1",
+    "changed_files": [
+      "M custodian/docs/ai_context/CURRENT_STATE.md",
+      " M custodian/docs/ai_context/FILE_INDEX.md",
+      " M custodian/game/world/procgen/presentation/procgen_void_cliff_face.gd",
+      " M custodian/game/world/procgen/proc_gen_map.tscn",
+      " M custodian/game/world/procgen/proc_gen_tilemap.gd",
+      " M custodian/game/world/procgen/streaming/archive_resolve.gdshader",
+      " M custodian/game/world/procgen/streaming/procgen_reveal_presentation.gd",
+      " M custodian/tools/validation/procgen_archive_resolve_frontier_restraint_smoke.gd",
+      " M custodian/tools/validation/procgen_reveal_presentation_smoke.gd",
+      " M custodian/tools/validation/procgen_void_cliff_face_smoke.gd",
+      " M custodian/tools/validation/validation_manifest.json",
+      " M design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md",
+      " M design/02_features/procgen/STREAMING_REVEAL_PRESENTATION_V1.md",
+      "?? custodian/game/world/procgen/streaming/archive_resolve_underfield.gdshader",
+      "?? custodian/game/world/procgen/streaming/archive_resolve_underfield.gdshader.uid",
+      "?? custodian/tools/validation/npa_showcase_existing_enemy_smoke.gd.uid",
+      "?? custodian/tools/validation/operator_2_5d_composition_preflight_smoke.gd.uid",
+      "?? reports/moment_forge/procgen/"
+    ],
+    "commit": "8c3ed99e31f0cafe301b203af67e5a004f32582e",
+    "dirty": true
+  },
+  "scenario_sha256": "1c6c2707dba64821a18ffe0f3906f5993b3f0a2a30f3f4ca9f7160675a9bfdaa"
+}

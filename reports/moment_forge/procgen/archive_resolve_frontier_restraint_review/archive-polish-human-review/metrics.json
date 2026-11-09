@@ -1,0 +1,42 @@
+{
+  "action_count": 8,
+  "completed": true,
+  "duration_ticks": 590,
+  "event_count": 47,
+  "fixture": {
+    "position": [
+      0.0,
+      0.0
+    ]
+  },
+  "media": {
+    "audio": {
+      "available": true,
+      "channels": 2,
+      "duration_sec": 9.9,
+      "frames": 475200,
+      "noise_floor_dbfs": -27.004941887961166,
+      "onset_ms": 2112.4375,
+      "onset_threshold_dbfs": -15.004941887961166,
+      "peak_dbfs": -13.186244737987973,
+      "peak_time_ms": 3505.5729166666665,
+      "rms_dbfs": -25.682832855337097,
+      "sample_rate": 48000,
+      "sample_width": 2
+    },
+    "baseline_audio": null,
+    "visual_diff": null
+  },
+  "probe_sample_count": 14,
+  "stable": {
+    "completed_tick": 590,
+    "visible_visual_anchor_delta_px": null,
+    "visible_visual_anchor_sample_count": 0
+  },
+  "stable_fingerprint": {
+    "algorithm": "sha256",
+    "schema": "custodian.moment_forge.stable_fingerprint.v1",
+    "value": "c1544f8fe5cd0b1ccb391a0e09b2c6228397f356d6d70b40ecf5d3206a511d54"
+  },
+  "warning_count": 0
+}

@@ -256,6 +256,12 @@ The following packets consume the reviewed M6 seam but are **not** part of S7/S8
 
 RF1/RFR1 are complete/passed and Region Frame is reviewed-stable. AP1's reviewed Alpine underlay is complete/landed. AP2 now consumes the approved durable source-master batch registered under `CUSTODIAN/asset_batches/_registry/`; its final 26-state Gate B is an AP2 output/closeout receipt. AP3's image-art blocker is cleared: all 16 surface source masters are registered, and AP3 waits only on AP2 before normalization/profile/catalog integration and final Gate C closeout. AP4 waits on AP1-AP3. AR1/ARR1, AR2, AR3 and AR4 implementation/review/correction lineage are complete; AR4's human disposition is `waive-to-playtest` and S1 remains `1773840677`. The remaining live-play blocker is the independent ready/auto P0 `game-tscn-operator-startup-integrity-v1`: a literal production `game.tscn` Dev Observatory run showed an active generated ProcGenMap while the sampled player remained at the scene-authored legacy Operator coordinates. Archive Resolve must not be reopened or retuned to solve that startup-integrity defect.
 
+**Archive Resolve follow-up (2026-10-12):** the separate ready/auto
+`procgen-archive-resolve-playtest-polish-v1` packet is now addressing the later
+gameplay composition findings. Its candidate remains pending the packet's
+explicit human visual disposition; it does not alter S1 (`1773840677`) or the
+independent startup-integrity lane.
+
 ## Roadmap Maintenance Contract
 
 This file is the program tracker for this workstream family.

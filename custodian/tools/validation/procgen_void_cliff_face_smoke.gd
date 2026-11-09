@@ -77,6 +77,16 @@ func _init() -> void:
 	var first_fingerprint := _fingerprint(face, first_cells)
 	_assert_plan(face, first_cells, floor_cells, chasm_cells, ocean_cells, wall_cells)
 	var state := face.get_debug_state()
+	var expected_companions: Dictionary = {}
+	for cell_variant: Variant in face.get_debug_paint_plan():
+		var cell := cell_variant as Vector2i
+		var owner: Vector2i = (face.get_debug_paint_plan()[cell] as Dictionary)["frontier_cell"]
+		if not expected_companions.has(owner):
+			expected_companions[owner] = [] as Array[Vector2i]
+		(expected_companions[owner] as Array[Vector2i]).append(cell)
+	for owner: Vector2i in expected_companions:
+		(expected_companions[owner] as Array[Vector2i]).sort()
+	assert(face.get_presentation_companion_cells() == expected_companions, "Archive Resolve companion map diverged from the authoritative fascia paint plan")
 	assert(state["source_ids"] == ROLE_SOURCE_IDS)
 	assert(int(state["frontier_cells"]) > 0)
 	assert(int(state["painted_cells"]) == first_cells.size())

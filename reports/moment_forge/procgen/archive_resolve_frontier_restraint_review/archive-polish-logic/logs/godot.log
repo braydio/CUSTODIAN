@@ -1,0 +1,65 @@
+Godot Engine v4.7.2.stable.arch_linux.ed1daf0bf (2026-08-17 01:18:38 UTC) - https://godotengine.org
+
+[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)
+[ProcGenTilemap] GEN_BEGIN id=1 mode=FINAL_VISUAL seed=424242 path=/root/ArchiveResolveFrontierRestraintMoment/ProcGenRuntime/ProcGenMap output_enabled=true
+[ProcGenTilemap] intent graph nodes=18 edges=17 floor_cells=4987 regions=18
+[TerrainBuilder] === PHASES ===
+[TerrainBuilder]   build_baseline: 19 ms
+[TerrainBuilder]   reserved_region: 85 ms
+[TerrainBuilder]   ascent_route: 175 ms
+[TerrainBuilder]   mountain_boundary: 5 ms
+[TerrainBuilder]   industrial_platform: 35 ms
+[TerrainBuilder]   connectivity_validate: 32 ms
+[TerrainBuilder]   connectivity_rescue: 0 ms
+[TerrainBuilder]   TOTAL: 535 ms
+TerrainBuilder: seed=35298381048036 mode=FINAL_VISUAL map_size=(224, 224) required=29 missing=0 rescue_carved=0 baseline_rescue=0 regions=3 blocked=1413 elevated=1976 ramps=116 connectivity=true fallback=false
+WorldProgression: profile=sundered_keep_ascent samples=196
+[ProcgenDepthBackdrop] Chasm camera backdrop active: cells=38235
+[ProcGen] floor_value_clusters SKIP no registered floor value variants
+[ProcGenTilemap] props_foliage SKIP mode=FINAL_VISUAL_STREAMING_REVEAL
+[ProcGen] === FILL_TILEMAPS PHASES ===
+[ProcGen]   setup_clear: 1 ms
+[ProcGen]   planet_profile: 0 ms
+[ProcGen]   substrate_ascent: 135 ms
+[ProcGen]   compound_interior_spawn: 4270 ms
+[ProcGen]   interest_paths: 43 ms
+[ProcGen]   roads_walls_capture: 64 ms
+[ProcGen]   terrain_apply_builder: 9444 ms
+[ProcGen]   terrain_route_walkability: 122 ms
+[ProcGen]   terrain_ingress_protection: 0 ms
+[ProcGen]   terrain_road_walkability: 37 ms
+[ProcGen]   terrain_road_repair: 0 ms
+[ProcGen]   terrain_connector_elevation: 0 ms
+[ProcGen]   terrain_edge_prune: 0 ms
+[ProcGen]   terrain_road_visual_refresh: 36 ms
+[ProcGen]   terrain_state_capture: 11 ms
+[ProcGen]   terrain_elevation: 9650 ms
+[ProcGen]   progress_faction_story: 998 ms
+[ProcGen]   roads_pass2: 0 ms
+[ProcGen]   road_semantics: 94 ms
+[ProcGen]   nonwalkable_surface_semantics: 186 ms
+[ProcGen]   biome_final_semantics: 89 ms
+[ProcGen]   surface_materials: 91 ms
+[ProcGen]   floor_value_clusters: 0 ms
+[ProcGen]   macro_presentation: 389 ms
+[ProcGen]   dressing_cluster_plan: 355 ms
+[ProcGen]   streaming_reveal_or_walls: 748 ms
+[ProcGen]   props_foliage: 0 ms
+[ProcGen]   props_visual: 0 ms
+[ProcGen]   playability_audit: 977 ms
+[ProcGen]   horiz_wall_overlays: 0 ms
+[ProcGen]   FILL_TILEMAPS TOTAL: 18090 ms
+[ProcgenDepthBackdrop] Chasm camera backdrop active: cells=38235
+[ProcGenTilemap] GEN_END id=1 mode=FINAL_VISUAL seed=424242 total=18174ms
+[ProcGen] === PIPELINE TIMING ===
+[ProcGen]   mode: FINAL_VISUAL
+[ProcGen]   seed: 424242
+[ProcGen]   fill_tilemaps: 18105 ms
+[ProcGen]   refresh_shadows: 0 ms
+[ProcGen]   TOTAL: 18174 ms
+[DevObservatory] Session exported: /home/braydenchaffee/Projects/.custodian-worktrees/procgen-archive-resolve-playtest-polish-v1-20261012T030652Z-0a89277ae869/reports/moment_forge/procgen/archive_resolve_frontier_restraint_review/archive-polish-logic/telemetry.json
+
+WARNING: 20 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 3 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

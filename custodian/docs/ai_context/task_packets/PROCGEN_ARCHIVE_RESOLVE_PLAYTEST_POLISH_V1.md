@@ -164,31 +164,42 @@
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `<fill at closeout>`
-- Completion boundary satisfied: `<fill at closeout>`
-- Acceptance satisfied: `<fill at closeout>`
+- Goal satisfied: `partial — implementation candidate and renderer evidence are ready; the required human visual disposition is outstanding`
+- Completion boundary satisfied: `no — do not close or land until the exact authoring-chat decision is recorded; one unrelated real-world enemy-spawn validation timed out in the broad changed sweep`
+- Acceptance satisfied: `objective focused checks and the fixed-seed determinism check pass; subjective visual acceptance and the full changed-file sweep remain incomplete`
 - Superseded/legacy production path disposition: `AR2's actor-above-veil scene-order invariant is superseded by the human-approved world-presentation concealment contract; AR1-AR4 lifecycle/frontier authority is preserved`
-- Evidence: `<fill at closeout>`
+- Evidence: `procgen_archive_resolve_frontier_restraint, procgen_reveal_presentation, procgen_archive_resolve_shader, and procgen_void_cliff_face focused checks pass; Moment Forge logic and full Vulkan capture pass; S1 quick reports determinism_ok=true and fingerprints 1773840677/1773840677; 18-tile mask reports 64 rebuilds/195801 us over 9.38 s (about 3.1 ms/rebuild); git diff --check passes; changed sweep result is 70 passed, 1 timed out (procgen_ambient_enemy_real_world_spawn at 180 s), 1 skipped`
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `success | partial | blocked`
-- Friction severity: `none | low | medium | high`
-- What went wrong: `human gameplay found black unresolved cells, too-fast/low-contrast resolution, actor/prop/structure leaks, and cliff presentation outside the resolve composition`
-- Root cause / contributing factors: `<fill at closeout>`
-- Prevention / pipeline improvement: `retain gameplay-scale human review after objective presentation smokes for effects whose quality depends on temporal composition`
-- Tooling / docs drift discovered: `active Archive Resolve docs still describe the pre-playtest visual baseline and must be reconciled to the approved post-playtest tuning at closeout`
-- Follow-up: `paired fresh-context review`
-- What worked: `AR1-AR4 state/streaming separation and existing Moment Forge fixture provide a narrow seam for presentation-only correction`
+- Outcome: `partial`
+- Friction severity: `medium`
+- What went wrong: `the first changed sweep hit the registered 120 s S1 timeout; after raising it to 240 s, the sweep passed S1 but the unrelated procgen_ambient_enemy_real_world_spawn check exceeded its 180 s timeout; one initial review upload had a duplicate final question and remains superseded by the corrected run`
+- Root cause / contributing factors: `S1 quick exceeded its recorded 120 s budget on this host; the full changed sweep selected the broad manifest set because validation_manifest.json changed; the real-world enemy-spawn smoke also exceeded its existing 180 s budget`
+- Prevention / pipeline improvement: `record measured focused run costs in validation timeouts; keep the external handoff selection bounded and inspect its dry-run manifest before upload`
+- Tooling / docs drift discovered: `procgen_performance_baseline_quick timeout raised from 120 s to 240 s after a direct successful run; procgen_ambient_enemy_real_world_spawn still timed out at 180 s and is outside this presentation slice; design/current-state/index/roadmap entries now distinguish the unapproved candidate from the prior baseline`
+- Follow-up: `manual-follow-up`
+- What worked: `AR1-AR4 ownership seams, cached LOS telemetry, paired frontier/cliff smokes, and the existing Moment Forge renderer fixture supported focused proof`
+
+## Process Feedback
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: partial
+- Friction severity: medium
+- What went wrong: initial changed sweep timed out S1; corrected sweep timed out the unrelated real-world enemy-spawn check; first uploaded review run is superseded by the corrected six-question handoff
+- Root cause / contributing factors: validation timeout budgets and a broad sweep triggered by manifest changes
+- Prevention / pipeline improvement: use measured timeout budgets and inspect publisher dry-run selections before immutable Dropbox upload
+- Tooling / docs drift discovered: S1 quick timeout increased to 240 s; ambient enemy-spawn timeout remains 180 s and needs a separate tooling follow-up
+- Follow-up: manual-follow-up
+- What worked: focused deterministic regressions and the rendered fixture completed successfully
 
 ## Handoff
 
-- Next workstream: `review-procgen-archive-resolve-playtest-polish-v1`
-- Next packet state: `ready`
-- Refresh owner: `none`
+- Next workstream: `procgen-archive-resolve-playtest-polish-v1`
+- Next packet state: `human-required`
+- Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
-- Refresh reason: `none; implementation has a required in-workstream human visual gate but no new planning gate`
-- Next action: `After implementation lands with recorded human visual approval, claim the fresh-context paired technical review.`
-- Blockers or open questions: `none at claim time; visual closeout requires the specified authoring-chat human decision`
+- Refresh reason: `required human visual verdict on the revised graphite field, connected resolve motion, world concealment, Operator readability, and settled appearance`
+- Next action: `Review /CUSTODIAN/visual_review/procgen-archive-resolve-playtest-polish-v1/20261012TARCHIVEPOLISH3/REVIEW_MANIFEST.json in the Authoring chat and record an explicit pass or bounded tuning requests; then resume this same workstream, complete closeout validation, and land before its paired fresh-context review.`
+- Blockers or open questions: `visual verdict pending; immutable runs 20261012TARCHIVEPOLISH1 (duplicate question) and 20261012TARCHIVEPOLISH2 (three keyframes) are superseded—review only run 20261012TARCHIVEPOLISH3 and clean all three after the decision`

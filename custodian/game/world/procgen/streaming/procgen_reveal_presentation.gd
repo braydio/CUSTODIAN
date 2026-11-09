@@ -68,16 +68,19 @@ const REDUCED_REGISTRATION_SCALE := 0.25
 @export var frontier_enabled: bool = true
 ## Time-based start budget: tokens accrue per second of presentation time and
 ## are spent per started tile, capped per frame by `resolve_burst_cap`.
-@export_range(1.0, 600.0, 1.0) var resolve_starts_per_sec: float = 84.0
+@export_range(1.0, 600.0, 1.0) var resolve_starts_per_sec: float = 48.0
 @export_range(1, 256, 1) var resolve_burst_cap: int = 8
+@export_range(1, 8, 1) var cascade_max_origins: int = 3
+@export_range(0.03, 0.12, 0.005) var cascade_neighbor_stagger_sec: float = 0.06
+@export_range(0.2, 2.0, 0.05) var cascade_isolated_fallback_sec: float = 0.75
 ## Bounded per-frame eligibility scan of the READY queue (rotating cursor).
 @export_range(16, 8192, 1) var eligibility_scan_per_frame: int = 1024
-@export_range(1, 32, 1) var visual_resolve_radius_tiles: int = 11
+@export_range(1, 32, 1) var visual_resolve_radius_tiles: int = 18
 @export_range(0, 8, 1) var visual_resolve_fringe_tiles: int = 2
 @export_range(0, 16, 1) var camera_margin_tiles: int = 2
-@export_range(0.0, 2.0, 0.01) var resolve_duration_sec: float = 0.22
+@export_range(0.0, 2.0, 0.01) var resolve_duration_sec: float = 0.48
 ## Reacquisition (previously resolved, later unloaded) settles much faster.
-@export_range(0.0, 1.0, 0.01) var reacquisition_duration_sec: float = 0.12
+@export_range(0.0, 1.0, 0.01) var reacquisition_duration_sec: float = 0.20
 ## One-time ingress resolve: Chebyshev tile radius re-veiled around the final
 ## Operator tile, the always-settled pocket inside it, and the outward wave
 ## duration. First tiles start immediately; total settle is wave + resolve.
@@ -87,15 +90,15 @@ const REDUCED_REGISTRATION_SCALE := 0.25
 ## Chebyshev tile radius around the Operator inside which already-committed
 ## cells are force-settled. Never reveals an uncommitted cell.
 @export_range(0, 16, 1) var safety_halo_tiles: int = 3
-@export var veil_color: Color = Color(0.07, 0.075, 0.085, 1.0)
+@export var veil_color: Color = Color(0.12, 0.135, 0.16, 1.0)
 @export_group("Archive Resolve Shader", "")
 ## Brass/amber registration trace strength at the dissolve boundary.
-@export_range(0.0, 1.0, 0.01) var registration_intensity: float = 0.6:
+@export_range(0.0, 1.0, 0.01) var registration_intensity: float = 0.8:
 	set(value):
 		registration_intensity = value
 		_sync_material_controls()
 ## Low-frequency soot/graphite variation across unresolved cover.
-@export_range(0.0, 1.0, 0.01) var unresolved_haze_intensity: float = 0.5:
+@export_range(0.0, 1.0, 0.01) var unresolved_haze_intensity: float = 0.72:
 	set(value):
 		unresolved_haze_intensity = value
 		_sync_material_controls()
@@ -105,7 +108,7 @@ const REDUCED_REGISTRATION_SCALE := 0.25
 		phase_misregistration_intensity = value
 		_sync_material_controls()
 ## Semantic evidence-echo strength (faint contour/registration hint).
-@export_range(0.0, 1.0, 0.01) var semantic_echo_intensity: float = 0.5:
+@export_range(0.0, 1.0, 0.01) var semantic_echo_intensity: float = 0.7:
 	set(value):
 		semantic_echo_intensity = value
 		_sync_material_controls()
@@ -167,6 +170,13 @@ var _presentation_time: float = 0.0
 var _tile_to_global: Callable = Callable()
 var _tile_size: Vector2 = Vector2(32, 32)
 var _states: Dictionary = {}
+var _ready_since: Dictionary = {}
+var _cascade_wave_by_tile: Dictionary = {}
+var _cascade_due_by_tile: Dictionary = {}
+var _cascade_origins: Dictionary = {}
+var _next_cascade_wave_id: int = 1
+var _cliff_companions_by_owner: Dictionary = {}
+var _cliff_owner_by_companion: Dictionary = {}
 var _slot_of: Dictionary = {}
 var _resolve_start: Dictionary = {}
 var _free_slots: Array[int] = []
@@ -188,6 +198,13 @@ func configure(tile_to_global: Callable, tile_size: Vector2 = Vector2(32, 32)) -
 
 func reset() -> void:
 	_states.clear()
+	_ready_since.clear()
+	_cascade_wave_by_tile.clear()
+	_cascade_due_by_tile.clear()
+	_cascade_origins.clear()
+	_next_cascade_wave_id = 1
+	_cliff_companions_by_owner.clear()
+	_cliff_owner_by_companion.clear()
 	_slot_of.clear()
 	_resolve_start.clear()
 	_ready_queue.clear()
@@ -239,6 +256,26 @@ func set_presentation_class_resolver(resolver: Callable) -> void:
 	class_resolver = resolver
 
 
+## Adapter input from ProcgenVoidCliffFace's own paint plan. The arrays are
+## copied so the reveal owner cannot mutate cliff presentation authority.
+func set_cliff_companion_cells(cells_by_frontier: Dictionary) -> void:
+	_cliff_companions_by_owner.clear()
+	_cliff_owner_by_companion.clear()
+	for owner_variant: Variant in cells_by_frontier:
+		if not owner_variant is Vector2i:
+			continue
+		var owner := owner_variant as Vector2i
+		var cells: Array[Vector2i] = []
+		for cell_variant: Variant in cells_by_frontier[owner_variant]:
+			if not cell_variant is Vector2i:
+				continue
+			var cell := cell_variant as Vector2i
+			cells.append(cell)
+			_cliff_owner_by_companion[cell] = owner
+		cells.sort()
+		_cliff_companions_by_owner[owner] = cells
+
+
 func set_frontier_inputs(opaque_tile: Callable, camera_tile_rect: Callable) -> void:
 	occluder = opaque_tile
 	camera_rect_provider = camera_tile_rect
@@ -257,23 +294,29 @@ func note_tiles_requested(chunk_pos: Vector2i, tiles: Array[Vector2i], reacquisi
 	if _ever_resolved_chunks.has(chunk_pos) != reacquisition:
 		identity_mismatch_count += 1
 	for tile in tiles:
-		requested_count += 1
-		if reacquisition:
-			reacquisition_count += 1
-		else:
-			first_resolve_count += 1
-		if not effect_enabled or _states.has(tile):
-			continue
-		if _free_slots.is_empty():
-			overflow_count += 1
-			continue
-		var slot: int = _free_slots.pop_back()
-		_slot_of[tile] = slot
-		_states[tile] = TileState.REQUESTED
-		if reacquisition:
-			_reacq_tiles[tile] = true
-		_write_slot(slot, tile, 1.0)
-		_write_slot_identity(slot, tile, reacquisition)
+		_request_veil_record(tile, reacquisition)
+		for companion in _cliff_companions_by_owner.get(tile, []):
+			_request_veil_record(companion, reacquisition)
+
+
+func _request_veil_record(tile: Vector2i, reacquisition: bool) -> void:
+	requested_count += 1
+	if reacquisition:
+		reacquisition_count += 1
+	else:
+		first_resolve_count += 1
+	if not effect_enabled or _states.has(tile):
+		return
+	if _free_slots.is_empty():
+		overflow_count += 1
+		return
+	var slot: int = _free_slots.pop_back()
+	_slot_of[tile] = slot
+	_states[tile] = TileState.REQUESTED
+	if reacquisition:
+		_reacq_tiles[tile] = true
+	_write_slot(slot, tile, 1.0)
+	_write_slot_identity(slot, tile, reacquisition)
 
 
 ## COMMIT observation: only a committed tile may become eligible to resolve.
@@ -286,6 +329,7 @@ func note_tile_committed(tile: Vector2i) -> void:
 					return
 				_states[tile] = TileState.READY
 				_ready_queue.append(tile)
+				_ready_since[tile] = _presentation_time
 				_ingress_pocket_waiting[tile] = true
 				return
 			if _in_ingress_ring(tile):
@@ -293,6 +337,12 @@ func note_tile_committed(tile: Vector2i) -> void:
 				return
 		_states[tile] = TileState.READY
 		_ready_queue.append(tile)
+		_ready_since[tile] = _presentation_time
+	var owner: Vector2i = _cliff_owner_by_companion.get(tile, NO_OPERATOR_TILE)
+	if owner != NO_OPERATOR_TILE and int(_states.get(owner, 0)) == TileState.RESOLVING:
+		_ready_queue.erase(tile)
+		_cascade_wave_by_tile[tile] = int(_cascade_wave_by_tile.get(owner, 0))
+		_begin_resolving_single(tile, float(_resolve_start.get(owner, _presentation_time)))
 		return
 	if not _states.has(tile):
 		# No veil record (effect disabled or slot overflow): visible as-is.
@@ -391,9 +441,11 @@ func _settle_visible_ingress_pocket_commits(chunk_size_tiles: int) -> void:
 		_filter_queues_to_live_tiles()
 
 
-## AR4 ordinary start: token-bucket pacing in presentation time (frame-rate
-## invariant), bounded burst, and a bounded rotating scan. Ineligible READY
-## tiles stay veiled and consume no start budget.
+## Ordinary start: shared token bucket plus deterministic connected micro-waves.
+## READY tiles only join a wave through a four-connected resolving neighbor that
+## is itself admitted by the cached distance/LOS/camera frontier. Disconnected
+## ready regions get at most three separated origins; true isolated leftovers
+## use a bounded age fallback instead of remaining hidden forever.
 func _start_ready_tiles_paced(delta: float) -> void:
 	frontier_start_tokens = minf(
 		frontier_start_tokens + maxf(0.0, delta) * resolve_starts_per_sec,
@@ -407,17 +459,106 @@ func _start_ready_tiles_paced(delta: float) -> void:
 	if budget <= 0:
 		return
 	var scanned := mini(count, eligibility_scan_per_frame)
-	var started: Dictionary = {}
+	var eligible: Array[Vector2i] = []
 	var idx := _scan_cursor % count
 	for _i in range(scanned):
-		if started.size() >= budget:
-			break
 		var tile := _ready_queue[idx]
 		if _frontier.check(tile):
-			started[tile] = true
-			_begin_resolving(tile, _presentation_time)
+			eligible.append(tile)
 		idx = (idx + 1) % count
 	_scan_cursor = idx
+	if eligible.is_empty():
+		return
+	eligible.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		var ta := float(_ready_since.get(a, _presentation_time))
+		var tb := float(_ready_since.get(b, _presentation_time))
+		if not is_equal_approx(ta, tb):
+			return ta < tb
+		var ha := cell_identity_hash(a)
+		var hb := cell_identity_hash(b)
+		if not is_equal_approx(ha, hb):
+			return ha < hb
+		return a.y < b.y or (a.y == b.y and a.x < b.x)
+	)
+	var active_waves: Dictionary = {}
+	for tile in _resolving_queue:
+		var wave := int(_cascade_wave_by_tile.get(tile, 0))
+		if wave > 0:
+			active_waves[wave] = true
+	for wave_variant: Variant in _cascade_origins.keys():
+		if not active_waves.has(int(wave_variant)):
+			_cascade_origins.erase(wave_variant)
+	var started: Dictionary = {}
+	var remaining_budget := budget
+	var connected: Array[Dictionary] = []
+	for tile in eligible:
+		if _states.get(tile, 0) != TileState.READY:
+			continue
+		var wave := _resolving_neighbor_wave(tile, active_waves)
+		if wave <= 0:
+			continue
+		if not _cascade_due_by_tile.has(tile):
+			var jitter := cell_identity_hash(tile)
+			var parent_start := _nearest_resolving_start(tile, wave)
+			_cascade_due_by_tile[tile] = parent_start + 0.03 + jitter * cascade_neighbor_stagger_sec
+		if float(_cascade_due_by_tile[tile]) <= _presentation_time:
+			connected.append({"tile": tile, "wave": wave})
+	connected.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		var at := float(_ready_since.get(a.tile, _presentation_time))
+		var bt := float(_ready_since.get(b.tile, _presentation_time))
+		if not is_equal_approx(at, bt):
+			return at < bt
+		return a.tile.y < b.tile.y or (a.tile.y == b.tile.y and a.tile.x < b.tile.x)
+	)
+	for candidate in connected:
+		if remaining_budget <= 0:
+			break
+		var tile: Vector2i = candidate.tile
+		if started.has(tile):
+			continue
+		_cascade_wave_by_tile[tile] = int(candidate.wave)
+		_cascade_due_by_tile.erase(tile)
+		_begin_resolving(tile, _presentation_time)
+		started[tile] = true
+		remaining_budget -= 1
+	var origin_count := active_waves.size()
+	for tile in eligible:
+		if remaining_budget <= 0 or origin_count >= cascade_max_origins:
+			break
+		if started.has(tile) or _states.get(tile, 0) != TileState.READY:
+			continue
+		var separated := true
+		for origin_variant: Variant in _cascade_origins.values():
+			if Vector2(tile - (origin_variant as Vector2i)).length() < 5.0:
+				separated = false
+				break
+		if not separated or _resolving_neighbor_wave(tile, active_waves) > 0:
+			continue
+		var wave_id := _next_cascade_wave_id
+		_next_cascade_wave_id += 1
+		_cascade_origins[wave_id] = tile
+		_cascade_wave_by_tile[tile] = wave_id
+		_begin_resolving(tile, _presentation_time)
+		started[tile] = true
+		active_waves[wave_id] = true
+		origin_count += 1
+		remaining_budget -= 1
+	# A genuinely isolated eligible cell eventually resolves through one bounded
+	# fallback origin, rather than becoming an orphaned forever-READY veil.
+	if remaining_budget > 0:
+		for tile in eligible:
+			if started.has(tile) or _states.get(tile, 0) != TileState.READY:
+				continue
+			if _presentation_time - float(_ready_since.get(tile, _presentation_time)) < cascade_isolated_fallback_sec:
+				continue
+			var wave_id := _next_cascade_wave_id
+			_next_cascade_wave_id += 1
+			_cascade_origins[wave_id] = tile
+			_cascade_wave_by_tile[tile] = wave_id
+			_begin_resolving(tile, _presentation_time)
+			started[tile] = true
+			remaining_budget -= 1
+			break
 	if started.is_empty():
 		return
 	frontier_start_tokens -= float(started.size())
@@ -425,6 +566,35 @@ func _start_ready_tiles_paced(delta: float) -> void:
 	frontier_burst_max = maxi(frontier_burst_max, started.size())
 	_ready_queue = _ready_queue.filter(func(t: Vector2i) -> bool: return not started.has(t))
 	_scan_cursor = 0 if _ready_queue.is_empty() else mini(_scan_cursor, _ready_queue.size() - 1)
+
+
+func _resolving_neighbor_wave(tile: Vector2i, active_waves: Dictionary) -> int:
+	var offsets: Array[Vector2i] = [Vector2i.UP, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT]
+	var candidates: Array[int] = []
+	for offset in offsets:
+		var neighbor := tile + offset
+		if int(_states.get(neighbor, 0)) != TileState.RESOLVING:
+			continue
+		var wave := int(_cascade_wave_by_tile.get(neighbor, 0))
+		if wave > 0 and active_waves.has(wave):
+			candidates.append(wave)
+	if candidates.is_empty():
+		return 0
+	candidates.sort()
+	return candidates[0]
+
+
+func _nearest_resolving_start(tile: Vector2i, wave: int) -> float:
+	var result := _presentation_time
+	var best_distance := 2147483647
+	for neighbor in _resolving_queue:
+		if int(_cascade_wave_by_tile.get(neighbor, 0)) != wave:
+			continue
+		var distance := absi(tile.x - neighbor.x) + absi(tile.y - neighbor.y)
+		if distance < best_distance:
+			best_distance = distance
+			result = float(_resolve_start.get(neighbor, _presentation_time))
+	return result
 
 
 ## One-time ingress resolve. Re-veils already-committed cells in the ring
@@ -549,8 +719,22 @@ func _advance_ingress(gated: bool = false) -> void:
 ## fully opaque; reacquisition cells never echo. `base_start` is the schedule
 ## time (frame-rate independent for ingress).
 func _begin_resolving(tile: Vector2i, base_start: float) -> void:
+	_begin_resolving_single(tile, base_start)
+	for companion in _cliff_companions_by_owner.get(tile, []):
+		var companion_state := int(_states.get(companion, 0))
+		if companion_state != TileState.READY and companion_state != TileState.REQUESTED:
+			continue
+		_ready_queue.erase(companion)
+		if _cascade_wave_by_tile.has(tile):
+			_cascade_wave_by_tile[companion] = _cascade_wave_by_tile[tile]
+		_begin_resolving_single(companion, base_start)
+
+
+func _begin_resolving_single(tile: Vector2i, base_start: float) -> void:
 	_states[tile] = TileState.RESOLVING
 	_resolve_start[tile] = base_start
+	_ready_since.erase(tile)
+	_cascade_due_by_tile.erase(tile)
 	_resolving_queue.append(tile)
 	if reduced_effects or _reacq_tiles.has(tile) or not class_resolver.is_valid():
 		return
@@ -737,6 +921,9 @@ func _release_tile(tile: Vector2i) -> void:
 	_ingress_start.erase(tile)
 	_reacq_tiles.erase(tile)
 	_echo_lead.erase(tile)
+	_ready_since.erase(tile)
+	_cascade_wave_by_tile.erase(tile)
+	_cascade_due_by_tile.erase(tile)
 
 
 func _build_multimesh() -> void:
@@ -820,3 +1007,6 @@ func _sync_material_controls() -> void:
 func _sync_material_time() -> void:
 	if _veil_material != null:
 		_veil_material.set_shader_parameter("presentation_time", _presentation_time)
+	var underfield := get_parent().get_node_or_null("ArchiveResolveUnrequestedUnderfield") as ColorRect if get_parent() != null else null
+	if underfield != null and underfield.material is ShaderMaterial:
+		(underfield.material as ShaderMaterial).set_shader_parameter("presentation_time", _presentation_time)

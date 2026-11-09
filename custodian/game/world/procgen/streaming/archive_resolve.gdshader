@@ -14,12 +14,12 @@ shader_type canvas_item;
 */
 
 uniform float presentation_time = 0.0;
-uniform float registration_intensity : hint_range(0.0, 1.0) = 0.6;
-uniform float unresolved_haze_intensity : hint_range(0.0, 1.0) = 0.5;
+uniform float registration_intensity : hint_range(0.0, 1.0) = 0.8;
+uniform float unresolved_haze_intensity : hint_range(0.0, 1.0) = 0.72;
 uniform float phase_misregistration_intensity : hint_range(0.0, 1.0) = 0.5;
 uniform float dither_cell_px : hint_range(1.0, 8.0) = 2.0;
-uniform float front_scale_px : hint_range(32.0, 512.0) = 112.0;
-uniform float semantic_echo_intensity : hint_range(0.0, 1.0) = 0.5;
+uniform float front_scale_px : hint_range(32.0, 512.0) = 192.0;
+uniform float semantic_echo_intensity : hint_range(0.0, 1.0) = 0.7;
 uniform float reacquisition_effect_scale : hint_range(0.0, 1.0) = 0.35;
 uniform vec3 registration_color : source_color = vec3(0.78, 0.58, 0.26);
 
@@ -76,7 +76,9 @@ void fragment() {
 	// 32 px cell grid, chunk edge, or checkerboard shows through the cover.
 	float slow = presentation_time * 0.05;
 	float haze = value_noise(world_pos / (front_scale_px * 1.7) + vec2(slow, -slow * 0.6));
-	vec3 soot = COLOR.rgb * (1.0 + unresolved_haze_intensity * (haze - 0.5) * 0.9);
+	vec3 broad_haze = vec3(value_noise(world_pos / 420.0 + vec2(-slow * 0.35, slow * 0.2)));
+	haze = mix(haze, broad_haze.r, 0.62);
+	vec3 soot = COLOR.rgb * (1.0 + unresolved_haze_intensity * (haze - 0.5) * 1.15);
 
 	float reacq_scale = mix(1.0, reacquisition_effect_scale, reacq);
 
@@ -129,8 +131,9 @@ void fragment() {
 		} else {
 			// Just-dissolved boundary band: thin, intermittent brass trace.
 			float band = veil - thr_reg;
-			float tick = step(0.55, hash21(floor(dp / 3.0) + floor(presentation_time * 12.0)));
-			float trace = step(-0.07, band) * step(band, 0.0) * tick * registration_intensity * reacq_scale;
+			float trace_noise = value_noise(world_pos / 56.0 + vec2(0.0, slow * 3.0));
+			float tick = step(0.38, hash21(floor(dp / 4.0) + floor(presentation_time * 9.0)));
+			float trace = step(-0.11, band) * step(band, 0.0) * tick * smoothstep(0.25, 0.8, trace_noise) * registration_intensity * reacq_scale;
 			if (trace > 0.001) {
 				COLOR = vec4(registration_color, trace * 0.85);
 			} else {

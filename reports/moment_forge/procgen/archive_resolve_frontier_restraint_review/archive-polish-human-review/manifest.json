@@ -1,0 +1,130 @@
+{
+  "artifacts": {
+    "assertions": "assertions.json",
+    "audio": "audio_mix.wav",
+    "contact_sheet": "current_contact_sheet.png",
+    "metrics": "metrics.json",
+    "probes": "probes.json",
+    "report": "index.html",
+    "telemetry": "telemetry.json",
+    "timeline": "timeline.json",
+    "video": "current.mp4",
+    "visual_diff": null
+  },
+  "baseline": {
+    "status": "not_requested"
+  },
+  "baseline_compatibility": {
+    "contact_sheet_ticks": [
+      10,
+      80,
+      180,
+      300,
+      420,
+      540
+    ],
+    "end_tick": 599,
+    "fps": 60,
+    "height": 720,
+    "metrics_schema_major": 1,
+    "scenario_id": "procgen/archive_resolve_frontier_restraint_review",
+    "scenario_schema_version": 1,
+    "scenario_sha256": "1c6c2707dba64821a18ffe0f3906f5993b3f0a2a30f3f4ca9f7160675a9bfdaa",
+    "start_tick": 0,
+    "width": 1280
+  },
+  "capture": {
+    "audio_requested": false,
+    "fps": 60,
+    "height": 720,
+    "mode": "full",
+    "synchronization": "verified",
+    "width": 1280
+  },
+  "generated_at": "2026-10-11T23:36:02.345830-04:00",
+  "media": {
+    "audio_metrics": {
+      "available": true,
+      "channels": 2,
+      "duration_sec": 9.9,
+      "frames": 475200,
+      "noise_floor_dbfs": -27.004941887961166,
+      "onset_ms": 2112.4375,
+      "onset_threshold_dbfs": -15.004941887961166,
+      "peak_dbfs": -13.186244737987973,
+      "peak_time_ms": 3505.5729166666665,
+      "rms_dbfs": -25.682832855337097,
+      "sample_rate": 48000,
+      "sample_width": 2
+    },
+    "audio_state": {
+      "available": true,
+      "canonical_available": true,
+      "conversion": "ffmpeg",
+      "requested": false
+    },
+    "ffmpeg_available": true,
+    "visual_diff": null
+  },
+  "repository": {
+    "branch": "agent/procgen-archive-resolve-playtest-polish-v1",
+    "changed_files": [
+      "M custodian/docs/ai_context/CURRENT_STATE.md",
+      " M custodian/docs/ai_context/FILE_INDEX.md",
+      " M custodian/game/world/procgen/presentation/procgen_void_cliff_face.gd",
+      " M custodian/game/world/procgen/proc_gen_map.tscn",
+      " M custodian/game/world/procgen/proc_gen_tilemap.gd",
+      " M custodian/game/world/procgen/streaming/archive_resolve.gdshader",
+      " M custodian/game/world/procgen/streaming/procgen_reveal_presentation.gd",
+      " M custodian/tools/validation/procgen_archive_resolve_frontier_restraint_smoke.gd",
+      " M custodian/tools/validation/procgen_reveal_presentation_smoke.gd",
+      " M custodian/tools/validation/procgen_void_cliff_face_smoke.gd",
+      " M custodian/tools/validation/validation_manifest.json",
+      " M design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md",
+      " M design/02_features/procgen/STREAMING_REVEAL_PRESENTATION_V1.md",
+      "?? custodian/game/world/procgen/streaming/archive_resolve_underfield.gdshader",
+      "?? custodian/game/world/procgen/streaming/archive_resolve_underfield.gdshader.uid",
+      "?? custodian/tools/validation/npa_showcase_existing_enemy_smoke.gd.uid",
+      "?? custodian/tools/validation/operator_2_5d_composition_preflight_smoke.gd.uid",
+      "?? reports/moment_forge/procgen/"
+    ],
+    "commit": "8c3ed99e31f0cafe301b203af67e5a004f32582e",
+    "dirty": true,
+    "root": "/home/braydenchaffee/Projects/.custodian-worktrees/procgen-archive-resolve-playtest-polish-v1-20261012T030652Z-0a89277ae869"
+  },
+  "run_id": "archive-polish-human-review",
+  "runtime": {
+    "godot": {
+      "build": "arch_linux",
+      "hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+      "hex": 263938,
+      "major": 4,
+      "minor": 7,
+      "patch": 2,
+      "status": "stable",
+      "string": "4.7.2-stable (arch_linux)",
+      "timestamp": 1786929518
+    },
+    "physics_hz": 60,
+    "renderer": "vulkan"
+  },
+  "scenario": {
+    "id": "procgen/archive_resolve_frontier_restraint_review",
+    "path": "/home/braydenchaffee/Projects/.custodian-worktrees/procgen-archive-resolve-playtest-polish-v1-20261012T030652Z-0a89277ae869/reports/moment_forge/procgen/archive_resolve_frontier_restraint_review/archive-polish-human-review/scenario.snapshot.json",
+    "schema_version": 1,
+    "sha256": "1c6c2707dba64821a18ffe0f3906f5993b3f0a2a30f3f4ca9f7160675a9bfdaa"
+  },
+  "schema": "custodian.moment_forge.run_manifest.v1",
+  "stable_assertions_passed": true,
+  "stable_fingerprint": {
+    "algorithm": "sha256",
+    "schema": "custodian.moment_forge.stable_fingerprint.v1",
+    "value": "c1544f8fe5cd0b1ccb391a0e09b2c6228397f356d6d70b40ecf5d3206a511d54"
+  },
+  "status": "passed",
+  "tools": {
+    "ffmpeg": "/usr/bin/ffmpeg",
+    "pillow": "12.3.0",
+    "python": "3.14.8"
+  }
+}
