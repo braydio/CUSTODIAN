@@ -7219,7 +7219,7 @@
         "custodian/tools/agent/task_packet_contract.py",
         ".agents/skills/custodian-next/SKILL.md"
       ],
-      "timeout_sec": 30,
+      "timeout_sec": 180,
       "needs_import": false
     },
     {
@@ -7266,12 +7266,13 @@
     {
       "id": "paired_review_runner_unit",
       "type": "python",
-      "script": "custodian/tools/agent/test_paired_review_runner.py",
+      "script": "custodian/tools/agent/test_paired_review_ci.py",
       "tier": "unit",
       "tags": [
         "agent_workflow",
         "paired_review",
-        "fresh_context"
+        "fresh_context",
+        "fast_ci"
       ],
       "owners": [
         "custodian/tools/godot_project_lock.py",
@@ -7280,7 +7281,8 @@
         "custodian/tools/agent/test_paired_review_runner.py",
         "custodian/docs/ai_context/review_scope_attestations/road_procession_p1_source_scope_v1.json",
         "custodian/tools/agent/task_packet_contract.py",
-        "custodian/tools/agent/workflow_control.py"
+        "custodian/tools/agent/workflow_control.py",
+        "custodian/tools/agent/test_paired_review_ci.py"
       ],
       "timeout_sec": 480,
       "needs_import": false
@@ -7792,7 +7794,10 @@
       "type": "python",
       "script": "custodian/tools/orchestration/test_chatgpt_relay_chrome.py",
       "tier": "unit",
-      "tags": ["orchestration", "chat_relay"],
+      "tags": [
+        "orchestration",
+        "chat_relay"
+      ],
       "owners": [
         "custodian/tools/orchestration/get_chatgpt_response.py",
         "custodian/tools/orchestration/send_chatgpt_message.py",
@@ -7807,7 +7812,11 @@
       "type": "python",
       "script": "custodian/tools/orchestration/test_chatgpt_relay_firefox.py",
       "tier": "unit",
-      "tags": ["orchestration", "chat_relay", "firefox"],
+      "tags": [
+        "orchestration",
+        "chat_relay",
+        "firefox"
+      ],
       "owners": [
         "custodian/tools/orchestration/get_chatgpt_response_firefox.py",
         "custodian/tools/orchestration/send_chatgpt_message_firefox.py",
@@ -7822,7 +7831,11 @@
       "type": "python",
       "script": "custodian/tools/orchestration/test_firefox_mcp_client.py",
       "tier": "unit",
-      "tags": ["orchestration", "chat_relay", "firefox"],
+      "tags": [
+        "orchestration",
+        "chat_relay",
+        "firefox"
+      ],
       "owners": [
         "custodian/tools/orchestration/firefox_mcp_client.py",
         "custodian/tools/orchestration/test_firefox_mcp_client.py",
