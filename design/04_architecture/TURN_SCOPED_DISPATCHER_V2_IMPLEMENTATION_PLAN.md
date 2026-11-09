@@ -1,10 +1,10 @@
 # Turn-Scoped Dispatcher V2 Implementation Plan
 
-**Status:** D2-006 implementation candidate on `agent/turn-scoped-dispatcher-v2`; focused implementation and lifecycle checks pass; not activated on `origin/main`.
+**Status:** D2-007 conditional merge authorization; merge is permitted only after required CI and branch-protection checks pass on the exact latest PR head. Until then the candidate remains unmerged and inactive on `origin/main`.
 **Program:** CUSTODIAN Dispatcher V2 replacement
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af12561-89a4-83ea-bc7f-c896ec89bed0
 **D2-006 base:** `de9fb72d8f4f2c239c551d87797351c9093e21b8` (fetched from `origin/main` on 2026-11-09).
-**Prototype:** PR #123, branch `agent/turn-scoped-dispatcher-v2`; implementation reference only.
+**Implementation PR:** #123, branch `agent/turn-scoped-dispatcher-v2`.
 
 ## Owner policy amendment for D2-006
 
@@ -15,9 +15,7 @@ Selection progress is advisory: rotation across new and resumable work is approp
 
 ## Purpose and boundary
 
-Replace the current persistent-worktree dispatcher model with a turn-scoped execution lifecycle that can acquire either a new eligible task or useful historical work, preserve recoverable work across turns, and retire temporary checkouts safely. This plan describes the implementation and cutover sequence. It does not itself replace `dispatch.py`, authorize checkout deletion, change task ownership, or alter the historical archive.
-
-The V2 candidate remains inactive until its focused validation is green and the owner directs cutover; standard GitHub CI and branch protection control landing. The local coordination checkout used to author this draft has unrelated dirty files; they are outside this scope and must remain intact.
+Replace the current persistent-worktree dispatcher model with a turn-scoped execution lifecycle that can select a new or resumable task, preserve recoverable work across turns, and retire only its exact temporary checkout safely. This plan records the implementation and cutover contract. It does not authorize changing task ownership, editing the private historical archive, or discarding user data.
 
 ## Goals
 
@@ -26,7 +24,7 @@ The V2 candidate remains inactive until its focused validation is green and the 
 - Permit useful historical work to resume without inheriting obsolete session ownership, lock, or scheduler restrictions. Current human-owned design decisions remain holds.
 - Preserve source, ignored/untracked data, Git LFS objects, evidence, and recoverability before a checkout is retired.
 - Prevent a concurrent writer from silently overwriting another writer's published progress through non-forcing, expected-parent Git updates and revalidation.
-- Retire the old dispatcher authority only after a separately reviewed migration and explicit acceptance of all consumers.
+- Keep V2 inactive until the exact PR head passes required CI and branch protection; after authorized landing, verify the landed main SHA and operational entrypoints.
 
 ## Non-goals and deferred work
 
@@ -84,14 +82,12 @@ The replacement must reuse useful task definitions, review processes, validation
 
 - Task identity, task-definition provenance, branch naming, validation evidence, and acceptance outcomes are mapped explicitly. The replacement must not turn review findings, `human_required`, archived state, or a missing supervisor record into a PASS or release signal. Old dispatcher status, locks, claims, dependency chains, or eligibility results do not control V2 selection.
 - Existing task packets and branches retain their identities. No bulk packet conversion or historical claim rewrite is needed to launch the new tool.
-- Root `AGENTS.md`, `custodian/AGENTS.md`, lifecycle docs, dispatcher docs, review handoffs, packet index consumers, and launch/service entrypoints must be inventoried as cutover consumers. Update them atomically with the approved cutover, not in an early prototype slice.
+- The bounded V2 consumer guidance and entrypoints included in PR #123 are updated with the implementation. After landing, verify the exact main revision and the documented command paths.
 - Current user instructions and unresolved user-owned design decisions continue to govern owner-held decisions. Other implementation prerequisites are scoped into the work.
 
-## PR #123 prototype assessment
+## Current merge decision
 
-PR #123 is a useful starting point for isolated CLI/test structure and the two-mode concept, but it is not production-ready and does not supersede any current authority. Retain or adapt only code that passes the implementation contract and tests below.
-
-Known gaps to close include: packet bytes are read from the local checkout rather than authenticated against advertised main; existing branch presence is not an exclusive writer lease; historical mode still requires an original-owner retirement route for a clean checkout; ignored data blocks checkpoint instead of using a verified preservation archive; and its current tests do not establish real LFS hydration, concurrent writers, failure recovery, hostile filesystem paths, archive completeness, or complete migration compatibility. Do not copy these assumptions into the production contract.
+The orchestrator issued conditional merge authorization (D2-007). At the decision point, PR #123 was open and draft, and its `Validate Repository` workflow was still running. Do not merge while the latest head has pending or failed required checks. Keep all implementation corrections, including the additive Firefox relay support, on this PR unless a concrete CI or branch-protection constraint requires a separate change. Once every required check passes on the exact latest head, merge under repository branch protection and verify the resulting `origin/main` SHA and V2 state.
 
 ## Implementation stages
 
@@ -119,24 +115,23 @@ The actual host archive still requires a stable, complete inventory and one veri
 
 - Produce an intentional behavior-difference matrix for representative tasks, covering V2 identity/readiness/selection and old dispatcher status, dependency, lock, and claim outcomes. Verify every difference follows the approved V2 model; do not “correct” V2 to restore old eligibility parity.
 - Inventory and migrate all repository instructions, workflow entrypoints, review/checkpoint integrations, and consumers. Update them as one bounded reviewed cutover so no tool or instruction points at a retired authority.
-- Perform an opt-in pilot on a disposable task with no active overlapping claim, then a historical restoration pilot using a verified archived example. Preserve full receipts and prove that a fresh turn can resume from branch, handoff, and archive manifest without prior process/session memory.
-- Run focused and repository-level validation from a clean, current checkout; include LFS-enabled host validation, multi-writer races, failure injection, filesystem edge cases, branch integrity checks, and verification that unrelated worktrees/refs are unchanged.
+- Preserve the focused lifecycle and data-integrity checks already required by the implementation, and verify the exact latest PR head through the standard GitHub CI and branch-protection checks. The private historical archive is not a prerequisite for ordinary Git-backed acquisition or merge.
 - Use independent technical review for changes explicitly requested for review or warranted by consequential risk. Resolve any findings in bounded corrections. Ordinary changes use standard CI and branch protection without a universal administrative review gate.
-- After focused correctness checks pass and the owner directs cutover, use standard GitHub CI and branch protection to land V2. Retain a documented rollback path until post-cutover validation confirms operational continuity. Remove old code only when every supported consumer has migrated and rollback is no longer required.
+- After all required CI and branch-protection checks pass on the exact PR head, exercise the conditional authorization and merge PR #123. Verify the landed main SHA and the V2 entrypoints. Keep the legacy dispatcher available for rollback; removing it is a separate future decision.
 
 ## Acceptance gates
 
-1. **Identity and authority:** Both modes identify exactly one canonical task/workstream and branch. Normal mode uses current dispatcher-confirmed eligibility and authenticated main packet bytes. Historical mode resolves durable task state without requiring an obsolete owner/session or administrative lock chain. Human-owned design holds remain effective.
+1. **Identity and authority:** Both modes identify exactly one canonical task/workstream and branch. Packet bytes are authenticated against fetched `origin/main`; historical mode does not require an obsolete owner/session or administrative lock chain. Human-owned design holds remain effective.
 2. **Disposable turns:** Each turn uses a fresh or explicitly rehydrated temporary checkout; every checkpoint contains the required handoff fields and exact branch/commit identity; later resume works in a new process with no session memory.
 3. **Publication integrity:** First-branch creation and checkpoint pushes are non-forcing and race-safe. Concurrent updates cannot overwrite or silently lose published commits. A race preserves all local work and produces an actionable reconciliation receipt.
 4. **Preservation:** Tests prove tracked, untracked, ignored, sensitive, symlink, submodule, external evidence, and Git LFS content are correctly classified. Required bytes are recoverable and hash-verified before retirement; unresolved or unique data keeps the checkout.
 5. **Retirement safety:** Only the exact verified temporary checkout can be automatically retired. No broad prune, age sweep, `rm -rf`, unrelated branch/ref deletion, or implicit claim/review cleanup occurs. Legacy checkout retirement requires exact inventory and restore verification.
 6. **Failure recovery:** Every mutation boundary has injected-failure coverage and is safe to retry or explicitly retains the checkout. Remote mismatch, missing LFS bytes, archive mismatch, stale packet/main state, unexpected path, and ambiguous ownership fail closed with a precise reason.
-7. **Authority migration:** V2 task identity, definition provenance, review acceptance, validation, provenance, and human approval remain truthful. The behavior-difference matrix documents intentional old/new selection differences; old statuses, locks, claims, and dependency chains cannot block V2 selection. All entrypoints and guidance name the same live authority after cutover.
-8. **Operations and cutover:** Focused tests, repository validation, LFS host smoke, historical restore pilot, standard GitHub CI/branch protection, and post-cutover smoke pass; review is required only when explicitly requested or warranted for consequential risk. The old path is retired only after a verified rollback window and consumer migration.
+7. **Authority migration:** V2 task identity, definition provenance, validation, and human decisions remain truthful. Old statuses, locks, claims, and dependency chains cannot block V2 selection. The bounded entrypoints and guidance name V2 after cutover; the legacy implementation remains available for rollback.
+8. **Operations and cutover:** Focused implementation checks pass and all required standard GitHub CI/branch-protection checks pass on the exact latest PR head before merge. Independent review is required only when explicitly requested or warranted for consequential risk. A private archive restore is not a universal merge gate.
 
 ## Evidence and reporting
 
 Each implementation stage records the exact base/main SHA, workstream and branch SHAs, CLI receipts, packet/handoff identities, archive manifest and verification results when used, LFS OIDs and availability, validation commands/results, optional review outcome, and any retained checkout with its predicate and next action. Reports distinguish `inspected`, `implemented`, `published`, `verified`, `reviewed`, and `approved`; none implies another.
 
-The first implementation instruction should select a bounded Stage 1 slice and its paired review contract. Stage 2 and Stage 3 proceed only after the preceding implementation and review evidence establish their technical prerequisites; these are absorbed into the work and do not reintroduce task-scheduling dependencies. The current dispatcher remains in force for its existing users until the Stage 3 cutover gate is explicitly met, while V2 selection remains independent of its gates.
+The current assignment is the bounded D2-006 correction plus D2-007 conditional merge decision. Do not add a universal paired-review cycle. The current dispatcher remains available until PR #123 lands; V2 selection itself remains independent of legacy eligibility gates.
