@@ -4,7 +4,7 @@
 - Workstream: review-agent-paired-review-closeout-coverage-policy-v1
 - Category: `agent-ops`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P1`
