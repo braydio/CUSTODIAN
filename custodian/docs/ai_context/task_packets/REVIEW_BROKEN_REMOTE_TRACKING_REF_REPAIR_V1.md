@@ -1,6 +1,7 @@
 # REVIEW BROKEN REMOTE TRACKING REF REPAIR V1
 
 - Packet schema: custodian.task_packet.v2
+- Category: agent-ops
 - Workstream: review-broken-remote-tracking-ref-repair-v1
 - Kind: review
 - Status: `draft`
@@ -19,9 +20,10 @@
 - Review target workstream: broken-remote-tracking-ref-repair-v1
 - Review target packet: custodian/docs/ai_context/task_packets/archived/BROKEN_REMOTE_TRACKING_REF_REPAIR_V1.md
 - Reviewed main: 5b74eb565b47b1b9c7f7edcf4fadffc1e65f62db
-- Authoring chat: pending current Phase B conversation URL
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af12561-89a4-83ea-bc7f-c896ec89bed0
 - Prior orchestration chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6aef81ab-23fc-83ea-8010-74334c76fb3a
 - Visual review: none
+- Publication inputs: none
 - Reviewer context: fresh
 - Reviewer provenance: different-agent
 - Goal: Independently verify the exact malformed-reference metadata repair, retention of all legitimate Git state, reversible evidence and canonical dispatcher outcome.
