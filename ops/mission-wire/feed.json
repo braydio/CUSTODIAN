@@ -1,9 +1,128 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-09T16:06:32.140Z",
+  "generated_at": "2026-11-09T17:34:00Z",
   "source_main_sha": "de9fb72d8f4f2c239c551d87797351c9093e21b8",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "turn-scoped-dispatcher-draft-pr123",
+      "headline": "A two-mode dispatcher reaches draft review, aiming to preserve task handoffs across sessions",
+      "summary": "Draft PR #123 proposes an opt-in dispatcher with normal and historical modes, durable branch-backed handoffs, LFS hydration and verified checkpoint/push operations. It is not merged or approved for cutover; the existing dispatcher and claims remain unchanged.",
+      "body": "A newly surfaced draft pull request proposes a turn-scoped dispatcher that can resume work from branch-backed state and retire a checkout without force. Its normal and historical modes aim to reduce fragile handoffs while keeping the existing dispatcher untouched. The PR describes isolated Git tests and a design/cutover document, but explicitly requires review, full tests and an authorized cutover. Its branch is not evidence of a running service or accepted independent review. The separate private WIRE pointer is dated November 8 and too old for fresh operational counts.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "turn-scoped-dispatcher-v2",
+      "occurred_at": "2026-11-09T12:01:29Z",
+      "bullets": [
+        "Draft PR #123 is open and unmerged.",
+        "Proposed modes cover normal and historical task continuity.",
+        "Current dispatcher, claims and refs are explicitly unchanged.",
+        "Next gate: independent review and full tests before any cutover decision."
+      ],
+      "links": [
+        {
+          "title": "Draft dispatcher proposal and review boundary",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/123"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN has opened a draft redesign of how its agents pick up and hand off tasks. The proposed dispatcher would carry work across sessions using branch-backed checkpoints, but it is not yet approved or running.",
+        "sections": [
+          {
+            "heading": "Why task handoffs matter",
+            "text": "The proposal adds normal and historical modes, Git LFS asset hydration, verified checkpoints and pushes, and retirement that avoids forcing a checkout. These features target continuity and safer recovery when work spans several agent turns."
+          },
+          {
+            "heading": "A proposal, not a cutover",
+            "text": "The pull request remains a draft. It explicitly leaves the current dispatcher, worktrees, references and claims alone. Review, full tests and an explicit safe cutover are still required before operational use."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Durable handoffs are the central change",
+            "explanation": "Branch-backed continuity could make interrupted work easier to resume without relying on an agent's transient session state. That benefit is proposed, not yet demonstrated in production."
+          },
+          {
+            "title": "The safety boundary is explicit",
+            "explanation": "Keeping the current dispatcher unchanged lets reviewers examine the candidate without interpreting its presence as an operational migration."
+          }
+        ],
+        "takeaway": "A substantial dispatcher candidate is available for review, but there is no verified adoption or independent acceptance.",
+        "next_watch": "Watch for full test evidence, independent review and an explicitly authorized cutover decision."
+      },
+      "scorecard": {
+        "stage": "Draft implementation under review; no operational cutover",
+        "as_of": "2026-11-09T17:34:00Z",
+        "scope": "PR #123 only, not canonical dispatcher queue",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Candidate PR opened",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "PR #123 open draft"
+          },
+          {
+            "label": "Isolated Git tests described",
+            "status": "current",
+            "verification": "reported",
+            "evidence": "PR author reports tests; no independent rerun inspected"
+          },
+          {
+            "label": "Full test suite and independent review",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No accepted review receipt inspected"
+          },
+          {
+            "label": "Explicit safe cutover",
+            "status": "blocked",
+            "verification": "verified",
+            "evidence": "PR requires review, full tests and explicit authorization"
+          }
+        ],
+        "next_gate": "Dispatcher owner: obtain full test evidence and independent review before requesting any cutover."
+      },
+      "details": {
+        "overview": "PR #123 is a draft branch candidate, not a main landing. Current main remains de9fb72d8f4f2c239c551d87797351c9093e21b8. GitHub's status endpoint returned no legacy commit statuses; this does not establish CI success.",
+        "ledger": [
+          {
+            "stage": "Draft proposal",
+            "status": "verified",
+            "evidence": "PR #123 open and unmerged"
+          },
+          {
+            "stage": "Implementation tests",
+            "status": "reported",
+            "evidence": "Isolated Git tests described in PR"
+          },
+          {
+            "stage": "Independent acceptance",
+            "status": "unknown",
+            "evidence": "No accepted review receipt inspected"
+          },
+          {
+            "stage": "Host runtime and teardown",
+            "status": "unknown",
+            "evidence": "No direct host evidence"
+          }
+        ],
+        "notes": [
+          "Private pilot pointer observed but dated November 8; no fresh private counts imported."
+        ],
+        "unknowns": [
+          "Full test outcome",
+          "Independent acceptance",
+          "Live host status and cleanup"
+        ],
+        "actions": [
+          "Dispatcher owner: collect full test and review evidence; preserve existing dispatcher until authorized cutover."
+        ]
+      },
+      "related": []
+    },
     {
       "id": "firefox-chat-relay-fix-de9fb72d",
       "headline": "CUSTODIAN's ChatGPT relay moves to Firefox, then fixes message delivery and response polling",
@@ -1511,165 +1630,6 @@
         "actions": [
           "Gameplay/audio owner: audition in game and record findings.",
           "Workstream owner: complete canonical finish and provide teardown evidence if applicable."
-        ]
-      },
-      "related": []
-    },
-    {
-      "id": "memorial-court-ready-da01ebe7",
-      "headline": "Sepulcher Memorial Court enters the automatic task queue, with independent art review queued behind it",
-      "summary": "CUSTODIAN authored and promoted a Memorial Court integration packet and its paired independent review to ready/automatic dispatch. The proposed scene would surround the existing Memorial Slab with verified paving, ring and wall art while preserving gameplay paths. No implementation landing or accepted review is established.",
-      "body": "Commit 30e1d8bc created the implementation and review packets; 3404f3a corrected a premature validation-script reference; da01ebe7 marked both ready/auto. The review depends on the implementation, so two ready packet labels do not mean two immediately executable tasks. The production court, validation, independent review and host teardown remain unverified. Existing source constraints exclude the hash-mismatched full strip, forbid presenting a 256x128 wall as the planned 512x192 state, and leave footings pending approved art.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "assets-art",
-      "workstream": "sepulcher-memorial-court-existing-art-v1",
-      "occurred_at": "2026-11-07T10:37:19Z",
-      "bullets": [
-        "Implementation and paired review packets are ready for automatic handoff, not proven claimed or running.",
-        "Implementation must land and archive before the independent review can proceed.",
-        "Watch for source-byte checks, focused Hub smoke evidence and the independent review receipt."
-      ],
-      "links": [
-        {
-          "title": "Packet authoring",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/30e1d8bc6287ca5c2d6fcb118d4339164948532d"
-        },
-        {
-          "title": "Validation reference correction",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/3404f3a057702d0bb483f12cf4b29007753f668e"
-        },
-        {
-          "title": "Automatic handoff",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/da01ebe7ad60f0a42f543eb3c021b90e4989c3d3"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN's Sepulcher memorial is moving toward a fuller environment. New task packets now authorize an automatic handoff to integrate existing paving, a witness-ring inlay and a masonry wall around the already-installed Memorial Slab. The work itself has not yet landed.",
-        "sections": [
-          {
-            "heading": "A court built around an existing memorial",
-            "text": "The plan reuses source-checked art and keeps the grave's interaction points, routes and collision untouched. This is a presentation upgrade rather than a rewrite of the memorial encounter."
-          },
-          {
-            "heading": "Review follows the implementation",
-            "text": "Both the build packet and its independent review were promoted to ready/automatic dispatch. The review explicitly depends on the implementation's completed landing and archival, so its ready label does not make it executable yet."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Ready is a handoff state, not a running worker",
-            "explanation": "The repository confirms packet eligibility but provides no live dispatcher claim or host execution evidence. The next meaningful milestone is an actual landed integration with validation."
-          },
-          {
-            "title": "Art provenance is the hard boundary",
-            "explanation": "The packet excludes a source strip with inconsistent hashes and forbids treating a smaller verified wall module as a full-sized production asset. That prevents visual progress from outrunning evidence."
-          }
-        ],
-        "takeaway": "The Memorial Court is now queued as a defined, independently reviewable workstream, not yet a completed game feature.",
-        "next_watch": "Look for the implementation landing, focused engine captures and then a fresh independent review receipt."
-      },
-      "scorecard": {
-        "stage": "Implementation ready; independent review dependent",
-        "as_of": "2026-11-07T10:48:57Z",
-        "scope": "Two named Memorial Court packets only, not full dispatcher queue",
-        "metrics": [
-          {
-            "id": "other-memorial-court-packets",
-            "label": "NAMED PACKETS",
-            "value": 2,
-            "verification": "verified",
-            "basis": "One implementation and one dependent review packet in commit da01ebe7",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/da01ebe7ad60f0a42f543eb3c021b90e4989c3d3"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Author implementation and review packets",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "30e1d8bc"
-          },
-          {
-            "label": "Correct validation reference",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "3404f3a"
-          },
-          {
-            "label": "Promote both packets to ready",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "da01ebe7"
-          },
-          {
-            "label": "Implement and validate Memorial Court",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No implementation landing inspected"
-          },
-          {
-            "label": "Land and archive implementation",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Required before review"
-          },
-          {
-            "label": "Independent review acceptance",
-            "status": "blocked",
-            "verification": "verified",
-            "evidence": "Review packet depends on implementation"
-          },
-          {
-            "label": "Canonical host teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No host evidence"
-          }
-        ],
-        "next_gate": "Implementation owner: claim eligible packet under dispatcher authority, verify source bytes, build and validate, then land and archive."
-      },
-      "details": {
-        "overview": "Two packets added to main, then changed from draft/manual to ready/auto. This is packet-state evidence only. No canonical live audit was available.",
-        "ledger": [
-          {
-            "stage": "Packet authoring",
-            "status": "verified",
-            "evidence": "30e1d8bc"
-          },
-          {
-            "stage": "Packet readiness",
-            "status": "verified",
-            "evidence": "da01ebe7"
-          },
-          {
-            "stage": "Implementation",
-            "status": "not verified",
-            "evidence": "No implementation landing in inspected commits"
-          },
-          {
-            "stage": "Independent review",
-            "status": "not accepted",
-            "evidence": "Dependent review packet remains gated"
-          },
-          {
-            "stage": "Host cleanup",
-            "status": "unknown",
-            "evidence": "No trustworthy host evidence"
-          }
-        ],
-        "notes": [
-          "Existing wall module 256x128 is not the planned 512x192 wall state."
-        ],
-        "unknowns": [
-          "Dispatcher claims and host execution",
-          "Full live queue counts and CI checks",
-          "Canonical teardown"
-        ],
-        "actions": [
-          "Implementation owner: complete and land the bounded integration with exact art provenance and focused smoke evidence.",
-          "Independent reviewer: assess landed implementation only after archive."
         ]
       },
       "related": []
