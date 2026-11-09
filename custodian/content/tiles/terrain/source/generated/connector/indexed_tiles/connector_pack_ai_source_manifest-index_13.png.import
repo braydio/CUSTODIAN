@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dmr1vdgkeluk1"
-path="res://.godot/imported/connector_pack_ai_source_manifest-index_13.png-3e7184e962c653ef38daa49943cb8e78.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/source/generated/connector/indexed_tiles/connector_pack_ai_source_manifest-index_13.png"
-dest_files=["res://.godot/imported/connector_pack_ai_source_manifest-index_13.png-3e7184e962c653ef38daa49943cb8e78.ctex"]
 
 [params]
 

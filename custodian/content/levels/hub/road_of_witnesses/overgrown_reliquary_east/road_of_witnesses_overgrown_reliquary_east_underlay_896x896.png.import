@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ddemejdxfeu8n"
-path="res://.godot/imported/road_of_witnesses_overgrown_reliquary_east_underlay_896x896.png-a4a07087c9a09b9b041c1d0bae6a30e1.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/levels/hub/road_of_witnesses/overgrown_reliquary_east/road_of_witnesses_overgrown_reliquary_east_underlay_896x896.png"
-dest_files=["res://.godot/imported/road_of_witnesses_overgrown_reliquary_east_underlay_896x896.png-a4a07087c9a09b9b041c1d0bae6a30e1.ctex"]
 
 [params]
 

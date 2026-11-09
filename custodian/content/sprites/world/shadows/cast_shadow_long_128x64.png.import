@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ckyd52ldulrp3"
-path="res://.godot/imported/cast_shadow_long_128x64.png-a4e425f0b92bd82457d8fd8cbdca8721.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/world/shadows/cast_shadow_long_128x64.png"
-dest_files=["res://.godot/imported/cast_shadow_long_128x64.png-a4e425f0b92bd82457d8fd8cbdca8721.ctex"]
 
 [params]
 

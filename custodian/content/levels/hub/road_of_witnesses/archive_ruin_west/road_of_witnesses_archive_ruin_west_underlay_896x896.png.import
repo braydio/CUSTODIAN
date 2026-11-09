@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dfpg7kp7m1m1g"
-path="res://.godot/imported/road_of_witnesses_archive_ruin_west_underlay_896x896.png-cb1655680250baf003fa5258b4ab8a0d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/levels/hub/road_of_witnesses/archive_ruin_west/road_of_witnesses_archive_ruin_west_underlay_896x896.png"
-dest_files=["res://.godot/imported/road_of_witnesses_archive_ruin_west_underlay_896x896.png-cb1655680250baf003fa5258b4ab8a0d.ctex"]
 
 [params]
 

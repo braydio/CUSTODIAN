@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bmndmrafi76qx"
-path="res://.godot/imported/dive_kick5.png-32752978cdb0f54a844515e8cd213c2e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://addons/fightengine/demo/Assets/Sprites/Brawler-Girl/Dive_kick/dive_kick5.png"
-dest_files=["res://.godot/imported/dive_kick5.png-32752978cdb0f54a844515e8cd213c2e.ctex"]
 
 [params]
 

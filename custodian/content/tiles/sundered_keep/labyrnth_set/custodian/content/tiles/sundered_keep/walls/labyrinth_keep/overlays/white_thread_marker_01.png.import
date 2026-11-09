@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cegi8ajthjq0o"
-path="res://.godot/imported/white_thread_marker_01.png-80b5209c58e0442098e7311a299dba6b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/labyrnth_set/custodian/content/tiles/sundered_keep/walls/labyrinth_keep/overlays/white_thread_marker_01.png"
-dest_files=["res://.godot/imported/white_thread_marker_01.png-80b5209c58e0442098e7311a299dba6b.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://qo7c8d3whlc0"
-path="res://.godot/imported/approach_edge_mist_wrap.png-d5d72f477aed634117e0e10dd6860cca.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/approach/occlusion/approach_edge_mist_wrap.png"
-dest_files=["res://.godot/imported/approach_edge_mist_wrap.png-d5d72f477aed634117e0e10dd6860cca.ctex"]
 
 [params]
 

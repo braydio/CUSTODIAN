@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bt2kbnopmhplj"
-path="res://.godot/imported/walking_4_corners.png-2bb2728c5d12ede0e74af8e85f6b56a8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/source_original/walking_4_corners.png"
-dest_files=["res://.godot/imported/walking_4_corners.png-2bb2728c5d12ede0e74af8e85f6b56a8.ctex"]
 
 [params]
 

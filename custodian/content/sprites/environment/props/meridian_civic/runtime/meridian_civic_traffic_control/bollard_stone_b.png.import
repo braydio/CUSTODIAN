@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dcnei33ynqx6i"
-path="res://.godot/imported/bollard_stone_b.png-e5fc11c24851304f3c964cc5c09dd933.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_traffic_control/bollard_stone_b.png"
-dest_files=["res://.godot/imported/bollard_stone_b.png-e5fc11c24851304f3c964cc5c09dd933.ctex"]
 
 [params]
 

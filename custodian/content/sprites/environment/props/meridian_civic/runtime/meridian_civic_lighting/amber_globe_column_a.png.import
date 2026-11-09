@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dme3kbsm82oy6"
-path="res://.godot/imported/amber_globe_column_a.png-7c0f723e07ec43adf842e4ca68328667.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_lighting/amber_globe_column_a.png"
-dest_files=["res://.godot/imported/amber_globe_column_a.png-7c0f723e07ec43adf842e4ca68328667.ctex"]
 
 [params]
 

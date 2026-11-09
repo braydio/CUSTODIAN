@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://r64ugb160gxc"
-path="res://.godot/imported/interaction_glyph.png-0435560612449921b43970c0f2a5c3e1.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/interaction_glyph.png"
-dest_files=["res://.godot/imported/interaction_glyph.png-0435560612449921b43970c0f2a5c3e1.ctex"]
 
 [params]
 

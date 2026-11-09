@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bonti631fkgop"
-path="res://.godot/imported/district_transfer_frame__fx__control__screen_off__omni__1f__32x32.png-a6dd9bb104188c49ba4fd57ae5395650.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/structure/district_transfer_frame/runtime/fx/control/district_transfer_frame__fx__control__screen_off__omni__1f__32x32.png"
-dest_files=["res://.godot/imported/district_transfer_frame__fx__control__screen_off__omni__1f__32x32.png-a6dd9bb104188c49ba4fd57ae5395650.ctex"]
 
 [params]
 

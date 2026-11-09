@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://uf2gxv7t622b"
-path="res://.godot/imported/dead_tree_vegetation_002.png-b58a762cd78a639efb05a7bbf1d42bf5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/gothic/vegetation/dead_tree_vegetation_002.png"
-dest_files=["res://.godot/imported/dead_tree_vegetation_002.png-b58a762cd78a639efb05a7bbf1d42bf5.ctex"]
 
 [params]
 

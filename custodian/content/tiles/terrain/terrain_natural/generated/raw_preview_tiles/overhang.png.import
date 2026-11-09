@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c2qesbhkqawbo"
-path="res://.godot/imported/overhang.png-b489a9370274b384f984a48030435e60.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/raw_preview_tiles/overhang.png"
-dest_files=["res://.godot/imported/overhang.png-b489a9370274b384f984a48030435e60.ctex"]
 
 [params]
 

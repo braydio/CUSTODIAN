@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://723t48gniiqg"
-path="res://.godot/imported/awakening_dust_lung_lift__body__interaction__idle__omni__1f__192x256.png-9a275dd1dd161ac5ade2d99c74e15b47.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/awakening/awakening_dust_lung_lift/runtime/body/awakening_dust_lung_lift__body__interaction__idle__omni__1f__192x256.png"
-dest_files=["res://.godot/imported/awakening_dust_lung_lift__body__interaction__idle__omni__1f__192x256.png-9a275dd1dd161ac5ade2d99c74e15b47.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d0x8ggnw1h2qs"
-path="res://.godot/imported/operator__modular_weapon_vigil_dagger__melee_1h__idle_relaxed_01__e__4f__96.png-63afdb25e963ba641fe0599e03c14684.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/archive/operator__modular_weapon_vigil_dagger__melee_1h__idle_relaxed_01__e__4f__96.png"
-dest_files=["res://.godot/imported/operator__modular_weapon_vigil_dagger__melee_1h__idle_relaxed_01__e__4f__96.png-63afdb25e963ba641fe0599e03c14684.ctex"]
 
 [params]
 

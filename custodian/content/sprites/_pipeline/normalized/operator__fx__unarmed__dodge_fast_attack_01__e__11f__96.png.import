@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cmaachgwehag7"
-path="res://.godot/imported/operator__fx__unarmed__dodge_fast_attack_01__e__11f__96.png-5f930c86be349a341883e72766d82d38.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/normalized/operator__fx__unarmed__dodge_fast_attack_01__e__11f__96.png"
-dest_files=["res://.godot/imported/operator__fx__unarmed__dodge_fast_attack_01__e__11f__96.png-5f930c86be349a341883e72766d82d38.ctex"]
 
 [params]
 

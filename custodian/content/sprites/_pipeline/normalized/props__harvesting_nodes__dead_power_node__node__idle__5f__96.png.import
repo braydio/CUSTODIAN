@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://birwlv0p5tu54"
-path="res://.godot/imported/props__harvesting_nodes__dead_power_node__node__idle__5f__96.png-f27de9f406a4db6886e2c44abea8edfa.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/normalized/props__harvesting_nodes__dead_power_node__node__idle__5f__96.png"
-dest_files=["res://.godot/imported/props__harvesting_nodes__dead_power_node__node__idle__5f__96.png-f27de9f406a4db6886e2c44abea8edfa.ctex"]
 
 [params]
 

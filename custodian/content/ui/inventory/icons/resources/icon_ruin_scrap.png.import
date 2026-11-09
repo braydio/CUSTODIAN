@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://6qwpj373h8kq"
-path="res://.godot/imported/icon_ruin_scrap.png-2aaa28ca9b271b1b14d142013e193e92.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/inventory/icons/resources/icon_ruin_scrap.png"
-dest_files=["res://.godot/imported/icon_ruin_scrap.png-2aaa28ca9b271b1b14d142013e193e92.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cs2yv4b6g4kpx"
-path="res://.godot/imported/RunBackwards.png-7c642a9a77d21dc5487b88d226b949f6.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://dev/test_sprites/Knight/RunBackwards.png"
-dest_files=["res://.godot/imported/RunBackwards.png-7c642a9a77d21dc5487b88d226b949f6.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cefft4jm0mpr8"
-path="res://.godot/imported/ruined_wall.png-9f2ee2317f3a7fa403748675526c7902.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/raw_preview_tiles/ruined_wall.png"
-dest_files=["res://.godot/imported/ruined_wall.png-9f2ee2317f3a7fa403748675526c7902.ctex"]
 
 [params]
 

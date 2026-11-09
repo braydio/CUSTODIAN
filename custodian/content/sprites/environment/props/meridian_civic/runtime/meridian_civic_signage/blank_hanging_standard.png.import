@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cbpwsyg0n3sfa"
-path="res://.godot/imported/blank_hanging_standard.png-b8a6859cb9d540a6692bbf851f0d7d2e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_signage/blank_hanging_standard.png"
-dest_files=["res://.godot/imported/blank_hanging_standard.png-b8a6859cb9d540a6692bbf851f0d7d2e.ctex"]
 
 [params]
 

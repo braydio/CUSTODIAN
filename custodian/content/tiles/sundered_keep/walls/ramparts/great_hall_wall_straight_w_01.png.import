@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ctpg412ttuntm"
-path="res://.godot/imported/great_hall_wall_straight_w_01.png-aa6df4f3b10205ac0a8298270b6593af.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/walls/ramparts/great_hall_wall_straight_w_01.png"
-dest_files=["res://.godot/imported/great_hall_wall_straight_w_01.png-aa6df4f3b10205ac0a8298270b6593af.ctex"]
 
 [params]
 

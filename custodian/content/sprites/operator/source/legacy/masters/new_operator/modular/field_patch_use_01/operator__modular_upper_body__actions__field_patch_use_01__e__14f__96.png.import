@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ypg45gfj4pfi"
-path="res://.godot/imported/operator__modular_upper_body__actions__field_patch_use_01__e__14f__96.png-8c2b4f04c0c45c17e64de97175798d07.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/new_operator/modular/field_patch_use_01/operator__modular_upper_body__actions__field_patch_use_01__e__14f__96.png"
-dest_files=["res://.godot/imported/operator__modular_upper_body__actions__field_patch_use_01__e__14f__96.png-8c2b4f04c0c45c17e64de97175798d07.ctex"]
 
 [params]
 

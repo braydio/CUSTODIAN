@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://r03jj27sgbcv"
-path="res://.godot/imported/enemy_forlorn_ritualant__body__pin_strike__s__10f__128.png-35d60e9c93dd4186ae4b4da74ab68a27.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/archive/enemy_forlorn_ritualant__body__pin_strike__s__10f__128.png"
-dest_files=["res://.godot/imported/enemy_forlorn_ritualant__body__pin_strike__s__10f__128.png-35d60e9c93dd4186ae4b4da74ab68a27.ctex"]
 
 [params]
 

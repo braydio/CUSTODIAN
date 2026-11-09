@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dd0w75l88v3em"
-path="res://.godot/imported/sprite_sheet_transparent_background.png-a3d104df8a3b1c79672fd2258a8792c0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/items/sprite_sheet_transparent_background.png"
-dest_files=["res://.godot/imported/sprite_sheet_transparent_background.png-a3d104df8a3b1c79672fd2258a8792c0.ctex"]
 
 [params]
 

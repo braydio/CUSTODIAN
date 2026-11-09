@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b0amo5soam0m2"
-path="res://.godot/imported/enemy_marine__body__locomotion__run_01__s__10f__96_contrast_no-outline.png-e1902cd2144d6abc74ceb0b6e23f93d6.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_marine/png/enemy_marine__body__locomotion__run_01__s__10f__96_contrast_no-outline.png"
-dest_files=["res://.godot/imported/enemy_marine__body__locomotion__run_01__s__10f__96_contrast_no-outline.png-e1902cd2144d6abc74ceb0b6e23f93d6.ctex"]
 
 [params]
 

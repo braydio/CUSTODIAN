@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cpovegqfc5dhp"
-path="res://.godot/imported/02_structure_utility_fan_roof_block.png-11df9873d4f749c53a2a1a9d5eb89253.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/02_structure_utility_fan_roof_block.png"
-dest_files=["res://.godot/imported/02_structure_utility_fan_roof_block.png-11df9873d4f749c53a2a1a9d5eb89253.ctex"]
 
 [params]
 

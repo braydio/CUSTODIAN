@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cjseyu7874aho"
-path="res://.godot/imported/granite_shelf_small_01.png-060bb6cfb78e6f041540ae7f77764d89.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/procgen_macro/runtime/rocky_upland/granite_shelf_small_01.png"
-dest_files=["res://.godot/imported/granite_shelf_small_01.png-060bb6cfb78e6f041540ae7f77764d89.ctex"]
 
 [params]
 

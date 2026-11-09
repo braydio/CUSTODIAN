@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dkexdn835tw84"
-path="res://.godot/imported/operator__fx__melee_1h__e__8f__156x96.png-7c90e97971e7214a1582a2bca4816f4d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/normalized/operator__fx__melee_1h__e__8f__156x96.png"
-dest_files=["res://.godot/imported/operator__fx__melee_1h__e__8f__156x96.png-7c90e97971e7214a1582a2bca4816f4d.ctex"]
 
 [params]
 

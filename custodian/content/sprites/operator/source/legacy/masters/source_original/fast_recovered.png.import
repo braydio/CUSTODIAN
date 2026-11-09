@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://jv1wdefps7l4"
-path="res://.godot/imported/fast_recovered.png-2231125b777d9079833cdd5f4c0b932a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/source_original/fast_recovered.png"
-dest_files=["res://.godot/imported/fast_recovered.png-2231125b777d9079833cdd5f4c0b932a.ctex"]
 
 [params]
 

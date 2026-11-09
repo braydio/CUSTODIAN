@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://u1woou8a0w1m"
-path="res://.godot/imported/forecourt_floor_variant_01.png-a36fe39596abe34ed2e08a8c5c4df8bc.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_design_extract/floors/forecourt_floor_variant_01.png"
-dest_files=["res://.godot/imported/forecourt_floor_variant_01.png-a36fe39596abe34ed2e08a8c5c4df8bc.ctex"]
 
 [params]
 

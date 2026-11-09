@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://mi8teydio3nv"
-path="res://.godot/imported/white_thread_slack.png-0f63de788860066e868f9bceaf5d3334.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/white_thread_slack.png"
-dest_files=["res://.godot/imported/white_thread_slack.png-0f63de788860066e868f9bceaf5d3334.ctex"]
 
 [params]
 

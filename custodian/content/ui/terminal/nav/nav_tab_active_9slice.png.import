@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cvow6qk7hu54v"
-path="res://.godot/imported/nav_tab_active_9slice.png-f016687fb9efe846af6b31e0a97f19b2.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/nav/nav_tab_active_9slice.png"
-dest_files=["res://.godot/imported/nav_tab_active_9slice.png-f016687fb9efe846af6b31e0a97f19b2.ctex"]
 
 [params]
 

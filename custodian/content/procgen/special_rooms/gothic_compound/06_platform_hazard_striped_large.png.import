@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://chycc0hpm6sfa"
-path="res://.godot/imported/06_platform_hazard_striped_large.png-662757c49aa137cc88f353c380d905ae.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/06_platform_hazard_striped_large.png"
-dest_files=["res://.godot/imported/06_platform_hazard_striped_large.png-662757c49aa137cc88f353c380d905ae.ctex"]
 
 [params]
 

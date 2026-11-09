@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cahyvdd35bhom"
-path="res://.godot/imported/cracked_lava.png-961987977720698ba598f45a1a386242.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/raw_preview_tiles/cracked_lava.png"
-dest_files=["res://.godot/imported/cracked_lava.png-961987977720698ba598f45a1a386242.ctex"]
 
 [params]
 

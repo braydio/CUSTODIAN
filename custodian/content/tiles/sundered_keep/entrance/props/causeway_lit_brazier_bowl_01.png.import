@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bhce6p6efnkph"
-path="res://.godot/imported/causeway_lit_brazier_bowl_01.png-03e68970b28742b0dfa305c8655f49eb.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/entrance/props/causeway_lit_brazier_bowl_01.png"
-dest_files=["res://.godot/imported/causeway_lit_brazier_bowl_01.png-03e68970b28742b0dfa305c8655f49eb.ctex"]
 
 [params]
 

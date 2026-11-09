@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cjqdt2oii0n1x"
-path="res://.godot/imported/180Turn.png-00988ce9f9734c670f420d728ab43343.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://dev/test_sprites/Knight/180Turn.png"
-dest_files=["res://.godot/imported/180Turn.png-00988ce9f9734c670f420d728ab43343.ctex"]
 
 [params]
 

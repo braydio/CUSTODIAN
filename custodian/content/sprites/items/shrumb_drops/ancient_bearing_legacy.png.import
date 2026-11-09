@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cmbvtrj8t1tc3"
-path="res://.godot/imported/ancient_bearing_legacy.png-f6db6941807a78732012605b0d8d81b9.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/items/shrumb_drops/ancient_bearing_legacy.png"
-dest_files=["res://.godot/imported/ancient_bearing_legacy.png-f6db6941807a78732012605b0d8d81b9.ctex"]
 
 [params]
 

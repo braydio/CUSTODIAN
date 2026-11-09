@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bj87k7tsj2rld"
-path="res://.godot/imported/pursuit_frame__body__reaction__flinch_01__s__4f__96.png-475799f342551de85df597a570c9fc0a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/pursuit_frame/runtime/body/reaction/pursuit_frame__body__reaction__flinch_01__s__4f__96.png"
-dest_files=["res://.godot/imported/pursuit_frame__body__reaction__flinch_01__s__4f__96.png-475799f342551de85df597a570c9fc0a.ctex"]
 
 [params]
 

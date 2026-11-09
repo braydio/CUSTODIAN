@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d3n4ejb2bijyp"
-path="res://.godot/imported/plateau_top.png-b74d161fb9861083322abeeda9bf5c75.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/tiles_32/plateau_top.png"
-dest_files=["res://.godot/imported/plateau_top.png-b74d161fb9861083322abeeda9bf5c75.ctex"]
 
 [params]
 

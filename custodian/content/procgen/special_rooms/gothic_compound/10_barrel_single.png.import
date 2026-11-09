@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dvfax2qkdd37t"
-path="res://.godot/imported/10_barrel_single.png-77aedf234010cf16ed8e8e7945192278.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/10_barrel_single.png"
-dest_files=["res://.godot/imported/10_barrel_single.png-77aedf234010cf16ed8e8e7945192278.ctex"]
 
 [params]
 

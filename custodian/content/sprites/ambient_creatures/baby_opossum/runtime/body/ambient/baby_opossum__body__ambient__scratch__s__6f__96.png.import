@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dumlqsvmuc6m6"
-path="res://.godot/imported/baby_opossum__body__ambient__scratch__s__6f__96.png-e949f4fe8b56e2917fc04508eac6874e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/ambient_creatures/baby_opossum/runtime/body/ambient/baby_opossum__body__ambient__scratch__s__6f__96.png"
-dest_files=["res://.godot/imported/baby_opossum__body__ambient__scratch__s__6f__96.png-e949f4fe8b56e2917fc04508eac6874e.ctex"]
 
 [params]
 

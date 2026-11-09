@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://q8ao41s1pjqw"
-path="res://.godot/imported/vaultwing_common__body__attack__dive_windup__s__4f__256.png-c194367a88ea492779677f64ec34073b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/ambient_creatures/vaultwing_common/runtime/body/attack/vaultwing_common__body__attack__dive_windup__s__4f__256.png"
-dest_files=["res://.godot/imported/vaultwing_common__body__attack__dive_windup__s__4f__256.png-c194367a88ea492779677f64ec34073b.ctex"]
 
 [params]
 

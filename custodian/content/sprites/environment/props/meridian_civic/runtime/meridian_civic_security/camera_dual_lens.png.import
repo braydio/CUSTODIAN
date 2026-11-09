@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bk0ycgqxcdxco"
-path="res://.godot/imported/camera_dual_lens.png-a232223b307798d42cfa4bd6f6b42b9b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_security/camera_dual_lens.png"
-dest_files=["res://.godot/imported/camera_dual_lens.png-a232223b307798d42cfa4bd6f6b42b9b.ctex"]
 
 [params]
 

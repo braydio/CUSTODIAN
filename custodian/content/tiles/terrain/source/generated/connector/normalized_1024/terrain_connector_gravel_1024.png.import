@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c5ufrix3kqoc"
-path="res://.godot/imported/terrain_connector_gravel_1024.png-0303a56ddfd38f0ee91986d30adc7bba.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/source/generated/connector/normalized_1024/terrain_connector_gravel_1024.png"
-dest_files=["res://.godot/imported/terrain_connector_gravel_1024.png-0303a56ddfd38f0ee91986d30adc7bba.ctex"]
 
 [params]
 

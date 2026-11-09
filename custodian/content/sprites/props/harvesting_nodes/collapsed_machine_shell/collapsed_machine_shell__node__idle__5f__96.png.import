@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dxvglevrjoomx"
-path="res://.godot/imported/collapsed_machine_shell__node__idle__5f__96.png-a5b731e0afa32fe194d306cad82976be.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/props/harvesting_nodes/collapsed_machine_shell/collapsed_machine_shell__node__idle__5f__96.png"
-dest_files=["res://.godot/imported/collapsed_machine_shell__node__idle__5f__96.png-a5b731e0afa32fe194d306cad82976be.ctex"]
 
 [params]
 

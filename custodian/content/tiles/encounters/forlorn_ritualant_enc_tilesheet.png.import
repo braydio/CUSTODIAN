@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dhgyewddmt6n7"
-path="res://.godot/imported/forlorn_ritualant_enc_tilesheet.png-28af096be4cda592d870249d44ef09b7.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/forlorn_ritualant_enc_tilesheet.png"
-dest_files=["res://.godot/imported/forlorn_ritualant_enc_tilesheet.png-28af096be4cda592d870249d44ef09b7.ctex"]
 
 [params]
 

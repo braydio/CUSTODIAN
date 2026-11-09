@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://lhkgecgxjn8m"
-path="res://.godot/imported/wall_rubble_fragment.png-3d971d7e49d2f7823fae6091d3b4efdc.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_debris/wall_rubble_fragment.png"
-dest_files=["res://.godot/imported/wall_rubble_fragment.png-3d971d7e49d2f7823fae6091d3b4efdc.ctex"]
 
 [params]
 

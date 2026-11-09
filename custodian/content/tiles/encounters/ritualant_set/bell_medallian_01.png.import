@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dvnra4t78owe2"
-path="res://.godot/imported/bell_medallian_01.png-61870c81d5049d519668979c162882a5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/bell_medallian_01.png"
-dest_files=["res://.godot/imported/bell_medallian_01.png-61870c81d5049d519668979c162882a5.ctex"]
 
 [params]
 

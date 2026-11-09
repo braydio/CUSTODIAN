@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bocq5g6qvk5ix"
-path="res://.godot/imported/collapsed_gap_256.png-3cde3e506e9016894b1fdd825f18a0f1.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/source/generated/chasm_bridge/previews_256/collapsed_gap_256.png"
-dest_files=["res://.godot/imported/collapsed_gap_256.png-3cde3e506e9016894b1fdd825f18a0f1.ctex"]
 
 [params]
 

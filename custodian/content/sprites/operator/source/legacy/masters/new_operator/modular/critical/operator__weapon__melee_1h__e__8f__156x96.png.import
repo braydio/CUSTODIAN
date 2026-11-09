@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://twi1fdrvhklw"
-path="res://.godot/imported/operator__weapon__melee_1h__e__8f__156x96.png-dfd3d51d67a04b7f4e370d387d203f3c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/new_operator/modular/critical/operator__weapon__melee_1h__e__8f__156x96.png"
-dest_files=["res://.godot/imported/operator__weapon__melee_1h__e__8f__156x96.png-dfd3d51d67a04b7f4e370d387d203f3c.ctex"]
 
 [params]
 

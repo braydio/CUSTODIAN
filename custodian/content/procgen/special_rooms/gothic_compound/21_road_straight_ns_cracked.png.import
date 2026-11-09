@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cbxcdft55foyv"
-path="res://.godot/imported/21_road_straight_ns_cracked.png-591796bece7dbab69756b72375191867.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/21_road_straight_ns_cracked.png"
-dest_files=["res://.godot/imported/21_road_straight_ns_cracked.png-591796bece7dbab69756b72375191867.ctex"]
 
 [params]
 

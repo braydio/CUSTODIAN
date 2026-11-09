@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ciwh166jnkqhv"
-path="res://.godot/imported/meridian_hardstand_grate_service_01.png-7921cea4c3bc38aac475bcd27294e4f2.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/procgen_macro/runtime/meridian_hardstand/meridian_hardstand_grate_service_01.png"
-dest_files=["res://.godot/imported/meridian_hardstand_grate_service_01.png-7921cea4c3bc38aac475bcd27294e4f2.ctex"]
 
 [params]
 

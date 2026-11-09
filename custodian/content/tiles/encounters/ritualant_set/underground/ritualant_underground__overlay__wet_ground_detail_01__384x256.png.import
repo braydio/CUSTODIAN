@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ogno4m17xnxm"
-path="res://.godot/imported/ritualant_underground__overlay__wet_ground_detail_01__384x256.png-8b57d3a39ff03dc6e86b896e2555b4bf.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__wet_ground_detail_01__384x256.png"
-dest_files=["res://.godot/imported/ritualant_underground__overlay__wet_ground_detail_01__384x256.png-8b57d3a39ff03dc6e86b896e2555b4bf.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bin2a51g01opv"
-path="res://.godot/imported/gothic_scifi_edge_damage_01.png-d883468d6f77ac510eda2e2832b3e5c6.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_damage_transition/gothic_scifi_edge_damage_01.png"
-dest_files=["res://.godot/imported/gothic_scifi_edge_damage_01.png-d883468d6f77ac510eda2e2832b3e5c6.ctex"]
 
 [params]
 

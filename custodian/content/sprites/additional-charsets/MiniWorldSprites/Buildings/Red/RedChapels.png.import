@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://mm4sv8708if1"
-path="res://.godot/imported/RedChapels.png-9380ae698dfc60bfb039da5528a39b18.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Red/RedChapels.png"
-dest_files=["res://.godot/imported/RedChapels.png-9380ae698dfc60bfb039da5528a39b18.ctex"]
 
 [params]
 

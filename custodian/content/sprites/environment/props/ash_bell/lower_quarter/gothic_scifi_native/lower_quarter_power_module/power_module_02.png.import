@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://blkgr0fspq10a"
-path="res://.godot/imported/power_module_02.png-584fd97dfeac244637e2d6e6e3a2ec23.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_power_module/power_module_02.png"
-dest_files=["res://.godot/imported/power_module_02.png-584fd97dfeac244637e2d6e6e3a2ec23.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dxta4ul6240gf"
-path="res://.godot/imported/station_ix_sync_core__body__interaction__idle__omni__1f__384x320.png-b46c7661f176de4d09b8452b25fd55c1.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/station_ix/station_ix_sync_core/runtime/body/station_ix_sync_core__body__interaction__idle__omni__1f__384x320.png"
-dest_files=["res://.godot/imported/station_ix_sync_core__body__interaction__idle__omni__1f__384x320.png-b46c7661f176de4d09b8452b25fd55c1.ctex"]
 
 [params]
 

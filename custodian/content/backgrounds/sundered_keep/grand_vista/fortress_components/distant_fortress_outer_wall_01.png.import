@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bti45xnfj2364"
-path="res://.godot/imported/distant_fortress_outer_wall_01.png-dcecad7ff4e2b13321633216d4f6ab58.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/grand_vista/fortress_components/distant_fortress_outer_wall_01.png"
-dest_files=["res://.godot/imported/distant_fortress_outer_wall_01.png-dcecad7ff4e2b13321633216d4f6ab58.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cqq37xhuvif6m"
-path="res://.godot/imported/fore.png-6a927ee0715c0bd14ba65a8fe86f85e8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://addons/fightengine/demo/Assets/Stage Layers/fore.png"
-dest_files=["res://.godot/imported/fore.png-6a927ee0715c0bd14ba65a8fe86f85e8.ctex"]
 
 [params]
 

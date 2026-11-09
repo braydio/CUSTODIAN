@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cjw8ha6ux2dav"
-path="res://.godot/imported/hazard_border_panel.png-babaeeb6363f106e6f720b808733dd74.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_floor_hardware/hazard_border_panel.png"
-dest_files=["res://.godot/imported/hazard_border_panel.png-babaeeb6363f106e6f720b808733dd74.ctex"]
 
 [params]
 

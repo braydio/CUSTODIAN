@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://deikb11qjw2qi"
-path="res://.godot/imported/ritualant_underground__hazard__thread_zone_decal_01__384x96.png-d3da2cead6162855f812685cb62c783e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__hazard__thread_zone_decal_01__384x96.png"
-dest_files=["res://.godot/imported/ritualant_underground__hazard__thread_zone_decal_01__384x96.png-d3da2cead6162855f812685cb62c783e.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cnxg8pupb5w7j"
-path="res://.godot/imported/Road_of_Witnesses_Tilemap.png-c0b726f913f41bce8e45384c9a884690.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/levels/hub/Road_of_Witnesses_Tilemap.png"
-dest_files=["res://.godot/imported/Road_of_Witnesses_Tilemap.png-c0b726f913f41bce8e45384c9a884690.ctex"]
 
 [params]
 

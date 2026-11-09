@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bx8rnep88c2mj"
-path="res://.godot/imported/running_down_working.png-457fbd8398705ccf1beac8e5cfd04584.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/source_original/running_down_working.png"
-dest_files=["res://.godot/imported/running_down_working.png-457fbd8398705ccf1beac8e5cfd04584.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dfip8h7yt2udy"
-path="res://.godot/imported/vault_resource_pile_scrap_01.png-030d330a9a1db1560e0c90046d80a370.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/gothic/vault_dressing/vault_resource_pile_scrap_01.png"
-dest_files=["res://.godot/imported/vault_resource_pile_scrap_01.png-030d330a9a1db1560e0c90046d80a370.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bfr3gp2yyvm04"
-path="res://.godot/imported/ascent_lip_connector_32.png-4dfe3083f5bcc8b104e017449ed641c8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/runtime/ascent/ascent_lip_connector_32.png"
-dest_files=["res://.godot/imported/ascent_lip_connector_32.png-4dfe3083f5bcc8b104e017449ed641c8.ctex"]
 
 [params]
 

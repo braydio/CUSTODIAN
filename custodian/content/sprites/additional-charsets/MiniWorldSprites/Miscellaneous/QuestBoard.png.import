@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dy42hh7mng8a6"
-path="res://.godot/imported/QuestBoard.png-8c70fc2459b6680857e1f0fa2059e946.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Miscellaneous/QuestBoard.png"
-dest_files=["res://.godot/imported/QuestBoard.png-8c70fc2459b6680857e1f0fa2059e946.ctex"]
 
 [params]
 

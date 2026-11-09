@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bbg5k4fsb5o0r"
-path="res://.godot/imported/walk.png-81e756923ca73b0d8eff6e06a5584b6f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://addons/fightengine/demo/Assets/Spritesheets/Enemy Punk/walk.png"
-dest_files=["res://.godot/imported/walk.png-81e756923ca73b0d8eff6e06a5584b6f.ctex"]
 
 [params]
 

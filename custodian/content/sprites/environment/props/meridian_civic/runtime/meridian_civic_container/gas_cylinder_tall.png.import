@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://beaglkhvbwxyo"
-path="res://.godot/imported/gas_cylinder_tall.png-32f6974de3f8a532ac4c975d53c16017.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_container/gas_cylinder_tall.png"
-dest_files=["res://.godot/imported/gas_cylinder_tall.png-32f6974de3f8a532ac4c975d53c16017.ctex"]
 
 [params]
 

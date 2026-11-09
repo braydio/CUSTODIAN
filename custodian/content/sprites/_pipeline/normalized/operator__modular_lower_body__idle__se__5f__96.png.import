@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bhkgrqw4i10bu"
-path="res://.godot/imported/operator__modular_lower_body__idle__se__5f__96.png-46ee2bc4b812c9a9e8a9d502579c91a0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/normalized/operator__modular_lower_body__idle__se__5f__96.png"
-dest_files=["res://.godot/imported/operator__modular_lower_body__idle__se__5f__96.png-46ee2bc4b812c9a9e8a9d502579c91a0.ctex"]
 
 [params]
 

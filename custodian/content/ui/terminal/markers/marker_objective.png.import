@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dcaxdndekra5o"
-path="res://.godot/imported/marker_objective.png-3e7e6a813c5e94665afdc33d5bdccd92.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/markers/marker_objective.png"
-dest_files=["res://.godot/imported/marker_objective.png-3e7e6a813c5e94665afdc33d5bdccd92.ctex"]
 
 [params]
 

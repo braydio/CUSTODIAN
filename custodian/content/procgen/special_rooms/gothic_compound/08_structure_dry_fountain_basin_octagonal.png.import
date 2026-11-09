@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c3df3bwlyxkkq"
-path="res://.godot/imported/08_structure_dry_fountain_basin_octagonal.png-ac1a1b4eebde82cca58fe37bd80ff7eb.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/08_structure_dry_fountain_basin_octagonal.png"
-dest_files=["res://.godot/imported/08_structure_dry_fountain_basin_octagonal.png-ac1a1b4eebde82cca58fe37bd80ff7eb.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ccwd4mos4eim6"
-path="res://.godot/imported/burned_rock.png-386ba6e5789c39b0c3f8b110868dfd91.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/tiles_32/burned_rock.png"
-dest_files=["res://.godot/imported/burned_rock.png-386ba6e5789c39b0c3f8b110868dfd91.ctex"]
 
 [params]
 

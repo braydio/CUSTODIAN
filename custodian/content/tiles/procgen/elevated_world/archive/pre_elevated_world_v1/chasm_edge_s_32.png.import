@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://48xa6x3qkocg"
-path="res://.godot/imported/chasm_edge_s_32.png-aae60ca5e44b63866dc9f06d7941cd08.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/procgen/elevated_world/archive/pre_elevated_world_v1/chasm_edge_s_32.png"
-dest_files=["res://.godot/imported/chasm_edge_s_32.png-aae60ca5e44b63866dc9f06d7941cd08.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dn5c2k75206dk"
-path="res://.godot/imported/rocky_dirt.png-a9200669486578938ac79117d6c1de92.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/tiles_32/rocky_dirt.png"
-dest_files=["res://.godot/imported/rocky_dirt.png-a9200669486578938ac79117d6c1de92.ctex"]
 
 [params]
 

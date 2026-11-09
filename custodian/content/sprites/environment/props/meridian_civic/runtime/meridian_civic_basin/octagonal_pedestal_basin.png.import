@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bdoa03i6bifgf"
-path="res://.godot/imported/octagonal_pedestal_basin.png-5974c28d8da4e43c5be7e623ba06308e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_basin/octagonal_pedestal_basin.png"
-dest_files=["res://.godot/imported/octagonal_pedestal_basin.png-5974c28d8da4e43c5be7e623ba06308e.ctex"]
 
 [params]
 

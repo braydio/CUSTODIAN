@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bvwaf0pv7138h"
-path="res://.godot/imported/double_head.png-8be7c084b45b14622b7fda72e36d92c6.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_lighting/double_head.png"
-dest_files=["res://.godot/imported/double_head.png-8be7c084b45b14622b7fda72e36d92c6.ctex"]
 
 [params]
 

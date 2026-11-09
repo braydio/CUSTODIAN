@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://uxi0jkqcqybt"
-path="res://.godot/imported/tree_verdent_96x128_01.png-75e9f385d08b411bd6e07490c3014d04.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/foliage/tree_verdent_96x128_01.png"
-dest_files=["res://.godot/imported/tree_verdent_96x128_01.png-75e9f385d08b411bd6e07490c3014d04.ctex"]
 
 [params]
 

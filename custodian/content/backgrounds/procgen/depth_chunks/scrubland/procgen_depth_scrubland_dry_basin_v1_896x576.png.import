@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bi1pb4yw0hxgq"
-path="res://.godot/imported/procgen_depth_scrubland_dry_basin_v1_896x576.png-13e5bc3b007f452673a087d79d1c2607.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/procgen/depth_chunks/scrubland/procgen_depth_scrubland_dry_basin_v1_896x576.png"
-dest_files=["res://.godot/imported/procgen_depth_scrubland_dry_basin_v1_896x576.png-13e5bc3b007f452673a087d79d1c2607.ctex"]
 
 [params]
 

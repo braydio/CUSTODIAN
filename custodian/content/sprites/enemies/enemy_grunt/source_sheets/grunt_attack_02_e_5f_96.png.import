@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bdqjqppymrx1y"
-path="res://.godot/imported/grunt_attack_02_e_5f_96.png-29f2685d0c41d6553c4288e65a5a38c1.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_grunt/source_sheets/grunt_attack_02_e_5f_96.png"
-dest_files=["res://.godot/imported/grunt_attack_02_e_5f_96.png-29f2685d0c41d6553c4288e65a5a38c1.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dkef27sixjk0a"
-path="res://.godot/imported/vault_reliquary_cache.png-483ac625e863a0cc866546b1934c7642.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/gothic/vault/vault_reliquary_cache.png"
-dest_files=["res://.godot/imported/vault_reliquary_cache.png-483ac625e863a0cc866546b1934c7642.ctex"]
 
 [params]
 

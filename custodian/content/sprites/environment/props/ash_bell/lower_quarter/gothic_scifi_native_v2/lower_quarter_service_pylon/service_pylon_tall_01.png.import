@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ba6t2plcea0e8"
-path="res://.godot/imported/service_pylon_tall_01.png-e948c412ccef6670a8baf2ee01344023.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_service_pylon/service_pylon_tall_01.png"
-dest_files=["res://.godot/imported/service_pylon_tall_01.png-e948c412ccef6670a8baf2ee01344023.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dgh6cgkjg052u"
-path="res://.godot/imported/causeway_wall_diagonal_parapet_nw_se_short_01.png-9c0adb69d8a75547bbff7788d0cde98a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/entrance/causeway_walls/causeway_wall_diagonal_parapet_nw_se_short_01.png"
-dest_files=["res://.godot/imported/causeway_wall_diagonal_parapet_nw_se_short_01.png-9c0adb69d8a75547bbff7788d0cde98a.ctex"]
 
 [params]
 

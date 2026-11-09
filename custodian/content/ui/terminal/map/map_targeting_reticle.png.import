@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cejqvv51poqlg"
-path="res://.godot/imported/map_targeting_reticle.png-848c4a0a4bf83f205c71a3dc28b5d54f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/map/map_targeting_reticle.png"
-dest_files=["res://.godot/imported/map_targeting_reticle.png-848c4a0a4bf83f205c71a3dc28b5d54f.ctex"]
 
 [params]
 

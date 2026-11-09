@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://baa31c5k6h7vf"
-path="res://.godot/imported/swamp.png-6120d7d0b3c5f651e56ce493cbc73bc1.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/tiles_32/swamp.png"
-dest_files=["res://.godot/imported/swamp.png-6120d7d0b3c5f651e56ce493cbc73bc1.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://btasklci565u0"
-path="res://.godot/imported/minimap_frame_corner_tr.png-fffd00a12cc28ca25af1c8394ae0a8dd.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/custodian/checks/minimap_frame_corner_tr.png"
-dest_files=["res://.godot/imported/minimap_frame_corner_tr.png-fffd00a12cc28ca25af1c8394ae0a8dd.ctex"]
 
 [params]
 

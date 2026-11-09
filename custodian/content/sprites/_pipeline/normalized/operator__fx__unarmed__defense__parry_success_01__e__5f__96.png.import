@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://doca60dyro0h7"
-path="res://.godot/imported/operator__fx__unarmed__defense__parry_success_01__e__5f__96.png-b7d0056df192b34b43a88ffd5778bfc1.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/normalized/operator__fx__unarmed__defense__parry_success_01__e__5f__96.png"
-dest_files=["res://.godot/imported/operator__fx__unarmed__defense__parry_success_01__e__5f__96.png-b7d0056df192b34b43a88ffd5778bfc1.ctex"]
 
 [params]
 

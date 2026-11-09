@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b4mig5cxmgpg1"
-path="res://.godot/imported/ritualant_underground__lift__shaft_scroll_01__256x1536.png-73827af22d0c8bc8a1c535716608e65d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__lift__shaft_scroll_01__256x1536.png"
-dest_files=["res://.godot/imported/ritualant_underground__lift__shaft_scroll_01__256x1536.png-73827af22d0c8bc8a1c535716608e65d.ctex"]
 
 [params]
 

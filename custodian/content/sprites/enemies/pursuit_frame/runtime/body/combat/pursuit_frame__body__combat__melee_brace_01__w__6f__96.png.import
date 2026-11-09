@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://nowhqllp0aj3"
-path="res://.godot/imported/pursuit_frame__body__combat__melee_brace_01__w__6f__96.png-b776ac9692694682f88f4a917e22a806.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/pursuit_frame/runtime/body/combat/pursuit_frame__body__combat__melee_brace_01__w__6f__96.png"
-dest_files=["res://.godot/imported/pursuit_frame__body__combat__melee_brace_01__w__6f__96.png-b776ac9692694682f88f4a917e22a806.ctex"]
 
 [params]
 

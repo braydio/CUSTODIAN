@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://0ofyg8kninss"
-path="res://.godot/imported/elevation_edge_south_32.png-af0f6234565d0ed23ea72fa9c7070c5c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/elevation/industrial/elevation_edge_south_32.png"
-dest_files=["res://.godot/imported/elevation_edge_south_32.png-af0f6234565d0ed23ea72fa9c7070c5c.ctex"]
 
 [params]
 

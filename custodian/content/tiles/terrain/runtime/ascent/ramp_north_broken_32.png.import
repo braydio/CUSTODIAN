@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cpvaa317wel24"
-path="res://.godot/imported/ramp_north_broken_32.png-8a3d7e1162b54ef50ba20f6fa20e4ea0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/runtime/ascent/ramp_north_broken_32.png"
-dest_files=["res://.godot/imported/ramp_north_broken_32.png-8a3d7e1162b54ef50ba20f6fa20e4ea0.ctex"]
 
 [params]
 

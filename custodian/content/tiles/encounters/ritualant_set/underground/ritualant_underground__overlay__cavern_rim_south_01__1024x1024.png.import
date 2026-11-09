@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dqthmmvtllsg7"
-path="res://.godot/imported/ritualant_underground__overlay__cavern_rim_south_01__1024x1024.png-95d08409cc29833b8f4393c2269c89a6.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__cavern_rim_south_01__1024x1024.png"
-dest_files=["res://.godot/imported/ritualant_underground__overlay__cavern_rim_south_01__1024x1024.png-95d08409cc29833b8f4393c2269c89a6.ctex"]
 
 [params]
 

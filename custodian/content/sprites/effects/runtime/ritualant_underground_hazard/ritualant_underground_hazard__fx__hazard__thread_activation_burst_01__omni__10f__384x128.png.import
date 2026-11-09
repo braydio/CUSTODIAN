@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c54lg6xpkoqbl"
-path="res://.godot/imported/ritualant_underground_hazard__fx__hazard__thread_activation_burst_01__omni__10f__384x128.png-00e78ceabed577b4cfa56e7a16770f3a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/effects/runtime/ritualant_underground_hazard/ritualant_underground_hazard__fx__hazard__thread_activation_burst_01__omni__10f__384x128.png"
-dest_files=["res://.godot/imported/ritualant_underground_hazard__fx__hazard__thread_activation_burst_01__omni__10f__384x128.png-00e78ceabed577b4cfa56e7a16770f3a.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://hki3kpwygghf"
-path="res://.godot/imported/09_wall_corner_inner_conn_e_s.png-10a16a86beabfad98981ed8e60131f11.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/09_wall_corner_inner_conn_e_s.png"
-dest_files=["res://.godot/imported/09_wall_corner_inner_conn_e_s.png-10a16a86beabfad98981ed8e60131f11.ctex"]
 
 [params]
 

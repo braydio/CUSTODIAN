@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ck71nah5rbn1k"
-path="res://.godot/imported/stacked_timber_beams.png-60a81b42bb04516f38e422e68f058509.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_debris/stacked_timber_beams.png"
-dest_files=["res://.godot/imported/stacked_timber_beams.png-60a81b42bb04516f38e422e68f058509.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bivy3586tjyo4"
-path="res://.godot/imported/punch3.png-a2798f64adbffa2ca1f48ce643726217.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://addons/fightengine/demo/Assets/Sprites/Brawler-Girl/Punch/punch3.png"
-dest_files=["res://.godot/imported/punch3.png-a2798f64adbffa2ca1f48ce643726217.ctex"]
 
 [params]
 

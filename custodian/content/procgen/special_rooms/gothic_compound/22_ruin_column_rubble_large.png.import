@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ksn0ii5hh6hf"
-path="res://.godot/imported/22_ruin_column_rubble_large.png-ec3db15f864a0b37cd2de7a6c3955368.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/22_ruin_column_rubble_large.png"
-dest_files=["res://.godot/imported/22_ruin_column_rubble_large.png-ec3db15f864a0b37cd2de7a6c3955368.ctex"]
 
 [params]
 

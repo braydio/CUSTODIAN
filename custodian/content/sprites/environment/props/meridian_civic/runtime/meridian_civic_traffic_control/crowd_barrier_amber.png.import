@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://32co3l7hunsj"
-path="res://.godot/imported/crowd_barrier_amber.png-04a53c77203aa59e7f9b2fe467619ae9.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_traffic_control/crowd_barrier_amber.png"
-dest_files=["res://.godot/imported/crowd_barrier_amber.png-04a53c77203aa59e7f9b2fe467619ae9.ctex"]
 
 [params]
 

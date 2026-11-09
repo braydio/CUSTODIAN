@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bbyg741luxt1u"
-path="res://.godot/imported/ramp_east_broken_256.png-ed3143ad8fcefacf42d8f641d5173837.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/source/generated/ascent/previews_256/ramp_east_broken_256.png"
-dest_files=["res://.godot/imported/ramp_east_broken_256.png-ed3143ad8fcefacf42d8f641d5173837.ctex"]
 
 [params]
 

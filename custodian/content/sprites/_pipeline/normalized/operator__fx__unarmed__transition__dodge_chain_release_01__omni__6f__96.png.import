@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c5wwv5xhcc0tx"
-path="res://.godot/imported/operator__fx__unarmed__transition__dodge_chain_release_01__omni__6f__96.png-025097d7ef604f11ff91cfa422123be1.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/normalized/operator__fx__unarmed__transition__dodge_chain_release_01__omni__6f__96.png"
-dest_files=["res://.godot/imported/operator__fx__unarmed__transition__dodge_chain_release_01__omni__6f__96.png-025097d7ef604f11ff91cfa422123be1.ctex"]
 
 [params]
 

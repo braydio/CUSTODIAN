@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dnrwescf17ukn"
-path="res://.godot/imported/faded_instinct.png-2cbb804b86e3187c83aad82ea035f00a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/items/faded_instinct.png"
-dest_files=["res://.godot/imported/faded_instinct.png-2cbb804b86e3187c83aad82ea035f00a.ctex"]
 
 [params]
 

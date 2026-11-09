@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bny5gx8fdxch8"
-path="res://.godot/imported/2h_heavy_deep_coil_melee.png-70c621ef29e5dc9480fefc09b842e1c6.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/source_original/heavy_2h/2h_heavy_deep_coil_melee.png"
-dest_files=["res://.godot/imported/2h_heavy_deep_coil_melee.png-70c621ef29e5dc9480fefc09b842e1c6.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dow3008lasas1"
-path="res://.godot/imported/39_marker_hidden_spawn_ember_star.png-5b48a268fa7ed7781c2002a3d54f9258.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/39_marker_hidden_spawn_ember_star.png"
-dest_files=["res://.godot/imported/39_marker_hidden_spawn_ember_star.png-5b48a268fa7ed7781c2002a3d54f9258.ctex"]
 
 [params]
 

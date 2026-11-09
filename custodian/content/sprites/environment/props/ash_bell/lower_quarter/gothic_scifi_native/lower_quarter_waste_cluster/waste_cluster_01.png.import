@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b63n5kcga583p"
-path="res://.godot/imported/waste_cluster_01.png-e79a8745e804c6d3181a6bc2a566688b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_waste_cluster/waste_cluster_01.png"
-dest_files=["res://.godot/imported/waste_cluster_01.png-e79a8745e804c6d3181a6bc2a566688b.ctex"]
 
 [params]
 

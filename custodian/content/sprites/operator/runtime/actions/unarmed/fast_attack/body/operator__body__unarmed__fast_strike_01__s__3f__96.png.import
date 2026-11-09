@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://t65nrvwxjekj"
-path="res://.godot/imported/operator__body__unarmed__fast_strike_01__s__3f__96.png-685b0b00fb6256c0d88b65fed6cb923a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/runtime/actions/unarmed/fast_attack/body/operator__body__unarmed__fast_strike_01__s__3f__96.png"
-dest_files=["res://.godot/imported/operator__body__unarmed__fast_strike_01__s__3f__96.png-685b0b00fb6256c0d88b65fed6cb923a.ctex"]
 
 [params]
 

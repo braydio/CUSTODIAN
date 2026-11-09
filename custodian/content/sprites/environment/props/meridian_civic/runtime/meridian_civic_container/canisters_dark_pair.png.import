@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bwja73oppaogn"
-path="res://.godot/imported/canisters_dark_pair.png-164c03f835a406894020fe73f2777335.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_container/canisters_dark_pair.png"
-dest_files=["res://.godot/imported/canisters_dark_pair.png-164c03f835a406894020fe73f2777335.ctex"]
 
 [params]
 

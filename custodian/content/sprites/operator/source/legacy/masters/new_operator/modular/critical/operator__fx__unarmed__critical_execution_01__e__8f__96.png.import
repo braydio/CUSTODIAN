@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://co7qckwcmwxj4"
-path="res://.godot/imported/operator__fx__unarmed__critical_execution_01__e__8f__96.png-974b646766c31747baac2f1f195a676c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/new_operator/modular/critical/operator__fx__unarmed__critical_execution_01__e__8f__96.png"
-dest_files=["res://.godot/imported/operator__fx__unarmed__critical_execution_01__e__8f__96.png-974b646766c31747baac2f1f195a676c.ctex"]
 
 [params]
 

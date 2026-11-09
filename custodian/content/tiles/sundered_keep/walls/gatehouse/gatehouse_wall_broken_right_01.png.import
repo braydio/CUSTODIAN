@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://poopriocydpk"
-path="res://.godot/imported/gatehouse_wall_broken_right_01.png-0885c76eb019cfe6975b1a09468673d8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/walls/gatehouse/gatehouse_wall_broken_right_01.png"
-dest_files=["res://.godot/imported/gatehouse_wall_broken_right_01.png-0885c76eb019cfe6975b1a09468673d8.ctex"]
 
 [params]
 

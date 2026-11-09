@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bdxug63pu5ap0"
-path="res://.godot/imported/overlay_critical_flash.png-44d63d27ae6f5de4c8b04af919c5d45b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/overlays/overlay_critical_flash.png"
-dest_files=["res://.godot/imported/overlay_critical_flash.png-44d63d27ae6f5de4c8b04af919c5d45b.ctex"]
 
 [params]
 

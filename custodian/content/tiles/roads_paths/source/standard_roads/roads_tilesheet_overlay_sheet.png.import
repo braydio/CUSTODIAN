@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bvbb3e26hx6ki"
-path="res://.godot/imported/roads_tilesheet_overlay_sheet.png-a16381c1aca010b63d00f77a867a7d89.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/roads_paths/source/standard_roads/roads_tilesheet_overlay_sheet.png"
-dest_files=["res://.godot/imported/roads_tilesheet_overlay_sheet.png-a16381c1aca010b63d00f77a867a7d89.ctex"]
 
 [params]
 

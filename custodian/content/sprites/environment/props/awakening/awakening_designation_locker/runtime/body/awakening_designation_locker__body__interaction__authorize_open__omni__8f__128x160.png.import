@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://4ct46xmdmv28"
-path="res://.godot/imported/awakening_designation_locker__body__interaction__authorize_open__omni__8f__128x160.png-1fa150fe889402c2bd7cd604ac602362.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/awakening/awakening_designation_locker/runtime/body/awakening_designation_locker__body__interaction__authorize_open__omni__8f__128x160.png"
-dest_files=["res://.godot/imported/awakening_designation_locker__body__interaction__authorize_open__omni__8f__128x160.png-1fa150fe889402c2bd7cd604ac602362.ctex"]
 
 [params]
 

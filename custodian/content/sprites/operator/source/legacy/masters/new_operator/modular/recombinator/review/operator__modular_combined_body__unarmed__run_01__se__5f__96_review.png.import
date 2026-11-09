@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://biyxe1ncmueqo"
-path="res://.godot/imported/operator__modular_combined_body__unarmed__run_01__se__5f__96_review.png-a10c8d6bac3228fde542dcc72085366a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/new_operator/modular/recombinator/review/operator__modular_combined_body__unarmed__run_01__se__5f__96_review.png"
-dest_files=["res://.godot/imported/operator__modular_combined_body__unarmed__run_01__se__5f__96_review.png-a10c8d6bac3228fde542dcc72085366a.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://5ufcm0eq4of1"
-path="res://.godot/imported/gothic_banner_or_hanging_cloth_001.png-dfc8ad89ef6660194e2451ba3507da8b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/gothic/banner_or_hanging_cloth/gothic_banner_or_hanging_cloth_001.png"
-dest_files=["res://.godot/imported/gothic_banner_or_hanging_cloth_001.png-dfc8ad89ef6660194e2451ba3507da8b.ctex"]
 
 [params]
 

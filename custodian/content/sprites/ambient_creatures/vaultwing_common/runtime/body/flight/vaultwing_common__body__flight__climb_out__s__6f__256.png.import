@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cdk63mthwklji"
-path="res://.godot/imported/vaultwing_common__body__flight__climb_out__s__6f__256.png-60e8007bf16d7378fb7c4cb18fb9c9f6.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/ambient_creatures/vaultwing_common/runtime/body/flight/vaultwing_common__body__flight__climb_out__s__6f__256.png"
-dest_files=["res://.godot/imported/vaultwing_common__body__flight__climb_out__s__6f__256.png-60e8007bf16d7378fb7c4cb18fb9c9f6.ctex"]
 
 [params]
 

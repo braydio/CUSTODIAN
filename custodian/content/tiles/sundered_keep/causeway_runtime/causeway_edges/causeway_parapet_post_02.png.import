@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://1dihjkyw2pco"
-path="res://.godot/imported/causeway_parapet_post_02.png-ba98a529621e136975ac284c03d8d4b7.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_runtime/causeway_edges/causeway_parapet_post_02.png"
-dest_files=["res://.godot/imported/causeway_parapet_post_02.png-ba98a529621e136975ac284c03d8d4b7.ctex"]
 
 [params]
 

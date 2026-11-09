@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d3h4r1arq82he"
-path="res://.godot/imported/compass_rose_small.png-a03d626e8dae649c0d7bb9f15976d7b0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/custodian/icons/compass_rose_small.png"
-dest_files=["res://.godot/imported/compass_rose_small.png-a03d626e8dae649c0d7bb9f15976d7b0.ctex"]
 
 [params]
 

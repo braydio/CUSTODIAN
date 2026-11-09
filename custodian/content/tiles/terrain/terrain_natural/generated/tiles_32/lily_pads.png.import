@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b2r253lu0goi2"
-path="res://.godot/imported/lily_pads.png-51d09d97627f8491331d73e18c638902.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/tiles_32/lily_pads.png"
-dest_files=["res://.godot/imported/lily_pads.png-51d09d97627f8491331d73e18c638902.ctex"]
 
 [params]
 

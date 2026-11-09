@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bcvhnlo4ecjg7"
-path="res://.godot/imported/amber_heavy_column.png-b44ed30ce62cd84c7ffee01f762c1867.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_lighting/amber_heavy_column.png"
-dest_files=["res://.godot/imported/amber_heavy_column.png-b44ed30ce62cd84c7ffee01f762c1867.ctex"]
 
 [params]
 

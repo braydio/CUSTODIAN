@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b3f3eatfyxjdn"
-path="res://.godot/imported/barrel.png-7c94ff2510383e49820966e5db3e63d4.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/raw_preview_tiles/barrel.png"
-dest_files=["res://.godot/imported/barrel.png-7c94ff2510383e49820966e5db3e63d4.ctex"]
 
 [params]
 

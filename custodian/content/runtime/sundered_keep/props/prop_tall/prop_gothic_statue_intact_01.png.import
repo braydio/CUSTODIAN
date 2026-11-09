@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bqk38ctuqm5yj"
-path="res://.godot/imported/prop_gothic_statue_intact_01.png-325efea37175ce92ea9fd6ae647dbd00.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/props/prop_tall/prop_gothic_statue_intact_01.png"
-dest_files=["res://.godot/imported/prop_gothic_statue_intact_01.png-325efea37175ce92ea9fd6ae647dbd00.ctex"]
 
 [params]
 

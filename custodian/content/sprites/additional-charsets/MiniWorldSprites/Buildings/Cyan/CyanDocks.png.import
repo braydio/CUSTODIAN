@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c15iafv81a181"
-path="res://.godot/imported/CyanDocks.png-7ab94e46d3a099378b13e8d7933a1900.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Cyan/CyanDocks.png"
-dest_files=["res://.godot/imported/CyanDocks.png-7ab94e46d3a099378b13e8d7933a1900.ctex"]
 
 [params]
 

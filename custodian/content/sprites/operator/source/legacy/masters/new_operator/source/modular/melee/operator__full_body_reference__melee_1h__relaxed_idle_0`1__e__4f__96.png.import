@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dar65mqf382q1"
-path="res://.godot/imported/operator__full_body_reference__melee_1h__relaxed_idle_0`1__e__4f__96.png-ff1590b2bdc858e83f5f2a2c59b4d090.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/new_operator/source/modular/melee/operator__full_body_reference__melee_1h__relaxed_idle_0`1__e__4f__96.png"
-dest_files=["res://.godot/imported/operator__full_body_reference__melee_1h__relaxed_idle_0`1__e__4f__96.png-ff1590b2bdc858e83f5f2a2c59b4d090.ctex"]
 
 [params]
 

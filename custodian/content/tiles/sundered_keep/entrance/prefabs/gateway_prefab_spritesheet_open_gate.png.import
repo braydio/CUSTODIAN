@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bejyj801q3noh"
-path="res://.godot/imported/gateway_prefab_spritesheet_open_gate.png-f880823a7bad2420599fdefbf82ec5db.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/entrance/prefabs/gateway_prefab_spritesheet_open_gate.png"
-dest_files=["res://.godot/imported/gateway_prefab_spritesheet_open_gate.png-f880823a7bad2420599fdefbf82ec5db.ctex"]
 
 [params]
 

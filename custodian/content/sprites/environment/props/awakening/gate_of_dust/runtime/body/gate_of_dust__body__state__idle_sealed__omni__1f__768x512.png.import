@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c53kc2i8b0bir"
-path="res://.godot/imported/gate_of_dust__body__state__idle_sealed__omni__1f__768x512.png-b7ed960fd328a1db08d4100c58f87787.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/awakening/gate_of_dust/runtime/body/gate_of_dust__body__state__idle_sealed__omni__1f__768x512.png"
-dest_files=["res://.godot/imported/gate_of_dust__body__state__idle_sealed__omni__1f__768x512.png-b7ed960fd328a1db08d4100c58f87787.ctex"]
 
 [params]
 

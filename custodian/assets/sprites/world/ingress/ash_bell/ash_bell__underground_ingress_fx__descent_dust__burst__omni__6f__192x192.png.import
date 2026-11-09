@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://om83n78xjlhq"
-path="res://.godot/imported/ash_bell__underground_ingress_fx__descent_dust__burst__omni__6f__192x192.png-6d327a514f7485eb28f399601359813f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress_fx__descent_dust__burst__omni__6f__192x192.png"
-dest_files=["res://.godot/imported/ash_bell__underground_ingress_fx__descent_dust__burst__omni__6f__192x192.png-6d327a514f7485eb28f399601359813f.ctex"]
 
 [params]
 

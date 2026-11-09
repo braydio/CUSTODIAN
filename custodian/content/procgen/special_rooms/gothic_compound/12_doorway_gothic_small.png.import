@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bl112v6trn8au"
-path="res://.godot/imported/12_doorway_gothic_small.png-c5214829f94c9c9c918c330a2d5c367a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/12_doorway_gothic_small.png"
-dest_files=["res://.godot/imported/12_doorway_gothic_small.png-c5214829f94c9c9c918c330a2d5c367a.ctex"]
 
 [params]
 

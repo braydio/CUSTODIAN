@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ccsuh255702oe"
-path="res://.godot/imported/carbine_mk1_projectile_impact_hard_01.png-d2d05d365ffb4228040c747e7e47c6bf.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/effects/weapons/carbine_mk1/carbine_mk1_projectile_impact_hard_01.png"
-dest_files=["res://.godot/imported/carbine_mk1_projectile_impact_hard_01.png-d2d05d365ffb4228040c747e7e47c6bf.ctex"]
 
 [params]
 

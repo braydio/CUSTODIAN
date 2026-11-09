@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c2iq0ewqeoqst"
-path="res://.godot/imported/gothic_master_sheet.png-f41748adb26f65fa91af136bc76a1f25.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/gothic/gothic_master_sheet.png"
-dest_files=["res://.godot/imported/gothic_master_sheet.png-f41748adb26f65fa91af136bc76a1f25.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bt1h32c82kpul"
-path="res://.godot/imported/plateau_inner_corner.png-185bf15438d6ce73a7e91c080d2c6aaf.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/raw_preview_tiles/plateau_inner_corner.png"
-dest_files=["res://.godot/imported/plateau_inner_corner.png-185bf15438d6ce73a7e91c080d2c6aaf.ctex"]
 
 [params]
 

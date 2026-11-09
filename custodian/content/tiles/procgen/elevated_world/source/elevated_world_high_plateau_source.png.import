@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dnreax72s4kw3"
-path="res://.godot/imported/elevated_world_high_plateau_source.png-02b5f7f62de8185efca58748edcb9f7b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/procgen/elevated_world/source/elevated_world_high_plateau_source.png"
-dest_files=["res://.godot/imported/elevated_world_high_plateau_source.png-02b5f7f62de8185efca58748edcb9f7b.ctex"]
 
 [params]
 

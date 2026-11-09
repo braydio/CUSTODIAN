@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://didiykjuixm2h"
-path="res://.godot/imported/operator__modular_lower_body__melee_1h__draw_weapon_01__e__4f__96x128.png-8c33541046d75a68ac5615e3fafc2e6c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/new_operator/modular/melee_1h/operator__modular_lower_body__melee_1h__draw_weapon_01__e__4f__96x128.png"
-dest_files=["res://.godot/imported/operator__modular_lower_body__melee_1h__draw_weapon_01__e__4f__96x128.png-8c33541046d75a68ac5615e3fafc2e6c.ctex"]
 
 [params]
 

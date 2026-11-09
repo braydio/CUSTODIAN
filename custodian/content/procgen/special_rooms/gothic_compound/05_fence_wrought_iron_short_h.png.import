@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b8yubbbbbisbg"
-path="res://.godot/imported/05_fence_wrought_iron_short_h.png-4c4b37969b7f54d5e84bd9bbb1b45111.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/05_fence_wrought_iron_short_h.png"
-dest_files=["res://.godot/imported/05_fence_wrought_iron_short_h.png-4c4b37969b7f54d5e84bd9bbb1b45111.ctex"]
 
 [params]
 

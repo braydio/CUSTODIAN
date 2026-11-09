@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://qpctkrweisc"
-path="res://.godot/imported/station_ix_district_landmark_768x768.png-5f3324864744b35906d3162b19edcab2.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/ash_bell/lower_quarter/station_ix_district/station_ix_district_landmark_768x768.png"
-dest_files=["res://.godot/imported/station_ix_district_landmark_768x768.png-5f3324864744b35906d3162b19edcab2.ctex"]
 
 [params]
 

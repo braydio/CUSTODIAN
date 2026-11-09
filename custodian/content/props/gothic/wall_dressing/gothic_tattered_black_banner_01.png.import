@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ct8issxym0xa"
-path="res://.godot/imported/gothic_tattered_black_banner_01.png-388b7b6371acdd0b16c51ea85e286cdf.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/gothic/wall_dressing/gothic_tattered_black_banner_01.png"
-dest_files=["res://.godot/imported/gothic_tattered_black_banner_01.png-388b7b6371acdd0b16c51ea85e286cdf.ctex"]
 
 [params]
 

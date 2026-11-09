@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://1miwhxwqxw78"
-path="res://.godot/imported/bolt4.png-9575d95a5b5071c30021fc6ff0ce1393.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/effects/source/spells/Pixelart/Bolt/sprites/bolt4.png"
-dest_files=["res://.godot/imported/bolt4.png-9575d95a5b5071c30021fc6ff0ce1393.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ckb23o3ley5k0"
-path="res://.godot/imported/combat_fx__breach_timer_reticle__12f__256-sheet.png-76b359e2c6f927b05575e1a1ecf760d0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/effects/combat/critical/combat_fx__breach_timer_reticle__12f__256-sheet.png"
-dest_files=["res://.godot/imported/combat_fx__breach_timer_reticle__12f__256-sheet.png-76b359e2c6f927b05575e1a1ecf760d0.ctex"]
 
 [params]
 

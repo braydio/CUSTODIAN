@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cepljfkqcckyr"
-path="res://.godot/imported/vault_door_lockplate_01.png-4ac674bfff2a72d9a329e92264c992a1.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/doors/gothic/vault/vault_door_lockplate_01.png"
-dest_files=["res://.godot/imported/vault_door_lockplate_01.png-4ac674bfff2a72d9a329e92264c992a1.ctex"]
 
 [params]
 

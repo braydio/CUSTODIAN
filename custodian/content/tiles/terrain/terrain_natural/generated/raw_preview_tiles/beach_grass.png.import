@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://y2vgx4dmki5l"
-path="res://.godot/imported/beach_grass.png-2701a12bee52a0e802abe4402c2909a7.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/raw_preview_tiles/beach_grass.png"
-dest_files=["res://.godot/imported/beach_grass.png-2701a12bee52a0e802abe4402c2909a7.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://drmlywrxxwc0h"
-path="res://.godot/imported/islander_wall_01_96.png-8f14b6954702abf20bfa603545d091f0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/walls/sundern_keep/islander_wall_01_96.png"
-dest_files=["res://.godot/imported/islander_wall_01_96.png-8f14b6954702abf20bfa603545d091f0.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://blxfpfhrork2k"
-path="res://.godot/imported/ritualant_underground__prop__chain_anchor_01__160x192.png-baced1ae83fbe810b8d3f7cc134b43ed.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__prop__chain_anchor_01__160x192.png"
-dest_files=["res://.godot/imported/ritualant_underground__prop__chain_anchor_01__160x192.png-baced1ae83fbe810b8d3f7cc134b43ed.ctex"]
 
 [params]
 

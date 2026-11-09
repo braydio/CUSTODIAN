@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bdf37cc1l4ww5"
-path="res://.godot/imported/_unarmed_run_8d.png-08e692aa7bece8a1ac2c40db7da26a97.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/source_original/_unarmed_run_8d.png"
-dest_files=["res://.godot/imported/_unarmed_run_8d.png-08e692aa7bece8a1ac2c40db7da26a97.ctex"]
 
 [params]
 

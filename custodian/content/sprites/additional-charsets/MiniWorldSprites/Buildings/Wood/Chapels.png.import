@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bp7qd1ddp4hvf"
-path="res://.godot/imported/Chapels.png-2a5e3d546f606b08138bd695e7226d8a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Wood/Chapels.png"
-dest_files=["res://.godot/imported/Chapels.png-2a5e3d546f606b08138bd695e7226d8a.ctex"]
 
 [params]
 

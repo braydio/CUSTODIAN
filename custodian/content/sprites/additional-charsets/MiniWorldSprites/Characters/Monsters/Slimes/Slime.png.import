@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bjoo2pif7tk3c"
-path="res://.godot/imported/Slime.png-929fa407569a86a98b5311cbd00c1c05.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Monsters/Slimes/Slime.png"
-dest_files=["res://.godot/imported/Slime.png-929fa407569a86a98b5311cbd00c1c05.ctex"]
 
 [params]
 

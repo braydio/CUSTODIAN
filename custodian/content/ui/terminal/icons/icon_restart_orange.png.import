@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cs7ldp41tin4f"
-path="res://.godot/imported/icon_restart_orange.png-ee072e0e386939322a219fe95522307d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/icons/icon_restart_orange.png"
-dest_files=["res://.godot/imported/icon_restart_orange.png-ee072e0e386939322a219fe95522307d.ctex"]
 
 [params]
 

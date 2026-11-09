@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cu7v73i5o3a0o"
-path="res://.godot/imported/gothic_wall_cap_terminal_04.png-3541b19f9556d3ea9a0d640515ac4c5d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/walls/gothic/wall_cap_terminal_or_buttress/gothic_wall_cap_terminal_04.png"
-dest_files=["res://.godot/imported/gothic_wall_cap_terminal_04.png-3541b19f9556d3ea9a0d640515ac4c5d.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c00hri8j7h7hk"
-path="res://.godot/imported/8bit-charset-4f-b.png-f05c73db2252eca5eb9021e77275f1ca.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/8bit-custodian/8bit-charset-4f-b.png"
-dest_files=["res://.godot/imported/8bit-charset-4f-b.png-f05c73db2252eca5eb9021e77275f1ca.ctex"]
 
 [params]
 

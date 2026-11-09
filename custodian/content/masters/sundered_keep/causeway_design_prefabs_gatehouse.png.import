@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bta6dw66yc5xt"
-path="res://.godot/imported/causeway_design_prefabs_gatehouse.png-c5e362563b94938da345744cf67b339e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/masters/sundered_keep/causeway_design_prefabs_gatehouse.png"
-dest_files=["res://.godot/imported/causeway_design_prefabs_gatehouse.png-c5e362563b94938da345744cf67b339e.ctex"]
 
 [params]
 

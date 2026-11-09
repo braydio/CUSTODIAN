@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://6p0e3cufytgo"
-path="res://.godot/imported/ash_bell__underground_ingress__mountain_cliff_mass__master__1536x1024_pixel_512x512.png-6238db11e35e48901633cdaa80580a58.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__mountain_cliff_mass__master__1536x1024_pixel_512x512.png"
-dest_files=["res://.godot/imported/ash_bell__underground_ingress__mountain_cliff_mass__master__1536x1024_pixel_512x512.png-6238db11e35e48901633cdaa80580a58.ctex"]
 
 [params]
 

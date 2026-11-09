@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bfpjpwjq1b1nk"
-path="res://.godot/imported/floor_plate_hazard_ring.png-f82070a5880b1f6799dbfe8f6b8e759a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_floor_hardware/floor_plate_hazard_ring.png"
-dest_files=["res://.godot/imported/floor_plate_hazard_ring.png-f82070a5880b1f6799dbfe8f6b8e759a.ctex"]
 
 [params]
 

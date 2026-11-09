@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://be0h52qn84j70"
-path="res://.godot/imported/junction_box_square_b.png-1174ca2ad4cf2a5293f66875ca3e91dd.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_utility/junction_box_square_b.png"
-dest_files=["res://.godot/imported/junction_box_square_b.png-1174ca2ad4cf2a5293f66875ca3e91dd.ctex"]
 
 [params]
 

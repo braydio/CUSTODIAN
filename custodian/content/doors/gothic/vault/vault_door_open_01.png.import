@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://gc4wt6ymhdfs"
-path="res://.godot/imported/vault_door_open_01.png-e08d7d8edf912df1f784ac812f261c51.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/doors/gothic/vault/vault_door_open_01.png"
-dest_files=["res://.godot/imported/vault_door_open_01.png-e08d7d8edf912df1f784ac812f261c51.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://1bvqbrtt4ciy"
-path="res://.godot/imported/grunt_template_pelvis_01.png-f8d197e68ca557248a3dd79acab2d375.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_brawler/index-parts/grunt_template_pelvis_01.png"
-dest_files=["res://.godot/imported/grunt_template_pelvis_01.png-f8d197e68ca557248a3dd79acab2d375.ctex"]
 
 [params]
 

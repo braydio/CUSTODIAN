@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://vv3piewgnvnb"
-path="res://.godot/imported/awakening_reliquary_dust_lung_connector_connector_a_128x160.png-936eff87218bced38a00614058929e56.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_connector_a_128x160.png"
-dest_files=["res://.godot/imported/awakening_reliquary_dust_lung_connector_connector_a_128x160.png-936eff87218bced38a00614058929e56.ctex"]
 
 [params]
 

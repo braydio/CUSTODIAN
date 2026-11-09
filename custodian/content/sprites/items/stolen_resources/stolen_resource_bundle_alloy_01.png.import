@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://qhpqk7tfist2"
-path="res://.godot/imported/stolen_resource_bundle_alloy_01.png-725e62e9949b0863569508d883d890e7.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/items/stolen_resources/stolen_resource_bundle_alloy_01.png"
-dest_files=["res://.godot/imported/stolen_resource_bundle_alloy_01.png-725e62e9949b0863569508d883d890e7.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://db0aigk5jsf6q"
-path="res://.godot/imported/anti_vehicle_star_01.png-1b1842079071a67b9087b5aa381b4fa8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_anti_vehicle_barrier/anti_vehicle_star_01.png"
-dest_files=["res://.godot/imported/anti_vehicle_star_01.png-1b1842079071a67b9087b5aa381b4fa8.ctex"]
 
 [params]
 

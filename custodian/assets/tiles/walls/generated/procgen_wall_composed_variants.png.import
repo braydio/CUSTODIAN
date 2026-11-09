@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://t40thener4f5"
-path="res://.godot/imported/procgen_wall_composed_variants.png-c1ae68f919b21d8f91e44fe644f9048c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://assets/tiles/walls/generated/procgen_wall_composed_variants.png"
-dest_files=["res://.godot/imported/procgen_wall_composed_variants.png-c1ae68f919b21d8f91e44fe644f9048c.ctex"]
 
 [params]
 

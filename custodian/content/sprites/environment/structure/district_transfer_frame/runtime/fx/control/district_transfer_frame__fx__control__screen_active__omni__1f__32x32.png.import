@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cmpgpw6w37qyh"
-path="res://.godot/imported/district_transfer_frame__fx__control__screen_active__omni__1f__32x32.png-7d6262f7bb6248dd45f69a7a8d554d86.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/structure/district_transfer_frame/runtime/fx/control/district_transfer_frame__fx__control__screen_active__omni__1f__32x32.png"
-dest_files=["res://.godot/imported/district_transfer_frame__fx__control__screen_active__omni__1f__32x32.png-7d6262f7bb6248dd45f69a7a8d554d86.ctex"]
 
 [params]
 

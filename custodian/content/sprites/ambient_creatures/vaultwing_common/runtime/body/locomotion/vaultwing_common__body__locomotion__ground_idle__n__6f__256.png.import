@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b1ysxycjpnjbo"
-path="res://.godot/imported/vaultwing_common__body__locomotion__ground_idle__n__6f__256.png-cc68c941a554984e0b8751d0d27b96c0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/ambient_creatures/vaultwing_common/runtime/body/locomotion/vaultwing_common__body__locomotion__ground_idle__n__6f__256.png"
-dest_files=["res://.godot/imported/vaultwing_common__body__locomotion__ground_idle__n__6f__256.png-cc68c941a554984e0b8751d0d27b96c0.ctex"]
 
 [params]
 

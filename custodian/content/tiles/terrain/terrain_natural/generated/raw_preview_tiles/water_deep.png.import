@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dw4a720t4upo6"
-path="res://.godot/imported/water_deep.png-a1bab423b0ef102acc3e634962a5e1fb.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/raw_preview_tiles/water_deep.png"
-dest_files=["res://.godot/imported/water_deep.png-a1bab423b0ef102acc3e634962a5e1fb.ctex"]
 
 [params]
 

@@ -1,0 +1,304 @@
+{
+  "schema": "custodian.operator_animation_workbench.v2",
+  "identity": {
+    "profile": "melee_1h",
+    "group": "attack",
+    "action": "fast_01",
+    "direction": "e"
+  },
+  "context": {
+    "weapon_id": "vigil_pattern_dagger",
+    "linked_profile": "melee_1h_dagger",
+    "presentation_mode": "authored_overlay",
+    "fingerprint": "5c8d764d7222059b4d32bcdbf724ff8a0f674de721de38f295bdcfe6c3908afd"
+  },
+  "weapon_context": {
+    "weapon_id": "vigil_pattern_dagger",
+    "animation_profile": "melee_1h_dagger",
+    "presentation_mode": "authored_overlay"
+  },
+  "timeline": {
+    "frames": 10,
+    "source_clock_frames": 10,
+    "workspace_clock_frames": 10,
+    "document_frames": 10,
+    "preview_fps": 12,
+    "timing_authority": false,
+    "clock_owner": "lower_body"
+  },
+  "canvas": {
+    "width": 156,
+    "height": 96
+  },
+  "aseprite": {
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/attack/fast_01/e/workbench.aseprite",
+    "last_synced_sha256": "3e9176ce77fde0a437d09188e078c8306e2eeef6c0eeaedde76c69b331ecf540"
+  },
+  "layers": [
+    {
+      "binding_id": "lower_body",
+      "aseprite_layer_name": "lower_body",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "melee_1h",
+      "group": "attack",
+      "action": "fast_01",
+      "direction": "e",
+      "layer": "lower_body",
+      "source_path": "custodian/content/sprites/operator/source/animations/melee_1h/attack/fast_01/operator__lower_body__melee_1h__attack__fast_01__e__10f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__lower_body__melee_1h__attack__fast_01__e__10f__96.png",
+      "source_file_sha256": "8babdad395da8e663e982417a846527e8ab090fcbd52bc8cd82b34560b5c9d7f",
+      "source_pixel_sha256": "6a10c8b403e81c77e69fdd8f49e4ba49c36d5768785da2532cd069fba292b801",
+      "frames": 10,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        30,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "lower_body",
+        "profile": "melee_1h",
+        "group": "attack",
+        "action": "fast_01",
+        "direction": "e"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/attack/fast_01/operator__lower_body__melee_1h__attack__fast_01__e__10f__96.png",
+        "frames": 10,
+        "frame_size": [
+          96,
+          96
+        ],
+        "file_sha256": "8babdad395da8e663e982417a846527e8ab090fcbd52bc8cd82b34560b5c9d7f",
+        "pixel_sha256": "6a10c8b403e81c77e69fdd8f49e4ba49c36d5768785da2532cd069fba292b801"
+      },
+      "workspace_contract": {
+        "frames": 10,
+        "frame_size": [
+          96,
+          96
+        ],
+        "placement": [
+          30,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/attack/fast_01/operator__lower_body__melee_1h__attack__fast_01__e__10f__96.png",
+        "frames": 10,
+        "frame_size": [
+          96,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/attack/fast_01/e/baseline/lower_body.png"
+    },
+    {
+      "binding_id": "upper_body",
+      "aseprite_layer_name": "upper_body",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "melee_1h",
+      "group": "attack",
+      "action": "fast_01",
+      "direction": "e",
+      "layer": "upper_body",
+      "source_path": "custodian/content/sprites/operator/source/animations/melee_1h/attack/fast_01/operator__upper_body__melee_1h__attack__fast_01__e__10f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__upper_body__melee_1h__attack__fast_01__e__10f__96.png",
+      "source_file_sha256": "ae481fc2e8cea0e6e65491039c70bd098f208da115fb4a9ddfa66dcfaafdb98b",
+      "source_pixel_sha256": "d356c5dfc4afff18656db0795133a165c0751eea6c0e1491ae666d1755894bff",
+      "frames": 10,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        30,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "upper_body",
+        "profile": "melee_1h",
+        "group": "attack",
+        "action": "fast_01",
+        "direction": "e"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/attack/fast_01/operator__upper_body__melee_1h__attack__fast_01__e__10f__96.png",
+        "frames": 10,
+        "frame_size": [
+          96,
+          96
+        ],
+        "file_sha256": "ae481fc2e8cea0e6e65491039c70bd098f208da115fb4a9ddfa66dcfaafdb98b",
+        "pixel_sha256": "d356c5dfc4afff18656db0795133a165c0751eea6c0e1491ae666d1755894bff"
+      },
+      "workspace_contract": {
+        "frames": 10,
+        "frame_size": [
+          96,
+          96
+        ],
+        "placement": [
+          30,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/attack/fast_01/operator__upper_body__melee_1h__attack__fast_01__e__10f__96.png",
+        "frames": 10,
+        "frame_size": [
+          96,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/attack/fast_01/e/baseline/upper_body.png"
+    },
+    {
+      "binding_id": "fx",
+      "aseprite_layer_name": "fx",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "melee_1h",
+      "group": "attack",
+      "action": "fast_01",
+      "direction": "e",
+      "layer": "fx",
+      "source_path": "custodian/content/sprites/operator/source/animations/melee_1h/attack/fast_01/operator__fx__melee_1h__attack__fast_01__e__10f__156x96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__fx__melee_1h__attack__fast_01__e__10f__156x96.png",
+      "source_file_sha256": "e2153d41453339e69ff52d8c704f5830d80e13649e4837d73c31be6a13f38f11",
+      "source_pixel_sha256": "d11f77df013282feb9717376348a4d7e6e07d70b4202195554ff9ce9ae26d095",
+      "frames": 10,
+      "frame_size": [
+        156,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "fx",
+        "profile": "melee_1h",
+        "group": "attack",
+        "action": "fast_01",
+        "direction": "e"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/attack/fast_01/operator__fx__melee_1h__attack__fast_01__e__10f__156x96.png",
+        "frames": 10,
+        "frame_size": [
+          156,
+          96
+        ],
+        "file_sha256": "e2153d41453339e69ff52d8c704f5830d80e13649e4837d73c31be6a13f38f11",
+        "pixel_sha256": "d11f77df013282feb9717376348a4d7e6e07d70b4202195554ff9ce9ae26d095"
+      },
+      "workspace_contract": {
+        "frames": 10,
+        "frame_size": [
+          156,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/attack/fast_01/operator__fx__melee_1h__attack__fast_01__e__10f__156x96.png",
+        "frames": 10,
+        "frame_size": [
+          156,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/attack/fast_01/e/baseline/fx.png"
+    }
+  ],
+  "references": [
+    {
+      "binding_id": "full_body_reference",
+      "aseprite_layer_name": "__REFERENCE_FULL_BODY",
+      "role": "reference",
+      "editable": false,
+      "source_path": "custodian/content/sprites/operator/source/animations/melee_1h/attack/fast_01/operator__full_body__melee_1h__attack__fast_01__e__10f__156x96.png",
+      "frames": 10,
+      "frame_size": [
+        156,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_slots": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/attack/fast_01/e/baseline/full_body_reference.png"
+    }
+  ],
+  "pending_migration": null,
+  "last_publish": {
+    "timestamp": "2026-09-05T10:07:52.410706+00:00",
+    "validation_status": "passed"
+  },
+  "export_stamp": "20260905T060726"
+}

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://csynwx1sds4um"
-path="res://.godot/imported/melee_stance_2h_katana_baked.png-0256c2bb461d9b3e5ce783bd9c9787be.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/source_original/melee/melee_stance_2h_katana_baked.png"
-dest_files=["res://.godot/imported/melee_stance_2h_katana_baked.png-0256c2bb461d9b3e5ce783bd9c9787be.ctex"]
 
 [params]
 

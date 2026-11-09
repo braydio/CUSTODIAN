@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://buqxxh37nn31u"
-path="res://.godot/imported/SlideEnd.png-db7ef8f819c110c9ec69e1dc307b6164.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://dev/test_sprites/Knight/SlideEnd.png"
-dest_files=["res://.godot/imported/SlideEnd.png-db7ef8f819c110c9ec69e1dc307b6164.ctex"]
 
 [params]
 

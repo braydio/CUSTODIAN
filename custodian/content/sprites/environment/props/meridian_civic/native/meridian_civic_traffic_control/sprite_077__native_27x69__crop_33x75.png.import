@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://5nna66s3uhbw"
-path="res://.godot/imported/sprite_077__native_27x69__crop_33x75.png-682748891713386536a410d16c7df38b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/native/meridian_civic_traffic_control/sprite_077__native_27x69__crop_33x75.png"
-dest_files=["res://.godot/imported/sprite_077__native_27x69__crop_33x75.png-682748891713386536a410d16c7df38b.ctex"]
 
 [params]
 

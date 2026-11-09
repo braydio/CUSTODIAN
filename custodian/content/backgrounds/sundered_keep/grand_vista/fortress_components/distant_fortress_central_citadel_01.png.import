@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dhqh17wdi37hm"
-path="res://.godot/imported/distant_fortress_central_citadel_01.png-1829ba2fd02819342eb6874c5fdb21c0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/grand_vista/fortress_components/distant_fortress_central_citadel_01.png"
-dest_files=["res://.godot/imported/distant_fortress_central_citadel_01.png-1829ba2fd02819342eb6874c5fdb21c0.ctex"]
 
 [params]
 

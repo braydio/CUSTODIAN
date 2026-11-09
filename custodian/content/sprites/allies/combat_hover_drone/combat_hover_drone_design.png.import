@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bbge1wy3cpnpn"
-path="res://.godot/imported/combat_hover_drone_design.png-9d0f3a946f38ad8c2b357a4f99608ea7.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/allies/combat_hover_drone/combat_hover_drone_design.png"
-dest_files=["res://.godot/imported/combat_hover_drone_design.png-9d0f3a946f38ad8c2b357a4f99608ea7.ctex"]
 
 [params]
 

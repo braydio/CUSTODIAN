@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://tqiwc2yaomvb"
-path="res://.godot/imported/turret-sniper-design.png-4acc31206f8a71c5ebd6dce449e5a65a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/turrets/sniper/turret-sniper-design.png"
-dest_files=["res://.godot/imported/turret-sniper-design.png-4acc31206f8a71c5ebd6dce449e5a65a.ctex"]
 
 [params]
 

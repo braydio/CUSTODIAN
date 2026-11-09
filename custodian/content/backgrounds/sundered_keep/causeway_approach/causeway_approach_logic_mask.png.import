@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ct5yfpcr855dj"
-path="res://.godot/imported/causeway_approach_logic_mask.png-85c8a62655eb7b2bd4fb2d7ecd9bcc25.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/causeway_approach/causeway_approach_logic_mask.png"
-dest_files=["res://.godot/imported/causeway_approach_logic_mask.png-85c8a62655eb7b2bd4fb2d7ecd9bcc25.ctex"]
 
 [params]
 

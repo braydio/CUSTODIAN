@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ca04oani1eh5h"
-path="res://.godot/imported/grunt_walk_e_5f_96.png-ffd7fef08a5c69fa66aa9f2bfec42484.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_grunt/source_sheets/grunt_walk_e_5f_96.png"
-dest_files=["res://.godot/imported/grunt_walk_e_5f_96.png-ffd7fef08a5c69fa66aa9f2bfec42484.ctex"]
 
 [params]
 

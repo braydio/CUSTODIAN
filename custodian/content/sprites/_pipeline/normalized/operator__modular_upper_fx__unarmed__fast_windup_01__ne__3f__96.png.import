@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dgs4av12omkiw"
-path="res://.godot/imported/operator__modular_upper_fx__unarmed__fast_windup_01__ne__3f__96.png-87c9cf19cc3ad43e0c5fe439f6f56365.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/normalized/operator__modular_upper_fx__unarmed__fast_windup_01__ne__3f__96.png"
-dest_files=["res://.godot/imported/operator__modular_upper_fx__unarmed__fast_windup_01__ne__3f__96.png-87c9cf19cc3ad43e0c5fe439f6f56365.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://doj4fw7llp66q"
-path="res://.godot/imported/44_terrain_ash_roots_patch_b.png-b1df0268d11f47a06771116279a00440.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/44_terrain_ash_roots_patch_b.png"
-dest_files=["res://.godot/imported/44_terrain_ash_roots_patch_b.png-b1df0268d11f47a06771116279a00440.ctex"]
 
 [params]
 

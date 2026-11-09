@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bs31yc6l2mgxc"
-path="res://.godot/imported/timber_debris_a.png-4c4187449e90cf46afdfc7b7070d213b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_debris/timber_debris_a.png"
-dest_files=["res://.godot/imported/timber_debris_a.png-4c4187449e90cf46afdfc7b7070d213b.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bxh7m40id71fm"
-path="res://.godot/imported/meter_frame_horizontal_9slice.png-68cdbce0c546d1f074f6087519608d90.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/meters/meter_frame_horizontal_9slice.png"
-dest_files=["res://.godot/imported/meter_frame_horizontal_9slice.png-68cdbce0c546d1f074f6087519608d90.ctex"]
 
 [params]
 

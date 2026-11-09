@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://daft6ppyln8oc"
-path="res://.godot/imported/iron_sconce_02.png-fd342bf66ab7c9cd6ffddbb6a3195828.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/labyrnth_set/custodian/content/tiles/sundered_keep/walls/labyrinth_keep/overlays/iron_sconce_02.png"
-dest_files=["res://.godot/imported/iron_sconce_02.png-fd342bf66ab7c9cd6ffddbb6a3195828.ctex"]
 
 [params]
 

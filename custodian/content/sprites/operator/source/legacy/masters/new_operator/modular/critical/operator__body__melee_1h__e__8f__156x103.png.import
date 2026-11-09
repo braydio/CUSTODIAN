@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b754vam4hdqcu"
-path="res://.godot/imported/operator__body__melee_1h__e__8f__156x103.png-b3002269d125eba9e295d30f9a657e42.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/new_operator/modular/critical/operator__body__melee_1h__e__8f__156x103.png"
-dest_files=["res://.godot/imported/operator__body__melee_1h__e__8f__156x103.png-b3002269d125eba9e295d30f9a657e42.ctex"]
 
 [params]
 

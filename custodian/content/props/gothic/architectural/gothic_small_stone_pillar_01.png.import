@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cqpbxard0vpej"
-path="res://.godot/imported/gothic_small_stone_pillar_01.png-a40e4843d684907fd376bc819bb86a0c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/gothic/architectural/gothic_small_stone_pillar_01.png"
-dest_files=["res://.godot/imported/gothic_small_stone_pillar_01.png-a40e4843d684907fd376bc819bb86a0c.ctex"]
 
 [params]
 

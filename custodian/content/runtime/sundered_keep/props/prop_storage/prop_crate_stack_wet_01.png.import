@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://jdmlgebrwwqp"
-path="res://.godot/imported/prop_crate_stack_wet_01.png-41b26855071c3d47d82fc0adf332af90.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/props/prop_storage/prop_crate_stack_wet_01.png"
-dest_files=["res://.godot/imported/prop_crate_stack_wet_01.png-41b26855071c3d47d82fc0adf332af90.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bnnangofnlfig"
-path="res://.godot/imported/wall_rack_damaged.png-249a3a71964be6431613d45d4f167f67.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_industrial_module/wall_rack_damaged.png"
-dest_files=["res://.godot/imported/wall_rack_damaged.png-249a3a71964be6431613d45d4f167f67.ctex"]
 
 [params]
 

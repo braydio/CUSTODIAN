@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bf4kbebsqwkcv"
-path="res://.godot/imported/gothic_dead_tree_roots_01.png-97ba50c819ba850eea1bb15971628a94.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/gothic/organic_intrusion_blocker/gothic_dead_tree_roots_01.png"
-dest_files=["res://.godot/imported/gothic_dead_tree_roots_01.png-97ba50c819ba850eea1bb15971628a94.ctex"]
 
 [params]
 

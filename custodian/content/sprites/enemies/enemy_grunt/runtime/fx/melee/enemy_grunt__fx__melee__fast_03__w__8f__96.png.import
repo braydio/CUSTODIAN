@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cebdbqeijg501"
-path="res://.godot/imported/enemy_grunt__fx__melee__fast_03__w__8f__96.png-a68916b120fac31a8dc5ca6b53994d67.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_grunt/runtime/fx/melee/enemy_grunt__fx__melee__fast_03__w__8f__96.png"
-dest_files=["res://.godot/imported/enemy_grunt__fx__melee__fast_03__w__8f__96.png-a68916b120fac31a8dc5ca6b53994d67.ctex"]
 
 [params]
 

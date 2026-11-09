@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://brijpsepmirbx"
-path="res://.godot/imported/wolf-all.png-e40d650bf997be4912f55a5759dfaaf2.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/wolf/wolf-all.png"
-dest_files=["res://.godot/imported/wolf-all.png-e40d650bf997be4912f55a5759dfaaf2.ctex"]
 
 [params]
 

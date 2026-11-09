@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dnvb20l6n5cgv"
-path="res://.godot/imported/entrance_causeway_broken_gap_01.png-1bb1f5f94a7c5a648f33ac61661d4ee4.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/entrance/entrance_causeway_broken_gap_01.png"
-dest_files=["res://.godot/imported/entrance_causeway_broken_gap_01.png-1bb1f5f94a7c5a648f33ac61661d4ee4.ctex"]
 
 [params]
 

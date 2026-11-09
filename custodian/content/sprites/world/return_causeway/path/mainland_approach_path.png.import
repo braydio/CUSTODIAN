@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://elbq1smgqhtr"
-path="res://.godot/imported/mainland_approach_path.png-3fc6cb93e4809157335880db24feabf8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/world/return_causeway/path/mainland_approach_path.png"
-dest_files=["res://.godot/imported/mainland_approach_path.png-3fc6cb93e4809157335880db24feabf8.ctex"]
 
 [params]
 

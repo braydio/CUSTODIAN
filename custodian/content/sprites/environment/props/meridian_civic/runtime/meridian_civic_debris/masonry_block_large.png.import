@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cv6iie70xvto0"
-path="res://.godot/imported/masonry_block_large.png-b3c9448e2b6590405a0936a1b2514387.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_debris/masonry_block_large.png"
-dest_files=["res://.godot/imported/masonry_block_large.png-b3c9448e2b6590405a0936a1b2514387.ctex"]
 
 [params]
 

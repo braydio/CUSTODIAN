@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://kqutg5ncmlof"
-path="res://.godot/imported/overlay_relic_symbol_05.png-51584c6e089bcdb97d35263498bdd154.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/roads_paths/runtime/roads/gothic/overlays/overlay_relic_symbol_05.png"
-dest_files=["res://.godot/imported/overlay_relic_symbol_05.png-51584c6e089bcdb97d35263498bdd154.ctex"]
 
 [params]
 

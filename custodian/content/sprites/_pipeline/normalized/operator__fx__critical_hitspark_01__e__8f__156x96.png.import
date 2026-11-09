@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cc8nnqoc35gss"
-path="res://.godot/imported/operator__fx__critical_hitspark_01__e__8f__156x96.png-655a491f4a6fb1438bf35358ce038a7d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/normalized/operator__fx__critical_hitspark_01__e__8f__156x96.png"
-dest_files=["res://.godot/imported/operator__fx__critical_hitspark_01__e__8f__156x96.png-655a491f4a6fb1438bf35358ce038a7d.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c1wecs6n86f7u"
-path="res://.godot/imported/cosmic_ocean_rock_diagonal_nw_se_edge_01.png-cab3f0d0bfec2bcbe2deb4de9e970246.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/cosmic_ocean/game32/cosmic_ocean_rock_diagonal_nw_se_edge_01.png"
-dest_files=["res://.godot/imported/cosmic_ocean_rock_diagonal_nw_se_edge_01.png-cab3f0d0bfec2bcbe2deb4de9e970246.ctex"]
 
 [params]
 

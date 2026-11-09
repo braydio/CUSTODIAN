@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dti7t6pbe0n0r"
-path="res://.godot/imported/icon_frayed_signal_filament.png-d55caab0322db468541b04d3e5f46bf8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/inventory/runtime/icons/icon_frayed_signal_filament.png"
-dest_files=["res://.godot/imported/icon_frayed_signal_filament.png-d55caab0322db468541b04d3e5f46bf8.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://i4hlkgj4qvuh"
-path="res://.godot/imported/index_design.png-f717f20ee9a553b04ab730a0364198f7.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_marine/source/index_design.png"
-dest_files=["res://.godot/imported/index_design.png-f717f20ee9a553b04ab730a0364198f7.ctex"]
 
 [params]
 

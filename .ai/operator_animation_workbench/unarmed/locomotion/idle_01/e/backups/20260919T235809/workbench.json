@@ -1,0 +1,213 @@
+{
+  "schema": "custodian.operator_animation_workbench.v2",
+  "identity": {
+    "profile": "unarmed",
+    "group": "locomotion",
+    "action": "idle_01",
+    "direction": "e"
+  },
+  "context": {
+    "weapon_id": "vigil_pattern_dagger",
+    "linked_profile": "melee_1h_dagger",
+    "presentation_mode": "authored_overlay",
+    "fingerprint": "9d043739010e4d80bb0c6cc5b7644c0b40b48ed82ae9ae7f86fe41c4bf18cc59"
+  },
+  "weapon_context": {
+    "weapon_id": "vigil_pattern_dagger",
+    "animation_profile": "melee_1h_dagger",
+    "presentation_mode": "authored_overlay"
+  },
+  "timeline": {
+    "frames": 6,
+    "source_clock_frames": 5,
+    "workspace_clock_frames": 5,
+    "document_frames": 6,
+    "preview_fps": 12,
+    "timing_authority": false,
+    "clock_owner": "lower_body"
+  },
+  "canvas": {
+    "width": 96,
+    "height": 96
+  },
+  "aseprite": {
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/unarmed/locomotion/idle_01/e/workbench.aseprite",
+    "last_synced_sha256": "d959f23e4600b4cece73cd4cac6b8b08f9e102a9945100814cdb4d94706db231"
+  },
+  "layers": [
+    {
+      "binding_id": "lower_body",
+      "aseprite_layer_name": "lower_body",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "unarmed",
+      "group": "locomotion",
+      "action": "idle_01",
+      "direction": "e",
+      "layer": "lower_body",
+      "source_path": "custodian/content/sprites/operator/source/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__e__5f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__e__5f__96.png",
+      "source_file_sha256": "de3c3a5548f8d6902a2c89b91c293978e58e3a607a4990ecae0fbdf9f24bdf6c",
+      "source_pixel_sha256": "cff087d8f2c5a07f4a5da671294bc2da2a7005840a7d257484b66b3aebe1b31b",
+      "frames": 5,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "group": "locomotion",
+        "action": "idle_01",
+        "direction": "e"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__e__5f__96.png",
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ],
+        "file_sha256": "de3c3a5548f8d6902a2c89b91c293978e58e3a607a4990ecae0fbdf9f24bdf6c",
+        "pixel_sha256": "cff087d8f2c5a07f4a5da671294bc2da2a7005840a7d257484b66b3aebe1b31b"
+      },
+      "workspace_contract": {
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__e__5f__96.png",
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/unarmed/locomotion/idle_01/e/baseline/lower_body.png"
+    },
+    {
+      "binding_id": "upper_body",
+      "aseprite_layer_name": "upper_body",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "unarmed",
+      "group": "locomotion",
+      "action": "idle_01",
+      "direction": "e",
+      "layer": "upper_body",
+      "source_path": "custodian/content/sprites/operator/source/animations/unarmed/locomotion/idle_01/operator__upper_body__unarmed__locomotion__idle_01__e__5f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__upper_body__unarmed__locomotion__idle_01__e__5f__96.png",
+      "source_file_sha256": "48f2d576a749ca6257b15474239273b83fc802b8b9e6a6adfa966bd39e774aa5",
+      "source_pixel_sha256": "d1423d76d5dc799d3159b00dfcc8f49fbd4a0da486f1c5f7ed8da69a992dbf57",
+      "frames": 5,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "upper_body",
+        "profile": "unarmed",
+        "group": "locomotion",
+        "action": "idle_01",
+        "direction": "e"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/unarmed/locomotion/idle_01/operator__upper_body__unarmed__locomotion__idle_01__e__5f__96.png",
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ],
+        "file_sha256": "48f2d576a749ca6257b15474239273b83fc802b8b9e6a6adfa966bd39e774aa5",
+        "pixel_sha256": "d1423d76d5dc799d3159b00dfcc8f49fbd4a0da486f1c5f7ed8da69a992dbf57"
+      },
+      "workspace_contract": {
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/unarmed/locomotion/idle_01/operator__upper_body__unarmed__locomotion__idle_01__e__5f__96.png",
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/unarmed/locomotion/idle_01/e/baseline/upper_body.png"
+    }
+  ],
+  "references": [
+    {
+      "binding_id": "full_body_reference",
+      "aseprite_layer_name": "__REFERENCE_FULL_BODY",
+      "role": "reference",
+      "editable": false,
+      "source_path": "custodian/content/sprites/operator/source/animations/unarmed/locomotion/idle_01/operator__full_body__unarmed__locomotion__idle_01__e__6f__96.png",
+      "frames": 6,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_slots": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/unarmed/locomotion/idle_01/e/baseline/full_body_reference.png"
+    }
+  ],
+  "pending_migration": null,
+  "last_publish": {
+    "timestamp": null,
+    "validation_status": null
+  }
+}

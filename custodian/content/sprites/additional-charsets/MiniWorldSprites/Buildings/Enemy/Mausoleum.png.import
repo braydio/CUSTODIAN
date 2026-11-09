@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bg4b0fchynofm"
-path="res://.godot/imported/Mausoleum.png-0ee56c8c05bbdf4dc9a8cf19a0636aab.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Enemy/Mausoleum.png"
-dest_files=["res://.godot/imported/Mausoleum.png-0ee56c8c05bbdf4dc9a8cf19a0636aab.ctex"]
 
 [params]
 

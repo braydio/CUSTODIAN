@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bxopd31higgxu"
-path="res://.godot/imported/cliff_guard_rail_02.png-f4b1b1a783326fb14cdeae29fee0c5a6.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/labyrnth_set/custodian/content/tiles/sundered_keep/walls/labyrinth_keep/cliff_guard_rail_02.png"
-dest_files=["res://.godot/imported/cliff_guard_rail_02.png-f4b1b1a783326fb14cdeae29fee0c5a6.ctex"]
 
 [params]
 

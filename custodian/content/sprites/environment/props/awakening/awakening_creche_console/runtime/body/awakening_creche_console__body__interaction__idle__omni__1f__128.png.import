@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cmil1kxkm1pcn"
-path="res://.godot/imported/awakening_creche_console__body__interaction__idle__omni__1f__128.png-0566fa24fdfd8a9ce35ad2a0efb4e9c9.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/awakening/awakening_creche_console/runtime/body/awakening_creche_console__body__interaction__idle__omni__1f__128.png"
-dest_files=["res://.godot/imported/awakening_creche_console__body__interaction__idle__omni__1f__128.png-0566fa24fdfd8a9ce35ad2a0efb4e9c9.ctex"]
 
 [params]
 

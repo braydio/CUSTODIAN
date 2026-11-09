@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ck5f02ags3ufb"
-path="res://.godot/imported/raised_causeway_02.png-bfaf291dca13988dd3e3b589b67b3cc3.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/grand_vista/fortress_components/raised_causeway_02.png"
-dest_files=["res://.godot/imported/raised_causeway_02.png-bfaf291dca13988dd3e3b589b67b3cc3.ctex"]
 
 [params]
 

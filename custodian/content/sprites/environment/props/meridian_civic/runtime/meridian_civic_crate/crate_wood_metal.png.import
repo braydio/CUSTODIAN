@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ctbifvsmbftv1"
-path="res://.godot/imported/crate_wood_metal.png-8d45433197da30e7ec0205e7ab671057.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_crate/crate_wood_metal.png"
-dest_files=["res://.godot/imported/crate_wood_metal.png-8d45433197da30e7ec0205e7ab671057.ctex"]
 
 [params]
 

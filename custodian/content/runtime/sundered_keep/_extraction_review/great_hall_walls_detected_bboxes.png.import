@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://1mxbkl0dtupt"
-path="res://.godot/imported/great_hall_walls_detected_bboxes.png-9cc81bc5f972d3d98a4ab41e9dc06fce.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/_extraction_review/great_hall_walls_detected_bboxes.png"
-dest_files=["res://.godot/imported/great_hall_walls_detected_bboxes.png-9cc81bc5f972d3d98a4ab41e9dc06fce.ctex"]
 
 [params]
 

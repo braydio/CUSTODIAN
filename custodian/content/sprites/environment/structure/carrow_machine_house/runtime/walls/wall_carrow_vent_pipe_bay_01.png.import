@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://de7r4rt54p8y8"
-path="res://.godot/imported/wall_carrow_vent_pipe_bay_01.png-c41edbba35213984ca5e12e15af28806.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_vent_pipe_bay_01.png"
-dest_files=["res://.godot/imported/wall_carrow_vent_pipe_bay_01.png-c41edbba35213984ca5e12e15af28806.ctex"]
 
 [params]
 

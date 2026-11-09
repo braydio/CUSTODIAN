@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dwjpgik1safai"
-path="res://.godot/imported/terminal_bg_tile_dark.png-9b2b87bbf3ac592d1d394f31aee56a27.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/panels/terminal_bg_tile_dark.png"
-dest_files=["res://.godot/imported/terminal_bg_tile_dark.png-9b2b87bbf3ac592d1d394f31aee56a27.ctex"]
 
 [params]
 

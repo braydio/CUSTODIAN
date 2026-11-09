@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bp411xl66vjcy"
-path="res://.godot/imported/gothic_dead_bramble_shrub_01.png-e6a716234e8056dcc8f9bc90553a6a32.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/gothic/forest_intrusion/gothic_dead_bramble_shrub_01.png"
-dest_files=["res://.godot/imported/gothic_dead_bramble_shrub_01.png-e6a716234e8056dcc8f9bc90553a6a32.ctex"]
 
 [params]
 

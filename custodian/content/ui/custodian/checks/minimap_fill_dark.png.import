@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://gsb37hkb7anx"
-path="res://.godot/imported/minimap_fill_dark.png-7b6ba0333823a873d742a9fbe5d31a27.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/custodian/checks/minimap_fill_dark.png"
-dest_files=["res://.godot/imported/minimap_fill_dark.png-7b6ba0333823a873d742a9fbe5d31a27.ctex"]
 
 [params]
 

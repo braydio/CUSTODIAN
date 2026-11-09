@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://daw6qexkt8f7h"
-path="res://.godot/imported/endless_forest_chasm_contact_shadow_source_1536x1024.png-35abf47b489baa683b67e408bce3300f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/procgen/endless_forest/source/endless_forest_chasm_contact_shadow_source_1536x1024.png"
-dest_files=["res://.godot/imported/endless_forest_chasm_contact_shadow_source_1536x1024.png-35abf47b489baa683b67e408bce3300f.ctex"]
 
 [params]
 

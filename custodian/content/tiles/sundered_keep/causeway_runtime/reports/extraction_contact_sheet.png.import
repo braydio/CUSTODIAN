@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://yt1yx7qkx5ht"
-path="res://.godot/imported/extraction_contact_sheet.png-39630068da09e03e35121d447db9bd65.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_runtime/reports/extraction_contact_sheet.png"
-dest_files=["res://.godot/imported/extraction_contact_sheet.png-39630068da09e03e35121d447db9bd65.ctex"]
 
 [params]
 

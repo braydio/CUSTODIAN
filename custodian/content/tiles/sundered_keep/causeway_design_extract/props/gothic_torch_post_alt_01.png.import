@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://t51vktiybq00"
-path="res://.godot/imported/gothic_torch_post_alt_01.png-e83ce72979571f935d2bd7d4fd347af2.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_design_extract/props/gothic_torch_post_alt_01.png"
-dest_files=["res://.godot/imported/gothic_torch_post_alt_01.png-e83ce72979571f935d2bd7d4fd347af2.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://2igu8yxkvccu"
-path="res://.godot/imported/RedWorkshops.png-8f6b0dd4f321058103d365149518b1ff.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Red/RedWorkshops.png"
-dest_files=["res://.godot/imported/RedWorkshops.png-8f6b0dd4f321058103d365149518b1ff.ctex"]
 
 [params]
 

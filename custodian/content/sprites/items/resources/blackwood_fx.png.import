@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dshtqce8sclje"
-path="res://.godot/imported/blackwood_fx.png-da01f477f1c79ef75ae22f14c0c14f43.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/items/resources/blackwood_fx.png"
-dest_files=["res://.godot/imported/blackwood_fx.png-da01f477f1c79ef75ae22f14c0c14f43.ctex"]
 
 [params]
 

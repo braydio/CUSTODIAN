@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://8fmd3ti6jip7"
-path="res://.godot/imported/cliff_rock_cluster_01.png-5abf33a6bd16906cb6b172fa24e20c87.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_entrance/cliffs/cliff_rock_cluster_01.png"
-dest_files=["res://.godot/imported/cliff_rock_cluster_01.png-5abf33a6bd16906cb6b172fa24e20c87.ctex"]
 
 [params]
 

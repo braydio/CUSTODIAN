@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://kv01dxrdg23u"
-path="res://.godot/imported/mountain_wall_impassable_32.png-10484abbe739393bd863f0f2b1c3735e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/procgen/elevated_world/archive/pre_elevated_world_v1/mountain_wall_impassable_32.png"
-dest_files=["res://.godot/imported/mountain_wall_impassable_32.png-10484abbe739393bd863f0f2b1c3735e.ctex"]
 
 [params]
 

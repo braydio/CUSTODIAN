@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://6nhb23mbglr8"
-path="res://.godot/imported/gothic_wall_corner_or_end_013.png-7a6fb8bb592abc6fb2f12e37adbfaf2f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/gothic/wall_corner_or_end/gothic_wall_corner_or_end_013.png"
-dest_files=["res://.godot/imported/gothic_wall_corner_or_end_013.png-7a6fb8bb592abc6fb2f12e37adbfaf2f.ctex"]
 
 [params]
 

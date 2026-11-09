@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://i5dcc2thqnl1"
-path="res://.godot/imported/gatehouse_entry_floor_01.png-3be337e46fa1b351683d841e46784fe8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_design_extract/floors/gatehouse_entry_floor_01.png"
-dest_files=["res://.godot/imported/gatehouse_entry_floor_01.png-3be337e46fa1b351683d841e46784fe8.ctex"]
 
 [params]
 

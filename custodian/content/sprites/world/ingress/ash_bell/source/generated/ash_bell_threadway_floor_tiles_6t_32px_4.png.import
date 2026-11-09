@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dw0vr057mpecl"
-path="res://.godot/imported/ash_bell_threadway_floor_tiles_6t_32px_4.png-a03d41d2eaa31474876e9a9854ad26e6.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/world/ingress/ash_bell/source/generated/ash_bell_threadway_floor_tiles_6t_32px_4.png"
-dest_files=["res://.godot/imported/ash_bell_threadway_floor_tiles_6t_32px_4.png-a03d41d2eaa31474876e9a9854ad26e6.ctex"]
 
 [params]
 

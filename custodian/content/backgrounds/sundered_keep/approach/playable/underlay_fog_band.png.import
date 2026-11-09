@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://chfiecym3yund"
-path="res://.godot/imported/underlay_fog_band.png-a6d1e2d2730f35e6533e110c09c600f9.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/approach/playable/underlay_fog_band.png"
-dest_files=["res://.godot/imported/underlay_fog_band.png-a6d1e2d2730f35e6533e110c09c600f9.ctex"]
 
 [params]
 

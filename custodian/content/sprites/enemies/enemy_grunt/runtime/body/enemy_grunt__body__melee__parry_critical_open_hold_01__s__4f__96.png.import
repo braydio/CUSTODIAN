@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://df4iv8dd6unng"
-path="res://.godot/imported/enemy_grunt__body__melee__parry_critical_open_hold_01__s__4f__96.png-449b6c818b92013b06c5cc74f0fcb95e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__parry_critical_open_hold_01__s__4f__96.png"
-dest_files=["res://.godot/imported/enemy_grunt__body__melee__parry_critical_open_hold_01__s__4f__96.png-449b6c818b92013b06c5cc74f0fcb95e.ctex"]
 
 [params]
 

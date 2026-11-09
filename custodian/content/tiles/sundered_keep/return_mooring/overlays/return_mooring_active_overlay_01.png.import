@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://btpjdchaujti2"
-path="res://.godot/imported/return_mooring_active_overlay_01.png-7db84302239e190e7587f198c8fd250e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/return_mooring/overlays/return_mooring_active_overlay_01.png"
-dest_files=["res://.godot/imported/return_mooring_active_overlay_01.png-7db84302239e190e7587f198c8fd250e.ctex"]
 
 [params]
 

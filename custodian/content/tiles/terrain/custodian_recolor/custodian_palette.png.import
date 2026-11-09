@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://byfd880sof01n"
-path="res://.godot/imported/custodian_palette.png-0cf0520b9acaf9c366e80787215b4130.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/custodian_recolor/custodian_palette.png"
-dest_files=["res://.godot/imported/custodian_palette.png-0cf0520b9acaf9c366e80787215b4130.ctex"]
 
 [params]
 

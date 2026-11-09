@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cc6ilu8abhhvx"
-path="res://.godot/imported/_preview_runtime_assets.png-45330f175ece70558c946fe5147c6ba8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/labyrnth_set/_preview_runtime_assets.png"
-dest_files=["res://.godot/imported/_preview_runtime_assets.png-45330f175ece70558c946fe5147c6ba8.ctex"]
 
 [params]
 

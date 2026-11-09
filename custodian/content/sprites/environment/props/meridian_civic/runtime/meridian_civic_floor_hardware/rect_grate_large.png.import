@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dgpw0c4pa24rq"
-path="res://.godot/imported/rect_grate_large.png-83f8bdfd9a346756e77482eb07209453.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_floor_hardware/rect_grate_large.png"
-dest_files=["res://.godot/imported/rect_grate_large.png-83f8bdfd9a346756e77482eb07209453.ctex"]
 
 [params]
 

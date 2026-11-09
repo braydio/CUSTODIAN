@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b4mf7w4butv70"
-path="res://.godot/imported/floor_plate_plain_c.png-7cb279ad28b77a7cdc6a80bdaf3e4cde.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_floor_hardware/floor_plate_plain_c.png"
-dest_files=["res://.godot/imported/floor_plate_plain_c.png-7cb279ad28b77a7cdc6a80bdaf3e4cde.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dbtrncr6ug31o"
-path="res://.godot/imported/forlorn_ritualant_attack_001.png-908584dc4f4955d85e05bbd83f75a0e1.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/forlorn_ritualant/attack/forlorn_ritualant_attack_001.png"
-dest_files=["res://.godot/imported/forlorn_ritualant_attack_001.png-908584dc4f4955d85e05bbd83f75a0e1.ctex"]
 
 [params]
 

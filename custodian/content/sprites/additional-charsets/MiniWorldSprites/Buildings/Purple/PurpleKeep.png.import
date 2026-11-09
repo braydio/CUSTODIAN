@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ceuv5w0xv1slt"
-path="res://.godot/imported/PurpleKeep.png-1b6095653e0cdff2b5c9039fb9bf1a50.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Purple/PurpleKeep.png"
-dest_files=["res://.godot/imported/PurpleKeep.png-1b6095653e0cdff2b5c9039fb9bf1a50.ctex"]
 
 [params]
 

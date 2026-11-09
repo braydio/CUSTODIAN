@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c8jcny6l5gjnm"
-path="res://.godot/imported/gothic_storage_crates_barrels_01.png-24a7cd240b33771711c8369140b15dcc.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/gothic/loot_cover_or_storage_prop/gothic_storage_crates_barrels_01.png"
-dest_files=["res://.godot/imported/gothic_storage_crates_barrels_01.png-24a7cd240b33771711c8369140b15dcc.ctex"]
 
 [params]
 

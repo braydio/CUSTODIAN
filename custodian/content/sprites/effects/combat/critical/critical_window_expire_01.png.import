@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cea3tyaijshiq"
-path="res://.godot/imported/critical_window_expire_01.png-01d0b839383ffe743a8f15dbb49b26d1.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/effects/combat/critical/critical_window_expire_01.png"
-dest_files=["res://.godot/imported/critical_window_expire_01.png-01d0b839383ffe743a8f15dbb49b26d1.ctex"]
 
 [params]
 

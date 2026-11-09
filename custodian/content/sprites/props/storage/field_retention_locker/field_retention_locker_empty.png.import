@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dg1lwdakb8ff"
-path="res://.godot/imported/field_retention_locker_empty.png-68f85a93f549f16e7d1c944be084a08b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/props/storage/field_retention_locker/field_retention_locker_empty.png"
-dest_files=["res://.godot/imported/field_retention_locker_empty.png-68f85a93f549f16e7d1c944be084a08b.ctex"]
 
 [params]
 

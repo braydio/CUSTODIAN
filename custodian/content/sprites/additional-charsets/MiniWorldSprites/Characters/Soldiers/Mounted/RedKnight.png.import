@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://beqarxvdi84lh"
-path="res://.godot/imported/RedKnight.png-e47268a7112b359f8d3516fd2fa2af07.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Soldiers/Mounted/RedKnight.png"
-dest_files=["res://.godot/imported/RedKnight.png-e47268a7112b359f8d3516fd2fa2af07.ctex"]
 
 [params]
 

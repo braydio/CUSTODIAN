@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ehyifygqiy2p"
-path="res://.godot/imported/operator__modular_full_body__aim__ranged_2h__e__5f__96.png-7a33f92f38b8a2a38ce474425384881e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/new_operator/source/modular/ranged/operator__modular_full_body__aim__ranged_2h__e__5f__96.png"
-dest_files=["res://.godot/imported/operator__modular_full_body__aim__ranged_2h__e__5f__96.png-7a33f92f38b8a2a38ce474425384881e.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bhq5oqsr4lblc"
-path="res://.godot/imported/ascent_threshold_1024.png-e7e58e71a46f4bf6c578874767ab19da.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/source/generated/ascent/normalized_1024/ascent_threshold_1024.png"
-dest_files=["res://.godot/imported/ascent_threshold_1024.png-e7e58e71a46f4bf6c578874767ab19da.ctex"]
 
 [params]
 

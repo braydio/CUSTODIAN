@@ -3,12 +3,11 @@
 importer="oggvorbisstr"
 type="AudioStreamOggVorbis"
 uid="uid://csaml3l0cnjlb"
-path="res://.godot/imported/warped-shooting-fx.ogg-75d590519821ad61ad5558cd6d4ff366.oggvorbisstr"
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/effects/source/spells/Music/warped-shooting-fx.ogg"
-dest_files=["res://.godot/imported/warped-shooting-fx.ogg-75d590519821ad61ad5558cd6d4ff366.oggvorbisstr"]
 
 [params]
 

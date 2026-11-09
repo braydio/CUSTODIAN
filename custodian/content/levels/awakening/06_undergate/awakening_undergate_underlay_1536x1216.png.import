@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ck1k7fx45wgpr"
-path="res://.godot/imported/awakening_undergate_underlay_1536x1216.png-7d6e12c2b67d2205b4dc306c4ce43142.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/levels/awakening/06_undergate/awakening_undergate_underlay_1536x1216.png"
-dest_files=["res://.godot/imported/awakening_undergate_underlay_1536x1216.png-7d6e12c2b67d2205b4dc306c4ce43142.ctex"]
 
 [params]
 

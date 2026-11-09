@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c04gv31ydso3v"
-path="res://.godot/imported/operator__modular_lower_body__unarmed__fast_recovery_01__s__3f__96.png-01f8bdce50bc9d660ffea1a802f2ab55.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/new_operator/modular/fast_attack/operator__modular_lower_body__unarmed__fast_recovery_01__s__3f__96.png"
-dest_files=["res://.godot/imported/operator__modular_lower_body__unarmed__fast_recovery_01__s__3f__96.png-01f8bdce50bc9d660ffea1a802f2ab55.ctex"]
 
 [params]
 

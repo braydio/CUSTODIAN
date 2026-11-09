@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bd3mdf23w78hh"
-path="res://.godot/imported/spike_barricade_fence_005.png-5acaf0c1dab0d4c83567caa93cb393b2.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/asset_exports/spikes_barricades_fences_auto/spike_barricade_fence_005.png"
-dest_files=["res://.godot/imported/spike_barricade_fence_005.png-5acaf0c1dab0d4c83567caa93cb393b2.ctex"]
 
 [params]
 

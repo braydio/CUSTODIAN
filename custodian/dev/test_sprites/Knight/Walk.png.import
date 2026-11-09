@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://donvf7a36s3t7"
-path="res://.godot/imported/Walk.png-87a0fc43efa4468752189bddca9518ed.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://dev/test_sprites/Knight/Walk.png"
-dest_files=["res://.godot/imported/Walk.png-87a0fc43efa4468752189bddca9518ed.ctex"]
 
 [params]
 

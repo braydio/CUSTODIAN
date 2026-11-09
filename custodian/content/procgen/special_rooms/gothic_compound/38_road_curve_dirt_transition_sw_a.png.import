@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://g47bmex3gvue"
-path="res://.godot/imported/38_road_curve_dirt_transition_sw_a.png-dfb96e4e1896094d7f63177346deef3d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/38_road_curve_dirt_transition_sw_a.png"
-dest_files=["res://.godot/imported/38_road_curve_dirt_transition_sw_a.png-dfb96e4e1896094d7f63177346deef3d.ctex"]
 
 [params]
 

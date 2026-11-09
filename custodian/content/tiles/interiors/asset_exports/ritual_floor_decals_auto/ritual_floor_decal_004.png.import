@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c7d5wlry67h8c"
-path="res://.godot/imported/ritual_floor_decal_004.png-022113ab805442d4f0ad4f397f11a600.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/asset_exports/ritual_floor_decals_auto/ritual_floor_decal_004.png"
-dest_files=["res://.godot/imported/ritual_floor_decal_004.png-022113ab805442d4f0ad4f397f11a600.ctex"]
 
 [params]
 

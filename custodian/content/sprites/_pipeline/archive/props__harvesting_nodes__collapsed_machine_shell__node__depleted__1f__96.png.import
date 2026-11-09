@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cfk3jp17n7a65"
-path="res://.godot/imported/props__harvesting_nodes__collapsed_machine_shell__node__depleted__1f__96.png-2031a65adfe3b652ea0a4b5086e19f62.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/archive/props__harvesting_nodes__collapsed_machine_shell__node__depleted__1f__96.png"
-dest_files=["res://.godot/imported/props__harvesting_nodes__collapsed_machine_shell__node__depleted__1f__96.png-2031a65adfe3b652ea0a4b5086e19f62.ctex"]
 
 [params]
 

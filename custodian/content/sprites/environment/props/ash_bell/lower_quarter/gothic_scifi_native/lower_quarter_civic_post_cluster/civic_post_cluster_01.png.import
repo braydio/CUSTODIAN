@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cd26ivdrv6ybb"
-path="res://.godot/imported/civic_post_cluster_01.png-28704f4cc9eaba47bc2270f35e71e6b2.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_civic_post_cluster/civic_post_cluster_01.png"
-dest_files=["res://.godot/imported/civic_post_cluster_01.png-28704f4cc9eaba47bc2270f35e71e6b2.ctex"]
 
 [params]
 

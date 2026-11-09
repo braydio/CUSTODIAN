@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bb8jo4bvcbupk"
-path="res://.godot/imported/posture_break_flash_01.png-ff3e9a30e27189812cf8a839786248d2.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/effects/combat/critical/posture_break_flash_01.png"
-dest_files=["res://.godot/imported/posture_break_flash_01.png-ff3e9a30e27189812cf8a839786248d2.ctex"]
 
 [params]
 

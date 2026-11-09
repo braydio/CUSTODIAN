@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cnb6awm6xvy5u"
-path="res://.godot/imported/gothic_small_door_insert_04.png-3626d39b21eac4e6feb36804a54587a1.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_04.png"
-dest_files=["res://.godot/imported/gothic_small_door_insert_04.png-3626d39b21eac4e6feb36804a54587a1.ctex"]
 
 [params]
 

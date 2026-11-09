@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://iwxvwvebswdk"
-path="res://.godot/imported/RedKeep.png-db13e8b5b96a3095c3323d7fa0a61c24.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Red/RedKeep.png"
-dest_files=["res://.godot/imported/RedKeep.png-db13e8b5b96a3095c3323d7fa0a61c24.ctex"]
 
 [params]
 

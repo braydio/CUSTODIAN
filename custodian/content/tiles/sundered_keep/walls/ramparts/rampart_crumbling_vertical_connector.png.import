@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://s4ljm5xym86o"
-path="res://.godot/imported/rampart_crumbling_vertical_connector.png-4e177cef18eff923fbf3e957e9606ad4.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/walls/ramparts/rampart_crumbling_vertical_connector.png"
-dest_files=["res://.godot/imported/rampart_crumbling_vertical_connector.png-4e177cef18eff923fbf3e957e9606ad4.ctex"]
 
 [params]
 

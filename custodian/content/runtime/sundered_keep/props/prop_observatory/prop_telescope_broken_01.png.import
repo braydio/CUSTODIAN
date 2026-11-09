@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cq06pvwl3ykhb"
-path="res://.godot/imported/prop_telescope_broken_01.png-46ca2ae482b9a1aafb126b865a0a6495.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/props/prop_observatory/prop_telescope_broken_01.png"
-dest_files=["res://.godot/imported/prop_telescope_broken_01.png-46ca2ae482b9a1aafb126b865a0a6495.ctex"]
 
 [params]
 

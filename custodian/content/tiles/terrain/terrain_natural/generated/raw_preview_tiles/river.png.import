@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cqe21emjpbysq"
-path="res://.godot/imported/river.png-f9b2a65434b54735cf2d3d442793eaa7.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/raw_preview_tiles/river.png"
-dest_files=["res://.godot/imported/river.png-f9b2a65434b54735cf2d3d442793eaa7.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://da3d0y6xewgm2"
-path="res://.godot/imported/vault_wall_corner_outer_ne_01.png-a561b9fe7923b4324cc519e5a0862657.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/walls/gothic/vault/vault_wall_corner_outer_ne_01.png"
-dest_files=["res://.godot/imported/vault_wall_corner_outer_ne_01.png-a561b9fe7923b4324cc519e5a0862657.ctex"]
 
 [params]
 

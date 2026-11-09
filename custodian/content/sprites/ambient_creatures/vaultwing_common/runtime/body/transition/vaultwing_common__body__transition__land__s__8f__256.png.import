@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://3yymummx2yc7"
-path="res://.godot/imported/vaultwing_common__body__transition__land__s__8f__256.png-0692ba74e0e22cf7f93d3bcde0628087.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/ambient_creatures/vaultwing_common/runtime/body/transition/vaultwing_common__body__transition__land__s__8f__256.png"
-dest_files=["res://.godot/imported/vaultwing_common__body__transition__land__s__8f__256.png-0692ba74e0e22cf7f93d3bcde0628087.ctex"]
 
 [params]
 

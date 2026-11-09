@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c3kcmnjdywx2c"
-path="res://.godot/imported/twin_solaria_v1_home_index_lowercourt_825x385.png-f82f287b3361dae9e125149615691b00.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/levels/hub/twin_solaria/v1/twin_solaria_v1_home_index_lowercourt_825x385.png"
-dest_files=["res://.godot/imported/twin_solaria_v1_home_index_lowercourt_825x385.png-f82f287b3361dae9e125149615691b00.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dpxhhtkrlgvfx"
-path="res://.godot/imported/grand_vista_foreground_edge_mask.png-ba842c8dd0e5b4b1f16a79f609364017.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_foreground_edge_mask.png"
-dest_files=["res://.godot/imported/grand_vista_foreground_edge_mask.png-ba842c8dd0e5b4b1f16a79f609364017.ctex"]
 
 [params]
 

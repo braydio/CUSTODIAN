@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://byhbcdhixgj4d"
-path="res://.godot/imported/CastSpell.png-15e4b33a7509d46f4a2b0c68907721fc.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://dev/test_sprites/Knight/CastSpell.png"
-dest_files=["res://.godot/imported/CastSpell.png-15e4b33a7509d46f4a2b0c68907721fc.ctex"]
 
 [params]
 

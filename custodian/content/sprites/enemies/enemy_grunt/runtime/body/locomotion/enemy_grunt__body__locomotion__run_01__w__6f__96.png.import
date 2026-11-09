@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://n448bjeevi5x"
-path="res://.godot/imported/enemy_grunt__body__locomotion__run_01__w__6f__96.png-880f6a991ac4a959e8e68f53329011c2.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_grunt/runtime/body/locomotion/enemy_grunt__body__locomotion__run_01__w__6f__96.png"
-dest_files=["res://.godot/imported/enemy_grunt__body__locomotion__run_01__w__6f__96.png-880f6a991ac4a959e8e68f53329011c2.ctex"]
 
 [params]
 

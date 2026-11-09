@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dv07ao8hhex3u"
-path="res://.godot/imported/terrain_tiles_32_atlas.png-570bb8849427873ef82222b55cd04c44.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/terrain_tiles_32_atlas.png"
-dest_files=["res://.godot/imported/terrain_tiles_32_atlas.png-570bb8849427873ef82222b55cd04c44.ctex"]
 
 [params]
 

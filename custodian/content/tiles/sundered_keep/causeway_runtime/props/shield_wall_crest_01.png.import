@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bcdcu20dc45ca"
-path="res://.godot/imported/shield_wall_crest_01.png-921b118dc48754e681c167bcd1f27abb.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_runtime/props/shield_wall_crest_01.png"
-dest_files=["res://.godot/imported/shield_wall_crest_01.png-921b118dc48754e681c167bcd1f27abb.ctex"]
 
 [params]
 

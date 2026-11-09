@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b3sybugsppomq"
-path="res://.godot/imported/cosmic_ocean_void_fill_blue_nebula_01.png-8b0cdbade3941c4dbcc86e692b58f91f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/cosmic_ocean/game32/cosmic_ocean_void_fill_blue_nebula_01.png"
-dest_files=["res://.godot/imported/cosmic_ocean_void_fill_blue_nebula_01.png-8b0cdbade3941c4dbcc86e692b58f91f.ctex"]
 
 [params]
 

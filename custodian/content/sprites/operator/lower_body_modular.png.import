@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dahhnr5llbmgq"
-path="res://.godot/imported/lower_body_modular.png-96e020d727d8e39a5987ec0f1253db45.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/lower_body_modular.png"
-dest_files=["res://.godot/imported/lower_body_modular.png-96e020d727d8e39a5987ec0f1253db45.ctex"]
 
 [params]
 

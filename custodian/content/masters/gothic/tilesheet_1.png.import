@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dwu7fo4po7mg5"
-path="res://.godot/imported/tilesheet_1.png-d96fc74ff1f4cd1eb605c5c7157b5fd4.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/masters/gothic/tilesheet_1.png"
-dest_files=["res://.godot/imported/tilesheet_1.png-d96fc74ff1f4cd1eb605c5c7157b5fd4.ctex"]
 
 [params]
 

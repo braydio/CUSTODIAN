@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bam4bpk5uj7x1"
-path="res://.godot/imported/endless_forest_canopy_mass_1536x1024.png-127a16e70f9342588e11b073efb90fda.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/procgen/endless_forest/endless_forest_canopy_mass_1536x1024.png"
-dest_files=["res://.godot/imported/endless_forest_canopy_mass_1536x1024.png-127a16e70f9342588e11b073efb90fda.ctex"]
 
 [params]
 

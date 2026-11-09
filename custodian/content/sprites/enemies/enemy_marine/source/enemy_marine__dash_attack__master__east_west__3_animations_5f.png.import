@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b88lclglb5te"
-path="res://.godot/imported/enemy_marine__dash_attack__master__east_west__3_animations_5f.png-ab7d2e3c0d09e34e10e29815c889f57e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_marine/source/enemy_marine__dash_attack__master__east_west__3_animations_5f.png"
-dest_files=["res://.godot/imported/enemy_marine__dash_attack__master__east_west__3_animations_5f.png-ab7d2e3c0d09e34e10e29815c889f57e.ctex"]
 
 [params]
 

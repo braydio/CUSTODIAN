@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dycqoomfgnwwb"
-path="res://.godot/imported/ChatGPT Image May 18, 2026, 04-53-50 PM.png-45d55f544cacdf266ef955c61df077b0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/source/ChatGPT Image May 18, 2026, 04-53-50 PM.png"
-dest_files=["res://.godot/imported/ChatGPT Image May 18, 2026, 04-53-50 PM.png-45d55f544cacdf266ef955c61df077b0.ctex"]
 
 [params]
 

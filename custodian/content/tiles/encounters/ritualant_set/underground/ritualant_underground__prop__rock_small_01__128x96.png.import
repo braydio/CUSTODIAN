@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://81e8x6uukl84"
-path="res://.godot/imported/ritualant_underground__prop__rock_small_01__128x96.png-f12e4f2cfa316c12451b354de107daba.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__prop__rock_small_01__128x96.png"
-dest_files=["res://.godot/imported/ritualant_underground__prop__rock_small_01__128x96.png-f12e4f2cfa316c12451b354de107daba.ctex"]
 
 [params]
 

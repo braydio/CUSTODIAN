@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cbarix2h3qlaw"
-path="res://.godot/imported/enemy_marine__fx__unarmed__dash_attack_01__e__8f__156.png-ff75928876bc8c5a81701bee5c98f863.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_marine/runtime/fx/enemy_marine__fx__unarmed__dash_attack_01__e__8f__156.png"
-dest_files=["res://.godot/imported/enemy_marine__fx__unarmed__dash_attack_01__e__8f__156.png-ff75928876bc8c5a81701bee5c98f863.ctex"]
 
 [params]
 

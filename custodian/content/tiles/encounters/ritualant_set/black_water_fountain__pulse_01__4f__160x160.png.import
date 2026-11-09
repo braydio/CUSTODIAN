@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://btyhk65uibd24"
-path="res://.godot/imported/black_water_fountain__pulse_01__4f__160x160.png-a13db0df95423414903c18698f83986a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/black_water_fountain__pulse_01__4f__160x160.png"
-dest_files=["res://.godot/imported/black_water_fountain__pulse_01__4f__160x160.png-a13db0df95423414903c18698f83986a.ctex"]
 
 [params]
 

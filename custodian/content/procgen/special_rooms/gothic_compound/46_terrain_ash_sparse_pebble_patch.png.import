@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://tormiqmg6xtj"
-path="res://.godot/imported/46_terrain_ash_sparse_pebble_patch.png-47db1c28b83477d422109f9f406ffb3f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/46_terrain_ash_sparse_pebble_patch.png"
-dest_files=["res://.godot/imported/46_terrain_ash_sparse_pebble_patch.png-47db1c28b83477d422109f9f406ffb3f.ctex"]
 
 [params]
 

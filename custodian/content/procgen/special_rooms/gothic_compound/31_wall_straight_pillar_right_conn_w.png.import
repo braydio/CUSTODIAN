@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bk52xffijujat"
-path="res://.godot/imported/31_wall_straight_pillar_right_conn_w.png-d965fb901f61c12b5956e4f04697bbd8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/31_wall_straight_pillar_right_conn_w.png"
-dest_files=["res://.godot/imported/31_wall_straight_pillar_right_conn_w.png-d965fb901f61c12b5956e4f04697bbd8.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://orcoawganl2q"
-path="res://.godot/imported/gothic_scifi_spiked_parapet_02.png-0660a28107ba8f6475c22c4d40d79899.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_spiked_parapet/gothic_scifi_spiked_parapet_02.png"
-dest_files=["res://.godot/imported/gothic_scifi_spiked_parapet_02.png-0660a28107ba8f6475c22c4d40d79899.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cjtgkw8d4nytq"
-path="res://.godot/imported/enemy_savage__body__melee__chain_hit_01__s__9f__96__oil_painted.png-89c493ae235c214170e3e0595fa07f29.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_savage/oil_paint_theme/enemy_savage__body__melee__chain_hit_01__s__9f__96__oil_painted.png"
-dest_files=["res://.godot/imported/enemy_savage__body__melee__chain_hit_01__s__9f__96__oil_painted.png-89c493ae235c214170e3e0595fa07f29.ctex"]
 
 [params]
 

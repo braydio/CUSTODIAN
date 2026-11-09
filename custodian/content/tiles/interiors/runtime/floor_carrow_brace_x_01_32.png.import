@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b6jy8n3j0k0p5"
-path="res://.godot/imported/floor_carrow_brace_x_01_32.png-2d65265962851ec5f6cf787c33d67dac.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/runtime/floor_carrow_brace_x_01_32.png"
-dest_files=["res://.godot/imported/floor_carrow_brace_x_01_32.png-2d65265962851ec5f6cf787c33d67dac.ctex"]
 
 [params]
 

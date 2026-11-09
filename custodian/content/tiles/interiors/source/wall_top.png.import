@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bvlmidlf1sjaf"
-path="res://.godot/imported/wall_top.png-6a787e95fa587a2b1bcfcc867f796936.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/source/wall_top.png"
-dest_files=["res://.godot/imported/wall_top.png-6a787e95fa587a2b1bcfcc867f796936.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://87t3qdqolfmj"
-path="res://.godot/imported/26_road_corner_inner_ne.png-97f9eae38cb9acb1dfa82b3116c96ffc.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/26_road_corner_inner_ne.png"
-dest_files=["res://.godot/imported/26_road_corner_inner_ne.png-97f9eae38cb9acb1dfa82b3116c96ffc.ctex"]
 
 [params]
 

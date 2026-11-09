@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://8ofpjsicrh4e"
-path="res://.godot/imported/portal_ring__fx__teleport__idle_01__omni__6f__161.png-aa2fcf5fab0ac57395de181b5615824d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/effects/runtime/portal_ring/portal_ring__fx__teleport__idle_01__omni__6f__161.png"
-dest_files=["res://.godot/imported/portal_ring__fx__teleport__idle_01__omni__6f__161.png-aa2fcf5fab0ac57395de181b5615824d.ctex"]
 
 [params]
 

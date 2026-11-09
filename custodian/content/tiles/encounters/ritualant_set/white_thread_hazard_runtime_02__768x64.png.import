@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bqqg37b481qiv"
-path="res://.godot/imported/white_thread_hazard_runtime_02__768x64.png-a6051772aefb9f27343740ffd2827060.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/white_thread_hazard_runtime_02__768x64.png"
-dest_files=["res://.godot/imported/white_thread_hazard_runtime_02__768x64.png-a6051772aefb9f27343740ffd2827060.ctex"]
 
 [params]
 

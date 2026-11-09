@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c7mbp58uy1pgm"
-path="res://.godot/imported/prop_lightning_rod_01.png-e8f65f42c8c7e5bb15f69eff10f07790.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/props/prop_rooftop/prop_lightning_rod_01.png"
-dest_files=["res://.godot/imported/prop_lightning_rod_01.png-e8f65f42c8c7e5bb15f69eff10f07790.ctex"]
 
 [params]
 

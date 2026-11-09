@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://br7paxg2smiwh"
-path="res://.godot/imported/moss_drip_01.png-5c76eceb4cccdcceae96e8a9711d9dbd.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/labyrnth_set/custodian/content/tiles/sundered_keep/walls/labyrinth_keep/overlays/moss_drip_01.png"
-dest_files=["res://.godot/imported/moss_drip_01.png-5c76eceb4cccdcceae96e8a9711d9dbd.ctex"]
 
 [params]
 

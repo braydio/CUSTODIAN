@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://0epew7wu8ew"
-path="res://.godot/imported/approach_rout_stairs.png-345b4c926b6355bfc36606c04808019b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/world/return_causeway/path/approach_rout_stairs.png"
-dest_files=["res://.godot/imported/approach_rout_stairs.png-345b4c926b6355bfc36606c04808019b.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c0l2mxjq323cb"
-path="res://.godot/imported/operator__modular_upper_fx__actions__field_patch_use_01__e__14f__96.png-8a58f939e9ad6f355c1c4e4f237e4dc6.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/archive/operator__modular_upper_fx__actions__field_patch_use_01__e__14f__96.png"
-dest_files=["res://.godot/imported/operator__modular_upper_fx__actions__field_patch_use_01__e__14f__96.png-8a58f939e9ad6f355c1c4e4f237e4dc6.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://8ka7hwibjsws"
-path="res://.godot/imported/road_edge_w_01_32.png-a83e064c90d76a9f5379446bff821332.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/roads_paths/runtime/roads/surface/pieces/road_edge_w_01_32.png"
-dest_files=["res://.godot/imported/road_edge_w_01_32.png-a83e064c90d76a9f5379446bff821332.ctex"]
 
 [params]
 

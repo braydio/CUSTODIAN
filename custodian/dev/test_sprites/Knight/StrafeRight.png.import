@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ry12ox4ix2ih"
-path="res://.godot/imported/StrafeRight.png-7135ed7d9c9d9a15c2bbca21ae05399c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://dev/test_sprites/Knight/StrafeRight.png"
-dest_files=["res://.godot/imported/StrafeRight.png-7135ed7d9c9d9a15c2bbca21ae05399c.ctex"]
 
 [params]
 

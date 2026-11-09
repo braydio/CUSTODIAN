@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ub46xtnsigsj"
-path="res://.godot/imported/kick4.png-9510fc107d12fe9fdfed197e400a26e9.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://addons/fightengine/demo/Assets/Sprites/Brawler-Girl/Kick/kick4.png"
-dest_files=["res://.godot/imported/kick4.png-9510fc107d12fe9fdfed197e400a26e9.ctex"]
 
 [params]
 

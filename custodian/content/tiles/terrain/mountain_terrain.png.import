@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://btqdbn28frq1n"
-path="res://.godot/imported/mountain_terrain.png-5c468bab4dbaffd6720041c8624c3f0e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/mountain_terrain.png"
-dest_files=["res://.godot/imported/mountain_terrain.png-5c468bab4dbaffd6720041c8624c3f0e.ctex"]
 
 [params]
 

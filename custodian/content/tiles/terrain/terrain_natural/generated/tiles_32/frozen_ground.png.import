@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bdwdqogdcdmjk"
-path="res://.godot/imported/frozen_ground.png-6b2f97299d8f67793f0a92578637235e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/tiles_32/frozen_ground.png"
-dest_files=["res://.godot/imported/frozen_ground.png-6b2f97299d8f67793f0a92578637235e.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cf0gl85iw4ixe"
-path="res://.godot/imported/causeway_wall_buttress_pier_cap_01.png-b78d94f110b704a5e15fc5119f79e2c5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/entrance/causeway_walls/causeway_wall_buttress_pier_cap_01.png"
-dest_files=["res://.godot/imported/causeway_wall_buttress_pier_cap_01.png-b78d94f110b704a5e15fc5119f79e2c5.ctex"]
 
 [params]
 

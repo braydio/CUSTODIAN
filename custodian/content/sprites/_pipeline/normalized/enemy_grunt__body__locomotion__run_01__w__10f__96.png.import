@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dg7bdcg11ab8o"
-path="res://.godot/imported/enemy_grunt__body__locomotion__run_01__w__10f__96.png-f4d0808297750bc6d13044147a30260d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/normalized/enemy_grunt__body__locomotion__run_01__w__10f__96.png"
-dest_files=["res://.godot/imported/enemy_grunt__body__locomotion__run_01__w__10f__96.png-f4d0808297750bc6d13044147a30260d.ctex"]
 
 [params]
 

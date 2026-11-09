@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c4kxf4egrw8nm"
-path="res://.godot/imported/approach_fog_strip_02.png-3a431a50897513a0cfc482a3350b38f7.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/approach/fog/approach_fog_strip_02.png"
-dest_files=["res://.godot/imported/approach_fog_strip_02.png-3a431a50897513a0cfc482a3350b38f7.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://o1gtmhi2cc6h"
-path="res://.godot/imported/cliff_inner_se_32.png-4bca11e0f5f7b2d26923f66541d4530c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/procgen/elevated_world/archive/pre_elevated_world_v1/cliff_inner_se_32.png"
-dest_files=["res://.godot/imported/cliff_inner_se_32.png-4bca11e0f5f7b2d26923f66541d4530c.ctex"]
 
 [params]
 

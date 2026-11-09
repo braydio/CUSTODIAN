@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b0fg7nd5j481c"
-path="res://.godot/imported/ritualant_underground__overlay__landing_connector_bridge_01__320x192.png-ea24efef7e04bd98096c9894ab6b9f80.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__landing_connector_bridge_01__320x192.png"
-dest_files=["res://.godot/imported/ritualant_underground__overlay__landing_connector_bridge_01__320x192.png-ea24efef7e04bd98096c9894ab6b9f80.ctex"]
 
 [params]
 

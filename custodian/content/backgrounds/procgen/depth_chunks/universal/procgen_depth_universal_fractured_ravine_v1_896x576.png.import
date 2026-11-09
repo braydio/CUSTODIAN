@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://diwove6768kks"
-path="res://.godot/imported/procgen_depth_universal_fractured_ravine_v1_896x576.png-4edcc757bcdeaede4ff62cde33e06276.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/procgen/depth_chunks/universal/procgen_depth_universal_fractured_ravine_v1_896x576.png"
-dest_files=["res://.godot/imported/procgen_depth_universal_fractured_ravine_v1_896x576.png-4edcc757bcdeaede4ff62cde33e06276.ctex"]
 
 [params]
 

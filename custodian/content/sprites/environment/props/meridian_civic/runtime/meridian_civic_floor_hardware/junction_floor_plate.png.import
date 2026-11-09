@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bmjpw3dts1bwy"
-path="res://.godot/imported/junction_floor_plate.png-933b1a438d1bedda92fc2d32d2d6364b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_floor_hardware/junction_floor_plate.png"
-dest_files=["res://.godot/imported/junction_floor_plate.png-933b1a438d1bedda92fc2d32d2d6364b.ctex"]
 
 [params]
 

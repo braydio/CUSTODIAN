@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bm32fqm4yxwtk"
-path="res://.godot/imported/collapsed_sea_cut_01.png-412e8ce2e7b2c9505d74b98dbacc991d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/labyrnth_set/custodian/content/tiles/sundered_keep/walls/labyrinth_keep/collapsed_sea_cut_01.png"
-dest_files=["res://.godot/imported/collapsed_sea_cut_01.png-412e8ce2e7b2c9505d74b98dbacc991d.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://of62ik8iy0qe"
-path="res://.godot/imported/civic_bollard_02.png-978a3c2e72c2151c34d640435854632a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_bollard/civic_bollard_02.png"
-dest_files=["res://.godot/imported/civic_bollard_02.png-978a3c2e72c2151c34d640435854632a.ctex"]
 
 [params]
 

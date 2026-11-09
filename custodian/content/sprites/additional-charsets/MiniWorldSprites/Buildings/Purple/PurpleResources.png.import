@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://q78hbgjw8jsv"
-path="res://.godot/imported/PurpleResources.png-e00cb118c251c190b045532de3f15473.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Purple/PurpleResources.png"
-dest_files=["res://.godot/imported/PurpleResources.png-e00cb118c251c190b045532de3f15473.ctex"]
 
 [params]
 

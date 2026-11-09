@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://djafgrjk22pa0"
-path="res://.godot/imported/containment_canister_01.png-687c4188924a8097695fdf8ffcbf1025.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_containment_canister/containment_canister_01.png"
-dest_files=["res://.godot/imported/containment_canister_01.png-687c4188924a8097695fdf8ffcbf1025.ctex"]
 
 [params]
 

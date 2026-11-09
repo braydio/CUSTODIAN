@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://mi6xtpvnfy7w"
-path="res://.godot/imported/district_transfer_frame__fx__interaction__boot__omni__6f__96x160.png-debccdb7e2907246da08051e30ae1bee.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/structure/district_transfer_frame/runtime/fx/interaction/district_transfer_frame__fx__interaction__boot__omni__6f__96x160.png"
-dest_files=["res://.godot/imported/district_transfer_frame__fx__interaction__boot__omni__6f__96x160.png-debccdb7e2907246da08051e30ae1bee.ctex"]
 
 [params]
 

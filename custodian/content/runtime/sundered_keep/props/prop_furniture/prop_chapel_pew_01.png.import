@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c4h43w7teb3pj"
-path="res://.godot/imported/prop_chapel_pew_01.png-668c787d75954313e56e66b874e26ad0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/props/prop_furniture/prop_chapel_pew_01.png"
-dest_files=["res://.godot/imported/prop_chapel_pew_01.png-668c787d75954313e56e66b874e26ad0.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://w7ofgelgu38u"
-path="res://.godot/imported/cosmic_ocean_masonry_w_dark_void_edge_01__raw.png-41ae43427c3563074b45946d95a8776f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/cosmic_ocean/raw/cosmic_ocean_masonry_w_dark_void_edge_01__raw.png"
-dest_files=["res://.godot/imported/cosmic_ocean_masonry_w_dark_void_edge_01__raw.png-41ae43427c3563074b45946d95a8776f.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d3ii80jrmka0n"
-path="res://.godot/imported/shrumb_hit_knockout8.png-9d0f13169ee60bc5e171ca261ea46b58.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/ambient_critter/shrumb_hit_knockout8.png"
-dest_files=["res://.godot/imported/shrumb_hit_knockout8.png-9d0f13169ee60bc5e171ca261ea46b58.ctex"]
 
 [params]
 

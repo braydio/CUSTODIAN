@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cibf8mfb1hh56"
-path="res://.godot/imported/masonry_barrier_low.png-803bfd58d6cf1ed3db808161549acb05.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_debris/masonry_barrier_low.png"
-dest_files=["res://.godot/imported/masonry_barrier_low.png-803bfd58d6cf1ed3db808161549acb05.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b3snsjdkfi7d"
-path="res://.godot/imported/ethereum-2.png-e51d22b65050c760af04a2a1f86dea3c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://addons/fightengine/demo/Assets/Stage Layers/props/Ethereum/ethereum-2.png"
-dest_files=["res://.godot/imported/ethereum-2.png-e51d22b65050c760af04a2a1f86dea3c.ctex"]
 
 [params]
 

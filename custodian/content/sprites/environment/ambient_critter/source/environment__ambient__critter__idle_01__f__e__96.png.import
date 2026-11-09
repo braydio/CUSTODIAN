@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d11mdjjk8cy7w"
-path="res://.godot/imported/environment__ambient__critter__idle_01__f__e__96.png-f7b4d59357f69c46175b5aab9afe71dd.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/ambient_critter/source/environment__ambient__critter__idle_01__f__e__96.png"
-dest_files=["res://.godot/imported/environment__ambient__critter__idle_01__f__e__96.png-f7b4d59357f69c46175b5aab9afe71dd.ctex"]
 
 [params]
 

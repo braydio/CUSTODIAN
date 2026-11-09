@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cwf3yjmubaxvt"
-path="res://.godot/imported/approach_route_contact_shadow.png-f1805aae7300a92c906c9ee12274f971.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/approach/underlay/approach_route_contact_shadow.png"
-dest_files=["res://.godot/imported/approach_route_contact_shadow.png-f1805aae7300a92c906c9ee12274f971.ctex"]
 
 [params]
 

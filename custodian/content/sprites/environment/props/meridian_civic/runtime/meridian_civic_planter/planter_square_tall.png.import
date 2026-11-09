@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c8o3b58om3aqr"
-path="res://.godot/imported/planter_square_tall.png-b74cfb9860db3f2e4f2d552ad580eb2b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_planter/planter_square_tall.png"
-dest_files=["res://.godot/imported/planter_square_tall.png-b74cfb9860db3f2e4f2d552ad580eb2b.ctex"]
 
 [params]
 

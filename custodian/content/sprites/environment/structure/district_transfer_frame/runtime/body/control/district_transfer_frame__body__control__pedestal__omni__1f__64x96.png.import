@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c0djjjlm5hbfu"
-path="res://.godot/imported/district_transfer_frame__body__control__pedestal__omni__1f__64x96.png-5c6a83bcbe1673017944c8a54d158d97.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/structure/district_transfer_frame/runtime/body/control/district_transfer_frame__body__control__pedestal__omni__1f__64x96.png"
-dest_files=["res://.godot/imported/district_transfer_frame__body__control__pedestal__omni__1f__64x96.png-5c6a83bcbe1673017944c8a54d158d97.ctex"]
 
 [params]
 

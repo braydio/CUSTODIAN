@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://36n3r7is4qtc"
-path="res://.godot/imported/enemy_marine_design.png-99e429cc4302c57d66a5167522fedd7a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_marine_design.png"
-dest_files=["res://.godot/imported/enemy_marine_design.png-99e429cc4302c57d66a5167522fedd7a.ctex"]
 
 [params]
 

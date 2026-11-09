@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://canx8nngkbls8"
-path="res://.godot/imported/wolf-idle.png-170ff338325d9da84981e2b18fb28b82.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/wolf/wolf-idle.png"
-dest_files=["res://.godot/imported/wolf-idle.png-170ff338325d9da84981e2b18fb28b82.ctex"]
 
 [params]
 

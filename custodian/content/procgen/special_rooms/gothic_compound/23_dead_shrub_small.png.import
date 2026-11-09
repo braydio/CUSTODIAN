@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://do4qu46f8guf2"
-path="res://.godot/imported/23_dead_shrub_small.png-d5100a6fcab445adacde84fb0b65fb9e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/23_dead_shrub_small.png"
-dest_files=["res://.godot/imported/23_dead_shrub_small.png-d5100a6fcab445adacde84fb0b65fb9e.ctex"]
 
 [params]
 

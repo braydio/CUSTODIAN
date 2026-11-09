@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dgyqgyky5o20t"
-path="res://.godot/imported/40_gate_fence_portcullis_small.png-b99590ce114821fd17bdefdf7c953bcd.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/40_gate_fence_portcullis_small.png"
-dest_files=["res://.godot/imported/40_gate_fence_portcullis_small.png-b99590ce114821fd17bdefdf7c953bcd.ctex"]
 
 [params]
 

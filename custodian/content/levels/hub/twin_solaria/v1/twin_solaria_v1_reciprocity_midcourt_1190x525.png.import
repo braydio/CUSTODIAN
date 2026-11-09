@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://pgtj0xhnvwr3"
-path="res://.godot/imported/twin_solaria_v1_reciprocity_midcourt_1190x525.png-4bb641887e1700aa47320fdb59397f8f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/levels/hub/twin_solaria/v1/twin_solaria_v1_reciprocity_midcourt_1190x525.png"
-dest_files=["res://.godot/imported/twin_solaria_v1_reciprocity_midcourt_1190x525.png-4bb641887e1700aa47320fdb59397f8f.ctex"]
 
 [params]
 

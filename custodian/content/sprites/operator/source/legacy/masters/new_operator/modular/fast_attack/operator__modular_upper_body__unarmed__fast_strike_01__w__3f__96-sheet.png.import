@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dg0yx54b1vxci"
-path="res://.godot/imported/operator__modular_upper_body__unarmed__fast_strike_01__w__3f__96-sheet.png-ea7788833e6c7aab07e28f1f928b47a2.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/new_operator/modular/fast_attack/operator__modular_upper_body__unarmed__fast_strike_01__w__3f__96-sheet.png"
-dest_files=["res://.godot/imported/operator__modular_upper_body__unarmed__fast_strike_01__w__3f__96-sheet.png-ea7788833e6c7aab07e28f1f928b47a2.ctex"]
 
 [params]
 

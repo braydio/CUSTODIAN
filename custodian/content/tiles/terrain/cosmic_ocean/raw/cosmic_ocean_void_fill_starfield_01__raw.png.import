@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://lnwllswh68uf"
-path="res://.godot/imported/cosmic_ocean_void_fill_starfield_01__raw.png-39d05a1d0f43e03248d6df7dfdf0347e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/cosmic_ocean/raw/cosmic_ocean_void_fill_starfield_01__raw.png"
-dest_files=["res://.godot/imported/cosmic_ocean_void_fill_starfield_01__raw.png-39d05a1d0f43e03248d6df7dfdf0347e.ctex"]
 
 [params]
 

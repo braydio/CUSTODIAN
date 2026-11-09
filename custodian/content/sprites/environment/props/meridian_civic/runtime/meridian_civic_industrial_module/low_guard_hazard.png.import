@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b23myjr08mqxa"
-path="res://.godot/imported/low_guard_hazard.png-65897296b006ef53a8b5c913780ac561.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_industrial_module/low_guard_hazard.png"
-dest_files=["res://.godot/imported/low_guard_hazard.png-65897296b006ef53a8b5c913780ac561.ctex"]
 
 [params]
 

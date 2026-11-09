@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b4d3cf0hwck41"
-path="res://.godot/imported/temporary_closure_cluster.png-e35277d8127c3c6731850b43944b1d7d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_traffic_control/temporary_closure_cluster.png"
-dest_files=["res://.godot/imported/temporary_closure_cluster.png-e35277d8127c3c6731850b43944b1d7d.ctex"]
 
 [params]
 

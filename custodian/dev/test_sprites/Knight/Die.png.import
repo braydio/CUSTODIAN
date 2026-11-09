@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dqc8u3n1w7f2"
-path="res://.godot/imported/Die.png-c92884217127a9836a3873af0cb1aa10.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://dev/test_sprites/Knight/Die.png"
-dest_files=["res://.godot/imported/Die.png-c92884217127a9836a3873af0cb1aa10.ctex"]
 
 [params]
 

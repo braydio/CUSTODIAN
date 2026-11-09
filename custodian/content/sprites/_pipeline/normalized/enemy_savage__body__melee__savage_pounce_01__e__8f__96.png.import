@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bn3w74v765cdc"
-path="res://.godot/imported/enemy_savage__body__melee__savage_pounce_01__e__8f__96.png-aa2cfb2ff93769fe2fb0ce435df2d6ca.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/normalized/enemy_savage__body__melee__savage_pounce_01__e__8f__96.png"
-dest_files=["res://.godot/imported/enemy_savage__body__melee__savage_pounce_01__e__8f__96.png-aa2cfb2ff93769fe2fb0ce435df2d6ca.ctex"]
 
 [params]
 

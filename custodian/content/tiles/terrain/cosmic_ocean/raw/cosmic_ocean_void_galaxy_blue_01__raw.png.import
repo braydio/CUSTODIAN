@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cqd77g55ullj6"
-path="res://.godot/imported/cosmic_ocean_void_galaxy_blue_01__raw.png-6f598aa8cd1c5ca196e065a498c18300.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/cosmic_ocean/raw/cosmic_ocean_void_galaxy_blue_01__raw.png"
-dest_files=["res://.godot/imported/cosmic_ocean_void_galaxy_blue_01__raw.png-6f598aa8cd1c5ca196e065a498c18300.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://h6d2jbgg5uj6"
-path="res://.godot/imported/return_mooring_floor_corner_nw.png-f76e6c049f6e3d625bdf82685ce77b5d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/return_mooring/floors/return_mooring_floor_corner_nw.png"
-dest_files=["res://.godot/imported/return_mooring_floor_corner_nw.png-f76e6c049f6e3d625bdf82685ce77b5d.ctex"]
 
 [params]
 

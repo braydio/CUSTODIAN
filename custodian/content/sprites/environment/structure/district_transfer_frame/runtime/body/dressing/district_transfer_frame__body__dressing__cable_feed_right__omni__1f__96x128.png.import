@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b14icu31hcrgp"
-path="res://.godot/imported/district_transfer_frame__body__dressing__cable_feed_right__omni__1f__96x128.png-3790e52177f50c19e830abdb7334a409.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/structure/district_transfer_frame/runtime/body/dressing/district_transfer_frame__body__dressing__cable_feed_right__omni__1f__96x128.png"
-dest_files=["res://.godot/imported/district_transfer_frame__body__dressing__cable_feed_right__omni__1f__96x128.png-3790e52177f50c19e830abdb7334a409.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b1j0lyafbmsq8"
-path="res://.godot/imported/enemy_savage__body__locomotion__idle_01__sw__5f__96.png-cd4ed6220bd08d41a2990bef0f7c9c93.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/archive/enemy_savage__body__locomotion__idle_01__sw__5f__96.png"
-dest_files=["res://.godot/imported/enemy_savage__body__locomotion__idle_01__sw__5f__96.png-cd4ed6220bd08d41a2990bef0f7c9c93.ctex"]
 
 [params]
 

@@ -1,0 +1,336 @@
+{
+  "schema": "custodian.operator_animation_workbench.v2",
+  "identity": {
+    "profile": "unarmed",
+    "group": "locomotion",
+    "action": "run_01",
+    "direction": "s"
+  },
+  "context": {
+    "weapon_id": "vigil_pattern_dagger",
+    "linked_profile": "melee_1h_dagger",
+    "presentation_mode": "authored_overlay",
+    "fingerprint": "c12d6aa89666dbc91fc027889e21aa2fc9dbbe596bc536f52f2071e12b16225f"
+  },
+  "weapon_context": {
+    "weapon_id": "vigil_pattern_dagger",
+    "animation_profile": "melee_1h_dagger",
+    "presentation_mode": "authored_overlay"
+  },
+  "timeline": {
+    "frames": 12,
+    "source_clock_frames": 12,
+    "workspace_clock_frames": 12,
+    "document_frames": 12,
+    "preview_fps": 10.0,
+    "timing_authority": true,
+    "clock_owner": "lower_body",
+    "fps": 10.0,
+    "loop": true,
+    "durations": [
+      0.6,
+      0.7,
+      1.0,
+      0.6,
+      0.7,
+      1.0,
+      0.6,
+      0.7,
+      1.0,
+      0.6,
+      0.7,
+      1.0
+    ],
+    "frame_durations_ms": [
+      60.0,
+      69.99999999999999,
+      100.0,
+      60.0,
+      69.99999999999999,
+      100.0,
+      60.0,
+      69.99999999999999,
+      100.0,
+      60.0,
+      69.99999999999999,
+      100.0
+    ]
+  },
+  "canvas": {
+    "width": 96,
+    "height": 96
+  },
+  "aseprite": {
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/unarmed/locomotion/run_01/s/workbench.aseprite",
+    "last_synced_sha256": "6582fc551850366ee37cf4e3218bb93909a474108d7ba4eb356adb9390a0efdb"
+  },
+  "layers": [
+    {
+      "binding_id": "lower_body",
+      "aseprite_layer_name": "lower_body",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "unarmed",
+      "group": "locomotion",
+      "action": "run_01",
+      "direction": "s",
+      "layer": "lower_body",
+      "source_path": "custodian/content/sprites/operator/source/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__s__12f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__s__12f__96.png",
+      "source_file_sha256": "89711c18f1cce13f83232387c8da8220cdede0b7c429d578dbba47b87286710f",
+      "source_pixel_sha256": "95df37af402186a7179b11ee0ea27e936fbe0a286852eb97792e8b282b5a61bb",
+      "frames": 12,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "group": "locomotion",
+        "action": "run_01",
+        "direction": "s"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__s__12f__96.png",
+        "frames": 12,
+        "frame_size": [
+          96,
+          96
+        ],
+        "file_sha256": "89711c18f1cce13f83232387c8da8220cdede0b7c429d578dbba47b87286710f",
+        "pixel_sha256": "95df37af402186a7179b11ee0ea27e936fbe0a286852eb97792e8b282b5a61bb"
+      },
+      "workspace_contract": {
+        "frames": 12,
+        "frame_size": [
+          96,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__s__12f__96.png",
+        "frames": 12,
+        "frame_size": [
+          96,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/unarmed/locomotion/run_01/s/baseline/lower_body.png"
+    },
+    {
+      "binding_id": "upper_body",
+      "aseprite_layer_name": "upper_body",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "unarmed",
+      "group": "locomotion",
+      "action": "run_01",
+      "direction": "s",
+      "layer": "upper_body",
+      "source_path": "custodian/content/sprites/operator/source/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__s__12f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__s__12f__96.png",
+      "source_file_sha256": "311df966a1445c9c67a13bb8608a8329a14f8854137d50c869da60c024042c8a",
+      "source_pixel_sha256": "8d08e489ee9b453cf49e9de9cb9fce3fff19208afe6f6cffb00db97f2bcb27a4",
+      "frames": 12,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "upper_body",
+        "profile": "unarmed",
+        "group": "locomotion",
+        "action": "run_01",
+        "direction": "s"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__s__12f__96.png",
+        "frames": 12,
+        "frame_size": [
+          96,
+          96
+        ],
+        "file_sha256": "311df966a1445c9c67a13bb8608a8329a14f8854137d50c869da60c024042c8a",
+        "pixel_sha256": "8d08e489ee9b453cf49e9de9cb9fce3fff19208afe6f6cffb00db97f2bcb27a4"
+      },
+      "workspace_contract": {
+        "frames": 12,
+        "frame_size": [
+          96,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__s__12f__96.png",
+        "frames": 12,
+        "frame_size": [
+          96,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/unarmed/locomotion/run_01/s/baseline/upper_body.png"
+    },
+    {
+      "binding_id": "weapon__vigil_pattern_dagger",
+      "aseprite_layer_name": "weapon__vigil_pattern_dagger",
+      "role": "linked_weapon",
+      "editable": true,
+      "owner": "operator",
+      "profile": "melee_1h_dagger",
+      "group": "locomotion",
+      "action": "run_01",
+      "direction": "s",
+      "layer": "weapon",
+      "source_path": "custodian/content/sprites/operator/source/animations/melee_1h_dagger/locomotion/run_01/operator__weapon__melee_1h_dagger__locomotion__run_01__s__12f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/melee_1h_dagger/locomotion/run_01/operator__weapon__melee_1h_dagger__locomotion__run_01__s__12f__96.png",
+      "source_file_sha256": "c8c4e43e70c2e5db4a514534ca2b38fc3b65a872b5f35053f872558a3eabdbd7",
+      "source_pixel_sha256": "4bacb97cc7cbf37f3e22d7ce07e44eb425f3eab15aab92076e78a433060829e8",
+      "frames": 12,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "weapon",
+        "profile": "melee_1h_dagger",
+        "group": "locomotion",
+        "action": "run_01",
+        "direction": "s"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h_dagger/locomotion/run_01/operator__weapon__melee_1h_dagger__locomotion__run_01__s__12f__96.png",
+        "frames": 12,
+        "frame_size": [
+          96,
+          96
+        ],
+        "file_sha256": "c8c4e43e70c2e5db4a514534ca2b38fc3b65a872b5f35053f872558a3eabdbd7",
+        "pixel_sha256": "4bacb97cc7cbf37f3e22d7ce07e44eb425f3eab15aab92076e78a433060829e8"
+      },
+      "workspace_contract": {
+        "frames": 12,
+        "frame_size": [
+          96,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h_dagger/locomotion/run_01/operator__weapon__melee_1h_dagger__locomotion__run_01__s__12f__96.png",
+        "frames": 12,
+        "frame_size": [
+          96,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/unarmed/locomotion/run_01/s/baseline/weapon__vigil_pattern_dagger.png"
+    }
+  ],
+  "references": [
+    {
+      "binding_id": "full_body_reference",
+      "aseprite_layer_name": "__REFERENCE_FULL_BODY",
+      "role": "reference",
+      "editable": false,
+      "source_path": "custodian/content/sprites/operator/source/animations/unarmed/locomotion/run_01/operator__full_body__unarmed__locomotion__run_01__s__7f__96.png",
+      "frames": 7,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_slots": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/unarmed/locomotion/run_01/s/baseline/full_body_reference.png"
+    }
+  ],
+  "pending_migration": null,
+  "last_publish": {
+    "timestamp": null,
+    "validation_status": null
+  }
+}

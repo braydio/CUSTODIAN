@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cdv60qsvrt3i1"
-path="res://.godot/imported/barrel.png-7e363c4b3aa31513450e65c26352835c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://addons/fightengine/demo/Assets/Stage Layers/props/barrel.png"
-dest_files=["res://.godot/imported/barrel.png-7e363c4b3aa31513450e65c26352835c.ctex"]
 
 [params]
 

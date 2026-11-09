@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://sfk8g0ceinws"
-path="res://.godot/imported/cliff_occluder.png-387efbca33712756ce61cbe23c14ece5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/approach/playable/cliff_occluder.png"
-dest_files=["res://.godot/imported/cliff_occluder.png-387efbca33712756ce61cbe23c14ece5.ctex"]
 
 [params]
 

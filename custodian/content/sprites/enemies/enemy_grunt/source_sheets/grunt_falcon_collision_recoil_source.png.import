@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ohltkyixitxy"
-path="res://.godot/imported/grunt_falcon_collision_recoil_source.png-e18fd2e0de2a13a5bac1618a3d685b34.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_grunt/source_sheets/grunt_falcon_collision_recoil_source.png"
-dest_files=["res://.godot/imported/grunt_falcon_collision_recoil_source.png-e18fd2e0de2a13a5bac1618a3d685b34.ctex"]
 
 [params]
 

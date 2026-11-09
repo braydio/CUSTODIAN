@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://25medpbostk0"
-path="res://.godot/imported/gothic_gate_archway_07.png-bb973e936137438f24d5b99b86e6d534.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/doors/gothic/compound_entrance_gate/gothic_gate_archway_07.png"
-dest_files=["res://.godot/imported/gothic_gate_archway_07.png-bb973e936137438f24d5b99b86e6d534.ctex"]
 
 [params]
 

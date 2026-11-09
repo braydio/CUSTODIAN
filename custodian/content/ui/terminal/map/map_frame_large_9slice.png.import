@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://8ypbb812k3kv"
-path="res://.godot/imported/map_frame_large_9slice.png-91fa31b86931020a180d341bcce53755.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/map/map_frame_large_9slice.png"
-dest_files=["res://.godot/imported/map_frame_large_9slice.png-91fa31b86931020a180d341bcce53755.ctex"]
 
 [params]
 

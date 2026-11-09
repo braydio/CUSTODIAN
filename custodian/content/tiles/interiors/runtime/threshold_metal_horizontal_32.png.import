@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dydx6e6kcw2im"
-path="res://.godot/imported/threshold_metal_horizontal_32.png-cc12a350120986c928139ffa1d159601.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/runtime/threshold_metal_horizontal_32.png"
-dest_files=["res://.godot/imported/threshold_metal_horizontal_32.png-cc12a350120986c928139ffa1d159601.ctex"]
 
 [params]
 

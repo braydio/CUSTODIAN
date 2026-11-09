@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bpih2hnwdmpxp"
-path="res://.godot/imported/36_gatehouse_main_open_large.png-6e33f26052e6ae85037941c722ab4c24.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/36_gatehouse_main_open_large.png"
-dest_files=["res://.godot/imported/36_gatehouse_main_open_large.png-6e33f26052e6ae85037941c722ab4c24.ctex"]
 
 [params]
 

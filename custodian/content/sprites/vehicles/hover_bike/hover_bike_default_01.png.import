@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c2qvrcc73w5p8"
-path="res://.godot/imported/hover_bike_default_01.png-345f2b99eb2164077e3a66580365da87.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/vehicles/hover_bike/hover_bike_default_01.png"
-dest_files=["res://.godot/imported/hover_bike_default_01.png-345f2b99eb2164077e3a66580365da87.ctex"]
 
 [params]
 

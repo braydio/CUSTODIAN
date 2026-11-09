@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c5h670ycvrihx"
-path="res://.godot/imported/operator__upper_body__unarmed__posture__idle_relaxed_01__e__5f__96.png-2a0ce34aa8b6ba6ea0f1fce48071adb9.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/normalized/operator__upper_body__unarmed__posture__idle_relaxed_01__e__5f__96.png"
-dest_files=["res://.godot/imported/operator__upper_body__unarmed__posture__idle_relaxed_01__e__5f__96.png-2a0ce34aa8b6ba6ea0f1fce48071adb9.ctex"]
 
 [params]
 

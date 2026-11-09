@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://2yawb3qiv3rx"
-path="res://.godot/imported/sundered_keep_world_vista_cliff_lip.png-46466244f513588e7feeb467086d5ccf.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/world_vista/sundered_keep_world_vista_cliff_lip.png"
-dest_files=["res://.godot/imported/sundered_keep_world_vista_cliff_lip.png-46466244f513588e7feeb467086d5ccf.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bh1ynoiw7ru43"
-path="res://.godot/imported/props_steel_chest_01_54x30.png-976eab5981c23d44182a4551c3234498.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/runtime/props_steel_chest_01_54x30.png"
-dest_files=["res://.godot/imported/props_steel_chest_01_54x30.png-976eab5981c23d44182a4551c3234498.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dno532wtsdeh7"
-path="res://.godot/imported/operator__body__full__dodge_01__s__9f__96.png-2331b1b2495f72ee3f1c1f5fd6153820.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/archive/operator__body__full__dodge_01__s__9f__96.png"
-dest_files=["res://.godot/imported/operator__body__full__dodge_01__s__9f__96.png-2331b1b2495f72ee3f1c1f5fd6153820.ctex"]
 
 [params]
 

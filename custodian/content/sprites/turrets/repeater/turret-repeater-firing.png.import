@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dy7wqoaqja0gy"
-path="res://.godot/imported/turret-repeater-firing.png-db3a4104fecf648557a4bb614314b643.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/turrets/repeater/turret-repeater-firing.png"
-dest_files=["res://.godot/imported/turret-repeater-firing.png-db3a4104fecf648557a4bb614314b643.ctex"]
 
 [params]
 

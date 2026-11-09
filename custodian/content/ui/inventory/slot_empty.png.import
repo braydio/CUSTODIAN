@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dusyr6kq8oddw"
-path="res://.godot/imported/slot_empty.png-4a7f63bc0807af5b17d0fbc69d251e6c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/inventory/slot_empty.png"
-dest_files=["res://.godot/imported/slot_empty.png-4a7f63bc0807af5b17d0fbc69d251e6c.ctex"]
 
 [params]
 

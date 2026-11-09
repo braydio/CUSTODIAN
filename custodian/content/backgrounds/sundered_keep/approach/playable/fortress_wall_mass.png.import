@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://5451bn2ji6fy"
-path="res://.godot/imported/fortress_wall_mass.png-1c05fa4d5619374e0f507cf2b061c6ad.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/approach/playable/fortress_wall_mass.png"
-dest_files=["res://.godot/imported/fortress_wall_mass.png-1c05fa4d5619374e0f507cf2b061c6ad.ctex"]
 
 [params]
 

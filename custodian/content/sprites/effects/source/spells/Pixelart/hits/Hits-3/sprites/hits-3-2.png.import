@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dexwwevigwr51"
-path="res://.godot/imported/hits-3-2.png-8db994e5289e1b0074cafbb7d892612d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/effects/source/spells/Pixelart/hits/Hits-3/sprites/hits-3-2.png"
-dest_files=["res://.godot/imported/hits-3-2.png-8db994e5289e1b0074cafbb7d892612d.ctex"]
 
 [params]
 

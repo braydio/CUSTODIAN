@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bb0n4ky461mxa"
-path="res://.godot/imported/rampart_broken_gap_n.png-d5d4beca8d5091e544bbd42b9fe8c3f9.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/walls/ramparts/rampart_broken_gap_n.png"
-dest_files=["res://.godot/imported/rampart_broken_gap_n.png-d5d4beca8d5091e544bbd42b9fe8c3f9.ctex"]
 
 [params]
 

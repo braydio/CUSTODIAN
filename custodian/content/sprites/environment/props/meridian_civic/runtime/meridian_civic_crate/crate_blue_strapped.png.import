@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bst6jh8i0u7kq"
-path="res://.godot/imported/crate_blue_strapped.png-135cf145dca599ab306db0eae6b02e0b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_crate/crate_blue_strapped.png"
-dest_files=["res://.godot/imported/crate_blue_strapped.png-135cf145dca599ab306db0eae6b02e0b.ctex"]
 
 [params]
 

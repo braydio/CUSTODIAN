@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://e1lhfbdejqbw"
-path="res://.godot/imported/horizon_sky_02.png-854d30b66aeeaf964b2d3e46d41815dd.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/shared/horizon/horizon_sky_02.png"
-dest_files=["res://.godot/imported/horizon_sky_02.png-854d30b66aeeaf964b2d3e46d41815dd.ctex"]
 
 [params]
 

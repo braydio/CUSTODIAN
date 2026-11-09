@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b2i8vbnx8i2s"
-path="res://.godot/imported/enemy_grunt_walk_8dir_8f_walk_8dir_grid.png-6097cd41e0200a7854eb9413be8df4a4.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_scout/exports/enemy_grunt_walk_8dir_8f_walk_8dir_grid.png"
-dest_files=["res://.godot/imported/enemy_grunt_walk_8dir_8f_walk_8dir_grid.png-6097cd41e0200a7854eb9413be8df4a4.ctex"]
 
 [params]
 

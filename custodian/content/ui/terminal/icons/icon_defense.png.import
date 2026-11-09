@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bc1uuihc8qk6u"
-path="res://.godot/imported/icon_defense.png-80b55efa537c05657bf1b2ea7b3c5010.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/icons/icon_defense.png"
-dest_files=["res://.godot/imported/icon_defense.png-80b55efa537c05657bf1b2ea7b3c5010.ctex"]
 
 [params]
 

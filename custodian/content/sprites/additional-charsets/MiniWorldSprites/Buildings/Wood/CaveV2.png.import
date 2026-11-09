@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bh7syrqsum80i"
-path="res://.godot/imported/CaveV2.png-9f32fe552031ce66d00a80752e1f63c5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Wood/CaveV2.png"
-dest_files=["res://.godot/imported/CaveV2.png-9f32fe552031ce66d00a80752e1f63c5.ctex"]
 
 [params]
 

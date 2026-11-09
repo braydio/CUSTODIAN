@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cqgbm70vjy7uw"
-path="res://.godot/imported/icon_hazard.png-9f26d8f4ca949924e6515fe122c38260.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/custodian/icons/icon_hazard.png"
-dest_files=["res://.godot/imported/icon_hazard.png-9f26d8f4ca949924e6515fe122c38260.ctex"]
 
 [params]
 

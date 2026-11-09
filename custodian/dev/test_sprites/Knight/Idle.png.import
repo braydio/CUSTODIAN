@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cqg6vcgjcgo5a"
-path="res://.godot/imported/Idle.png-1ad04a8237c32a9ca6c113ab4a840820.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://dev/test_sprites/Knight/Idle.png"
-dest_files=["res://.godot/imported/Idle.png-1ad04a8237c32a9ca6c113ab4a840820.ctex"]
 
 [params]
 

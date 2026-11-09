@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://r34ss466ysms"
-path="res://.godot/imported/meridian_hardstand_plaza_irregular_01.png-289ae8b0a0376c60872cc3f2387cb96b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/procgen_macro/runtime/meridian_hardstand/meridian_hardstand_plaza_irregular_01.png"
-dest_files=["res://.godot/imported/meridian_hardstand_plaza_irregular_01.png-289ae8b0a0376c60872cc3f2387cb96b.ctex"]
 
 [params]
 

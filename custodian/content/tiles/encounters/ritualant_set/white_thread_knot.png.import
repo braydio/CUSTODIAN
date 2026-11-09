@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dag656hyh58d8"
-path="res://.godot/imported/white_thread_knot.png-7b32c958cc06c2aa557c0708e99934f9.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/white_thread_knot.png"
-dest_files=["res://.godot/imported/white_thread_knot.png-7b32c958cc06c2aa557c0708e99934f9.ctex"]
 
 [params]
 

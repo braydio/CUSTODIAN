@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dqkrebdu7u6kc"
-path="res://.godot/imported/short_walls_ashen_forum-sheet.png-db7f7203cf9d5903a0e525a9900745a0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/source/ashen_forum/short_walls_ashen_forum-sheet.png"
-dest_files=["res://.godot/imported/short_walls_ashen_forum-sheet.png-db7f7203cf9d5903a0e525a9900745a0.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dkr8kke21kd4n"
-path="res://.godot/imported/06_spike_barricade_h.png-99804256e94cfdc983380369b20a791e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/06_spike_barricade_h.png"
-dest_files=["res://.godot/imported/06_spike_barricade_h.png-99804256e94cfdc983380369b20a791e.ctex"]
 
 [params]
 

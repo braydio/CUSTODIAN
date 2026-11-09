@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dux3m0rmmnvy7"
-path="res://.godot/imported/rubble_small_01.png-322ec2d4c8a372c2f40871fb647fe700.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_rubble/rubble_small_01.png"
-dest_files=["res://.godot/imported/rubble_small_01.png-322ec2d4c8a372c2f40871fb647fe700.ctex"]
 
 [params]
 

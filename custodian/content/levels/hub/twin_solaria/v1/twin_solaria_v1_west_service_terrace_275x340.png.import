@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ddf4ke1dbf3kq"
-path="res://.godot/imported/twin_solaria_v1_west_service_terrace_275x340.png-fb4f9d80ab7874b87dd37e7bae4a1a23.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/levels/hub/twin_solaria/v1/twin_solaria_v1_west_service_terrace_275x340.png"
-dest_files=["res://.godot/imported/twin_solaria_v1_west_service_terrace_275x340.png-fb4f9d80ab7874b87dd37e7bae4a1a23.ctex"]
 
 [params]
 

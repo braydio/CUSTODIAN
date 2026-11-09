@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c7lxasegq52je"
-path="res://.godot/imported/GiantCrab.png-1e9ced10f39d84dc1849df72475fa44c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Monsters/GiantAnimals/GiantCrab.png"
-dest_files=["res://.godot/imported/GiantCrab.png-1e9ced10f39d84dc1849df72475fa44c.ctex"]
 
 [params]
 

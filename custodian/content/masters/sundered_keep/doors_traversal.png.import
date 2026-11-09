@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c7v4y68i3vgtb"
-path="res://.godot/imported/doors_traversal.png-37158e0ad7a3d42eab755fe2265fdb37.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/masters/sundered_keep/doors_traversal.png"
-dest_files=["res://.godot/imported/doors_traversal.png-37158e0ad7a3d42eab755fe2265fdb37.ctex"]
 
 [params]
 

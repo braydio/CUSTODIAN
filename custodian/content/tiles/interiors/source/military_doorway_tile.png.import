@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://odkas1j4hyev"
-path="res://.godot/imported/military_doorway_tile.png-77f8b2bbbbe769ccff199ee70453d426.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/source/military_doorway_tile.png"
-dest_files=["res://.godot/imported/military_doorway_tile.png-77f8b2bbbbe769ccff199ee70453d426.ctex"]
 
 [params]
 

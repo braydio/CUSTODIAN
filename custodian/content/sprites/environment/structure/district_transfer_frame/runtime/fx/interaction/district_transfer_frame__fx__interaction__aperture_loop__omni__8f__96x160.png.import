@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dp1fhn48yahvt"
-path="res://.godot/imported/district_transfer_frame__fx__interaction__aperture_loop__omni__8f__96x160.png-79d40f45f519509b971c3b66a921ecec.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/structure/district_transfer_frame/runtime/fx/interaction/district_transfer_frame__fx__interaction__aperture_loop__omni__8f__96x160.png"
-dest_files=["res://.godot/imported/district_transfer_frame__fx__interaction__aperture_loop__omni__8f__96x160.png-79d40f45f519509b971c3b66a921ecec.ctex"]
 
 [params]
 

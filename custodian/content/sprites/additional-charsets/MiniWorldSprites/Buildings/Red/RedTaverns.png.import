@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bwo6sg1xyh0k8"
-path="res://.godot/imported/RedTaverns.png-983355d5a8f5698ebfa23536050cc29f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Red/RedTaverns.png"
-dest_files=["res://.godot/imported/RedTaverns.png-983355d5a8f5698ebfa23536050cc29f.ctex"]
 
 [params]
 

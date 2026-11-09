@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://brss54xs1wfiv"
-path="res://.godot/imported/field_fabricator_mk1__fx__interaction__powered_glow__omni__1f__128x96.png-f52fb0aff01de50fe0d9566fc64aaded.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/field_fabricator_mk1/runtime/fx/field_fabricator_mk1__fx__interaction__powered_glow__omni__1f__128x96.png"
-dest_files=["res://.godot/imported/field_fabricator_mk1__fx__interaction__powered_glow__omni__1f__128x96.png-f52fb0aff01de50fe0d9566fc64aaded.ctex"]
 
 [params]
 

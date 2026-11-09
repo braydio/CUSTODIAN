@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cxonrnwshl55t"
-path="res://.godot/imported/operator__body__light_recovery_01__s__2f__96.png-3d9ba8ea17f7da4849b9eeb870ff5191.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/normalized/operator__body__light_recovery_01__s__2f__96.png"
-dest_files=["res://.godot/imported/operator__body__light_recovery_01__s__2f__96.png-3d9ba8ea17f7da4849b9eeb870ff5191.ctex"]
 
 [params]
 

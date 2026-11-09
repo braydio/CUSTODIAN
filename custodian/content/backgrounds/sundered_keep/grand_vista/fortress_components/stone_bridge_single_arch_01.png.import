@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dybthm4dslpq1"
-path="res://.godot/imported/stone_bridge_single_arch_01.png-82fb00c8652cfe8325c7e1562542dd97.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/grand_vista/fortress_components/stone_bridge_single_arch_01.png"
-dest_files=["res://.godot/imported/stone_bridge_single_arch_01.png-82fb00c8652cfe8325c7e1562542dd97.ctex"]
 
 [params]
 

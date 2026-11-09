@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dgpgq1ifrjpmg"
-path="res://.godot/imported/unnarrived_apparration_01.png-64f734b2410e0de3dd8c87a1b9c4de99.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/unnarrived_apparration_01.png"
-dest_files=["res://.godot/imported/unnarrived_apparration_01.png-64f734b2410e0de3dd8c87a1b9c4de99.ctex"]
 
 [params]
 

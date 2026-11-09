@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cto3gkswjnufe"
-path="res://.godot/imported/carbine_mk1__weapon__aim__nw.png-4e7a50c2b2c3d4f9eea782bef5e411a3.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/weapons/carbine_mk1/runtime/carbine_mk1__weapon__aim__nw.png"
-dest_files=["res://.godot/imported/carbine_mk1__weapon__aim__nw.png-4e7a50c2b2c3d4f9eea782bef5e411a3.ctex"]
 
 [params]
 

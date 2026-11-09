@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://da3ymsrhvb8fm"
-path="res://.godot/imported/sandbag-spritesheet.png-fd6042b087c6d278051e50503ceda43d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/turrets/sandbag-spritesheet.png"
-dest_files=["res://.godot/imported/sandbag-spritesheet.png-fd6042b087c6d278051e50503ceda43d.ctex"]
 
 [params]
 

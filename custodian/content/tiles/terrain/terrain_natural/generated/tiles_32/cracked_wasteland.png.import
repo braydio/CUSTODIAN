@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cm07g5on7bj1c"
-path="res://.godot/imported/cracked_wasteland.png-5e0f6c90a634c97416bd284979898ba2.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/tiles_32/cracked_wasteland.png"
-dest_files=["res://.godot/imported/cracked_wasteland.png-5e0f6c90a634c97416bd284979898ba2.ctex"]
 
 [params]
 

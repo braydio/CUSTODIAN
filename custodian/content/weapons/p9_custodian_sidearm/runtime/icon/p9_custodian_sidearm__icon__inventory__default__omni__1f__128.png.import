@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b7sl4mkqkw6mh"
-path="res://.godot/imported/p9_custodian_sidearm__icon__inventory__default__omni__1f__128.png-e55c0503562a7dfda0751a948ab9cd31.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/weapons/p9_custodian_sidearm/runtime/icon/p9_custodian_sidearm__icon__inventory__default__omni__1f__128.png"
-dest_files=["res://.godot/imported/p9_custodian_sidearm__icon__inventory__default__omni__1f__128.png-e55c0503562a7dfda0751a948ab9cd31.ctex"]
 
 [params]
 

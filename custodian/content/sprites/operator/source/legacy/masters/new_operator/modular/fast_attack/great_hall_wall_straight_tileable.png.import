@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bq1f1rgwyow44"
-path="res://.godot/imported/great_hall_wall_straight_tileable.png-1e30c4665c4d55f2ecb90b8b60f950b8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/new_operator/modular/fast_attack/great_hall_wall_straight_tileable.png"
-dest_files=["res://.godot/imported/great_hall_wall_straight_tileable.png-1e30c4665c4d55f2ecb90b8b60f950b8.ctex"]
 
 [params]
 

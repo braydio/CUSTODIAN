@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://l3fbd5avnjpq"
-path="res://.godot/imported/enemy_run_8dir_8f.png-1fef59ec9d1900719c5be15089fc8859.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/_aseprite/sprites/items/resources/enemy_run_8dir_8f.png"
-dest_files=["res://.godot/imported/enemy_run_8dir_8f.png-1fef59ec9d1900719c5be15089fc8859.ctex"]
 
 [params]
 

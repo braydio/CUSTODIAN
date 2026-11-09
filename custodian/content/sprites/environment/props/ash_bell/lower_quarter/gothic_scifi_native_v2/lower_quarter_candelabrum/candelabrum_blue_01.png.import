@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d2cd7d7ekd84j"
-path="res://.godot/imported/candelabrum_blue_01.png-30ecab78320411638705d4b4a99d995e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_candelabrum/candelabrum_blue_01.png"
-dest_files=["res://.godot/imported/candelabrum_blue_01.png-30ecab78320411638705d4b4a99d995e.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d14wesxrhc4ir"
-path="res://.godot/imported/minimap_marker_player.png-6720090ca6f74e3c35e0a1fc96d58679.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/custodian/checks/minimap_marker_player.png"
-dest_files=["res://.godot/imported/minimap_marker_player.png-6720090ca6f74e3c35e0a1fc96d58679.ctex"]
 
 [params]
 

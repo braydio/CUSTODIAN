@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://yruac8e1pq5y"
-path="res://.godot/imported/undercroft_wet_stone_floor_01.png-46404ab3186b5593d2dfbe8cdb0a63dc.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/floors/undercroft_wet_stone_floor_01.png"
-dest_files=["res://.godot/imported/undercroft_wet_stone_floor_01.png-46404ab3186b5593d2dfbe8cdb0a63dc.ctex"]
 
 [params]
 

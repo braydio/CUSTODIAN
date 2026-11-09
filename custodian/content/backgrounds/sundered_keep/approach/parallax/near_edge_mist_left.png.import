@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://di8l5ncxyhigv"
-path="res://.godot/imported/near_edge_mist_left.png-00bc3693dea7b0f6b3133338740a3906.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/approach/parallax/near_edge_mist_left.png"
-dest_files=["res://.godot/imported/near_edge_mist_left.png-00bc3693dea7b0f6b3133338740a3906.ctex"]
 
 [params]
 

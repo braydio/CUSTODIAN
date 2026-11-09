@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ckbmuqpm0y5ng"
-path="res://.godot/imported/plaque_body_small.png-b8359c176e830a3afa87b95a0148dd53.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/black_reliquary/prompt/plaque_body_small.png"
-dest_files=["res://.godot/imported/plaque_body_small.png-b8359c176e830a3afa87b95a0148dd53.ctex"]
 
 [params]
 

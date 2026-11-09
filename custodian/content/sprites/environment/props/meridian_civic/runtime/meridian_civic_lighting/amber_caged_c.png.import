@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b3xgfbwbnxibp"
-path="res://.godot/imported/amber_caged_c.png-38169b5906cd341fb9bd35fb23d767af.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_lighting/amber_caged_c.png"
-dest_files=["res://.godot/imported/amber_caged_c.png-38169b5906cd341fb9bd35fb23d767af.ctex"]
 
 [params]
 

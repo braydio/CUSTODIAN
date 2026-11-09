@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bj2tn4w5gcqhc"
-path="res://.godot/imported/cliffs_oceans.png-a3fb452d87ccda3225da3c1f05fc5bac.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/masters/sundered_keep/cliffs_oceans.png"
-dest_files=["res://.godot/imported/cliffs_oceans.png-a3fb452d87ccda3225da3c1f05fc5bac.ctex"]
 
 [params]
 

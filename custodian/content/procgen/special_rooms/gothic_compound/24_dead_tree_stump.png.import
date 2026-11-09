@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c7u2yrawspgvr"
-path="res://.godot/imported/24_dead_tree_stump.png-b3105574d62c2767ba3a3361f74ef0d1.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/24_dead_tree_stump.png"
-dest_files=["res://.godot/imported/24_dead_tree_stump.png-b3105574d62c2767ba3a3361f74ef0d1.ctex"]
 
 [params]
 

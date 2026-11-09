@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://yterqx0sebwp"
-path="res://.godot/imported/props__harvesting_nodes__ruptured_capacitor_bank__node__idle__5f__96.png-f99000cf2727e98e952ec34d5246dd89.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/normalized/props__harvesting_nodes__ruptured_capacitor_bank__node__idle__5f__96.png"
-dest_files=["res://.godot/imported/props__harvesting_nodes__ruptured_capacitor_bank__node__idle__5f__96.png-f99000cf2727e98e952ec34d5246dd89.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cjwwj7gfm8m42"
-path="res://.godot/imported/attack_4d.png-6413212211a20934eff0017066cc3c4b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/new_operator/attack_4d.png"
-dest_files=["res://.godot/imported/attack_4d.png-6413212211a20934eff0017066cc3c4b.ctex"]
 
 [params]
 

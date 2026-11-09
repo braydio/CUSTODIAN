@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://08rnpxw6k0sd"
-path="res://.godot/imported/destroyed_terminal_01.png-457a26b8e46d81a3b041d3b3ebcfb05c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_destroyed_terminal/destroyed_terminal_01.png"
-dest_files=["res://.godot/imported/destroyed_terminal_01.png-457a26b8e46d81a3b041d3b3ebcfb05c.ctex"]
 
 [params]
 

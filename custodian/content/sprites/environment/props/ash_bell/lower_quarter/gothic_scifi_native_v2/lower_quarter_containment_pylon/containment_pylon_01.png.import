@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://rr0cq8memewg"
-path="res://.godot/imported/containment_pylon_01.png-f65e9f15b4e81d4ee21d9065c6228489.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_containment_pylon/containment_pylon_01.png"
-dest_files=["res://.godot/imported/containment_pylon_01.png-f65e9f15b4e81d4ee21d9065c6228489.ctex"]
 
 [params]
 

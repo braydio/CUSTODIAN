@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cmxbf5rw1jvxn"
-path="res://.godot/imported/elevated_world_cliffs_source.png-d39b8bf6006456a19dc00b51e69e7ee6.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/procgen/elevated_world/source/elevated_world_cliffs_source.png"
-dest_files=["res://.godot/imported/elevated_world_cliffs_source.png-d39b8bf6006456a19dc00b51e69e7ee6.ctex"]
 
 [params]
 

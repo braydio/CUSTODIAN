@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://jol3o1okl58p"
-path="res://.godot/imported/drone_firing.png-906311e759082fb3f1d09704e232b539.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/drone/runtime/attack/drone_firing.png"
-dest_files=["res://.godot/imported/drone_firing.png-906311e759082fb3f1d09704e232b539.ctex"]
 
 [params]
 

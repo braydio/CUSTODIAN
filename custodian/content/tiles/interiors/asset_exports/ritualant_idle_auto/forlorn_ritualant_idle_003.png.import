@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bvfc4usmxdn4m"
-path="res://.godot/imported/forlorn_ritualant_idle_003.png-90789c7efca09e6a634e7f575d033561.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/asset_exports/ritualant_idle_auto/forlorn_ritualant_idle_003.png"
-dest_files=["res://.godot/imported/forlorn_ritualant_idle_003.png-90789c7efca09e6a634e7f575d033561.ctex"]
 
 [params]
 

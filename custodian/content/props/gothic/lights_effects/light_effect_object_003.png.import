@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://diqfocx6trui0"
-path="res://.godot/imported/light_effect_object_003.png-5cd52395185d6bc22cebdd6c24429f81.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/gothic/lights_effects/light_effect_object_003.png"
-dest_files=["res://.godot/imported/light_effect_object_003.png-5cd52395185d6bc22cebdd6c24429f81.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://7kqejvg74ril"
-path="res://.godot/imported/far_sea.png-71408fb7cf39f28144c6ff4b27ac62cf.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/shared/horizon/far_sea.png"
-dest_files=["res://.godot/imported/far_sea.png-71408fb7cf39f28144c6ff4b27ac62cf.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://qynyuw7xsds"
-path="res://.godot/imported/approach_ocean_void_underlay.png-09107c0cc75d20480928324068afee50.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/approach/underlay/approach_ocean_void_underlay.png"
-dest_files=["res://.godot/imported/approach_ocean_void_underlay.png-09107c0cc75d20480928324068afee50.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ba4rkul4n13mq"
-path="res://.godot/imported/baby_opossum__body__locomotion__scurry__w__6f__96.png-d4948825ed1215414eab95adc509e5cd.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/ambient_creatures/baby_opossum/runtime/body/locomotion/baby_opossum__body__locomotion__scurry__w__6f__96.png"
-dest_files=["res://.godot/imported/baby_opossum__body__locomotion__scurry__w__6f__96.png-d4948825ed1215414eab95adc509e5cd.ctex"]
 
 [params]
 

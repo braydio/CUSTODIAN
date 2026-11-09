@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dnm7jufakx1em"
-path="res://.godot/imported/minimap_fill_dark.png-d02215ab6155586de0351038cdb4551e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/black_reliquary/minimap/minimap_fill_dark.png"
-dest_files=["res://.godot/imported/minimap_fill_dark.png-d02215ab6155586de0351038cdb4551e.ctex"]
 
 [params]
 

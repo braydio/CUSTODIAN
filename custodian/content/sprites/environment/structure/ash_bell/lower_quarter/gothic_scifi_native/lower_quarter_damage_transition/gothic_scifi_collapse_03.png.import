@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b16njrolerbmk"
-path="res://.godot/imported/gothic_scifi_collapse_03.png-46fd82eb8ab6eba17b4924c0dd98e9ed.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_damage_transition/gothic_scifi_collapse_03.png"
-dest_files=["res://.godot/imported/gothic_scifi_collapse_03.png-46fd82eb8ab6eba17b4924c0dd98e9ed.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dgfguyqqpscga"
-path="res://.godot/imported/prop_gargoyle_perch_01.png-e4c16eadcb6ef2f566426fe260c24f6b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/props/prop_statue/prop_gargoyle_perch_01.png"
-dest_files=["res://.godot/imported/prop_gargoyle_perch_01.png-e4c16eadcb6ef2f566426fe260c24f6b.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://be7j37olgu2ji"
-path="res://.godot/imported/causeway_wall_buttressed_inner_corner_ne_01.png-4bcf154ac71a138a6aa4f3540ad2fe01.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/entrance/causeway_walls/causeway_wall_buttressed_inner_corner_ne_01.png"
-dest_files=["res://.godot/imported/causeway_wall_buttressed_inner_corner_ne_01.png-4bcf154ac71a138a6aa4f3540ad2fe01.ctex"]
 
 [params]
 

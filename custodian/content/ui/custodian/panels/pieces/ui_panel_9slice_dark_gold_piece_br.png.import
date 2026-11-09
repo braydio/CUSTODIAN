@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b0d0t7kdv6geg"
-path="res://.godot/imported/ui_panel_9slice_dark_gold_piece_br.png-1b180c4e8f44966c8b46d503db41e120.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_br.png"
-dest_files=["res://.godot/imported/ui_panel_9slice_dark_gold_piece_br.png-1b180c4e8f44966c8b46d503db41e120.ctex"]
 
 [params]
 

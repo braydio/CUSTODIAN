@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cogi3vp7x4sf3"
-path="res://.godot/imported/forlorn_ritualant_attack_002.png-ae7432035997d07e52489df8278e2fd6.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/asset_exports/ritualant_attack_auto/forlorn_ritualant_attack_002.png"
-dest_files=["res://.godot/imported/forlorn_ritualant_attack_002.png-ae7432035997d07e52489df8278e2fd6.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bxrulh8p7mqi7"
-path="res://.godot/imported/main_gate_portcullis_shadow_01.png-752f75cebb1e3618606eae2a41da46da.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/overlays/main_gate_portcullis_shadow_01.png"
-dest_files=["res://.godot/imported/main_gate_portcullis_shadow_01.png-752f75cebb1e3618606eae2a41da46da.ctex"]
 
 [params]
 

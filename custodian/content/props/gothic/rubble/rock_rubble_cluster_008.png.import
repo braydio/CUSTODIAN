@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dp1xdkuqk40g1"
-path="res://.godot/imported/rock_rubble_cluster_008.png-46e2a55a2f73783807b07864bef404c9.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/gothic/rubble/rock_rubble_cluster_008.png"
-dest_files=["res://.godot/imported/rock_rubble_cluster_008.png-46e2a55a2f73783807b07864bef404c9.ctex"]
 
 [params]
 

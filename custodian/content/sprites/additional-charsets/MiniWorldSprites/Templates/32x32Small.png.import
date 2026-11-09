@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bdoq2eifmo7ve"
-path="res://.godot/imported/32x32Small.png-2338888d0afb39c788960bb7a119a6dd.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Templates/32x32Small.png"
-dest_files=["res://.godot/imported/32x32Small.png-2338888d0afb39c788960bb7a119a6dd.ctex"]
 
 [params]
 

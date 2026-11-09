@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cl26xb8ttcjsu"
-path="res://.godot/imported/field_patch_hotbar_01.png-4f1047b6fead7a59e5af59dee90cf122.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/items/consumables/field_patch/field_patch_hotbar_01.png"
-dest_files=["res://.godot/imported/field_patch_hotbar_01.png-4f1047b6fead7a59e5af59dee90cf122.ctex"]
 
 [params]
 

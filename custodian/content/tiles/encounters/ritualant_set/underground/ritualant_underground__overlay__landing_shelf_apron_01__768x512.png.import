@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d0ic636htapk6"
-path="res://.godot/imported/ritualant_underground__overlay__landing_shelf_apron_01__768x512.png-c97bec189df203d8f2ae45fb68b1a862.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__landing_shelf_apron_01__768x512.png"
-dest_files=["res://.godot/imported/ritualant_underground__overlay__landing_shelf_apron_01__768x512.png-c97bec189df203d8f2ae45fb68b1a862.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dqqp4hi1ti0eg"
-path="res://.godot/imported/ash_bell__underground_ingress__lift_platform_back__vibrate__s__4f__128x128.png-9ce3b144479de441ad0a306bc22fa17a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_platform_back__vibrate__s__4f__128x128.png"
-dest_files=["res://.godot/imported/ash_bell__underground_ingress__lift_platform_back__vibrate__s__4f__128x128.png-9ce3b144479de441ad0a306bc22fa17a.ctex"]
 
 [params]
 

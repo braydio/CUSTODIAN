@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b4egcn8oifpjh"
-path="res://.godot/imported/icon_power_components.png-508f5eb3f8b916a6fc230df2a7da5bc3.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/inventory/runtime/icons/icon_power_components.png"
-dest_files=["res://.godot/imported/icon_power_components.png-508f5eb3f8b916a6fc230df2a7da5bc3.ctex"]
 
 [params]
 

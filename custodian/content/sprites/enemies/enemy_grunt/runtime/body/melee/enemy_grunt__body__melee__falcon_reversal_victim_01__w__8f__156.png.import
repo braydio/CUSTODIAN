@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dq8a2pqkcpjvx"
-path="res://.godot/imported/enemy_grunt__body__melee__falcon_reversal_victim_01__w__8f__156.png-095b5ef956189a1795c3511dbe08d4a3.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__falcon_reversal_victim_01__w__8f__156.png"
-dest_files=["res://.godot/imported/enemy_grunt__body__melee__falcon_reversal_victim_01__w__8f__156.png-095b5ef956189a1795c3511dbe08d4a3.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://13e2kmla8l83"
-path="res://.godot/imported/marker_operator.png-f1c4ce97a7b92558ad4317f06be00263.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/markers/marker_operator.png"
-dest_files=["res://.godot/imported/marker_operator.png-f1c4ce97a7b92558ad4317f06be00263.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c5xv5w8147sv8"
-path="res://.godot/imported/04_platform_stone_plain_large.png-1652e0db289adda7a313581ac181af2a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/04_platform_stone_plain_large.png"
-dest_files=["res://.godot/imported/04_platform_stone_plain_large.png-1652e0db289adda7a313581ac181af2a.ctex"]
 
 [params]
 

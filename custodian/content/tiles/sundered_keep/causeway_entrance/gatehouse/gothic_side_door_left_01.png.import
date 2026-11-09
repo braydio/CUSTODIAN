@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c8uy787gqbi8u"
-path="res://.godot/imported/gothic_side_door_left_01.png-9b398495e331b4eb0ae7e65a77fa73cf.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_entrance/gatehouse/gothic_side_door_left_01.png"
-dest_files=["res://.godot/imported/gothic_side_door_left_01.png-9b398495e331b4eb0ae7e65a77fa73cf.ctex"]
 
 [params]
 

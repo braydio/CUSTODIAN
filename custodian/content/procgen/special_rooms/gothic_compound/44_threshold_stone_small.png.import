@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://x4wcgu8rbk4s"
-path="res://.godot/imported/44_threshold_stone_small.png-5149c04c7a64f1a06d04daedb9d2c24d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/44_threshold_stone_small.png"
-dest_files=["res://.godot/imported/44_threshold_stone_small.png-5149c04c7a64f1a06d04daedb9d2c24d.ctex"]
 
 [params]
 

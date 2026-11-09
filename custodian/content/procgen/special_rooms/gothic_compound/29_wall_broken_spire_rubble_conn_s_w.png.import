@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://3eix5fqwoejy"
-path="res://.godot/imported/29_wall_broken_spire_rubble_conn_s_w.png-3aa540ee7ef6a4c3defee04ebddd65e3.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/29_wall_broken_spire_rubble_conn_s_w.png"
-dest_files=["res://.godot/imported/29_wall_broken_spire_rubble_conn_s_w.png-3aa540ee7ef6a4c3defee04ebddd65e3.ctex"]
 
 [params]
 

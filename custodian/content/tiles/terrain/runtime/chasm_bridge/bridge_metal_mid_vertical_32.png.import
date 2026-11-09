@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bkkcn0o04rdxp"
-path="res://.godot/imported/bridge_metal_mid_vertical_32.png-309212cee69d9a015558c82c4c5afcc0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/runtime/chasm_bridge/bridge_metal_mid_vertical_32.png"
-dest_files=["res://.godot/imported/bridge_metal_mid_vertical_32.png-309212cee69d9a015558c82c4c5afcc0.ctex"]
 
 [params]
 

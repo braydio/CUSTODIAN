@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://53yiwnhoeqv4"
-path="res://.godot/imported/directory_board.png-624f9fcf845ed6299ce2002585f304d2.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_terminal/directory_board.png"
-dest_files=["res://.godot/imported/directory_board.png-624f9fcf845ed6299ce2002585f304d2.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bkwhibm8q103m"
-path="res://.godot/imported/cosmic_ocean_void_black_hole_01__raw.png-7882a2a42f1f1ab422c381734773316c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/cosmic_ocean/raw/cosmic_ocean_void_black_hole_01__raw.png"
-dest_files=["res://.godot/imported/cosmic_ocean_void_black_hole_01__raw.png-7882a2a42f1f1ab422c381734773316c.ctex"]
 
 [params]
 

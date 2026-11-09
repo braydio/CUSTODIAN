@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bre2c6c512k5l"
-path="res://.godot/imported/grand_vista_labyrinth_far_01.png-16b58aa5987f98c26daa2f6ee3872af9.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/grand_vista/landmarks/grand_vista_labyrinth_far_01.png"
-dest_files=["res://.godot/imported/grand_vista_labyrinth_far_01.png-16b58aa5987f98c26daa2f6ee3872af9.ctex"]
 
 [params]
 

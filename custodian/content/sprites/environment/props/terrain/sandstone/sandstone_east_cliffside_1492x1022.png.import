@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://4tuf8m1cola1"
-path="res://.godot/imported/sandstone_east_cliffside_1492x1022.png-4d27f065a2b8ebc72e1c988d33acfafe.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/terrain/sandstone/sandstone_east_cliffside_1492x1022.png"
-dest_files=["res://.godot/imported/sandstone_east_cliffside_1492x1022.png-4d27f065a2b8ebc72e1c988d33acfafe.ctex"]
 
 [params]
 

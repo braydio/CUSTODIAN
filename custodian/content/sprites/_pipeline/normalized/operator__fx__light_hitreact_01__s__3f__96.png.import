@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dvi6qqyngs4gf"
-path="res://.godot/imported/operator__fx__light_hitreact_01__s__3f__96.png-dca6f6217d44cb85f54845e22f1d7ddd.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/normalized/operator__fx__light_hitreact_01__s__3f__96.png"
-dest_files=["res://.godot/imported/operator__fx__light_hitreact_01__s__3f__96.png-dca6f6217d44cb85f54845e22f1d7ddd.ctex"]
 
 [params]
 

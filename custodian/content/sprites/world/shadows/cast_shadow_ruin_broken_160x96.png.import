@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ud1qsge47a6o"
-path="res://.godot/imported/cast_shadow_ruin_broken_160x96.png-e0561d3e47c45161c2612d7be36cdd78.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/world/shadows/cast_shadow_ruin_broken_160x96.png"
-dest_files=["res://.godot/imported/cast_shadow_ruin_broken_160x96.png-e0561d3e47c45161c2612d7be36cdd78.ctex"]
 
 [params]
 

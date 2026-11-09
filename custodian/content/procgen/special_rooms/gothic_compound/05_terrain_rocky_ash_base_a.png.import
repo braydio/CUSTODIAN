@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dvcgoya5jdjr8"
-path="res://.godot/imported/05_terrain_rocky_ash_base_a.png-a763d6638e73c7cf5f4ece26f6600023.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/05_terrain_rocky_ash_base_a.png"
-dest_files=["res://.godot/imported/05_terrain_rocky_ash_base_a.png-a763d6638e73c7cf5f4ece26f6600023.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bp88vpupdqngd"
-path="res://.godot/imported/ocean_foam_endcap_w.png-767ad9443927af45b5c51933e6e2cd90.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_endcap_w.png"
-dest_files=["res://.godot/imported/ocean_foam_endcap_w.png-767ad9443927af45b5c51933e6e2cd90.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c0jg0g68gdd2s"
-path="res://.godot/imported/PurpleBarracks.png-4f69ce3796c99d0a59728007222cf159.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Purple/PurpleBarracks.png"
-dest_files=["res://.godot/imported/PurpleBarracks.png-4f69ce3796c99d0a59728007222cf159.ctex"]
 
 [params]
 

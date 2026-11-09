@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://turvp5kivhfx"
-path="res://.godot/imported/awakening_ambulatory_fixtures__body__fixture__inspection_niche_medica__omni__1f__160x192.png-98cbae3c49642ab13f9470a6fba4f0bd.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/awakening/awakening_ambulatory_fixtures/runtime/body/awakening_ambulatory_fixtures__body__fixture__inspection_niche_medica__omni__1f__160x192.png"
-dest_files=["res://.godot/imported/awakening_ambulatory_fixtures__body__fixture__inspection_niche_medica__omni__1f__160x192.png-98cbae3c49642ab13f9470a6fba4f0bd.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b8ldsybibdtf4"
-path="res://.godot/imported/gatehouse_floor_dark_01.png-2ab2caa48717f4cd706f2e17025440d8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/floors/gatehouse_floor_dark_01.png"
-dest_files=["res://.godot/imported/gatehouse_floor_dark_01.png-2ab2caa48717f4cd706f2e17025440d8.ctex"]
 
 [params]
 

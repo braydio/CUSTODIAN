@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://co7x6id4ggc4q"
-path="res://.godot/imported/rifles_source_6x.png-624462c3f20222a447e100da76b3ad63.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/effects/weapons/rifles_source_6x.png"
-dest_files=["res://.godot/imported/rifles_source_6x.png-624462c3f20222a447e100da76b3ad63.ctex"]
 
 [params]
 

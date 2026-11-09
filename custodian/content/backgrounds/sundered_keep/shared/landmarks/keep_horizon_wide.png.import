@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bq4nss5fbsq3m"
-path="res://.godot/imported/keep_horizon_wide.png-a3b13367b8c42ad282d16948c4290633.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/shared/landmarks/keep_horizon_wide.png"
-dest_files=["res://.godot/imported/keep_horizon_wide.png-a3b13367b8c42ad282d16948c4290633.ctex"]
 
 [params]
 

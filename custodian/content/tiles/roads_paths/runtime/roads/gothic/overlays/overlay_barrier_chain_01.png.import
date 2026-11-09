@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dxtkk8o26o7dm"
-path="res://.godot/imported/overlay_barrier_chain_01.png-7f3f8f123890ed8d01209fb3e405b0c4.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/roads_paths/runtime/roads/gothic/overlays/overlay_barrier_chain_01.png"
-dest_files=["res://.godot/imported/overlay_barrier_chain_01.png-7f3f8f123890ed8d01209fb3e405b0c4.ctex"]
 
 [params]
 

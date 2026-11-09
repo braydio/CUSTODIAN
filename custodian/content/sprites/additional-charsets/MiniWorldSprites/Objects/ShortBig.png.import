@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b7bghpeli6tru"
-path="res://.godot/imported/ShortBig.png-94eaad1b2a3f43066d4034aad5d31747.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Objects/ShortBig.png"
-dest_files=["res://.godot/imported/ShortBig.png-94eaad1b2a3f43066d4034aad5d31747.ctex"]
 
 [params]
 

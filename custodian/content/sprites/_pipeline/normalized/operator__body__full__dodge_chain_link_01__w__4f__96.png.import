@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cy058v6k4q6ss"
-path="res://.godot/imported/operator__body__full__dodge_chain_link_01__w__4f__96.png-bdc93d133ce505d63a3c03740145ed2f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/normalized/operator__body__full__dodge_chain_link_01__w__4f__96.png"
-dest_files=["res://.godot/imported/operator__body__full__dodge_chain_link_01__w__4f__96.png-bdc93d133ce505d63a3c03740145ed2f.ctex"]
 
 [params]
 

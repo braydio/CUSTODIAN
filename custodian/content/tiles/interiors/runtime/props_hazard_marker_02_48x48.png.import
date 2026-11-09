@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://0egnlq3kqh1y"
-path="res://.godot/imported/props_hazard_marker_02_48x48.png-5436b9147155f71171b4a605d9c39a6c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/runtime/props_hazard_marker_02_48x48.png"
-dest_files=["res://.godot/imported/props_hazard_marker_02_48x48.png-5436b9147155f71171b4a605d9c39a6c.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cg3clpmhbonxo"
-path="res://.godot/imported/preview_stage.png-03caf165b57ae3fc3eaa8e5ef94dd8d8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://addons/fightengine/demo/Assets/Previews/Stage/preview_stage.png"
-dest_files=["res://.godot/imported/preview_stage.png-03caf165b57ae3fc3eaa8e5ef94dd8d8.ctex"]
 
 [params]
 

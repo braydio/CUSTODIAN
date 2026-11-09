@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cyvgtklobfn32"
-path="res://.godot/imported/emergency_floodlight_01.png-46e93b63926315fee1501fdda60255ab.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_emergency_floodlight/emergency_floodlight_01.png"
-dest_files=["res://.godot/imported/emergency_floodlight_01.png-46e93b63926315fee1501fdda60255ab.ctex"]
 
 [params]
 

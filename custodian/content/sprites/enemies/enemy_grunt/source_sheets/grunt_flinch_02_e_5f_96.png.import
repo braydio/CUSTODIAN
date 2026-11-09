@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dbcc3xq4nvhpw"
-path="res://.godot/imported/grunt_flinch_02_e_5f_96.png-5724ace0f72b369b747042adcd3c7bd8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_grunt/source_sheets/grunt_flinch_02_e_5f_96.png"
-dest_files=["res://.godot/imported/grunt_flinch_02_e_5f_96.png-5724ace0f72b369b747042adcd3c7bd8.ctex"]
 
 [params]
 

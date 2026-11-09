@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b0mq2oy63kts8"
-path="res://.godot/imported/awakening_creche_foreground_960x704.png-39e02d954fd4a08f253d1aba6c28bcde.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/levels/awakening/01_creche/awakening_creche_foreground_960x704.png"
-dest_files=["res://.godot/imported/awakening_creche_foreground_960x704.png-39e02d954fd4a08f253d1aba6c28bcde.ctex"]
 
 [params]
 

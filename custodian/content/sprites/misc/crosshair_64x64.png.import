@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://6y4pj114mk8m"
-path="res://.godot/imported/crosshair_64x64.png-c012f24cbfa0ead662671a7d20cafacc.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/misc/crosshair_64x64.png"
-dest_files=["res://.godot/imported/crosshair_64x64.png-c012f24cbfa0ead662671a7d20cafacc.ctex"]
 
 [params]
 

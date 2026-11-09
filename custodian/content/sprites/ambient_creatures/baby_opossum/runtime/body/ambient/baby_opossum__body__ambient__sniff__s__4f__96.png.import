@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dseqtvh8vvuob"
-path="res://.godot/imported/baby_opossum__body__ambient__sniff__s__4f__96.png-f9e25b0166b123bc9d6700a98782db4e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/ambient_creatures/baby_opossum/runtime/body/ambient/baby_opossum__body__ambient__sniff__s__4f__96.png"
-dest_files=["res://.godot/imported/baby_opossum__body__ambient__sniff__s__4f__96.png-f9e25b0166b123bc9d6700a98782db4e.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://da12osdmgchp1"
-path="res://.godot/imported/operator__body__unarmed__critical_falcon_execution_01__w__8f__96.png-bfc90fc2847e894217ad0b69f631fd81.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/new_operator/modular/critical/operator__body__unarmed__critical_falcon_execution_01__w__8f__96.png"
-dest_files=["res://.godot/imported/operator__body__unarmed__critical_falcon_execution_01__w__8f__96.png-bfc90fc2847e894217ad0b69f631fd81.ctex"]
 
 [params]
 

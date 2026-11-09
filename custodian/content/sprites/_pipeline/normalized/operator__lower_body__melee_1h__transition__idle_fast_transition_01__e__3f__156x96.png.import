@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dodor0x31iq0h"
-path="res://.godot/imported/operator__lower_body__melee_1h__transition__idle_fast_transition_01__e__3f__156x96.png-2517fd727c90b5a613b25c9638cdb6df.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/normalized/operator__lower_body__melee_1h__transition__idle_fast_transition_01__e__3f__156x96.png"
-dest_files=["res://.godot/imported/operator__lower_body__melee_1h__transition__idle_fast_transition_01__e__3f__156x96.png-2517fd727c90b5a613b25c9638cdb6df.ctex"]
 
 [params]
 

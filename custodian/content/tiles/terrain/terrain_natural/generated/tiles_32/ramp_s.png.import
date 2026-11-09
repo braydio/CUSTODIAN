@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dlepq1cg1mign"
-path="res://.godot/imported/ramp_s.png-0ff4df5858a51a41a81691372f3745f4.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/tiles_32/ramp_s.png"
-dest_files=["res://.godot/imported/ramp_s.png-0ff4df5858a51a41a81691372f3745f4.ctex"]
 
 [params]
 

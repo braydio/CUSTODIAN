@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://btvao4oj74o87"
-path="res://.godot/imported/operator__weapon__sidearm_pistol__draw_sidearm_01__sw__5f__96.png-e51029f3eaa51c3897b544c1b829fefd.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/new_operator/modular/sidearm/operator__weapon__sidearm_pistol__draw_sidearm_01__sw__5f__96.png"
-dest_files=["res://.godot/imported/operator__weapon__sidearm_pistol__draw_sidearm_01__sw__5f__96.png-e51029f3eaa51c3897b544c1b829fefd.ctex"]
 
 [params]
 

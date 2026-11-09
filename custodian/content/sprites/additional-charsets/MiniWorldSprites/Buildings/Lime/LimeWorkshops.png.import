@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://t04i1xjmg5bf"
-path="res://.godot/imported/LimeWorkshops.png-cc0b0b04136d3d48aae7cfb8319ad832.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Lime/LimeWorkshops.png"
-dest_files=["res://.godot/imported/LimeWorkshops.png-cc0b0b04136d3d48aae7cfb8319ad832.ctex"]
 
 [params]
 

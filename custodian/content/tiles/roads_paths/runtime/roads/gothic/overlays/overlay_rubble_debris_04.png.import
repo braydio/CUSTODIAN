@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c3knbwxnw86pi"
-path="res://.godot/imported/overlay_rubble_debris_04.png-67a0bba7fc057a2a439fcce548f31345.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/roads_paths/runtime/roads/gothic/overlays/overlay_rubble_debris_04.png"
-dest_files=["res://.godot/imported/overlay_rubble_debris_04.png-67a0bba7fc057a2a439fcce548f31345.ctex"]
 
 [params]
 

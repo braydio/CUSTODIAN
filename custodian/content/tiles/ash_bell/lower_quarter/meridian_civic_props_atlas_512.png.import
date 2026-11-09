@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://wm7pyiuxot8o"
-path="res://.godot/imported/meridian_civic_props_atlas_512.png-492a2fd97082869bc5f7cc4c8755fbdf.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/ash_bell/lower_quarter/meridian_civic_props_atlas_512.png"
-dest_files=["res://.godot/imported/meridian_civic_props_atlas_512.png-492a2fd97082869bc5f7cc4c8755fbdf.ctex"]
 
 [params]
 

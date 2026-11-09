@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bbmyoqgt4q81h"
-path="res://.godot/imported/enemy_brawler__body__melee__fast-windup_01__s__6f__128.png-be4781fceb904f38343bde092fa59960.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_brawler/enemy_brawler__body__melee__fast-windup_01__s__6f__128.png"
-dest_files=["res://.godot/imported/enemy_brawler__body__melee__fast-windup_01__s__6f__128.png-be4781fceb904f38343bde092fa59960.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d0qsox5ltp13l"
-path="res://.godot/imported/district_transfer_frame__fx__structure__contact_shadow__omni__1f__192x96.png-9e46234fd0b11404ce295fdc8caaba9e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/structure/district_transfer_frame/runtime/fx/structure/district_transfer_frame__fx__structure__contact_shadow__omni__1f__192x96.png"
-dest_files=["res://.godot/imported/district_transfer_frame__fx__structure__contact_shadow__omni__1f__192x96.png-9e46234fd0b11404ce295fdc8caaba9e.ctex"]
 
 [params]
 

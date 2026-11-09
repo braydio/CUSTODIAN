@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bfp1g4yhkwgvx"
-path="res://.godot/imported/SpearmanLime.png-9db0f569d1c1b6a822f945b0716417ae.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Soldiers/Melee/LimeMelee/SpearmanLime.png"
-dest_files=["res://.godot/imported/SpearmanLime.png-9db0f569d1c1b6a822f945b0716417ae.ctex"]
 
 [params]
 

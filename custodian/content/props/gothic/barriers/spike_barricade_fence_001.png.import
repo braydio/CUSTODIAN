@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dryhqveovah4i"
-path="res://.godot/imported/spike_barricade_fence_001.png-5377bf9ad553126cf232fb95ce8bfb74.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/gothic/barriers/spike_barricade_fence_001.png"
-dest_files=["res://.godot/imported/spike_barricade_fence_001.png-5377bf9ad553126cf232fb95ce8bfb74.ctex"]
 
 [params]
 

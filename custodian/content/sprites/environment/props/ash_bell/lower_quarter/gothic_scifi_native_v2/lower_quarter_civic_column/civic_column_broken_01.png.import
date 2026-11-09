@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c1pnn3gtra57u"
-path="res://.godot/imported/civic_column_broken_01.png-0a5dda275c07347a266168e87175dddb.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_civic_column/civic_column_broken_01.png"
-dest_files=["res://.godot/imported/civic_column_broken_01.png-0a5dda275c07347a266168e87175dddb.ctex"]
 
 [params]
 

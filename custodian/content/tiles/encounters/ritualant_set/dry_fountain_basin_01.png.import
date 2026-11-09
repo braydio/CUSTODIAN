@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://def5k5volpv0y"
-path="res://.godot/imported/dry_fountain_basin_01.png-5d253511a33c5f85ebdc16b5ea9f47c6.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/dry_fountain_basin_01.png"
-dest_files=["res://.godot/imported/dry_fountain_basin_01.png-5d253511a33c5f85ebdc16b5ea9f47c6.ctex"]
 
 [params]
 

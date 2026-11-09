@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bh847h1rstkxv"
-path="res://.godot/imported/arch_fragment_01.png-96b449f9ac7657906ea2e78c7306412d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_arch_fragment/arch_fragment_01.png"
-dest_files=["res://.godot/imported/arch_fragment_01.png-96b449f9ac7657906ea2e78c7306412d.ctex"]
 
 [params]
 

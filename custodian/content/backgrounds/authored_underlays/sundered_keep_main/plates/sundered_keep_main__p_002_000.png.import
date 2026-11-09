@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://sakhnvwkhbhb"
-path="res://.godot/imported/sundered_keep_main__p_002_000.png-a88a310963157441be61ac4ff13b3acf.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/authored_underlays/sundered_keep_main/plates/sundered_keep_main__p_002_000.png"
-dest_files=["res://.godot/imported/sundered_keep_main__p_002_000.png-a88a310963157441be61ac4ff13b3acf.ctex"]
 
 [params]
 

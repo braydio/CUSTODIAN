@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dvx3aj0d0e64a"
-path="res://.godot/imported/cliff_shadow_32.png-59fad5fb05b6b88e9118f64df0904ec2.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/elevation/industrial/cliff_shadow_32.png"
-dest_files=["res://.godot/imported/cliff_shadow_32.png-59fad5fb05b6b88e9118f64df0904ec2.ctex"]
 
 [params]
 

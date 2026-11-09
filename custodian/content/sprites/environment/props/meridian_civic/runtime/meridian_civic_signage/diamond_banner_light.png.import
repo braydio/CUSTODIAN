@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ccmqgirqblwe8"
-path="res://.godot/imported/diamond_banner_light.png-305cc20c44ed72631babbec44ecf4c00.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_signage/diamond_banner_light.png"
-dest_files=["res://.godot/imported/diamond_banner_light.png-305cc20c44ed72631babbec44ecf4c00.ctex"]
 
 [params]
 

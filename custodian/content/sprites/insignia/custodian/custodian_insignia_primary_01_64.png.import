@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dn0yu21p3yxlr"
-path="res://.godot/imported/custodian_insignia_primary_01_64.png-f49fa529530eafc584c17d88ea26eda3.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/insignia/custodian/custodian_insignia_primary_01_64.png"
-dest_files=["res://.godot/imported/custodian_insignia_primary_01_64.png-f49fa529530eafc584c17d88ea26eda3.ctex"]
 
 [params]
 

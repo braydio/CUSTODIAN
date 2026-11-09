@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b66tyswtmmj2"
-path="res://.godot/imported/spark-preview5.png-d34ff739dad57558c714a172d05d6899.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/effects/source/spells/Pixelart/spark/sprites/spark-preview5.png"
-dest_files=["res://.godot/imported/spark-preview5.png-d34ff739dad57558c714a172d05d6899.ctex"]
 
 [params]
 

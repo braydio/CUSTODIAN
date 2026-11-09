@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c4lpapd7epbcm"
-path="res://.godot/imported/unnarrived_apparition_group_01.png-7404de1ed79a2db3ea79eec048f4b6f7.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/unnarrived_apparition_group_01.png"
-dest_files=["res://.godot/imported/unnarrived_apparition_group_01.png-7404de1ed79a2db3ea79eec048f4b6f7.ctex"]
 
 [params]
 

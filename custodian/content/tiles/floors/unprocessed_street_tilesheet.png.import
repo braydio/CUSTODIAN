@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://icybsx2bmov"
-path="res://.godot/imported/unprocessed_street_tilesheet.png-8d7588f4e830166815f6f74319386613.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/floors/unprocessed_street_tilesheet.png"
-dest_files=["res://.godot/imported/unprocessed_street_tilesheet.png-8d7588f4e830166815f6f74319386613.ctex"]
 
 [params]
 

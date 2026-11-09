@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dxbaod22olwk4"
-path="res://.godot/imported/ocean_mist_strip_left.png-f746e19a2775e24873eab89800bffaa1.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/approach/parallax/ocean_mist_strip_left.png"
-dest_files=["res://.godot/imported/ocean_mist_strip_left.png-f746e19a2775e24873eab89800bffaa1.ctex"]
 
 [params]
 

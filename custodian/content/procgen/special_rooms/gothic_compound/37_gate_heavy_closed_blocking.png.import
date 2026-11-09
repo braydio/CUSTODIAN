@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dquxsv3upb1hs"
-path="res://.godot/imported/37_gate_heavy_closed_blocking.png-21164d583724b0ee99e485c95f7979ec.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/37_gate_heavy_closed_blocking.png"
-dest_files=["res://.godot/imported/37_gate_heavy_closed_blocking.png-21164d583724b0ee99e485c95f7979ec.ctex"]
 
 [params]
 

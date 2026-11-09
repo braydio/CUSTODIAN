@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cx68ca2fw5s23"
-path="res://.godot/imported/portal_ring_01.png-6c5b0dc86172cb0d753eb6e120adf697.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/ruins/portal_ring_01.png"
-dest_files=["res://.godot/imported/portal_ring_01.png-6c5b0dc86172cb0d753eb6e120adf697.ctex"]
 
 [params]
 

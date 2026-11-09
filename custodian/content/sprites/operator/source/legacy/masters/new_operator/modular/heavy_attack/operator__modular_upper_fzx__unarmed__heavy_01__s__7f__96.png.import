@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bl2xn80gdqcbs"
-path="res://.godot/imported/operator__modular_upper_fzx__unarmed__heavy_01__s__7f__96.png-04b1fe5a707bc28ebe9ec44231842882.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/new_operator/modular/heavy_attack/operator__modular_upper_fzx__unarmed__heavy_01__s__7f__96.png"
-dest_files=["res://.godot/imported/operator__modular_upper_fzx__unarmed__heavy_01__s__7f__96.png-04b1fe5a707bc28ebe9ec44231842882.ctex"]
 
 [params]
 

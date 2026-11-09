@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dgjw058jc1eu0"
-path="res://.godot/imported/compound_gothic_sheet.png-be2865d41f4f92722355f893344ce5c6.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/source/gothic_compound/compound_gothic_sheet.png"
-dest_files=["res://.godot/imported/compound_gothic_sheet.png-be2865d41f4f92722355f893344ce5c6.ctex"]
 
 [params]
 

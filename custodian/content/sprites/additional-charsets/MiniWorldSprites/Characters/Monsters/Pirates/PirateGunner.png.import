@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://btfkygjiqsk2p"
-path="res://.godot/imported/PirateGunner.png-8f521a83decab0903554b9f9774c75ad.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Monsters/Pirates/PirateGunner.png"
-dest_files=["res://.godot/imported/PirateGunner.png-8f521a83decab0903554b9f9774c75ad.ctex"]
 
 [params]
 

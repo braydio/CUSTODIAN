@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bwyntu0tnnqnp"
-path="res://.godot/imported/rock_plateau_raised_32.png-58ef3176f1de02b1dc9f375baa91a096.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/procgen/elevated_world/archive/pre_elevated_world_v1/rock_plateau_raised_32.png"
-dest_files=["res://.godot/imported/rock_plateau_raised_32.png-58ef3176f1de02b1dc9f375baa91a096.ctex"]
 
 [params]
 

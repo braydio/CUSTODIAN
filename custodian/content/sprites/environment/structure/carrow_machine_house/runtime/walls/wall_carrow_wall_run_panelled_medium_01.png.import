@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dyg02w3acon4l"
-path="res://.godot/imported/wall_carrow_wall_run_panelled_medium_01.png-302ac177f91cb4a5c845c38baa974289.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_wall_run_panelled_medium_01.png"
-dest_files=["res://.godot/imported/wall_carrow_wall_run_panelled_medium_01.png-302ac177f91cb4a5c845c38baa974289.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://4gg35lb2ae7i"
-path="res://.godot/imported/grunt_stagger_01_e_5f_96.png-b6cd0e486bfd449a87066ad751bb96aa.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_grunt/source_sheets/grunt_stagger_01_e_5f_96.png"
-dest_files=["res://.godot/imported/grunt_stagger_01_e_5f_96.png-b6cd0e486bfd449a87066ad751bb96aa.ctex"]
 
 [params]
 

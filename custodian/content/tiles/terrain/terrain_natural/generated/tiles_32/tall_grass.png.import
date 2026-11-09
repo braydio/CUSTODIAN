@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ce5dkpoaoxpbd"
-path="res://.godot/imported/tall_grass.png-34a174a0cde6a9c13d2e6c743f0fd8de.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/tiles_32/tall_grass.png"
-dest_files=["res://.godot/imported/tall_grass.png-34a174a0cde6a9c13d2e6c743f0fd8de.ctex"]
 
 [params]
 

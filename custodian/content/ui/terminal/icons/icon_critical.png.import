@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cun1f6v7b7npl"
-path="res://.godot/imported/icon_critical.png-c68ed7bd53f5389bfa696b2807a4e6ad.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/icons/icon_critical.png"
-dest_files=["res://.godot/imported/icon_critical.png-c68ed7bd53f5389bfa696b2807a4e6ad.ctex"]
 
 [params]
 

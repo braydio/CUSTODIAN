@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bv03trvxpq4xk"
-path="res://.godot/imported/54_decal_shadow_smoke_dark.png-d8857ae384cd7fc8c425c887b42f0377.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/54_decal_shadow_smoke_dark.png"
-dest_files=["res://.godot/imported/54_decal_shadow_smoke_dark.png-d8857ae384cd7fc8c425c887b42f0377.ctex"]
 
 [params]
 

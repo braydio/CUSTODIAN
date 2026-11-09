@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://frtk2iin2srn"
-path="res://.godot/imported/16_banner_black_torn.png-198a4225a4e0a4a2d0ef578d1193fb7f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/16_banner_black_torn.png"
-dest_files=["res://.godot/imported/16_banner_black_torn.png-198a4225a4e0a4a2d0ef578d1193fb7f.ctex"]
 
 [params]
 

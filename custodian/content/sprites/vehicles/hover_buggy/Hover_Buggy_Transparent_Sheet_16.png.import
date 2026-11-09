@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://didnc6o4mnajp"
-path="res://.godot/imported/Hover_Buggy_Transparent_Sheet_16.png-00b6de8618be26951dc037b4437f1325.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/vehicles/hover_buggy/Hover_Buggy_Transparent_Sheet_16.png"
-dest_files=["res://.godot/imported/Hover_Buggy_Transparent_Sheet_16.png-00b6de8618be26951dc037b4437f1325.ctex"]
 
 [params]
 

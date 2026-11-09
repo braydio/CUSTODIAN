@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b5w1nhipbn37c"
-path="res://.godot/imported/command_line_frame_9slice.png-028305cd7d62b225312460b2eb28de0c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/command_line/command_line_frame_9slice.png"
-dest_files=["res://.godot/imported/command_line_frame_9slice.png-028305cd7d62b225312460b2eb28de0c.ctex"]
 
 [params]
 

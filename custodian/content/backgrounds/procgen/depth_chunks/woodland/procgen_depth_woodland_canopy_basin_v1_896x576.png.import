@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://roqwwqtqhjl8"
-path="res://.godot/imported/procgen_depth_woodland_canopy_basin_v1_896x576.png-d3aaa137e9666c713706a576d626ebf3.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/procgen/depth_chunks/woodland/procgen_depth_woodland_canopy_basin_v1_896x576.png"
-dest_files=["res://.godot/imported/procgen_depth_woodland_canopy_basin_v1_896x576.png-d3aaa137e9666c713706a576d626ebf3.ctex"]
 
 [params]
 

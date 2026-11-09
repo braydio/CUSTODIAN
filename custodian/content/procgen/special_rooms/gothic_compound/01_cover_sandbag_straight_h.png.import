@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dp68lhmqy6bbj"
-path="res://.godot/imported/01_cover_sandbag_straight_h.png-bc87ba341803d764abc97e70b2975b90.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/01_cover_sandbag_straight_h.png"
-dest_files=["res://.godot/imported/01_cover_sandbag_straight_h.png-bc87ba341803d764abc97e70b2975b90.ctex"]
 
 [params]
 

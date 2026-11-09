@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cfl825ouifd4p"
-path="res://.godot/imported/terrain_landing_stone_256.png-f06b10b53695fd78584e658c2133a180.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/source/generated/ascent/previews_256/terrain_landing_stone_256.png"
-dest_files=["res://.godot/imported/terrain_landing_stone_256.png-f06b10b53695fd78584e658c2133a180.ctex"]
 
 [params]
 

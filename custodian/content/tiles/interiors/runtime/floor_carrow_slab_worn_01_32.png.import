@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://blo5qe4kdmfl2"
-path="res://.godot/imported/floor_carrow_slab_worn_01_32.png-ac9a2ebcb54aa66d4ec2f4b634c9b64b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/runtime/floor_carrow_slab_worn_01_32.png"
-dest_files=["res://.godot/imported/floor_carrow_slab_worn_01_32.png-ac9a2ebcb54aa66d4ec2f4b634c9b64b.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://tlh5ccelqwbu"
-path="res://.godot/imported/lava.png-455a773565f6e7c7347a119665eb301c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/raw_preview_tiles/lava.png"
-dest_files=["res://.godot/imported/lava.png-455a773565f6e7c7347a119665eb301c.ctex"]
 
 [params]
 

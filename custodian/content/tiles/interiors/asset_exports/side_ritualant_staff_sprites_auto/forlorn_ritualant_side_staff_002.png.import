@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d1pvwh7qniein"
-path="res://.godot/imported/forlorn_ritualant_side_staff_002.png-e25984022dfa7463a975afcc879ad270.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/asset_exports/side_ritualant_staff_sprites_auto/forlorn_ritualant_side_staff_002.png"
-dest_files=["res://.godot/imported/forlorn_ritualant_side_staff_002.png-e25984022dfa7463a975afcc879ad270.ctex"]
 
 [params]
 

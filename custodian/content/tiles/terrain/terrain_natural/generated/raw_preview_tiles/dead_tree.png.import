@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cernqkfrj0kdv"
-path="res://.godot/imported/dead_tree.png-4f47d4a269dffeb6b6233a12540ff7a6.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/raw_preview_tiles/dead_tree.png"
-dest_files=["res://.godot/imported/dead_tree.png-4f47d4a269dffeb6b6233a12540ff7a6.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://3uuhgcj1v3st"
-path="res://.godot/imported/command_terminal__body__interaction__pickup__omni__4f__48.png-28496614fd6bed93da3a88195a6e439b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/terminal/runtime/body/command_terminal__body__interaction__pickup__omni__4f__48.png"
-dest_files=["res://.godot/imported/command_terminal__body__interaction__pickup__omni__4f__48.png-28496614fd6bed93da3a88195a6e439b.ctex"]
 
 [params]
 

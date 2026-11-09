@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b3mvlkp7x480"
-path="res://.godot/imported/grated_industrial_floor_original.png-1f005f85737f88829bf86e0923346756.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/source/grated_industrial_floor_original.png"
-dest_files=["res://.godot/imported/grated_industrial_floor_original.png-1f005f85737f88829bf86e0923346756.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dstfxpc1c0dif"
-path="res://.godot/imported/SwordShort.png-8dfd3758875493b43b71aaecd4be9fef.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Objects/SwordShort.png"
-dest_files=["res://.godot/imported/SwordShort.png-8dfd3758875493b43b71aaecd4be9fef.ctex"]
 
 [params]
 

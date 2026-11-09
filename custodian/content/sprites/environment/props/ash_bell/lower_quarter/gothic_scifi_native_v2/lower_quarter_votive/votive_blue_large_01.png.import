@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d11650bynmtdt"
-path="res://.godot/imported/votive_blue_large_01.png-d8264e9822c35595ddfe5f0b811a7410.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_votive/votive_blue_large_01.png"
-dest_files=["res://.godot/imported/votive_blue_large_01.png-d8264e9822c35595ddfe5f0b811a7410.ctex"]
 
 [params]
 

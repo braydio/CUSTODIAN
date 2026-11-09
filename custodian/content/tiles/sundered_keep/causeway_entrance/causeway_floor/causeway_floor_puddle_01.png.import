@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://71vqtipdi4ri"
-path="res://.godot/imported/causeway_floor_puddle_01.png-4e0b54e3cb89f11b67c62eba54d8d172.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_entrance/causeway_floor/causeway_floor_puddle_01.png"
-dest_files=["res://.godot/imported/causeway_floor_puddle_01.png-4e0b54e3cb89f11b67c62eba54d8d172.ctex"]
 
 [params]
 

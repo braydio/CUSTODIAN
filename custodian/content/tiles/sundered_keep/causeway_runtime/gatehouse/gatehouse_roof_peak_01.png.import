@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://t10oktlk3c0j"
-path="res://.godot/imported/gatehouse_roof_peak_01.png-86ca9ca54049eedcf5b75656c9573a84.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_runtime/gatehouse/gatehouse_roof_peak_01.png"
-dest_files=["res://.godot/imported/gatehouse_roof_peak_01.png-86ca9ca54049eedcf5b75656c9573a84.ctex"]
 
 [params]
 

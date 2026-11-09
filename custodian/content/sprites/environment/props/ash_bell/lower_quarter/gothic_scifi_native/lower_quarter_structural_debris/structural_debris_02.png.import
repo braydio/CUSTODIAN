@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c43844qulsdd"
-path="res://.godot/imported/structural_debris_02.png-53994969224230445ab953de69500bbb.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_structural_debris/structural_debris_02.png"
-dest_files=["res://.godot/imported/structural_debris_02.png-53994969224230445ab953de69500bbb.ctex"]
 
 [params]
 

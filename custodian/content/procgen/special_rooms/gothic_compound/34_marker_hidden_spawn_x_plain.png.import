@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bb2fvo1mmj14h"
-path="res://.godot/imported/34_marker_hidden_spawn_x_plain.png-a0d09721b4bea42cc3c991e94d5e907a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/34_marker_hidden_spawn_x_plain.png"
-dest_files=["res://.godot/imported/34_marker_hidden_spawn_x_plain.png-a0d09721b4bea42cc3c991e94d5e907a.ctex"]
 
 [params]
 

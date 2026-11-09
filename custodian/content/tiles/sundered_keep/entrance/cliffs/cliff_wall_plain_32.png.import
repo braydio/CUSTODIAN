@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c8w7yjhdqbdy"
-path="res://.godot/imported/cliff_wall_plain_32.png-7e43e9ad0fadb7c56792b24fd6458387.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/entrance/cliffs/cliff_wall_plain_32.png"
-dest_files=["res://.godot/imported/cliff_wall_plain_32.png-7e43e9ad0fadb7c56792b24fd6458387.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://de8vbt33tw157"
-path="res://.godot/imported/prop_broken_spire_chunk_01.png-b129ea90a523e88a1f23abe956a9a96c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/props/prop_rubble/prop_broken_spire_chunk_01.png"
-dest_files=["res://.godot/imported/prop_broken_spire_chunk_01.png-b129ea90a523e88a1f23abe956a9a96c.ctex"]
 
 [params]
 

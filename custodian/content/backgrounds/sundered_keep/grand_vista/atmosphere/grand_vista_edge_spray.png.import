@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dcl0nbf7x5g15"
-path="res://.godot/imported/grand_vista_edge_spray.png-00a911c6836e65f6f378957cb5c05a0a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_edge_spray.png"
-dest_files=["res://.godot/imported/grand_vista_edge_spray.png-00a911c6836e65f6f378957cb5c05a0a.ctex"]
 
 [params]
 

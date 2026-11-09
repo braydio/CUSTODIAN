@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ctpj4flnf4v7a"
-path="res://.godot/imported/Walls_Gates.png-18eecbe3e24052f88ab3ce5c10165f27.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/Walls_Gates.png"
-dest_files=["res://.godot/imported/Walls_Gates.png-18eecbe3e24052f88ab3ce5c10165f27.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dnuxfv1cpvyjn"
-path="res://.godot/imported/depth_rocky_upland_talus_ravine_v1.png-dfc8ee976d0a90972ee67aade1853cd3.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/procgen/depth_chunks/depth_rocky_upland_talus_ravine_v1.png"
-dest_files=["res://.godot/imported/depth_rocky_upland_talus_ravine_v1.png-dfc8ee976d0a90972ee67aade1853cd3.ctex"]
 
 [params]
 

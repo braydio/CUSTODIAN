@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bbho41l6h354t"
-path="res://.godot/imported/portal_ring__fx__interaction__arrival_01__omni__12f__161.png-4ef6e875543e064d55957601025df53d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/archive/portal_ring__fx__interaction__arrival_01__omni__12f__161.png"
-dest_files=["res://.godot/imported/portal_ring__fx__interaction__arrival_01__omni__12f__161.png-4ef6e875543e064d55957601025df53d.ctex"]
 
 [params]
 

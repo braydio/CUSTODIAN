@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b2tjncpmuow88"
-path="res://.godot/imported/prop_gate_winch_01.png-4779cd72fef8c18f56f96b42f46eba1a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/props/prop_mechanical/prop_gate_winch_01.png"
-dest_files=["res://.godot/imported/prop_gate_winch_01.png-4779cd72fef8c18f56f96b42f46eba1a.ctex"]
 
 [params]
 

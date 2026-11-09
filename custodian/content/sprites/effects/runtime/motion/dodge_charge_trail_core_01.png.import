@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://mlw0j0n3go5q"
-path="res://.godot/imported/dodge_charge_trail_core_01.png-c4c8d4234ce7640c8533fe6e42e8ebc7.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/effects/runtime/motion/dodge_charge_trail_core_01.png"
-dest_files=["res://.godot/imported/dodge_charge_trail_core_01.png-c4c8d4234ce7640c8533fe6e42e8ebc7.ctex"]
 
 [params]
 

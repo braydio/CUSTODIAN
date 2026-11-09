@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://caxaf8rd56tu2"
-path="res://.godot/imported/10_terrain_rocky_dirt_scatter_c.png-35b76db785d1e552c7ed85538d699a18.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/10_terrain_rocky_dirt_scatter_c.png"
-dest_files=["res://.godot/imported/10_terrain_rocky_dirt_scatter_c.png-35b76db785d1e552c7ed85538d699a18.ctex"]
 
 [params]
 

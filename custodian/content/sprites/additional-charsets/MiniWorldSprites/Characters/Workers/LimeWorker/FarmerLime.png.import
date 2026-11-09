@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cdfruhuupewt7"
-path="res://.godot/imported/FarmerLime.png-6738ede7bcd957ccc4df20bdc67396be.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Workers/LimeWorker/FarmerLime.png"
-dest_files=["res://.godot/imported/FarmerLime.png-6738ede7bcd957ccc4df20bdc67396be.ctex"]
 
 [params]
 

@@ -1,0 +1,106 @@
+{
+  "transaction_id": "20260906T114842",
+  "state": "COMMITTED",
+  "sources": [
+    {
+      "binding_id": "lower_body",
+      "old_path": "custodian/content/sprites/operator/source/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__s__12f__96.png",
+      "old_sha256": "1e402ad2d129b4541c14092319aa820ea17a4539ddc088f94632f224986d4ca9",
+      "target_path": "custodian/content/sprites/operator/source/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__s__12f__96.png",
+      "target_sha256": "89711c18f1cce13f83232387c8da8220cdede0b7c429d578dbba47b87286710f",
+      "backup_path": ".ai/operator_animation_workbench/unarmed/locomotion/run_01/s/transactions/20260906T114842/backups/sources/lower_body.png",
+      "import_backup_path": ".ai/operator_animation_workbench/unarmed/locomotion/run_01/s/transactions/20260906T114842/backups/sources/lower_body.png.import"
+    },
+    {
+      "binding_id": "upper_body",
+      "old_path": "custodian/content/sprites/operator/source/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__s__12f__96.png",
+      "old_sha256": "5e712ac18e4deadc02888b880194ef7f6f5d32cddd05b38cad601815885b3392",
+      "target_path": "custodian/content/sprites/operator/source/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__s__12f__96.png",
+      "target_sha256": "311df966a1445c9c67a13bb8608a8329a14f8854137d50c869da60c024042c8a",
+      "backup_path": ".ai/operator_animation_workbench/unarmed/locomotion/run_01/s/transactions/20260906T114842/backups/sources/upper_body.png",
+      "import_backup_path": ".ai/operator_animation_workbench/unarmed/locomotion/run_01/s/transactions/20260906T114842/backups/sources/upper_body.png.import"
+    }
+  ],
+  "resources": [
+    {
+      "path": "custodian/game/actors/operator/operator_runtime_frames.tres",
+      "old_sha256": "18b46d9e5ca66fac0fe24a7e69fc76534bb03d2dd548e5933d4df0f40bbb4948",
+      "target_sha256": "18b46d9e5ca66fac0fe24a7e69fc76534bb03d2dd548e5933d4df0f40bbb4948",
+      "backup_path": ".ai/operator_animation_workbench/unarmed/locomotion/run_01/s/transactions/20260906T114842/backups/resources/operator_runtime_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_weapon_frames.tres",
+      "old_sha256": "8cea5358d5cdd51e3e770e468e8f5e44db1b041c3e0423b6bd1f3130c2246f01",
+      "target_sha256": "8cea5358d5cdd51e3e770e468e8f5e44db1b041c3e0423b6bd1f3130c2246f01",
+      "backup_path": ".ai/operator_animation_workbench/unarmed/locomotion/run_01/s/transactions/20260906T114842/backups/resources/operator_weapon_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_melee_overlay_frames.tres",
+      "old_sha256": "148f5774c77f491def605ab6ee63297f5503cdccc503c2c65515dc0e959d2bc7",
+      "target_sha256": "148f5774c77f491def605ab6ee63297f5503cdccc503c2c65515dc0e959d2bc7",
+      "backup_path": ".ai/operator_animation_workbench/unarmed/locomotion/run_01/s/transactions/20260906T114842/backups/resources/operator_melee_overlay_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_ranged_fx_frames.tres",
+      "old_sha256": "17e088cfcee8edafeee524af193f5d7ff3ecb47ce96e102f839ee14cc81a766f",
+      "target_sha256": "17e088cfcee8edafeee524af193f5d7ff3ecb47ce96e102f839ee14cc81a766f",
+      "backup_path": ".ai/operator_animation_workbench/unarmed/locomotion/run_01/s/transactions/20260906T114842/backups/resources/operator_ranged_fx_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_modular_lower_body_frames.tres",
+      "old_sha256": "42d5ee01968939b150863ff86277ed18fc4599e79c4706a6c9950e271d5618b5",
+      "target_sha256": "42d5ee01968939b150863ff86277ed18fc4599e79c4706a6c9950e271d5618b5",
+      "backup_path": ".ai/operator_animation_workbench/unarmed/locomotion/run_01/s/transactions/20260906T114842/backups/resources/operator_modular_lower_body_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_modular_upper_body_frames.tres",
+      "old_sha256": "223f1437da5d784d1ae5ef025deb20433c28733e9197c4de6a6ca9eba5714e10",
+      "target_sha256": "223f1437da5d784d1ae5ef025deb20433c28733e9197c4de6a6ca9eba5714e10",
+      "backup_path": ".ai/operator_animation_workbench/unarmed/locomotion/run_01/s/transactions/20260906T114842/backups/resources/operator_modular_upper_body_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_modular_sidearm_frames.tres",
+      "old_sha256": "9b7137b5c0aed0209afd613ef09e5d66aad6dda5bbebf9c1c34b2f79206d55ea",
+      "target_sha256": "9b7137b5c0aed0209afd613ef09e5d66aad6dda5bbebf9c1c34b2f79206d55ea",
+      "backup_path": ".ai/operator_animation_workbench/unarmed/locomotion/run_01/s/transactions/20260906T114842/backups/resources/operator_modular_sidearm_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_modular_upper_fx_frames.tres",
+      "old_sha256": "f2ff2e0f7dd11da98d12b58efd76646fbb7fb99f46fd45eb16bdf998142d02ee",
+      "target_sha256": "f2ff2e0f7dd11da98d12b58efd76646fbb7fb99f46fd45eb16bdf998142d02ee",
+      "backup_path": ".ai/operator_animation_workbench/unarmed/locomotion/run_01/s/transactions/20260906T114842/backups/resources/operator_modular_upper_fx_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_modular_cape_frames.tres",
+      "old_sha256": "b26ca7064847d5a4eb38ff0c05a3e2adbc4fb90e9bfa0b7e379306aac71d6dd1",
+      "target_sha256": "b26ca7064847d5a4eb38ff0c05a3e2adbc4fb90e9bfa0b7e379306aac71d6dd1",
+      "backup_path": ".ai/operator_animation_workbench/unarmed/locomotion/run_01/s/transactions/20260906T114842/backups/resources/operator_modular_cape_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_modular_head_frames.tres",
+      "old_sha256": "57afb19a5c18428f5a7a9709e1d89d920f0a9ab73116149d195209171dd970de",
+      "target_sha256": "57afb19a5c18428f5a7a9709e1d89d920f0a9ab73116149d195209171dd970de",
+      "backup_path": ".ai/operator_animation_workbench/unarmed/locomotion/run_01/s/transactions/20260906T114842/backups/resources/operator_modular_head_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_animation_catalog_frames.tres",
+      "old_sha256": "e64aa0788d3cc3490c52736b41c6c54b445beccdac0de0cbe1f5ec7bbe863bed",
+      "target_sha256": "e64aa0788d3cc3490c52736b41c6c54b445beccdac0de0cbe1f5ec7bbe863bed",
+      "backup_path": ".ai/operator_animation_workbench/unarmed/locomotion/run_01/s/transactions/20260906T114842/backups/resources/operator_animation_catalog_frames.tres"
+    }
+  ],
+  "pending_migration": null,
+  "validation_stages_completed": [
+    "source_swap",
+    "runtime_build",
+    "compatibility_resource_generation",
+    "godot_import",
+    "catalog_resource_generation",
+    "validation:--check",
+    "validation:operator_animation_contract_report.py",
+    "validation:operator_animation_workbench_smoke.py",
+    "validation:operator_modular_layers_smoke.gd",
+    "mandatory_validation",
+    "manifest_sync"
+  ]
+}

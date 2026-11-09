@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dwqy4ibghycah"
-path="res://.godot/imported/drowned_basilica_far_depth_b_1536x1024.png-750f0978c446c4474314af17f563d65a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/procgen/drowned_basilica/drowned_basilica_far_depth_b_1536x1024.png"
-dest_files=["res://.godot/imported/drowned_basilica_far_depth_b_1536x1024.png-750f0978c446c4474314af17f563d65a.ctex"]
 
 [params]
 

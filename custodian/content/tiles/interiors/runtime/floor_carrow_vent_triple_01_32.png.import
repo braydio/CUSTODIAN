@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://wdrljv8o0y68"
-path="res://.godot/imported/floor_carrow_vent_triple_01_32.png-5bf48df5181bfd759cfbff70ba1becb6.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/runtime/floor_carrow_vent_triple_01_32.png"
-dest_files=["res://.godot/imported/floor_carrow_vent_triple_01_32.png-5bf48df5181bfd759cfbff70ba1becb6.ctex"]
 
 [params]
 

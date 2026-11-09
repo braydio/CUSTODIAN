@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d3tui1ywjta5i"
-path="res://.godot/imported/dry_shrub.png-71a17a8152075160d3208186c990b38f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/raw_preview_tiles/dry_shrub.png"
-dest_files=["res://.godot/imported/dry_shrub.png-71a17a8152075160d3208186c990b38f.ctex"]
 
 [params]
 

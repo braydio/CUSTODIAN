@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cwn638w3pqp3o"
-path="res://.godot/imported/operator__upper_body__melee_1h__defense__block_loop_01__e__5f__96.png-8ec3093eb04718cd1eb4cf8eb0ffa510.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/normalized/operator__upper_body__melee_1h__defense__block_loop_01__e__5f__96.png"
-dest_files=["res://.godot/imported/operator__upper_body__melee_1h__defense__block_loop_01__e__5f__96.png-8ec3093eb04718cd1eb4cf8eb0ffa510.ctex"]
 
 [params]
 

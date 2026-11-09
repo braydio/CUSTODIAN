@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://440lgqypbi57"
-path="res://.godot/imported/rubble_crescent_01.png-4964fcb2a4fd5d3c7909bfda4d1113fa.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/ruins/extracted/rubble_crescent_01.png"
-dest_files=["res://.godot/imported/rubble_crescent_01.png-4964fcb2a4fd5d3c7909bfda4d1113fa.ctex"]
 
 [params]
 

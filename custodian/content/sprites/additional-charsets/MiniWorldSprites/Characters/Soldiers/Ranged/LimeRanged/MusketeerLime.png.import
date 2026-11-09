@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b2ea7wdesiat6"
-path="res://.godot/imported/MusketeerLime.png-732a1c312ff25cc5027e5c61821b13c5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Soldiers/Ranged/LimeRanged/MusketeerLime.png"
-dest_files=["res://.godot/imported/MusketeerLime.png-732a1c312ff25cc5027e5c61821b13c5.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d1hper23hbrvp"
-path="res://.godot/imported/chain_railing_span.png-f58b66615fff8bdfb5fd1b5071420a74.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_structure/chain_railing_span.png"
-dest_files=["res://.godot/imported/chain_railing_span.png-f58b66615fff8bdfb5fd1b5071420a74.ctex"]
 
 [params]
 

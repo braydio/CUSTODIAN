@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://8jx5gwqc8m3v"
-path="res://.godot/imported/micro_stone_a.png-98145b7e16650370eacba3df028d3afc.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_debris/micro_stone_a.png"
-dest_files=["res://.godot/imported/micro_stone_a.png-98145b7e16650370eacba3df028d3afc.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dj5uy8s0v565t"
-path="res://.godot/imported/meridian_answer_pedestal__body__interaction__idle__omni__1f__96.png-39bfa702689180fb6fe20c5f8d7810b4.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/meridian_answer_pedestal/runtime/body/meridian_answer_pedestal__body__interaction__idle__omni__1f__96.png"
-dest_files=["res://.godot/imported/meridian_answer_pedestal__body__interaction__idle__omni__1f__96.png-39bfa702689180fb6fe20c5f8d7810b4.ctex"]
 
 [params]
 

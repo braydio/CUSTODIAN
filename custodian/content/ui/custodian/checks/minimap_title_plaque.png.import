@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dv6u4jvrovieq"
-path="res://.godot/imported/minimap_title_plaque.png-1637d36f3ab8cd01cdfd1a2619eb5a3b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/custodian/checks/minimap_title_plaque.png"
-dest_files=["res://.godot/imported/minimap_title_plaque.png-1637d36f3ab8cd01cdfd1a2619eb5a3b.ctex"]
 
 [params]
 

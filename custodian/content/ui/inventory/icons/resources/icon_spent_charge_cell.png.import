@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://djmsr612go8bu"
-path="res://.godot/imported/icon_spent_charge_cell.png-f9133401ce123de3dba6b6142502b8b0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/inventory/icons/resources/icon_spent_charge_cell.png"
-dest_files=["res://.godot/imported/icon_spent_charge_cell.png-f9133401ce123de3dba6b6142502b8b0.ctex"]
 
 [params]
 

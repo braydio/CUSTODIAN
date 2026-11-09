@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bx7li2cye5ct3"
-path="res://.godot/imported/wall_pier_01_96.png-dc35741c891dea37beed6b88d57fcc91.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/labyrnth_set/curated/wall_pier_01_96.png"
-dest_files=["res://.godot/imported/wall_pier_01_96.png-dc35741c891dea37beed6b88d57fcc91.ctex"]
 
 [params]
 

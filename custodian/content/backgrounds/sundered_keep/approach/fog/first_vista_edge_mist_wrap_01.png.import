@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://rwlmq3v55dpw"
-path="res://.godot/imported/first_vista_edge_mist_wrap_01.png-2cc1a29c97be899df9e6aaea249db514.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/approach/fog/first_vista_edge_mist_wrap_01.png"
-dest_files=["res://.godot/imported/first_vista_edge_mist_wrap_01.png-2cc1a29c97be899df9e6aaea249db514.ctex"]
 
 [params]
 

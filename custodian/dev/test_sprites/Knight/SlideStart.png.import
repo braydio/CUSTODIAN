@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://nsiikolnoocv"
-path="res://.godot/imported/SlideStart.png-ba51e264da7a6410875d424fb100d223.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://dev/test_sprites/Knight/SlideStart.png"
-dest_files=["res://.godot/imported/SlideStart.png-ba51e264da7a6410875d424fb100d223.ctex"]
 
 [params]
 

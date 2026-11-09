@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://or58okgug5mr"
-path="res://.godot/imported/rear_watchtower_round_01.png-06ee419cf9f27122a553f9c9bdc0403b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/grand_vista/fortress_components/rear_watchtower_round_01.png"
-dest_files=["res://.godot/imported/rear_watchtower_round_01.png-06ee419cf9f27122a553f9c9bdc0403b.ctex"]
 
 [params]
 

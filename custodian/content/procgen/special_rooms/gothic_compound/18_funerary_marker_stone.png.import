@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bysd332s61f2b"
-path="res://.godot/imported/18_funerary_marker_stone.png-d07af6f6079310d2cfc36a5c932c9a94.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/18_funerary_marker_stone.png"
-dest_files=["res://.godot/imported/18_funerary_marker_stone.png-d07af6f6079310d2cfc36a5c932c9a94.ctex"]
 
 [params]
 

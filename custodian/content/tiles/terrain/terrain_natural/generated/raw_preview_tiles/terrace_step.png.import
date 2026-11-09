@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://di1hni7g44d1f"
-path="res://.godot/imported/terrace_step.png-d0fbabd6c743a94b77559a7a5856666c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/raw_preview_tiles/terrace_step.png"
-dest_files=["res://.godot/imported/terrace_step.png-d0fbabd6c743a94b77559a7a5856666c.ctex"]
 
 [params]
 

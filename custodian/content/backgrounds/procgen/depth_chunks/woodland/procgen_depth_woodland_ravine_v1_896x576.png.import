@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://vvb3h2jux8pn"
-path="res://.godot/imported/procgen_depth_woodland_ravine_v1_896x576.png-da82e9d53aada87d550951b53c049286.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/procgen/depth_chunks/woodland/procgen_depth_woodland_ravine_v1_896x576.png"
-dest_files=["res://.godot/imported/procgen_depth_woodland_ravine_v1_896x576.png-da82e9d53aada87d550951b53c049286.ctex"]
 
 [params]
 

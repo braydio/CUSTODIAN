@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bq0txtleip6up"
-path="res://.godot/imported/RedTower.png-41f76a250536e62be65a8fba9e083cd5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Red/RedTower.png"
-dest_files=["res://.godot/imported/RedTower.png-41f76a250536e62be65a8fba9e083cd5.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cyi6bcmn464bl"
-path="res://.godot/imported/gothic_rubble_ruin_01.png-29bf4e2ea217d25f9ddabc22caf1324d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/gothic/rubble_cover_or_ruin_storytelling/gothic_rubble_ruin_01.png"
-dest_files=["res://.godot/imported/gothic_rubble_ruin_01.png-29bf4e2ea217d25f9ddabc22caf1324d.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bvo6px3u3us8"
-path="res://.godot/imported/main_gate_portcullis_open.png-e7bbff06ca4a66040f530f4f04450c89.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/doors_traversal/gates/main_gate_portcullis_open.png"
-dest_files=["res://.godot/imported/main_gate_portcullis_open.png-e7bbff06ca4a66040f530f4f04450c89.ctex"]
 
 [params]
 

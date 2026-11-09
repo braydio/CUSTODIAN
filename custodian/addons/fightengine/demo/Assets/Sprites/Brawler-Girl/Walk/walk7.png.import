@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://yae177dljpyw"
-path="res://.godot/imported/walk7.png-d03f800eaea6e62686f9952e56d857bd.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://addons/fightengine/demo/Assets/Sprites/Brawler-Girl/Walk/walk7.png"
-dest_files=["res://.godot/imported/walk7.png-d03f800eaea6e62686f9952e56d857bd.ctex"]
 
 [params]
 

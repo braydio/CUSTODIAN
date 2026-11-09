@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cfimo3g1oggse"
-path="res://.godot/imported/BowmanTemplate.png-bc9b99a66527efb24e7e252344922573.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Soldiers/Ranged/BowmanTemplate.png"
-dest_files=["res://.godot/imported/BowmanTemplate.png-bc9b99a66527efb24e7e252344922573.ctex"]
 
 [params]
 

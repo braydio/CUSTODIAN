@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ctde8gao0yb10"
-path="res://.godot/imported/29_road_cross_intersection.png-5bcdc0c0d912fc1afcd2945a485d4a7c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/29_road_cross_intersection.png"
-dest_files=["res://.godot/imported/29_road_cross_intersection.png-5bcdc0c0d912fc1afcd2945a485d4a7c.ctex"]
 
 [params]
 

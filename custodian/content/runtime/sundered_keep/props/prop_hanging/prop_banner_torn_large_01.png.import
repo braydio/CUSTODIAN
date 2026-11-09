@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://0okybbyju5cn"
-path="res://.godot/imported/prop_banner_torn_large_01.png-3363fdaf9054d85dc25b495a3582befb.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/props/prop_hanging/prop_banner_torn_large_01.png"
-dest_files=["res://.godot/imported/prop_banner_torn_large_01.png-3363fdaf9054d85dc25b495a3582befb.ctex"]
 
 [params]
 

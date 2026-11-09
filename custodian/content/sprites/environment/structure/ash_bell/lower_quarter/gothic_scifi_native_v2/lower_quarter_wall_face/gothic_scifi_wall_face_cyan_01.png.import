@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c2iapxo1j1rng"
-path="res://.godot/imported/gothic_scifi_wall_face_cyan_01.png-13629cdae63fdeb083ed10a4f5375c2a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_wall_face/gothic_scifi_wall_face_cyan_01.png"
-dest_files=["res://.godot/imported/gothic_scifi_wall_face_cyan_01.png-13629cdae63fdeb083ed10a4f5375c2a.ctex"]
 
 [params]
 

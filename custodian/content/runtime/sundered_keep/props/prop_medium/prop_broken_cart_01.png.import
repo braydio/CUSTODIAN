@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b80axsgrh2bc5"
-path="res://.godot/imported/prop_broken_cart_01.png-5f1047146c2134c103de419eb2b891b2.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/props/prop_medium/prop_broken_cart_01.png"
-dest_files=["res://.godot/imported/prop_broken_cart_01.png-5f1047146c2134c103de419eb2b891b2.ctex"]
 
 [params]
 

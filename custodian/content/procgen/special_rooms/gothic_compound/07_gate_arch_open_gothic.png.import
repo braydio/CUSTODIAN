@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cjq2k37wii24r"
-path="res://.godot/imported/07_gate_arch_open_gothic.png-236a7d3dbd799eb26e115b6a54f0283e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/07_gate_arch_open_gothic.png"
-dest_files=["res://.godot/imported/07_gate_arch_open_gothic.png-236a7d3dbd799eb26e115b6a54f0283e.ctex"]
 
 [params]
 

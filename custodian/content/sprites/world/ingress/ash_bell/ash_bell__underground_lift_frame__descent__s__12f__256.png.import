@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://kpfavoifwjns"
-path="res://.godot/imported/ash_bell__underground_lift_frame__descent__s__12f__256.png-b5e537a7df2dfab9a6df110f35ec2cb9.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/world/ingress/ash_bell/ash_bell__underground_lift_frame__descent__s__12f__256.png"
-dest_files=["res://.godot/imported/ash_bell__underground_lift_frame__descent__s__12f__256.png-b5e537a7df2dfab9a6df110f35ec2cb9.ctex"]
 
 [params]
 

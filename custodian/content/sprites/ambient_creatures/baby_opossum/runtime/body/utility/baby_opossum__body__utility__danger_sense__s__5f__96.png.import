@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cnu8hirmn7c4k"
-path="res://.godot/imported/baby_opossum__body__utility__danger_sense__s__5f__96.png-ac3685d9dfd48380521a9b1fe95e39eb.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/ambient_creatures/baby_opossum/runtime/body/utility/baby_opossum__body__utility__danger_sense__s__5f__96.png"
-dest_files=["res://.godot/imported/baby_opossum__body__utility__danger_sense__s__5f__96.png-ac3685d9dfd48380521a9b1fe95e39eb.ctex"]
 
 [params]
 

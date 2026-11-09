@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ko0tn02coj1y"
-path="res://.godot/imported/sandstone_cap_cave_small_1504x1024.png-63652fd3b427c5cbc1741a4f4a51d07f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/terrain/sandstone/sandstone_cap_cave_small_1504x1024.png"
-dest_files=["res://.godot/imported/sandstone_cap_cave_small_1504x1024.png-63652fd3b427c5cbc1741a4f4a51d07f.ctex"]
 
 [params]
 

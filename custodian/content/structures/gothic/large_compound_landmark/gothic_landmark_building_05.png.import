@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://4iwr2amfennu"
-path="res://.godot/imported/gothic_landmark_building_05.png-da0c17addf65e5cf8909ffbc56e64ba0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/structures/gothic/large_compound_landmark/gothic_landmark_building_05.png"
-dest_files=["res://.godot/imported/gothic_landmark_building_05.png-da0c17addf65e5cf8909ffbc56e64ba0.ctex"]
 
 [params]
 

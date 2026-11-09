@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b2bdhdvc6gfwv"
-path="res://.godot/imported/carbine_mk1_projectile_travel_loop_01.png-4d4f259e1e0c307a92c3c11c840491a9.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/effects/weapons/carbine_mk1/carbine_mk1_projectile_travel_loop_01.png"
-dest_files=["res://.godot/imported/carbine_mk1_projectile_travel_loop_01.png-4d4f259e1e0c307a92c3c11c840491a9.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c2gs8lx8r2v4n"
-path="res://.godot/imported/move_default.png-f7704d525e5871792dac62cdbfee3e26.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/vehicles/hover_buggy/move_default.png"
-dest_files=["res://.godot/imported/move_default.png-f7704d525e5871792dac62cdbfee3e26.ctex"]
 
 [params]
 

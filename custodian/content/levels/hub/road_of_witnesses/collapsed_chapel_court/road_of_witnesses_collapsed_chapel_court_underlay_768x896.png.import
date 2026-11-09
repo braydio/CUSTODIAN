@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b8jirw27qnwu6"
-path="res://.godot/imported/road_of_witnesses_collapsed_chapel_court_underlay_768x896.png-95434d28a1ab195022b2928b950802d8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/levels/hub/road_of_witnesses/collapsed_chapel_court/road_of_witnesses_collapsed_chapel_court_underlay_768x896.png"
-dest_files=["res://.godot/imported/road_of_witnesses_collapsed_chapel_court_underlay_768x896.png-95434d28a1ab195022b2928b950802d8.ctex"]
 
 [params]
 

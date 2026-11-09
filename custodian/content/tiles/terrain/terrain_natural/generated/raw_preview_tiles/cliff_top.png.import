@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dpf1ddg7wcjtd"
-path="res://.godot/imported/cliff_top.png-5b0bd9976c93fbc8dbde80fe76af5e03.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/raw_preview_tiles/cliff_top.png"
-dest_files=["res://.godot/imported/cliff_top.png-5b0bd9976c93fbc8dbde80fe76af5e03.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b806tb5g0b4dk"
-path="res://.godot/imported/operator__body__unarmed__fast_01__e__3f__96.png-d28837d9577571a22828243ac41ababa.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/normalized/operator__body__unarmed__fast_01__e__3f__96.png"
-dest_files=["res://.godot/imported/operator__body__unarmed__fast_01__e__3f__96.png-d28837d9577571a22828243ac41ababa.ctex"]
 
 [params]
 

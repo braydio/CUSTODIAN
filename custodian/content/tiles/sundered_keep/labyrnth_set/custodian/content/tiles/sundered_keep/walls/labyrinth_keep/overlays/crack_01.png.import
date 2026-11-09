@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b2inrm37t421g"
-path="res://.godot/imported/crack_01.png-da01f091b162440118115a09fe683b00.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/labyrnth_set/custodian/content/tiles/sundered_keep/walls/labyrinth_keep/overlays/crack_01.png"
-dest_files=["res://.godot/imported/crack_01.png-da01f091b162440118115a09fe683b00.ctex"]
 
 [params]
 

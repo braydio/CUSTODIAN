@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://blu4skcqkqec2"
-path="res://.godot/imported/broken_gap_edge_32.png-e6027353e8bb96298b52caf9e926c319.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/procgen/elevated_world/archive/pre_elevated_world_v1/broken_gap_edge_32.png"
-dest_files=["res://.godot/imported/broken_gap_edge_32.png-e6027353e8bb96298b52caf9e926c319.ctex"]
 
 [params]
 

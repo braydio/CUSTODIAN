@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://63ptghvxcst4"
-path="res://.godot/imported/chasm_edge_s_1024.png-f080451be01c8ecc4bef4bc1f797d0ea.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/source/generated/chasm_bridge/normalized_1024/chasm_edge_s_1024.png"
-dest_files=["res://.godot/imported/chasm_edge_s_1024.png-f080451be01c8ecc4bef4bc1f797d0ea.ctex"]
 
 [params]
 

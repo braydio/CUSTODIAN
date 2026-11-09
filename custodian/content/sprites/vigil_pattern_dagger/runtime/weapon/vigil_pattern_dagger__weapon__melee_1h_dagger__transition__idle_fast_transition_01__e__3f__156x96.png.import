@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dm0rail4ooq8q"
-path="res://.godot/imported/vigil_pattern_dagger__weapon__melee_1h_dagger__transition__idle_fast_transition_01__e__3f__156x96.png-bd744aaf62881562e765cbe98af6410b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/vigil_pattern_dagger/runtime/weapon/vigil_pattern_dagger__weapon__melee_1h_dagger__transition__idle_fast_transition_01__e__3f__156x96.png"
-dest_files=["res://.godot/imported/vigil_pattern_dagger__weapon__melee_1h_dagger__transition__idle_fast_transition_01__e__3f__156x96.png-bd744aaf62881562e765cbe98af6410b.ctex"]
 
 [params]
 

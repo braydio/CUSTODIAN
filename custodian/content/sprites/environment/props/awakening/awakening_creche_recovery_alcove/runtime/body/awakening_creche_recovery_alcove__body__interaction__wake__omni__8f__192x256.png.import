@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cw7wjq3iahpi7"
-path="res://.godot/imported/awakening_creche_recovery_alcove__body__interaction__wake__omni__8f__192x256.png-4c573182ba87e312d619de78317cc136.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/awakening/awakening_creche_recovery_alcove/runtime/body/awakening_creche_recovery_alcove__body__interaction__wake__omni__8f__192x256.png"
-dest_files=["res://.godot/imported/awakening_creche_recovery_alcove__body__interaction__wake__omni__8f__192x256.png-4c573182ba87e312d619de78317cc136.ctex"]
 
 [params]
 

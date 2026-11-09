@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cqvdo3xdkyvkq"
-path="res://.godot/imported/prop_banquet_table_broken_01.png-f63aad6aa072d22e8ef8e5b00ae50e28.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/props/prop_table/prop_banquet_table_broken_01.png"
-dest_files=["res://.godot/imported/prop_banquet_table_broken_01.png-f63aad6aa072d22e8ef8e5b00ae50e28.ctex"]
 
 [params]
 

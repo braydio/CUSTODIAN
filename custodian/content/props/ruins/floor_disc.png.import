@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://uil260gmhc7q"
-path="res://.godot/imported/floor_disc.png-b0a135a0c50d7f37fba895a6f0c10124.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/ruins/floor_disc.png"
-dest_files=["res://.godot/imported/floor_disc.png-b0a135a0c50d7f37fba895a6f0c10124.ctex"]
 
 [params]
 

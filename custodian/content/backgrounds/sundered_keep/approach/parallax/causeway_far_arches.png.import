@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bodu5ldbmnxtk"
-path="res://.godot/imported/causeway_far_arches.png-578a5b815fb8360d5e680d25fe7f44b0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/approach/parallax/causeway_far_arches.png"
-dest_files=["res://.godot/imported/causeway_far_arches.png-578a5b815fb8360d5e680d25fe7f44b0.ctex"]
 
 [params]
 

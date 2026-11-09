@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d0y5nl48hcyss"
-path="res://.godot/imported/crate.png-5c431bfcdad21235be1a83631f60f6d6.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/raw_preview_tiles/crate.png"
-dest_files=["res://.godot/imported/crate.png-5c431bfcdad21235be1a83631f60f6d6.ctex"]
 
 [params]
 

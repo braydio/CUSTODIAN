@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cd2ljetvemcp0"
-path="res://.godot/imported/icon_ancient_bearing.png-3453fb2b7ac754d623a124e6bd6511d2.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/inventory/runtime/icons/icon_ancient_bearing.png"
-dest_files=["res://.godot/imported/icon_ancient_bearing.png-3453fb2b7ac754d623a124e6bd6511d2.ctex"]
 
 [params]
 

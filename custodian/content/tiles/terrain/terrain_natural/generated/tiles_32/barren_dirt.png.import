@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bwqsiottu7fqy"
-path="res://.godot/imported/barren_dirt.png-05c4b26e1aab0dcff4fa342328d42fbd.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/tiles_32/barren_dirt.png"
-dest_files=["res://.godot/imported/barren_dirt.png-05c4b26e1aab0dcff4fa342328d42fbd.ctex"]
 
 [params]
 

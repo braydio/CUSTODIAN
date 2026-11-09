@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bwky81rxrwqtm"
-path="res://.godot/imported/CyanChapels.png-8ef6c293178bbee4bd1066d96cbe9e52.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Cyan/CyanChapels.png"
-dest_files=["res://.godot/imported/CyanChapels.png-8ef6c293178bbee4bd1066d96cbe9e52.ctex"]
 
 [params]
 

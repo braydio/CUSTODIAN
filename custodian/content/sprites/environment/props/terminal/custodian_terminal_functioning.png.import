@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://0or887sob5qj"
-path="res://.godot/imported/custodian_terminal_functioning.png-dc2479b5e96ddd950c664944620cefd3.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/terminal/custodian_terminal_functioning.png"
-dest_files=["res://.godot/imported/custodian_terminal_functioning.png-dc2479b5e96ddd950c664944620cefd3.ctex"]
 
 [params]
 

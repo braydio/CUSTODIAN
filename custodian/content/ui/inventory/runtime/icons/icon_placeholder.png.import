@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bbstlqlehkqa1"
-path="res://.godot/imported/icon_placeholder.png-344e2b922802ce5c32282537b32d98f7.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/inventory/runtime/icons/icon_placeholder.png"
-dest_files=["res://.godot/imported/icon_placeholder.png-344e2b922802ce5c32282537b32d98f7.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://faiuwni888oe"
-path="res://.godot/imported/placeholder_events_nodes_portals.png-896431495181b41e977db7a4fecef983.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/placeholder_art/placeholder_events_nodes_portals.png"
-dest_files=["res://.godot/imported/placeholder_events_nodes_portals.png-896431495181b41e977db7a4fecef983.ctex"]
 
 [params]
 

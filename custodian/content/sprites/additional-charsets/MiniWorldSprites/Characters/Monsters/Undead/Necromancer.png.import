@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c6f1nfm0wjgcb"
-path="res://.godot/imported/Necromancer.png-cf66e1496b29b7b63c15ce1d0c4a044b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Monsters/Undead/Necromancer.png"
-dest_files=["res://.godot/imported/Necromancer.png-cf66e1496b29b7b63c15ce1d0c4a044b.ctex"]
 
 [params]
 

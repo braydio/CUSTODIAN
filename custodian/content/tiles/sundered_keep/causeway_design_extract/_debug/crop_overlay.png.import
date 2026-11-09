@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://jregmxfplqsq"
-path="res://.godot/imported/crop_overlay.png-255661b75dc0b20ed9f1b5e8946ce9a3.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_design_extract/_debug/crop_overlay.png"
-dest_files=["res://.godot/imported/crop_overlay.png-255661b75dc0b20ed9f1b5e8946ce9a3.ctex"]
 
 [params]
 

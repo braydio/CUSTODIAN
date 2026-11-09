@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ctevgsk85mr57"
-path="res://.godot/imported/stance_ne.png-6865c22f4534be396d4a79d04b3db540.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_brawler/diagonal_stance_exports/stance_ne.png"
-dest_files=["res://.godot/imported/stance_ne.png-6865c22f4534be396d4a79d04b3db540.ctex"]
 
 [params]
 

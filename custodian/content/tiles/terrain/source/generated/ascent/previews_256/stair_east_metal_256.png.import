@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cu3brdnom4vp"
-path="res://.godot/imported/stair_east_metal_256.png-982326548c29868cb38c132f2168a3a4.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/source/generated/ascent/previews_256/stair_east_metal_256.png"
-dest_files=["res://.godot/imported/stair_east_metal_256.png-982326548c29868cb38c132f2168a3a4.ctex"]
 
 [params]
 

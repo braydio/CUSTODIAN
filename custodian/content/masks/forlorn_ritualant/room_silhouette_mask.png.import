@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dk8eosjspm22s"
-path="res://.godot/imported/room_silhouette_mask.png-ac4da122aaa43f39f9d9fae864c9f307.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/masks/forlorn_ritualant/room_silhouette_mask.png"
-dest_files=["res://.godot/imported/room_silhouette_mask.png-ac4da122aaa43f39f9d9fae864c9f307.ctex"]
 
 [params]
 

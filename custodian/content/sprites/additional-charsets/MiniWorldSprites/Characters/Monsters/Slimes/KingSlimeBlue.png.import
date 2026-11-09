@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bybst2jaylij7"
-path="res://.godot/imported/KingSlimeBlue.png-817b75a3821932ef9f4d5e3887c04034.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Monsters/Slimes/KingSlimeBlue.png"
-dest_files=["res://.godot/imported/KingSlimeBlue.png-817b75a3821932ef9f4d5e3887c04034.ctex"]
 
 [params]
 

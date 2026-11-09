@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://momgo5v1jnkh"
-path="res://.godot/imported/light_effect_object_005.png-4216fe747f73c6dee6c806ab039f3d1e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/asset_exports/lights_effect_objects_auto/light_effect_object_005.png"
-dest_files=["res://.godot/imported/light_effect_object_005.png-4216fe747f73c6dee6c806ab039f3d1e.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://v1376kb0kulf"
-path="res://.godot/imported/awakening_attestation_foreground_832x928.png-1e571af1fd52d389b53dfcd800fe93b6.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/levels/awakening/03_attestation/awakening_attestation_foreground_832x928.png"
-dest_files=["res://.godot/imported/awakening_attestation_foreground_832x928.png-1e571af1fd52d389b53dfcd800fe93b6.ctex"]
 
 [params]
 

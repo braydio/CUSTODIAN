@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://62mngd6euckw"
-path="res://.godot/imported/blue_votive_candles_small.png-3b44d5cf06827d2d5589b48b07970008.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/blue_votive_candles_small.png"
-dest_files=["res://.godot/imported/blue_votive_candles_small.png-3b44d5cf06827d2d5589b48b07970008.ctex"]
 
 [params]
 

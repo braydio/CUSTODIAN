@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://kj4v5r8wh72u"
-path="res://.godot/imported/ocean_foam_open_01.png-08cc992ad55f5cce569dddce8b1ed0f0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_entrance/water/ocean_foam_open_01.png"
-dest_files=["res://.godot/imported/ocean_foam_open_01.png-08cc992ad55f5cce569dddce8b1ed0f0.ctex"]
 
 [params]
 

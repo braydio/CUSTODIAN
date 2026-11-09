@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://5iydln71gxky"
-path="res://.godot/imported/ancient_bearing_icon_32.png-8ea2d992549e4e5586b78aa5c3257872.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/new_operator/modular/parry_01/ancient_bearing_icon_32.png"
-dest_files=["res://.godot/imported/ancient_bearing_icon_32.png-8ea2d992549e4e5586b78aa5c3257872.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b3s3h6xs27pna"
-path="res://.godot/imported/planter_low_long.png-6060ed73cf56cd0414bbfc87c1afb84f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_planter/planter_low_long.png"
-dest_files=["res://.godot/imported/planter_low_long.png-6060ed73cf56cd0414bbfc87c1afb84f.ctex"]
 
 [params]
 

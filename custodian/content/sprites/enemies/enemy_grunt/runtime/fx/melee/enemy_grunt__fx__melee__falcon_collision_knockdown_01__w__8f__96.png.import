@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c7c5bguca5k04"
-path="res://.godot/imported/enemy_grunt__fx__melee__falcon_collision_knockdown_01__w__8f__96.png-b7620ba17f601437c5da2396a04cbb98.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_grunt/runtime/fx/melee/enemy_grunt__fx__melee__falcon_collision_knockdown_01__w__8f__96.png"
-dest_files=["res://.godot/imported/enemy_grunt__fx__melee__falcon_collision_knockdown_01__w__8f__96.png-b7620ba17f601437c5da2396a04cbb98.ctex"]
 
 [params]
 

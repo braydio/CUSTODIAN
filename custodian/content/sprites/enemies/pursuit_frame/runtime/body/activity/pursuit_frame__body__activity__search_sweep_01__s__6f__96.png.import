@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dgad71uec3nec"
-path="res://.godot/imported/pursuit_frame__body__activity__search_sweep_01__s__6f__96.png-8078cd5c212fabad5ef20cfa76578d21.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/pursuit_frame/runtime/body/activity/pursuit_frame__body__activity__search_sweep_01__s__6f__96.png"
-dest_files=["res://.godot/imported/pursuit_frame__body__activity__search_sweep_01__s__6f__96.png-8078cd5c212fabad5ef20cfa76578d21.ctex"]
 
 [params]
 

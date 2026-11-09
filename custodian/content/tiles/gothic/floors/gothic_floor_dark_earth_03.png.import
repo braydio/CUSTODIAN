@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://crw60mph7lg03"
-path="res://.godot/imported/gothic_floor_dark_earth_03.png-11f1229a5a2c1b5ed7da0683c9a5c396.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/gothic/floors/gothic_floor_dark_earth_03.png"
-dest_files=["res://.godot/imported/gothic_floor_dark_earth_03.png-11f1229a5a2c1b5ed7da0683c9a5c396.ctex"]
 
 [params]
 

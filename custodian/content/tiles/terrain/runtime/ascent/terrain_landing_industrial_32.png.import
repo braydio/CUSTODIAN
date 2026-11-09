@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dh5fr7mcsqvum"
-path="res://.godot/imported/terrain_landing_industrial_32.png-d91bfde9d6df3a2901ab1100013698c4.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/runtime/ascent/terrain_landing_industrial_32.png"
-dest_files=["res://.godot/imported/terrain_landing_industrial_32.png-d91bfde9d6df3a2901ab1100013698c4.ctex"]
 
 [params]
 

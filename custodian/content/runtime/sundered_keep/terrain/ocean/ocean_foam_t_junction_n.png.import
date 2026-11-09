@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://wlu7idfc8ug2"
-path="res://.godot/imported/ocean_foam_t_junction_n.png-4096a92a91e1ac5a70850eace3e63218.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_t_junction_n.png"
-dest_files=["res://.godot/imported/ocean_foam_t_junction_n.png-4096a92a91e1ac5a70850eace3e63218.ctex"]
 
 [params]
 

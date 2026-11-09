@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ci5pc1hqkqxuc"
-path="res://.godot/imported/16_cover_low_wall_long_h.png-4dc18fb67e91d476043246802a5077f5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/16_cover_low_wall_long_h.png"
-dest_files=["res://.godot/imported/16_cover_low_wall_long_h.png-4dc18fb67e91d476043246802a5077f5.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://brge7gqrqgpch"
-path="res://.godot/imported/wall_carrow_pillar_plain_01.png-10d1a582d7cc5604f22687ea8a596b0e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_pillar_plain_01.png"
-dest_files=["res://.godot/imported/wall_carrow_pillar_plain_01.png-10d1a582d7cc5604f22687ea8a596b0e.ctex"]
 
 [params]
 

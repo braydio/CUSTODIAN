@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://blcxlkboe1dqv"
-path="res://.godot/imported/floor_carrow_grate_slots_02_32.png-76d87690a8e42b3192a6e979b2a65173.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/runtime/floor_carrow_grate_slots_02_32.png"
-dest_files=["res://.godot/imported/floor_carrow_grate_slots_02_32.png-76d87690a8e42b3192a6e979b2a65173.ctex"]
 
 [params]
 

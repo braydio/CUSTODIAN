@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dydkj1fgolt4c"
-path="res://.godot/imported/Ashen_Forum_Cliffs_Walls_Tall.png-62fa471912ae0090c1917b8a84643ec6.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/source/ashen_forum/Ashen_Forum_Cliffs_Walls_Tall.png"
-dest_files=["res://.godot/imported/Ashen_Forum_Cliffs_Walls_Tall.png-62fa471912ae0090c1917b8a84643ec6.ctex"]
 
 [params]
 

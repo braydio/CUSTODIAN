@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://53wnaaojexu1"
-path="res://.godot/imported/prop_bookshelf_tall_01.png-9b2bd21a2e420de1ffb9df6fc4be02e7.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/props/prop_furniture/prop_bookshelf_tall_01.png"
-dest_files=["res://.godot/imported/prop_bookshelf_tall_01.png-9b2bd21a2e420de1ffb9df6fc4be02e7.ctex"]
 
 [params]
 

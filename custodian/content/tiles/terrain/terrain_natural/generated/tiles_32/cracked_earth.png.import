@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://xolf7nbx6ers"
-path="res://.godot/imported/cracked_earth.png-f5ed58e9aaa65f1cda10070e5b44d65b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/tiles_32/cracked_earth.png"
-dest_files=["res://.godot/imported/cracked_earth.png-f5ed58e9aaa65f1cda10070e5b44d65b.ctex"]
 
 [params]
 

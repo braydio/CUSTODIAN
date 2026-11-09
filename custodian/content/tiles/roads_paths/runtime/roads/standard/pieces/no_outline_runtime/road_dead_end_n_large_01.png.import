@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b5gpu81sjcu8q"
-path="res://.godot/imported/road_dead_end_n_large_01.png-9b1d3bbef038225f171ec10fd27fe6f4.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/roads_paths/runtime/roads/standard/pieces/no_outline_runtime/road_dead_end_n_large_01.png"
-dest_files=["res://.godot/imported/road_dead_end_n_large_01.png-9b1d3bbef038225f171ec10fd27fe6f4.ctex"]
 
 [params]
 

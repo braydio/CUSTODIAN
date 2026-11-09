@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dxspn6402a0wa"
-path="res://.godot/imported/jab3.png-f3138671b274766a27abe95240b7deb1.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://addons/fightengine/demo/Assets/Sprites/Brawler-Girl/Jab/jab3.png"
-dest_files=["res://.godot/imported/jab3.png-f3138671b274766a27abe95240b7deb1.ctex"]
 
 [params]
 

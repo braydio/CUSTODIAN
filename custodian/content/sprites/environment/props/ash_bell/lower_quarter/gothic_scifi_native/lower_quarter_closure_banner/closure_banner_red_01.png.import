@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c85ci6gxdboyp"
-path="res://.godot/imported/closure_banner_red_01.png-2c4b2f1ff76a03c8b94a36edec9a446a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_closure_banner/closure_banner_red_01.png"
-dest_files=["res://.godot/imported/closure_banner_red_01.png-2c4b2f1ff76a03c8b94a36edec9a446a.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://y46eetdb0wa8"
-path="res://.godot/imported/Large_Props_cut.png-5857d97fb927c0afcaa28cf89419b99f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/Large_Props_cut.png"
-dest_files=["res://.godot/imported/Large_Props_cut.png-5857d97fb927c0afcaa28cf89419b99f.ctex"]
 
 [params]
 

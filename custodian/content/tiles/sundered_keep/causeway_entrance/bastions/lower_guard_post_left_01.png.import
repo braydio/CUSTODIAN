@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://prqcrkksu4o8"
-path="res://.godot/imported/lower_guard_post_left_01.png-dab0381ccc3595dbe923fe5f3dd42489.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_entrance/bastions/lower_guard_post_left_01.png"
-dest_files=["res://.godot/imported/lower_guard_post_left_01.png-dab0381ccc3595dbe923fe5f3dd42489.ctex"]
 
 [params]
 

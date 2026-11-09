@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d4giprd5wpqlq"
-path="res://.godot/imported/forlorn_ritualant_idle_003.png-18b3c17fdd5c693a468b53053c96012c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/forlorn_ritualant/idle/forlorn_ritualant_idle_003.png"
-dest_files=["res://.godot/imported/forlorn_ritualant_idle_003.png-18b3c17fdd5c693a468b53053c96012c.ctex"]
 
 [params]
 

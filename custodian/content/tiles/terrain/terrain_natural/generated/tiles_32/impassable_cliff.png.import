@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bpax17t874evm"
-path="res://.godot/imported/impassable_cliff.png-573e0303d6caa2b1bb644849d6b493da.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/tiles_32/impassable_cliff.png"
-dest_files=["res://.godot/imported/impassable_cliff.png-573e0303d6caa2b1bb644849d6b493da.ctex"]
 
 [params]
 

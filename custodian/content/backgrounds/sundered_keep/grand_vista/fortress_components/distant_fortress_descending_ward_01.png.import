@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bnl7s1gpk734s"
-path="res://.godot/imported/distant_fortress_descending_ward_01.png-a6b07320a5bca18742a4bf6ce49c9d63.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/grand_vista/fortress_components/distant_fortress_descending_ward_01.png"
-dest_files=["res://.godot/imported/distant_fortress_descending_ward_01.png-a6b07320a5bca18742a4bf6ce49c9d63.ctex"]
 
 [params]
 

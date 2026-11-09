@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://q2rn6cl370y8"
-path="res://.godot/imported/fast_01.png-63570c1a903be6f07efbf8fc4a371a61.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/source_work/blend_fast_01_idle_01/fast_01.png"
-dest_files=["res://.godot/imported/fast_01.png-63570c1a903be6f07efbf8fc4a371a61.ctex"]
 
 [params]
 

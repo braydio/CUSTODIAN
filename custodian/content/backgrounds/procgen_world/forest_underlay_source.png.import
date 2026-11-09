@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cab83v4am2d6e"
-path="res://.godot/imported/forest_underlay_source.png-d8fa9e765193ff36a9198aac799766ec.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/procgen_world/forest_underlay_source.png"
-dest_files=["res://.godot/imported/forest_underlay_source.png-d8fa9e765193ff36a9198aac799766ec.ctex"]
 
 [params]
 

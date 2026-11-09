@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dt3xnb23isql0"
-path="res://.godot/imported/LimeChapels.png-d15c0c5afd1ef528412a32c7210aef91.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Lime/LimeChapels.png"
-dest_files=["res://.godot/imported/LimeChapels.png-d15c0c5afd1ef528412a32c7210aef91.ctex"]
 
 [params]
 

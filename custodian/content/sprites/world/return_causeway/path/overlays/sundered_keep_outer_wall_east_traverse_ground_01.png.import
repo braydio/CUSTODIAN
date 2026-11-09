@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://0whr2bd0brtm"
-path="res://.godot/imported/sundered_keep_outer_wall_east_traverse_ground_01.png-62891b62885ded15063553defa95585e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/world/return_causeway/path/overlays/sundered_keep_outer_wall_east_traverse_ground_01.png"
-dest_files=["res://.godot/imported/sundered_keep_outer_wall_east_traverse_ground_01.png-62891b62885ded15063553defa95585e.ctex"]
 
 [params]
 

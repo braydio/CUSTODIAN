@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ds2lagwh4ylp1"
-path="res://.godot/imported/tables_crates_props.png-60c3d82358bf9ea2a5c0b02fd2810c40.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/masters/sundered_keep/tables_crates_props.png"
-dest_files=["res://.godot/imported/tables_crates_props.png-60c3d82358bf9ea2a5c0b02fd2810c40.ctex"]
 
 [params]
 

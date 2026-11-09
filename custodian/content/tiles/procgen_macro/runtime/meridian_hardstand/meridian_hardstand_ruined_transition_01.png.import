@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dfc4kcpejujx7"
-path="res://.godot/imported/meridian_hardstand_ruined_transition_01.png-f0acd334c50afcd769dcb6cdd3844c74.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/procgen_macro/runtime/meridian_hardstand/meridian_hardstand_ruined_transition_01.png"
-dest_files=["res://.godot/imported/meridian_hardstand_ruined_transition_01.png-f0acd334c50afcd769dcb6cdd3844c74.ctex"]
 
 [params]
 

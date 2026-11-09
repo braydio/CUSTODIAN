@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://djjeg752nmst7"
-path="res://.godot/imported/map_crosshair_center.png-fa2c5331afc4b9151c57358ff0cff3e8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/map/map_crosshair_center.png"
-dest_files=["res://.godot/imported/map_crosshair_center.png-fa2c5331afc4b9151c57358ff0cff3e8.ctex"]
 
 [params]
 

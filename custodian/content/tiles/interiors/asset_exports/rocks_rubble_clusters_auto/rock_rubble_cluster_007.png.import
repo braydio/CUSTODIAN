@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bdmx1pa2iq8wg"
-path="res://.godot/imported/rock_rubble_cluster_007.png-1a23a976fe96d82fb7673406f795d8a0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/asset_exports/rocks_rubble_clusters_auto/rock_rubble_cluster_007.png"
-dest_files=["res://.godot/imported/rock_rubble_cluster_007.png-1a23a976fe96d82fb7673406f795d8a0.ctex"]
 
 [params]
 

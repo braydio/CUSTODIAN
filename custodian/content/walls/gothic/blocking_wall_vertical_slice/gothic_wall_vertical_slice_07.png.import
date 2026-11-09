@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://caju7ki6wfgoi"
-path="res://.godot/imported/gothic_wall_vertical_slice_07.png-71cbec3aa0aa172ebf4def6c63abfc05.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/walls/gothic/blocking_wall_vertical_slice/gothic_wall_vertical_slice_07.png"
-dest_files=["res://.godot/imported/gothic_wall_vertical_slice_07.png-71cbec3aa0aa172ebf4def6c63abfc05.ctex"]
 
 [params]
 

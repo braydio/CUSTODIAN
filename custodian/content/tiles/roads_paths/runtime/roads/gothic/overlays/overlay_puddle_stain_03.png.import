@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cfwumwxpcrmxq"
-path="res://.godot/imported/overlay_puddle_stain_03.png-d1df181ea57ee3ed7e475889de2059bc.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/roads_paths/runtime/roads/gothic/overlays/overlay_puddle_stain_03.png"
-dest_files=["res://.godot/imported/overlay_puddle_stain_03.png-d1df181ea57ee3ed7e475889de2059bc.ctex"]
 
 [params]
 

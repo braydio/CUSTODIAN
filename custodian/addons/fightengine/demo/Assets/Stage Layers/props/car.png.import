@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://5duvwc2a18r8"
-path="res://.godot/imported/car.png-c44713857e4a502dbec948c235c6c92a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://addons/fightengine/demo/Assets/Stage Layers/props/car.png"
-dest_files=["res://.godot/imported/car.png-c44713857e4a502dbec948c235c6c92a.ctex"]
 
 [params]
 

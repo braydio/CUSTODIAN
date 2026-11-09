@@ -1,0 +1,114 @@
+{
+  "schema": "custodian.operator_animation_workbench.v1",
+  "identity": {
+    "profile": "melee_1h",
+    "group": "posture",
+    "action": "idle_relaxed_01",
+    "direction": "e"
+  },
+  "weapon_context": {
+    "weapon_id": "vigil_pattern_dagger",
+    "animation_profile": "melee_1h_dagger",
+    "presentation_mode": "authored_overlay"
+  },
+  "timeline": {
+    "frames": 4,
+    "preview_fps": 12,
+    "timing_authority": false,
+    "clock_owner": "lower_body"
+  },
+  "canvas": {
+    "width": 96,
+    "height": 96
+  },
+  "aseprite": {
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/posture/idle_relaxed_01/e/workbench.aseprite",
+    "last_synced_sha256": "07db3d88fd5f993e313cb7df360d206647004e46628efddac79a5f025ea30d6a"
+  },
+  "layers": [
+    {
+      "binding_id": "lower_body",
+      "aseprite_layer_name": "lower_body",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "melee_1h",
+      "group": "posture",
+      "action": "idle_relaxed_01",
+      "direction": "e",
+      "layer": "lower_body",
+      "source_path": "custodian/content/sprites/operator/source/animations/melee_1h/posture/idle_relaxed_01/operator__lower_body__melee_1h__posture__idle_relaxed_01__e__4f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/melee_1h/posture/idle_relaxed_01/operator__lower_body__melee_1h__posture__idle_relaxed_01__e__4f__96.png",
+      "source_file_sha256": "72bf6a883045814aad297e8f910cc91ad46329964c227f674ee3c7da2a91a7b9",
+      "source_pixel_sha256": "a169566b2f84d04e8a2d14db315f3b00902d9a6b137962fe1e4a4ccbaa3c3556",
+      "frames": 4,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact"
+    },
+    {
+      "binding_id": "upper_body",
+      "aseprite_layer_name": "upper_body",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "melee_1h",
+      "group": "posture",
+      "action": "idle_relaxed_01",
+      "direction": "e",
+      "layer": "upper_body",
+      "source_path": "custodian/content/sprites/operator/source/animations/melee_1h/posture/idle_relaxed_01/operator__upper_body__melee_1h__posture__idle_relaxed_01__e__4f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/melee_1h/posture/idle_relaxed_01/operator__upper_body__melee_1h__posture__idle_relaxed_01__e__4f__96.png",
+      "source_file_sha256": "6cccd05da7963e0a0b99fa8391eb37dd4e421c18f14770bb05a981600238c72e",
+      "source_pixel_sha256": "eaa327de94f96cb810ace440c7bd3d8edbfa22c8b55ce86eae9c991dcf277f3a",
+      "frames": 4,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact"
+    },
+    {
+      "binding_id": "weapon__vigil_pattern_dagger",
+      "aseprite_layer_name": "weapon__vigil_pattern_dagger",
+      "role": "linked_weapon",
+      "editable": true,
+      "owner": "operator",
+      "profile": "melee_1h_dagger",
+      "group": "posture",
+      "action": "idle_relaxed_01",
+      "direction": "e",
+      "layer": "weapon",
+      "source_path": "custodian/content/sprites/operator/source/animations/melee_1h_dagger/posture/idle_relaxed_01/operator__weapon__melee_1h_dagger__posture__idle_relaxed_01__e__4f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/melee_1h_dagger/posture/idle_relaxed_01/operator__weapon__melee_1h_dagger__posture__idle_relaxed_01__e__4f__96.png",
+      "source_file_sha256": "fa020a68f12bd0c5a82a1721eb20ca7fa5514b004ffd52293cf67e9a49232bb0",
+      "source_pixel_sha256": "e4c1120d42a2119d2d5cc9a94e2f1643e4888e301a69621e6a9cf6aebd2be153",
+      "frames": 4,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact"
+    }
+  ],
+  "references": [],
+  "last_publish": {
+    "timestamp": null,
+    "validation_status": null
+  },
+  "export_stamp": "20260828T132848"
+}

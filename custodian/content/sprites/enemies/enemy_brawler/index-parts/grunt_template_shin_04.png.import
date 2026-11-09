@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://lt3isfpljdlg"
-path="res://.godot/imported/grunt_template_shin_04.png-ce8706e459a37703eaaf51df73678254.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_brawler/index-parts/grunt_template_shin_04.png"
-dest_files=["res://.godot/imported/grunt_template_shin_04.png-ce8706e459a37703eaaf51df73678254.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ca4e0kmaixj01"
-path="res://.godot/imported/operator__full_body__ranged_2h__cosmetic__reload_01__omni__4f__96.png-a53037ba4adb2267ced2955c9d0215ea.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/normalized/operator__full_body__ranged_2h__cosmetic__reload_01__omni__4f__96.png"
-dest_files=["res://.godot/imported/operator__full_body__ranged_2h__cosmetic__reload_01__omni__4f__96.png-a53037ba4adb2267ced2955c9d0215ea.ctex"]
 
 [params]
 

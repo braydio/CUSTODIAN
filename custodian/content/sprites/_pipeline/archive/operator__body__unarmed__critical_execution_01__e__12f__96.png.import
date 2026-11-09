@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c0uy8s26cty27"
-path="res://.godot/imported/operator__body__unarmed__critical_execution_01__e__12f__96.png-fcd11e65cbdae5798b231c33e3a8bc63.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/archive/operator__body__unarmed__critical_execution_01__e__12f__96.png"
-dest_files=["res://.godot/imported/operator__body__unarmed__critical_execution_01__e__12f__96.png-fcd11e65cbdae5798b231c33e3a8bc63.ctex"]
 
 [params]
 

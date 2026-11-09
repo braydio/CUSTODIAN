@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b1hpcqqkrnyrs"
-path="res://.godot/imported/railing_straight_01.png-8a9e2c6caebc3fba5f9f6d6fb8166b61.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_railing/railing_straight_01.png"
-dest_files=["res://.godot/imported/railing_straight_01.png-8a9e2c6caebc3fba5f9f6d6fb8166b61.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://coblgoq7l688b"
-path="res://.godot/imported/civic_terminal_02.png-422e3c126985c7f9c58318bd917f9b59.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_terminal/civic_terminal_02.png"
-dest_files=["res://.godot/imported/civic_terminal_02.png-422e3c126985c7f9c58318bd917f9b59.ctex"]
 
 [params]
 

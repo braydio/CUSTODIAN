@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dfxt4qyqyxjl"
-path="res://.godot/imported/02_wall_pillar_spire_single.png-c88a3707ed835aff398f760bf7d724c5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/02_wall_pillar_spire_single.png"
-dest_files=["res://.godot/imported/02_wall_pillar_spire_single.png-c88a3707ed835aff398f760bf7d724c5.ctex"]
 
 [params]
 

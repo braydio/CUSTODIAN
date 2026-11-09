@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bk273u1280358"
-path="res://.godot/imported/allied_mech_liberty_prime.png-0daa0ea04b224ed05469935453c09b14.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/allies/allied_mech_liberty_prime.png"
-dest_files=["res://.godot/imported/allied_mech_liberty_prime.png-0daa0ea04b224ed05469935453c09b14.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://wuscpb6pjiro"
-path="res://.godot/imported/operator__full_body__unarmed__arrival_01__s__13f__96.png-d35a1eaeba3b207f6b730dd383f1b253.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/new_operator/modular/actions/teleporter/operator__full_body__unarmed__arrival_01__s__13f__96.png"
-dest_files=["res://.godot/imported/operator__full_body__unarmed__arrival_01__s__13f__96.png-d35a1eaeba3b207f6b730dd383f1b253.ctex"]
 
 [params]
 

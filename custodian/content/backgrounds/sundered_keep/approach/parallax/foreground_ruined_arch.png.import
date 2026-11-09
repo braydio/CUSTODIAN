@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b8n2ctkkj6u55"
-path="res://.godot/imported/foreground_ruined_arch.png-6ce52a19f749f4135126cd08218fdd32.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/approach/parallax/foreground_ruined_arch.png"
-dest_files=["res://.godot/imported/foreground_ruined_arch.png-6ce52a19f749f4135126cd08218fdd32.ctex"]
 
 [params]
 

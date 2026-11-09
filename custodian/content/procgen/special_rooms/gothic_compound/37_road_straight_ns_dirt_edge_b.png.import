@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://3ivqio6uxh0i"
-path="res://.godot/imported/37_road_straight_ns_dirt_edge_b.png-09113a5cd199cf49b67b8c55d209afad.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/37_road_straight_ns_dirt_edge_b.png"
-dest_files=["res://.godot/imported/37_road_straight_ns_dirt_edge_b.png-09113a5cd199cf49b67b8c55d209afad.ctex"]
 
 [params]
 

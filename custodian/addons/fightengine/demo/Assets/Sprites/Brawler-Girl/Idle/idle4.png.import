@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dl45ymq6edaix"
-path="res://.godot/imported/idle4.png-b0ca8bf569252ad4f62f23f6be2d67ff.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://addons/fightengine/demo/Assets/Sprites/Brawler-Girl/Idle/idle4.png"
-dest_files=["res://.godot/imported/idle4.png-b0ca8bf569252ad4f62f23f6be2d67ff.ctex"]
 
 [params]
 

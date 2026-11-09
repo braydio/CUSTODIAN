@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d4jukf3cfhcbw"
-path="res://.godot/imported/compound_salvage_cluster.png-2a1c7ca8c302f4af11443fd825296bd2.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_debris/compound_salvage_cluster.png"
-dest_files=["res://.godot/imported/compound_salvage_cluster.png-2a1c7ca8c302f4af11443fd825296bd2.ctex"]
 
 [params]
 

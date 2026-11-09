@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cxqp53318pm06"
-path="res://.godot/imported/hover_buggy_idle_hover_runtime.png-992f789182f4a02560607078fc49eed1.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/vehicles/hover_buggy/runtime/hover_buggy_idle_hover_runtime.png"
-dest_files=["res://.godot/imported/hover_buggy_idle_hover_runtime.png-992f789182f4a02560607078fc49eed1.ctex"]
 
 [params]
 

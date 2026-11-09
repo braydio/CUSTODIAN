@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://byyrcveynrx0f"
-path="res://.godot/imported/gothic_cyan_power_core_machine_01.png-a15c343f0eba5b81c74f1b50cbecf6af.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/gothic/machines/gothic_cyan_power_core_machine_01.png"
-dest_files=["res://.godot/imported/gothic_cyan_power_core_machine_01.png-a15c343f0eba5b81c74f1b50cbecf6af.ctex"]
 
 [params]
 

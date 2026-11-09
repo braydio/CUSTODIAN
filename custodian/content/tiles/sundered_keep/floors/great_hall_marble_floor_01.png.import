@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c70ol15cqqddh"
-path="res://.godot/imported/great_hall_marble_floor_01.png-3fe1a4709fed357b9f47c83efe4b0cce.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/floors/great_hall_marble_floor_01.png"
-dest_files=["res://.godot/imported/great_hall_marble_floor_01.png-3fe1a4709fed357b9f47c83efe4b0cce.ctex"]
 
 [params]
 

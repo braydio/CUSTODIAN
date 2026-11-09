@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cs1bet6tivwon"
-path="res://.godot/imported/map_grid_tile.png-29aea8e9281c82c03da8f68cbaded547.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/map/map_grid_tile.png"
-dest_files=["res://.godot/imported/map_grid_tile.png-29aea8e9281c82c03da8f68cbaded547.ctex"]
 
 [params]
 

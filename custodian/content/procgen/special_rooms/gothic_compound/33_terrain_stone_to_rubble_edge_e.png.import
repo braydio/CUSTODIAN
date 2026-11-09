@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cqlplclypefry"
-path="res://.godot/imported/33_terrain_stone_to_rubble_edge_e.png-aa0dd747a47c40a13239e6d185edf108.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/33_terrain_stone_to_rubble_edge_e.png"
-dest_files=["res://.godot/imported/33_terrain_stone_to_rubble_edge_e.png-aa0dd747a47c40a13239e6d185edf108.ctex"]
 
 [params]
 

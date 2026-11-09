@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bn708snu4jsr8"
-path="res://.godot/imported/minimap_marker_stair_down.png-78777110b55096bb36588b9113633342.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/black_reliquary/markers/minimap_marker_stair_down.png"
-dest_files=["res://.godot/imported/minimap_marker_stair_down.png-78777110b55096bb36588b9113633342.ctex"]
 
 [params]
 

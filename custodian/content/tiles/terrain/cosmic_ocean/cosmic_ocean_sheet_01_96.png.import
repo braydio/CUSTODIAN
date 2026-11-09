@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cpiktae7g652g"
-path="res://.godot/imported/cosmic_ocean_sheet_01_96.png-97637cb495b9920f017b8d56641b4060.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/cosmic_ocean/cosmic_ocean_sheet_01_96.png"
-dest_files=["res://.godot/imported/cosmic_ocean_sheet_01_96.png-97637cb495b9920f017b8d56641b4060.ctex"]
 
 [params]
 

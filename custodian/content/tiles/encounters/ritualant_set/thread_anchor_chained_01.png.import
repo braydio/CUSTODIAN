@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d2jve8ht28kaa"
-path="res://.godot/imported/thread_anchor_chained_01.png-2d6d5a93a436421e336de15f1a46213b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/thread_anchor_chained_01.png"
-dest_files=["res://.godot/imported/thread_anchor_chained_01.png-2d6d5a93a436421e336de15f1a46213b.ctex"]
 
 [params]
 

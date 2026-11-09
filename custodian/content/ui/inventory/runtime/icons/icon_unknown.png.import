@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://66rmxprv4d5k"
-path="res://.godot/imported/icon_unknown.png-bfaa117d88cde05fe4b245f1c19ab8e1.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/inventory/runtime/icons/icon_unknown.png"
-dest_files=["res://.godot/imported/icon_unknown.png-bfaa117d88cde05fe4b245f1c19ab8e1.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c5lf1v1p3vivm"
-path="res://.godot/imported/floor_carrow_hatch_small_01_32.png-3c4d34372cb8e76455ed60a5a06d8002.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/runtime/floor_carrow_hatch_small_01_32.png"
-dest_files=["res://.godot/imported/floor_carrow_hatch_small_01_32.png-3c4d34372cb8e76455ed60a5a06d8002.ctex"]
 
 [params]
 

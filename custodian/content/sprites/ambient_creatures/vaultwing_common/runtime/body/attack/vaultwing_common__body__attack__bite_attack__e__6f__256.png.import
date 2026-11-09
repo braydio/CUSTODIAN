@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bftpb20akfve"
-path="res://.godot/imported/vaultwing_common__body__attack__bite_attack__e__6f__256.png-436e73c05bb0c02f5312aa116bf40dd5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/ambient_creatures/vaultwing_common/runtime/body/attack/vaultwing_common__body__attack__bite_attack__e__6f__256.png"
-dest_files=["res://.godot/imported/vaultwing_common__body__attack__bite_attack__e__6f__256.png-436e73c05bb0c02f5312aa116bf40dd5.ctex"]
 
 [params]
 

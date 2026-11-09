@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://gyrfnqae4pum"
-path="res://.godot/imported/corner_retaining_cap.png-0bbc70366fbefffa08c046c74fa379a8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_structure/corner_retaining_cap.png"
-dest_files=["res://.godot/imported/corner_retaining_cap.png-0bbc70366fbefffa08c046c74fa379a8.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://qokrd1ur5yc1"
-path="res://.godot/imported/CrouchIdle.png-87046d2d47d40ee7c75f389e7dcc1da5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://dev/test_sprites/Knight/CrouchIdle.png"
-dest_files=["res://.godot/imported/CrouchIdle.png-87046d2d47d40ee7c75f389e7dcc1da5.ctex"]
 
 [params]
 

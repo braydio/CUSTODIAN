@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bhkra70qgwj27"
-path="res://.godot/imported/contact_shadow_prop_large_96x48.png-e234afddba7025805a2fa5c75954e818.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/world/shadows/contact_shadow_prop_large_96x48.png"
-dest_files=["res://.godot/imported/contact_shadow_prop_large_96x48.png-e234afddba7025805a2fa5c75954e818.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bssgxqoju8thr"
-path="res://.godot/imported/enemy_savage__body__taunt_01__s__10f__96.png-7e0d29cf5d1a647b1b219b79aa9fd0fa.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_savage/enemy_savage__body__taunt_01__s__10f__96.png"
-dest_files=["res://.godot/imported/enemy_savage__body__taunt_01__s__10f__96.png-7e0d29cf5d1a647b1b219b79aa9fd0fa.ctex"]
 
 [params]
 

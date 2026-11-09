@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://hs3vtx31aldc"
-path="res://.godot/imported/doorway_military_vertical_32.png-d7d025f38277e6e0126daf28e5c35219.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/runtime/doorway_military_vertical_32.png"
-dest_files=["res://.godot/imported/doorway_military_vertical_32.png-d7d025f38277e6e0126daf28e5c35219.ctex"]
 
 [params]
 

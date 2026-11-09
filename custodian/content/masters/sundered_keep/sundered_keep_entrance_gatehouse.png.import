@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bhitt8dj025nl"
-path="res://.godot/imported/sundered_keep_entrance_gatehouse.png-27107c6f74c9914e4d9ae5d6108996bd.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/masters/sundered_keep/sundered_keep_entrance_gatehouse.png"
-dest_files=["res://.godot/imported/sundered_keep_entrance_gatehouse.png-27107c6f74c9914e4d9ae5d6108996bd.ctex"]
 
 [params]
 

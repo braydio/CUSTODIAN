@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://blxsdq8lfdp53"
-path="res://.godot/imported/grunt_knockdown_01_e_5f.png-e5a5a79263df63285878406436b49e39.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_grunt/source_sheets/grunt_knockdown_01_e_5f.png"
-dest_files=["res://.godot/imported/grunt_knockdown_01_e_5f.png-e5a5a79263df63285878406436b49e39.ctex"]
 
 [params]
 

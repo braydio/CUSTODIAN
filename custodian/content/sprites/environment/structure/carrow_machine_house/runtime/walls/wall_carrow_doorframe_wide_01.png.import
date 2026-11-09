@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ybsk30avwr8g"
-path="res://.godot/imported/wall_carrow_doorframe_wide_01.png-f9f08df59a0ad97ee63c7e04705d3550.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_doorframe_wide_01.png"
-dest_files=["res://.godot/imported/wall_carrow_doorframe_wide_01.png-f9f08df59a0ad97ee63c7e04705d3550.ctex"]
 
 [params]
 

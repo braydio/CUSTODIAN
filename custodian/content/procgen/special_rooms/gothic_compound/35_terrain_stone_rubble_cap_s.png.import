@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dg4w8j431e006"
-path="res://.godot/imported/35_terrain_stone_rubble_cap_s.png-aca94eac1e9f432c3585e116aa43bdf3.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/35_terrain_stone_rubble_cap_s.png"
-dest_files=["res://.godot/imported/35_terrain_stone_rubble_cap_s.png-aca94eac1e9f432c3585e116aa43bdf3.ctex"]
 
 [params]
 

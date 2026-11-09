@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dubqia1wqbyu2"
-path="res://.godot/imported/floor_carrow_conduit_port_01_32.png-5167b5cbac1530ebd210b193e44ac42d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/runtime/floor_carrow_conduit_port_01_32.png"
-dest_files=["res://.godot/imported/floor_carrow_conduit_port_01_32.png-5167b5cbac1530ebd210b193e44ac42d.ctex"]
 
 [params]
 

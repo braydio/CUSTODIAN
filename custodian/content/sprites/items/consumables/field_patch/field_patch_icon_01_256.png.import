@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://iilo4ckk2bfm"
-path="res://.godot/imported/field_patch_icon_01_256.png-0cc0ca12d3a3a7384edd07fea990d443.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/items/consumables/field_patch/field_patch_icon_01_256.png"
-dest_files=["res://.godot/imported/field_patch_icon_01_256.png-0cc0ca12d3a3a7384edd07fea990d443.ctex"]
 
 [params]
 

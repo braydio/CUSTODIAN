@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cs47js8wgl7nj"
-path="res://.godot/imported/overlook_ledge.png-92d10b7d3ec6cdb1671624c5716c7f3e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/approach/playable/overlook_ledge.png"
-dest_files=["res://.godot/imported/overlook_ledge.png-92d10b7d3ec6cdb1671624c5716c7f3e.ctex"]
 
 [params]
 

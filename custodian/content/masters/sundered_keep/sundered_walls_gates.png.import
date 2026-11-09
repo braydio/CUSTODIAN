@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bai1fuuii0386"
-path="res://.godot/imported/sundered_walls_gates.png-155192b59bf9c579f70f25e22fe53fc9.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/masters/sundered_keep/sundered_walls_gates.png"
-dest_files=["res://.godot/imported/sundered_walls_gates.png-155192b59bf9c579f70f25e22fe53fc9.ctex"]
 
 [params]
 

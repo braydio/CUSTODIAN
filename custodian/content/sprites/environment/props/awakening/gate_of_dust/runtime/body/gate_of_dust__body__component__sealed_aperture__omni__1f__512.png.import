@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dnlx7sojku8uq"
-path="res://.godot/imported/gate_of_dust__body__component__sealed_aperture__omni__1f__512.png-3c0b057bc55fa5c87046276170ca1674.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/awakening/gate_of_dust/runtime/body/gate_of_dust__body__component__sealed_aperture__omni__1f__512.png"
-dest_files=["res://.godot/imported/gate_of_dust__body__component__sealed_aperture__omni__1f__512.png-3c0b057bc55fa5c87046276170ca1674.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dngwdy20lohg0"
-path="res://.godot/imported/road_cross_n_e_s_w_large_03.png-b41d5542e83969849050f9df99479ba5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/roads_paths/runtime/roads/standard/pieces/no_outline_runtime/road_cross_n_e_s_w_large_03.png"
-dest_files=["res://.godot/imported/road_cross_n_e_s_w_large_03.png-b41d5542e83969849050f9df99479ba5.ctex"]
 
 [params]
 

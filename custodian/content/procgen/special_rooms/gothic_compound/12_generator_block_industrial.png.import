@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dbl15rqiauisa"
-path="res://.godot/imported/12_generator_block_industrial.png-116e84c645ea4977db1cbf32fab949df.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/12_generator_block_industrial.png"
-dest_files=["res://.godot/imported/12_generator_block_industrial.png-116e84c645ea4977db1cbf32fab949df.ctex"]
 
 [params]
 

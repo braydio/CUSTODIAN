@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://3wx423gp3xdu"
-path="res://.godot/imported/grunt_draw_01_pixel_78x78_sheet.png-d78553ff115d0175bcd4a7dfa1caa498.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_grunt/source_sheets/grunt_draw_01_pixel_78x78_sheet.png"
-dest_files=["res://.godot/imported/grunt_draw_01_pixel_78x78_sheet.png-d78553ff115d0175bcd4a7dfa1caa498.ctex"]
 
 [params]
 

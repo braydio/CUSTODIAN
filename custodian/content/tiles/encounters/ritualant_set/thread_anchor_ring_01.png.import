@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://doe7hwqivmf16"
-path="res://.godot/imported/thread_anchor_ring_01.png-ec2e9d710d6fb42945ed3f4b0d111613.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/thread_anchor_ring_01.png"
-dest_files=["res://.godot/imported/thread_anchor_ring_01.png-ec2e9d710d6fb42945ed3f4b0d111613.ctex"]
 
 [params]
 

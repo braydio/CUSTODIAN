@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b6b2y74lqixnm"
-path="res://.godot/imported/custodian_terminal_restored-sheet.png-d4dc84f46f7ef4a980f496371ef6877c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/terminal/custodian_terminal_restored-sheet.png"
-dest_files=["res://.godot/imported/custodian_terminal_restored-sheet.png-d4dc84f46f7ef4a980f496371ef6877c.ctex"]
 
 [params]
 

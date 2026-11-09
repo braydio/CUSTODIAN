@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://unsscrb6rym8"
-path="res://.godot/imported/cobblestone_stairs_center_01.png-e554e3ab774d6cd6eb6e06b3e85292fb.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/entrance/causeway_floors/cobblestone_stairs_center_01.png"
-dest_files=["res://.godot/imported/cobblestone_stairs_center_01.png-e554e3ab774d6cd6eb6e06b3e85292fb.ctex"]
 
 [params]
 

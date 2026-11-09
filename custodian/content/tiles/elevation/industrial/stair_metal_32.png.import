@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b2w5d4gwkhr22"
-path="res://.godot/imported/stair_metal_32.png-7dea92d49cb9f1218dbe64f502b223b9.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/elevation/industrial/stair_metal_32.png"
-dest_files=["res://.godot/imported/stair_metal_32.png-7dea92d49cb9f1218dbe64f502b223b9.ctex"]
 
 [params]
 

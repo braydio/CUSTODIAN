@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b50h5088aenci"
-path="res://.godot/imported/operator__full_body_source__melee_1h__chain_mid_01__e__9f__156x96.png-4b18a3fe99d9fe77844adf4cfaae536c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/new_operator/modular/chain_attack/operator__full_body_source__melee_1h__chain_mid_01__e__9f__156x96.png"
-dest_files=["res://.godot/imported/operator__full_body_source__melee_1h__chain_mid_01__e__9f__156x96.png-4b18a3fe99d9fe77844adf4cfaae536c.ctex"]
 
 [params]
 

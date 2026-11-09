@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bk5ckolglfliw"
-path="res://.godot/imported/floor_carrow_grate_vertical_01_32.png-0f3142ca005e6831449eb24c07d546d1.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/runtime/floor_carrow_grate_vertical_01_32.png"
-dest_files=["res://.godot/imported/floor_carrow_grate_vertical_01_32.png-0f3142ca005e6831449eb24c07d546d1.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ch40eyi4yrd6m"
-path="res://.godot/imported/grunt_fx_falcon_collision_pixel_78x78_sheet.png-f8e5cbb8ce8a93f5b822b542176c0270.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_grunt/source_sheets/grunt_fx_falcon_collision_pixel_78x78_sheet.png"
-dest_files=["res://.godot/imported/grunt_fx_falcon_collision_pixel_78x78_sheet.png-f8e5cbb8ce8a93f5b822b542176c0270.ctex"]
 
 [params]
 

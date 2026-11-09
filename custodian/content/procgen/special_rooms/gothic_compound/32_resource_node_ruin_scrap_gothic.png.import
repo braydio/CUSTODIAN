@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b4g6e3q64gc4y"
-path="res://.godot/imported/32_resource_node_ruin_scrap_gothic.png-d757afd0fb4077ff0f89817b68f865f0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/32_resource_node_ruin_scrap_gothic.png"
-dest_files=["res://.godot/imported/32_resource_node_ruin_scrap_gothic.png-d757afd0fb4077ff0f89817b68f865f0.ctex"]
 
 [params]
 

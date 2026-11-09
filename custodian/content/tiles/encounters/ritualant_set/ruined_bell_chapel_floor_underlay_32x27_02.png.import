@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cx7i1vtmnhh3"
-path="res://.godot/imported/ruined_bell_chapel_floor_underlay_32x27_02.png-8e7bb8442648a379e270d45faa0529c5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/ruined_bell_chapel_floor_underlay_32x27_02.png"
-dest_files=["res://.godot/imported/ruined_bell_chapel_floor_underlay_32x27_02.png-8e7bb8442648a379e270d45faa0529c5.ctex"]
 
 [params]
 

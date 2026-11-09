@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cpnxg6lqlfuua"
-path="res://.godot/imported/minimap_marker_stair_down.png-0fbf17f13a56e25eafb2f4bad87a9c0f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/custodian/checks/minimap_marker_stair_down.png"
-dest_files=["res://.godot/imported/minimap_marker_stair_down.png-0fbf17f13a56e25eafb2f4bad87a9c0f.ctex"]
 
 [params]
 

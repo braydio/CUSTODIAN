@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b47bqc5c6rm5d"
-path="res://.godot/imported/Special2.png-2ef6989a1609d625d18c0207e55cc8ae.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://dev/test_sprites/Knight/Special2.png"
-dest_files=["res://.godot/imported/Special2.png-2ef6989a1609d625d18c0207e55cc8ae.ctex"]
 
 [params]
 

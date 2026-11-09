@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cuq1rcurx4cyx"
-path="res://.godot/imported/stone_stairs_down_s.png-aaa4779052fda935cf69c6854111f0d8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/doors_traversal/stairs/stone_stairs_down_s.png"
-dest_files=["res://.godot/imported/stone_stairs_down_s.png-aaa4779052fda935cf69c6854111f0d8.ctex"]
 
 [params]
 

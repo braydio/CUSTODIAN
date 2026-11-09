@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dr7ojjhmyy8rj"
-path="res://.godot/imported/awakening_creche_fixtures__body__fixture__alcove_empty__omni__1f__128x192.png-2072f34921fb4056aeafe0deaa0c8024.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/awakening/awakening_creche_fixtures/runtime/body/awakening_creche_fixtures__body__fixture__alcove_empty__omni__1f__128x192.png"
-dest_files=["res://.godot/imported/awakening_creche_fixtures__body__fixture__alcove_empty__omni__1f__128x192.png-2072f34921fb4056aeafe0deaa0c8024.ctex"]
 
 [params]
 

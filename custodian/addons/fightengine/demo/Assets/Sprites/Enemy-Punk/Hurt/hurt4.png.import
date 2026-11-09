@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dosi6lsa8fexn"
-path="res://.godot/imported/hurt4.png-538c1a79728da75757de905ed008fe8e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://addons/fightengine/demo/Assets/Sprites/Enemy-Punk/Hurt/hurt4.png"
-dest_files=["res://.godot/imported/hurt4.png-538c1a79728da75757de905ed008fe8e.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cliwxmu2nu8u1"
-path="res://.godot/imported/cliff_chasm_drop_32.png-c2a09018dfe323261441ef8aab236d65.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/mountain_cliffs/cliff_chasm_drop_32.png"
-dest_files=["res://.godot/imported/cliff_chasm_drop_32.png-c2a09018dfe323261441ef8aab236d65.ctex"]
 
 [params]
 

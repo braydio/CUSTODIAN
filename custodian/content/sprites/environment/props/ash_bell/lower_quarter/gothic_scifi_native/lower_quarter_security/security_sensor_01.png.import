@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b2hvqcem2gorc"
-path="res://.godot/imported/security_sensor_01.png-a86e95a44e5828784eb8af574350e1e4.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_security/security_sensor_01.png"
-dest_files=["res://.godot/imported/security_sensor_01.png-a86e95a44e5828784eb8af574350e1e4.ctex"]
 
 [params]
 

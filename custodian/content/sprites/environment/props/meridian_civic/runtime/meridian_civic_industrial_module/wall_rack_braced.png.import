@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ca71et1qdvvhi"
-path="res://.godot/imported/wall_rack_braced.png-52783db8ce21360b31209a97c73c8083.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_industrial_module/wall_rack_braced.png"
-dest_files=["res://.godot/imported/wall_rack_braced.png-52783db8ce21360b31209a97c73c8083.ctex"]
 
 [params]
 

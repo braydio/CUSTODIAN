@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ddqqikqliymmk"
-path="res://.godot/imported/compound_ashen_sheet.png-51f315fdc328b3635f8e9985efa37b2f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/source/compound_ashen/compound_ashen_sheet.png"
-dest_files=["res://.godot/imported/compound_ashen_sheet.png-51f315fdc328b3635f8e9985efa37b2f.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dsyya65v2d2tp"
-path="res://.godot/imported/map_theme.png-f6f158d1db30305b18a9adc091a849ca.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/masters/ui/map_theme.png"
-dest_files=["res://.godot/imported/map_theme.png-f6f158d1db30305b18a9adc091a849ca.ctex"]
 
 [params]
 

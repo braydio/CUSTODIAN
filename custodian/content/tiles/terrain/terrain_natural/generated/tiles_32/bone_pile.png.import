@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://jjyvny0jefyd"
-path="res://.godot/imported/bone_pile.png-49f3846c83acc2c96a95b028a5296de8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/tiles_32/bone_pile.png"
-dest_files=["res://.godot/imported/bone_pile.png-49f3846c83acc2c96a95b028a5296de8.ctex"]
 
 [params]
 

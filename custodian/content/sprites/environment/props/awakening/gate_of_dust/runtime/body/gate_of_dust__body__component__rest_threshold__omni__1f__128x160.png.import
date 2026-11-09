@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dlg5gsobxbnmr"
-path="res://.godot/imported/gate_of_dust__body__component__rest_threshold__omni__1f__128x160.png-707a95115e4e33540f9724985506b25f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/awakening/gate_of_dust/runtime/body/gate_of_dust__body__component__rest_threshold__omni__1f__128x160.png"
-dest_files=["res://.godot/imported/gate_of_dust__body__component__rest_threshold__omni__1f__128x160.png-707a95115e4e33540f9724985506b25f.ctex"]
 
 [params]
 

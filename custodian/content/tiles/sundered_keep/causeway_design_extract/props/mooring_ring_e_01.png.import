@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dyhkq8sb3u1in"
-path="res://.godot/imported/mooring_ring_e_01.png-e5ba55c4e282e8dd99948743b77646a1.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_design_extract/props/mooring_ring_e_01.png"
-dest_files=["res://.godot/imported/mooring_ring_e_01.png-e5ba55c4e282e8dd99948743b77646a1.ctex"]
 
 [params]
 

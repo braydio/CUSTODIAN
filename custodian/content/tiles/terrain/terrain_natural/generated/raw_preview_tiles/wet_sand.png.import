@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://3s5i3yjeemj4"
-path="res://.godot/imported/wet_sand.png-bc70de6b31d89f96afd19cd117570fbf.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/raw_preview_tiles/wet_sand.png"
-dest_files=["res://.godot/imported/wet_sand.png-bc70de6b31d89f96afd19cd117570fbf.ctex"]
 
 [params]
 

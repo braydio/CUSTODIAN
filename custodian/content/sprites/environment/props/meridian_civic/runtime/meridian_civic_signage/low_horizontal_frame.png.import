@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://btx4i6fvdgu8s"
-path="res://.godot/imported/low_horizontal_frame.png-a27f88fc2553f330e2a18d1cb1293fb2.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_signage/low_horizontal_frame.png"
-dest_files=["res://.godot/imported/low_horizontal_frame.png-a27f88fc2553f330e2a18d1cb1293fb2.ctex"]
 
 [params]
 

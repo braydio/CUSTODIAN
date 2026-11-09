@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://f3rwox2hh4hc"
-path="res://.godot/imported/mooring_bollards_e_01.png-699ec4a1f4205152c8da3b1ea2c560dd.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_design_extract/props/mooring_bollards_e_01.png"
-dest_files=["res://.godot/imported/mooring_bollards_e_01.png-699ec4a1f4205152c8da3b1ea2c560dd.ctex"]
 
 [params]
 

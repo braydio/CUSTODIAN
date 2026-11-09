@@ -1,0 +1,33 @@
+{
+  "transaction_id": "20260829T000057",
+  "state": "ROLLED_BACK",
+  "old_source_paths": [
+    "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/custodian/content/sprites/operator/source/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__e__5f__96.png",
+    "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/custodian/content/sprites/operator/source/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__e__5f__96.png"
+  ],
+  "target_source_paths": [
+    "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/custodian/content/sprites/operator/source/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__e__6f__96.png",
+    "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/custodian/content/sprites/operator/source/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__e__6f__96.png"
+  ],
+  "pending_migration": {
+    "kind": "frame_count",
+    "operation": "add",
+    "position": {
+      "after": 1
+    },
+    "fill": "duplicate-prev",
+    "old_clock_frames": 5,
+    "new_clock_frames": 6,
+    "affected_bindings": [
+      "lower_body",
+      "upper_body"
+    ],
+    "excluded_bindings": [],
+    "dependency_audit": {
+      "level": "GREEN",
+      "dependencies": []
+    },
+    "status": "pending"
+  },
+  "validation_stages_completed": []
+}

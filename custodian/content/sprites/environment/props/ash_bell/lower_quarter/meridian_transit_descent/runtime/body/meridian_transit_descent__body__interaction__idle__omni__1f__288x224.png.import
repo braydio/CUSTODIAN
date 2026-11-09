@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cux2d6xgnljwy"
-path="res://.godot/imported/meridian_transit_descent__body__interaction__idle__omni__1f__288x224.png-3f6bd91c5d6d7fe681b5947713d7a661.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/meridian_transit_descent/runtime/body/meridian_transit_descent__body__interaction__idle__omni__1f__288x224.png"
-dest_files=["res://.godot/imported/meridian_transit_descent__body__interaction__idle__omni__1f__288x224.png-3f6bd91c5d6d7fe681b5947713d7a661.ctex"]
 
 [params]
 

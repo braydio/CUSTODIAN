@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b7t1vgudo8lf1"
-path="res://.godot/imported/enemy_grunt__body__melee__stagger_01__w__11f__96.png-45998364394b225a67a48e72b853cc2b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/archive/enemy_grunt__body__melee__stagger_01__w__11f__96.png"
-dest_files=["res://.godot/imported/enemy_grunt__body__melee__stagger_01__w__11f__96.png-45998364394b225a67a48e72b853cc2b.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b6i3xaae0amvr"
-path="res://.godot/imported/battlement_crown_round_01.png-6eebbd65392c677071acdb612960522c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/grand_vista/fortress_components/battlement_crown_round_01.png"
-dest_files=["res://.godot/imported/battlement_crown_round_01.png-6eebbd65392c677071acdb612960522c.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bkvn22uowh5b1"
-path="res://.godot/imported/floor_carrow_conduit_indicator_vertical_01_32.png-55fc8dad61489bb44dd3c9fa703e8114.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/runtime/floor_carrow_conduit_indicator_vertical_01_32.png"
-dest_files=["res://.godot/imported/floor_carrow_conduit_indicator_vertical_01_32.png-55fc8dad61489bb44dd3c9fa703e8114.ctex"]
 
 [params]
 

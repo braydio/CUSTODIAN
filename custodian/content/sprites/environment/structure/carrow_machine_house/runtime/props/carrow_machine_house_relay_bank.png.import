@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c1cwsy0waqa3u"
-path="res://.godot/imported/carrow_machine_house_relay_bank.png-332a2f5b6ce5cf7443e70dbd25a415d8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/structure/carrow_machine_house/runtime/props/carrow_machine_house_relay_bank.png"
-dest_files=["res://.godot/imported/carrow_machine_house_relay_bank.png-332a2f5b6ce5cf7443e70dbd25a415d8.ctex"]
 
 [params]
 

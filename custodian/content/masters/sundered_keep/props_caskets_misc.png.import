@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c2q2tfjmkxiig"
-path="res://.godot/imported/props_caskets_misc.png-0c297a28c13b50c62fd169dfc9bb6cad.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/masters/sundered_keep/props_caskets_misc.png"
-dest_files=["res://.godot/imported/props_caskets_misc.png-0c297a28c13b50c62fd169dfc9bb6cad.ctex"]
 
 [params]
 

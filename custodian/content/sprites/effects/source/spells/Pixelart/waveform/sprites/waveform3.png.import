@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c0ucyyv3g6lwj"
-path="res://.godot/imported/waveform3.png-a695ac944b66f27dec86cccaf03b0e8c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/effects/source/spells/Pixelart/waveform/sprites/waveform3.png"
-dest_files=["res://.godot/imported/waveform3.png-a695ac944b66f27dec86cccaf03b0e8c.ctex"]
 
 [params]
 

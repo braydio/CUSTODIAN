@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dqphmcs4gdo1w"
-path="res://.godot/imported/residual_instinct_portrait_source_512.png-fd4c458c396d891a53a77dfc2a7e8d9d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/items/shrumb_drops/residual_instinct_portrait_source_512.png"
-dest_files=["res://.godot/imported/residual_instinct_portrait_source_512.png-fd4c458c396d891a53a77dfc2a7e8d9d.ctex"]
 
 [params]
 

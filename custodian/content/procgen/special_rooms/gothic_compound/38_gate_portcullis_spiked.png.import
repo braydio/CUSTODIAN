@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dkqa0fjcklq2"
-path="res://.godot/imported/38_gate_portcullis_spiked.png-68ed02affc9b47270af8ce33a2e9bb30.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/38_gate_portcullis_spiked.png"
-dest_files=["res://.godot/imported/38_gate_portcullis_spiked.png-68ed02affc9b47270af8ce33a2e9bb30.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dd270kqjk30mt"
-path="res://.godot/imported/environment__wall__ruined_stone__piece_026__r03c08__1f__74x87.png-4690efe81c0a817f96c827161d726849.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/walls/wall_slices_game32/environment__wall__ruined_stone__piece_026__r03c08__1f__74x87.png"
-dest_files=["res://.godot/imported/environment__wall__ruined_stone__piece_026__r03c08__1f__74x87.png-4690efe81c0a817f96c827161d726849.ctex"]
 
 [params]
 

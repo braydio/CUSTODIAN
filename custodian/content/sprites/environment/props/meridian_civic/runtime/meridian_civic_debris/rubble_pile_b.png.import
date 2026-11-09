@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bmlcltgtjbr4w"
-path="res://.godot/imported/rubble_pile_b.png-c23741e4117a8d6756c84d18cacb49aa.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_debris/rubble_pile_b.png"
-dest_files=["res://.godot/imported/rubble_pile_b.png-c23741e4117a8d6756c84d18cacb49aa.ctex"]
 
 [params]
 

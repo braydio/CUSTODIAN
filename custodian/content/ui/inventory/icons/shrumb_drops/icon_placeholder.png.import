@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://7xfpk4x2gt0o"
-path="res://.godot/imported/icon_placeholder.png-488df4c8fdbef4a147aa075163edea8b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/inventory/icons/shrumb_drops/icon_placeholder.png"
-dest_files=["res://.godot/imported/icon_placeholder.png-488df4c8fdbef4a147aa075163edea8b.ctex"]
 
 [params]
 

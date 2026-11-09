@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b6a3dyenphc3w"
-path="res://.godot/imported/vertical_floor_grate.png-fd4af7d2997f35b042bde8255ab57472.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_floor_hardware/vertical_floor_grate.png"
-dest_files=["res://.godot/imported/vertical_floor_grate.png-fd4af7d2997f35b042bde8255ab57472.ctex"]
 
 [params]
 

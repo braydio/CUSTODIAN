@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dn8ty5fld3rd3"
-path="res://.godot/imported/rampart_crenellaton_end_cap_right.png-104dfabb6bb4b9853b8dabec9a1b3a55.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/walls/ramparts/rampart_crenellaton_end_cap_right.png"
-dest_files=["res://.godot/imported/rampart_crenellaton_end_cap_right.png-104dfabb6bb4b9853b8dabec9a1b3a55.ctex"]
 
 [params]
 

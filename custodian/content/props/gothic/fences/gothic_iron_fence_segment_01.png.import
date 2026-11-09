@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://thn43vegvpvx"
-path="res://.godot/imported/gothic_iron_fence_segment_01.png-90179de81ec2de473a6712bac73c8d53.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/gothic/fences/gothic_iron_fence_segment_01.png"
-dest_files=["res://.godot/imported/gothic_iron_fence_segment_01.png-90179de81ec2de473a6712bac73c8d53.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://now4enyjjppr"
-path="res://.godot/imported/props_ammo_crate_01_40x32.png-07b6a19ec676bbfdac39f2b7bb05ddba.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/runtime/props_ammo_crate_01_40x32.png"
-dest_files=["res://.godot/imported/props_ammo_crate_01_40x32.png-07b6a19ec676bbfdac39f2b7bb05ddba.ctex"]
 
 [params]
 

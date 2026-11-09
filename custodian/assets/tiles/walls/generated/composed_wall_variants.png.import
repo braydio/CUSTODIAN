@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://imcvmi3xlnon"
-path="res://.godot/imported/composed_wall_variants.png-88fbb04ed6042523b824812691d5d88c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://assets/tiles/walls/generated/composed_wall_variants.png"
-dest_files=["res://.godot/imported/composed_wall_variants.png-88fbb04ed6042523b824812691d5d88c.ctex"]
 
 [params]
 

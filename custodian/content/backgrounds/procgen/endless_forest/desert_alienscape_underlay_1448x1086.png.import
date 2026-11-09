@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bjk8idygop7kq"
-path="res://.godot/imported/desert_alienscape_underlay_1448x1086.png-d2b3e6b477c91852307b2c82892343e0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/procgen/endless_forest/desert_alienscape_underlay_1448x1086.png"
-dest_files=["res://.godot/imported/desert_alienscape_underlay_1448x1086.png-d2b3e6b477c91852307b2c82892343e0.ctex"]
 
 [params]
 

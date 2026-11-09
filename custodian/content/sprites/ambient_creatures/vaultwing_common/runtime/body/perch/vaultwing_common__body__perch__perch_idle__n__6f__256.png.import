@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dwoql0vcmaccm"
-path="res://.godot/imported/vaultwing_common__body__perch__perch_idle__n__6f__256.png-f80543d52a9e738db9deb46d32905b31.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/ambient_creatures/vaultwing_common/runtime/body/perch/vaultwing_common__body__perch__perch_idle__n__6f__256.png"
-dest_files=["res://.godot/imported/vaultwing_common__body__perch__perch_idle__n__6f__256.png-f80543d52a9e738db9deb46d32905b31.ctex"]
 
 [params]
 

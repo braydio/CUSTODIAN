@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dn2m51rmem0ic"
-path="res://.godot/imported/props_tables_crates_detected_bboxes.png-bc89602bf6139022ce25c889deaa1719.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/_extraction_review/props_tables_crates_detected_bboxes.png"
-dest_files=["res://.godot/imported/props_tables_crates_detected_bboxes.png-bc89602bf6139022ce25c889deaa1719.ctex"]
 
 [params]
 

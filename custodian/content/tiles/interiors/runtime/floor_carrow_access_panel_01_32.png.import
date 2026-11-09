@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dwuinukh3sbox"
-path="res://.godot/imported/floor_carrow_access_panel_01_32.png-288990f0967c5cdd8f90351771e653e1.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/runtime/floor_carrow_access_panel_01_32.png"
-dest_files=["res://.godot/imported/floor_carrow_access_panel_01_32.png-288990f0967c5cdd8f90351771e653e1.ctex"]
 
 [params]
 

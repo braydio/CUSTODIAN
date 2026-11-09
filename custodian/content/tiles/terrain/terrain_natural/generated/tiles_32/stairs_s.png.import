@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ddgviyjggmsle"
-path="res://.godot/imported/stairs_s.png-d81ae9de99f90a4ef804c2f48127f186.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/tiles_32/stairs_s.png"
-dest_files=["res://.godot/imported/stairs_s.png-d81ae9de99f90a4ef804c2f48127f186.ctex"]
 
 [params]
 

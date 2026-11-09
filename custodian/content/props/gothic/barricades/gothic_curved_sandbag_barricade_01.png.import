@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cqiq3wsns7vli"
-path="res://.godot/imported/gothic_curved_sandbag_barricade_01.png-1461be44f7ae01835b3e6357f58031a0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/gothic/barricades/gothic_curved_sandbag_barricade_01.png"
-dest_files=["res://.godot/imported/gothic_curved_sandbag_barricade_01.png-1461be44f7ae01835b3e6357f58031a0.ctex"]
 
 [params]
 

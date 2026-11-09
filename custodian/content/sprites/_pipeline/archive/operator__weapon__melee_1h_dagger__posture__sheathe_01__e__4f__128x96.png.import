@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dvr5ct8t8v7yv"
-path="res://.godot/imported/operator__weapon__melee_1h_dagger__posture__sheathe_01__e__4f__128x96.png-160304fa154af4bbcdaffa9a89b1f351.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/archive/operator__weapon__melee_1h_dagger__posture__sheathe_01__e__4f__128x96.png"
-dest_files=["res://.godot/imported/operator__weapon__melee_1h_dagger__posture__sheathe_01__e__4f__128x96.png-160304fa154af4bbcdaffa9a89b1f351.ctex"]
 
 [params]
 

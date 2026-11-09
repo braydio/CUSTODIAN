@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ddpqgycicpcni"
-path="res://.godot/imported/overlay_rune_circle_05.png-0ad58f1d107f684d62dbcb1a382d92b0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/roads_paths/runtime/roads/gothic/overlays/overlay_rune_circle_05.png"
-dest_files=["res://.godot/imported/overlay_rune_circle_05.png-0ad58f1d107f684d62dbcb1a382d92b0.ctex"]
 
 [params]
 

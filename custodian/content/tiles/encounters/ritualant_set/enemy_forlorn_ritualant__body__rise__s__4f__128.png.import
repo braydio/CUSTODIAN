@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://csxf3nd5fndvb"
-path="res://.godot/imported/enemy_forlorn_ritualant__body__rise__s__4f__128.png-7c0c506df025c0081f9e92fe7efca8ec.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/enemy_forlorn_ritualant__body__rise__s__4f__128.png"
-dest_files=["res://.godot/imported/enemy_forlorn_ritualant__body__rise__s__4f__128.png-7c0c506df025c0081f9e92fe7efca8ec.ctex"]
 
 [params]
 

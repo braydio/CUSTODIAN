@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dd6lvtclr44lm"
-path="res://.godot/imported/ocean_foam_corner_sw.png-edcadf2b8141c68de4badb5502d2bb48.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_corner_sw.png"
-dest_files=["res://.godot/imported/ocean_foam_corner_sw.png-edcadf2b8141c68de4badb5502d2bb48.ctex"]
 
 [params]
 

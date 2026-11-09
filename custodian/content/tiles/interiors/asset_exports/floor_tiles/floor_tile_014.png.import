@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://0vl7mojucpl6"
-path="res://.godot/imported/floor_tile_014.png-59ea67190718a89e0852fe98858e2036.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/asset_exports/floor_tiles/floor_tile_014.png"
-dest_files=["res://.godot/imported/floor_tile_014.png-59ea67190718a89e0852fe98858e2036.ctex"]
 
 [params]
 

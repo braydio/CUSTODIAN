@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cb6mgfg1kjh8"
-path="res://.godot/imported/marker_fabricator1.png-1c1d0a16e9c23d37a649bc3d481d029b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/source/marker_fabricator1.png"
-dest_files=["res://.godot/imported/marker_fabricator1.png-1c1d0a16e9c23d37a649bc3d481d029b.ctex"]
 
 [params]
 

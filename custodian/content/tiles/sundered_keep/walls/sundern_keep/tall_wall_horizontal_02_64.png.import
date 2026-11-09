@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://carcwfj0xuafj"
-path="res://.godot/imported/tall_wall_horizontal_02_64.png-740931921338c075528a94a562ff2756.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/walls/sundern_keep/tall_wall_horizontal_02_64.png"
-dest_files=["res://.godot/imported/tall_wall_horizontal_02_64.png-740931921338c075528a94a562ff2756.ctex"]
 
 [params]
 

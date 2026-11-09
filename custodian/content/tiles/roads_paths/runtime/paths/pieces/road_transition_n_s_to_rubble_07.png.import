@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dh1b5mxrfk351"
-path="res://.godot/imported/road_transition_n_s_to_rubble_07.png-ae73be2054436ce4f8f0719dffedc834.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/roads_paths/runtime/paths/pieces/road_transition_n_s_to_rubble_07.png"
-dest_files=["res://.godot/imported/road_transition_n_s_to_rubble_07.png-ae73be2054436ce4f8f0719dffedc834.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://colow50uvixw0"
-path="res://.godot/imported/sundered_keep_outer_wall_checkpoint_detail_01.png-ba8dfd5a62897e97ca7896e65922abd6.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/approach/near_detail/sundered_keep_outer_wall_checkpoint_detail_01.png"
-dest_files=["res://.godot/imported/sundered_keep_outer_wall_checkpoint_detail_01.png-ba8dfd5a62897e97ca7896e65922abd6.ctex"]
 
 [params]
 

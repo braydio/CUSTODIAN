@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b6yah88ajk5wl"
-path="res://.godot/imported/road_path_005.png-97be443e34c32f33b507419a4aeb4713.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/asset_exports/road_path_tiles/road_path_005.png"
-dest_files=["res://.godot/imported/road_path_005.png-97be443e34c32f33b507419a4aeb4713.ctex"]
 
 [params]
 

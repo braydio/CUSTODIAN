@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bxk7y2u1xmr8b"
-path="res://.godot/imported/MageRed.png-51d331dfb151b2980b96001ed9c88421.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Soldiers/Ranged/RedRanged/MageRed.png"
-dest_files=["res://.godot/imported/MageRed.png-51d331dfb151b2980b96001ed9c88421.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bbfctn61ggh6y"
-path="res://.godot/imported/chain_barrier_black.png-6402c6b34ee00348fb8069dbed8032de.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_traffic_control/chain_barrier_black.png"
-dest_files=["res://.godot/imported/chain_barrier_black.png-6402c6b34ee00348fb8069dbed8032de.ctex"]
 
 [params]
 

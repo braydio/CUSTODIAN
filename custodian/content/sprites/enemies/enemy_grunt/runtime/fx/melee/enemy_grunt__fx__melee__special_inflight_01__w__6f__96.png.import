@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://duoxbhyryn80h"
-path="res://.godot/imported/enemy_grunt__fx__melee__special_inflight_01__w__6f__96.png-1844fc03260584bbd3963382cd4379f0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_grunt/runtime/fx/melee/enemy_grunt__fx__melee__special_inflight_01__w__6f__96.png"
-dest_files=["res://.godot/imported/enemy_grunt__fx__melee__special_inflight_01__w__6f__96.png-1844fc03260584bbd3963382cd4379f0.ctex"]
 
 [params]
 

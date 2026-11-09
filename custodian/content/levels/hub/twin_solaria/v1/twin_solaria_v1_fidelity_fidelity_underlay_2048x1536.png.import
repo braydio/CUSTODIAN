@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://sa1ac4ctamyg"
-path="res://.godot/imported/twin_solaria_v1_fidelity_fidelity_underlay_2048x1536.png-dab9dcd134b4b65583ee5a185acc61be.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/levels/hub/twin_solaria/v1/twin_solaria_v1_fidelity_fidelity_underlay_2048x1536.png"
-dest_files=["res://.godot/imported/twin_solaria_v1_fidelity_fidelity_underlay_2048x1536.png-dab9dcd134b4b65583ee5a185acc61be.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bqubdaxppl02"
-path="res://.godot/imported/operator__modular_upper_body__melee_1h__stance_01__e__1f__96.png-1f952da7fe90ed325adcfbb848aad140.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/archive/operator__modular_upper_body__melee_1h__stance_01__e__1f__96.png"
-dest_files=["res://.godot/imported/operator__modular_upper_body__melee_1h__stance_01__e__1f__96.png-1f952da7fe90ed325adcfbb848aad140.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://doylsepovacel"
-path="res://.godot/imported/nav_tab_hover_9slice.png-eb56888aa443e051f67e2b1accc82a03.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/nav/nav_tab_hover_9slice.png"
-dest_files=["res://.godot/imported/nav_tab_hover_9slice.png-eb56888aa443e051f67e2b1accc82a03.ctex"]
 
 [params]
 

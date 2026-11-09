@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cg5qfy6f1vlen"
-path="res://.godot/imported/cliff_face_dark_01.png-4ef076da9c22508772f0c1452868dd44.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_runtime/cliffs/cliff_face_dark_01.png"
-dest_files=["res://.godot/imported/cliff_face_dark_01.png-4ef076da9c22508772f0c1452868dd44.ctex"]
 
 [params]
 

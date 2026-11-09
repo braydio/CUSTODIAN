@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://br0sniesc6883"
-path="res://.godot/imported/overlay_warning_flash.png-c2a712e7b46dcd11a05e31fa39f5a25c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/overlays/overlay_warning_flash.png"
-dest_files=["res://.godot/imported/overlay_warning_flash.png-c2a712e7b46dcd11a05e31fa39f5a25c.ctex"]
 
 [params]
 

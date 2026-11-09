@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://565yvftntyoo"
-path="res://.godot/imported/allied_infantry_droid__idle__e__5f__96.png-f3058b6a3b8872e30c05d8c0cdb54457.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/allies/allied_infantry_droid/allied_infantry_droid__idle__e__5f__96.png"
-dest_files=["res://.godot/imported/allied_infantry_droid__idle__e__5f__96.png-f3058b6a3b8872e30c05d8c0cdb54457.ctex"]
 
 [params]
 

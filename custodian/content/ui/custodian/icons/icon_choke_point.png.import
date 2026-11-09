@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cbdbuamcj7m7l"
-path="res://.godot/imported/icon_choke_point.png-a66c2cb96624b5c7e111570c59f666ae.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/custodian/icons/icon_choke_point.png"
-dest_files=["res://.godot/imported/icon_choke_point.png-a66c2cb96624b5c7e111570c59f666ae.ctex"]
 
 [params]
 

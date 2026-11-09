@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bp5oobc2cnsns"
-path="res://.godot/imported/dungeon_stone_floor_01.png-3479a6b4fcbce2a2205cb2da866995d4.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/floors/dungeon_stone_floor_01.png"
-dest_files=["res://.godot/imported/dungeon_stone_floor_01.png-3479a6b4fcbce2a2205cb2da866995d4.ctex"]
 
 [params]
 

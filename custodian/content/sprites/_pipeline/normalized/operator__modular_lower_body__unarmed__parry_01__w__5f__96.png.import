@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dnyoa5mktwve3"
-path="res://.godot/imported/operator__modular_lower_body__unarmed__parry_01__w__5f__96.png-4a0463105e0491c5099f83e3c41bb867.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/normalized/operator__modular_lower_body__unarmed__parry_01__w__5f__96.png"
-dest_files=["res://.godot/imported/operator__modular_lower_body__unarmed__parry_01__w__5f__96.png-4a0463105e0491c5099f83e3c41bb867.ctex"]
 
 [params]
 

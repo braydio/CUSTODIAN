@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bwqgcphkuv1wc"
-path="res://.godot/imported/gothic_castle_walls_detected_bboxes.png-c7782ce366c753a2f72e924c88fb2540.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/_extraction_review/gothic_castle_walls_detected_bboxes.png"
-dest_files=["res://.godot/imported/gothic_castle_walls_detected_bboxes.png-c7782ce366c753a2f72e924c88fb2540.ctex"]
 
 [params]
 

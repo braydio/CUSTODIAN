@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://0e53f7mxdbc5"
-path="res://.godot/imported/idle_kick_rocks.png-43d2c2e6233e071bed380dcfecbcfa65.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/source_original/idle_kick_rocks.png"
-dest_files=["res://.godot/imported/idle_kick_rocks.png-43d2c2e6233e071bed380dcfecbcfa65.ctex"]
 
 [params]
 

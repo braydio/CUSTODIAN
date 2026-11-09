@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://wlhcu48uv51t"
-path="res://.godot/imported/pursuit_frame__body__reaction__stagger_01__s__6f__96.png-39c28817dcc7e19c66c4e5050a371aa8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/pursuit_frame/runtime/body/reaction/pursuit_frame__body__reaction__stagger_01__s__6f__96.png"
-dest_files=["res://.godot/imported/pursuit_frame__body__reaction__stagger_01__s__6f__96.png-39c28817dcc7e19c66c4e5050a371aa8.ctex"]
 
 [params]
 

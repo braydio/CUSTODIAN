@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://vfhko6wsk1v1"
-path="res://.godot/imported/snow_drifts.png-520705a8b2e9fa121386b572baad1165.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/raw_preview_tiles/snow_drifts.png"
-dest_files=["res://.godot/imported/snow_drifts.png-520705a8b2e9fa121386b572baad1165.ctex"]
 
 [params]
 

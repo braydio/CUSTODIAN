@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://0lyvvqsuj023"
-path="res://.godot/imported/vaultwing_common__body__reaction__hurt__e__4f__256.png-6b5806d194d4347d8ff287d9eceb74ea.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/ambient_creatures/vaultwing_common/runtime/body/reaction/vaultwing_common__body__reaction__hurt__e__4f__256.png"
-dest_files=["res://.godot/imported/vaultwing_common__body__reaction__hurt__e__4f__256.png-6b5806d194d4347d8ff287d9eceb74ea.ctex"]
 
 [params]
 

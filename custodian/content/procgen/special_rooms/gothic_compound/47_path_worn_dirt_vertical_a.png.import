@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cgdthclqs5wq7"
-path="res://.godot/imported/47_path_worn_dirt_vertical_a.png-36e1999f8389c63102b0663ebdbb4420.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/47_path_worn_dirt_vertical_a.png"
-dest_files=["res://.godot/imported/47_path_worn_dirt_vertical_a.png-36e1999f8389c63102b0663ebdbb4420.ctex"]
 
 [params]
 

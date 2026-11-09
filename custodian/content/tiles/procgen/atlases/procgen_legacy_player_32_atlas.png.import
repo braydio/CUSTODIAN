@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cmo4dkrj1fyal"
-path="res://.godot/imported/procgen_legacy_player_32_atlas.png-f0f8f6808c71fe9f75d6463663b64531.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/procgen/atlases/procgen_legacy_player_32_atlas.png"
-dest_files=["res://.godot/imported/procgen_legacy_player_32_atlas.png-f0f8f6808c71fe9f75d6463663b64531.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://m3b8ppu3g3gm"
-path="res://.godot/imported/slot_highlighted.png-1709d1a6765a54bd7f650c32e411efe5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/inventory/slot_highlighted.png"
-dest_files=["res://.godot/imported/slot_highlighted.png-1709d1a6765a54bd7f650c32e411efe5.ctex"]
 
 [params]
 

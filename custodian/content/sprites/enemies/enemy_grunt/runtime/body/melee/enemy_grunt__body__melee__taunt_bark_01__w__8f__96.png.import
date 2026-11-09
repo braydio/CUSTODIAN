@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://hw4r1h2rsf84"
-path="res://.godot/imported/enemy_grunt__body__melee__taunt_bark_01__w__8f__96.png-4116f21fd170714b180b7c738d619ff5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__taunt_bark_01__w__8f__96.png"
-dest_files=["res://.godot/imported/enemy_grunt__body__melee__taunt_bark_01__w__8f__96.png-4116f21fd170714b180b7c738d619ff5.ctex"]
 
 [params]
 

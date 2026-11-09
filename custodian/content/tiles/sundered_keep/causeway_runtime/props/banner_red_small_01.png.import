@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c37x4o3g81mlv"
-path="res://.godot/imported/banner_red_small_01.png-72b149559f2ac52b1f1c58369264d1fd.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_runtime/props/banner_red_small_01.png"
-dest_files=["res://.godot/imported/banner_red_small_01.png-72b149559f2ac52b1f1c58369264d1fd.ctex"]
 
 [params]
 

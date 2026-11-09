@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c3737dqmmcix"
-path="res://.godot/imported/grunt_idle_e_5f_96.png-08320613501173372a61ff9dfe199742.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_grunt/source_sheets/grunt_idle_e_5f_96.png"
-dest_files=["res://.godot/imported/grunt_idle_e_5f_96.png-08320613501173372a61ff9dfe199742.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://y4vltvw23osb"
-path="res://.godot/imported/icon_gate_open.png-98f4cb7e1440e03086545f89948cc63d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/custodian/icons/icon_gate_open.png"
-dest_files=["res://.godot/imported/icon_gate_open.png-98f4cb7e1440e03086545f89948cc63d.ctex"]
 
 [params]
 

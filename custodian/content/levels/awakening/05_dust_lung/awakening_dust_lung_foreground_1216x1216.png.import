@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bijetp7s0qv1p"
-path="res://.godot/imported/awakening_dust_lung_foreground_1216x1216.png-27ab9fbec60fe6b1432290556580f24b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/levels/awakening/05_dust_lung/awakening_dust_lung_foreground_1216x1216.png"
-dest_files=["res://.godot/imported/awakening_dust_lung_foreground_1216x1216.png-27ab9fbec60fe6b1432290556580f24b.ctex"]
 
 [params]
 

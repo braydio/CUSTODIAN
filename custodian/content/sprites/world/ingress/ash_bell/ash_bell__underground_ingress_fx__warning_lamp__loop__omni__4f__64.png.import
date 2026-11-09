@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ctnyvl5g3fktj"
-path="res://.godot/imported/ash_bell__underground_ingress_fx__warning_lamp__loop__omni__4f__64.png-1b363398c3c9b481f6ef2a47af51b586.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/world/ingress/ash_bell/ash_bell__underground_ingress_fx__warning_lamp__loop__omni__4f__64.png"
-dest_files=["res://.godot/imported/ash_bell__underground_ingress_fx__warning_lamp__loop__omni__4f__64.png-1b363398c3c9b481f6ef2a47af51b586.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://coohifi7wc5yo"
-path="res://.godot/imported/environment__ambient_critter__shrumb__death_01__8f__e__96.png-35fd40c7b9836da9d0d8fc7200d0f724.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/ambient_critter/source/environment__ambient_critter__shrumb__death_01__8f__e__96.png"
-dest_files=["res://.godot/imported/environment__ambient_critter__shrumb__death_01__8f__e__96.png-35fd40c7b9836da9d0d8fc7200d0f724.ctex"]
 
 [params]
 

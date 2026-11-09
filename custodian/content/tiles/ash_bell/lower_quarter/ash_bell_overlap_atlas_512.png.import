@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://qg7cteh2qyjf"
-path="res://.godot/imported/ash_bell_overlap_atlas_512.png-e7a3bce0e4123f45651a6f7bad97e624.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/ash_bell/lower_quarter/ash_bell_overlap_atlas_512.png"
-dest_files=["res://.godot/imported/ash_bell_overlap_atlas_512.png-e7a3bce0e4123f45651a6f7bad97e624.ctex"]
 
 [params]
 

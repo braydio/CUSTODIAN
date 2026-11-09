@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dgx37uo6i7edm"
-path="res://.godot/imported/icon_warning.png-27d8e781d4269abf9750c22b68c4f6ce.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/icons/icon_warning.png"
-dest_files=["res://.godot/imported/icon_warning.png-27d8e781d4269abf9750c22b68c4f6ce.ctex"]
 
 [params]
 

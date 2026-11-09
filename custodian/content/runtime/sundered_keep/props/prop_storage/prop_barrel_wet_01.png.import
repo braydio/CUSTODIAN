@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://s3guhtmvj73v"
-path="res://.godot/imported/prop_barrel_wet_01.png-559c0590f127767f5e6498f005b47d5f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/props/prop_storage/prop_barrel_wet_01.png"
-dest_files=["res://.godot/imported/prop_barrel_wet_01.png-559c0590f127767f5e6498f005b47d5f.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b47hexgwr0k27"
-path="res://.godot/imported/Scene Overview.png-f36bd4792de9d91cffbacaa0b9834bee.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/Scene Overview.png"
-dest_files=["res://.godot/imported/Scene Overview.png-f36bd4792de9d91cffbacaa0b9834bee.ctex"]
 
 [params]
 

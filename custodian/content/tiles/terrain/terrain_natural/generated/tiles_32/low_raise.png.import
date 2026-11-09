@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bs7i35fqe8orw"
-path="res://.godot/imported/low_raise.png-d1852134d3fbcb6a8efafe9e872bf413.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/tiles_32/low_raise.png"
-dest_files=["res://.godot/imported/low_raise.png-d1852134d3fbcb6a8efafe9e872bf413.ctex"]
 
 [params]
 

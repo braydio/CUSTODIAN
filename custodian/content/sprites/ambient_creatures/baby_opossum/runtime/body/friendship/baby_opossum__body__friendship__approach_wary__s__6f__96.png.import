@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bcxochbc1wlxg"
-path="res://.godot/imported/baby_opossum__body__friendship__approach_wary__s__6f__96.png-31502c33c472f506e6fb18cb592fded4.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/ambient_creatures/baby_opossum/runtime/body/friendship/baby_opossum__body__friendship__approach_wary__s__6f__96.png"
-dest_files=["res://.godot/imported/baby_opossum__body__friendship__approach_wary__s__6f__96.png-31502c33c472f506e6fb18cb592fded4.ctex"]
 
 [params]
 

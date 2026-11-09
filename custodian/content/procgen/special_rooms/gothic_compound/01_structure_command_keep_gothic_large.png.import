@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://2tnydjnxdgls"
-path="res://.godot/imported/01_structure_command_keep_gothic_large.png-572276d98b2dd475a886bad09bb09271.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/01_structure_command_keep_gothic_large.png"
-dest_files=["res://.godot/imported/01_structure_command_keep_gothic_large.png-572276d98b2dd475a886bad09bb09271.ctex"]
 
 [params]
 

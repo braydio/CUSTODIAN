@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://pmmjif1opuu3"
-path="res://.godot/imported/stair_retaining_slope.png-4920fed312fd0cb8213de0d6fd1357c1.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_structure/stair_retaining_slope.png"
-dest_files=["res://.godot/imported/stair_retaining_slope.png-4920fed312fd0cb8213de0d6fd1357c1.ctex"]
 
 [params]
 

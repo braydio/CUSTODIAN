@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dfpww8ldv6tgo"
-path="res://.godot/imported/31_ground_brown_rubble_patch.png-d1ccd56935c426bf736e1675e810862b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/31_ground_brown_rubble_patch.png"
-dest_files=["res://.godot/imported/31_ground_brown_rubble_patch.png-d1ccd56935c426bf736e1675e810862b.ctex"]
 
 [params]
 

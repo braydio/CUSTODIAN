@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bgrsmek4g1avv"
-path="res://.godot/imported/portal__ring__idle_01__6f.png-79ff58e0c4bcd968bf009dba2f1e9d2a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/normalized/portal__ring__idle_01__6f.png"
-dest_files=["res://.godot/imported/portal__ring__idle_01__6f.png-79ff58e0c4bcd968bf009dba2f1e9d2a.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bu2uhv8x240re"
-path="res://.godot/imported/combat_fx__breach_alert__8f__96-48.png-f4b2b158adf756d3b2c1bcb6383bc36b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/effects/combat/critical/combat_fx__breach_alert__8f__96-48.png"
-dest_files=["res://.godot/imported/combat_fx__breach_alert__8f__96-48.png-f4b2b158adf756d3b2c1bcb6383bc36b.ctex"]
 
 [params]
 

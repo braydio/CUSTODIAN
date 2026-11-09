@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cj3peakry7cs5"
-path="res://.godot/imported/broken_signal_relay__node__idle__5f__96.png-9b484e8b4897b9489e2cf986c001dd46.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/props/harvesting_nodes/broken_signal_relay/broken_signal_relay__node__idle__5f__96.png"
-dest_files=["res://.godot/imported/broken_signal_relay__node__idle__5f__96.png-9b484e8b4897b9489e2cf986c001dd46.ctex"]
 
 [params]
 

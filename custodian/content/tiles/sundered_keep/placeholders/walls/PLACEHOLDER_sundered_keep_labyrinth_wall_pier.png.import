@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cetjyd5n3ucsf"
-path="res://.godot/imported/PLACEHOLDER_sundered_keep_labyrinth_wall_pier.png-eab9758ffa86f1792cef63290c9b60ec.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/placeholders/walls/PLACEHOLDER_sundered_keep_labyrinth_wall_pier.png"
-dest_files=["res://.godot/imported/PLACEHOLDER_sundered_keep_labyrinth_wall_pier.png-eab9758ffa86f1792cef63290c9b60ec.ctex"]
 
 [params]
 

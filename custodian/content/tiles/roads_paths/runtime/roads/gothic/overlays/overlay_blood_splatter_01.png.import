@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c0rfu0k25sgep"
-path="res://.godot/imported/overlay_blood_splatter_01.png-b5272248eb8525976958b41ac864ce98.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/roads_paths/runtime/roads/gothic/overlays/overlay_blood_splatter_01.png"
-dest_files=["res://.godot/imported/overlay_blood_splatter_01.png-b5272248eb8525976958b41ac864ce98.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://df43c71vafoyv"
-path="res://.godot/imported/floor_carrow_hazard_diagonal_02_32.png-bfb8a0380d22eb39d12f7fb8bdb462e4.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/runtime/floor_carrow_hazard_diagonal_02_32.png"
-dest_files=["res://.godot/imported/floor_carrow_hazard_diagonal_02_32.png-bfb8a0380d22eb39d12f7fb8bdb462e4.ctex"]
 
 [params]
 

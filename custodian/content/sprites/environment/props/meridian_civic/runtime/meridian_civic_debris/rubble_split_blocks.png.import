@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://df8l7ncdf40lo"
-path="res://.godot/imported/rubble_split_blocks.png-a384970409c9cda7fa5c2ad8c933dafe.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_debris/rubble_split_blocks.png"
-dest_files=["res://.godot/imported/rubble_split_blocks.png-a384970409c9cda7fa5c2ad8c933dafe.ctex"]
 
 [params]
 

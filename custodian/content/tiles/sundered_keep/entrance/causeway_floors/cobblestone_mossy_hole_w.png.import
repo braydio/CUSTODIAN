@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ol6tocltmxwh"
-path="res://.godot/imported/cobblestone_mossy_hole_w.png-3e0ee58414a06c500bc99c5b6e412d07.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/entrance/causeway_floors/cobblestone_mossy_hole_w.png"
-dest_files=["res://.godot/imported/cobblestone_mossy_hole_w.png-3e0ee58414a06c500bc99c5b6e412d07.ctex"]
 
 [params]
 

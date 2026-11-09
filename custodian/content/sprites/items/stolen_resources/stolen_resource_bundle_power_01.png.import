@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b3j7qdwk3kyhq"
-path="res://.godot/imported/stolen_resource_bundle_power_01.png-ad4dd594de8d507a617cd01d714be92a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/items/stolen_resources/stolen_resource_bundle_power_01.png"
-dest_files=["res://.godot/imported/stolen_resource_bundle_power_01.png-ad4dd594de8d507a617cd01d714be92a.ctex"]
 
 [params]
 

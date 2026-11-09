@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://xdsblpfycolx"
-path="res://.godot/imported/30_wall_broken_rubble_gap.png-a05c7229219db8455510ade4e1e77251.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/30_wall_broken_rubble_gap.png"
-dest_files=["res://.godot/imported/30_wall_broken_rubble_gap.png-a05c7229219db8455510ade4e1e77251.ctex"]
 
 [params]
 

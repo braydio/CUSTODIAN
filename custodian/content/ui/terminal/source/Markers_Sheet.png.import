@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dt8gf6mx2k8qd"
-path="res://.godot/imported/Markers_Sheet.png-8d3f5f2d869e7978cc0ee0a52a946c71.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/source/Markers_Sheet.png"
-dest_files=["res://.godot/imported/Markers_Sheet.png-8d3f5f2d869e7978cc0ee0a52a946c71.ctex"]
 
 [params]
 

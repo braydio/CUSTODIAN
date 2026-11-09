@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cuptntdell4oc"
-path="res://.godot/imported/chain_or_black_post_01.png-d3e9ffad0e5767d945f54f319b2d28f8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_entrance/props/chain_or_black_post_01.png"
-dest_files=["res://.godot/imported/chain_or_black_post_01.png-d3e9ffad0e5767d945f54f319b2d28f8.ctex"]
 
 [params]
 

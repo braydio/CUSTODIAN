@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c82k3aqiylqhc"
-path="res://.godot/imported/cliff_depth_underlay.png-4cdeb4f5f30af467660af6ad044c4750.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/shared/underlay/cliff_depth_underlay.png"
-dest_files=["res://.godot/imported/cliff_depth_underlay.png-4cdeb4f5f30af467660af6ad044c4750.ctex"]
 
 [params]
 

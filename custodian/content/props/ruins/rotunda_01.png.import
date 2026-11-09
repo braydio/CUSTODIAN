@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bvyimcyn2psju"
-path="res://.godot/imported/rotunda_01.png-0ea44cd17350db28eaa66bd9a35a9e82.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/ruins/rotunda_01.png"
-dest_files=["res://.godot/imported/rotunda_01.png-0ea44cd17350db28eaa66bd9a35a9e82.ctex"]
 
 [params]
 

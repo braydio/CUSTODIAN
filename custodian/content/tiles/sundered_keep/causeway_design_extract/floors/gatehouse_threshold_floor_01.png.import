@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cdtqaau6ksmst"
-path="res://.godot/imported/gatehouse_threshold_floor_01.png-585519aab5d919abf14c03fd1e870eb8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_design_extract/floors/gatehouse_threshold_floor_01.png"
-dest_files=["res://.godot/imported/gatehouse_threshold_floor_01.png-585519aab5d919abf14c03fd1e870eb8.ctex"]
 
 [params]
 

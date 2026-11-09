@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cfro177yh3jjd"
-path="res://.godot/imported/operator__modular_upper_fx__sidearm__draw_sidearm_01__ne__5f__96.png-81c33e81eadd41f92ad2b20d5de311bf.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/new_operator/modular/sidearm/operator__modular_upper_fx__sidearm__draw_sidearm_01__ne__5f__96.png"
-dest_files=["res://.godot/imported/operator__modular_upper_fx__sidearm__draw_sidearm_01__ne__5f__96.png-81c33e81eadd41f92ad2b20d5de311bf.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bhia3ec2sms7b"
-path="res://.godot/imported/causeway_keep_battlement_outer_corner_sw.png-afd087bd8d56b3f71b2ab420edc72090.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/entrance/causeway_walls/causeway_keep_battlement_outer_corner_sw.png"
-dest_files=["res://.godot/imported/causeway_keep_battlement_outer_corner_sw.png-afd087bd8d56b3f71b2ab420edc72090.ctex"]
 
 [params]
 

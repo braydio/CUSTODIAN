@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dedp71lihbko2"
-path="res://.godot/imported/Rolling.png-2ee30004fda3a41521f6c0029b367085.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://dev/test_sprites/Knight/Rolling.png"
-dest_files=["res://.godot/imported/Rolling.png-2ee30004fda3a41521f6c0029b367085.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://lb2s3eiq383e"
-path="res://.godot/imported/castle_wall_support_constructed_cliffside_01.png-b36b5c7d973978bdf1bdfc98fe433034.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/entrance/cliffs/castle_wall_support_constructed_cliffside_01.png"
-dest_files=["res://.godot/imported/castle_wall_support_constructed_cliffside_01.png-b36b5c7d973978bdf1bdfc98fe433034.ctex"]
 
 [params]
 

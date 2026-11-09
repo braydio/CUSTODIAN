@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bwd63fujx2vn3"
-path="res://.godot/imported/keep_buttress_vertical_left_01.png-3396aca9afd74dc41692c1a33a193518.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_runtime/keep_walls/keep_buttress_vertical_left_01.png"
-dest_files=["res://.godot/imported/keep_buttress_vertical_left_01.png-3396aca9afd74dc41692c1a33a193518.ctex"]
 
 [params]
 

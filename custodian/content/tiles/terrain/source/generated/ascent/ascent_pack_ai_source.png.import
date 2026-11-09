@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ctjig0t14b3s1"
-path="res://.godot/imported/ascent_pack_ai_source.png-ad4d156047a12894383d2a7852388af3.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/source/generated/ascent/ascent_pack_ai_source.png"
-dest_files=["res://.godot/imported/ascent_pack_ai_source.png-ad4d156047a12894383d2a7852388af3.ctex"]
 
 [params]
 

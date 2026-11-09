@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://f6eow0utylmy"
-path="res://.godot/imported/shrumb_slink_east1.png-a67ac112f9e5e4c3b012fb7e784e7f14.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/ambient_critter/shrumb_slink_east1.png"
-dest_files=["res://.godot/imported/shrumb_slink_east1.png-a67ac112f9e5e4c3b012fb7e784e7f14.ctex"]
 
 [params]
 

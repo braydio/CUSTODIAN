@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bi6a3stpw1ewx"
-path="res://.godot/imported/props_cart_bin_case_unprocessed.png-ca12eed5b28f29b585072f4193e61f07.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/props_cart_bin_case_unprocessed.png"
-dest_files=["res://.godot/imported/props_cart_bin_case_unprocessed.png-ca12eed5b28f29b585072f4193e61f07.ctex"]
 
 [params]
 

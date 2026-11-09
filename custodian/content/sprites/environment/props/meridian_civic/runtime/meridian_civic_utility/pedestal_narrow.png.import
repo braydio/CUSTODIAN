@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cxirwmmn1lg7q"
-path="res://.godot/imported/pedestal_narrow.png-3b7c90bc56eeb4921da7b8285cd6527e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_utility/pedestal_narrow.png"
-dest_files=["res://.godot/imported/pedestal_narrow.png-3b7c90bc56eeb4921da7b8285cd6527e.ctex"]
 
 [params]
 

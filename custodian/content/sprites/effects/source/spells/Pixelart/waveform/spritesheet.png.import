@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bam530ajoxl6"
-path="res://.godot/imported/spritesheet.png-31a2085e91be1576beac3463514b26bd.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/effects/source/spells/Pixelart/waveform/spritesheet.png"
-dest_files=["res://.godot/imported/spritesheet.png-31a2085e91be1576beac3463514b26bd.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://0w0xkvi2b7jh"
-path="res://.godot/imported/cobblestone_causeway_bridge_01.png-2af71eabbb807af17905cbb4bbe02ffc.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/entrance/causeway_floors/cobblestone_causeway_bridge_01.png"
-dest_files=["res://.godot/imported/cobblestone_causeway_bridge_01.png-2af71eabbb807af17905cbb4bbe02ffc.ctex"]
 
 [params]
 

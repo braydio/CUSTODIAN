@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dm8fml3xr7b14"
-path="res://.godot/imported/701.png-e022bb71ac334cd4f7b5c6b50776d5b8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/effects/Free/Part 15/701.png"
-dest_files=["res://.godot/imported/701.png-e022bb71ac334cd4f7b5c6b50776d5b8.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cjb1elrrj8x2y"
-path="res://.godot/imported/first_vista_base_storm_horizon.png-b1cef6cb436e3a5bc1d29cf1196568d4.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/approach/underlay/first_vista_base_storm_horizon.png"
-dest_files=["res://.godot/imported/first_vista_base_storm_horizon.png-b1cef6cb436e3a5bc1d29cf1196568d4.ctex"]
 
 [params]
 

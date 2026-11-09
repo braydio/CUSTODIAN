@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ci4hjutf3veqa"
-path="res://.godot/imported/information_column_01.png-fbaafbf2b5e4bb9912e6eb093aa41a0d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_information_column/information_column_01.png"
-dest_files=["res://.godot/imported/information_column_01.png-fbaafbf2b5e4bb9912e6eb093aa41a0d.ctex"]
 
 [params]
 

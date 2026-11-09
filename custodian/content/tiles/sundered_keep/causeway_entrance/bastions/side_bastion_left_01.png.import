@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bd60c8joe838o"
-path="res://.godot/imported/side_bastion_left_01.png-a518ea20ac4a4de781c2c14619c23cf3.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_entrance/bastions/side_bastion_left_01.png"
-dest_files=["res://.godot/imported/side_bastion_left_01.png-a518ea20ac4a4de781c2c14619c23cf3.ctex"]
 
 [params]
 

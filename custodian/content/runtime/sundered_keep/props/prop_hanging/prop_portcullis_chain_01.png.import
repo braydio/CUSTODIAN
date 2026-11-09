@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cov0nkmqlby24"
-path="res://.godot/imported/prop_portcullis_chain_01.png-a99776697a9812fe3bc2da0c1e80b3a3.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/props/prop_hanging/prop_portcullis_chain_01.png"
-dest_files=["res://.godot/imported/prop_portcullis_chain_01.png-a99776697a9812fe3bc2da0c1e80b3a3.ctex"]
 
 [params]
 

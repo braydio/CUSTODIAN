@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://caupwspqcyf5o"
-path="res://.godot/imported/holding-rifles.png-a54d04bea9002f1b3b5e6b6e3629128f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/source_original/holding-rifles.png"
-dest_files=["res://.godot/imported/holding-rifles.png-a54d04bea9002f1b3b5e6b6e3629128f.ctex"]
 
 [params]
 

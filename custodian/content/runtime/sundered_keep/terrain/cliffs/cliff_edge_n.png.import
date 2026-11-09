@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b5ckd54qdjjc4"
-path="res://.godot/imported/cliff_edge_n.png-304b539a5cbd0ffda353af0ca1154cb2.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/terrain/cliffs/cliff_edge_n.png"
-dest_files=["res://.godot/imported/cliff_edge_n.png-304b539a5cbd0ffda353af0ca1154cb2.ctex"]
 
 [params]
 

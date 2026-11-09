@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bfgfjqirgqcui"
-path="res://.godot/imported/cliff_top_mossy_edge_01.png-be6865a3c71e1e0665606e804e5aaff0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_runtime/cliffs/cliff_top_mossy_edge_01.png"
-dest_files=["res://.godot/imported/cliff_top_mossy_edge_01.png-be6865a3c71e1e0665606e804e5aaff0.ctex"]
 
 [params]
 

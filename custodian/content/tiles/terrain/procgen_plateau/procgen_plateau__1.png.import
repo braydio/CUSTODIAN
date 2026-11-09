@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bkk2sbs5oixmo"
-path="res://.godot/imported/procgen_plateau__1.png-34c520b91bf38dab0266ac1ea24f701c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/procgen_plateau/procgen_plateau__1.png"
-dest_files=["res://.godot/imported/procgen_plateau__1.png-34c520b91bf38dab0266ac1ea24f701c.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ciqk6o6ejq0oh"
-path="res://.godot/imported/operator__full_body_combat__unarmed__bodyslam_knockdown_01__w__12f__96.png-bc07ff3875dc031b63a6e7b0b321a97b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/archive/operator__full_body_combat__unarmed__bodyslam_knockdown_01__w__12f__96.png"
-dest_files=["res://.godot/imported/operator__full_body_combat__unarmed__bodyslam_knockdown_01__w__12f__96.png-bc07ff3875dc031b63a6e7b0b321a97b.ctex"]
 
 [params]
 

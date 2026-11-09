@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cvnq8ckvj0p1b"
-path="res://.godot/imported/sundered_keep_approach_route_parish_detour.png-8a3418002dc2114f96b821c945485dc1.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/world/return_causeway/path/sundered_keep_approach_route_parish_detour.png"
-dest_files=["res://.godot/imported/sundered_keep_approach_route_parish_detour.png-8a3418002dc2114f96b821c945485dc1.ctex"]
 
 [params]
 

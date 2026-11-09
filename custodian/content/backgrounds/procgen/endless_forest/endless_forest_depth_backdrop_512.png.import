@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dbbvv7cflud4x"
-path="res://.godot/imported/endless_forest_depth_backdrop_512.png-a041e241b167c3f83961cef6a911e50a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/procgen/endless_forest/endless_forest_depth_backdrop_512.png"
-dest_files=["res://.godot/imported/endless_forest_depth_backdrop_512.png-a041e241b167c3f83961cef6a911e50a.ctex"]
 
 [params]
 

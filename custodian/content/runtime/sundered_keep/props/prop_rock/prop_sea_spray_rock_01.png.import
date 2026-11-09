@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bi8evg3uakx2o"
-path="res://.godot/imported/prop_sea_spray_rock_01.png-c9e95080ddf2451da128b937fb615771.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/props/prop_rock/prop_sea_spray_rock_01.png"
-dest_files=["res://.godot/imported/prop_sea_spray_rock_01.png-c9e95080ddf2451da128b937fb615771.ctex"]
 
 [params]
 

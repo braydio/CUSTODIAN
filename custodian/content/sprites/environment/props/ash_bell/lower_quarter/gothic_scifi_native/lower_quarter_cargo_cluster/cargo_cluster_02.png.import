@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bek0pihyqi7b4"
-path="res://.godot/imported/cargo_cluster_02.png-205e0772ae921fdbd42f61288d277bcc.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_cargo_cluster/cargo_cluster_02.png"
-dest_files=["res://.godot/imported/cargo_cluster_02.png-205e0772ae921fdbd42f61288d277bcc.ctex"]
 
 [params]
 

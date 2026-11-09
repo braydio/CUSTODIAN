@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dcnovtwla0vpj"
-path="res://.godot/imported/angled_frame.png-1662bdefe7a417c98e086b0e26391dae.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_signage/angled_frame.png"
-dest_files=["res://.godot/imported/angled_frame.png-1662bdefe7a417c98e086b0e26391dae.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://flxxd8wck72q"
-path="res://.godot/imported/input_key_badge.png-b0062b6c8bfceda2265314d317ce9b33.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/black_reliquary/prompt/input_key_badge.png"
-dest_files=["res://.godot/imported/input_key_badge.png-b0062b6c8bfceda2265314d317ce9b33.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://byonw8vouyq47"
-path="res://.godot/imported/causeway_vertical_wall_terminal_s_01.png-d8a0e1876415aa0091c6946380b586f4.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/entrance/causeway_walls/causeway_vertical_wall_terminal_s_01.png"
-dest_files=["res://.godot/imported/causeway_vertical_wall_terminal_s_01.png-d8a0e1876415aa0091c6946380b586f4.ctex"]
 
 [params]
 

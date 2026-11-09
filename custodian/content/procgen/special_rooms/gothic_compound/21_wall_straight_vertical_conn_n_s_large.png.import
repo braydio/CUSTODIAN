@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d2vx1smrqmnmt"
-path="res://.godot/imported/21_wall_straight_vertical_conn_n_s_large.png-3cb3481b9fc463233bda463ddc7737eb.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/21_wall_straight_vertical_conn_n_s_large.png"
-dest_files=["res://.godot/imported/21_wall_straight_vertical_conn_n_s_large.png-3cb3481b9fc463233bda463ddc7737eb.ctex"]
 
 [params]
 

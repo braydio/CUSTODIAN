@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b8ceh1iyp410p"
-path="res://.godot/imported/operator__fx__full__dodge_01__nw__5f__96.png-c69e08f4413f8ef78368f21db8c7f2d7.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/new_operator/modular/dodge/operator__fx__full__dodge_01__nw__5f__96.png"
-dest_files=["res://.godot/imported/operator__fx__full__dodge_01__nw__5f__96.png-c69e08f4413f8ef78368f21db8c7f2d7.ctex"]
 
 [params]
 

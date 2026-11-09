@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://tlnva1i162t"
-path="res://.godot/imported/AssasinCyan.png-a22b2297898a3cbde030149aaea189d0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Soldiers/Melee/CyanMelee/AssasinCyan.png"
-dest_files=["res://.godot/imported/AssasinCyan.png-a22b2297898a3cbde030149aaea189d0.ctex"]
 
 [params]
 

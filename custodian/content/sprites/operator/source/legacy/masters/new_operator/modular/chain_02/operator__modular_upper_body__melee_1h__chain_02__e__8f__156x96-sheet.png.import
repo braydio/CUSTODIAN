@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://0yun4v0fq1c4"
-path="res://.godot/imported/operator__modular_upper_body__melee_1h__chain_02__e__8f__156x96-sheet.png-ec7b7c13e435b0519cea791dcf9bd454.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/new_operator/modular/chain_02/operator__modular_upper_body__melee_1h__chain_02__e__8f__156x96-sheet.png"
-dest_files=["res://.godot/imported/operator__modular_upper_body__melee_1h__chain_02__e__8f__156x96-sheet.png-ec7b7c13e435b0519cea791dcf9bd454.ctex"]
 
 [params]
 

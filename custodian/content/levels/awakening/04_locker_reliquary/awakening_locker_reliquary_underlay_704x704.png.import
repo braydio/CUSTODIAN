@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bkas3mmri55yh"
-path="res://.godot/imported/awakening_locker_reliquary_underlay_704x704.png-48e35cd2ed069326445032b23827dbe8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/levels/awakening/04_locker_reliquary/awakening_locker_reliquary_underlay_704x704.png"
-dest_files=["res://.godot/imported/awakening_locker_reliquary_underlay_704x704.png-48e35cd2ed069326445032b23827dbe8.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bbic4g04ofra1"
-path="res://.godot/imported/Arthax.png-192cced69d0dc5a0ac49a18520463b67.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Champions/Arthax.png"
-dest_files=["res://.godot/imported/Arthax.png-192cced69d0dc5a0ac49a18520463b67.ctex"]
 
 [params]
 

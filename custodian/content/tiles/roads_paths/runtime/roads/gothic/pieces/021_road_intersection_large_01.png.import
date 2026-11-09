@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://okwnby15au08"
-path="res://.godot/imported/021_road_intersection_large_01.png-73b5ca6c264f7ae39593c1d13103cbcd.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/roads_paths/runtime/roads/gothic/pieces/021_road_intersection_large_01.png"
-dest_files=["res://.godot/imported/021_road_intersection_large_01.png-73b5ca6c264f7ae39593c1d13103cbcd.ctex"]
 
 [params]
 

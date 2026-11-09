@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://te2248q1h42t"
-path="res://.godot/imported/curtain_wall_banner_01.png-58e9758fcd292a82409af578a8af3d8e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/grand_vista/fortress_components/curtain_wall_banner_01.png"
-dest_files=["res://.godot/imported/curtain_wall_banner_01.png-58e9758fcd292a82409af578a8af3d8e.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://drs00untllt0d"
-path="res://.godot/imported/enemy_marine__body__dash_attack_recovery_01__e__5f__128.png-9a3d32db0ce10ec2c730e18eb4c1f335.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_marine/pipeline_inbox/enemy_marine__body__dash_attack_recovery_01__e__5f__128.png"
-dest_files=["res://.godot/imported/enemy_marine__body__dash_attack_recovery_01__e__5f__128.png-9a3d32db0ce10ec2c730e18eb4c1f335.ctex"]
 
 [params]
 

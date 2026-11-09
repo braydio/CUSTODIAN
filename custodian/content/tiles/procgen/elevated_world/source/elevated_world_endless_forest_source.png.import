@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c0brye5yypa53"
-path="res://.godot/imported/elevated_world_endless_forest_source.png-a972007718ebf58748ef540c3c649670.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/procgen/elevated_world/source/elevated_world_endless_forest_source.png"
-dest_files=["res://.godot/imported/elevated_world_endless_forest_source.png-a972007718ebf58748ef540c3c649670.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cox7xsrhlum0s"
-path="res://.godot/imported/planter_corner_small.png-1e512b0be178c7991579fc9ba2e176c5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_planter/planter_corner_small.png"
-dest_files=["res://.godot/imported/planter_corner_small.png-1e512b0be178c7991579fc9ba2e176c5.ctex"]
 
 [params]
 

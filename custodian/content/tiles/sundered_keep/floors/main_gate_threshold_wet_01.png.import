@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cxnbsdyrvcvs"
-path="res://.godot/imported/main_gate_threshold_wet_01.png-598830e2031e82354315771ac2de3bdf.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/floors/main_gate_threshold_wet_01.png"
-dest_files=["res://.godot/imported/main_gate_threshold_wet_01.png-598830e2031e82354315771ac2de3bdf.ctex"]
 
 [params]
 

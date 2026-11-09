@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cshewovhh3ntu"
-path="res://.godot/imported/ash_upward_fx_01.png-acff3809e96257d76604f3118a5d1cf7.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/ash_upward_fx_01.png"
-dest_files=["res://.godot/imported/ash_upward_fx_01.png-acff3809e96257d76604f3118a5d1cf7.ctex"]
 
 [params]
 

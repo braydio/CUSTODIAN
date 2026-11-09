@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b46nti2akgw8y"
-path="res://.godot/imported/cargo_crate_long.png-3c6702aff300ad08a79d5232cb6402c7.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_crate/cargo_crate_long.png"
-dest_files=["res://.godot/imported/cargo_crate_long.png-3c6702aff300ad08a79d5232cb6402c7.ctex"]
 
 [params]
 

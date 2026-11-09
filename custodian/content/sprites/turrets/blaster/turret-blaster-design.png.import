@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b2a558ghicdyf"
-path="res://.godot/imported/turret-blaster-design.png-9020bfc31a97be3d0bd0666939fddb36.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/turrets/blaster/turret-blaster-design.png"
-dest_files=["res://.godot/imported/turret-blaster-design.png-9020bfc31a97be3d0bd0666939fddb36.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bed1654nyw6ie"
-path="res://.godot/imported/ritualant_underground__ground__cavern_repeat_01__512x512.png-0284376eef5593c301eb7a55b34b4524.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__ground__cavern_repeat_01__512x512.png"
-dest_files=["res://.godot/imported/ritualant_underground__ground__cavern_repeat_01__512x512.png-0284376eef5593c301eb7a55b34b4524.ctex"]
 
 [params]
 

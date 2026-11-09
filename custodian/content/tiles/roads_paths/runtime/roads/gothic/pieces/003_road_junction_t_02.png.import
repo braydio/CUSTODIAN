@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://qge11rdvk3hv"
-path="res://.godot/imported/003_road_junction_t_02.png-35bd919c048994f606d7d2a1f8855317.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/roads_paths/runtime/roads/gothic/pieces/003_road_junction_t_02.png"
-dest_files=["res://.godot/imported/003_road_junction_t_02.png-35bd919c048994f606d7d2a1f8855317.ctex"]
 
 [params]
 

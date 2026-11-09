@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b06hf12t5543a"
-path="res://.godot/imported/loot_marker__fx__interaction__beacon_loop__9f__48x160.png-a2f0f27bdd058401f837eb78f008a983.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/effects/loot_marker/runtime/fx/interaction/loot_marker__fx__interaction__beacon_loop__9f__48x160.png"
-dest_files=["res://.godot/imported/loot_marker__fx__interaction__beacon_loop__9f__48x160.png-a2f0f27bdd058401f837eb78f008a983.ctex"]
 
 [params]
 

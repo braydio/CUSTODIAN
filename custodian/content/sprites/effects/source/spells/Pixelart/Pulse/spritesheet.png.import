@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://hqjfnh7wobc3"
-path="res://.godot/imported/spritesheet.png-c528593057c06f7b0c5c589f9d099ab9.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/effects/source/spells/Pixelart/Pulse/spritesheet.png"
-dest_files=["res://.godot/imported/spritesheet.png-c528593057c06f7b0c5c589f9d099ab9.ctex"]
 
 [params]
 

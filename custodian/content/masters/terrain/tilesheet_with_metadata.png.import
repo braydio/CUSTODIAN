@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://u5wvv2h4v5fs"
-path="res://.godot/imported/tilesheet_with_metadata.png-47efa88c811e52070c6143cbcd9532e3.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/masters/terrain/tilesheet_with_metadata.png"
-dest_files=["res://.godot/imported/tilesheet_with_metadata.png-47efa88c811e52070c6143cbcd9532e3.ctex"]
 
 [params]
 

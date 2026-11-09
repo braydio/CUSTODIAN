@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c72wodfkhu46s"
-path="res://.godot/imported/gothic_castle_wall_window_tall_e.png-7f0b2037f60be1bd6c4a9139979f2149.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_window_tall_e.png"
-dest_files=["res://.godot/imported/gothic_castle_wall_window_tall_e.png-7f0b2037f60be1bd6c4a9139979f2149.ctex"]
 
 [params]
 

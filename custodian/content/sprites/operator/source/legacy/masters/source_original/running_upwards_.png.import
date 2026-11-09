@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cwrisxfyx8ni3"
-path="res://.godot/imported/running_upwards_.png-6a941a99bb13e321df95f7135ef71ed5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/source_original/running_upwards_.png"
-dest_files=["res://.godot/imported/running_upwards_.png-6a941a99bb13e321df95f7135ef71ed5.ctex"]
 
 [params]
 

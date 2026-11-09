@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://br7n2kbs2bbvf"
-path="res://.godot/imported/marker_enemy.png-ba02a6cde8f39fe10889bf0dd52602a4.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/markers/marker_enemy.png"
-dest_files=["res://.godot/imported/marker_enemy.png-ba02a6cde8f39fe10889bf0dd52602a4.ctex"]
 
 [params]
 

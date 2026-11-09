@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dlllt2bdw4hlq"
-path="res://.godot/imported/vigil_pattern_dagger__weapon__melee_1h_dagger__defense__block_enter_01__e__4f__96.png-d0654056f5e4cac88dce1258ae70f28c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/normalized/vigil_pattern_dagger__weapon__melee_1h_dagger__defense__block_enter_01__e__4f__96.png"
-dest_files=["res://.godot/imported/vigil_pattern_dagger__weapon__melee_1h_dagger__defense__block_enter_01__e__4f__96.png-d0654056f5e4cac88dce1258ae70f28c.ctex"]
 
 [params]
 

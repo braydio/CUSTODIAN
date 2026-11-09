@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bg8m8x4v0jmaj"
-path="res://.godot/imported/skeleton.png-60fc03e2e889d9484272f63ad4575759.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/raw_preview_tiles/skeleton.png"
-dest_files=["res://.godot/imported/skeleton.png-60fc03e2e889d9484272f63ad4575759.ctex"]
 
 [params]
 

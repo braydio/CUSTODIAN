@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cowgwmliidvfk"
-path="res://.godot/imported/rock_outcrop.png-d250a87712cc36b3369b20307c8b5352.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/raw_preview_tiles/rock_outcrop.png"
-dest_files=["res://.godot/imported/rock_outcrop.png-d250a87712cc36b3369b20307c8b5352.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://nqo1ar1dpq0o"
-path="res://.godot/imported/main_courtyard_flagstone_cracked_01.png-757513ecdfa1eae5d0ec26a5a0f71189.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/floors/main_courtyard_flagstone_cracked_01.png"
-dest_files=["res://.godot/imported/main_courtyard_flagstone_cracked_01.png-757513ecdfa1eae5d0ec26a5a0f71189.ctex"]
 
 [params]
 

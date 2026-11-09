@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://crlb6287xo850"
-path="res://.godot/imported/button_red_up.png-be3f2615d947aea5b925df7f5526b6b8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/source/placeholder-tileset/0x72_DungeonTilesetII_v1.7/frames/button_red_up.png"
-dest_files=["res://.godot/imported/button_red_up.png-be3f2615d947aea5b925df7f5526b6b8.ctex"]
 
 [params]
 

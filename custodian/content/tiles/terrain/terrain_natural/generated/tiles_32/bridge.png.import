@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b78shqbyqs57d"
-path="res://.godot/imported/bridge.png-aa0d12949c31e5fed0f6480a563429db.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/tiles_32/bridge.png"
-dest_files=["res://.godot/imported/bridge.png-aa0d12949c31e5fed0f6480a563429db.ctex"]
 
 [params]
 

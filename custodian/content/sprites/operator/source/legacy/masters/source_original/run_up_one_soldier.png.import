@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://e78dm3g2dpp6"
-path="res://.godot/imported/run_up_one_soldier.png-4e78b54918a09943fce0c4ce3e20fd4b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/source_original/run_up_one_soldier.png"
-dest_files=["res://.godot/imported/run_up_one_soldier.png-4e78b54918a09943fce0c4ce3e20fd4b.ctex"]
 
 [params]
 

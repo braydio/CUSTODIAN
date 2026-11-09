@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bwbvwn4r51p87"
-path="res://.godot/imported/operator__modular_head__hooded__stance_01__e__1f__96.png-6bd813133f2019069e308d1846635f96.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/new_operator/modular/stance_01/operator__modular_head__hooded__stance_01__e__1f__96.png"
-dest_files=["res://.godot/imported/operator__modular_head__hooded__stance_01__e__1f__96.png-6bd813133f2019069e308d1846635f96.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b8pug37puh1b3"
-path="res://.godot/imported/black_banner_01.png-46a4ebc297604c7e57bcbb43c00d4c73.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_black_banner/black_banner_01.png"
-dest_files=["res://.godot/imported/black_banner_01.png-46a4ebc297604c7e57bcbb43c00d4c73.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://145i16kt3sw3"
-path="res://.godot/imported/button_warning_9slice.png-f0c46826f3be20bd46c746558cc44533.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/buttons/button_warning_9slice.png"
-dest_files=["res://.godot/imported/button_warning_9slice.png-f0c46826f3be20bd46c746558cc44533.ctex"]
 
 [params]
 

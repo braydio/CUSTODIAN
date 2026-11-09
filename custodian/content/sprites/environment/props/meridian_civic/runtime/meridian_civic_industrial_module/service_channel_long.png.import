@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://drl0nwjlvawbi"
-path="res://.godot/imported/service_channel_long.png-4ee239910d33e6882539cdf66f917567.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_industrial_module/service_channel_long.png"
-dest_files=["res://.godot/imported/service_channel_long.png-4ee239910d33e6882539cdf66f917567.ctex"]
 
 [params]
 

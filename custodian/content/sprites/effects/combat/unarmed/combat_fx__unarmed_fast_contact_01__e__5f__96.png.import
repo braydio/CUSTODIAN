@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://45jer3ua0x61"
-path="res://.godot/imported/combat_fx__unarmed_fast_contact_01__e__5f__96.png-27462b4708d423d9e14cce5c5b6e4520.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/effects/combat/unarmed/combat_fx__unarmed_fast_contact_01__e__5f__96.png"
-dest_files=["res://.godot/imported/combat_fx__unarmed_fast_contact_01__e__5f__96.png-27462b4708d423d9e14cce5c5b6e4520.ctex"]
 
 [params]
 

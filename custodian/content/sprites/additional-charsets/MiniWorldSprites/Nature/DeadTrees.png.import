@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cqutn2vy4ml47"
-path="res://.godot/imported/DeadTrees.png-f13ef879c136c466a2b061d6a2873952.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Nature/DeadTrees.png"
-dest_files=["res://.godot/imported/DeadTrees.png-f13ef879c136c466a2b061d6a2873952.ctex"]
 
 [params]
 

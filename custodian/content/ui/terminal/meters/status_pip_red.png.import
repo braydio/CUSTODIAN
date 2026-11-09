@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bncx6nnhwgr2a"
-path="res://.godot/imported/status_pip_red.png-1fa453f9f6f50fe0c316108e79768065.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/meters/status_pip_red.png"
-dest_files=["res://.godot/imported/status_pip_red.png-1fa453f9f6f50fe0c316108e79768065.ctex"]
 
 [params]
 

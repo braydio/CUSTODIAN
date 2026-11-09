@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dfd87ypv1o1i4"
-path="res://.godot/imported/terminal_scanline_overlay.png-d166667c6048e235447b42ec5a7111d8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/overlays/terminal_scanline_overlay.png"
-dest_files=["res://.godot/imported/terminal_scanline_overlay.png-d166667c6048e235447b42ec5a7111d8.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bfp3r8xyb3gwh"
-path="res://.godot/imported/props_cables_01_28x32.png-bf52480d593834eadc94696815172895.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/runtime/props_cables_01_28x32.png"
-dest_files=["res://.godot/imported/props_cables_01_28x32.png-bf52480d593834eadc94696815172895.ctex"]
 
 [params]
 

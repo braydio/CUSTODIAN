@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bnqorpk71su6b"
-path="res://.godot/imported/fortress_wall_mass.png-1cc58239cbf67611536ee0572adcaa71.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/world/return_causeway/path/fortress_wall_mass.png"
-dest_files=["res://.godot/imported/fortress_wall_mass.png-1cc58239cbf67611536ee0572adcaa71.ctex"]
 
 [params]
 

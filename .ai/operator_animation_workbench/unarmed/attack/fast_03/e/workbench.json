@@ -1,0 +1,261 @@
+{
+  "schema": "custodian.operator_animation_workbench.v2",
+  "identity": {
+    "profile": "unarmed",
+    "group": "attack",
+    "action": "fast_03",
+    "direction": "e"
+  },
+  "context": {
+    "weapon_id": "",
+    "linked_profile": "",
+    "presentation_mode": "",
+    "fingerprint": "039c65cdf35a625937f7befbec791fea6bf7d3984abcb2446e69820b6c92bd36"
+  },
+  "weapon_context": null,
+  "timeline": {
+    "frames": 8,
+    "source_clock_frames": 7,
+    "workspace_clock_frames": 7,
+    "document_frames": 8,
+    "preview_fps": 12,
+    "timing_authority": false,
+    "clock_owner": "lower_body"
+  },
+  "canvas": {
+    "width": 96,
+    "height": 96
+  },
+  "aseprite": {
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/unarmed/attack/fast_03/e/workbench.aseprite",
+    "last_synced_sha256": "e7cc2e53558af47e27851fb2901fefcf6e349b4b5bd6520cf253b5db04ced148"
+  },
+  "layers": [
+    {
+      "binding_id": "lower_body",
+      "aseprite_layer_name": "lower_body",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "unarmed",
+      "group": "attack",
+      "action": "fast_03",
+      "direction": "e",
+      "layer": "lower_body",
+      "source_path": "custodian/content/sprites/operator/source/animations/unarmed/attack/fast_03/operator__lower_body__unarmed__attack__fast_03__e__7f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/unarmed/attack/fast_03/operator__lower_body__unarmed__attack__fast_03__e__7f__96.png",
+      "source_file_sha256": "ce7ee169eccbe948201f9be4f5a6de1017ec2ae26dba9c7384724af091f192a4",
+      "source_pixel_sha256": "44b0e60370e595e4ea074e82bfdb06b119816bffa68769d29c6dd1f84b2d548c",
+      "frames": 7,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "group": "attack",
+        "action": "fast_03",
+        "direction": "e"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/unarmed/attack/fast_03/operator__lower_body__unarmed__attack__fast_03__e__7f__96.png",
+        "frames": 7,
+        "frame_size": [
+          96,
+          96
+        ],
+        "file_sha256": "ce7ee169eccbe948201f9be4f5a6de1017ec2ae26dba9c7384724af091f192a4",
+        "pixel_sha256": "44b0e60370e595e4ea074e82bfdb06b119816bffa68769d29c6dd1f84b2d548c"
+      },
+      "workspace_contract": {
+        "frames": 7,
+        "frame_size": [
+          96,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/unarmed/attack/fast_03/operator__lower_body__unarmed__attack__fast_03__e__7f__96.png",
+        "frames": 7,
+        "frame_size": [
+          96,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/unarmed/attack/fast_03/e/baseline/lower_body.png"
+    },
+    {
+      "binding_id": "upper_body",
+      "aseprite_layer_name": "upper_body",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "unarmed",
+      "group": "attack",
+      "action": "fast_03",
+      "direction": "e",
+      "layer": "upper_body",
+      "source_path": "custodian/content/sprites/operator/source/animations/unarmed/attack/fast_03/operator__upper_body__unarmed__attack__fast_03__e__7f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/unarmed/attack/fast_03/operator__upper_body__unarmed__attack__fast_03__e__7f__96.png",
+      "source_file_sha256": "6b9ccdecfd93a4837abb8be0809ad4fe375e87cb69c63fc93e059392229535df",
+      "source_pixel_sha256": "37d65895d9ffe573b9de1b19bb58bbf821205e7fc7e27cbc489e55fda360e075",
+      "frames": 7,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "upper_body",
+        "profile": "unarmed",
+        "group": "attack",
+        "action": "fast_03",
+        "direction": "e"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/unarmed/attack/fast_03/operator__upper_body__unarmed__attack__fast_03__e__7f__96.png",
+        "frames": 7,
+        "frame_size": [
+          96,
+          96
+        ],
+        "file_sha256": "6b9ccdecfd93a4837abb8be0809ad4fe375e87cb69c63fc93e059392229535df",
+        "pixel_sha256": "37d65895d9ffe573b9de1b19bb58bbf821205e7fc7e27cbc489e55fda360e075"
+      },
+      "workspace_contract": {
+        "frames": 7,
+        "frame_size": [
+          96,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/unarmed/attack/fast_03/operator__upper_body__unarmed__attack__fast_03__e__7f__96.png",
+        "frames": 7,
+        "frame_size": [
+          96,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/unarmed/attack/fast_03/e/baseline/upper_body.png"
+    },
+    {
+      "binding_id": "fx",
+      "aseprite_layer_name": "fx",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "unarmed",
+      "group": "attack",
+      "action": "fast_03",
+      "direction": "e",
+      "layer": "fx",
+      "source_path": "custodian/content/sprites/operator/source/animations/unarmed/attack/fast_03/operator__fx__unarmed__attack__fast_03__e__8f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/unarmed/attack/fast_03/operator__fx__unarmed__attack__fast_03__e__8f__96.png",
+      "source_file_sha256": "7010c6884b01871570362fc9faad41519b0b0062dd83b76193cd4d785450632c",
+      "source_pixel_sha256": "63f5d7867f4dd3d841a3882fc76f620902d79fc5a9a87a329d49866352184a72",
+      "frames": 8,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "editor_sequential_only",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "fx",
+        "profile": "unarmed",
+        "group": "attack",
+        "action": "fast_03",
+        "direction": "e"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/unarmed/attack/fast_03/operator__fx__unarmed__attack__fast_03__e__8f__96.png",
+        "frames": 8,
+        "frame_size": [
+          96,
+          96
+        ],
+        "file_sha256": "7010c6884b01871570362fc9faad41519b0b0062dd83b76193cd4d785450632c",
+        "pixel_sha256": "63f5d7867f4dd3d841a3882fc76f620902d79fc5a9a87a329d49866352184a72"
+      },
+      "workspace_contract": {
+        "frames": 8,
+        "frame_size": [
+          96,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/unarmed/attack/fast_03/operator__fx__unarmed__attack__fast_03__e__8f__96.png",
+        "frames": 8,
+        "frame_size": [
+          96,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/unarmed/attack/fast_03/e/baseline/fx.png"
+    }
+  ],
+  "references": [],
+  "pending_migration": null,
+  "last_publish": {
+    "timestamp": null,
+    "validation_status": null
+  }
+}

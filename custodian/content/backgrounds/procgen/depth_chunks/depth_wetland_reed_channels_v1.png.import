@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cp0bbdwh1agct"
-path="res://.godot/imported/depth_wetland_reed_channels_v1.png-6b411033fce88851c0fb9e8bc8fe035a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/procgen/depth_chunks/depth_wetland_reed_channels_v1.png"
-dest_files=["res://.godot/imported/depth_wetland_reed_channels_v1.png-6b411033fce88851c0fb9e8bc8fe035a.ctex"]
 
 [params]
 

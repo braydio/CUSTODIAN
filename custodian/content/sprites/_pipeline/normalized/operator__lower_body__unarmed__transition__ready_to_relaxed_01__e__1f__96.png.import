@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b54p407rqinyp"
-path="res://.godot/imported/operator__lower_body__unarmed__transition__ready_to_relaxed_01__e__1f__96.png-38a31924466d54ddc3c96665072097c1.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/normalized/operator__lower_body__unarmed__transition__ready_to_relaxed_01__e__1f__96.png"
-dest_files=["res://.godot/imported/operator__lower_body__unarmed__transition__ready_to_relaxed_01__e__1f__96.png-38a31924466d54ddc3c96665072097c1.ctex"]
 
 [params]
 

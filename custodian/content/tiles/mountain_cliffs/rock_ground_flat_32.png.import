@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b22btwwb5c532"
-path="res://.godot/imported/rock_ground_flat_32.png-452479b02e9edb059c6cfc5358f82672.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/mountain_cliffs/rock_ground_flat_32.png"
-dest_files=["res://.godot/imported/rock_ground_flat_32.png-452479b02e9edb059c6cfc5358f82672.ctex"]
 
 [params]
 

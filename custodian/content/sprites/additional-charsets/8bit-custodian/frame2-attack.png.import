@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dbhgg3erd73yd"
-path="res://.godot/imported/frame2-attack.png-1f733e97e2208f5a11783d3f3421f0f5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/8bit-custodian/frame2-attack.png"
-dest_files=["res://.godot/imported/frame2-attack.png-1f733e97e2208f5a11783d3f3421f0f5.ctex"]
 
 [params]
 

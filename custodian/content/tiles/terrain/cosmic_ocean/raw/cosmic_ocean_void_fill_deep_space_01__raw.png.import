@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://2vp7dvpm5mh8"
-path="res://.godot/imported/cosmic_ocean_void_fill_deep_space_01__raw.png-99caa626289920080dbcebc590646709.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/cosmic_ocean/raw/cosmic_ocean_void_fill_deep_space_01__raw.png"
-dest_files=["res://.godot/imported/cosmic_ocean_void_fill_deep_space_01__raw.png-99caa626289920080dbcebc590646709.ctex"]
 
 [params]
 

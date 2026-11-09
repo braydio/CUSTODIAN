@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d24dh5jusfhmm"
-path="res://.godot/imported/vault_wall_cap_01.png-845e36d1114cd656902e6ddc27a6f3c5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/gothic/vault/vault_wall_cap_01.png"
-dest_files=["res://.godot/imported/vault_wall_cap_01.png-845e36d1114cd656902e6ddc27a6f3c5.ctex"]
 
 [params]
 

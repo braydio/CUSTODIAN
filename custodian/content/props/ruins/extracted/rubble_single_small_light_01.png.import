@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cx7c8opf4e686"
-path="res://.godot/imported/rubble_single_small_light_01.png-850df378330816f0a8da8905578cdf5b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/ruins/extracted/rubble_single_small_light_01.png"
-dest_files=["res://.godot/imported/rubble_single_small_light_01.png-850df378330816f0a8da8905578cdf5b.ctex"]
 
 [params]
 

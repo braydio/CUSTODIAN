@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c0bgbi7pvaj33"
-path="res://.godot/imported/junction_box_beacon.png-513116dfe3a2c2e916f152a7db90a0ea.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_utility/junction_box_beacon.png"
-dest_files=["res://.godot/imported/junction_box_beacon.png-513116dfe3a2c2e916f152a7db90a0ea.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dsg8qtqtwnt8s"
-path="res://.godot/imported/ui_black_reliquary_components.png-2c4dca5195eb0e1d55d88e969b066b52.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/masters/ui/ui_black_reliquary_components.png"
-dest_files=["res://.godot/imported/ui_black_reliquary_components.png-2c4dca5195eb0e1d55d88e969b066b52.ctex"]
 
 [params]
 

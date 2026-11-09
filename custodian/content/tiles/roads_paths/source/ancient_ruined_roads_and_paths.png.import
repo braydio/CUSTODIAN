@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bfc48gx2u6fcw"
-path="res://.godot/imported/ancient_ruined_roads_and_paths.png-3a5605c9905bf45f7daca70c1dd56aa1.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/roads_paths/source/ancient_ruined_roads_and_paths.png"
-dest_files=["res://.godot/imported/ancient_ruined_roads_and_paths.png-3a5605c9905bf45f7daca70c1dd56aa1.ctex"]
 
 [params]
 

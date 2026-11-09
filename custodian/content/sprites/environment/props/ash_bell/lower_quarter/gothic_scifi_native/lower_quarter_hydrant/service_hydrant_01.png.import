@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b8tje3pifhaap"
-path="res://.godot/imported/service_hydrant_01.png-32cd6d1a330b9bb369018edbc14e5bdd.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_hydrant/service_hydrant_01.png"
-dest_files=["res://.godot/imported/service_hydrant_01.png-32cd6d1a330b9bb369018edbc14e5bdd.ctex"]
 
 [params]
 

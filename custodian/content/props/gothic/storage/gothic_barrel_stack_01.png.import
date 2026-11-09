@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ccoh4yxv5j6kp"
-path="res://.godot/imported/gothic_barrel_stack_01.png-da65245e45b1446cd77065666cca3322.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/gothic/storage/gothic_barrel_stack_01.png"
-dest_files=["res://.godot/imported/gothic_barrel_stack_01.png-da65245e45b1446cd77065666cca3322.ctex"]
 
 [params]
 

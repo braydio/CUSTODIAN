@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cpbrbxpydtxkh"
-path="res://.godot/imported/props__harvesting_nodes__fungal_resin_pod__node__idle__5f__96.png-7f47894c860ee4df5bdf04b772564e2d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/archive/props__harvesting_nodes__fungal_resin_pod__node__idle__5f__96.png"
-dest_files=["res://.godot/imported/props__harvesting_nodes__fungal_resin_pod__node__idle__5f__96.png-7f47894c860ee4df5bdf04b772564e2d.ctex"]
 
 [params]
 

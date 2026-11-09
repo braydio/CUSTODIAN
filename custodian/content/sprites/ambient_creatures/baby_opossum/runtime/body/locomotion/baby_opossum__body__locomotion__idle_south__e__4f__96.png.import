@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://vlna6pvudiub"
-path="res://.godot/imported/baby_opossum__body__locomotion__idle_south__e__4f__96.png-171f3b54d3c1c488b58fb07f6e2418ca.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/ambient_creatures/baby_opossum/runtime/body/locomotion/baby_opossum__body__locomotion__idle_south__e__4f__96.png"
-dest_files=["res://.godot/imported/baby_opossum__body__locomotion__idle_south__e__4f__96.png-171f3b54d3c1c488b58fb07f6e2418ca.ctex"]
 
 [params]
 

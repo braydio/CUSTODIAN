@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dqb5r2kpnjrdo"
-path="res://.godot/imported/causeway_edge_top_horizontal_01.png-9fed8fbc7a0a3123d23fb672dec26ef7.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_runtime/causeway_edges/causeway_edge_top_horizontal_01.png"
-dest_files=["res://.godot/imported/causeway_edge_top_horizontal_01.png-9fed8fbc7a0a3123d23fb672dec26ef7.ctex"]
 
 [params]
 

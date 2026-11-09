@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ps27gr10qmj5"
-path="res://.godot/imported/door_gate_mechanism_003.png-9970fc767f2b5b6f9770cbedd90f1413.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/asset_exports/doors_gates_mechanisms_auto/door_gate_mechanism_003.png"
-dest_files=["res://.godot/imported/door_gate_mechanism_003.png-9970fc767f2b5b6f9770cbedd90f1413.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b7f67jnb7xp2x"
-path="res://.godot/imported/slatted_service_cover.png-67d34bd58d53fad6c03710683afa6af8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_floor_hardware/slatted_service_cover.png"
-dest_files=["res://.godot/imported/slatted_service_cover.png-67d34bd58d53fad6c03710683afa6af8.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://brlgyfh4ojlap"
-path="res://.godot/imported/procgen_depth_scrubland_service_scar_v1_640x448.png-267a631155aef447b34ce24aa8427953.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/procgen/depth_chunks/scrubland/procgen_depth_scrubland_service_scar_v1_640x448.png"
-dest_files=["res://.godot/imported/procgen_depth_scrubland_service_scar_v1_640x448.png-267a631155aef447b34ce24aa8427953.ctex"]
 
 [params]
 

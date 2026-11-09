@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://wssr7rc2mqie"
-path="res://.godot/imported/collapsed_ritualant_cloth_01.png-daa659834645e31ef3fbbd553e48a826.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/collapsed_ritualant_cloth_01.png"
-dest_files=["res://.godot/imported/collapsed_ritualant_cloth_01.png-daa659834645e31ef3fbbd553e48a826.ctex"]
 
 [params]
 

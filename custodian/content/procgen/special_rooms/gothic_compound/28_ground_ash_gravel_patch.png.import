@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bw7rxhhhw6607"
-path="res://.godot/imported/28_ground_ash_gravel_patch.png-433cbb179bd5d1a7b0fff398591ce712.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/28_ground_ash_gravel_patch.png"
-dest_files=["res://.godot/imported/28_ground_ash_gravel_patch.png-433cbb179bd5d1a7b0fff398591ce712.ctex"]
 
 [params]
 

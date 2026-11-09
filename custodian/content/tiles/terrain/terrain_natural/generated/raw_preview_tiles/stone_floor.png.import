@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bcfexnxcit3ts"
-path="res://.godot/imported/stone_floor.png-596279e751e49a1e3f122d13556b770a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/raw_preview_tiles/stone_floor.png"
-dest_files=["res://.godot/imported/stone_floor.png-596279e751e49a1e3f122d13556b770a.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bc4lsiebq4itx"
-path="res://.godot/imported/icon_structural_alloy.png-4dcc512a5a705859d996703ce0af8882.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/inventory/icons/resources/icon_structural_alloy.png"
-dest_files=["res://.godot/imported/icon_structural_alloy.png-4dcc512a5a705859d996703ce0af8882.ctex"]
 
 [params]
 

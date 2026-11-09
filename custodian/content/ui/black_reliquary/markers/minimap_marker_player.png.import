@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dbhf6s832osqw"
-path="res://.godot/imported/minimap_marker_player.png-51062e08b1c2883f1da32b5e154c37f2.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/black_reliquary/markers/minimap_marker_player.png"
-dest_files=["res://.godot/imported/minimap_marker_player.png-51062e08b1c2883f1da32b5e154c37f2.ctex"]
 
 [params]
 

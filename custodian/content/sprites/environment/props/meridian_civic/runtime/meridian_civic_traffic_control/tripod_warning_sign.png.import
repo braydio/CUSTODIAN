@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cbyxv5qyybgnb"
-path="res://.godot/imported/tripod_warning_sign.png-7f550de571ad0cf893d06e79821019a2.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_traffic_control/tripod_warning_sign.png"
-dest_files=["res://.godot/imported/tripod_warning_sign.png-7f550de571ad0cf893d06e79821019a2.ctex"]
 
 [params]
 

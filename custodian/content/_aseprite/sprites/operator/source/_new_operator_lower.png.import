@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://1ddnt76s183o"
-path="res://.godot/imported/_new_operator_lower.png-cdae8b4acde3d0913365c54af1d3aff8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/_aseprite/sprites/operator/source/_new_operator_lower.png"
-dest_files=["res://.godot/imported/_new_operator_lower.png-cdae8b4acde3d0913365c54af1d3aff8.ctex"]
 
 [params]
 

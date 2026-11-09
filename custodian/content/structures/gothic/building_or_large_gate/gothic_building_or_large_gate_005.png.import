@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dx0mssd1sym1h"
-path="res://.godot/imported/gothic_building_or_large_gate_005.png-4246aa6040674c4f092be06873267acb.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/structures/gothic/building_or_large_gate/gothic_building_or_large_gate_005.png"
-dest_files=["res://.godot/imported/gothic_building_or_large_gate_005.png-4246aa6040674c4f092be06873267acb.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d2o3343d0gap"
-path="res://.godot/imported/operator__modular_lower_body__walk_01__s__5f__96.png-0f1a3cb8edbcd656c3b041fe4bd3206f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/operator__modular_lower_body__walk_01__s__5f__96.png"
-dest_files=["res://.godot/imported/operator__modular_lower_body__walk_01__s__5f__96.png-0f1a3cb8edbcd656c3b041fe4bd3206f.ctex"]
 
 [params]
 

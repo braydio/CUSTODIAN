@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://chnxxaii14mop"
-path="res://.godot/imported/octagonal_jet_fountain.png-abef489173388735150a012772a05595.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_basin/octagonal_jet_fountain.png"
-dest_files=["res://.godot/imported/octagonal_jet_fountain.png-abef489173388735150a012772a05595.ctex"]
 
 [params]
 

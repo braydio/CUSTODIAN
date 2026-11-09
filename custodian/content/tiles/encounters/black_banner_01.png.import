@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cnsglhqbpw6et"
-path="res://.godot/imported/black_banner_01.png-c55ddef52a1e686d5592de70452930f5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/black_banner_01.png"
-dest_files=["res://.godot/imported/black_banner_01.png-c55ddef52a1e686d5592de70452930f5.ctex"]
 
 [params]
 

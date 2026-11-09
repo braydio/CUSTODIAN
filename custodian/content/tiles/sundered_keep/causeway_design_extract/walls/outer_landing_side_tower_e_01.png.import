@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cms3a0vabcl6d"
-path="res://.godot/imported/outer_landing_side_tower_e_01.png-33eb4c8c065e5c3e4a37f707d1433364.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_design_extract/walls/outer_landing_side_tower_e_01.png"
-dest_files=["res://.godot/imported/outer_landing_side_tower_e_01.png-33eb4c8c065e5c3e4a37f707d1433364.ctex"]
 
 [params]
 

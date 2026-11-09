@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://panejpor8ipi"
-path="res://.godot/imported/gothic_double_door_open_s.png-39a3f66a92b1be1496d13cc25eed44a8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/doors_traversal/doors/gothic_double_door_open_s.png"
-dest_files=["res://.godot/imported/gothic_double_door_open_s.png-39a3f66a92b1be1496d13cc25eed44a8.ctex"]
 
 [params]
 

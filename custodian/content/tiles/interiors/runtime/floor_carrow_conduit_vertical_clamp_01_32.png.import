@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bwnsjm6vgkfs5"
-path="res://.godot/imported/floor_carrow_conduit_vertical_clamp_01_32.png-543aa29de926330ee8db4ec69def729b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/runtime/floor_carrow_conduit_vertical_clamp_01_32.png"
-dest_files=["res://.godot/imported/floor_carrow_conduit_vertical_clamp_01_32.png-543aa29de926330ee8db4ec69def729b.ctex"]
 
 [params]
 

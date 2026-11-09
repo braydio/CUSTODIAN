@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dej5gbg7bf15y"
-path="res://.godot/imported/ocean_dark_water_01.png-c2c2ff73976bb20cdbef1882a8e9e79a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/terrain/ocean/ocean_dark_water_01.png"
-dest_files=["res://.godot/imported/ocean_dark_water_01.png-c2c2ff73976bb20cdbef1882a8e9e79a.ctex"]
 
 [params]
 

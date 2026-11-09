@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b6pugcqcp1cpv"
-path="res://.godot/imported/icon_return_mooring.png-53ce1a3b140000d2e8dd4e0cba79cf49.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/custodian/icons/icon_return_mooring.png"
-dest_files=["res://.godot/imported/icon_return_mooring.png-53ce1a3b140000d2e8dd4e0cba79cf49.ctex"]
 
 [params]
 

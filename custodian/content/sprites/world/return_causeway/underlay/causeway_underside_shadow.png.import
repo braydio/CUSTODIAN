@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dadl4ecuopn48"
-path="res://.godot/imported/causeway_underside_shadow.png-0bdda8d36920b7206815afa24169873e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/world/return_causeway/underlay/causeway_underside_shadow.png"
-dest_files=["res://.godot/imported/causeway_underside_shadow.png-0bdda8d36920b7206815afa24169873e.ctex"]
 
 [params]
 

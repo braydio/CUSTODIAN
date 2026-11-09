@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://82dgple5wyyi"
-path="res://.godot/imported/broken_wall_collapsed_01.png-d51344799c7c7ac43156f7ba39ca929f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/grand_vista/fortress_components/broken_wall_collapsed_01.png"
-dest_files=["res://.godot/imported/broken_wall_collapsed_01.png-d51344799c7c7ac43156f7ba39ca929f.ctex"]
 
 [params]
 

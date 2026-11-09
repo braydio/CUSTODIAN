@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cmmwsy0w0pl4j"
-path="res://.godot/imported/big_demon_idle_anim_f2.png-d4a9bb0e82a1d0b95976fba1f0744320.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/source/placeholder-tileset/0x72_DungeonTilesetII_v1.7/frames/big_demon_idle_anim_f2.png"
-dest_files=["res://.godot/imported/big_demon_idle_anim_f2.png-d4a9bb0e82a1d0b95976fba1f0744320.ctex"]
 
 [params]
 

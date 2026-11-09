@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b7aljr6ev1k4a"
-path="res://.godot/imported/gothic_fence_02.png-aed211f432aa6dc55f410f2be97d0d22.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_gothic_fence/gothic_fence_02.png"
-dest_files=["res://.godot/imported/gothic_fence_02.png-aed211f432aa6dc55f410f2be97d0d22.ctex"]
 
 [params]
 

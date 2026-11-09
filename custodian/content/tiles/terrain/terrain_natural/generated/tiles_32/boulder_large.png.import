@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dclfc2ok0xuc7"
-path="res://.godot/imported/boulder_large.png-aab5817dd518e531ccae5ba9a38897d9.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/tiles_32/boulder_large.png"
-dest_files=["res://.godot/imported/boulder_large.png-aab5817dd518e531ccae5ba9a38897d9.ctex"]
 
 [params]
 

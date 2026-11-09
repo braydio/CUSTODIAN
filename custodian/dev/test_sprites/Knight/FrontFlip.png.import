@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dipxfvtdr3uom"
-path="res://.godot/imported/FrontFlip.png-fbe04d2bc5334d70fb36071a80ef94cc.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://dev/test_sprites/Knight/FrontFlip.png"
-dest_files=["res://.godot/imported/FrontFlip.png-fbe04d2bc5334d70fb36071a80ef94cc.ctex"]
 
 [params]
 

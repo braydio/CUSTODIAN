@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://1ejrjgcldxf6"
-path="res://.godot/imported/operator__lower_body__unarmed__defense__block_enter_01__e__4f__96.png-2226adb4fa4fcab475046b39123b7d5f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/normalized/operator__lower_body__unarmed__defense__block_enter_01__e__4f__96.png"
-dest_files=["res://.godot/imported/operator__lower_body__unarmed__defense__block_enter_01__e__4f__96.png-2226adb4fa4fcab475046b39123b7d5f.ctex"]
 
 [params]
 

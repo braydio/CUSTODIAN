@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cgvmp53cq7h0"
-path="res://.godot/imported/overlay_hanging_banner_03.png-7362221c050f58f8dbdc68c2503cc10f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/roads_paths/runtime/roads/gothic/overlays/overlay_hanging_banner_03.png"
-dest_files=["res://.godot/imported/overlay_hanging_banner_03.png-7362221c050f58f8dbdc68c2503cc10f.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bn0li3tfhv1ht"
-path="res://.godot/imported/awakening_ambulatory_foreground_1152x960.png-0bf326d915889d2f6aaa7796671b3253.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/levels/awakening/02_ambulatory/awakening_ambulatory_foreground_1152x960.png"
-dest_files=["res://.godot/imported/awakening_ambulatory_foreground_1152x960.png-0bf326d915889d2f6aaa7796671b3253.ctex"]
 
 [params]
 

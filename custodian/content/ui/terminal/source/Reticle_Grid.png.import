@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://csn3haqe8u8v"
-path="res://.godot/imported/Reticle_Grid.png-c2b3e9242a62f0ecad06b038354c6b32.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/source/Reticle_Grid.png"
-dest_files=["res://.godot/imported/Reticle_Grid.png-c2b3e9242a62f0ecad06b038354c6b32.ctex"]
 
 [params]
 

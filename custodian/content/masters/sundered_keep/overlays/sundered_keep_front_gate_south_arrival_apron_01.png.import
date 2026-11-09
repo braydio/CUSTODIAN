@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cunae4nkqoni6"
-path="res://.godot/imported/sundered_keep_front_gate_south_arrival_apron_01.png-77af43da1a181c756f870bcb4c418e33.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/masters/sundered_keep/overlays/sundered_keep_front_gate_south_arrival_apron_01.png"
-dest_files=["res://.godot/imported/sundered_keep_front_gate_south_arrival_apron_01.png-77af43da1a181c756f870bcb4c418e33.ctex"]
 
 [params]
 

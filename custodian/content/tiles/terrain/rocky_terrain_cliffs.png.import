@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b17qcypfu03nm"
-path="res://.godot/imported/rocky_terrain_cliffs.png-803b5c137e6f16608f05256967270123.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/rocky_terrain_cliffs.png"
-dest_files=["res://.godot/imported/rocky_terrain_cliffs.png-803b5c137e6f16608f05256967270123.ctex"]
 
 [params]
 

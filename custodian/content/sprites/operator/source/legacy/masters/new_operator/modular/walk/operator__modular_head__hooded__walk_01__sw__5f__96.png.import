@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bc635q2k4i6mb"
-path="res://.godot/imported/operator__modular_head__hooded__walk_01__sw__5f__96.png-893251b963a309742e3e29f5d783e5f0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/new_operator/modular/walk/operator__modular_head__hooded__walk_01__sw__5f__96.png"
-dest_files=["res://.godot/imported/operator__modular_head__hooded__walk_01__sw__5f__96.png-893251b963a309742e3e29f5d783e5f0.ctex"]
 
 [params]
 

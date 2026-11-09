@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cg0xx427112mi"
-path="res://.godot/imported/drone_idle.png-a44afa2abf2d64534d6599097d2eb789.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/drone/runtime/idle/drone_idle.png"
-dest_files=["res://.godot/imported/drone_idle.png-a44afa2abf2d64534d6599097d2eb789.ctex"]
 
 [params]
 

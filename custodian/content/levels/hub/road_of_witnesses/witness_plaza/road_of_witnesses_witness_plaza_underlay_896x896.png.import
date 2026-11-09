@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bdopb48x7txy7"
-path="res://.godot/imported/road_of_witnesses_witness_plaza_underlay_896x896.png-8b248cf699d5fd12664a2cde7ac5dff4.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/levels/hub/road_of_witnesses/witness_plaza/road_of_witnesses_witness_plaza_underlay_896x896.png"
-dest_files=["res://.godot/imported/road_of_witnesses_witness_plaza_underlay_896x896.png-8b248cf699d5fd12664a2cde7ac5dff4.ctex"]
 
 [params]
 

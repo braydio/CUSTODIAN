@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dga5jnky18c3n"
-path="res://.godot/imported/scree_overlay_01.png-6108df3e4c46e9ffe5a617ec0c938eb8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/procgen_macro/runtime/rocky_upland/scree_overlay_01.png"
-dest_files=["res://.godot/imported/scree_overlay_01.png-6108df3e4c46e9ffe5a617ec0c938eb8.ctex"]
 
 [params]
 

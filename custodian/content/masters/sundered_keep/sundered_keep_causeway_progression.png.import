@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dagnvhbu3fopr"
-path="res://.godot/imported/sundered_keep_causeway_progression.png-48b81dba876b27bc6583f6bef226a015.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/masters/sundered_keep/sundered_keep_causeway_progression.png"
-dest_files=["res://.godot/imported/sundered_keep_causeway_progression.png-48b81dba876b27bc6583f6bef226a015.ctex"]
 
 [params]
 

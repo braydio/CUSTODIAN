@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dfgvof067kpgh"
-path="res://.godot/imported/forlorn_ritualant_side_staff_002.png-11531ac9772f5ad091aae3de43aa7cff.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/forlorn_ritualant/overlays/staff/forlorn_ritualant_side_staff_002.png"
-dest_files=["res://.godot/imported/forlorn_ritualant_side_staff_002.png-11531ac9772f5ad091aae3de43aa7cff.ctex"]
 
 [params]
 

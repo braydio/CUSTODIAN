@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bjqb6fogiexmv"
-path="res://.godot/imported/vaultwing_common__body__flight__flap__e__8f__256.png-0d02e315293158d7aa3d9da16b3e9d7b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/ambient_creatures/vaultwing_common/runtime/body/flight/vaultwing_common__body__flight__flap__e__8f__256.png"
-dest_files=["res://.godot/imported/vaultwing_common__body__flight__flap__e__8f__256.png-0d02e315293158d7aa3d9da16b3e9d7b.ctex"]
 
 [params]
 

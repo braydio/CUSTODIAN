@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dj0wijwycerud"
-path="res://.godot/imported/hill_climb_path.png-2ee3b05e2ab3a3574a906f4f25dee4d8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/world/return_causeway/path/hill_climb_path.png"
-dest_files=["res://.godot/imported/hill_climb_path.png-2ee3b05e2ab3a3574a906f4f25dee4d8.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dp3ffa5weyk1f"
-path="res://.godot/imported/rack_low_e.png-42d46727c6c09bf8c1b548407a45084b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_industrial_module/rack_low_e.png"
-dest_files=["res://.godot/imported/rack_low_e.png-42d46727c6c09bf8c1b548407a45084b.ctex"]
 
 [params]
 

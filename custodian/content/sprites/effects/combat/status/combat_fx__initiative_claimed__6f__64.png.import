@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c4ojs0lkk4tqp"
-path="res://.godot/imported/combat_fx__initiative_claimed__6f__64.png-1165fac98f839b651410925736b6739c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/effects/combat/status/combat_fx__initiative_claimed__6f__64.png"
-dest_files=["res://.godot/imported/combat_fx__initiative_claimed__6f__64.png-1165fac98f839b651410925736b6739c.ctex"]
 
 [params]
 

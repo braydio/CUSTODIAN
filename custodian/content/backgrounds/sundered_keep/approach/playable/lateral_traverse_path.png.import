@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bwti2qvfhhjjl"
-path="res://.godot/imported/lateral_traverse_path.png-58839c3f451525b06ef308ccbad007e5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/approach/playable/lateral_traverse_path.png"
-dest_files=["res://.godot/imported/lateral_traverse_path.png-58839c3f451525b06ef308ccbad007e5.ctex"]
 
 [params]
 

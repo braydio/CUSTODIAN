@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cg8x3yil53ieu"
-path="res://.godot/imported/operator__fx__locomotion__dodge_charge_meter_01__omni__8f__96.png-80f91f9fdfef8683c0def764525816b3.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/new_operator/source/modular/dodge/operator__fx__locomotion__dodge_charge_meter_01__omni__8f__96.png"
-dest_files=["res://.godot/imported/operator__fx__locomotion__dodge_charge_meter_01__omni__8f__96.png-80f91f9fdfef8683c0def764525816b3.ctex"]
 
 [params]
 

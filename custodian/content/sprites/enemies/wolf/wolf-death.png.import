@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cqxqi6v2ut48d"
-path="res://.godot/imported/wolf-death.png-d9e68d6ee7056d8e6ed36e2a00f1a40e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/wolf/wolf-death.png"
-dest_files=["res://.godot/imported/wolf-death.png-d9e68d6ee7056d8e6ed36e2a00f1a40e.ctex"]
 
 [params]
 

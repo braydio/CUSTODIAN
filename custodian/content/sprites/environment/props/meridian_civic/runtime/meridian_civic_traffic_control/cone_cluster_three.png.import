@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b0owpasrbc3lw"
-path="res://.godot/imported/cone_cluster_three.png-979950c6854a13063a7ca8d2fb35a7f5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_traffic_control/cone_cluster_three.png"
-dest_files=["res://.godot/imported/cone_cluster_three.png-979950c6854a13063a7ca8d2fb35a7f5.ctex"]
 
 [params]
 

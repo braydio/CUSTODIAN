@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://djip71qb3ljco"
-path="res://.godot/imported/cable_reel_01.png-fab37bb268f686b1b771b872bab49bcf.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_cable/cable_reel_01.png"
-dest_files=["res://.godot/imported/cable_reel_01.png-fab37bb268f686b1b771b872bab49bcf.ctex"]
 
 [params]
 

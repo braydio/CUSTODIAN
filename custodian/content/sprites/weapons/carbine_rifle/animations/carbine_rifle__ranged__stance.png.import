@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://2o6gvj7rdj4x"
-path="res://.godot/imported/carbine_rifle__ranged__stance.png-a5d57ebc92af399d288aab3fcc1f2c96.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/weapons/carbine_rifle/animations/carbine_rifle__ranged__stance.png"
-dest_files=["res://.godot/imported/carbine_rifle__ranged__stance.png-a5d57ebc92af399d288aab3fcc1f2c96.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://yxrry237j62a"
-path="res://.godot/imported/Buttons_Sheet.png-4b2467221459ca572c39f387f1fb9b25.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/source/Buttons_Sheet.png"
-dest_files=["res://.godot/imported/Buttons_Sheet.png-4b2467221459ca572c39f387f1fb9b25.ctex"]
 
 [params]
 

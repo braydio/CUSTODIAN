@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bku5myb0sw15t"
-path="res://.godot/imported/rubble_conduit_small.png-e731bad70dab50e7930cae0e0b6f0409.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_debris/rubble_conduit_small.png"
-dest_files=["res://.godot/imported/rubble_conduit_small.png-e731bad70dab50e7930cae0e0b6f0409.ctex"]
 
 [params]
 

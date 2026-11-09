@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ddmwxf6peufmw"
-path="res://.godot/imported/shield_crest_wall_overlay_01.png-93ffa65f843485b873e701005a01681e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/entrance/overlays/shield_crest_wall_overlay_01.png"
-dest_files=["res://.godot/imported/shield_crest_wall_overlay_01.png-93ffa65f843485b873e701005a01681e.ctex"]
 
 [params]
 

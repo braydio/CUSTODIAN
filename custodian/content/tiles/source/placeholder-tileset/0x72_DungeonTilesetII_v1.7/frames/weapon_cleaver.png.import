@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://njyqbhy0b3mg"
-path="res://.godot/imported/weapon_cleaver.png-1f81095f3c9fc07c9f22d3d7715bae9a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/source/placeholder-tileset/0x72_DungeonTilesetII_v1.7/frames/weapon_cleaver.png"
-dest_files=["res://.godot/imported/weapon_cleaver.png-1f81095f3c9fc07c9f22d3d7715bae9a.ctex"]
 
 [params]
 

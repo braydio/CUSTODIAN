@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dodmn1xf1lqjx"
-path="res://.godot/imported/button_pressed_9slice.png-8f41b951adcd3af0e09960a2e7bc1b75.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/buttons/button_pressed_9slice.png"
-dest_files=["res://.godot/imported/button_pressed_9slice.png-8f41b951adcd3af0e09960a2e7bc1b75.ctex"]
 
 [params]
 

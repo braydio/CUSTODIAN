@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dh7ojavxug48i"
-path="res://.godot/imported/stacked_cobblestone_bricks_01_32.png-1b4a6507870fb9bfdd98fb8eb0dae1d2.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/extracted/stacked_cobblestone_bricks_01_32.png"
-dest_files=["res://.godot/imported/stacked_cobblestone_bricks_01_32.png-1b4a6507870fb9bfdd98fb8eb0dae1d2.ctex"]
 
 [params]
 

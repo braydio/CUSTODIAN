@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://yqulpjhlydgv"
-path="res://.godot/imported/CyanShip.png-0ffd834ed00472532a21c7ab7b1eba92.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Cyan/CyanShip.png"
-dest_files=["res://.godot/imported/CyanShip.png-0ffd834ed00472532a21c7ab7b1eba92.ctex"]
 
 [params]
 

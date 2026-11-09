@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ds4a2srpjwa2u"
-path="res://.godot/imported/dead_tree_vegetation_001.png-f8a818bbe7a314759628a43a8ca36e86.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/asset_exports/trees_dead_vegetation_auto/dead_tree_vegetation_001.png"
-dest_files=["res://.godot/imported/dead_tree_vegetation_001.png-f8a818bbe7a314759628a43a8ca36e86.ctex"]
 
 [params]
 

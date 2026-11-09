@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dekoqyrb1nvmw"
-path="res://.godot/imported/gate_sconce_right_01.png-96352686736b59a6f6d4b9f224783019.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_runtime/props/gate_sconce_right_01.png"
-dest_files=["res://.godot/imported/gate_sconce_right_01.png-96352686736b59a6f6d4b9f224783019.ctex"]
 
 [params]
 

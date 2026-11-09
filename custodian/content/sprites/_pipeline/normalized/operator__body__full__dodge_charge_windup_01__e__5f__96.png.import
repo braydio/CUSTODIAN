@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://6mccuyetmaiu"
-path="res://.godot/imported/operator__body__full__dodge_charge_windup_01__e__5f__96.png-9937d73e80ff5f9395e89c1b95d4e90a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/normalized/operator__body__full__dodge_charge_windup_01__e__5f__96.png"
-dest_files=["res://.godot/imported/operator__body__full__dodge_charge_windup_01__e__5f__96.png-9937d73e80ff5f9395e89c1b95d4e90a.ctex"]
 
 [params]
 

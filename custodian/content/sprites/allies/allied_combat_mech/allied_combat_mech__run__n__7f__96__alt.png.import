@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b7bm2ouaemxb1"
-path="res://.godot/imported/allied_combat_mech__run__n__7f__96__alt.png-d6edea123f35289669498b6990d8787e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/allies/allied_combat_mech/allied_combat_mech__run__n__7f__96__alt.png"
-dest_files=["res://.godot/imported/allied_combat_mech__run__n__7f__96__alt.png-d6edea123f35289669498b6990d8787e.ctex"]
 
 [params]
 

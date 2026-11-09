@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ce7sa1a6nsunc"
-path="res://.godot/imported/tree_stump.png-8b10895c3b6668fbe008260042011e74.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/raw_preview_tiles/tree_stump.png"
-dest_files=["res://.godot/imported/tree_stump.png-8b10895c3b6668fbe008260042011e74.ctex"]
 
 [params]
 

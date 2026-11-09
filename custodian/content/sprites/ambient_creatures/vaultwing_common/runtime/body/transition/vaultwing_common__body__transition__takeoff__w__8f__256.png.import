@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c5x47rwksc5d8"
-path="res://.godot/imported/vaultwing_common__body__transition__takeoff__w__8f__256.png-5b018ec1fde2b94c1b76fee8cfc9b987.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/ambient_creatures/vaultwing_common/runtime/body/transition/vaultwing_common__body__transition__takeoff__w__8f__256.png"
-dest_files=["res://.godot/imported/vaultwing_common__body__transition__takeoff__w__8f__256.png-5b018ec1fde2b94c1b76fee8cfc9b987.ctex"]
 
 [params]
 

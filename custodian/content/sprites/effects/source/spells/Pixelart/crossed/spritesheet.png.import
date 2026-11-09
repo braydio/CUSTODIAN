@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c1132fhtl5068"
-path="res://.godot/imported/spritesheet.png-6eb9ed48372948e54e417af2992c3eaa.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/effects/source/spells/Pixelart/crossed/spritesheet.png"
-dest_files=["res://.godot/imported/spritesheet.png-6eb9ed48372948e54e417af2992c3eaa.ctex"]
 
 [params]
 

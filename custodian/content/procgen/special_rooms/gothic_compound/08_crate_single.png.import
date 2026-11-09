@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bvyl50sef5oji"
-path="res://.godot/imported/08_crate_single.png-6668346d14ecb0e789b9f501086fd7ba.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/08_crate_single.png"
-dest_files=["res://.godot/imported/08_crate_single.png-6668346d14ecb0e789b9f501086fd7ba.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cqss88ila2et8"
-path="res://.godot/imported/41_gate_chain_posts.png-4e1761fd0c788a0670a8f781ed6df814.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/41_gate_chain_posts.png"
-dest_files=["res://.godot/imported/41_gate_chain_posts.png-4e1761fd0c788a0670a8f781ed6df814.ctex"]
 
 [params]
 

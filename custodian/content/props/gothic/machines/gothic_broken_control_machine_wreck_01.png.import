@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cpql0amcipp0"
-path="res://.godot/imported/gothic_broken_control_machine_wreck_01.png-9ad4b1dcd8e40acd159bd42a8c7110c7.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/gothic/machines/gothic_broken_control_machine_wreck_01.png"
-dest_files=["res://.godot/imported/gothic_broken_control_machine_wreck_01.png-9ad4b1dcd8e40acd159bd42a8c7110c7.ctex"]
 
 [params]
 

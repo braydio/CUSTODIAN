@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dopt73gl6geqn"
-path="res://.godot/imported/sawhorse_large.png-44eeb4c48652c8daf72a18092b2f31ab.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_traffic_control/sawhorse_large.png"
-dest_files=["res://.godot/imported/sawhorse_large.png-44eeb4c48652c8daf72a18092b2f31ab.ctex"]
 
 [params]
 

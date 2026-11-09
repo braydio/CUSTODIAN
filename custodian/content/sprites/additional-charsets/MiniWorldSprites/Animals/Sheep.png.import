@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b740jojhnyh06"
-path="res://.godot/imported/Sheep.png-e840bb088de9d6714a98992ba5a27d01.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Animals/Sheep.png"
-dest_files=["res://.godot/imported/Sheep.png-e840bb088de9d6714a98992ba5a27d01.ctex"]
 
 [params]
 

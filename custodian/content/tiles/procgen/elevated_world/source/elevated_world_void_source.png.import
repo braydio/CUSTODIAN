@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ne0tpjrxh3mc"
-path="res://.godot/imported/elevated_world_void_source.png-7a4af67fd7cef14f603ceb2eec128f9e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/procgen/elevated_world/source/elevated_world_void_source.png"
-dest_files=["res://.godot/imported/elevated_world_void_source.png-7a4af67fd7cef14f603ceb2eec128f9e.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dk5urcubw4rpg"
-path="res://.godot/imported/icon_memory_glass_fragment.png-c67b0af7c09a5913864f72c9aa643004.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/inventory/icons/resources/icon_memory_glass_fragment.png"
-dest_files=["res://.godot/imported/icon_memory_glass_fragment.png-c67b0af7c09a5913864f72c9aa643004.ctex"]
 
 [params]
 

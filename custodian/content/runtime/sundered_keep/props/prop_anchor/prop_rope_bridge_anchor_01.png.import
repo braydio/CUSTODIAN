@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bjss1j2e2dh5p"
-path="res://.godot/imported/prop_rope_bridge_anchor_01.png-0a99545adf088cc7a9f06045af75b12e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/props/prop_anchor/prop_rope_bridge_anchor_01.png"
-dest_files=["res://.godot/imported/prop_rope_bridge_anchor_01.png-0a99545adf088cc7a9f06045af75b12e.ctex"]
 
 [params]
 

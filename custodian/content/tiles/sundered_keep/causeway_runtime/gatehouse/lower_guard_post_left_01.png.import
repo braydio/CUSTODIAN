@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://yvjdn4ud2aiq"
-path="res://.godot/imported/lower_guard_post_left_01.png-f8d12f51e97320e0fb1fdb373a8cae2c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_runtime/gatehouse/lower_guard_post_left_01.png"
-dest_files=["res://.godot/imported/lower_guard_post_left_01.png-f8d12f51e97320e0fb1fdb373a8cae2c.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dq0sd56i8cs7v"
-path="res://.godot/imported/wall_shadow_occluder.png-efb34f21f36e9259755ac01e15ae5006.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/approach/playable/wall_shadow_occluder.png"
-dest_files=["res://.godot/imported/wall_shadow_occluder.png-efb34f21f36e9259755ac01e15ae5006.ctex"]
 
 [params]
 

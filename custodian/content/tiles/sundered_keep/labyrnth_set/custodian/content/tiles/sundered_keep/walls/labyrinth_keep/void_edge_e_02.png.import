@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ddpd8xa7kruog"
-path="res://.godot/imported/void_edge_e_02.png-bb1d928f27c428cd463d7b7803fdabda.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/labyrnth_set/custodian/content/tiles/sundered_keep/walls/labyrinth_keep/void_edge_e_02.png"
-dest_files=["res://.godot/imported/void_edge_e_02.png-bb1d928f27c428cd463d7b7803fdabda.ctex"]
 
 [params]
 

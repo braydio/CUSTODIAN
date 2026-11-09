@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://hiuwjabumofe"
-path="res://.godot/imported/octagonal_shallow_basin.png-7a5339f00e79e2b85138b258d4d2ddb2.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_basin/octagonal_shallow_basin.png"
-dest_files=["res://.godot/imported/octagonal_shallow_basin.png-7a5339f00e79e2b85138b258d4d2ddb2.ctex"]
 
 [params]
 

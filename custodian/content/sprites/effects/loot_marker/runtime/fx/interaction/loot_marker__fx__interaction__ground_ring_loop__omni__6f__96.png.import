@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dplbk607vi7b7"
-path="res://.godot/imported/loot_marker__fx__interaction__ground_ring_loop__omni__6f__96.png-04dabefb895c89b82fe0dd4020e48f82.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/effects/loot_marker/runtime/fx/interaction/loot_marker__fx__interaction__ground_ring_loop__omni__6f__96.png"
-dest_files=["res://.godot/imported/loot_marker__fx__interaction__ground_ring_loop__omni__6f__96.png-04dabefb895c89b82fe0dd4020e48f82.ctex"]
 
 [params]
 

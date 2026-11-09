@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dpub6o5f62he7"
-path="res://.godot/imported/snow.png-eb56010ff1037a69204ba75456db23ca.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/raw_preview_tiles/snow.png"
-dest_files=["res://.godot/imported/snow.png-eb56010ff1037a69204ba75456db23ca.ctex"]
 
 [params]
 

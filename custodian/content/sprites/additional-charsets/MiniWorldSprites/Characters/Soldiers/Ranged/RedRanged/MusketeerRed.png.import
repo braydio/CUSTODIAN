@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b8s520hs860qg"
-path="res://.godot/imported/MusketeerRed.png-2594796b5b13a2ba0d82c4bc2c70b41d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Soldiers/Ranged/RedRanged/MusketeerRed.png"
-dest_files=["res://.godot/imported/MusketeerRed.png-2594796b5b13a2ba0d82c4bc2c70b41d.ctex"]
 
 [params]
 

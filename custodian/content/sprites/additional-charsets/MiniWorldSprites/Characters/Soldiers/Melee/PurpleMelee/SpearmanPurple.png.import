@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bjx8rn5t0xka6"
-path="res://.godot/imported/SpearmanPurple.png-8d39b06d5322149bce66ecd1298f0d17.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Soldiers/Melee/PurpleMelee/SpearmanPurple.png"
-dest_files=["res://.godot/imported/SpearmanPurple.png-8d39b06d5322149bce66ecd1298f0d17.ctex"]
 
 [params]
 

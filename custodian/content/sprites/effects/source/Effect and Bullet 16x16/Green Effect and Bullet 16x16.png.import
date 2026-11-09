@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dxv5je3txuqlm"
-path="res://.godot/imported/Green Effect and Bullet 16x16.png-f7fdafffd11b0f4b73ee9faba2180782.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/effects/source/Effect and Bullet 16x16/Green Effect and Bullet 16x16.png"
-dest_files=["res://.godot/imported/Green Effect and Bullet 16x16.png-f7fdafffd11b0f4b73ee9faba2180782.ctex"]
 
 [params]
 

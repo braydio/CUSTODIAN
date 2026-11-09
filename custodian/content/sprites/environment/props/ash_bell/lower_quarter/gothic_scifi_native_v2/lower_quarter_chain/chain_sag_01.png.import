@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ep74hwo362v1"
-path="res://.godot/imported/chain_sag_01.png-216033c1fa65590e4869aea28fe5be2e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_chain/chain_sag_01.png"
-dest_files=["res://.godot/imported/chain_sag_01.png-216033c1fa65590e4869aea28fe5be2e.ctex"]
 
 [params]
 

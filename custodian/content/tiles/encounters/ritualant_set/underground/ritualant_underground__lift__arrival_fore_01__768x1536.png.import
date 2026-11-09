@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c1dcua6iv01k1"
-path="res://.godot/imported/ritualant_underground__lift__arrival_fore_01__768x1536.png-c6e806aac0f03146e3acb3b1de1d9a49.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__lift__arrival_fore_01__768x1536.png"
-dest_files=["res://.godot/imported/ritualant_underground__lift__arrival_fore_01__768x1536.png-c6e806aac0f03146e3acb3b1de1d9a49.ctex"]
 
 [params]
 

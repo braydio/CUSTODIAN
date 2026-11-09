@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c71w2l7yue0lf"
-path="res://.godot/imported/minimap_marker_return_mooring.png-d50acff3e4251dd0d08874e179e06b01.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/custodian/checks/minimap_marker_return_mooring.png"
-dest_files=["res://.godot/imported/minimap_marker_return_mooring.png-d50acff3e4251dd0d08874e179e06b01.ctex"]
 
 [params]
 

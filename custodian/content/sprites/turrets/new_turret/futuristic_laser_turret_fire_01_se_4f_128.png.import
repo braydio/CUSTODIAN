@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dm8cxamqo841v"
-path="res://.godot/imported/futuristic_laser_turret_fire_01_se_4f_128.png-df3bd6ef1bac8147eb7d1867a804a7ac.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/turrets/new_turret/futuristic_laser_turret_fire_01_se_4f_128.png"
-dest_files=["res://.godot/imported/futuristic_laser_turret_fire_01_se_4f_128.png-df3bd6ef1bac8147eb7d1867a804a7ac.ctex"]
 
 [params]
 

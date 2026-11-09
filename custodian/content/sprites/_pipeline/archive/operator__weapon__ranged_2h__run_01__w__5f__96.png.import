@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bi16sdhwcv4rt"
-path="res://.godot/imported/operator__weapon__ranged_2h__run_01__w__5f__96.png-8a89ae18bea0a38a67cd7c1b66d81015.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/archive/operator__weapon__ranged_2h__run_01__w__5f__96.png"
-dest_files=["res://.godot/imported/operator__weapon__ranged_2h__run_01__w__5f__96.png-8a89ae18bea0a38a67cd7c1b66d81015.ctex"]
 
 [params]
 

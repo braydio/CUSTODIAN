@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dp628vtsbmwso"
-path="res://.godot/imported/mountain_wall_impassable_32.png-6ca58ab9339ba80f32d3269e2fa1d107.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/mountain_cliffs/mountain_wall_impassable_32.png"
-dest_files=["res://.godot/imported/mountain_wall_impassable_32.png-6ca58ab9339ba80f32d3269e2fa1d107.ctex"]
 
 [params]
 

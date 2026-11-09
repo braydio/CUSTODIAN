@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://babagalrw0cct"
-path="res://.godot/imported/panel_header_bar.png-aa5ff516c9e277e18f832166086c6191.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/panels/panel_header_bar.png"
-dest_files=["res://.godot/imported/panel_header_bar.png-aa5ff516c9e277e18f832166086c6191.ctex"]
 
 [params]
 

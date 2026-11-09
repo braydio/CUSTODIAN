@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dol5oqumgo61v"
-path="res://.godot/imported/timber_rubble_large.png-66ca412fb34c3dd342738a514dc1b667.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_debris/timber_rubble_large.png"
-dest_files=["res://.godot/imported/timber_rubble_large.png-66ca412fb34c3dd342738a514dc1b667.ctex"]
 
 [params]
 

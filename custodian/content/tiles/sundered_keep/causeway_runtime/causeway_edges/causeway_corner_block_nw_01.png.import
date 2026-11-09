@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://0apic0cs2q1l"
-path="res://.godot/imported/causeway_corner_block_nw_01.png-e62e3a6816e7fbd2ed3b86e885919112.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_runtime/causeway_edges/causeway_corner_block_nw_01.png"
-dest_files=["res://.godot/imported/causeway_corner_block_nw_01.png-e62e3a6816e7fbd2ed3b86e885919112.ctex"]
 
 [params]
 

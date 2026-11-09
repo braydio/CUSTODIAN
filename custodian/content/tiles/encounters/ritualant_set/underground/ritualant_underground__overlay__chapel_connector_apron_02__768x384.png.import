@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://1jy877s2f3ck"
-path="res://.godot/imported/ritualant_underground__overlay__chapel_connector_apron_02__768x384.png-14380048f6026b19e5768e000f1c8262.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__chapel_connector_apron_02__768x384.png"
-dest_files=["res://.godot/imported/ritualant_underground__overlay__chapel_connector_apron_02__768x384.png-14380048f6026b19e5768e000f1c8262.ctex"]
 
 [params]
 

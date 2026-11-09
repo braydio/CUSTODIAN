@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ch3jpqwgdpudx"
-path="res://.godot/imported/Melee.png-877a29c51a3feaac4f2238bc4b6211fe.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://dev/test_sprites/Knight/Melee.png"
-dest_files=["res://.godot/imported/Melee.png-877a29c51a3feaac4f2238bc4b6211fe.ctex"]
 
 [params]
 

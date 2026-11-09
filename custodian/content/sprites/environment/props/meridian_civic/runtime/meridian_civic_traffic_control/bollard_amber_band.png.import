@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ckff12f6qwtap"
-path="res://.godot/imported/bollard_amber_band.png-a11d9684fc92781987d1fc32cbe65730.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_traffic_control/bollard_amber_band.png"
-dest_files=["res://.godot/imported/bollard_amber_band.png-a11d9684fc92781987d1fc32cbe65730.ctex"]
 
 [params]
 

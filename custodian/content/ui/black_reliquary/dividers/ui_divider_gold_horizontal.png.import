@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cq4pm7w5usmjt"
-path="res://.godot/imported/ui_divider_gold_horizontal.png-856fb17cf79a1ba4053cab215f96f7b3.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/black_reliquary/dividers/ui_divider_gold_horizontal.png"
-dest_files=["res://.godot/imported/ui_divider_gold_horizontal.png-856fb17cf79a1ba4053cab215f96f7b3.ctex"]
 
 [params]
 

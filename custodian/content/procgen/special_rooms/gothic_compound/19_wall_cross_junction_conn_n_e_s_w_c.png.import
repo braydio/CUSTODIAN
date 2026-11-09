@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dkmmmjcbjr4qx"
-path="res://.godot/imported/19_wall_cross_junction_conn_n_e_s_w_c.png-6992bd31fe22b40093f8d15e4fd38ec5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/19_wall_cross_junction_conn_n_e_s_w_c.png"
-dest_files=["res://.godot/imported/19_wall_cross_junction_conn_n_e_s_w_c.png-6992bd31fe22b40093f8d15e4fd38ec5.ctex"]
 
 [params]
 

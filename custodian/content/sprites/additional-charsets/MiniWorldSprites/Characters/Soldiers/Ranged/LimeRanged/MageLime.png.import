@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b55rb3nncema5"
-path="res://.godot/imported/MageLime.png-a426da3b71209d93e3dd618ac8e2acbc.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Soldiers/Ranged/LimeRanged/MageLime.png"
-dest_files=["res://.godot/imported/MageLime.png-a426da3b71209d93e3dd618ac8e2acbc.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c5frll57r024d"
-path="res://.godot/imported/prop_gate_barricade_01.png-efdbec2bad454f8a2675f9868289588e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/props/prop_barrier/prop_gate_barricade_01.png"
-dest_files=["res://.godot/imported/prop_gate_barricade_01.png-efdbec2bad454f8a2675f9868289588e.ctex"]
 
 [params]
 

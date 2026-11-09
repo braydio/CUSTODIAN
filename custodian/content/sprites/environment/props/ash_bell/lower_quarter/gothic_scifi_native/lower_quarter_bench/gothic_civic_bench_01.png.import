@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://4s14kwv5emay"
-path="res://.godot/imported/gothic_civic_bench_01.png-82e47cdbdac5769080f5330d39225e66.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_bench/gothic_civic_bench_01.png"
-dest_files=["res://.godot/imported/gothic_civic_bench_01.png-82e47cdbdac5769080f5330d39225e66.ctex"]
 
 [params]
 

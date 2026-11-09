@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dnamf81ikoivn"
-path="res://.godot/imported/Nav_Tab_Disabled.png-672cc9aa9e551b70318a15b866e8df9f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/source/Nav_Tab_Disabled.png"
-dest_files=["res://.godot/imported/Nav_Tab_Disabled.png-672cc9aa9e551b70318a15b866e8df9f.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ctfuswo0t106q"
-path="res://.godot/imported/circular_port_plate.png-2d6bce98a18bb636ccdd10cc509381a5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_floor_hardware/circular_port_plate.png"
-dest_files=["res://.godot/imported/circular_port_plate.png-2d6bce98a18bb636ccdd10cc509381a5.ctex"]
 
 [params]
 

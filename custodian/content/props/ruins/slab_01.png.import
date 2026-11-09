@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bj34fuqfn3pk"
-path="res://.godot/imported/slab_01.png-42a01f8c58ecbf67243387c189c009a5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/ruins/slab_01.png"
-dest_files=["res://.godot/imported/slab_01.png-42a01f8c58ecbf67243387c189c009a5.ctex"]
 
 [params]
 

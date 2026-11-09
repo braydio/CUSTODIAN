@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dsa88gfxgioba"
-path="res://.godot/imported/ladder_access.png-e4063afb0eb5cefc11c654c612d62857.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_floor_hardware/ladder_access.png"
-dest_files=["res://.godot/imported/ladder_access.png-e4063afb0eb5cefc11c654c612d62857.ctex"]
 
 [params]
 

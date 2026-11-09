@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dw36isltjfkuf"
-path="res://.godot/imported/15_obelisk_large_gothic.png-04da7746c5b6acd3bd7f543ebece12e9.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/15_obelisk_large_gothic.png"
-dest_files=["res://.godot/imported/15_obelisk_large_gothic.png-04da7746c5b6acd3bd7f543ebece12e9.ctex"]
 
 [params]
 

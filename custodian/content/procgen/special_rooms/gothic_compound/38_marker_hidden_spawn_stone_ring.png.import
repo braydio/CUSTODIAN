@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dkqhsmn5ws54e"
-path="res://.godot/imported/38_marker_hidden_spawn_stone_ring.png-60ba9430d7cbf37dc668cb324e389bf6.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/38_marker_hidden_spawn_stone_ring.png"
-dest_files=["res://.godot/imported/38_marker_hidden_spawn_stone_ring.png-60ba9430d7cbf37dc668cb324e389bf6.ctex"]
 
 [params]
 

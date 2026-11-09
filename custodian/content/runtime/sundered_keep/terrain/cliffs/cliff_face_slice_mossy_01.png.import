@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cr7f3ynup4i2g"
-path="res://.godot/imported/cliff_face_slice_mossy_01.png-a8d2c1d36e5487b760ff9fb2f07907ec.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/terrain/cliffs/cliff_face_slice_mossy_01.png"
-dest_files=["res://.godot/imported/cliff_face_slice_mossy_01.png-a8d2c1d36e5487b760ff9fb2f07907ec.ctex"]
 
 [params]
 

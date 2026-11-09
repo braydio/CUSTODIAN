@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://t2f6o5s2wwrc"
-path="res://.godot/imported/ritualant_underground__arena__expanded_floor_base_01__2594x1737.png-11b8cce046868ee69c5ce23a6d73e326.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__arena__expanded_floor_base_01__2594x1737.png"
-dest_files=["res://.godot/imported/ritualant_underground__arena__expanded_floor_base_01__2594x1737.png-11b8cce046868ee69c5ce23a6d73e326.ctex"]
 
 [params]
 

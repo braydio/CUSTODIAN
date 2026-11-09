@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ce3wk1vnw8btw"
-path="res://.godot/imported/grand_vista_shadow_vignette.png-dead21c0ca8fd8133dbb6bd6361de4de.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_shadow_vignette.png"
-dest_files=["res://.godot/imported/grand_vista_shadow_vignette.png-dead21c0ca8fd8133dbb6bd6361de4de.ctex"]
 
 [params]
 

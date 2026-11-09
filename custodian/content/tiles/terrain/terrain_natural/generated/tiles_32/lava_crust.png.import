@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ds643a8b2o4va"
-path="res://.godot/imported/lava_crust.png-880f337f5a0844accaf59ad74a58c8b6.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/tiles_32/lava_crust.png"
-dest_files=["res://.godot/imported/lava_crust.png-880f337f5a0844accaf59ad74a58c8b6.ctex"]
 
 [params]
 

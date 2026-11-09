@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bmlxaj2x5k7ka"
-path="res://.godot/imported/operator__modular_weapon__melee_1h__chain_01__e__10f__156x96.png-f1c88c608d0d714fe1ca4629a831de7b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/archive/operator__modular_weapon__melee_1h__chain_01__e__10f__156x96.png"
-dest_files=["res://.godot/imported/operator__modular_weapon__melee_1h__chain_01__e__10f__156x96.png-f1c88c608d0d714fe1ca4629a831de7b.ctex"]
 
 [params]
 

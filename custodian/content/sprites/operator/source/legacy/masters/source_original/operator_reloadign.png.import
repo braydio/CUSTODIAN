@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ecsfj1ivdm8f"
-path="res://.godot/imported/operator_reloadign.png-20af02d2b56eb28b3b475cb1484af37c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/source_original/operator_reloadign.png"
-dest_files=["res://.godot/imported/operator_reloadign.png-20af02d2b56eb28b3b475cb1484af37c.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bsxmj8paaca8c"
-path="res://.godot/imported/MeleeRun.png-a691874b0135bd6ff801958c3ad60f68.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://dev/test_sprites/Knight/MeleeRun.png"
-dest_files=["res://.godot/imported/MeleeRun.png-a691874b0135bd6ff801958c3ad60f68.ctex"]
 
 [params]
 

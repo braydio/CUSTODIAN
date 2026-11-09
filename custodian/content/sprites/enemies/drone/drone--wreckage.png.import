@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bjch7aqlpi57w"
-path="res://.godot/imported/drone--wreckage.png-736b2ebaf23ec0723758a1861723353f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/drone/drone--wreckage.png"
-dest_files=["res://.godot/imported/drone--wreckage.png-736b2ebaf23ec0723758a1861723353f.ctex"]
 
 [params]
 

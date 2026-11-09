@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dppc1eb0gypfh"
-path="res://.godot/imported/lightshaft_dust_96x192.png-47139fe06c5b3c116d964b0546d35557.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/world/lighting/lightshaft_dust_96x192.png"
-dest_files=["res://.godot/imported/lightshaft_dust_96x192.png-47139fe06c5b3c116d964b0546d35557.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://csi03l5xygm1a"
-path="res://.godot/imported/terrain_cliffs_ocean_detected_bboxes.png-bccf979472769dbe6ae430f4675cc65e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/_extraction_review/terrain_cliffs_ocean_detected_bboxes.png"
-dest_files=["res://.godot/imported/terrain_cliffs_ocean_detected_bboxes.png-bccf979472769dbe6ae430f4675cc65e.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://di7drnbxt0y87"
-path="res://.godot/imported/ocean_underlay.png-ac5e759d0eede45a7f5d650d74e99114.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/shared/underlay/ocean_underlay.png"
-dest_files=["res://.godot/imported/ocean_underlay.png-ac5e759d0eede45a7f5d650d74e99114.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://crvricbj8w8tt"
-path="res://.godot/imported/props_steel_locker_01_44x64.png-b2c5f2914a62e2110992a26e3a798813.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/runtime/props_steel_locker_01_44x64.png"
-dest_files=["res://.godot/imported/props_steel_locker_01_44x64.png-b2c5f2914a62e2110992a26e3a798813.ctex"]
 
 [params]
 

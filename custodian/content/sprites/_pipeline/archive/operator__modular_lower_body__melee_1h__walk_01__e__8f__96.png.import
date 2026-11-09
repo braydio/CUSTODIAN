@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bq8u3pf5ja7ib"
-path="res://.godot/imported/operator__modular_lower_body__melee_1h__walk_01__e__8f__96.png-16b12f76605df7a53dfb7b64f1a41e73.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/archive/operator__modular_lower_body__melee_1h__walk_01__e__8f__96.png"
-dest_files=["res://.godot/imported/operator__modular_lower_body__melee_1h__walk_01__e__8f__96.png-16b12f76605df7a53dfb7b64f1a41e73.ctex"]
 
 [params]
 

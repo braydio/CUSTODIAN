@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b1spwjs7mwqek"
-path="res://.godot/imported/destroy_smoke.png-60319d79ea620e16a05ca766623b26fd.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/2d-tutorial-assets/destroy_smoke.png"
-dest_files=["res://.godot/imported/destroy_smoke.png-60319d79ea620e16a05ca766623b26fd.ctex"]
 
 [params]
 

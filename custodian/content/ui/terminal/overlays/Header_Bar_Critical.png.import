@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c440led4ykusy"
-path="res://.godot/imported/Header_Bar_Critical.png-cb744624c02b9ed1855066a3fe3d9efe.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/overlays/Header_Bar_Critical.png"
-dest_files=["res://.godot/imported/Header_Bar_Critical.png-cb744624c02b9ed1855066a3fe3d9efe.ctex"]
 
 [params]
 

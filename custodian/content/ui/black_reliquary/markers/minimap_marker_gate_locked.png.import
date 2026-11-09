@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dxhd0h08i61bn"
-path="res://.godot/imported/minimap_marker_gate_locked.png-f0c6170175c99f8f4f7e050ad658c198.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/black_reliquary/markers/minimap_marker_gate_locked.png"
-dest_files=["res://.godot/imported/minimap_marker_gate_locked.png-f0c6170175c99f8f4f7e050ad658c198.ctex"]
 
 [params]
 

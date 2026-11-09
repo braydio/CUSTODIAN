@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d1q0a2joehg4m"
-path="res://.godot/imported/19_road_corner_or_end_sw.png-9ef051c20af205b81b489e7e84c8f117.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/19_road_corner_or_end_sw.png"
-dest_files=["res://.godot/imported/19_road_corner_or_end_sw.png-9ef051c20af205b81b489e7e84c8f117.ctex"]
 
 [params]
 

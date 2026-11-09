@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bl5ceuvfr1vrv"
-path="res://.godot/imported/mountain_custodian_deadworld.mapping.preview_custodian_value_mapped.png-5b8a0da5742d6c8a4e2b765d7176bdfd.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/custodian_recolor/mountain_custodian_deadworld.mapping.preview_custodian/mountain_custodian_deadworld.mapping.preview_custodian_value_mapped.png"
-dest_files=["res://.godot/imported/mountain_custodian_deadworld.mapping.preview_custodian_value_mapped.png-5b8a0da5742d6c8a4e2b765d7176bdfd.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cy68rsbr3fojk"
-path="res://.godot/imported/operator__modular__source__walk_8d__96.png-957c001cff32b863c995233af11eb062.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/new_operator/source/modular/lower/operator__modular__source__walk_8d__96.png"
-dest_files=["res://.godot/imported/operator__modular__source__walk_8d__96.png-957c001cff32b863c995233af11eb062.ctex"]
 
 [params]
 

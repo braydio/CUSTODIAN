@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d0re57teh3hhi"
-path="res://.godot/imported/enemy_grunt__body__melee__critical_execution_victim_01__s__8f__96.png-0f4d235ed7fae18905a8a1c8bb47c4a7.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__critical_execution_victim_01__s__8f__96.png"
-dest_files=["res://.godot/imported/enemy_grunt__body__melee__critical_execution_victim_01__s__8f__96.png-0f4d235ed7fae18905a8a1c8bb47c4a7.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dp8r1k0cbpcso"
-path="res://.godot/imported/operator__weapon__melee_1h_dagger__locomotion__run_01__s__12f__96.png-7270073919af607cd202ba1c292a2bd3.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/archive/operator__weapon__melee_1h_dagger__locomotion__run_01__s__12f__96.png"
-dest_files=["res://.godot/imported/operator__weapon__melee_1h_dagger__locomotion__run_01__s__12f__96.png-7270073919af607cd202ba1c292a2bd3.ctex"]
 
 [params]
 

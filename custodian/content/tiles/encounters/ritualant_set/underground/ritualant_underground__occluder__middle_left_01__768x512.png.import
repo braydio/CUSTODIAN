@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cu1btnlypi4wb"
-path="res://.godot/imported/ritualant_underground__occluder__middle_left_01__768x512.png-177de368f08b03b96451aceee90ce091.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__occluder__middle_left_01__768x512.png"
-dest_files=["res://.godot/imported/ritualant_underground__occluder__middle_left_01__768x512.png-177de368f08b03b96451aceee90ce091.ctex"]
 
 [params]
 

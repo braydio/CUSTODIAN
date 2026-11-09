@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bp0nej6pnuxpu"
-path="res://.godot/imported/sprite_084__native_83x56__crop_89x62.png-0bfee959f5f1d473bbb38c746acdfe3b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/ruins_native/meridian_ruins_salvage/sprite_084__native_83x56__crop_89x62.png"
-dest_files=["res://.godot/imported/sprite_084__native_83x56__crop_89x62.png-0bfee959f5f1d473bbb38c746acdfe3b.ctex"]
 
 [params]
 

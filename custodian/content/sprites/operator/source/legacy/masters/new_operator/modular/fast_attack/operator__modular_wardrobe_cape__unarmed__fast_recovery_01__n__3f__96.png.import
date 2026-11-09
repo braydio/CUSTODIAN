@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://0kybfius7d3e"
-path="res://.godot/imported/operator__modular_wardrobe_cape__unarmed__fast_recovery_01__n__3f__96.png-802a2dafc32b217d47d7c58a723a269d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/new_operator/modular/fast_attack/operator__modular_wardrobe_cape__unarmed__fast_recovery_01__n__3f__96.png"
-dest_files=["res://.godot/imported/operator__modular_wardrobe_cape__unarmed__fast_recovery_01__n__3f__96.png-802a2dafc32b217d47d7c58a723a269d.ctex"]
 
 [params]
 

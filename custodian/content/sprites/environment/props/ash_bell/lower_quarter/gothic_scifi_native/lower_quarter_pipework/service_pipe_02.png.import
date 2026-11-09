@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bgj87au4skrdb"
-path="res://.godot/imported/service_pipe_02.png-d016274ceea5dcdd7d8faff1c99ced49.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pipework/service_pipe_02.png"
-dest_files=["res://.godot/imported/service_pipe_02.png-d016274ceea5dcdd7d8faff1c99ced49.ctex"]
 
 [params]
 

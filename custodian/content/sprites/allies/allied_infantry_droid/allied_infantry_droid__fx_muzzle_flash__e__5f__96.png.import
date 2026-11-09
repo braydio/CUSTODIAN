@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cajtcfcrgungy"
-path="res://.godot/imported/allied_infantry_droid__fx_muzzle_flash__e__5f__96.png-731116aac7e271da36c7282f827fadf2.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/allies/allied_infantry_droid/allied_infantry_droid__fx_muzzle_flash__e__5f__96.png"
-dest_files=["res://.godot/imported/allied_infantry_droid__fx_muzzle_flash__e__5f__96.png-731116aac7e271da36c7282f827fadf2.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cwbxm172cgt0m"
-path="res://.godot/imported/coral_shells.png-ddd0a6153cfaee47380ac89dced74e55.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/tiles_32/coral_shells.png"
-dest_files=["res://.godot/imported/coral_shells.png-ddd0a6153cfaee47380ac89dced74e55.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ct08rm07a175l"
-path="res://.godot/imported/OrcShaman.png-dbc636eab6a77122a36908e6caf44b28.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Monsters/Orcs/OrcShaman.png"
-dest_files=["res://.godot/imported/OrcShaman.png-dbc636eab6a77122a36908e6caf44b28.ctex"]
 
 [params]
 

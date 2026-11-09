@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://crrohkprj8iv0"
-path="res://.godot/imported/flowers.png-e53e29bc1a9eef7e63b6f1b82023b611.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/raw_preview_tiles/flowers.png"
-dest_files=["res://.godot/imported/flowers.png-e53e29bc1a9eef7e63b6f1b82023b611.ctex"]
 
 [params]
 

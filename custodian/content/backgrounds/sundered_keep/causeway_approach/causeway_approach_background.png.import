@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c368d4uhy1n8u"
-path="res://.godot/imported/causeway_approach_background.png-668876a5517aeac813ac35f6585a4f1a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/causeway_approach/causeway_approach_background.png"
-dest_files=["res://.godot/imported/causeway_approach_background.png-668876a5517aeac813ac35f6585a4f1a.ctex"]
 
 [params]
 

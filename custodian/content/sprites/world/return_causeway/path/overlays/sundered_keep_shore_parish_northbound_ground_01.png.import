@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b0yiwjfotrvnr"
-path="res://.godot/imported/sundered_keep_shore_parish_northbound_ground_01.png-679e099ec9afbe15cc0d3f175817c3ff.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/world/return_causeway/path/overlays/sundered_keep_shore_parish_northbound_ground_01.png"
-dest_files=["res://.godot/imported/sundered_keep_shore_parish_northbound_ground_01.png-679e099ec9afbe15cc0d3f175817c3ff.ctex"]
 
 [params]
 

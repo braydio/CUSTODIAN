@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://imm6pv4u1mpw"
-path="res://.godot/imported/service_channel_curve_a.png-264d49a7e98a12b1331ff9396ca7fbf3.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_floor_hardware/service_channel_curve_a.png"
-dest_files=["res://.godot/imported/service_channel_curve_a.png-264d49a7e98a12b1331ff9396ca7fbf3.ctex"]
 
 [params]
 

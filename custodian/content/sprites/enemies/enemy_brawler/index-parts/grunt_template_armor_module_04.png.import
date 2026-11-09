@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b380oo0epbmnn"
-path="res://.godot/imported/grunt_template_armor_module_04.png-8a781cd2b1a0197e2278030f05354e87.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_brawler/index-parts/grunt_template_armor_module_04.png"
-dest_files=["res://.godot/imported/grunt_template_armor_module_04.png-8a781cd2b1a0197e2278030f05354e87.ctex"]
 
 [params]
 

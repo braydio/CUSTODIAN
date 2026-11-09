@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b28svah1cq21"
-path="res://.godot/imported/bridge_broken_segment_32.png-b1fadd29817ef562b94442e563fcf16b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/runtime/chasm_bridge/bridge_broken_segment_32.png"
-dest_files=["res://.godot/imported/bridge_broken_segment_32.png-b1fadd29817ef562b94442e563fcf16b.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bljuw3xuj37aq"
-path="res://.godot/imported/forlorn_cave_lip_occluder.png-3e8f92e1e99a551680876eb0761f0e05.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/forlorn_ritualant/cave_approach/forlorn_cave_lip_occluder.png"
-dest_files=["res://.godot/imported/forlorn_cave_lip_occluder.png-3e8f92e1e99a551680876eb0761f0e05.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bmfi8tokq7f8s"
-path="res://.godot/imported/- Thank You.png-ab0ebc5b8dfb143a7f4f577de744dacb.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://addons/Sound FX Starter Pack Vol. 1/- Thank You.png"
-dest_files=["res://.godot/imported/- Thank You.png-ab0ebc5b8dfb143a7f4f577de744dacb.ctex"]
 
 [params]
 

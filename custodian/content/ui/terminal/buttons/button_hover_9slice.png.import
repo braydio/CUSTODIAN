@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ccc5yna1edhi3"
-path="res://.godot/imported/button_hover_9slice.png-1b3cc2dd861b7fa69b3f1afa218d33d6.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/buttons/button_hover_9slice.png"
-dest_files=["res://.godot/imported/button_hover_9slice.png-1b3cc2dd861b7fa69b3f1afa218d33d6.ctex"]
 
 [params]
 

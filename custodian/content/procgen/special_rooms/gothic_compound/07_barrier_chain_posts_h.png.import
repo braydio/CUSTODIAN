@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bqcq1enqmqvx"
-path="res://.godot/imported/07_barrier_chain_posts_h.png-4501356b0f095edf95fece4b22501524.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/07_barrier_chain_posts_h.png"
-dest_files=["res://.godot/imported/07_barrier_chain_posts_h.png-4501356b0f095edf95fece4b22501524.ctex"]
 
 [params]
 

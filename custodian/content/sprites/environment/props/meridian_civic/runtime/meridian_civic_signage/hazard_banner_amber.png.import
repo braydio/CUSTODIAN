@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://orthh7i7fgvx"
-path="res://.godot/imported/hazard_banner_amber.png-6828b428f1d08380bbfa4f78011485d1.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_signage/hazard_banner_amber.png"
-dest_files=["res://.godot/imported/hazard_banner_amber.png-6828b428f1d08380bbfa4f78011485d1.ctex"]
 
 [params]
 

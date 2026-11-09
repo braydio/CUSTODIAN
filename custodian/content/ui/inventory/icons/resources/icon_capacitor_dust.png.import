@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dqy2540dva8xs"
-path="res://.godot/imported/icon_capacitor_dust.png-f90d6e95dc7cfffd689a9e3f8d401213.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/inventory/icons/resources/icon_capacitor_dust.png"
-dest_files=["res://.godot/imported/icon_capacitor_dust.png-f90d6e95dc7cfffd689a9e3f8d401213.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cgvvetasg5liq"
-path="res://.godot/imported/Soldier-Death.png-4184456b8403ea4d722f15f9047a9237.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/Tiny RPG Character Asset Pack v1.03 -Free Soldier&Orc/Characters(100x100)/Soldier/Soldier/Soldier-Death.png"
-dest_files=["res://.godot/imported/Soldier-Death.png-4184456b8403ea4d722f15f9047a9237.ctex"]
 
 [params]
 

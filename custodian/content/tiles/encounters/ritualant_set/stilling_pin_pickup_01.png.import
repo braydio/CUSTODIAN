@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://btim01pwws3sb"
-path="res://.godot/imported/stilling_pin_pickup_01.png-07ba9149d8449a09e4eaa0c7bf713bbe.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/stilling_pin_pickup_01.png"
-dest_files=["res://.godot/imported/stilling_pin_pickup_01.png-07ba9149d8449a09e4eaa0c7bf713bbe.ctex"]
 
 [params]
 

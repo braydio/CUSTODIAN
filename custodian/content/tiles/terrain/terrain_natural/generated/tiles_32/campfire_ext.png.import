@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://43e8toffpvb7"
-path="res://.godot/imported/campfire_ext.png-0c9a798f5ca6323f6034c37a262784bf.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/tiles_32/campfire_ext.png"
-dest_files=["res://.godot/imported/campfire_ext.png-0c9a798f5ca6323f6034c37a262784bf.ctex"]
 
 [params]
 

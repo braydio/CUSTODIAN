@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cfnisw78fuxp5"
-path="res://.godot/imported/combat_drone.png-23037b7bd635fefa212918a07db23a85.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/turrets/combat_drone.png"
-dest_files=["res://.godot/imported/combat_drone.png-23037b7bd635fefa212918a07db23a85.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bbqm0mckt2lpw"
-path="res://.godot/imported/banner_bastion_pole_01.png-35ef84cfd54834121d9a096d86c58820.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/sundered_keep/causeway/banner_bastion_pole_01.png"
-dest_files=["res://.godot/imported/banner_bastion_pole_01.png-35ef84cfd54834121d9a096d86c58820.ctex"]
 
 [params]
 

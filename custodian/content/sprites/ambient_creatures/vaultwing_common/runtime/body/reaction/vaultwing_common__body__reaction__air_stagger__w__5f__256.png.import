@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://puh2ludd4cy4"
-path="res://.godot/imported/vaultwing_common__body__reaction__air_stagger__w__5f__256.png-e1a5dc61e2e3caab1b6c80a39e996c66.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/ambient_creatures/vaultwing_common/runtime/body/reaction/vaultwing_common__body__reaction__air_stagger__w__5f__256.png"
-dest_files=["res://.godot/imported/vaultwing_common__body__reaction__air_stagger__w__5f__256.png-e1a5dc61e2e3caab1b6c80a39e996c66.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ddeucv0vnbt8s"
-path="res://.godot/imported/round_citadel_tower_02.png-e3d3099d14fd604e0d771286c2f3dbd5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/grand_vista/fortress_components/round_citadel_tower_02.png"
-dest_files=["res://.godot/imported/round_citadel_tower_02.png-e3d3099d14fd604e0d771286c2f3dbd5.ctex"]
 
 [params]
 

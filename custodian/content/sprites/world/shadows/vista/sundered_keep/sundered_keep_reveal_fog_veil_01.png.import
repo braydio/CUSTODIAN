@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cbm3kc2lhycqx"
-path="res://.godot/imported/sundered_keep_reveal_fog_veil_01.png-2be8588fc67b81706fce376febdad882.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/world/shadows/vista/sundered_keep/sundered_keep_reveal_fog_veil_01.png"
-dest_files=["res://.godot/imported/sundered_keep_reveal_fog_veil_01.png-2be8588fc67b81706fce376febdad882.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://nkppitbphyst"
-path="res://.godot/imported/barrels_yellow_pair.png-f9362c412301ab3f4a98a7d18a87a7fd.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_container/barrels_yellow_pair.png"
-dest_files=["res://.godot/imported/barrels_yellow_pair.png-f9362c412301ab3f4a98a7d18a87a7fd.ctex"]
 
 [params]
 

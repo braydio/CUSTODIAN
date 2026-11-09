@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://4tcth0pxvdc7"
-path="res://.godot/imported/ruined_bell_chapel_perimeter_rubble_40x30.png-7ccd29d5f8f69cb6e540b25655892c06.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/ruined_bell_chapel_perimeter_rubble_40x30.png"
-dest_files=["res://.godot/imported/ruined_bell_chapel_perimeter_rubble_40x30.png-7ccd29d5f8f69cb6e540b25655892c06.ctex"]
 
 [params]
 

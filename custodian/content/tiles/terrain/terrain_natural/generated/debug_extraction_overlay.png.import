@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cc7h6axdig0ao"
-path="res://.godot/imported/debug_extraction_overlay.png-f5c365e691043d32c7d76ebfb19deb68.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/debug_extraction_overlay.png"
-dest_files=["res://.godot/imported/debug_extraction_overlay.png-f5c365e691043d32c7d76ebfb19deb68.ctex"]
 
 [params]
 

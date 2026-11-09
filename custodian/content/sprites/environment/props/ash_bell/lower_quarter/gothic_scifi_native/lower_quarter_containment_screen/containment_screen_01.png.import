@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://iwkmx18jvm4p"
-path="res://.godot/imported/containment_screen_01.png-2f6943d740154467914a5667b52738b6.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_containment_screen/containment_screen_01.png"
-dest_files=["res://.godot/imported/containment_screen_01.png-2f6943d740154467914a5667b52738b6.ctex"]
 
 [params]
 

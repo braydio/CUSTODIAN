@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://n0b66vpvwt5"
-path="res://.godot/imported/causeway_castle_wall_sw_ne_filled_01.png-085246df84e35967ff2dc02501d4a76f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/entrance/causeway_walls/causeway_castle_wall_sw_ne_filled_01.png"
-dest_files=["res://.godot/imported/causeway_castle_wall_sw_ne_filled_01.png-085246df84e35967ff2dc02501d4a76f.ctex"]
 
 [params]
 

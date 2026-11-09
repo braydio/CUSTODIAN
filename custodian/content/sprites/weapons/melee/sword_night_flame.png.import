@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cwac8iekd1yxx"
-path="res://.godot/imported/sword_night_flame.png-d68dfbac6aace688383e56d72606f139.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/weapons/melee/sword_night_flame.png"
-dest_files=["res://.godot/imported/sword_night_flame.png-d68dfbac6aace688383e56d72606f139.ctex"]
 
 [params]
 

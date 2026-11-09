@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bj08l2kjaf3yq"
-path="res://.godot/imported/shattered_archive_terminal__node__depleted__1f__96.png-687af0189dd853ad3aca9e3667ed2380.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/props/harvesting_nodes/shattered_archive_terminal/shattered_archive_terminal__node__depleted__1f__96.png"
-dest_files=["res://.godot/imported/shattered_archive_terminal__node__depleted__1f__96.png-687af0189dd853ad3aca9e3667ed2380.ctex"]
 
 [params]
 

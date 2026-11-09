@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b8icpl26d6108"
-path="res://.godot/imported/Winter.png-57c9e9b9cbca1b7dea2eed3835f2ded5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Ground/Winter.png"
-dest_files=["res://.godot/imported/Winter.png-57c9e9b9cbca1b7dea2eed3835f2ded5.ctex"]
 
 [params]
 

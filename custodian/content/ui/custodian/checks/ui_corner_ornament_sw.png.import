@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ceeod5sr8omw6"
-path="res://.godot/imported/ui_corner_ornament_sw.png-a68f6705df714443056ca241d1ee3342.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/custodian/checks/ui_corner_ornament_sw.png"
-dest_files=["res://.godot/imported/ui_corner_ornament_sw.png-a68f6705df714443056ca241d1ee3342.ctex"]
 
 [params]
 

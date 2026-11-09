@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c3h7qca3k36g1"
-path="res://.godot/imported/flaming_brazier_hanging_pillar_e_01.png-dd7e927f8f3d83235261aa50c1bf29ab.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/entrance/cliffs/flaming_brazier_hanging_pillar_e_01.png"
-dest_files=["res://.godot/imported/flaming_brazier_hanging_pillar_e_01.png-dd7e927f8f3d83235261aa50c1bf29ab.ctex"]
 
 [params]
 

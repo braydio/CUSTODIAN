@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://mlc4ve85m636"
-path="res://.godot/imported/vault_floor_metal_inlay_01.png-2a9ce093916348273d379a8ed50187cf.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/gothic/vault/vault_floor_metal_inlay_01.png"
-dest_files=["res://.godot/imported/vault_floor_metal_inlay_01.png-2a9ce093916348273d379a8ed50187cf.ctex"]
 
 [params]
 

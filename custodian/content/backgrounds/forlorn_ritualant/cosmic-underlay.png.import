@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c374vxw5wfavd"
-path="res://.godot/imported/cosmic-underlay.png-805a40e822914bb7af58180429ba3d3a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/forlorn_ritualant/cosmic-underlay.png"
-dest_files=["res://.godot/imported/cosmic-underlay.png-805a40e822914bb7af58180429ba3d3a.ctex"]
 
 [params]
 

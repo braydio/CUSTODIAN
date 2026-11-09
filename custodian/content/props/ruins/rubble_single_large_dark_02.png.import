@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://6dharc3t80yl"
-path="res://.godot/imported/rubble_single_large_dark_02.png-e3fed33aea138290ee8371b1417afdad.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/ruins/rubble_single_large_dark_02.png"
-dest_files=["res://.godot/imported/rubble_single_large_dark_02.png-e3fed33aea138290ee8371b1417afdad.ctex"]
 
 [params]
 

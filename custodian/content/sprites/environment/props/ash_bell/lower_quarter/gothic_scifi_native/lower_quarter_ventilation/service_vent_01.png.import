@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://kftujn4yvnfl"
-path="res://.godot/imported/service_vent_01.png-f90c180c052b0aa52ab28b5acd67d8f4.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_ventilation/service_vent_01.png"
-dest_files=["res://.godot/imported/service_vent_01.png-f90c180c052b0aa52ab28b5acd67d8f4.ctex"]
 
 [params]
 

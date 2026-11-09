@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://1cfpnxskf53j"
-path="res://.godot/imported/meter_fill_yellow.png-4720e36e1066cd796e14abaeadb7d641.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/meters/meter_fill_yellow.png"
-dest_files=["res://.godot/imported/meter_fill_yellow.png-4720e36e1066cd796e14abaeadb7d641.ctex"]
 
 [params]
 

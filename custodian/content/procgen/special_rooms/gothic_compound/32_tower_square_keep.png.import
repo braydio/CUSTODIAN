@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d3apw705xxrs3"
-path="res://.godot/imported/32_tower_square_keep.png-9e93f7e638a34112a1ba3c03034de181.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/32_tower_square_keep.png"
-dest_files=["res://.godot/imported/32_tower_square_keep.png-9e93f7e638a34112a1ba3c03034de181.ctex"]
 
 [params]
 

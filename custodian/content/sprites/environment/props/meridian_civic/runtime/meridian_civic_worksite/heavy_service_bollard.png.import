@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://diptwlxky4rxp"
-path="res://.godot/imported/heavy_service_bollard.png-42fdfa1b2e4c696902f1b3c9d288dcf5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_worksite/heavy_service_bollard.png"
-dest_files=["res://.godot/imported/heavy_service_bollard.png-42fdfa1b2e4c696902f1b3c9d288dcf5.ctex"]
 
 [params]
 

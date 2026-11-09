@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d26h1bg0my0px"
-path="res://.godot/imported/hover_buggy_base.png-b4458045cb159458b30819694cef4074.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/vehicles/hover_buggy/hover_buggy_base.png"
-dest_files=["res://.godot/imported/hover_buggy_base.png-b4458045cb159458b30819694cef4074.ctex"]
 
 [params]
 

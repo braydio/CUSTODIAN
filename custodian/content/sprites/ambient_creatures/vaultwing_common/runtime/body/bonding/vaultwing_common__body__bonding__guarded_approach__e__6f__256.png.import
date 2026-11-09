@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ch4wp53ww6dwx"
-path="res://.godot/imported/vaultwing_common__body__bonding__guarded_approach__e__6f__256.png-f63b442b33fc414482fc61c61c710fef.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__guarded_approach__e__6f__256.png"
-dest_files=["res://.godot/imported/vaultwing_common__body__bonding__guarded_approach__e__6f__256.png-f63b442b33fc414482fc61c61c710fef.ctex"]
 
 [params]
 

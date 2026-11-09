@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cjb23sv6nd3gl"
-path="res://.godot/imported/rear_watchtower_octagonal_broken_01.png-8a1f1b64677ad49c6dc95c343158a2a9.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/grand_vista/fortress_components/rear_watchtower_octagonal_broken_01.png"
-dest_files=["res://.godot/imported/rear_watchtower_octagonal_broken_01.png-8a1f1b64677ad49c6dc95c343158a2a9.ctex"]
 
 [params]
 

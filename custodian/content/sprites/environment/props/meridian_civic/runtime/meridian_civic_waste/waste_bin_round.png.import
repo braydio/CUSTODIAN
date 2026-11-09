@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://k2ghs2322oci"
-path="res://.godot/imported/waste_bin_round.png-77df751ccfbd8fb3188f32ee7bd1272f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_waste/waste_bin_round.png"
-dest_files=["res://.godot/imported/waste_bin_round.png-77df751ccfbd8fb3188f32ee7bd1272f.ctex"]
 
 [params]
 

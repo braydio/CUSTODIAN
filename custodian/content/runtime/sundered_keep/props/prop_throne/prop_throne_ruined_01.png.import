@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://y5le3lidnk5v"
-path="res://.godot/imported/prop_throne_ruined_01.png-2be0b2c6dd8fa9040fcd432c008f5eb0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/props/prop_throne/prop_throne_ruined_01.png"
-dest_files=["res://.godot/imported/prop_throne_ruined_01.png-2be0b2c6dd8fa9040fcd432c008f5eb0.ctex"]
 
 [params]
 

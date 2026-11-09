@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://p26t7ek7g3ju"
-path="res://.godot/imported/Boar.png-786438f145604b2f35b5218d735d80b3.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Animals/Boar.png"
-dest_files=["res://.godot/imported/Boar.png-786438f145604b2f35b5218d735d80b3.ctex"]
 
 [params]
 

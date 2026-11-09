@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://soqsu3thg7pf"
-path="res://.godot/imported/icon_stairs_down.png-a78bd2cfa9f385138352d255cbae8feb.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/custodian/icons/icon_stairs_down.png"
-dest_files=["res://.godot/imported/icon_stairs_down.png-a78bd2cfa9f385138352d255cbae8feb.ctex"]
 
 [params]
 

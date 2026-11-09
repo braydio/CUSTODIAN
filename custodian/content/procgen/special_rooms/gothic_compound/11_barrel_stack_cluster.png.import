@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bqe30qgn7s0et"
-path="res://.godot/imported/11_barrel_stack_cluster.png-b9c80d024f9924cfc709b12fa9ca5f9a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/11_barrel_stack_cluster.png"
-dest_files=["res://.godot/imported/11_barrel_stack_cluster.png-b9c80d024f9924cfc709b12fa9ca5f9a.ctex"]
 
 [params]
 

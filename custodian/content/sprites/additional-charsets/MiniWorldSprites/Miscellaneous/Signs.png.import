@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bl7qop32q5jkj"
-path="res://.godot/imported/Signs.png-96f9a46411c0f802b7cc59c8b0d2c9e5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Miscellaneous/Signs.png"
-dest_files=["res://.godot/imported/Signs.png-96f9a46411c0f802b7cc59c8b0d2c9e5.ctex"]
 
 [params]
 

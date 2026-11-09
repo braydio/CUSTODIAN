@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cayvpeoijteat"
-path="res://.godot/imported/vertical_offset_frame.png-9a43a79aa7f4ee49ea890a106d319b3e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_signage/vertical_offset_frame.png"
-dest_files=["res://.godot/imported/vertical_offset_frame.png-9a43a79aa7f4ee49ea890a106d319b3e.ctex"]
 
 [params]
 

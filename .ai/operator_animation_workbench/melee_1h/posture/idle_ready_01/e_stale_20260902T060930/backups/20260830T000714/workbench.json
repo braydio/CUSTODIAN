@@ -1,0 +1,203 @@
+{
+  "schema": "custodian.operator_animation_workbench.v2",
+  "identity": {
+    "profile": "melee_1h",
+    "group": "posture",
+    "action": "idle_ready_01",
+    "direction": "e"
+  },
+  "context": {
+    "weapon_id": "",
+    "linked_profile": "",
+    "presentation_mode": "",
+    "fingerprint": "bb297717dc3a1bfc62eed8d68d3bbcf18d60b1d38a310ec0fde8338664944d65"
+  },
+  "weapon_context": null,
+  "timeline": {
+    "frames": 5,
+    "source_clock_frames": 4,
+    "workspace_clock_frames": 5,
+    "document_frames": 5,
+    "preview_fps": 12,
+    "timing_authority": false,
+    "clock_owner": "lower_body"
+  },
+  "canvas": {
+    "width": 128,
+    "height": 96
+  },
+  "aseprite": {
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/posture/idle_ready_01/e/workbench.aseprite",
+    "last_synced_sha256": "50df7178cefe066ba15ae1e8d65d2f8954598e71d680ac4b6e12516a9f47f777"
+  },
+  "layers": [
+    {
+      "binding_id": "lower_body",
+      "aseprite_layer_name": "lower_body",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "melee_1h",
+      "group": "posture",
+      "action": "idle_ready_01",
+      "direction": "e",
+      "layer": "lower_body",
+      "source_path": "custodian/content/sprites/operator/source/animations/melee_1h/posture/idle_ready_01/operator__lower_body__melee_1h__posture__idle_ready_01__e__4f__128x96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/melee_1h/posture/idle_ready_01/operator__lower_body__melee_1h__posture__idle_ready_01__e__4f__128x96.png",
+      "source_file_sha256": "a6a183ca9b5cd982caf5411c3df59e72d0e6ea41792c4b72ce4b8ac9b6e8710e",
+      "source_pixel_sha256": "01884aa044c5bf044584d00dd452469f6f311ce5fe8d69f96ca3da3e4f5ba321",
+      "frames": 5,
+      "frame_size": [
+        128,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "lower_body",
+        "profile": "melee_1h",
+        "group": "posture",
+        "action": "idle_ready_01",
+        "direction": "e"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/posture/idle_ready_01/operator__lower_body__melee_1h__posture__idle_ready_01__e__4f__128x96.png",
+        "frames": 4,
+        "frame_size": [
+          128,
+          96
+        ],
+        "file_sha256": "a6a183ca9b5cd982caf5411c3df59e72d0e6ea41792c4b72ce4b8ac9b6e8710e",
+        "pixel_sha256": "01884aa044c5bf044584d00dd452469f6f311ce5fe8d69f96ca3da3e4f5ba321"
+      },
+      "workspace_contract": {
+        "frames": 5,
+        "frame_size": [
+          128,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/posture/idle_ready_01/operator__lower_body__melee_1h__posture__idle_ready_01__e__5f__128x96.png",
+        "frames": 5,
+        "frame_size": [
+          128,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/posture/idle_ready_01/e/migrations/20260830T000649/target/lower_body.png"
+    },
+    {
+      "binding_id": "upper_body",
+      "aseprite_layer_name": "upper_body",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "melee_1h",
+      "group": "posture",
+      "action": "idle_ready_01",
+      "direction": "e",
+      "layer": "upper_body",
+      "source_path": "custodian/content/sprites/operator/source/animations/melee_1h/posture/idle_ready_01/operator__upper_body__melee_1h__posture__idle_ready_01__e__4f__128x96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/melee_1h/posture/idle_ready_01/operator__upper_body__melee_1h__posture__idle_ready_01__e__4f__128x96.png",
+      "source_file_sha256": "21e9c31f1804df9e4fc106d9ea1cb87a8476a38ebde68dcc227e4240e6f9b4ec",
+      "source_pixel_sha256": "5c6e50da930cf89dfdb4cc002aeadbb5845856bc918c6d55e66d60e05b2ee7b9",
+      "frames": 5,
+      "frame_size": [
+        128,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "upper_body",
+        "profile": "melee_1h",
+        "group": "posture",
+        "action": "idle_ready_01",
+        "direction": "e"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/posture/idle_ready_01/operator__upper_body__melee_1h__posture__idle_ready_01__e__4f__128x96.png",
+        "frames": 4,
+        "frame_size": [
+          128,
+          96
+        ],
+        "file_sha256": "21e9c31f1804df9e4fc106d9ea1cb87a8476a38ebde68dcc227e4240e6f9b4ec",
+        "pixel_sha256": "5c6e50da930cf89dfdb4cc002aeadbb5845856bc918c6d55e66d60e05b2ee7b9"
+      },
+      "workspace_contract": {
+        "frames": 5,
+        "frame_size": [
+          128,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/posture/idle_ready_01/operator__upper_body__melee_1h__posture__idle_ready_01__e__5f__128x96.png",
+        "frames": 5,
+        "frame_size": [
+          128,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/posture/idle_ready_01/e/migrations/20260830T000649/target/upper_body.png"
+    }
+  ],
+  "references": [],
+  "pending_migration": {
+    "kind": "frame_count",
+    "operation": "add",
+    "position": {
+      "after": 2
+    },
+    "fill": "duplicate-prev",
+    "old_clock_frames": 4,
+    "new_clock_frames": 5,
+    "affected_bindings": [
+      "lower_body",
+      "upper_body"
+    ],
+    "excluded_bindings": [],
+    "dependency_audit": {
+      "level": "GREEN",
+      "dependencies": []
+    },
+    "status": "pending"
+  },
+  "last_publish": {
+    "timestamp": null,
+    "validation_status": null
+  },
+  "export_stamp": "migration_20260830T000649"
+}

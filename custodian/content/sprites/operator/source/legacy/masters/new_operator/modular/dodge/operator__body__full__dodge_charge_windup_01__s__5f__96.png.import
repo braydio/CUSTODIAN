@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bgtyl6qeptjt3"
-path="res://.godot/imported/operator__body__full__dodge_charge_windup_01__s__5f__96.png-47a3c5733befbe09a05ddd2e65784602.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/new_operator/modular/dodge/operator__body__full__dodge_charge_windup_01__s__5f__96.png"
-dest_files=["res://.godot/imported/operator__body__full__dodge_charge_windup_01__s__5f__96.png-47a3c5733befbe09a05ddd2e65784602.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cdygpk3w2ucjx"
-path="res://.godot/imported/gun_sprite_carbine_reload_east_pixel_64x64_sheet.png-f8af2af1f5cc57a5f1eb8b1f0af5cf43.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/weapons/carbine_rifle_mk1/source/reference/reload_01/gun_sprite_carbine_reload_east_pixel_64x64_sheet.png"
-dest_files=["res://.godot/imported/gun_sprite_carbine_reload_east_pixel_64x64_sheet.png-f8af2af1f5cc57a5f1eb8b1f0af5cf43.ctex"]
 
 [params]
 

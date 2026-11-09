@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c8qso6kehsrcj"
-path="res://.godot/imported/Kick.png-95cedfd4758c542da7f7fa5eaffe8dc9.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://dev/test_sprites/Knight/Kick.png"
-dest_files=["res://.godot/imported/Kick.png-95cedfd4758c542da7f7fa5eaffe8dc9.ctex"]
 
 [params]
 

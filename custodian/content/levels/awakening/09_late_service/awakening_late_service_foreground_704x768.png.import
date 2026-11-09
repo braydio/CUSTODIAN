@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dhcqri71rucnn"
-path="res://.godot/imported/awakening_late_service_foreground_704x768.png-a8410140516c4eddad40ac6d2ed3cdf4.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/levels/awakening/09_late_service/awakening_late_service_foreground_704x768.png"
-dest_files=["res://.godot/imported/awakening_late_service_foreground_704x768.png-a8410140516c4eddad40ac6d2ed3cdf4.ctex"]
 
 [params]
 

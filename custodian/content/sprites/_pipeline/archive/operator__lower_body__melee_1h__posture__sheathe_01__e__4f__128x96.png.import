@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b35mwx160xeex"
-path="res://.godot/imported/operator__lower_body__melee_1h__posture__sheathe_01__e__4f__128x96.png-ab880ec05ca0206dd861f7dbeb81b96a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/archive/operator__lower_body__melee_1h__posture__sheathe_01__e__4f__128x96.png"
-dest_files=["res://.godot/imported/operator__lower_body__melee_1h__posture__sheathe_01__e__4f__128x96.png-ab880ec05ca0206dd861f7dbeb81b96a.ctex"]
 
 [params]
 

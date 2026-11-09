@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dw43lsh32yvfv"
-path="res://.godot/imported/awakening_ambulatory_fixtures__body__fixture__service_basin_a__omni__1f__128.png-69727e9148c7e56bc6736e08332c7b3e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/awakening/awakening_ambulatory_fixtures/runtime/body/awakening_ambulatory_fixtures__body__fixture__service_basin_a__omni__1f__128.png"
-dest_files=["res://.godot/imported/awakening_ambulatory_fixtures__body__fixture__service_basin_a__omni__1f__128.png-69727e9148c7e56bc6736e08332c7b3e.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cm7b612ajbunl"
-path="res://.godot/imported/AxemanPurple.png-4f69fdf216fdc9c899e6e86a519435c7.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Soldiers/Melee/PurpleMelee/AxemanPurple.png"
-dest_files=["res://.godot/imported/AxemanPurple.png-4f69fdf216fdc9c899e6e86a519435c7.ctex"]
 
 [params]
 

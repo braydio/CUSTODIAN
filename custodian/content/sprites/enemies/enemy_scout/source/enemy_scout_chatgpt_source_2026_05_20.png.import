@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bvkphm17jtxrp"
-path="res://.godot/imported/enemy_scout_chatgpt_source_2026_05_20.png-6f37fbadf9dc0684563fb16c9e4c3833.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_scout/source/enemy_scout_chatgpt_source_2026_05_20.png"
-dest_files=["res://.godot/imported/enemy_scout_chatgpt_source_2026_05_20.png-6f37fbadf9dc0684563fb16c9e4c3833.ctex"]
 
 [params]
 

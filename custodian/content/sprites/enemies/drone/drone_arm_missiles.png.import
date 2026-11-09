@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dto40xijafu8e"
-path="res://.godot/imported/drone_arm_missiles.png-b30864fb196e0e58afe7395eb5ef97f6.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/drone/drone_arm_missiles.png"
-dest_files=["res://.godot/imported/drone_arm_missiles.png-b30864fb196e0e58afe7395eb5ef97f6.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cn3dfaw62jhfd"
-path="res://.godot/imported/enemy__forlorn_ritualant__body__dissolve_01__s__6f__128.png-981c4c0d120624842da24130c047b1e3.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/archive/enemy__forlorn_ritualant__body__dissolve_01__s__6f__128.png"
-dest_files=["res://.godot/imported/enemy__forlorn_ritualant__body__dissolve_01__s__6f__128.png-981c4c0d120624842da24130c047b1e3.ctex"]
 
 [params]
 

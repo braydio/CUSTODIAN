@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://do1u0o686a1n1"
-path="res://.godot/imported/gothic_dead_root_stump_01.png-3e7f7556ffd2a1828a9ed067d2d11638.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/gothic/forest_intrusion/gothic_dead_root_stump_01.png"
-dest_files=["res://.godot/imported/gothic_dead_root_stump_01.png-3e7f7556ffd2a1828a9ed067d2d11638.ctex"]
 
 [params]
 

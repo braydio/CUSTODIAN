@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dnbucim6uiwn2"
-path="res://.godot/imported/sprite_175__native_77x62__crop_83x68.png-129541cfcba8e49d480caf94454cfb32.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/native/meridian_civic_planter/sprite_175__native_77x62__crop_83x68.png"
-dest_files=["res://.godot/imported/sprite_175__native_77x62__crop_83x68.png-129541cfcba8e49d480caf94454cfb32.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://chmkrnof0moh7"
-path="res://.godot/imported/29_ground_rocky_patch_large.png-f8641ff09a779b1c46739a1e2aa6682e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/29_ground_rocky_patch_large.png"
-dest_files=["res://.godot/imported/29_ground_rocky_patch_large.png-f8641ff09a779b1c46739a1e2aa6682e.ctex"]
 
 [params]
 

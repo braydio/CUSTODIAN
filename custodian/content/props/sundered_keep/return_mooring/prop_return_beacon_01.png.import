@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dnxd865i3psst"
-path="res://.godot/imported/prop_return_beacon_01.png-0eb70522ed0beae75c0a7f02be51a511.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/sundered_keep/return_mooring/prop_return_beacon_01.png"
-dest_files=["res://.godot/imported/prop_return_beacon_01.png-0eb70522ed0beae75c0a7f02be51a511.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c1oj4djlarxxx"
-path="res://.godot/imported/twin_solaria_v1_authority_threshold_plate_375x355.png-46df28f853fab3ae1e3d4abd95429688.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/levels/hub/twin_solaria/v1/twin_solaria_v1_authority_threshold_plate_375x355.png"
-dest_files=["res://.godot/imported/twin_solaria_v1_authority_threshold_plate_375x355.png-46df28f853fab3ae1e3d4abd95429688.ctex"]
 
 [params]
 

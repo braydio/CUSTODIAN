@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://vmxw02os4bxf"
-path="res://.godot/imported/open_great_doors_prefab_sheet.png-ce0f570c63723c233d3602f808e03c37.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/entrance/prefabs/open_great_doors_prefab_sheet.png"
-dest_files=["res://.godot/imported/open_great_doors_prefab_sheet.png-ce0f570c63723c233d3602f808e03c37.ctex"]
 
 [params]
 

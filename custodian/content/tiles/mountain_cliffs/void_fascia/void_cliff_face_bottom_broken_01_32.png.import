@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ytpvv76o03bm"
-path="res://.godot/imported/void_cliff_face_bottom_broken_01_32.png-65cddefed431007107d64d818550c634.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/mountain_cliffs/void_fascia/void_cliff_face_bottom_broken_01_32.png"
-dest_files=["res://.godot/imported/void_cliff_face_bottom_broken_01_32.png-65cddefed431007107d64d818550c634.ctex"]
 
 [params]
 

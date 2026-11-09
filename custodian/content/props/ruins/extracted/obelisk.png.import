@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cbi543thqkhji"
-path="res://.godot/imported/obelisk.png-4e387c882715a41622a325c74e7cbbfb.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/ruins/extracted/obelisk.png"
-dest_files=["res://.godot/imported/obelisk.png-4e387c882715a41622a325c74e7cbbfb.ctex"]
 
 [params]
 

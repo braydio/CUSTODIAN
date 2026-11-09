@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c30td7r08kol5"
-path="res://.godot/imported/icon_signal_filament.png-6b5086c7932c7f7aa0d92b656616c886.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/inventory/runtime/icons/icon_signal_filament.png"
-dest_files=["res://.godot/imported/icon_signal_filament.png-6b5086c7932c7f7aa0d92b656616c886.ctex"]
 
 [params]
 

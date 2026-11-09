@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://doburwnp362n3"
-path="res://.godot/imported/operator__modular_weapon_vigil_dagger__melee_1h__chain_02__e__8f__156x96.png-8f207a98f3661e48230ba3d2f405ce09.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/archive/operator__modular_weapon_vigil_dagger__melee_1h__chain_02__e__8f__156x96.png"
-dest_files=["res://.godot/imported/operator__modular_weapon_vigil_dagger__melee_1h__chain_02__e__8f__156x96.png-8f207a98f3661e48230ba3d2f405ce09.ctex"]
 
 [params]
 

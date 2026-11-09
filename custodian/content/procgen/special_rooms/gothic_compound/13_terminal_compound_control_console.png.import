@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ipqy0b834a1x"
-path="res://.godot/imported/13_terminal_compound_control_console.png-947501bb5fe7df1f941c3c37890975c2.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/13_terminal_compound_control_console.png"
-dest_files=["res://.godot/imported/13_terminal_compound_control_console.png-947501bb5fe7df1f941c3c37890975c2.ctex"]
 
 [params]
 

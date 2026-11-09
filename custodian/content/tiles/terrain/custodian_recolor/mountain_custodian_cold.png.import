@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ydsxmvedln2j"
-path="res://.godot/imported/mountain_custodian_cold.png-12f6a7c08456e56c2270226654d78b55.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/custodian_recolor/mountain_custodian_cold.png"
-dest_files=["res://.godot/imported/mountain_custodian_cold.png-12f6a7c08456e56c2270226654d78b55.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://spgf6r42ey4m"
-path="res://.godot/imported/overlay_hardware_plate_02.png-b000819e0b1e232e7a41c469a747b4af.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/roads_paths/runtime/roads/gothic/overlays/overlay_hardware_plate_02.png"
-dest_files=["res://.godot/imported/overlay_hardware_plate_02.png-b000819e0b1e232e7a41c469a747b4af.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://uj8e4w6a6363"
-path="res://.godot/imported/rampart_trim_underwall_01.png-d22aa5ea6f4e61e9936e917992308b43.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_design_extract/edges/rampart_trim_underwall_01.png"
-dest_files=["res://.godot/imported/rampart_trim_underwall_01.png-d22aa5ea6f4e61e9936e917992308b43.ctex"]
 
 [params]
 

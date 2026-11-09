@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d0ccan0elsat1"
-path="res://.godot/imported/great_hall_wall_straight_test_original.png-1e0a8fe63c6db7f5a535c8e990bdd297.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/new_operator/modular/fast_attack/great_hall_wall_straight_test_original.png"
-dest_files=["res://.godot/imported/great_hall_wall_straight_test_original.png-1e0a8fe63c6db7f5a535c8e990bdd297.ctex"]
 
 [params]
 

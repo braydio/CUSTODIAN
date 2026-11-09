@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bn8kmyoupr820"
-path="res://.godot/imported/small_square_stone_detail_01.png-4b3c373138af11c2e9df6aa14d7e034a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_design_extract/props/small_square_stone_detail_01.png"
-dest_files=["res://.godot/imported/small_square_stone_detail_01.png-4b3c373138af11c2e9df6aa14d7e034a.ctex"]
 
 [params]
 

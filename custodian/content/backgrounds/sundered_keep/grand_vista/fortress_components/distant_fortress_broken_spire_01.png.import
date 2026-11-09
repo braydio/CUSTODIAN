@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://wtktjbuksxbm"
-path="res://.godot/imported/distant_fortress_broken_spire_01.png-5308ff44deceb4ee6ff659befadc082e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/grand_vista/fortress_components/distant_fortress_broken_spire_01.png"
-dest_files=["res://.godot/imported/distant_fortress_broken_spire_01.png-5308ff44deceb4ee6ff659befadc082e.ctex"]
 
 [params]
 

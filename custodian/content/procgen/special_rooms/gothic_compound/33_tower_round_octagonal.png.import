@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://be3li07so77ed"
-path="res://.godot/imported/33_tower_round_octagonal.png-475accd23fbd7c27c4b67ff2c41ee020.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/33_tower_round_octagonal.png"
-dest_files=["res://.godot/imported/33_tower_round_octagonal.png-475accd23fbd7c27c4b67ff2c41ee020.ctex"]
 
 [params]
 

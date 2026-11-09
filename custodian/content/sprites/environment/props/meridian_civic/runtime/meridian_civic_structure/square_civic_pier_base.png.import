@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cm3qkvgujwyhx"
-path="res://.godot/imported/square_civic_pier_base.png-4df7e80e5635d457ab283527368af470.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_structure/square_civic_pier_base.png"
-dest_files=["res://.godot/imported/square_civic_pier_base.png-4df7e80e5635d457ab283527368af470.ctex"]
 
 [params]
 

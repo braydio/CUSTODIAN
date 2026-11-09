@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cxracalij1jt3"
-path="res://.godot/imported/awakening_custodian_approach_foreground_1024x864.png-4ab323b779c0ba17ea38d1a92483905e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/levels/awakening/08_approach/awakening_custodian_approach_foreground_1024x864.png"
-dest_files=["res://.godot/imported/awakening_custodian_approach_foreground_1024x864.png-4ab323b779c0ba17ea38d1a92483905e.ctex"]
 
 [params]
 

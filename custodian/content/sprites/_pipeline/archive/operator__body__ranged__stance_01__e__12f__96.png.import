@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bcaumoi8i6pa"
-path="res://.godot/imported/operator__body__ranged__stance_01__e__12f__96.png-d514827863f6167e4bc9edcd04ac8d28.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/archive/operator__body__ranged__stance_01__e__12f__96.png"
-dest_files=["res://.godot/imported/operator__body__ranged__stance_01__e__12f__96.png-d514827863f6167e4bc9edcd04ac8d28.ctex"]
 
 [params]
 

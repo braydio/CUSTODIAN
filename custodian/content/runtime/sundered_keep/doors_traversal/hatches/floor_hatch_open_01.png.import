@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cx8th2bquso6"
-path="res://.godot/imported/floor_hatch_open_01.png-df68335fd5ccd539c9864752f16258a5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/doors_traversal/hatches/floor_hatch_open_01.png"
-dest_files=["res://.godot/imported/floor_hatch_open_01.png-df68335fd5ccd539c9864752f16258a5.ctex"]
 
 [params]
 

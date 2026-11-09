@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d1n2g24y22hr2"
-path="res://.godot/imported/barrel_gray.png-392d43da105b480741cf914e95f49f4e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_container/barrel_gray.png"
-dest_files=["res://.godot/imported/barrel_gray.png-392d43da105b480741cf914e95f49f4e.ctex"]
 
 [params]
 

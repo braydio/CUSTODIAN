@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://drrom8ydkea2r"
-path="res://.godot/imported/procgen_wall_stone_32_atlas.png-40720ed4b31daf5896e5e4bb67ab02ec.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/procgen/atlases/procgen_wall_stone_32_atlas.png"
-dest_files=["res://.godot/imported/procgen_wall_stone_32_atlas.png-40720ed4b31daf5896e5e4bb67ab02ec.ctex"]
 
 [params]
 

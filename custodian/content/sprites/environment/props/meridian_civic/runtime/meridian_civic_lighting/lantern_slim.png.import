@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bp7gcgoyfd7fm"
-path="res://.godot/imported/lantern_slim.png-9fb415eb71799363be9b5d0dffa95cef.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_lighting/lantern_slim.png"
-dest_files=["res://.godot/imported/lantern_slim.png-9fb415eb71799363be9b5d0dffa95cef.ctex"]
 
 [params]
 

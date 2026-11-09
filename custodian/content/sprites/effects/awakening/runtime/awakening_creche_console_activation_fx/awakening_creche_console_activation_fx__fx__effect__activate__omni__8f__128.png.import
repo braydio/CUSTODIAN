@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dn6tjlr8afe48"
-path="res://.godot/imported/awakening_creche_console_activation_fx__fx__effect__activate__omni__8f__128.png-930eebe1a072b8d51a47ac5328cd6fa1.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/effects/awakening/runtime/awakening_creche_console_activation_fx/awakening_creche_console_activation_fx__fx__effect__activate__omni__8f__128.png"
-dest_files=["res://.godot/imported/awakening_creche_console_activation_fx__fx__effect__activate__omni__8f__128.png-930eebe1a072b8d51a47ac5328cd6fa1.ctex"]
 
 [params]
 

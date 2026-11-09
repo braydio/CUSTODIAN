@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://crni44hctjwbd"
-path="res://.godot/imported/floor_carrow_edge_plain_01_32.png-4beec6cb401416a2af9685eef6559915.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/runtime/floor_carrow_edge_plain_01_32.png"
-dest_files=["res://.godot/imported/floor_carrow_edge_plain_01_32.png-4beec6cb401416a2af9685eef6559915.ctex"]
 
 [params]
 

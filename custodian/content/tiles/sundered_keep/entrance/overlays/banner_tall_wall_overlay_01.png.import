@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c8rnlpm65y7x6"
-path="res://.godot/imported/banner_tall_wall_overlay_01.png-649246965ec8b9db01be24e270bc3f0a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/entrance/overlays/banner_tall_wall_overlay_01.png"
-dest_files=["res://.godot/imported/banner_tall_wall_overlay_01.png-649246965ec8b9db01be24e270bc3f0a.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d1o38d7qsut38"
-path="res://.godot/imported/operator__modular_lower_body__melee_1h__stance_01__e__1f__96.png-82c07356934e00a19250429461044872.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/new_operator/modular/stance_01/operator__modular_lower_body__melee_1h__stance_01__e__1f__96.png"
-dest_files=["res://.godot/imported/operator__modular_lower_body__melee_1h__stance_01__e__1f__96.png-82c07356934e00a19250429461044872.ctex"]
 
 [params]
 

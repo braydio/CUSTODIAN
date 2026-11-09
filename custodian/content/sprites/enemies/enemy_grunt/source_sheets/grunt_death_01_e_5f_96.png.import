@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b2dojnen6ttfj"
-path="res://.godot/imported/grunt_death_01_e_5f_96.png-8fca7362998095817898a171c17deb41.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_grunt/source_sheets/grunt_death_01_e_5f_96.png"
-dest_files=["res://.godot/imported/grunt_death_01_e_5f_96.png-8fca7362998095817898a171c17deb41.ctex"]
 
 [params]
 

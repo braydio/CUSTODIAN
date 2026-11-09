@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cle7xlt0l0ooj"
-path="res://.godot/imported/field_fabricator_mk1__body__interaction__fabricate__omni__8f__156.png-e79b29d4ed340381d98e095da872e9be.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/field_fabricator_mk1/runtime/body/interaction/field_fabricator_mk1__body__interaction__fabricate__omni__8f__156.png"
-dest_files=["res://.godot/imported/field_fabricator_mk1__body__interaction__fabricate__omni__8f__156.png-e79b29d4ed340381d98e095da872e9be.ctex"]
 
 [params]
 

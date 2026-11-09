@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://di6stkewookg1"
-path="res://.godot/imported/button_disabled.png-f70cdb3a9493135a03d2cf1f75d59fb4.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/source/button_disabled.png"
-dest_files=["res://.godot/imported/button_disabled.png-f70cdb3a9493135a03d2cf1f75d59fb4.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://2mi1no5gbls4"
-path="res://.godot/imported/procgen_floor_grass_32_atlas.png-4e716dcac7c558ba4f7bffa5ce8d05c2.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/procgen/atlases/procgen_floor_grass_32_atlas.png"
-dest_files=["res://.godot/imported/procgen_floor_grass_32_atlas.png-4e716dcac7c558ba4f7bffa5ce8d05c2.ctex"]
 
 [params]
 

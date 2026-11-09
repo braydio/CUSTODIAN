@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c35rgcjor70bi"
-path="res://.godot/imported/sandstone_east_mountainside_ascent_01_1372x1020.png-df30de60e4457c205d3f108186b7eeaf.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/terrain/sandstone/sandstone_east_mountainside_ascent_01_1372x1020.png"
-dest_files=["res://.godot/imported/sandstone_east_mountainside_ascent_01_1372x1020.png-df30de60e4457c205d3f108186b7eeaf.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cpgrffa7irf0n"
-path="res://.godot/imported/enemy_grunt__body__melee__taunt_brandish_01__e__8f__96.png-94ff5b6167993a1e18b709781e596a27.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__taunt_brandish_01__e__8f__96.png"
-dest_files=["res://.godot/imported/enemy_grunt__body__melee__taunt_brandish_01__e__8f__96.png-94ff5b6167993a1e18b709781e596a27.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bamdpbypiq18a"
-path="res://.godot/imported/road_end_w_cap_02.png-2fa26af094ffe6f8e58926cbb25ea56e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/roads_paths/legacy/road_piece_exports_game32_previous/pieces/road_end_w_cap_02.png"
-dest_files=["res://.godot/imported/road_end_w_cap_02.png-2fa26af094ffe6f8e58926cbb25ea56e.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bdlk8gqm1hl5t"
-path="res://.godot/imported/gothic_civic_light_03.png-f6fa23596f6af493354c737f356cf796.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_civic_lighting/gothic_civic_light_03.png"
-dest_files=["res://.godot/imported/gothic_civic_light_03.png-f6fa23596f6af493354c737f356cf796.ctex"]
 
 [params]
 

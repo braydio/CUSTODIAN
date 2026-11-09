@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dtb08nkx01nn8"
-path="res://.godot/imported/overlay_candle_shrine_01.png-4907d357c464e7c493b089d031948a95.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/roads_paths/runtime/roads/gothic/overlays/overlay_candle_shrine_01.png"
-dest_files=["res://.godot/imported/overlay_candle_shrine_01.png-4907d357c464e7c493b089d031948a95.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://hnfx6abniri"
-path="res://.godot/imported/operator__modular_upper_body__unarmed__run_01__ne__6f__96.png-4f9b5bf2834729cf0150f6959efa5682.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/archive/operator__modular_upper_body__unarmed__run_01__ne__6f__96.png"
-dest_files=["res://.godot/imported/operator__modular_upper_body__unarmed__run_01__ne__6f__96.png-4f9b5bf2834729cf0150f6959efa5682.ctex"]
 
 [params]
 

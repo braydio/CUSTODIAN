@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c2i0ftelrw3rv"
-path="res://.godot/imported/43_pylon_dead_light.png-00c8cacae14f499637925ff42c28d92c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/43_pylon_dead_light.png"
-dest_files=["res://.godot/imported/43_pylon_dead_light.png-00c8cacae14f499637925ff42c28d92c.ctex"]
 
 [params]
 

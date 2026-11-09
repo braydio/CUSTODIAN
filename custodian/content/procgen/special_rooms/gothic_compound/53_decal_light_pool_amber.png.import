@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c81xcii1sve23"
-path="res://.godot/imported/53_decal_light_pool_amber.png-e14fb1f0e428b05a81da2a81f8faf17f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/53_decal_light_pool_amber.png"
-dest_files=["res://.godot/imported/53_decal_light_pool_amber.png-e14fb1f0e428b05a81da2a81f8faf17f.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bva4fqu7vhdqi"
-path="res://.godot/imported/wreckage_rubble.png-676fe4099f0510fdf7fdb116c546cff8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_debris/wreckage_rubble.png"
-dest_files=["res://.godot/imported/wreckage_rubble.png-676fe4099f0510fdf7fdb116c546cff8.ctex"]
 
 [params]
 

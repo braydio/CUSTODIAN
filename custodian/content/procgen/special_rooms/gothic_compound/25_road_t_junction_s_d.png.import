@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://brpkey2tnub8d"
-path="res://.godot/imported/25_road_t_junction_s_d.png-cee018f696575ba1833c1e111dceac35.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/25_road_t_junction_s_d.png"
-dest_files=["res://.godot/imported/25_road_t_junction_s_d.png-cee018f696575ba1833c1e111dceac35.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bcb2ogtoeqnmp"
-path="res://.godot/imported/distant_sundered_keep_landmark_v2.png-a6c4b68733bcb782933cdce68cb4a8c6.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/shared/landmarks/distant_sundered_keep_landmark_v2.png"
-dest_files=["res://.godot/imported/distant_sundered_keep_landmark_v2.png-a6c4b68733bcb782933cdce68cb4a8c6.ctex"]
 
 [params]
 

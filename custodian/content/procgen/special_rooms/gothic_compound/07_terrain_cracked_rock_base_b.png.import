@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b4mkah3cnhv3v"
-path="res://.godot/imported/07_terrain_cracked_rock_base_b.png-c7f3cf90f32f303d6a07d7cd5ef30922.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/07_terrain_cracked_rock_base_b.png"
-dest_files=["res://.godot/imported/07_terrain_cracked_rock_base_b.png-c7f3cf90f32f303d6a07d7cd5ef30922.ctex"]
 
 [params]
 

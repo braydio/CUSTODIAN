@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://2g7ddd0v2j8x"
-path="res://.godot/imported/icon_fabrication.png-e273c680a6e618db1513d0cf46090a5a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/icons/icon_fabrication.png"
-dest_files=["res://.godot/imported/icon_fabrication.png-e273c680a6e618db1513d0cf46090a5a.ctex"]
 
 [params]
 

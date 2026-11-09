@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b6ixble0ko47"
-path="res://.godot/imported/Door_Threshold_Wall.png-d56d38c306d308712e216b36b69201b2.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/Door_Threshold_Wall.png"
-dest_files=["res://.godot/imported/Door_Threshold_Wall.png-d56d38c306d308712e216b36b69201b2.ctex"]
 
 [params]
 

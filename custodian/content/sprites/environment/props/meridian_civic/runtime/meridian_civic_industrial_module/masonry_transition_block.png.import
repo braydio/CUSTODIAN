@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://4owsimj60osx"
-path="res://.godot/imported/masonry_transition_block.png-3516ba6a301f53e3a67ca83a38931c29.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_industrial_module/masonry_transition_block.png"
-dest_files=["res://.godot/imported/masonry_transition_block.png-3516ba6a301f53e3a67ca83a38931c29.ctex"]
 
 [params]
 

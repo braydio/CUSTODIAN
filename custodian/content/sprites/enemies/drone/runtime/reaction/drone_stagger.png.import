@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b652vnxstsval"
-path="res://.godot/imported/drone_stagger.png-9e0a1d5866e7782dcfb1cde1692ffaef.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/drone/runtime/reaction/drone_stagger.png"
-dest_files=["res://.godot/imported/drone_stagger.png-9e0a1d5866e7782dcfb1cde1692ffaef.ctex"]
 
 [params]
 

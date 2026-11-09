@@ -1,0 +1,115 @@
+{
+  "schema": "custodian.operator_animation_workbench.v2",
+  "identity": {
+    "profile": "melee_1h",
+    "group": "attack",
+    "action": "fast_02_legacy_04ab0f51",
+    "direction": "w"
+  },
+  "context": {
+    "weapon_id": "",
+    "linked_profile": "",
+    "presentation_mode": "",
+    "fingerprint": "509511b0daad1a7628ba0947af7e42e43b7b04df8715e450001b2460320fb8ff"
+  },
+  "weapon_context": null,
+  "timeline": {
+    "frames": 8,
+    "source_clock_frames": 8,
+    "workspace_clock_frames": 8,
+    "document_frames": 8,
+    "preview_fps": 12,
+    "timing_authority": false,
+    "clock_owner": "fx"
+  },
+  "canvas": {
+    "width": 96,
+    "height": 96
+  },
+  "aseprite": {
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/attack/fast_02_legacy_04ab0f51/w/workbench.aseprite",
+    "last_synced_sha256": "6bdb8a6bcd5f420a0f40f4a3b67c8171c112d9b51073117db26c4a2d1d479452"
+  },
+  "layers": [
+    {
+      "binding_id": "fx",
+      "aseprite_layer_name": "fx",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "melee_1h",
+      "group": "attack",
+      "action": "fast_02_legacy_04ab0f51",
+      "direction": "w",
+      "layer": "fx",
+      "source_path": "custodian/content/sprites/operator/source/animations/melee_1h/attack/fast_02_legacy_04ab0f51/operator__fx__melee_1h__attack__fast_02_legacy_04ab0f51__w__8f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/melee_1h/attack/fast_02_legacy_04ab0f51/operator__fx__melee_1h__attack__fast_02_legacy_04ab0f51__w__8f__96.png",
+      "source_file_sha256": "04ab0f512aca8b49b3dd04c1e3e1c5bce613a1b3d47810215bcdc4ba7346882e",
+      "source_pixel_sha256": "3e7a756ebd1b93abecf74dcc3651dffedf92e02815c08c04d4862df4d12d7ac7",
+      "frames": 8,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "fx",
+        "profile": "melee_1h",
+        "group": "attack",
+        "action": "fast_02_legacy_04ab0f51",
+        "direction": "w"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/attack/fast_02_legacy_04ab0f51/operator__fx__melee_1h__attack__fast_02_legacy_04ab0f51__w__8f__96.png",
+        "frames": 8,
+        "frame_size": [
+          96,
+          96
+        ],
+        "file_sha256": "04ab0f512aca8b49b3dd04c1e3e1c5bce613a1b3d47810215bcdc4ba7346882e",
+        "pixel_sha256": "3e7a756ebd1b93abecf74dcc3651dffedf92e02815c08c04d4862df4d12d7ac7"
+      },
+      "workspace_contract": {
+        "frames": 8,
+        "frame_size": [
+          96,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/attack/fast_02_legacy_04ab0f51/operator__fx__melee_1h__attack__fast_02_legacy_04ab0f51__w__8f__96.png",
+        "frames": 8,
+        "frame_size": [
+          96,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/attack/fast_02_legacy_04ab0f51/w/baseline/fx.png"
+    }
+  ],
+  "references": [],
+  "pending_migration": null,
+  "last_publish": {
+    "timestamp": null,
+    "validation_status": null
+  }
+}

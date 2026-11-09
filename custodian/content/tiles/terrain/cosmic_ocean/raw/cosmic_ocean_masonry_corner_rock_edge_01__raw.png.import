@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bieeja2cibby5"
-path="res://.godot/imported/cosmic_ocean_masonry_corner_rock_edge_01__raw.png-db8a037598889dc2dede698231c7e255.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/cosmic_ocean/raw/cosmic_ocean_masonry_corner_rock_edge_01__raw.png"
-dest_files=["res://.godot/imported/cosmic_ocean_masonry_corner_rock_edge_01__raw.png-db8a037598889dc2dede698231c7e255.ctex"]
 
 [params]
 

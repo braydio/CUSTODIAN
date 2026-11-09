@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://y73vjes0biuk"
-path="res://.godot/imported/bush.png-3a3a32b9d1ed6b3e5e2c677ffe6315b2.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/raw_preview_tiles/bush.png"
-dest_files=["res://.godot/imported/bush.png-3a3a32b9d1ed6b3e5e2c677ffe6315b2.ctex"]
 
 [params]
 

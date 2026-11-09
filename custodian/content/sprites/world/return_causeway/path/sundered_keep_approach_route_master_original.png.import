@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bi8g6cano8pwu"
-path="res://.godot/imported/sundered_keep_approach_route_master_original.png-6981d0c4d01873fa9d6bbf23c7d78645.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/world/return_causeway/path/sundered_keep_approach_route_master_original.png"
-dest_files=["res://.godot/imported/sundered_keep_approach_route_master_original.png-6981d0c4d01873fa9d6bbf23c7d78645.ctex"]
 
 [params]
 

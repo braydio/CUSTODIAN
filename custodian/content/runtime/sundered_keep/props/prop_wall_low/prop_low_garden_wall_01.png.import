@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dext25wo2mbil"
-path="res://.godot/imported/prop_low_garden_wall_01.png-0ce2fba1e268dabf87403ed6843e3d36.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/props/prop_wall_low/prop_low_garden_wall_01.png"
-dest_files=["res://.godot/imported/prop_low_garden_wall_01.png-0ce2fba1e268dabf87403ed6843e3d36.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://7s8sde4sahev"
-path="res://.godot/imported/gooseneck_single.png-c353b623383f5140cb41b60c3748d01c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_lighting/gooseneck_single.png"
-dest_files=["res://.godot/imported/gooseneck_single.png-c353b623383f5140cb41b60c3748d01c.ctex"]
 
 [params]
 

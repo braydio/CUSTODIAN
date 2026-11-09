@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b2xaijg6laqtf"
-path="res://.godot/imported/2h_heavy_pre-strike.png-f86efad20d870aab9b1d9d5078049138.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/source_original/heavy_2h/2h_heavy_pre-strike.png"
-dest_files=["res://.godot/imported/2h_heavy_pre-strike.png-f86efad20d870aab9b1d9d5078049138.ctex"]
 
 [params]
 

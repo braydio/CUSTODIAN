@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cwgnln4ckfihp"
-path="res://.godot/imported/spike_rock_light.png-e4a4dc6b0fd5b6b99fa7c6f0bd9b0ba6.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/ruins/spike_rock_light.png"
-dest_files=["res://.godot/imported/spike_rock_light.png-e4a4dc6b0fd5b6b99fa7c6f0bd9b0ba6.ctex"]
 
 [params]
 

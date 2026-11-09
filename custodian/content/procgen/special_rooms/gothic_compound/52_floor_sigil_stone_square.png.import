@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://pxjskp6pjx5n"
-path="res://.godot/imported/52_floor_sigil_stone_square.png-a95c1b476ad36e9113489891804f4fb0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/52_floor_sigil_stone_square.png"
-dest_files=["res://.godot/imported/52_floor_sigil_stone_square.png-a95c1b476ad36e9113489891804f4fb0.ctex"]
 
 [params]
 

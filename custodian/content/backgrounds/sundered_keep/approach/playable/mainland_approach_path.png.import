@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bf5v652idf211"
-path="res://.godot/imported/mainland_approach_path.png-54f54e296bdd10d6b687076cf2082d2b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/approach/playable/mainland_approach_path.png"
-dest_files=["res://.godot/imported/mainland_approach_path.png-54f54e296bdd10d6b687076cf2082d2b.ctex"]
 
 [params]
 

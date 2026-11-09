@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b1c1ke8pqe577"
-path="res://.godot/imported/wall_straight_squared_01_64.png-a63a80e74cac87f4f21efb5153b49720.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/labyrnth_set/curated/wall_straight_squared_01_64.png"
-dest_files=["res://.godot/imported/wall_straight_squared_01_64.png-a63a80e74cac87f4f21efb5153b49720.ctex"]
 
 [params]
 

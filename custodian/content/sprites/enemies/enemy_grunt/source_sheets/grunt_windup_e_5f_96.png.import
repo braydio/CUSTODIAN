@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ccnnyfd1a8fur"
-path="res://.godot/imported/grunt_windup_e_5f_96.png-ee627f46c480daf9d6aba96152135e3e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_grunt/source_sheets/grunt_windup_e_5f_96.png"
-dest_files=["res://.godot/imported/grunt_windup_e_5f_96.png-ee627f46c480daf9d6aba96152135e3e.ctex"]
 
 [params]
 

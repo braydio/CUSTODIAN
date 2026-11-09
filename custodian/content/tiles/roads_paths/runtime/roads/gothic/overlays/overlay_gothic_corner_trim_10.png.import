@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dmyl2nw6shrv3"
-path="res://.godot/imported/overlay_gothic_corner_trim_10.png-60f391c82b15c8baee0056e78552492d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/roads_paths/runtime/roads/gothic/overlays/overlay_gothic_corner_trim_10.png"
-dest_files=["res://.godot/imported/overlay_gothic_corner_trim_10.png-60f391c82b15c8baee0056e78552492d.ctex"]
 
 [params]
 

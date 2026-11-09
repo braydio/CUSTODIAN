@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cynmce8oowe42"
-path="res://.godot/imported/tree_oak.png-289407d9d6f3d9d8b88c731afa979bad.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/raw_preview_tiles/tree_oak.png"
-dest_files=["res://.godot/imported/tree_oak.png-289407d9d6f3d9d8b88c731afa979bad.ctex"]
 
 [params]
 

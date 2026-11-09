@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://mnh71osiiijj"
-path="res://.godot/imported/pursuit_frame__body__combat__intercept_recover_01__w__5f__96.png-f26a1785097756c1bdb824a30a51ecdd.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/pursuit_frame/runtime/body/combat/pursuit_frame__body__combat__intercept_recover_01__w__5f__96.png"
-dest_files=["res://.godot/imported/pursuit_frame__body__combat__intercept_recover_01__w__5f__96.png-f26a1785097756c1bdb824a30a51ecdd.ctex"]
 
 [params]
 

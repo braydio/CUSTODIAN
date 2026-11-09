@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://daie1gcvh2wxg"
-path="res://.godot/imported/causeway_design_master_hd.png-39ff8522f3d6e600c872335b33fb71c8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/masters/sundered_keep/causeway_design_master_hd.png"
-dest_files=["res://.godot/imported/causeway_design_master_hd.png-39ff8522f3d6e600c872335b33fb71c8.ctex"]
 
 [params]
 

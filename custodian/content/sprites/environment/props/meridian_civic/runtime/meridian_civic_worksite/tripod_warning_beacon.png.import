@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bov5p0bej3lw3"
-path="res://.godot/imported/tripod_warning_beacon.png-d9649be05b3cfd57440e668d6b00a958.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_worksite/tripod_warning_beacon.png"
-dest_files=["res://.godot/imported/tripod_warning_beacon.png-d9649be05b3cfd57440e668d6b00a958.ctex"]
 
 [params]
 

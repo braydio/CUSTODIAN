@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cigjvjubi1ar0"
-path="res://.godot/imported/open_square_shaft.png-c89e0512d98c14ad77602da1750eaf8d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_floor_hardware/open_square_shaft.png"
-dest_files=["res://.godot/imported/open_square_shaft.png-c89e0512d98c14ad77602da1750eaf8d.ctex"]
 
 [params]
 

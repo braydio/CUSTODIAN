@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c8cv4x5gf1jlo"
-path="res://.godot/imported/first_vista_moonlight_sweep_01__6f__1024x512.png-bcf480a65cd6370f6e7b7e938544ce15.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/approach/light/first_vista_moonlight_sweep_01__6f__1024x512.png"
-dest_files=["res://.godot/imported/first_vista_moonlight_sweep_01__6f__1024x512.png-bcf480a65cd6370f6e7b7e938544ce15.ctex"]
 
 [params]
 

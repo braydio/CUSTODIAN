@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://blixjxv04q58v"
-path="res://.godot/imported/ash.png-f2a28bcb9a85b99569b494aa56721260.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/tiles_32/ash.png"
-dest_files=["res://.godot/imported/ash.png-f2a28bcb9a85b99569b494aa56721260.ctex"]
 
 [params]
 

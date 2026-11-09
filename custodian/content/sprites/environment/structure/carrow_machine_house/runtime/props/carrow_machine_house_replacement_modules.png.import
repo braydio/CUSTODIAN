@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ddi5j5ki6yt02"
-path="res://.godot/imported/carrow_machine_house_replacement_modules.png-026105d618bd2a2f14cfe12b7c7c3d34.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/structure/carrow_machine_house/runtime/props/carrow_machine_house_replacement_modules.png"
-dest_files=["res://.godot/imported/carrow_machine_house_replacement_modules.png-026105d618bd2a2f14cfe12b7c7c3d34.ctex"]
 
 [params]
 

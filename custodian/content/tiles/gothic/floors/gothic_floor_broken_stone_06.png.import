@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://h6be7c2w8fxe"
-path="res://.godot/imported/gothic_floor_broken_stone_06.png-1fd8bd181fc1b8856b7fcff02e37aebe.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/gothic/floors/gothic_floor_broken_stone_06.png"
-dest_files=["res://.godot/imported/gothic_floor_broken_stone_06.png-1fd8bd181fc1b8856b7fcff02e37aebe.ctex"]
 
 [params]
 

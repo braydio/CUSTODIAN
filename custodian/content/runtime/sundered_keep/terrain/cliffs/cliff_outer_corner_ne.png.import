@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c6tyghruob0hr"
-path="res://.godot/imported/cliff_outer_corner_ne.png-24b2bf43c0d10f00b5b0aacb307a95c5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/terrain/cliffs/cliff_outer_corner_ne.png"
-dest_files=["res://.godot/imported/cliff_outer_corner_ne.png-24b2bf43c0d10f00b5b0aacb307a95c5.ctex"]
 
 [params]
 

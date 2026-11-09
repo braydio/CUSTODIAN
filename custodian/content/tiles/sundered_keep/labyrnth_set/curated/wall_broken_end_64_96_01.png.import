@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d3vdiy6gcja3x"
-path="res://.godot/imported/wall_broken_end_64_96_01.png-553c1ded32842bcd16fdfe4654c4a32f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/labyrnth_set/curated/wall_broken_end_64_96_01.png"
-dest_files=["res://.godot/imported/wall_broken_end_64_96_01.png-553c1ded32842bcd16fdfe4654c4a32f.ctex"]
 
 [params]
 

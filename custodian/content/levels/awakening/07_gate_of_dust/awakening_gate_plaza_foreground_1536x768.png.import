@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cda72d0gp0nqh"
-path="res://.godot/imported/awakening_gate_plaza_foreground_1536x768.png-da21600ed01e2300a00134e923fd1312.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/levels/awakening/07_gate_of_dust/awakening_gate_plaza_foreground_1536x768.png"
-dest_files=["res://.godot/imported/awakening_gate_plaza_foreground_1536x768.png-da21600ed01e2300a00134e923fd1312.ctex"]
 
 [params]
 

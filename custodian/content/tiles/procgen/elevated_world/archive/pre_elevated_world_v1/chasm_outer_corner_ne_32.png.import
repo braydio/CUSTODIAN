@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d4j6ln7ntk5hh"
-path="res://.godot/imported/chasm_outer_corner_ne_32.png-d7e00f530eeaa358f66fa57fdc5a048b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/procgen/elevated_world/archive/pre_elevated_world_v1/chasm_outer_corner_ne_32.png"
-dest_files=["res://.godot/imported/chasm_outer_corner_ne_32.png-d7e00f530eeaa358f66fa57fdc5a048b.ctex"]
 
 [params]
 

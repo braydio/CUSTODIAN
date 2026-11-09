@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://btabl8gdoceev"
-path="res://.godot/imported/operator__modular_head__hooded__run_01__n__8f__96.png-1ccc884f03fcd6ca7bab1970aeb90f75.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/new_operator/modular/run/operator__modular_head__hooded__run_01__n__8f__96.png"
-dest_files=["res://.godot/imported/operator__modular_head__hooded__run_01__n__8f__96.png-1ccc884f03fcd6ca7bab1970aeb90f75.ctex"]
 
 [params]
 

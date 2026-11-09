@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d1jwarvpg65hd"
-path="res://.godot/imported/keep_wall_face_02.png-81f0412f65e502b77f4e30d05fd55fcd.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_runtime/keep_walls/keep_wall_face_02.png"
-dest_files=["res://.godot/imported/keep_wall_face_02.png-81f0412f65e502b77f4e30d05fd55fcd.ctex"]
 
 [params]
 

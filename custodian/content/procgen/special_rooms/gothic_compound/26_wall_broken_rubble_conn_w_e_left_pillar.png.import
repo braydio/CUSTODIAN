@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://5e21acf2o3th"
-path="res://.godot/imported/26_wall_broken_rubble_conn_w_e_left_pillar.png-dae1cd32feb405e5345792df009df7f9.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/26_wall_broken_rubble_conn_w_e_left_pillar.png"
-dest_files=["res://.godot/imported/26_wall_broken_rubble_conn_w_e_left_pillar.png-dae1cd32feb405e5345792df009df7f9.ctex"]
 
 [params]
 

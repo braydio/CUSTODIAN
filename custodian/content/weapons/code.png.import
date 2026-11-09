@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dnrx7dbw84g1l"
-path="res://.godot/imported/code.png-ae9151f99e6b33480c3ae6f11c339da7.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/weapons/code.png"
-dest_files=["res://.godot/imported/code.png-ae9151f99e6b33480c3ae6f11c339da7.ctex"]
 
 [params]
 

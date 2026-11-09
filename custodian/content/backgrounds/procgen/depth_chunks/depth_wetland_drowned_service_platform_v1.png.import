@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://2r3vc0d2cw4a"
-path="res://.godot/imported/depth_wetland_drowned_service_platform_v1.png-61163555f317947521b9ac9e63257904.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/procgen/depth_chunks/depth_wetland_drowned_service_platform_v1.png"
-dest_files=["res://.godot/imported/depth_wetland_drowned_service_platform_v1.png-61163555f317947521b9ac9e63257904.ctex"]
 
 [params]
 

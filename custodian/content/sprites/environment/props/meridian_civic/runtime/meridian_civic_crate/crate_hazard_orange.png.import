@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cnh7qjg320f1o"
-path="res://.godot/imported/crate_hazard_orange.png-fe45bc6c1bb4d5e1c8ebc5ef7125acfb.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_crate/crate_hazard_orange.png"
-dest_files=["res://.godot/imported/crate_hazard_orange.png-fe45bc6c1bb4d5e1c8ebc5ef7125acfb.ctex"]
 
 [params]
 

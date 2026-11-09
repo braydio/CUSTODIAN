@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://7gng5bbkfjvd"
-path="res://.godot/imported/Bracket_Right_Lower.png-e61947dde34b31213cd6c6cc781e9918.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/Bracket_Right_Lower.png"
-dest_files=["res://.godot/imported/Bracket_Right_Lower.png-e61947dde34b31213cd6c6cc781e9918.ctex"]
 
 [params]
 

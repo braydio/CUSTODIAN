@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b5kurao80nvva"
-path="res://.godot/imported/approach_first_vista_horizon.png-b3f36ea238e80bcf19d0f6d7d922a56c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/approach/legacy/approach_first_vista_horizon.png"
-dest_files=["res://.godot/imported/approach_first_vista_horizon.png-b3f36ea238e80bcf19d0f6d7d922a56c.ctex"]
 
 [params]
 

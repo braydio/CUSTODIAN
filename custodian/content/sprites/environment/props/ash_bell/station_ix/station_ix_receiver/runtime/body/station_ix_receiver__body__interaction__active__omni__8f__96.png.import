@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bpfu72eerarf3"
-path="res://.godot/imported/station_ix_receiver__body__interaction__active__omni__8f__96.png-419193c4534fe43b53462104aab48948.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/station_ix/station_ix_receiver/runtime/body/station_ix_receiver__body__interaction__active__omni__8f__96.png"
-dest_files=["res://.godot/imported/station_ix_receiver__body__interaction__active__omni__8f__96.png-419193c4534fe43b53462104aab48948.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dr8agp0li1suq"
-path="res://.godot/imported/gothic_floor_rectangular_grate_01.png-f511ff270d888470ff7de85489babf83.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/gothic/floors/gothic_floor_rectangular_grate_01.png"
-dest_files=["res://.godot/imported/gothic_floor_rectangular_grate_01.png-f511ff270d888470ff7de85489babf83.ctex"]
 
 [params]
 

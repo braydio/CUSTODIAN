@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://brwkdr53lljxt"
-path="res://.godot/imported/twin_solaria_rebuilt_upscaled.png-eaf851e2a533567df7fa2225afd6b387.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/levels/hub/twin_solaria/development/twin_solaria_rebuilt_upscaled.png"
-dest_files=["res://.godot/imported/twin_solaria_rebuilt_upscaled.png-eaf851e2a533567df7fa2225afd6b387.ctex"]
 
 [params]
 

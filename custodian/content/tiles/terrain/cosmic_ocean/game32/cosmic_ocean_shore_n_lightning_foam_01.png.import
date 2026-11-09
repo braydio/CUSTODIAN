@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dudp2n5fjadl5"
-path="res://.godot/imported/cosmic_ocean_shore_n_lightning_foam_01.png-6da127dc4415e723c96e156357f6e44e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/cosmic_ocean/game32/cosmic_ocean_shore_n_lightning_foam_01.png"
-dest_files=["res://.godot/imported/cosmic_ocean_shore_n_lightning_foam_01.png-6da127dc4415e723c96e156357f6e44e.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dc1kwuq2lhc1a"
-path="res://.godot/imported/hurt2.png-a3418d7b032295f5791418ff0fc5a712.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://addons/fightengine/demo/Assets/Sprites/Brawler-Girl/Hurt/hurt2.png"
-dest_files=["res://.godot/imported/hurt2.png-a3418d7b032295f5791418ff0fc5a712.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://buw1dp6ux1i86"
-path="res://.godot/imported/strapped_rubble.png-9227b36416b8aa309b02ecbdf59ece80.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_debris/strapped_rubble.png"
-dest_files=["res://.godot/imported/strapped_rubble.png-9227b36416b8aa309b02ecbdf59ece80.ctex"]
 
 [params]
 

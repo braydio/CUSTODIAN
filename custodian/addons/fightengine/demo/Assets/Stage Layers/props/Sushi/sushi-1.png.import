@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cuuhauv8ykvve"
-path="res://.godot/imported/sushi-1.png-edeadd0df76c675ad630c55bb222f01c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://addons/fightengine/demo/Assets/Stage Layers/props/Sushi/sushi-1.png"
-dest_files=["res://.godot/imported/sushi-1.png-edeadd0df76c675ad630c55bb222f01c.ctex"]
 
 [params]
 

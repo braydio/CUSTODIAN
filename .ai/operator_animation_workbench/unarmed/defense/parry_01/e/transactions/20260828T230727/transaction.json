@@ -1,0 +1,16 @@
+{
+  "transaction_id": "20260828T230727",
+  "state": "COMMITTED",
+  "old_source_paths": [
+    "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/custodian/content/sprites/operator/source/animations/unarmed/defense/parry_01/operator__lower_body__unarmed__defense__parry_01__e__5f__96.png",
+    "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/custodian/content/sprites/operator/source/animations/unarmed/defense/parry_01/operator__upper_body__unarmed__defense__parry_01__e__5f__96.png",
+    "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/custodian/content/sprites/operator/source/animations/unarmed/defense/parry_01/operator__fx__unarmed__defense__parry_01__e__5f__96.png"
+  ],
+  "target_source_paths": [
+    "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/custodian/content/sprites/operator/source/animations/unarmed/defense/parry_01/operator__lower_body__unarmed__defense__parry_01__e__5f__96.png",
+    "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/custodian/content/sprites/operator/source/animations/unarmed/defense/parry_01/operator__upper_body__unarmed__defense__parry_01__e__5f__96.png",
+    "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/custodian/content/sprites/operator/source/animations/unarmed/defense/parry_01/operator__fx__unarmed__defense__parry_01__e__5f__96.png"
+  ],
+  "pending_migration": null,
+  "validation_stages_completed": []
+}

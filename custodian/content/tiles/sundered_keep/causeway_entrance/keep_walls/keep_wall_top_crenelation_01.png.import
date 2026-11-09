@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cfpw0pbq4ipus"
-path="res://.godot/imported/keep_wall_top_crenelation_01.png-76d19307684db5447aa9f490baa8aca5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_entrance/keep_walls/keep_wall_top_crenelation_01.png"
-dest_files=["res://.godot/imported/keep_wall_top_crenelation_01.png-76d19307684db5447aa9f490baa8aca5.ctex"]
 
 [params]
 

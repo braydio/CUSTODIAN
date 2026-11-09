@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bhymiv5i368b0"
-path="res://.godot/imported/forlorn_ritualant_activation_003.png-22c9edab59a24221521c861bd6da3721.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/forlorn_ritualant/activation/forlorn_ritualant_activation_003.png"
-dest_files=["res://.godot/imported/forlorn_ritualant_activation_003.png-22c9edab59a24221521c861bd6da3721.ctex"]
 
 [params]
 

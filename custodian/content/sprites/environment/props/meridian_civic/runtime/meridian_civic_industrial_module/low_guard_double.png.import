@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://clu8ni663bm8x"
-path="res://.godot/imported/low_guard_double.png-913dfaf22f297346d28f0cda264d2a41.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_industrial_module/low_guard_double.png"
-dest_files=["res://.godot/imported/low_guard_double.png-913dfaf22f297346d28f0cda264d2a41.ctex"]
 
 [params]
 

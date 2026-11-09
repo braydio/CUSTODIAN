@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bhrmf3xbmoy8r"
-path="res://.godot/imported/operator__modular_upper_fx__unarmed__fast_strike_01__se__3f__96.png-398d68ac1084bd89b98f7680afb7038b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/archive/operator__modular_upper_fx__unarmed__fast_strike_01__se__3f__96.png"
-dest_files=["res://.godot/imported/operator__modular_upper_fx__unarmed__fast_strike_01__se__3f__96.png-398d68ac1084bd89b98f7680afb7038b.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ca2vb8ak5s155"
-path="res://.godot/imported/8dir_idle_4f.png-b7e37ba1324b618fc2b748c81877a7d0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_marine/source/8dir_idle_4f.png"
-dest_files=["res://.godot/imported/8dir_idle_4f.png-b7e37ba1324b618fc2b748c81877a7d0.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bdr3yp7vw3noc"
-path="res://.godot/imported/props_terminal_console_01_74x56.png-f6b9d35b05e59e8efe1f616927f8a198.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/runtime/props_terminal_console_01_74x56.png"
-dest_files=["res://.godot/imported/props_terminal_console_01_74x56.png-f6b9d35b05e59e8efe1f616927f8a198.ctex"]
 
 [params]
 

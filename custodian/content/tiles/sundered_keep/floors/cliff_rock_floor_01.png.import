@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://e23tj0fcrx53"
-path="res://.godot/imported/cliff_rock_floor_01.png-4fa0f034409c9e00355f41dcfa7a94e8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/floors/cliff_rock_floor_01.png"
-dest_files=["res://.godot/imported/cliff_rock_floor_01.png-4fa0f034409c9e00355f41dcfa7a94e8.ctex"]
 
 [params]
 

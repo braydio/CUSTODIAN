@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ch8d5nxsfci5x"
-path="res://.godot/imported/cliff_corner_se.png-66a0123b23124e1a7a7da28bbee73a73.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/tiles_32/cliff_corner_se.png"
-dest_files=["res://.godot/imported/cliff_corner_se.png-66a0123b23124e1a7a7da28bbee73a73.ctex"]
 
 [params]
 

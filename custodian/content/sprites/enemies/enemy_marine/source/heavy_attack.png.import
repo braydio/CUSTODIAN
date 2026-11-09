@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b8a8vxltkg3bf"
-path="res://.godot/imported/heavy_attack.png-1eb9ae12b53fa35004595016ef0df9aa.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_marine/source/heavy_attack.png"
-dest_files=["res://.godot/imported/heavy_attack.png-1eb9ae12b53fa35004595016ef0df9aa.ctex"]
 
 [params]
 

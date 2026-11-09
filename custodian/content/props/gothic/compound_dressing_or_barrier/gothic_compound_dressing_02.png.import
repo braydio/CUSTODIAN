@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dxq26dciv1poe"
-path="res://.godot/imported/gothic_compound_dressing_02.png-d22d774d871b8c933e6367118148f31e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/gothic/compound_dressing_or_barrier/gothic_compound_dressing_02.png"
-dest_files=["res://.godot/imported/gothic_compound_dressing_02.png-d22d774d871b8c933e6367118148f31e.ctex"]
 
 [params]
 

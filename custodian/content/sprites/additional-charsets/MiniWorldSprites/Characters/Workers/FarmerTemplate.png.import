@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bng6splwsl8j0"
-path="res://.godot/imported/FarmerTemplate.png-57255f6a95cbc5e2e808e2e5807269cc.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Workers/FarmerTemplate.png"
-dest_files=["res://.godot/imported/FarmerTemplate.png-57255f6a95cbc5e2e808e2e5807269cc.ctex"]
 
 [params]
 

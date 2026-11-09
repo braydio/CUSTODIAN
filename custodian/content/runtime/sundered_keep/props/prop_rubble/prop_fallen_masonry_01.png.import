@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bkie78vl52d5o"
-path="res://.godot/imported/prop_fallen_masonry_01.png-55f5f0c85fd0ca0727884a09eaef6810.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/props/prop_rubble/prop_fallen_masonry_01.png"
-dest_files=["res://.godot/imported/prop_fallen_masonry_01.png-55f5f0c85fd0ca0727884a09eaef6810.ctex"]
 
 [params]
 

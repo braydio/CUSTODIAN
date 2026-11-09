@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://vgq0qedigbva"
-path="res://.godot/imported/props__harvesting_nodes__blackwood_deadfall__node__fx_strike_idle__5f__96.png-58cfcb6616c2eb804827eb432b5a1c61.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/effects/harvesting_nodes/blackwood_deadfall/props__harvesting_nodes__blackwood_deadfall__node__fx_strike_idle__5f__96.png"
-dest_files=["res://.godot/imported/props__harvesting_nodes__blackwood_deadfall__node__fx_strike_idle__5f__96.png-58cfcb6616c2eb804827eb432b5a1c61.ctex"]
 
 [params]
 

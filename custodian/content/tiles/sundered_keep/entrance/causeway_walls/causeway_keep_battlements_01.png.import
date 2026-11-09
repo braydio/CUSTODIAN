@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d4fajkxbyn0hk"
-path="res://.godot/imported/causeway_keep_battlements_01.png-d807551b098fc93c92725a5c64cdd122.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/entrance/causeway_walls/causeway_keep_battlements_01.png"
-dest_files=["res://.godot/imported/causeway_keep_battlements_01.png-d807551b098fc93c92725a5c64cdd122.ctex"]
 
 [params]
 

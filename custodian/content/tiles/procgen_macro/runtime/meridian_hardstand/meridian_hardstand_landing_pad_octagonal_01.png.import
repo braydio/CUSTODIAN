@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://idmkt881bs15"
-path="res://.godot/imported/meridian_hardstand_landing_pad_octagonal_01.png-ebf75baa8f2a2845ba3fd986eeea0dac.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/procgen_macro/runtime/meridian_hardstand/meridian_hardstand_landing_pad_octagonal_01.png"
-dest_files=["res://.godot/imported/meridian_hardstand_landing_pad_octagonal_01.png-ebf75baa8f2a2845ba3fd986eeea0dac.ctex"]
 
 [params]
 

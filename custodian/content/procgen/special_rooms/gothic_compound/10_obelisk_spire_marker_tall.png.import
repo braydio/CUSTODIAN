@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://0pnioai4545"
-path="res://.godot/imported/10_obelisk_spire_marker_tall.png-b29f39c761919fdd7242e76398cc9f77.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/10_obelisk_spire_marker_tall.png"
-dest_files=["res://.godot/imported/10_obelisk_spire_marker_tall.png-b29f39c761919fdd7242e76398cc9f77.ctex"]
 
 [params]
 

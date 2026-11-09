@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://orkn1w5difd7"
-path="res://.godot/imported/enemy_humanoid_cutout_test__rig_atlas__base__s__5x4__96.png-fd035ecb168d6ac7c14422426fb95953.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_humanoid_cutout_test/runtime/body/rig/enemy_humanoid_cutout_test__rig_atlas__base__s__5x4__96.png"
-dest_files=["res://.godot/imported/enemy_humanoid_cutout_test__rig_atlas__base__s__5x4__96.png-fd035ecb168d6ac7c14422426fb95953.ctex"]
 
 [params]
 

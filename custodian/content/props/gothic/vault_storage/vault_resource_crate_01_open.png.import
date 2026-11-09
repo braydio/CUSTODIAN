@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cyx832q2ydqeh"
-path="res://.godot/imported/vault_resource_crate_01_open.png-9f3b466e977a117bca4288715cafb478.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/gothic/vault_storage/vault_resource_crate_01_open.png"
-dest_files=["res://.godot/imported/vault_resource_crate_01_open.png-9f3b466e977a117bca4288715cafb478.ctex"]
 
 [params]
 

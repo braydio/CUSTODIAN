@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bjvepybtyet0y"
-path="res://.godot/imported/chasm_outer_corner_nw_32.png-976f53923896d0c771a1ea3dfdd542e3.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/runtime/chasm_bridge/chasm_outer_corner_nw_32.png"
-dest_files=["res://.godot/imported/chasm_outer_corner_nw_32.png-976f53923896d0c771a1ea3dfdd542e3.ctex"]
 
 [params]
 

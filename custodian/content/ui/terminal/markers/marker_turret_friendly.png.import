@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dbxhilhm8qtjv"
-path="res://.godot/imported/marker_turret_friendly.png-955e425f8120ccd426d528188ca1b561.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/markers/marker_turret_friendly.png"
-dest_files=["res://.godot/imported/marker_turret_friendly.png-955e425f8120ccd426d528188ca1b561.ctex"]
 
 [params]
 

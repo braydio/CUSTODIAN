@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d0kgk2oxmbomi"
-path="res://.godot/imported/granite_cliff_corner_se_01.png-046c5e561a7455d7267b4c3aa8eae8a0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/procgen_macro/runtime/rocky_upland/granite_cliff_corner_se_01.png"
-dest_files=["res://.godot/imported/granite_cliff_corner_se_01.png-046c5e561a7455d7267b4c3aa8eae8a0.ctex"]
 
 [params]
 

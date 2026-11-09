@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bvpo0niivbqhd"
-path="res://.godot/imported/operator__modular_head__hooded__idle_hitreact_01__s__5f__96.png-8c26b33dde37bc0ddc7182d685288748.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/archive/operator__modular_head__hooded__idle_hitreact_01__s__5f__96.png"
-dest_files=["res://.godot/imported/operator__modular_head__hooded__idle_hitreact_01__s__5f__96.png-8c26b33dde37bc0ddc7182d685288748.ctex"]
 
 [params]
 

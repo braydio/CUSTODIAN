@@ -1,0 +1,259 @@
+{
+  "schema": "custodian.operator_animation_workbench.v2",
+  "identity": {
+    "profile": "melee_1h",
+    "group": "posture",
+    "action": "idle_ready_01",
+    "direction": "e"
+  },
+  "context": {
+    "weapon_id": "vigil_pattern_dagger",
+    "linked_profile": "melee_1h_dagger",
+    "presentation_mode": "authored_overlay",
+    "fingerprint": "09dc7001a0eedfc57fcf29dcd3173593e990cdf64683faffd9fe11aba678f1f4"
+  },
+  "weapon_context": {
+    "weapon_id": "vigil_pattern_dagger",
+    "animation_profile": "melee_1h_dagger",
+    "presentation_mode": "authored_overlay"
+  },
+  "timeline": {
+    "frames": 5,
+    "source_clock_frames": 5,
+    "workspace_clock_frames": 5,
+    "document_frames": 5,
+    "preview_fps": 12,
+    "timing_authority": false,
+    "clock_owner": "lower_body"
+  },
+  "canvas": {
+    "width": 128,
+    "height": 96
+  },
+  "aseprite": {
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/posture/idle_ready_01/e/workbench.aseprite",
+    "last_synced_sha256": "67d08a44f7f954795f601e7c9e3c2f14f8fe68677b88f4512750ad696c3288ac"
+  },
+  "layers": [
+    {
+      "binding_id": "lower_body",
+      "aseprite_layer_name": "lower_body",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "melee_1h",
+      "group": "posture",
+      "action": "idle_ready_01",
+      "direction": "e",
+      "layer": "lower_body",
+      "source_path": "custodian/content/sprites/operator/source/animations/melee_1h/posture/idle_ready_01/operator__lower_body__melee_1h__posture__idle_ready_01__e__5f__128x96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/melee_1h/posture/idle_ready_01/operator__lower_body__melee_1h__posture__idle_ready_01__e__5f__128x96.png",
+      "source_file_sha256": "806a5606a0500e69e5307618324212b30d6f7dfa268c9e77a0733a853b8fa626",
+      "source_pixel_sha256": "fa3db72231dfc64e17bc2ca7e245473ad9f223f9da62e326f93e62f9dd8a80bc",
+      "frames": 5,
+      "frame_size": [
+        128,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "lower_body",
+        "profile": "melee_1h",
+        "group": "posture",
+        "action": "idle_ready_01",
+        "direction": "e"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/posture/idle_ready_01/operator__lower_body__melee_1h__posture__idle_ready_01__e__5f__128x96.png",
+        "frames": 5,
+        "frame_size": [
+          128,
+          96
+        ],
+        "file_sha256": "806a5606a0500e69e5307618324212b30d6f7dfa268c9e77a0733a853b8fa626",
+        "pixel_sha256": "fa3db72231dfc64e17bc2ca7e245473ad9f223f9da62e326f93e62f9dd8a80bc"
+      },
+      "workspace_contract": {
+        "frames": 5,
+        "frame_size": [
+          128,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/posture/idle_ready_01/operator__lower_body__melee_1h__posture__idle_ready_01__e__5f__128x96.png",
+        "frames": 5,
+        "frame_size": [
+          128,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/posture/idle_ready_01/e/baseline/lower_body.png"
+    },
+    {
+      "binding_id": "upper_body",
+      "aseprite_layer_name": "upper_body",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "melee_1h",
+      "group": "posture",
+      "action": "idle_ready_01",
+      "direction": "e",
+      "layer": "upper_body",
+      "source_path": "custodian/content/sprites/operator/source/animations/melee_1h/posture/idle_ready_01/operator__upper_body__melee_1h__posture__idle_ready_01__e__5f__128x96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/melee_1h/posture/idle_ready_01/operator__upper_body__melee_1h__posture__idle_ready_01__e__5f__128x96.png",
+      "source_file_sha256": "f0d15daf464cce48dcb7df0a66a58dadec67cc13a80730c3519d6d83c0522ddc",
+      "source_pixel_sha256": "157864c6f1a59b51cab88d8b87f5d0afba390577a3375a272b96d9bf8b549f93",
+      "frames": 5,
+      "frame_size": [
+        128,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "upper_body",
+        "profile": "melee_1h",
+        "group": "posture",
+        "action": "idle_ready_01",
+        "direction": "e"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/posture/idle_ready_01/operator__upper_body__melee_1h__posture__idle_ready_01__e__5f__128x96.png",
+        "frames": 5,
+        "frame_size": [
+          128,
+          96
+        ],
+        "file_sha256": "f0d15daf464cce48dcb7df0a66a58dadec67cc13a80730c3519d6d83c0522ddc",
+        "pixel_sha256": "157864c6f1a59b51cab88d8b87f5d0afba390577a3375a272b96d9bf8b549f93"
+      },
+      "workspace_contract": {
+        "frames": 5,
+        "frame_size": [
+          128,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/posture/idle_ready_01/operator__upper_body__melee_1h__posture__idle_ready_01__e__5f__128x96.png",
+        "frames": 5,
+        "frame_size": [
+          128,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/posture/idle_ready_01/e/baseline/upper_body.png"
+    },
+    {
+      "binding_id": "weapon__vigil_pattern_dagger",
+      "aseprite_layer_name": "weapon__vigil_pattern_dagger",
+      "role": "linked_weapon",
+      "editable": true,
+      "owner": "operator",
+      "profile": "melee_1h_dagger",
+      "group": "posture",
+      "action": "idle_ready_01",
+      "direction": "e",
+      "layer": "weapon",
+      "source_path": "custodian/content/sprites/operator/source/animations/melee_1h_dagger/posture/idle_ready_01/operator__weapon__melee_1h_dagger__posture__idle_ready_01__e__5f__128x96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/melee_1h_dagger/posture/idle_ready_01/operator__weapon__melee_1h_dagger__posture__idle_ready_01__e__5f__128x96.png",
+      "source_file_sha256": "4dcafc755184c261c5b6fd9709a578e52d9cb261ddae2bf0b617c3056c367174",
+      "source_pixel_sha256": "c6f7c09dae5fedd6e2b8e1406396d49225cb561073ab3be6b6a26244ceb9318c",
+      "frames": 5,
+      "frame_size": [
+        128,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "weapon",
+        "profile": "melee_1h_dagger",
+        "group": "posture",
+        "action": "idle_ready_01",
+        "direction": "e"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h_dagger/posture/idle_ready_01/operator__weapon__melee_1h_dagger__posture__idle_ready_01__e__5f__128x96.png",
+        "frames": 5,
+        "frame_size": [
+          128,
+          96
+        ],
+        "file_sha256": "4dcafc755184c261c5b6fd9709a578e52d9cb261ddae2bf0b617c3056c367174",
+        "pixel_sha256": "c6f7c09dae5fedd6e2b8e1406396d49225cb561073ab3be6b6a26244ceb9318c"
+      },
+      "workspace_contract": {
+        "frames": 5,
+        "frame_size": [
+          128,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h_dagger/posture/idle_ready_01/operator__weapon__melee_1h_dagger__posture__idle_ready_01__e__5f__128x96.png",
+        "frames": 5,
+        "frame_size": [
+          128,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/posture/idle_ready_01/e/baseline/weapon__vigil_pattern_dagger.png"
+    }
+  ],
+  "references": [],
+  "pending_migration": null,
+  "last_publish": {
+    "timestamp": null,
+    "validation_status": null
+  },
+  "export_stamp": "20260831T223357"
+}

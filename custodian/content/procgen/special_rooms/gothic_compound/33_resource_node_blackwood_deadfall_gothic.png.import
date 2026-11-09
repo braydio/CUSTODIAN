@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cxn345tbj66xh"
-path="res://.godot/imported/33_resource_node_blackwood_deadfall_gothic.png-0e6befb302f903df5df716b1cd2bfa1b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/33_resource_node_blackwood_deadfall_gothic.png"
-dest_files=["res://.godot/imported/33_resource_node_blackwood_deadfall_gothic.png-0e6befb302f903df5df716b1cd2bfa1b.ctex"]
 
 [params]
 

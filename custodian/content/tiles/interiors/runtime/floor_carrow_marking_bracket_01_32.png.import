@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c7t54iyl3wfrx"
-path="res://.godot/imported/floor_carrow_marking_bracket_01_32.png-5e5fd8f5057cfe01ab165b7667d05af1.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/runtime/floor_carrow_marking_bracket_01_32.png"
-dest_files=["res://.godot/imported/floor_carrow_marking_bracket_01_32.png-5e5fd8f5057cfe01ab165b7667d05af1.ctex"]
 
 [params]
 

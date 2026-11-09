@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://fbddl42e86m5"
-path="res://.godot/imported/gate_of_dust__body__component__east_pylon__omni__1f__256x512.png-1d01136db989f5c5466864c976ad007f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/awakening/gate_of_dust/runtime/body/gate_of_dust__body__component__east_pylon__omni__1f__256x512.png"
-dest_files=["res://.godot/imported/gate_of_dust__body__component__east_pylon__omni__1f__256x512.png-1d01136db989f5c5466864c976ad007f.ctex"]
 
 [params]
 

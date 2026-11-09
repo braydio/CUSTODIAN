@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b2rcr3elj0aau"
-path="res://.godot/imported/jump_kick.png-65ec921d90995eeaff4b7a47a53b4fba.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://addons/fightengine/demo/Assets/Spritesheets/Brawler Girl/jump_kick.png"
-dest_files=["res://.godot/imported/jump_kick.png-65ec921d90995eeaff4b7a47a53b4fba.ctex"]
 
 [params]
 

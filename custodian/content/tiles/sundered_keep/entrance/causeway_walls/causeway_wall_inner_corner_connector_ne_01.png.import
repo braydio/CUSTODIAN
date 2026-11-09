@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d3xotowt6ujrr"
-path="res://.godot/imported/causeway_wall_inner_corner_connector_ne_01.png-2da6edef4a84fa00f6027b38e3ff48fc.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/entrance/causeway_walls/causeway_wall_inner_corner_connector_ne_01.png"
-dest_files=["res://.godot/imported/causeway_wall_inner_corner_connector_ne_01.png-2da6edef4a84fa00f6027b38e3ff48fc.ctex"]
 
 [params]
 

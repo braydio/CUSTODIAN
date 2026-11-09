@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dr8b36f1osqap"
-path="res://.godot/imported/equipment_case_01.png-b6c97918ec89e89d7cfbd1ad522e6621.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_equipment_case/equipment_case_01.png"
-dest_files=["res://.godot/imported/equipment_case_01.png-b6c97918ec89e89d7cfbd1ad522e6621.ctex"]
 
 [params]
 

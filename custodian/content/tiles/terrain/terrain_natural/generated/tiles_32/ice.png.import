@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://db0kwnlqn0yf5"
-path="res://.godot/imported/ice.png-b67964511787de7c788b88b8077b8e12.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/tiles_32/ice.png"
-dest_files=["res://.godot/imported/ice.png-b67964511787de7c788b88b8077b8e12.ctex"]
 
 [params]
 

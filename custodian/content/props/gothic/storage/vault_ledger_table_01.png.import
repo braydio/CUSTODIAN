@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b02thi1xfsnj6"
-path="res://.godot/imported/vault_ledger_table_01.png-1c734127baea554909c6d9176145cfd5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/gothic/storage/vault_ledger_table_01.png"
-dest_files=["res://.godot/imported/vault_ledger_table_01.png-1c734127baea554909c6d9176145cfd5.ctex"]
 
 [params]
 

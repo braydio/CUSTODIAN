@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://5j74qcof8jek"
-path="res://.godot/imported/causeway_floor_mossy_01.png-cc6c5328b90117ce25891be4d4385bc9.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_entrance/causeway_floor/causeway_floor_mossy_01.png"
-dest_files=["res://.godot/imported/causeway_floor_mossy_01.png-cc6c5328b90117ce25891be4d4385bc9.ctex"]
 
 [params]
 

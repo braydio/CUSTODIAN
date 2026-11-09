@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://0ei6u18kblde"
-path="res://.godot/imported/gothic_wall_horizontal_or_cap_002.png-3f2bc25b08b73c0932e79df7ea159993.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/gothic/wall_horizontal_or_cap/gothic_wall_horizontal_or_cap_002.png"
-dest_files=["res://.godot/imported/gothic_wall_horizontal_or_cap_002.png-3f2bc25b08b73c0932e79df7ea159993.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dkueiiuoext6q"
-path="res://.godot/imported/icon_gate_locked.png-e9f28520b6c247456ea99ead56e7f719.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/custodian/icons/icon_gate_locked.png"
-dest_files=["res://.godot/imported/icon_gate_locked.png-e9f28520b6c247456ea99ead56e7f719.ctex"]
 
 [params]
 

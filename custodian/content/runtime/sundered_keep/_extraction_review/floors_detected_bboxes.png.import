@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cn0fjfedr3gy"
-path="res://.godot/imported/floors_detected_bboxes.png-b6987f1ef76730c7876be2b33eb11d95.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/_extraction_review/floors_detected_bboxes.png"
-dest_files=["res://.godot/imported/floors_detected_bboxes.png-b6987f1ef76730c7876be2b33eb11d95.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c57fw3y80wfp8"
-path="res://.godot/imported/overlay_crack_01.png-08265d4db321af75f75891cd2ba73133.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/roads_paths/runtime/roads/gothic/overlays/overlay_crack_01.png"
-dest_files=["res://.godot/imported/overlay_crack_01.png-08265d4db321af75f75891cd2ba73133.ctex"]
 
 [params]
 

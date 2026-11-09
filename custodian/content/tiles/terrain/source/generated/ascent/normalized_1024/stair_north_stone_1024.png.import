@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ceikoj3xicruk"
-path="res://.godot/imported/stair_north_stone_1024.png-229fcd0f4359077e6d8e9504281d172e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/source/generated/ascent/normalized_1024/stair_north_stone_1024.png"
-dest_files=["res://.godot/imported/stair_north_stone_1024.png-229fcd0f4359077e6d8e9504281d172e.ctex"]
 
 [params]
 

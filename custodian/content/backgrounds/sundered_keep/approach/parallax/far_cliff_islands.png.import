@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bd5mjnnssyo12"
-path="res://.godot/imported/far_cliff_islands.png-e03128ae74645311c3128074ac998d47.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/approach/parallax/far_cliff_islands.png"
-dest_files=["res://.godot/imported/far_cliff_islands.png-e03128ae74645311c3128074ac998d47.ctex"]
 
 [params]
 

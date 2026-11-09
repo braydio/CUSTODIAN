@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b0u1auxqxgq2w"
-path="res://.godot/imported/icon_resin_clot.png-ce3a7cdaf6b3522f3824402736a584d9.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/inventory/icons/resources/icon_resin_clot.png"
-dest_files=["res://.godot/imported/icon_resin_clot.png-ce3a7cdaf6b3522f3824402736a584d9.ctex"]
 
 [params]
 

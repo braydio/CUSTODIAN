@@ -1,0 +1,188 @@
+{
+  "schema": "custodian.operator_animation_workbench.v2",
+  "identity": {
+    "profile": "melee_1h",
+    "group": "defense",
+    "action": "block_hit_01",
+    "direction": "e"
+  },
+  "context": {
+    "weapon_id": "sword_cleaver",
+    "linked_profile": "melee_1h_heavy",
+    "presentation_mode": "authored_overlay",
+    "fingerprint": "3b6786142f2f4ef55e86df9139a687f4318951eda7038b1c59e7295d6a9b0c44"
+  },
+  "weapon_context": {
+    "weapon_id": "sword_cleaver",
+    "animation_profile": "melee_1h_heavy",
+    "presentation_mode": "authored_overlay"
+  },
+  "timeline": {
+    "frames": 5,
+    "source_clock_frames": 5,
+    "workspace_clock_frames": 5,
+    "document_frames": 5,
+    "preview_fps": 12,
+    "timing_authority": false,
+    "clock_owner": "lower_body"
+  },
+  "canvas": {
+    "width": 96,
+    "height": 96
+  },
+  "aseprite": {
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/defense/block_hit_01/e/workbench.aseprite",
+    "last_synced_sha256": "cb06f3ee34b0ce8e2866bbd3c46bf7affd9546c01715475aeb58583c015e1514"
+  },
+  "layers": [
+    {
+      "binding_id": "lower_body",
+      "aseprite_layer_name": "lower_body",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "melee_1h",
+      "group": "defense",
+      "action": "block_hit_01",
+      "direction": "e",
+      "layer": "lower_body",
+      "source_path": "custodian/content/sprites/operator/source/animations/melee_1h/defense/block_hit_01/operator__lower_body__melee_1h__defense__block_hit_01__e__5f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/melee_1h/defense/block_hit_01/operator__lower_body__melee_1h__defense__block_hit_01__e__5f__96.png",
+      "source_file_sha256": "a1e808fd3eb79ca07800516cab938fe39a6abb428ea26d6e2dc509a4b46f24e2",
+      "source_pixel_sha256": "6ccedc2f5623e7c1ea68b775aab4a44339f7be919b4a4840eaecbbd06527a96a",
+      "frames": 5,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "lower_body",
+        "profile": "melee_1h",
+        "group": "defense",
+        "action": "block_hit_01",
+        "direction": "e"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/defense/block_hit_01/operator__lower_body__melee_1h__defense__block_hit_01__e__5f__96.png",
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ],
+        "file_sha256": "a1e808fd3eb79ca07800516cab938fe39a6abb428ea26d6e2dc509a4b46f24e2",
+        "pixel_sha256": "6ccedc2f5623e7c1ea68b775aab4a44339f7be919b4a4840eaecbbd06527a96a"
+      },
+      "workspace_contract": {
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/defense/block_hit_01/operator__lower_body__melee_1h__defense__block_hit_01__e__5f__96.png",
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/defense/block_hit_01/e/baseline/lower_body.png"
+    },
+    {
+      "binding_id": "upper_body",
+      "aseprite_layer_name": "upper_body",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "melee_1h",
+      "group": "defense",
+      "action": "block_hit_01",
+      "direction": "e",
+      "layer": "upper_body",
+      "source_path": "custodian/content/sprites/operator/source/animations/melee_1h/defense/block_hit_01/operator__upper_body__melee_1h__defense__block_hit_01__e__5f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/melee_1h/defense/block_hit_01/operator__upper_body__melee_1h__defense__block_hit_01__e__5f__96.png",
+      "source_file_sha256": "6eca8056dee5dac8802fd067cb681f5d7b0910978c9c4cd8908c79e3387ba438",
+      "source_pixel_sha256": "08339cf394df18732a0011beab9e591e9048727ddb76c4a4258ab819b0e00e8e",
+      "frames": 5,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "upper_body",
+        "profile": "melee_1h",
+        "group": "defense",
+        "action": "block_hit_01",
+        "direction": "e"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/defense/block_hit_01/operator__upper_body__melee_1h__defense__block_hit_01__e__5f__96.png",
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ],
+        "file_sha256": "6eca8056dee5dac8802fd067cb681f5d7b0910978c9c4cd8908c79e3387ba438",
+        "pixel_sha256": "08339cf394df18732a0011beab9e591e9048727ddb76c4a4258ab819b0e00e8e"
+      },
+      "workspace_contract": {
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/defense/block_hit_01/operator__upper_body__melee_1h__defense__block_hit_01__e__5f__96.png",
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/defense/block_hit_01/e/baseline/upper_body.png"
+    }
+  ],
+  "references": [],
+  "pending_migration": null,
+  "last_publish": {
+    "timestamp": "2026-09-28T19:02:07.658598+00:00",
+    "validation_status": "passed"
+  },
+  "export_stamp": "20260928T150142"
+}

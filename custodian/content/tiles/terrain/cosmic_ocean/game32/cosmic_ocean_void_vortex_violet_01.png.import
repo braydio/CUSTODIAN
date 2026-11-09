@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ckw6x0kmv1gvr"
-path="res://.godot/imported/cosmic_ocean_void_vortex_violet_01.png-fab6ea98ffd031b73d146ae2ed93fb0e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/cosmic_ocean/game32/cosmic_ocean_void_vortex_violet_01.png"
-dest_files=["res://.godot/imported/cosmic_ocean_void_vortex_violet_01.png-fab6ea98ffd031b73d146ae2ed93fb0e.ctex"]
 
 [params]
 

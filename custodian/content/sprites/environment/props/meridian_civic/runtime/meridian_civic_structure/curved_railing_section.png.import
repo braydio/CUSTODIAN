@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dobagkkgwnoq5"
-path="res://.godot/imported/curved_railing_section.png-7ab03b48a89b635a1bf062a669b014b0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_structure/curved_railing_section.png"
-dest_files=["res://.godot/imported/curved_railing_section.png-7ab03b48a89b635a1bf062a669b014b0.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bsrf4opmplged"
-path="res://.godot/imported/compound_example.png-1ba06aa0de02d513aa3129a538cef8e8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/source/compound_ashen/compound_example.png"
-dest_files=["res://.godot/imported/compound_example.png-1ba06aa0de02d513aa3129a538cef8e8.ctex"]
 
 [params]
 

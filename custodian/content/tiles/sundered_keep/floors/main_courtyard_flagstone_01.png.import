@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c7v36y6xs6ieo"
-path="res://.godot/imported/main_courtyard_flagstone_01.png-bc85c78510f55ec98748294bb60bae02.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/floors/main_courtyard_flagstone_01.png"
-dest_files=["res://.godot/imported/main_courtyard_flagstone_01.png-bc85c78510f55ec98748294bb60bae02.ctex"]
 
 [params]
 

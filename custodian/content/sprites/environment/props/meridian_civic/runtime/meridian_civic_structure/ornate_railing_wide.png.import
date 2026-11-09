@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://knc114pk0x0t"
-path="res://.godot/imported/ornate_railing_wide.png-49380ad03deda2fc1649a9d99010a6b3.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_structure/ornate_railing_wide.png"
-dest_files=["res://.godot/imported/ornate_railing_wide.png-49380ad03deda2fc1649a9d99010a6b3.ctex"]
 
 [params]
 

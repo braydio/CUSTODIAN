@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d2bjl8oy0maeq"
-path="res://.godot/imported/cliff_edge_s.png-5da781fae647f9b0b735e7c164955e84.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/raw_preview_tiles/cliff_edge_s.png"
-dest_files=["res://.godot/imported/cliff_edge_s.png-5da781fae647f9b0b735e7c164955e84.ctex"]
 
 [params]
 

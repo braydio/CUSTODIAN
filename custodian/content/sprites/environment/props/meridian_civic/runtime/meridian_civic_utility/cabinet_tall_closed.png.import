@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://rk18pyiemdvn"
-path="res://.godot/imported/cabinet_tall_closed.png-b6ed90c82641516067e3a04ce2859f18.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_utility/cabinet_tall_closed.png"
-dest_files=["res://.godot/imported/cabinet_tall_closed.png-b6ed90c82641516067e3a04ce2859f18.ctex"]
 
 [params]
 

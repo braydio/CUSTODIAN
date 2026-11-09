@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://2mxt1w0bqfr5"
-path="res://.godot/imported/icon_contract.png-8bfa590dbacdaaf1039290daa206870f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/icons/icon_contract.png"
-dest_files=["res://.godot/imported/icon_contract.png-8bfa590dbacdaaf1039290daa206870f.ctex"]
 
 [params]
 

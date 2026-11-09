@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dap6qx5whi44u"
-path="res://.godot/imported/square_spout_basin.png-1c69e2aef669e9be3719c963985bdfdd.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_basin/square_spout_basin.png"
-dest_files=["res://.godot/imported/square_spout_basin.png-1c69e2aef669e9be3719c963985bdfdd.ctex"]
 
 [params]
 

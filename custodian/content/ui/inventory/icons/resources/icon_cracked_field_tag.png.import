@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bh31m0ich44fp"
-path="res://.godot/imported/icon_cracked_field_tag.png-842ec6017c6647ba3ccd02ada13924c7.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/inventory/icons/resources/icon_cracked_field_tag.png"
-dest_files=["res://.godot/imported/icon_cracked_field_tag.png-842ec6017c6647ba3ccd02ada13924c7.ctex"]
 
 [params]
 

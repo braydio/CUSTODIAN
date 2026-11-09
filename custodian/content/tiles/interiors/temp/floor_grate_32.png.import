@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://3l10pfunnvea"
-path="res://.godot/imported/floor_grate_32.png-8d5c9ae8cd88849ce3688680881aa867.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/temp/floor_grate_32.png"
-dest_files=["res://.godot/imported/floor_grate_32.png-8d5c9ae8cd88849ce3688680881aa867.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://csjxsa2ppv7po"
-path="res://.godot/imported/ash_bell__underground_ingress__lift_chain__idle__s__1f__64x256.png-61e94febf7484e3cd4c11b06a767e8a4.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_chain__idle__s__1f__64x256.png"
-dest_files=["res://.godot/imported/ash_bell__underground_ingress__lift_chain__idle__s__1f__64x256.png-61e94febf7484e3cd4c11b06a767e8a4.ctex"]
 
 [params]
 

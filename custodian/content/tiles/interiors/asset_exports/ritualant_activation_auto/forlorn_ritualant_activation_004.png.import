@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bk33txonlsqib"
-path="res://.godot/imported/forlorn_ritualant_activation_004.png-c208f2dffcc7df15d3c72c59a4bef6c4.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/asset_exports/ritualant_activation_auto/forlorn_ritualant_activation_004.png"
-dest_files=["res://.godot/imported/forlorn_ritualant_activation_004.png-c208f2dffcc7df15d3c72c59a4bef6c4.ctex"]
 
 [params]
 

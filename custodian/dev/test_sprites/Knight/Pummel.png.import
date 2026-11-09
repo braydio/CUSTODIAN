@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c2est8pc5w6ew"
-path="res://.godot/imported/Pummel.png-a274b5444c4bfefa83857848d5db3770.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://dev/test_sprites/Knight/Pummel.png"
-dest_files=["res://.godot/imported/Pummel.png-a274b5444c4bfefa83857848d5db3770.ctex"]
 
 [params]
 

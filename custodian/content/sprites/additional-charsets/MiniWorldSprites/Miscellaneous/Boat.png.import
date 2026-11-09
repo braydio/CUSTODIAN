@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cd763mcn4wlhp"
-path="res://.godot/imported/Boat.png-d038a524c93893915ef9dd12f7b63c59.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Miscellaneous/Boat.png"
-dest_files=["res://.godot/imported/Boat.png-d038a524c93893915ef9dd12f7b63c59.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://o1408fbt4uxs"
-path="res://.godot/imported/props__harvesting_nodes__exposed_alloy_vein__node__depleted__1f__96.png-3bc6de8be4efdb501d14de8e51825d2d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/normalized/props__harvesting_nodes__exposed_alloy_vein__node__depleted__1f__96.png"
-dest_files=["res://.godot/imported/props__harvesting_nodes__exposed_alloy_vein__node__depleted__1f__96.png-3bc6de8be4efdb501d14de8e51825d2d.ctex"]
 
 [params]
 

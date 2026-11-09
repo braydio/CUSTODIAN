@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ds6yqfc2lqvrc"
-path="res://.godot/imported/UnSheathSword.png-8ebd60545b1aedee4ec0643de6327e9d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://dev/test_sprites/Knight/UnSheathSword.png"
-dest_files=["res://.godot/imported/UnSheathSword.png-8ebd60545b1aedee4ec0643de6327e9d.ctex"]
 
 [params]
 

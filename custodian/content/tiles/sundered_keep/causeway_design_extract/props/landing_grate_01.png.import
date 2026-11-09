@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dme7ahqo0jyhv"
-path="res://.godot/imported/landing_grate_01.png-bb3db92acf551474903f4f59a8c6552e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_design_extract/props/landing_grate_01.png"
-dest_files=["res://.godot/imported/landing_grate_01.png-bb3db92acf551474903f4f59a8c6552e.ctex"]
 
 [params]
 

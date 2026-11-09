@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cjhjildm2bjym"
-path="res://.godot/imported/enemy_brawler__body__core_locomotion__idle_01__e__6f__128.png-e72fa47b836a6af0adbbccf52c99f4ef.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_brawler/enemy_brawler__body__core_locomotion__idle_01__e__6f__128.png"
-dest_files=["res://.godot/imported/enemy_brawler__body__core_locomotion__idle_01__e__6f__128.png-e72fa47b836a6af0adbbccf52c99f4ef.ctex"]
 
 [params]
 

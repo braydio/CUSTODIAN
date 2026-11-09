@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://q2hrg2xmfuv1"
-path="res://.godot/imported/hit-spark-raw.png-3d1549caebd43008d9238ef3a47bb63d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/effects/source/hit_spark/hit-spark-raw.png"
-dest_files=["res://.godot/imported/hit-spark-raw.png-3d1549caebd43008d9238ef3a47bb63d.ctex"]
 
 [params]
 

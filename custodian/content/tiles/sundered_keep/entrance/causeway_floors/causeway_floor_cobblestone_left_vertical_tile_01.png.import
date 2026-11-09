@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c2n0aw6yobq88"
-path="res://.godot/imported/causeway_floor_cobblestone_left_vertical_tile_01.png-44e37aed113ebe1e0f4c6f28f228dfb4.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/entrance/causeway_floors/causeway_floor_cobblestone_left_vertical_tile_01.png"
-dest_files=["res://.godot/imported/causeway_floor_cobblestone_left_vertical_tile_01.png-44e37aed113ebe1e0f4c6f28f228dfb4.ctex"]
 
 [params]
 

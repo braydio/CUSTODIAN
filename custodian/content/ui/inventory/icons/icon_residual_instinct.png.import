@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dfn02mbh5len4"
-path="res://.godot/imported/icon_residual_instinct.png-75b38d0fed0137acec62ea5722d5b7d7.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/inventory/icons/icon_residual_instinct.png"
-dest_files=["res://.godot/imported/icon_residual_instinct.png-75b38d0fed0137acec62ea5722d5b7d7.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ceq0xkrefxlvt"
-path="res://.godot/imported/enemy_sav_preview.png-908bf7e146def1195be63c466dabe6ba.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_savage/enemy_sav_preview.png"
-dest_files=["res://.godot/imported/enemy_sav_preview.png-908bf7e146def1195be63c466dabe6ba.ctex"]
 
 [params]
 

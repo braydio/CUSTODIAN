@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://5uafql2o7fgu"
-path="res://.godot/imported/prop_018.png-07136e994a7c2f8c4f1c01f2e58110e9.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/asset_exports/props_auto/prop_018.png"
-dest_files=["res://.godot/imported/prop_018.png-07136e994a7c2f8c4f1c01f2e58110e9.ctex"]
 
 [params]
 

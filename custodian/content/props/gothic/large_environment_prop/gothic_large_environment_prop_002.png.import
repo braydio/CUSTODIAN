@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bj53uw6ydu2ge"
-path="res://.godot/imported/gothic_large_environment_prop_002.png-5a6b75da292d0397f442cb62dc8dfd8b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/gothic/large_environment_prop/gothic_large_environment_prop_002.png"
-dest_files=["res://.godot/imported/gothic_large_environment_prop_002.png-5a6b75da292d0397f442cb62dc8dfd8b.ctex"]
 
 [params]
 

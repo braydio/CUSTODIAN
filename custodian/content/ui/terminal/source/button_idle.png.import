@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://r3hmus5okiq1"
-path="res://.godot/imported/button_idle.png-67fbb98c7c8504ec1e064af190884e87.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/source/button_idle.png"
-dest_files=["res://.godot/imported/button_idle.png-67fbb98c7c8504ec1e064af190884e87.ctex"]
 
 [params]
 

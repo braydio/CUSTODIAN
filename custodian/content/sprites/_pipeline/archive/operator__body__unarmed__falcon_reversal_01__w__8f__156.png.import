@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://be4a4dbn4g7oi"
-path="res://.godot/imported/operator__body__unarmed__falcon_reversal_01__w__8f__156.png-f19bc8c681da17527a462dce4374c74d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/archive/operator__body__unarmed__falcon_reversal_01__w__8f__156.png"
-dest_files=["res://.godot/imported/operator__body__unarmed__falcon_reversal_01__w__8f__156.png-f19bc8c681da17527a462dce4374c74d.ctex"]
 
 [params]
 

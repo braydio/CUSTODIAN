@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bb87cnhmysgfh"
-path="res://.godot/imported/wall_carrow_short_bridge_01.png-5c4d8ba1d80f6b7238ad30945304d541.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_short_bridge_01.png"
-dest_files=["res://.godot/imported/wall_carrow_short_bridge_01.png-5c4d8ba1d80f6b7238ad30945304d541.ctex"]
 
 [params]
 

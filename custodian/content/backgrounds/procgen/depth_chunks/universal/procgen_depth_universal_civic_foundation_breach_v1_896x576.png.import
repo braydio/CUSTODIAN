@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://lj6j4caxaqew"
-path="res://.godot/imported/procgen_depth_universal_civic_foundation_breach_v1_896x576.png-4f5e68d8ed439d062c52c8b187e4d9c3.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/procgen/depth_chunks/universal/procgen_depth_universal_civic_foundation_breach_v1_896x576.png"
-dest_files=["res://.godot/imported/procgen_depth_universal_civic_foundation_breach_v1_896x576.png-4f5e68d8ed439d062c52c8b187e4d9c3.ctex"]
 
 [params]
 

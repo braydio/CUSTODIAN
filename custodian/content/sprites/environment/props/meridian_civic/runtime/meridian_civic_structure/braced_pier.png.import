@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c8ulxc15mdi6g"
-path="res://.godot/imported/braced_pier.png-8cf7f1adfd770a834e33dd9c15bc82b2.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_structure/braced_pier.png"
-dest_files=["res://.godot/imported/braced_pier.png-8cf7f1adfd770a834e33dd9c15bc82b2.ctex"]
 
 [params]
 

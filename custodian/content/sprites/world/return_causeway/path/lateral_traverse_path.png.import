@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bgo3exusw0b35"
-path="res://.godot/imported/lateral_traverse_path.png-755f381cb58a5f57c5e9a0ca15a31751.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/world/return_causeway/path/lateral_traverse_path.png"
-dest_files=["res://.godot/imported/lateral_traverse_path.png-755f381cb58a5f57c5e9a0ca15a31751.ctex"]
 
 [params]
 

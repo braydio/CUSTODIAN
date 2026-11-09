@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cgslwgwxjxaoa"
-path="res://.godot/imported/awakening_locker_reliquary_foreground_704x704.png-177f12cbac8dcfa8f3aa47b5377b5a9a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/levels/awakening/04_locker_reliquary/awakening_locker_reliquary_foreground_704x704.png"
-dest_files=["res://.godot/imported/awakening_locker_reliquary_foreground_704x704.png-177f12cbac8dcfa8f3aa47b5377b5a9a.ctex"]
 
 [params]
 

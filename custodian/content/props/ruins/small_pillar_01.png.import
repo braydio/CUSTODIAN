@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://78c60c31y0di"
-path="res://.godot/imported/small_pillar_01.png-8145b1dd7ba4152348c635a1743409ab.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/ruins/small_pillar_01.png"
-dest_files=["res://.godot/imported/small_pillar_01.png-8145b1dd7ba4152348c635a1743409ab.ctex"]
 
 [params]
 

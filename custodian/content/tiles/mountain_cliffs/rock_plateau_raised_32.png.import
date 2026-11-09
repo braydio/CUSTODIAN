@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://br8pa3kgoducl"
-path="res://.godot/imported/rock_plateau_raised_32.png-819432c3ab2c28cdd68a5cc808e0bdfb.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/mountain_cliffs/rock_plateau_raised_32.png"
-dest_files=["res://.godot/imported/rock_plateau_raised_32.png-819432c3ab2c28cdd68a5cc808e0bdfb.ctex"]
 
 [params]
 

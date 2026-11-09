@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cgtkgtaay5rys"
-path="res://.godot/imported/control_terminal_01.png-e58137d4d6a6ce0f3e8e42da9019c419.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_control_terminal/control_terminal_01.png"
-dest_files=["res://.godot/imported/control_terminal_01.png-e58137d4d6a6ce0f3e8e42da9019c419.ctex"]
 
 [params]
 

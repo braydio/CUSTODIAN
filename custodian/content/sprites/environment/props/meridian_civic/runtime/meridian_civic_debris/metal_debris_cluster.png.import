@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://drycvn6mbehf5"
-path="res://.godot/imported/metal_debris_cluster.png-8f3e60261ea1e32a9515bfed75a5aea8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_debris/metal_debris_cluster.png"
-dest_files=["res://.godot/imported/metal_debris_cluster.png-8f3e60261ea1e32a9515bfed75a5aea8.ctex"]
 
 [params]
 

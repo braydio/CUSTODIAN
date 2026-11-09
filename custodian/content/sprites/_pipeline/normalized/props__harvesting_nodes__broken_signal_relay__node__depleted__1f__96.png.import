@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bf8nk24a0p88d"
-path="res://.godot/imported/props__harvesting_nodes__broken_signal_relay__node__depleted__1f__96.png-b098ac1babea3512147e2b248d180576.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/normalized/props__harvesting_nodes__broken_signal_relay__node__depleted__1f__96.png"
-dest_files=["res://.godot/imported/props__harvesting_nodes__broken_signal_relay__node__depleted__1f__96.png-b098ac1babea3512147e2b248d180576.ctex"]
 
 [params]
 

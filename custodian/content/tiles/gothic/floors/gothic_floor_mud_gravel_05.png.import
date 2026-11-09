@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://clelodoncq61b"
-path="res://.godot/imported/gothic_floor_mud_gravel_05.png-e8f5c30451d2a989daeb6ecd3ea8f7d5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/gothic/floors/gothic_floor_mud_gravel_05.png"
-dest_files=["res://.godot/imported/gothic_floor_mud_gravel_05.png-e8f5c30451d2a989daeb6ecd3ea8f7d5.ctex"]
 
 [params]
 

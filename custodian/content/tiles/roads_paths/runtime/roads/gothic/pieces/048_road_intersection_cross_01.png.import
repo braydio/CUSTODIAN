@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ccs6sj5ejw8i1"
-path="res://.godot/imported/048_road_intersection_cross_01.png-20daa8c65143a3beb8c3a186b1442bdf.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/roads_paths/runtime/roads/gothic/pieces/048_road_intersection_cross_01.png"
-dest_files=["res://.godot/imported/048_road_intersection_cross_01.png-20daa8c65143a3beb8c3a186b1442bdf.ctex"]
 
 [params]
 

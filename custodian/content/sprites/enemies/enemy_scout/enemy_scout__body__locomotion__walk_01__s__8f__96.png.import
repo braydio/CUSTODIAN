@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bu4hf0qo7ih1q"
-path="res://.godot/imported/enemy_scout__body__locomotion__walk_01__s__8f__96.png-f567c2284bab9b8944c19f27f5f9f0ad.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_scout/enemy_scout__body__locomotion__walk_01__s__8f__96.png"
-dest_files=["res://.godot/imported/enemy_scout__body__locomotion__walk_01__s__8f__96.png-f567c2284bab9b8944c19f27f5f9f0ad.ctex"]
 
 [params]
 

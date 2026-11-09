@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c6cewfu0crsl1"
-path="res://.godot/imported/cliff_inner_nw_32.png-fc54061b1d70ec97a2e9de0856a73d99.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/mountain_cliffs/cliff_inner_nw_32.png"
-dest_files=["res://.godot/imported/cliff_inner_nw_32.png-fc54061b1d70ec97a2e9de0856a73d99.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bp5uxgpijc4n7"
-path="res://.godot/imported/ChatGPT Image Mar 19, 2026, 04-38-09 AM.png-df3c1af5d12defe42ec4bc477e9e8474.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/turrets/ChatGPT Image Mar 19, 2026, 04-38-09 AM.png"
-dest_files=["res://.godot/imported/ChatGPT Image Mar 19, 2026, 04-38-09 AM.png-df3c1af5d12defe42ec4bc477e9e8474.ctex"]
 
 [params]
 

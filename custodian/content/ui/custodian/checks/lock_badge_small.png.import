@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dryjj3algkygy"
-path="res://.godot/imported/lock_badge_small.png-e9a2552c215bc1dd1bdc2b59db8f0675.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/custodian/checks/lock_badge_small.png"
-dest_files=["res://.godot/imported/lock_badge_small.png-e9a2552c215bc1dd1bdc2b59db8f0675.ctex"]
 
 [params]
 

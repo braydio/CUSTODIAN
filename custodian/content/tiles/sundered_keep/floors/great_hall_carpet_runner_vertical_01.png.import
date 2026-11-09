@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bo8hp3sj7ie2c"
-path="res://.godot/imported/great_hall_carpet_runner_vertical_01.png-e08c4bd553e61f4ee3a98fe18ea9218d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/floors/great_hall_carpet_runner_vertical_01.png"
-dest_files=["res://.godot/imported/great_hall_carpet_runner_vertical_01.png-e08c4bd553e61f4ee3a98fe18ea9218d.ctex"]
 
 [params]
 

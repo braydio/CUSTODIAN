@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cpynjg6ehmmid"
-path="res://.godot/imported/floor_grate_01.png-2f242c1d6aea5c904b8df104c8411b9b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_floor_hardware/floor_grate_01.png"
-dest_files=["res://.godot/imported/floor_grate_01.png-2f242c1d6aea5c904b8df104c8411b9b.ctex"]
 
 [params]
 

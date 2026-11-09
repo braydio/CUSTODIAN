@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c4mk56cwgflrl"
-path="res://.godot/imported/punch.png-e67b0ad0da4e894e686b6cfa0e2a1ecb.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://addons/fightengine/demo/Assets/Spritesheets/Enemy Punk/punch.png"
-dest_files=["res://.godot/imported/punch.png-e67b0ad0da4e894e686b6cfa0e2a1ecb.ctex"]
 
 [params]
 

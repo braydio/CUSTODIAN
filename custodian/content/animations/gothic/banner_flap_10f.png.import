@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cx8qm2kd2d6i7"
-path="res://.godot/imported/banner_flap_10f.png-65b100954cd08bef6628f2615ed7cfb7.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/animations/gothic/banner_flap_10f.png"
-dest_files=["res://.godot/imported/banner_flap_10f.png-65b100954cd08bef6628f2615ed7cfb7.ctex"]
 
 [params]
 

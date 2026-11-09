@@ -1,0 +1,182 @@
+{
+  "schema": "custodian.operator_animation_workbench.v2",
+  "identity": {
+    "profile": "melee_1h",
+    "group": "posture",
+    "action": "draw_01",
+    "direction": "w"
+  },
+  "context": {
+    "weapon_id": "",
+    "linked_profile": "",
+    "presentation_mode": "",
+    "fingerprint": "459439d3a1faa951e33f04465c0ee6b5e02275fe4482387642748ca05cfabc90"
+  },
+  "weapon_context": null,
+  "timeline": {
+    "frames": 4,
+    "source_clock_frames": 4,
+    "workspace_clock_frames": 4,
+    "document_frames": 4,
+    "preview_fps": 12,
+    "timing_authority": false,
+    "clock_owner": "lower_body"
+  },
+  "canvas": {
+    "width": 128,
+    "height": 96
+  },
+  "aseprite": {
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/posture/draw_01/w/workbench.aseprite",
+    "last_synced_sha256": "e1cdcef95c10965cacdb9bf8056b8ca88197de959ec0766112780a8cd28b1de3"
+  },
+  "layers": [
+    {
+      "binding_id": "lower_body",
+      "aseprite_layer_name": "lower_body",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "melee_1h",
+      "group": "posture",
+      "action": "draw_01",
+      "direction": "w",
+      "layer": "lower_body",
+      "source_path": "custodian/content/sprites/operator/source/animations/melee_1h/posture/draw_01/operator__lower_body__melee_1h__posture__draw_01__w__4f__128x96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/melee_1h/posture/draw_01/operator__lower_body__melee_1h__posture__draw_01__w__4f__128x96.png",
+      "source_file_sha256": "1eb17b341b3aac7872a935b756ce30a58c66ac6e7d3dea7aa4b574d8f1140eb5",
+      "source_pixel_sha256": "b4ee2e41b5132da87a5c4e4d55a0a1e1320b36500683620a7308279a2784ba3b",
+      "frames": 4,
+      "frame_size": [
+        128,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "lower_body",
+        "profile": "melee_1h",
+        "group": "posture",
+        "action": "draw_01",
+        "direction": "w"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/posture/draw_01/operator__lower_body__melee_1h__posture__draw_01__w__4f__128x96.png",
+        "frames": 4,
+        "frame_size": [
+          128,
+          96
+        ],
+        "file_sha256": "1eb17b341b3aac7872a935b756ce30a58c66ac6e7d3dea7aa4b574d8f1140eb5",
+        "pixel_sha256": "b4ee2e41b5132da87a5c4e4d55a0a1e1320b36500683620a7308279a2784ba3b"
+      },
+      "workspace_contract": {
+        "frames": 4,
+        "frame_size": [
+          128,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/posture/draw_01/operator__lower_body__melee_1h__posture__draw_01__w__4f__128x96.png",
+        "frames": 4,
+        "frame_size": [
+          128,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/posture/draw_01/w/baseline/lower_body.png"
+    },
+    {
+      "binding_id": "upper_body",
+      "aseprite_layer_name": "upper_body",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "melee_1h",
+      "group": "posture",
+      "action": "draw_01",
+      "direction": "w",
+      "layer": "upper_body",
+      "source_path": "custodian/content/sprites/operator/source/animations/melee_1h/posture/draw_01/operator__upper_body__melee_1h__posture__draw_01__w__4f__128x96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/melee_1h/posture/draw_01/operator__upper_body__melee_1h__posture__draw_01__w__4f__128x96.png",
+      "source_file_sha256": "76adb44eff04ee084bdb780fd6c7580fd817f79a5899055f111904e787946f2e",
+      "source_pixel_sha256": "47dfca29d27e76e578c24cba18de4f78c16d8ee4e953aa883e4d5217a90db888",
+      "frames": 4,
+      "frame_size": [
+        128,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "upper_body",
+        "profile": "melee_1h",
+        "group": "posture",
+        "action": "draw_01",
+        "direction": "w"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/posture/draw_01/operator__upper_body__melee_1h__posture__draw_01__w__4f__128x96.png",
+        "frames": 4,
+        "frame_size": [
+          128,
+          96
+        ],
+        "file_sha256": "76adb44eff04ee084bdb780fd6c7580fd817f79a5899055f111904e787946f2e",
+        "pixel_sha256": "47dfca29d27e76e578c24cba18de4f78c16d8ee4e953aa883e4d5217a90db888"
+      },
+      "workspace_contract": {
+        "frames": 4,
+        "frame_size": [
+          128,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/posture/draw_01/operator__upper_body__melee_1h__posture__draw_01__w__4f__128x96.png",
+        "frames": 4,
+        "frame_size": [
+          128,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/posture/draw_01/w/baseline/upper_body.png"
+    }
+  ],
+  "references": [],
+  "pending_migration": null,
+  "last_publish": {
+    "timestamp": "2026-09-02T05:24:16.440389+00:00",
+    "validation_status": "passed"
+  },
+  "export_stamp": "20260902T012349"
+}

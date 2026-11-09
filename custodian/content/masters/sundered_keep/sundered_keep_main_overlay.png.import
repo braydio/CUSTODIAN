@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://brxbwbx8w52mb"
-path="res://.godot/imported/sundered_keep_main_overlay.png-b6e0683203161efbdd2a5d1ff871d188.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/masters/sundered_keep/sundered_keep_main_overlay.png"
-dest_files=["res://.godot/imported/sundered_keep_main_overlay.png-b6e0683203161efbdd2a5d1ff871d188.ctex"]
 
 [params]
 

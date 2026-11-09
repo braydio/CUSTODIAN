@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dca8yosqw6le"
-path="res://.godot/imported/PurpleMarket.png-aa23a127d19c56dcf3cdcd0c48b6a47d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Purple/PurpleMarket.png"
-dest_files=["res://.godot/imported/PurpleMarket.png-aa23a127d19c56dcf3cdcd0c48b6a47d.ctex"]
 
 [params]
 

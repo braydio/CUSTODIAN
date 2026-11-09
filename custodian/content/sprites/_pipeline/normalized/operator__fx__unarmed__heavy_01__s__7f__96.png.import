@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://baf0gtn8nc0ux"
-path="res://.godot/imported/operator__fx__unarmed__heavy_01__s__7f__96.png-8727764cc52dcc4a2886fbc6fc0788db.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/normalized/operator__fx__unarmed__heavy_01__s__7f__96.png"
-dest_files=["res://.godot/imported/operator__fx__unarmed__heavy_01__s__7f__96.png-8727764cc52dcc4a2886fbc6fc0788db.ctex"]
 
 [params]
 

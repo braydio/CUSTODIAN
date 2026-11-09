@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://05hgjc7id7sd"
-path="res://.godot/imported/plaque_body_small.png-6bce2f3fa3c6d6c5bf2cbe3c5ff3e375.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/custodian/prompts/plaque_body_small.png"
-dest_files=["res://.godot/imported/plaque_body_small.png-6bce2f3fa3c6d6c5bf2cbe3c5ff3e375.ctex"]
 
 [params]
 

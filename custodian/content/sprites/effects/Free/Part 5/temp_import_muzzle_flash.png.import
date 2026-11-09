@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bih752er5hhw"
-path="res://.godot/imported/temp_import_muzzle_flash.png-a7539f4d00d8fac2df362ef1999651ec.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/effects/Free/Part 5/temp_import_muzzle_flash.png"
-dest_files=["res://.godot/imported/temp_import_muzzle_flash.png-a7539f4d00d8fac2df362ef1999651ec.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dnsy52ce4rqhk"
-path="res://.godot/imported/framed_square_grate.png-e1d5f397f69062ef14fcc910d2588029.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_floor_hardware/framed_square_grate.png"
-dest_files=["res://.godot/imported/framed_square_grate.png-e1d5f397f69062ef14fcc910d2588029.ctex"]
 
 [params]
 

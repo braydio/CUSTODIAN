@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cfkc15ti36f3f"
-path="res://.godot/imported/stone_railing_short.png-7f66308b2a048eb2cba0e2fff86d1a35.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_structure/stone_railing_short.png"
-dest_files=["res://.godot/imported/stone_railing_short.png-7f66308b2a048eb2cba0e2fff86d1a35.ctex"]
 
 [params]
 

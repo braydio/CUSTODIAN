@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cl2g2itnmivmn"
-path="res://.godot/imported/cactus.png-f6320f36bc0bae6cbe7800488be7c369.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/tiles_32/cactus.png"
-dest_files=["res://.godot/imported/cactus.png-f6320f36bc0bae6cbe7800488be7c369.ctex"]
 
 [params]
 

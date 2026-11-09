@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dwwpa3jml45ac"
-path="res://.godot/imported/idle4.png-a679bf53196666ea914f8bf069b48774.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://addons/fightengine/demo/Assets/Sprites/Enemy-Punk/Idle/idle4.png"
-dest_files=["res://.godot/imported/idle4.png-a679bf53196666ea914f8bf069b48774.ctex"]
 
 [params]
 

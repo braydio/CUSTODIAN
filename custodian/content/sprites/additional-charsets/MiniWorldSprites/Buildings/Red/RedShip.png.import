@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dxouejsavykv2"
-path="res://.godot/imported/RedShip.png-0ae13fa1a3f278485e975726db01b57a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Red/RedShip.png"
-dest_files=["res://.godot/imported/RedShip.png-0ae13fa1a3f278485e975726db01b57a.ctex"]
 
 [params]
 

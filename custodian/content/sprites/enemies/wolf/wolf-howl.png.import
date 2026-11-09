@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bmbyri4mxjrf0"
-path="res://.godot/imported/wolf-howl.png-0e8c9ffbf223c00dda1353eeeee7e333.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/wolf/wolf-howl.png"
-dest_files=["res://.godot/imported/wolf-howl.png-0e8c9ffbf223c00dda1353eeeee7e333.ctex"]
 
 [params]
 

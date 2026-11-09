@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://enqmbv7xp63t"
-path="res://.godot/imported/scaffold_01.png-7b18cfaca6d86e3ceb4661fad38ab33e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_scaffold/scaffold_01.png"
-dest_files=["res://.godot/imported/scaffold_01.png-7b18cfaca6d86e3ceb4661fad38ab33e.ctex"]
 
 [params]
 

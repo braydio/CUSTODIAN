@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dt7toxyodmiff"
-path="res://.godot/imported/sand_with_rocks.png-3e1efda37bbd36fe854f2cde7f943df0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/tiles_32/sand_with_rocks.png"
-dest_files=["res://.godot/imported/sand_with_rocks.png-3e1efda37bbd36fe854f2cde7f943df0.ctex"]
 
 [params]
 

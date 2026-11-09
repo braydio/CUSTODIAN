@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ci03okv08rlpg"
-path="res://.godot/imported/square_gate_tower_01.png-07e88c334f378aa9773fd77cfebfc376.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/grand_vista/fortress_components/square_gate_tower_01.png"
-dest_files=["res://.godot/imported/square_gate_tower_01.png-07e88c334f378aa9773fd77cfebfc376.ctex"]
 
 [params]
 

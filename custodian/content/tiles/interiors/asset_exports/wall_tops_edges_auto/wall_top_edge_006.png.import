@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://oxmjp44mixrg"
-path="res://.godot/imported/wall_top_edge_006.png-e528664f2bd5dd62139c7f971b7dd776.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/asset_exports/wall_tops_edges_auto/wall_top_edge_006.png"
-dest_files=["res://.godot/imported/wall_top_edge_006.png-e528664f2bd5dd62139c7f971b7dd776.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ckjkkhk44d1k"
-path="res://.godot/imported/minimap_frame_edge_top.png-ee76697bf37bab6231a41e6c451cc13a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/custodian/checks/minimap_frame_edge_top.png"
-dest_files=["res://.godot/imported/minimap_frame_edge_top.png-ee76697bf37bab6231a41e6c451cc13a.ctex"]
 
 [params]
 

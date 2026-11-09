@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bfwmmijqdas5k"
-path="res://.godot/imported/door_gate_mechanism_002.png-3247d10138a8cd01709caa38d881375c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/gothic/doors_gates/door_gate_mechanism_002.png"
-dest_files=["res://.godot/imported/door_gate_mechanism_002.png-3247d10138a8cd01709caa38d881375c.ctex"]
 
 [params]
 

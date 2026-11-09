@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://2rjrnumgabn5"
-path="res://.godot/imported/wasteland.png-5403876e18fd7f02852bdbd8c9fca533.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/raw_preview_tiles/wasteland.png"
-dest_files=["res://.godot/imported/wasteland.png-5403876e18fd7f02852bdbd8c9fca533.ctex"]
 
 [params]
 

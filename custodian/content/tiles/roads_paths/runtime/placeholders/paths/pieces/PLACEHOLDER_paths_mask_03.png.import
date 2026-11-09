@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://yq65k1nxoyd4"
-path="res://.godot/imported/PLACEHOLDER_paths_mask_03.png-1c0bb6a845fe2d514ce4d8d9370b4d60.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/roads_paths/runtime/placeholders/paths/pieces/PLACEHOLDER_paths_mask_03.png"
-dest_files=["res://.godot/imported/PLACEHOLDER_paths_mask_03.png-1c0bb6a845fe2d514ce4d8d9370b4d60.ctex"]
 
 [params]
 

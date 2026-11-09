@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://qmpq2547deyj"
-path="res://.godot/imported/underlay_fog_band.png-10b79a3c471e077b09fa33cbc592fd98.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/world/return_causeway/underlay/underlay_fog_band.png"
-dest_files=["res://.godot/imported/underlay_fog_band.png-10b79a3c471e077b09fa33cbc592fd98.ctex"]
 
 [params]
 

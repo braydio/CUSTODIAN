@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://rdd3eyxxp46l"
-path="res://.godot/imported/portal_ring__activate_01__12f.png-a8fdc0da6404e39ebaa25c193e1ad22a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/archive/portal_ring__activate_01__12f.png"
-dest_files=["res://.godot/imported/portal_ring__activate_01__12f.png-a8fdc0da6404e39ebaa25c193e1ad22a.ctex"]
 
 [params]
 

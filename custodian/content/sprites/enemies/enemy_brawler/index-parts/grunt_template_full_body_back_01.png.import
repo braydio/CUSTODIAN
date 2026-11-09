@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://crspbq14llxsa"
-path="res://.godot/imported/grunt_template_full_body_back_01.png-edfdcf7b846e02aeb780f57e550bb0db.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/enemy_brawler/index-parts/grunt_template_full_body_back_01.png"
-dest_files=["res://.godot/imported/grunt_template_full_body_back_01.png-edfdcf7b846e02aeb780f57e550bb0db.ctex"]
 
 [params]
 

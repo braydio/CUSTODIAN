@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c68iobcq1ihqw"
-path="res://.godot/imported/rubble_pile_01.png-9c5e4cf94274ce22358c6af11c6490c2.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_design_extract/props/rubble_pile_01.png"
-dest_files=["res://.godot/imported/rubble_pile_01.png-9c5e4cf94274ce22358c6af11c6490c2.ctex"]
 
 [params]
 

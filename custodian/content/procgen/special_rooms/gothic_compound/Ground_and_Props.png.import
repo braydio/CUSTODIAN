@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bij7wyuyhhurj"
-path="res://.godot/imported/Ground_and_Props.png-23936993e07e60c0d5caf52422115700.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/Ground_and_Props.png"
-dest_files=["res://.godot/imported/Ground_and_Props.png-23936993e07e60c0d5caf52422115700.ctex"]
 
 [params]
 

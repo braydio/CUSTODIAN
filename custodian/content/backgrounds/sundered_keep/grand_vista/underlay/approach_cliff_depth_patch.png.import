@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d3ybobalf2gy1"
-path="res://.godot/imported/approach_cliff_depth_patch.png-d8bbc8e3f452858e26a0c039ea4d422d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/grand_vista/underlay/approach_cliff_depth_patch.png"
-dest_files=["res://.godot/imported/approach_cliff_depth_patch.png-d8bbc8e3f452858e26a0c039ea4d422d.ctex"]
 
 [params]
 

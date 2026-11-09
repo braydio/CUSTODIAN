@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://du16wqyh7pis4"
-path="res://.godot/imported/props_cart_tool_01_54x36.png-8eccf84fc67bfa1408c8982c44a1a196.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/runtime/props_cart_tool_01_54x36.png"
-dest_files=["res://.godot/imported/props_cart_tool_01_54x36.png-8eccf84fc67bfa1408c8982c44a1a196.ctex"]
 
 [params]
 

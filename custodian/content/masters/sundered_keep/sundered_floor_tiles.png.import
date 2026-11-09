@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://6o43i75bjwpx"
-path="res://.godot/imported/sundered_floor_tiles.png-fb5730cdee8a5c19730b7d1dc90b0a43.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/masters/sundered_keep/sundered_floor_tiles.png"
-dest_files=["res://.godot/imported/sundered_floor_tiles.png-fb5730cdee8a5c19730b7d1dc90b0a43.ctex"]
 
 [params]
 

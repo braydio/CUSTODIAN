@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bwtcsai5jxyqo"
-path="res://.godot/imported/plaque_header_small.png-fa3ae6dc07b017f3eee9c40a5bb75b66.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/custodian/checks/plaque_header_small.png"
-dest_files=["res://.godot/imported/plaque_header_small.png-fa3ae6dc07b017f3eee9c40a5bb75b66.ctex"]
 
 [params]
 

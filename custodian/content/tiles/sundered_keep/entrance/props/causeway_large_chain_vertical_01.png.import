@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dkvqau4vwk88k"
-path="res://.godot/imported/causeway_large_chain_vertical_01.png-489f1bd0aebbb493584eb2ec659eb30e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/entrance/props/causeway_large_chain_vertical_01.png"
-dest_files=["res://.godot/imported/causeway_large_chain_vertical_01.png-489f1bd0aebbb493584eb2ec659eb30e.ctex"]
 
 [params]
 

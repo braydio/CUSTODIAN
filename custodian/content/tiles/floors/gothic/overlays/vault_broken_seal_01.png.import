@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dpbyxvfnlqdvp"
-path="res://.godot/imported/vault_broken_seal_01.png-aa5cdbef3ccac6b997e2441a011337fa.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/floors/gothic/overlays/vault_broken_seal_01.png"
-dest_files=["res://.godot/imported/vault_broken_seal_01.png-aa5cdbef3ccac6b997e2441a011337fa.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bqo4t3v4rusnt"
-path="res://.godot/imported/mountain_custodian_warm_accent.png-09243c468772ab6a2a73afbcd5444c5e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/custodian_recolor/mountain_custodian_warm_accent.png"
-dest_files=["res://.godot/imported/mountain_custodian_warm_accent.png-09243c468772ab6a2a73afbcd5444c5e.ctex"]
 
 [params]
 

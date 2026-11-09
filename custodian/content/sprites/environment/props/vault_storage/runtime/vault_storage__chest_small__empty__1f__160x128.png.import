@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://xvp60hfddsg0"
-path="res://.godot/imported/vault_storage__chest_small__empty__1f__160x128.png-76c194b1034cf0936b7643bac3c7cdac.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/vault_storage/runtime/vault_storage__chest_small__empty__1f__160x128.png"
-dest_files=["res://.godot/imported/vault_storage__chest_small__empty__1f__160x128.png-76c194b1034cf0936b7643bac3c7cdac.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cpsp2tidy2351"
-path="res://.godot/imported/operator__upper_body__melee_1h__transition__ready_to_relaxed_01__e__8f__96.png-4c9b6ec0d64095cd99bbbdef52cb179f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/archive/operator__upper_body__melee_1h__transition__ready_to_relaxed_01__e__8f__96.png"
-dest_files=["res://.godot/imported/operator__upper_body__melee_1h__transition__ready_to_relaxed_01__e__8f__96.png-4c9b6ec0d64095cd99bbbdef52cb179f.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://h3xj6vxd6qul"
-path="res://.godot/imported/containment_barrier_03.png-fba4b348bf5b7da285ee1e5936e30179.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_containment_barrier/containment_barrier_03.png"
-dest_files=["res://.godot/imported/containment_barrier_03.png-fba4b348bf5b7da285ee1e5936e30179.ctex"]
 
 [params]
 

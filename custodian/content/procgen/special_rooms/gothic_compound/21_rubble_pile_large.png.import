@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b8xa3g0o2jge5"
-path="res://.godot/imported/21_rubble_pile_large.png-d641367eaef845bb8e89ed8f5b00ad36.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/21_rubble_pile_large.png"
-dest_files=["res://.godot/imported/21_rubble_pile_large.png-d641367eaef845bb8e89ed8f5b00ad36.ctex"]
 
 [params]
 

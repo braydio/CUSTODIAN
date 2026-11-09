@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://mx2hhn2m76sm"
-path="res://.godot/imported/moss_patch_01.png-30143072fbe821d647f7202ca6fdf2a4.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/ruins/overlays/moss_patch_01.png"
-dest_files=["res://.godot/imported/moss_patch_01.png-30143072fbe821d647f7202ca6fdf2a4.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://hoeygsipivmp"
-path="res://.godot/imported/CyanTaverns.png-f1322e8ff384ac3575c2514e3defeffd.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Cyan/CyanTaverns.png"
-dest_files=["res://.godot/imported/CyanTaverns.png-f1322e8ff384ac3575c2514e3defeffd.ctex"]
 
 [params]
 

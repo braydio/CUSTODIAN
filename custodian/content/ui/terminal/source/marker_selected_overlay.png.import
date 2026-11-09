@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d3pbl0wuw3182"
-path="res://.godot/imported/marker_selected_overlay.png-99acbf62948fae50ce2afe35f1bd5759.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/source/marker_selected_overlay.png"
-dest_files=["res://.godot/imported/marker_selected_overlay.png-99acbf62948fae50ce2afe35f1bd5759.ctex"]
 
 [params]
 

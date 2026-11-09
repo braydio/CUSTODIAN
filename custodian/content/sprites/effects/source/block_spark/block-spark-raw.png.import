@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://blkleiare12dt"
-path="res://.godot/imported/block-spark-raw.png-aa9771c9aff379fbc951d16c6bb16033.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/effects/source/block_spark/block-spark-raw.png"
-dest_files=["res://.godot/imported/block-spark-raw.png-aa9771c9aff379fbc951d16c6bb16033.ctex"]
 
 [params]
 

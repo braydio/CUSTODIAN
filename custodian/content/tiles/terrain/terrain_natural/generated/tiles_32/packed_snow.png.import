@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dlxrr4an82lbd"
-path="res://.godot/imported/packed_snow.png-613175df9491c51428fd926e8d8da144.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/tiles_32/packed_snow.png"
-dest_files=["res://.godot/imported/packed_snow.png-613175df9491c51428fd926e8d8da144.ctex"]
 
 [params]
 

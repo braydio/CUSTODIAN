@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://i7vnti83qnqu"
-path="res://.godot/imported/ritualant_underground__prop__mineral_seep_01__256x192.png-5e80d27e07b4dc211f4875f7577dedb5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__prop__mineral_seep_01__256x192.png"
-dest_files=["res://.godot/imported/ritualant_underground__prop__mineral_seep_01__256x192.png-5e80d27e07b4dc211f4875f7577dedb5.ctex"]
 
 [params]
 

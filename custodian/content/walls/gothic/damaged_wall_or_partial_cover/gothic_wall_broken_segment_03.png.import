@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c6l3yqp1p0dix"
-path="res://.godot/imported/gothic_wall_broken_segment_03.png-cc9e4eebe08bc84e8355efd99c37a894.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/walls/gothic/damaged_wall_or_partial_cover/gothic_wall_broken_segment_03.png"
-dest_files=["res://.godot/imported/gothic_wall_broken_segment_03.png-cc9e4eebe08bc84e8355efd99c37a894.ctex"]
 
 [params]
 

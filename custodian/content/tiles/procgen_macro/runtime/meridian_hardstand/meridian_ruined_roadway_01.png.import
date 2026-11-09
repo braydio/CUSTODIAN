@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dwexsdrwbfmv1"
-path="res://.godot/imported/meridian_ruined_roadway_01.png-4749ec372b04458d8ff60a944eba14a8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/procgen_macro/runtime/meridian_hardstand/meridian_ruined_roadway_01.png"
-dest_files=["res://.godot/imported/meridian_ruined_roadway_01.png-4749ec372b04458d8ff60a944eba14a8.ctex"]
 
 [params]
 

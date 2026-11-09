@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ch3c1l4spk7h0"
-path="res://.godot/imported/waste_receptacle_tall.png-692f913bbf5ceae3aff2de5e58686cfd.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_waste/waste_receptacle_tall.png"
-dest_files=["res://.godot/imported/waste_receptacle_tall.png-692f913bbf5ceae3aff2de5e58686cfd.ctex"]
 
 [params]
 

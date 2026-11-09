@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bpma2jjsb0gve"
-path="res://.godot/imported/props__harvesting_nodes__dead_power_node__node__depleted__1f__96.png-9e3e666afe85de559d5dcc630935bee6.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/normalized/props__harvesting_nodes__dead_power_node__node__depleted__1f__96.png"
-dest_files=["res://.godot/imported/props__harvesting_nodes__dead_power_node__node__depleted__1f__96.png-9e3e666afe85de559d5dcc630935bee6.ctex"]
 
 [params]
 

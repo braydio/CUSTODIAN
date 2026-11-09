@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://wugc5q4vq0ji"
-path="res://.godot/imported/enemy_grunt__body__melee__parry_critical_recover_01__s__5f__96.png-cf8a27497d145db32cf14f361364c5e0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/normalized/enemy_grunt__body__melee__parry_critical_recover_01__s__5f__96.png"
-dest_files=["res://.godot/imported/enemy_grunt__body__melee__parry_critical_recover_01__s__5f__96.png-cf8a27497d145db32cf14f361364c5e0.ctex"]
 
 [params]
 

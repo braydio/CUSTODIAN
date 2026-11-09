@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b4sc48brydai1"
-path="res://.godot/imported/cliff_occluder.png-6bed837a9eafba857db1ac8a09f9307f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/world/return_causeway/occlusion/cliff_occluder.png"
-dest_files=["res://.godot/imported/cliff_occluder.png-6bed837a9eafba857db1ac8a09f9307f.ctex"]
 
 [params]
 

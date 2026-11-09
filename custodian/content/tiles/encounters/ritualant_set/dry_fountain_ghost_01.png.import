@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ulvnm0p131ag"
-path="res://.godot/imported/dry_fountain_ghost_01.png-f731e66f1c1579d2284ff42da937fd97.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/dry_fountain_ghost_01.png"
-dest_files=["res://.godot/imported/dry_fountain_ghost_01.png-f731e66f1c1579d2284ff42da937fd97.ctex"]
 
 [params]
 

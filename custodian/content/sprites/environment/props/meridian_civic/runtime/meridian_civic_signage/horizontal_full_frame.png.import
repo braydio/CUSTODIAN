@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dpplp2gnx7byn"
-path="res://.godot/imported/horizontal_full_frame.png-493ee20ce3f69196a12ea7449fc62778.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_signage/horizontal_full_frame.png"
-dest_files=["res://.godot/imported/horizontal_full_frame.png-493ee20ce3f69196a12ea7449fc62778.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bdm87o4eomfan"
-path="res://.godot/imported/waves.png-fb481f43d982284af9a5cf2909ecd6c2.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/tiles_32/waves.png"
-dest_files=["res://.godot/imported/waves.png-fb481f43d982284af9a5cf2909ecd6c2.ctex"]
 
 [params]
 

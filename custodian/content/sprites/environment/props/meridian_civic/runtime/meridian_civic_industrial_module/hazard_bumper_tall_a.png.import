@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bxopfyg34b8gf"
-path="res://.godot/imported/hazard_bumper_tall_a.png-8e070b1d570d69a0d2db9d40f05c811a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_industrial_module/hazard_bumper_tall_a.png"
-dest_files=["res://.godot/imported/hazard_bumper_tall_a.png-8e070b1d570d69a0d2db9d40f05c811a.ctex"]
 
 [params]
 

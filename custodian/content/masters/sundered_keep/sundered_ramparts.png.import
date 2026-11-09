@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://711gvvog8mt4"
-path="res://.godot/imported/sundered_ramparts.png-b5974462d8695b2ba3ce8fae97a68946.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/masters/sundered_keep/sundered_ramparts.png"
-dest_files=["res://.godot/imported/sundered_ramparts.png-b5974462d8695b2ba3ce8fae97a68946.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cykk3s3ev1rsn"
-path="res://.godot/imported/36_marker_hidden_spawn_rocky_x.png-28879c5e0287fba2ef9eeb28c927a902.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/36_marker_hidden_spawn_rocky_x.png"
-dest_files=["res://.godot/imported/36_marker_hidden_spawn_rocky_x.png-28879c5e0287fba2ef9eeb28c927a902.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://csbnnvs55dqgl"
-path="res://.godot/imported/SOURCE_WALK_behemoth_combat_mech_5dir.png-ae4d1be2a5e2c3176dd0aa7a183befed.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/allies/allied_behemoth/SOURCE_WALK_behemoth_combat_mech_5dir.png"
-dest_files=["res://.godot/imported/SOURCE_WALK_behemoth_combat_mech_5dir.png-ae4d1be2a5e2c3176dd0aa7a183befed.ctex"]
 
 [params]
 

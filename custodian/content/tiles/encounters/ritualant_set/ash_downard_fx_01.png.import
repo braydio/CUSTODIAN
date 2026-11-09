@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://iclxlhopdxpu"
-path="res://.godot/imported/ash_downard_fx_01.png-5f80f2db819c094f1b1baf8c2876eb62.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/ash_downard_fx_01.png"
-dest_files=["res://.godot/imported/ash_downard_fx_01.png-5f80f2db819c094f1b1baf8c2876eb62.ctex"]
 
 [params]
 

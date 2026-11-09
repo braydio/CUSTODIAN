@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b8k1dk883f07v"
-path="res://.godot/imported/forlorn_ritualant_death_004.png-d4a08cd7c81b54308da2f1cebe342af6.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/forlorn_ritualant/death/forlorn_ritualant_death_004.png"
-dest_files=["res://.godot/imported/forlorn_ritualant_death_004.png-d4a08cd7c81b54308da2f1cebe342af6.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://gppkksnb7sxk"
-path="res://.godot/imported/operator__body__melee__recovery_1__3f__8d__96.png-2cde96333f2a04e9836ca7e76d7aedf5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/source_original/operator__body__melee__recovery_1__3f__8d__96.png"
-dest_files=["res://.godot/imported/operator__body__melee__recovery_1__3f__8d__96.png-2cde96333f2a04e9836ca7e76d7aedf5.ctex"]
 
 [params]
 

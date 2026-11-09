@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://8g46tm6j10lm"
-path="res://.godot/imported/cliff_foundation_shelved_01.png-6478d6412f3c78def33b39a4b60cedb4.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/backgrounds/sundered_keep/grand_vista/fortress_components/cliff_foundation_shelved_01.png"
-dest_files=["res://.godot/imported/cliff_foundation_shelved_01.png-6478d6412f3c78def33b39a4b60cedb4.ctex"]
 
 [params]
 

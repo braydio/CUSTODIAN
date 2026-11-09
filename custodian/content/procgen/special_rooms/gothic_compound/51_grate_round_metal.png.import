@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://q4ijmqisssk1"
-path="res://.godot/imported/51_grate_round_metal.png-dbfcf1f0e472c6e6cc88cec04fdfd528.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/51_grate_round_metal.png"
-dest_files=["res://.godot/imported/51_grate_round_metal.png-dbfcf1f0e472c6e6cc88cec04fdfd528.ctex"]
 
 [params]
 

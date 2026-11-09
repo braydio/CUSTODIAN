@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cbv5gl8cqcux8"
-path="res://.godot/imported/road_of_witnesses_south_reach_civic_axis_underlay_768x896.png-c3c708c34743357e5721d136ae48d01d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/levels/hub/road_of_witnesses/south_reach_civic_axis/road_of_witnesses_south_reach_civic_axis_underlay_768x896.png"
-dest_files=["res://.godot/imported/road_of_witnesses_south_reach_civic_axis_underlay_768x896.png-c3c708c34743357e5721d136ae48d01d.ctex"]
 
 [params]
 

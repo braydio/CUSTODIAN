@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://db4fgjkojtpr4"
-path="res://.godot/imported/operator__parry_fx__unarmed__parry_miss_01__w__8f__96.png-c12264c0243bc3833886a82da4f6cda0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/archive/operator__parry_fx__unarmed__parry_miss_01__w__8f__96.png"
-dest_files=["res://.godot/imported/operator__parry_fx__unarmed__parry_miss_01__w__8f__96.png-c12264c0243bc3833886a82da4f6cda0.ctex"]
 
 [params]
 

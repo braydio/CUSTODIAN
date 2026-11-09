@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bwlpkocngufsy"
-path="res://.godot/imported/Well.png-9adf293d36076ebe60822e9d4618f278.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Miscellaneous/Well.png"
-dest_files=["res://.godot/imported/Well.png-9adf293d36076ebe60822e9d4618f278.ctex"]
 
 [params]
 

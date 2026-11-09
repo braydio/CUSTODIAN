@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bp0ralgr8dptx"
-path="res://.godot/imported/meridian_civic_relay__body__interaction__idle__omni__1f__96.png-5ff02ec42b019237da03564735903f63.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/common/meridian_civic_relay/runtime/body/meridian_civic_relay__body__interaction__idle__omni__1f__96.png"
-dest_files=["res://.godot/imported/meridian_civic_relay__body__interaction__idle__omni__1f__96.png-5ff02ec42b019237da03564735903f63.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bi58ijtb35dcv"
-path="res://.godot/imported/ash_bell_entrance_shell_chroma_source.png-be0e4e840a818e80402d285ccf3a0571.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://assets/sprites/world/ingress/ash_bell/source/generated/ash_bell_entrance_shell_chroma_source.png"
-dest_files=["res://.godot/imported/ash_bell_entrance_shell_chroma_source.png-be0e4e840a818e80402d285ccf3a0571.ctex"]
 
 [params]
 

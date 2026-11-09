@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://x175u0u0gdvn"
-path="res://.godot/imported/baby_opossum__body__fear__play_dead_hold__s__1f__96.png-5ad86a37a2c187dbe863460bdc233e93.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/ambient_creatures/baby_opossum/runtime/body/fear/baby_opossum__body__fear__play_dead_hold__s__1f__96.png"
-dest_files=["res://.godot/imported/baby_opossum__body__fear__play_dead_hold__s__1f__96.png-5ad86a37a2c187dbe863460bdc233e93.ctex"]
 
 [params]
 

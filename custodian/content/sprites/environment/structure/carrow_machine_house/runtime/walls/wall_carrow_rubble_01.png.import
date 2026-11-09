@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bn7u5thps1wu5"
-path="res://.godot/imported/wall_carrow_rubble_01.png-ee6b39b7f398d336809d77c57f0c2713.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/structure/carrow_machine_house/runtime/walls/wall_carrow_rubble_01.png"
-dest_files=["res://.godot/imported/wall_carrow_rubble_01.png-ee6b39b7f398d336809d77c57f0c2713.ctex"]
 
 [params]
 

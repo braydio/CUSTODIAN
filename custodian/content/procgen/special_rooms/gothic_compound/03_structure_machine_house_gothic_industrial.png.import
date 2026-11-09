@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dr78nksb67txx"
-path="res://.godot/imported/03_structure_machine_house_gothic_industrial.png-99805b9a510ae5fd0527beed441d1862.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/03_structure_machine_house_gothic_industrial.png"
-dest_files=["res://.godot/imported/03_structure_machine_house_gothic_industrial.png-99805b9a510ae5fd0527beed441d1862.ctex"]
 
 [params]
 

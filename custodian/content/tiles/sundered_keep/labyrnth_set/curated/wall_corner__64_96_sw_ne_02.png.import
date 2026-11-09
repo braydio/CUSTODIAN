@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://0jm7fonidh0n"
-path="res://.godot/imported/wall_corner__64_96_sw_ne_02.png-61b7794dfe09352d851c127f2cafec68.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/labyrnth_set/curated/wall_corner__64_96_sw_ne_02.png"
-dest_files=["res://.godot/imported/wall_corner__64_96_sw_ne_02.png-61b7794dfe09352d851c127f2cafec68.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dgphbni5mi3dt"
-path="res://.godot/imported/ShieldBlockMid.png-4cdb0fb6d9fe01e43afa2f5f5fb94ac0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://dev/test_sprites/Knight/ShieldBlockMid.png"
-dest_files=["res://.godot/imported/ShieldBlockMid.png-4cdb0fb6d9fe01e43afa2f5f5fb94ac0.ctex"]
 
 [params]
 

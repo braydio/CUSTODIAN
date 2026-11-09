@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://v0bxurgbwoxy"
-path="res://.godot/imported/event_room_ritual_chamber.png-a8545a210499e2c92fdf561625f7a564.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/asset_exports/event_room_full/event_room_ritual_chamber.png"
-dest_files=["res://.godot/imported/event_room_ritual_chamber.png-a8545a210499e2c92fdf561625f7a564.ctex"]
 
 [params]
 

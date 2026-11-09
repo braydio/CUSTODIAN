@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bg4vrq08m33sr"
-path="res://.godot/imported/enemy_marine__body__unarmed__idle_01__se__4f__96.png-9cf0a65e20185f309f2d98355cbb4503.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/normalized/enemy_marine__body__unarmed__idle_01__se__4f__96.png"
-dest_files=["res://.godot/imported/enemy_marine__body__unarmed__idle_01__se__4f__96.png-9cf0a65e20185f309f2d98355cbb4503.ctex"]
 
 [params]
 

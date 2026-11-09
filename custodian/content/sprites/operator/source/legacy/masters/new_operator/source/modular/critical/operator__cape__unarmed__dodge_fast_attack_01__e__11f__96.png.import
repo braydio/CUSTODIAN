@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c5q8pfulh1q3l"
-path="res://.godot/imported/operator__cape__unarmed__dodge_fast_attack_01__e__11f__96.png-79dd4e302e84389232d077a7fa4147af.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/new_operator/source/modular/critical/operator__cape__unarmed__dodge_fast_attack_01__e__11f__96.png"
-dest_files=["res://.godot/imported/operator__cape__unarmed__dodge_fast_attack_01__e__11f__96.png-79dd4e302e84389232d077a7fa4147af.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://boyv3whhpjxye"
-path="res://.godot/imported/ocean_current_streak_01.png-cd0ebe4743e0aa2d5e5b1b6a0a5ba5e8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_runtime/ocean/ocean_current_streak_01.png"
-dest_files=["res://.godot/imported/ocean_current_streak_01.png-cd0ebe4743e0aa2d5e5b1b6a0a5ba5e8.ctex"]
 
 [params]
 

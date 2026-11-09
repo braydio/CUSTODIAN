@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://kjudh5oc484d"
-path="res://.godot/imported/meridian_hardened_floor_transition_v1_32.png-7afc72d8bec5d2dfdb29ef3465db769a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/procgen/surfaces/hardened/meridian_hardened_floor_transition_v1_32.png"
-dest_files=["res://.godot/imported/meridian_hardened_floor_transition_v1_32.png-7afc72d8bec5d2dfdb29ef3465db769a.ctex"]
 
 [params]
 

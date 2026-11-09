@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dgtbk2v5sdo1w"
-path="res://.godot/imported/amber_beacon_compact_b.png-4b5263e4d2d840374e15d69eb5a9fcaf.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_lighting/amber_beacon_compact_b.png"
-dest_files=["res://.godot/imported/amber_beacon_compact_b.png-4b5263e4d2d840374e15d69eb5a9fcaf.ctex"]
 
 [params]
 

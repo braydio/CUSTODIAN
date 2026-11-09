@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bqptl01l4uekt"
-path="res://.godot/imported/icon_wall.png-3e835200173edc8c8eafdb020e9cbf38.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/icons/icon_wall.png"
-dest_files=["res://.godot/imported/icon_wall.png-3e835200173edc8c8eafdb020e9cbf38.ctex"]
 
 [params]
 

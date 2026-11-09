@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bwv62fyor1lr4"
-path="res://.godot/imported/paving_break_01.png-667b4feea90cb5a41bc7ae4b0c75713c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/ash_bell/lower_quarter/gothic_scifi_native_v2/lower_quarter_paving_break/paving_break_01.png"
-dest_files=["res://.godot/imported/paving_break_01.png-667b4feea90cb5a41bc7ae4b0c75713c.ctex"]
 
 [params]
 

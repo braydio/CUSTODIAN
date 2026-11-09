@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d382sl1mkeu4o"
-path="res://.godot/imported/ash_bell_threadway_resolve_01__6f__256__source.png-f69a4f65f4b6c72a551e37059ad485dc.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/world/ingress/ash_bell/source/ash_bell_threadway_resolve_01__6f__256__source.png"
-dest_files=["res://.godot/imported/ash_bell_threadway_resolve_01__6f__256__source.png-f69a4f65f4b6c72a551e37059ad485dc.ctex"]
 
 [params]
 

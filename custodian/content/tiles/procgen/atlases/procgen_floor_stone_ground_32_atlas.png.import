@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ok00m7x12cod"
-path="res://.godot/imported/procgen_floor_stone_ground_32_atlas.png-7ab665a57e43ff350114616e7b4aef1f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/procgen/atlases/procgen_floor_stone_ground_32_atlas.png"
-dest_files=["res://.godot/imported/procgen_floor_stone_ground_32_atlas.png-7ab665a57e43ff350114616e7b4aef1f.ctex"]
 
 [params]
 

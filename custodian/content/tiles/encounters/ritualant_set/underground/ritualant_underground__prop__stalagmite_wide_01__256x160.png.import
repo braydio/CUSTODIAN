@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://xxjy24y48cpp"
-path="res://.godot/imported/ritualant_underground__prop__stalagmite_wide_01__256x160.png-6e71f7a8d6a1b30ff5d418d3392dc6de.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__prop__stalagmite_wide_01__256x160.png"
-dest_files=["res://.godot/imported/ritualant_underground__prop__stalagmite_wide_01__256x160.png-6e71f7a8d6a1b30ff5d418d3392dc6de.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b2ap0oobl5ond"
-path="res://.godot/imported/gothic_scifi_pier_07.png-92079adc6eaf6bcf76be2b5111c4d943.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_07.png"
-dest_files=["res://.godot/imported/gothic_scifi_pier_07.png-92079adc6eaf6bcf76be2b5111c4d943.ctex"]
 
 [params]
 

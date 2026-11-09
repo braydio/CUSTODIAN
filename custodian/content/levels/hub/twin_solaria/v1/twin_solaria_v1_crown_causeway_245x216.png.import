@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://sripyl3wbnux"
-path="res://.godot/imported/twin_solaria_v1_crown_causeway_245x216.png-3de37290891d2c397fa4c9f0592ee62d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/levels/hub/twin_solaria/v1/twin_solaria_v1_crown_causeway_245x216.png"
-dest_files=["res://.godot/imported/twin_solaria_v1_crown_causeway_245x216.png-3de37290891d2c397fa4c9f0592ee62d.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b56v1u6ufmyk2"
-path="res://.godot/imported/muzzle_flash_yellow.png-cae075a14acce758c7f547f28d8fc03b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/effects/runtime/muzzle_flash_yellow.png"
-dest_files=["res://.godot/imported/muzzle_flash_yellow.png-cae075a14acce758c7f547f28d8fc03b.ctex"]
 
 [params]
 

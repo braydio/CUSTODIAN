@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bh43j7u7vb8dk"
-path="res://.godot/imported/floor_carrow_edge_bevel_01_32.png-03c73a90786afacb5915419c9fc198fb.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/runtime/floor_carrow_edge_bevel_01_32.png"
-dest_files=["res://.godot/imported/floor_carrow_edge_bevel_01_32.png-03c73a90786afacb5915419c9fc198fb.ctex"]
 
 [params]
 

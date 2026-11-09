@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bphhtmxqpgld4"
-path="res://.godot/imported/mossy_ground.png-23034df1c6126f33f387ecd4f7efb76b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/raw_preview_tiles/mossy_ground.png"
-dest_files=["res://.godot/imported/mossy_ground.png-23034df1c6126f33f387ecd4f7efb76b.ctex"]
 
 [params]
 

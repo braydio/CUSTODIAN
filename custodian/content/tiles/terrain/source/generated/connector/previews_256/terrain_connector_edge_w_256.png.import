@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://66cw3i5sttr8"
-path="res://.godot/imported/terrain_connector_edge_w_256.png-e0711f30cfdce687ca4693a78e91357f.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/source/generated/connector/previews_256/terrain_connector_edge_w_256.png"
-dest_files=["res://.godot/imported/terrain_connector_edge_w_256.png-e0711f30cfdce687ca4693a78e91357f.ctex"]
 
 [params]
 

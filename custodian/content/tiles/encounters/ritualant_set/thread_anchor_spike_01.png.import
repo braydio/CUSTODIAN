@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d4h4ptu0bkhsx"
-path="res://.godot/imported/thread_anchor_spike_01.png-36cde62fc678b35b4082fcc10a4c092e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/thread_anchor_spike_01.png"
-dest_files=["res://.godot/imported/thread_anchor_spike_01.png-36cde62fc678b35b4082fcc10a4c092e.ctex"]
 
 [params]
 

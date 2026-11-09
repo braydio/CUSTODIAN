@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dnyfx8loxk0mj"
-path="res://.godot/imported/terminal_2phase.png-c257fc5c0a50deada7c572ea9948527b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/terminal/source/terminal_2phase.png"
-dest_files=["res://.godot/imported/terminal_2phase.png-c257fc5c0a50deada7c572ea9948527b.ctex"]
 
 [params]
 

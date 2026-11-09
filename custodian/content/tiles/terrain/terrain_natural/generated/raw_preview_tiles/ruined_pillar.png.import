@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://behvm7wrhj1a"
-path="res://.godot/imported/ruined_pillar.png-89b359e3b797cde8fb598761979e753d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/raw_preview_tiles/ruined_pillar.png"
-dest_files=["res://.godot/imported/ruined_pillar.png-89b359e3b797cde8fb598761979e753d.ctex"]
 
 [params]
 

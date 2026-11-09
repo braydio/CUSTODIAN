@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dhb5l3k11n670"
-path="res://.godot/imported/15_wall_endcap_pillar_large.png-fb1ea993c3a7edca95e0d02c9f65f2fa.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/15_wall_endcap_pillar_large.png"
-dest_files=["res://.godot/imported/15_wall_endcap_pillar_large.png-fb1ea993c3a7edca95e0d02c9f65f2fa.ctex"]
 
 [params]
 

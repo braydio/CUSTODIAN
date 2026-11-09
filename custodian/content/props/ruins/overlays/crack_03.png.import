@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ceqq0p3r0rbqo"
-path="res://.godot/imported/crack_03.png-66f6c975820ff61214ae01a2d26a3b42.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/ruins/overlays/crack_03.png"
-dest_files=["res://.godot/imported/crack_03.png-66f6c975820ff61214ae01a2d26a3b42.ctex"]
 
 [params]
 

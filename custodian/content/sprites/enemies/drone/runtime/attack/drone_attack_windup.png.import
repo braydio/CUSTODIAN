@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://drhl01wmt2pcn"
-path="res://.godot/imported/drone_attack_windup.png-1cdcde6e233544a5d7caa7b52a7048a6.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/drone/runtime/attack/drone_attack_windup.png"
-dest_files=["res://.godot/imported/drone_attack_windup.png-1cdcde6e233544a5d7caa7b52a7048a6.ctex"]
 
 [params]
 

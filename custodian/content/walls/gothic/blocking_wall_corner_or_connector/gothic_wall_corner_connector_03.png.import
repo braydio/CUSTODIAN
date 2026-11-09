@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cv80hx0mtimyf"
-path="res://.godot/imported/gothic_wall_corner_connector_03.png-a6581ed4ab2555cd0536c114a239a70c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/walls/gothic/blocking_wall_corner_or_connector/gothic_wall_corner_connector_03.png"
-dest_files=["res://.godot/imported/gothic_wall_corner_connector_03.png-a6581ed4ab2555cd0536c114a239a70c.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d4dg3fbouuveq"
-path="res://.godot/imported/prop_brazier_iron_01.png-6422bab465457f8eac28abd6515266f9.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/runtime/sundered_keep/props/prop_light/prop_brazier_iron_01.png"
-dest_files=["res://.godot/imported/prop_brazier_iron_01.png-6422bab465457f8eac28abd6515266f9.ctex"]
 
 [params]
 

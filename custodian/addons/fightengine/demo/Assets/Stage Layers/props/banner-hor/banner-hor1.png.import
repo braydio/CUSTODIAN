@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://itueus4wxbpf"
-path="res://.godot/imported/banner-hor1.png-7e1292623c56981712eb835f2005e712.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://addons/fightengine/demo/Assets/Stage Layers/props/banner-hor/banner-hor1.png"
-dest_files=["res://.godot/imported/banner-hor1.png-7e1292623c56981712eb835f2005e712.ctex"]
 
 [params]
 

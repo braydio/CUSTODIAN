@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cutow56phphj1"
-path="res://.godot/imported/status_badge_ready.png-52af506ce696b6d78303e685d7a6d847.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/custodian/checks/status_badge_ready.png"
-dest_files=["res://.godot/imported/status_badge_ready.png-52af506ce696b6d78303e685d7a6d847.ctex"]
 
 [params]
 

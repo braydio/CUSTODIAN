@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bccg4dd2256aa"
-path="res://.godot/imported/rampart_parapet_e_source.png-1dc84ea9798ac6655b7341e8ba2336b2.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/walls/ramparts/rampart_parapet_e_source.png"
-dest_files=["res://.godot/imported/rampart_parapet_e_source.png-1dc84ea9798ac6655b7341e8ba2336b2.ctex"]
 
 [params]
 

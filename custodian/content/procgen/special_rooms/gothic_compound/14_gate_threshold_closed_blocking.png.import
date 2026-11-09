@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://r6ckedkaifs0"
-path="res://.godot/imported/14_gate_threshold_closed_blocking.png-a3e5d2cd586f1a29cb43b4164f9044ff.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/procgen/special_rooms/gothic_compound/14_gate_threshold_closed_blocking.png"
-dest_files=["res://.godot/imported/14_gate_threshold_closed_blocking.png-a3e5d2cd586f1a29cb43b4164f9044ff.ctex"]
 
 [params]
 

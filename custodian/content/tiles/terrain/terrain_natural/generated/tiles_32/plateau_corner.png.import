@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://reiuio2mqs0f"
-path="res://.godot/imported/plateau_corner.png-88ef10d732a36ed1a23aaf095ac33fbf.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/tiles_32/plateau_corner.png"
-dest_files=["res://.godot/imported/plateau_corner.png-88ef10d732a36ed1a23aaf095ac33fbf.ctex"]
 
 [params]
 

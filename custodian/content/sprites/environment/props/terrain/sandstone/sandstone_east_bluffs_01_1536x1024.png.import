@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ddbf1as2mkl7w"
-path="res://.godot/imported/sandstone_east_bluffs_01_1536x1024.png-f3520cac4835c5d9bcf92e6874e01774.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/terrain/sandstone/sandstone_east_bluffs_01_1536x1024.png"
-dest_files=["res://.godot/imported/sandstone_east_bluffs_01_1536x1024.png-f3520cac4835c5d9bcf92e6874e01774.ctex"]
 
 [params]
 

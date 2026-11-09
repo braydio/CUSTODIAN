@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dw7wcb2qorq6a"
-path="res://.godot/imported/access_panel_plain.png-ae472203d043f492b4deaaf6bf953b8d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_floor_hardware/access_panel_plain.png"
-dest_files=["res://.godot/imported/access_panel_plain.png-ae472203d043f492b4deaaf6bf953b8d.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://efmjwadcbcwp"
-path="res://.godot/imported/guardian_statue_west.png-8df79d330ec10f2f9787704070b66a54.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/ruins/extracted/guardian_statue_west.png"
-dest_files=["res://.godot/imported/guardian_statue_west.png-8df79d330ec10f2f9787704070b66a54.ctex"]
 
 [params]
 

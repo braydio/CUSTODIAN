@@ -1,0 +1,199 @@
+{
+  "schema": "custodian.operator_animation_workbench.v2",
+  "identity": {
+    "profile": "melee_1h",
+    "group": "defense",
+    "action": "block_loop_01",
+    "direction": "e"
+  },
+  "context": {
+    "weapon_id": "",
+    "linked_profile": "",
+    "presentation_mode": "",
+    "fingerprint": "473bdaa8482a75ad4b17f66b7e7fdc63fbd1506ed7dba913f6b3ee1f57cb8031"
+  },
+  "weapon_context": null,
+  "timeline": {
+    "frames": 5,
+    "source_clock_frames": 5,
+    "workspace_clock_frames": 5,
+    "document_frames": 5,
+    "preview_fps": 12.0,
+    "timing_authority": true,
+    "clock_owner": "lower_body",
+    "fps": 12.0,
+    "loop": true,
+    "durations": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "frame_durations_ms": [
+      83.33333333333333,
+      83.33333333333333,
+      83.33333333333333,
+      83.33333333333333,
+      83.33333333333333
+    ]
+  },
+  "canvas": {
+    "width": 96,
+    "height": 96
+  },
+  "aseprite": {
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/defense/block_loop_01/e/workbench.aseprite",
+    "last_synced_sha256": "0119505a3d2e155db48ca235903dcad3b4a84c43d6f64b4f6af8102980c08fb3"
+  },
+  "layers": [
+    {
+      "binding_id": "lower_body",
+      "aseprite_layer_name": "lower_body",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "melee_1h",
+      "group": "defense",
+      "action": "block_loop_01",
+      "direction": "e",
+      "layer": "lower_body",
+      "source_path": "custodian/content/sprites/operator/source/animations/melee_1h/defense/block_loop_01/operator__lower_body__melee_1h__defense__block_loop_01__e__5f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/melee_1h/defense/block_loop_01/operator__lower_body__melee_1h__defense__block_loop_01__e__5f__96.png",
+      "source_file_sha256": "6d0c640098d423ce456586202a3a9ffb39abf7be2cba1bba6e73e73f83a2a92f",
+      "source_pixel_sha256": "3315d49f7847b467c1bf29191c63d48a68040451d7edb65d682d349f7093c402",
+      "frames": 5,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "lower_body",
+        "profile": "melee_1h",
+        "group": "defense",
+        "action": "block_loop_01",
+        "direction": "e"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/defense/block_loop_01/operator__lower_body__melee_1h__defense__block_loop_01__e__5f__96.png",
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ],
+        "file_sha256": "6d0c640098d423ce456586202a3a9ffb39abf7be2cba1bba6e73e73f83a2a92f",
+        "pixel_sha256": "3315d49f7847b467c1bf29191c63d48a68040451d7edb65d682d349f7093c402"
+      },
+      "workspace_contract": {
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/defense/block_loop_01/operator__lower_body__melee_1h__defense__block_loop_01__e__5f__96.png",
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/defense/block_loop_01/e/baseline/lower_body.png"
+    },
+    {
+      "binding_id": "upper_body",
+      "aseprite_layer_name": "upper_body",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "melee_1h",
+      "group": "defense",
+      "action": "block_loop_01",
+      "direction": "e",
+      "layer": "upper_body",
+      "source_path": "custodian/content/sprites/operator/source/animations/melee_1h/defense/block_loop_01/operator__upper_body__melee_1h__defense__block_loop_01__e__5f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/melee_1h/defense/block_loop_01/operator__upper_body__melee_1h__defense__block_loop_01__e__5f__96.png",
+      "source_file_sha256": "a889854d4f475a2899af829ab48a7d3501b6555708c833001af7f5e7acea2f9a",
+      "source_pixel_sha256": "977cf38d87dcdd028812e78d15452b309a2bdd044b44a39227543e401cd94a50",
+      "frames": 5,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "upper_body",
+        "profile": "melee_1h",
+        "group": "defense",
+        "action": "block_loop_01",
+        "direction": "e"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/defense/block_loop_01/operator__upper_body__melee_1h__defense__block_loop_01__e__5f__96.png",
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ],
+        "file_sha256": "a889854d4f475a2899af829ab48a7d3501b6555708c833001af7f5e7acea2f9a",
+        "pixel_sha256": "977cf38d87dcdd028812e78d15452b309a2bdd044b44a39227543e401cd94a50"
+      },
+      "workspace_contract": {
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/defense/block_loop_01/operator__upper_body__melee_1h__defense__block_loop_01__e__5f__96.png",
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/defense/block_loop_01/e/baseline/upper_body.png"
+    }
+  ],
+  "references": [],
+  "pending_migration": null,
+  "last_publish": {
+    "timestamp": null,
+    "validation_status": null
+  }
+}

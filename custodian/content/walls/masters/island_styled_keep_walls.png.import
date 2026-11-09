@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d2j6ldgbqqag3"
-path="res://.godot/imported/island_styled_keep_walls.png-9dae258005b834fcab38930f1bb6bafa.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/walls/masters/island_styled_keep_walls.png"
-dest_files=["res://.godot/imported/island_styled_keep_walls.png-9dae258005b834fcab38930f1bb6bafa.ctex"]
 
 [params]
 

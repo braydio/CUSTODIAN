@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://eb34xs1xrjhu"
-path="res://.godot/imported/overlook_ledge.png-dc83c53b7a36b540903c4767dbc5a86b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/world/return_causeway/path/overlook_ledge.png"
-dest_files=["res://.godot/imported/overlook_ledge.png-dc83c53b7a36b540903c4767dbc5a86b.ctex"]
 
 [params]
 

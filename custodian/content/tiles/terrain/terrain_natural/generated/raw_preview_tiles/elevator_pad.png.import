@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://clpilq7hmtn51"
-path="res://.godot/imported/elevator_pad.png-14ca1b9b21c9270938152441fbbf7fa8.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/raw_preview_tiles/elevator_pad.png"
-dest_files=["res://.godot/imported/elevator_pad.png-14ca1b9b21c9270938152441fbbf7fa8.ctex"]
 
 [params]
 

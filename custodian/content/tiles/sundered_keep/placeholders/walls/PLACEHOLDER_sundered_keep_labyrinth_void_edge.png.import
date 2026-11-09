@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://tna8uyasctne"
-path="res://.godot/imported/PLACEHOLDER_sundered_keep_labyrinth_void_edge.png-09f298e5d64a4fda0722284324f227e4.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/placeholders/walls/PLACEHOLDER_sundered_keep_labyrinth_void_edge.png"
-dest_files=["res://.godot/imported/PLACEHOLDER_sundered_keep_labyrinth_void_edge.png-09f298e5d64a4fda0722284324f227e4.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://8y3aihftcv57"
-path="res://.godot/imported/2h_heavy_full_windup.png-ae224eb2c5e8b26332925228cb07abfa.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/source_original/heavy_2h/2h_heavy_full_windup.png"
-dest_files=["res://.godot/imported/2h_heavy_full_windup.png-ae224eb2c5e8b26332925228cb07abfa.ctex"]
 
 [params]
 

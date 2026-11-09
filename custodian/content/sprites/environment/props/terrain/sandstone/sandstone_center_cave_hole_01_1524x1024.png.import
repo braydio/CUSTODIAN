@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bwbyogqbm5tvd"
-path="res://.godot/imported/sandstone_center_cave_hole_01_1524x1024.png-93ba1f64d744cacafb5442e68a5cfc11.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/terrain/sandstone/sandstone_center_cave_hole_01_1524x1024.png"
-dest_files=["res://.godot/imported/sandstone_center_cave_hole_01_1524x1024.png-93ba1f64d744cacafb5442e68a5cfc11.ctex"]
 
 [params]
 

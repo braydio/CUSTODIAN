@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://pryk61mm2rgx"
-path="res://.godot/imported/prop_return_console_ruined_01.png-1545a1a5b4612225a1b852feb7cf51b7.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/props/sundered_keep/return_mooring/prop_return_console_ruined_01.png"
-dest_files=["res://.godot/imported/prop_return_console_ruined_01.png-1545a1a5b4612225a1b852feb7cf51b7.ctex"]
 
 [params]
 

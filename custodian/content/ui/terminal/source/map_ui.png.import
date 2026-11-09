@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bwyq6r345pb2y"
-path="res://.godot/imported/map_ui.png-2070f4eb7fb308423320a3da6b9b57fe.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/terminal/source/map_ui.png"
-dest_files=["res://.godot/imported/map_ui.png-2070f4eb7fb308423320a3da6b9b57fe.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cwcmale3g6wuy"
-path="res://.godot/imported/panel_compact_b.png-e125ac5a27876a31daee08880420198e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_utility/panel_compact_b.png"
-dest_files=["res://.godot/imported/panel_compact_b.png-e125ac5a27876a31daee08880420198e.ctex"]
 
 [params]
 

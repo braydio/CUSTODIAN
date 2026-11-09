@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dnk5ohaw00xnf"
-path="res://.godot/imported/road_corner_n_w_large_01.png-c7d8daeb035ff989a93a288fe994403d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/roads_paths/runtime/roads/standard/pieces/road_corner_n_w_large_01.png"
-dest_files=["res://.godot/imported/road_corner_n_w_large_01.png-c7d8daeb035ff989a93a288fe994403d.ctex"]
 
 [params]
 

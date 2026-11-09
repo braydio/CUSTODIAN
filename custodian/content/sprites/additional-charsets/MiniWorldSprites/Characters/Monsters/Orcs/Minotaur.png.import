@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://qp2ve0qlupoc"
-path="res://.godot/imported/Minotaur.png-b46c252f863dd380a51f7c4254df8e33.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Monsters/Orcs/Minotaur.png"
-dest_files=["res://.godot/imported/Minotaur.png-b46c252f863dd380a51f7c4254df8e33.ctex"]
 
 [params]
 

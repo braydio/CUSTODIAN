@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://inxe1xsos13f"
-path="res://.godot/imported/mountain_custodian_palette_locked_preview.png-1b24e195abf343242e734f0588be6ee1.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/custodian_recolor/mountain_custodian_palette_locked_preview.png"
-dest_files=["res://.godot/imported/mountain_custodian_palette_locked_preview.png-1b24e195abf343242e734f0588be6ee1.ctex"]
 
 [params]
 

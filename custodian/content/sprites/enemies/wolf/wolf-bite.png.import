@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://vw3pcv3nhfp4"
-path="res://.godot/imported/wolf-bite.png-2f664cf740a07cab9f73d33b05d483c5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/wolf/wolf-bite.png"
-dest_files=["res://.godot/imported/wolf-bite.png-2f664cf740a07cab9f73d33b05d483c5.ctex"]
 
 [params]
 

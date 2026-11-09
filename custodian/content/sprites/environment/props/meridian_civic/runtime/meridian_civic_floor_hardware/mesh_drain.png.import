@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cjisd1jmkltth"
-path="res://.godot/imported/mesh_drain.png-1431f875675b7a58e8ad1b62b700b183.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_floor_hardware/mesh_drain.png"
-dest_files=["res://.godot/imported/mesh_drain.png-1431f875675b7a58e8ad1b62b700b183.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cw8kmkhhm076t"
-path="res://.godot/imported/fiber_moss_patch__node__depleted__1f__96.png-1be4f5c4e74baf1d901cb84de08fc946.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/props/harvesting_nodes/fiber_moss_patch/fiber_moss_patch__node__depleted__1f__96.png"
-dest_files=["res://.godot/imported/fiber_moss_patch__node__depleted__1f__96.png-1be4f5c4e74baf1d901cb84de08fc946.ctex"]
 
 [params]
 

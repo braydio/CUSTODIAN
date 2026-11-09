@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d3ddekaiewkpw"
-path="res://.godot/imported/ocean_void_01.png-3ae147c6682dda0aa14c90f360285710.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/floors/ocean_void_01.png"
-dest_files=["res://.godot/imported/ocean_void_01.png-3ae147c6682dda0aa14c90f360285710.ctex"]
 
 [params]
 

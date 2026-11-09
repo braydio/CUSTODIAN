@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b641usppe0dhw"
-path="res://.godot/imported/placeholder_walls_floors_stairs.png-f0c5b28d1d0e016d63d303f2f4447b82.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/placeholder_art/placeholder_walls_floors_stairs.png"
-dest_files=["res://.godot/imported/placeholder_walls_floors_stairs.png-f0c5b28d1d0e016d63d303f2f4447b82.ctex"]
 
 [params]
 

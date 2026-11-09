@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d24xijonoxuef"
-path="res://.godot/imported/faint_recollection_icon_256.png-c5f71f59cb2e290fa9c92deae82c182b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/items/shrumb_drops/faint_recollection_icon_256.png"
-dest_files=["res://.godot/imported/faint_recollection_icon_256.png-c5f71f59cb2e290fa9c92deae82c182b.ctex"]
 
 [params]
 

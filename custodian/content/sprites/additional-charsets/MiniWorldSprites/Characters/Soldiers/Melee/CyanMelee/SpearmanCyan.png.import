@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://xoawkfhssj5p"
-path="res://.godot/imported/SpearmanCyan.png-d9feeb371f3e3d1d0fcaa3d8c47afdb5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Soldiers/Melee/CyanMelee/SpearmanCyan.png"
-dest_files=["res://.godot/imported/SpearmanCyan.png-d9feeb371f3e3d1d0fcaa3d8c47afdb5.ctex"]
 
 [params]
 

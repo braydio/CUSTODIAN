@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://knjr4cqq5j3c"
-path="res://.godot/imported/TransportShip.png-e73cf6942077f80732492ed78228c7b5.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Miscellaneous/TransportShip.png"
-dest_files=["res://.godot/imported/TransportShip.png-e73cf6942077f80732492ed78228c7b5.ctex"]
 
 [params]
 

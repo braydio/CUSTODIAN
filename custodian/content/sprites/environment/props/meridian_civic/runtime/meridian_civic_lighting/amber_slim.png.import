@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://do0mbbdbshun0"
-path="res://.godot/imported/amber_slim.png-4cd666d4d4cb6e768bae81aabfe8e8ef.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_lighting/amber_slim.png"
-dest_files=["res://.godot/imported/amber_slim.png-4cd666d4d4cb6e768bae81aabfe8e8ef.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c6lmab8rup50h"
-path="res://.godot/imported/ledge.png-1616d4ac67378b472e8cd26603299375.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/tiles_32/ledge.png"
-dest_files=["res://.godot/imported/ledge.png-1616d4ac67378b472e8cd26603299375.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dhcp3bxmhs4km"
-path="res://.godot/imported/awakening_gate_plaza_underlay_1536x768.png-ac67bf397a87eeed5884b4ac756afd15.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/levels/awakening/07_gate_of_dust/awakening_gate_plaza_underlay_1536x768.png"
-dest_files=["res://.godot/imported/awakening_gate_plaza_underlay_1536x768.png-ac67bf397a87eeed5884b4ac756afd15.ctex"]
 
 [params]
 

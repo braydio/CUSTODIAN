@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://2fvos4tvfhwy"
-path="res://.godot/imported/operator__full_body_example__unarmed__success_01__e__5f__96.png-a72cee80b9b30ac74ab6b308ca42f784.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/legacy/masters/new_operator/operator__full_body_example__unarmed__success_01__e__5f__96.png"
-dest_files=["res://.godot/imported/operator__full_body_example__unarmed__success_01__e__5f__96.png-a72cee80b9b30ac74ab6b308ca42f784.ctex"]
 
 [params]
 

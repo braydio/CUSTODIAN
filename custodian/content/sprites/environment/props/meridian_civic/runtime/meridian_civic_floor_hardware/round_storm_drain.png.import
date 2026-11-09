@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cqpomlkf8bwpw"
-path="res://.godot/imported/round_storm_drain.png-5299af9cc48e60e3e774462f93925a60.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/meridian_civic/runtime/meridian_civic_floor_hardware/round_storm_drain.png"
-dest_files=["res://.godot/imported/round_storm_drain.png-5299af9cc48e60e3e774462f93925a60.ctex"]
 
 [params]
 

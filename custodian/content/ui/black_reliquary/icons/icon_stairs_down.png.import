@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bdmvy2cl1tdyx"
-path="res://.godot/imported/icon_stairs_down.png-9794313b3d81d78a68e38cacb2817398.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/black_reliquary/icons/icon_stairs_down.png"
-dest_files=["res://.godot/imported/icon_stairs_down.png-9794313b3d81d78a68e38cacb2817398.ctex"]
 
 [params]
 

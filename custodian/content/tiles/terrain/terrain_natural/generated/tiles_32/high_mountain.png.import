@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c7nduf4ree6n0"
-path="res://.godot/imported/high_mountain.png-7919e519c977f40c48281d74c6378599.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/tiles_32/high_mountain.png"
-dest_files=["res://.godot/imported/high_mountain.png-7919e519c977f40c48281d74c6378599.ctex"]
 
 [params]
 

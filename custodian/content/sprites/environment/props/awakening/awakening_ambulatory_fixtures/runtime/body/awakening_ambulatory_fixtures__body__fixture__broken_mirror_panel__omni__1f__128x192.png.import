@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bmokttqyf45ef"
-path="res://.godot/imported/awakening_ambulatory_fixtures__body__fixture__broken_mirror_panel__omni__1f__128x192.png-2ca28ed7c67806c3fa6ae28336d52525.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/environment/props/awakening/awakening_ambulatory_fixtures/runtime/body/awakening_ambulatory_fixtures__body__fixture__broken_mirror_panel__omni__1f__128x192.png"
-dest_files=["res://.godot/imported/awakening_ambulatory_fixtures__body__fixture__broken_mirror_panel__omni__1f__128x192.png-2ca28ed7c67806c3fa6ae28336d52525.ctex"]
 
 [params]
 

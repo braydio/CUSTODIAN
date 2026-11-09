@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://63gcnuf0gkpq"
-path="res://.godot/imported/operator__modular_wardrobe_cape__unarmed__run_01__n__6f__96.png-e628672faf51cd86840ea0f5a071892e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/archive/operator__modular_wardrobe_cape__unarmed__run_01__n__6f__96.png"
-dest_files=["res://.godot/imported/operator__modular_wardrobe_cape__unarmed__run_01__n__6f__96.png-e628672faf51cd86840ea0f5a071892e.ctex"]
 
 [params]
 

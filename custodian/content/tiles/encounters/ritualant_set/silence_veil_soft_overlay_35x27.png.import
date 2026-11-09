@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c7llxirjnpbgi"
-path="res://.godot/imported/silence_veil_soft_overlay_35x27.png-bdbdd38f4bcff5c3ea67e44fcd692349.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/silence_veil_soft_overlay_35x27.png"
-dest_files=["res://.godot/imported/silence_veil_soft_overlay_35x27.png-bdbdd38f4bcff5c3ea67e44fcd692349.ctex"]
 
 [params]
 

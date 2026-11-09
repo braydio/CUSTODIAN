@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://by36jdlw580ku"
-path="res://.godot/imported/wall_military_32x64.png-c89973d9120994032efe0aa63f1cde5e.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/interiors/source/wall_military_32x64.png"
-dest_files=["res://.godot/imported/wall_military_32x64.png-c89973d9120994032efe0aa63f1cde5e.ctex"]
 
 [params]
 

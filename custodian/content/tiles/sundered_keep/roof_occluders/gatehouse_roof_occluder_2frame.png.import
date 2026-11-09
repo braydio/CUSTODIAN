@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://rd1iv6nsj2yi"
-path="res://.godot/imported/gatehouse_roof_occluder_2frame.png-086532e92091d25ad23cae090ddb64fc.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/roof_occluders/gatehouse_roof_occluder_2frame.png"
-dest_files=["res://.godot/imported/gatehouse_roof_occluder_2frame.png-086532e92091d25ad23cae090ddb64fc.ctex"]
 
 [params]
 

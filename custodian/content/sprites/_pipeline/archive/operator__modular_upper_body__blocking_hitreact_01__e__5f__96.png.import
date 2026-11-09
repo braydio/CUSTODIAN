@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b83u6lqo4qyuk"
-path="res://.godot/imported/operator__modular_upper_body__blocking_hitreact_01__e__5f__96.png-c7f346de73d9f7aed625e2602e15c5bb.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/_pipeline/archive/operator__modular_upper_body__blocking_hitreact_01__e__5f__96.png"
-dest_files=["res://.godot/imported/operator__modular_upper_body__blocking_hitreact_01__e__5f__96.png-c7f346de73d9f7aed625e2602e15c5bb.ctex"]
 
 [params]
 

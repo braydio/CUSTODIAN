@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://m2kmo0o0dqdr"
-path="res://.godot/imported/vanguard_seal__icon__inventory__default__omni__1f__48.png-2bf29c83ef06562fd72305922df6370d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/ui/inventory/runtime/icons/relics/vanguard_seal__icon__inventory__default__omni__1f__48.png"
-dest_files=["res://.godot/imported/vanguard_seal__icon__inventory__default__omni__1f__48.png-2bf29c83ef06562fd72305922df6370d.ctex"]
 
 [params]
 

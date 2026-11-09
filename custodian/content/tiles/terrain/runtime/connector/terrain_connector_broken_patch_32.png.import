@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bivoohs4roib2"
-path="res://.godot/imported/terrain_connector_broken_patch_32.png-b0440f6071214606f474d3dd1fc47d21.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/runtime/connector/terrain_connector_broken_patch_32.png"
-dest_files=["res://.godot/imported/terrain_connector_broken_patch_32.png-b0440f6071214606f474d3dd1fc47d21.ctex"]
 
 [params]
 

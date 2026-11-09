@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bt26k70h366ik"
-path="res://.godot/imported/ShieldBlockStart.png-336654c0b335cfacb3b18087186823f7.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://dev/test_sprites/Knight/ShieldBlockStart.png"
-dest_files=["res://.godot/imported/ShieldBlockStart.png-336654c0b335cfacb3b18087186823f7.ctex"]
 
 [params]
 

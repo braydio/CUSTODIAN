@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dpv0khjxada23"
-path="res://.godot/imported/mud.png-884bf5a07070a7c8d60c673aae3bc77d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/terrain_natural/generated/tiles_32/mud.png"
-dest_files=["res://.godot/imported/mud.png-884bf5a07070a7c8d60c673aae3bc77d.ctex"]
 
 [params]
 

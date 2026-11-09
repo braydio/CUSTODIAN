@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c4u4co02snfgd"
-path="res://.godot/imported/pursuit_frame__body__posture__idle_ready_01__n__4f__96.png-c8e8ca36e2454e827f9fe475ea52636d.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/enemies/pursuit_frame/runtime/body/posture/pursuit_frame__body__posture__idle_ready_01__n__4f__96.png"
-dest_files=["res://.godot/imported/pursuit_frame__body__posture__idle_ready_01__n__4f__96.png-c8e8ca36e2454e827f9fe475ea52636d.ctex"]
 
 [params]
 

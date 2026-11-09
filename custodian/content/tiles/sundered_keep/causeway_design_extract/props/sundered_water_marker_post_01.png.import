@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dnnm5r0dssv4q"
-path="res://.godot/imported/sundered_water_marker_post_01.png-6e225eb23968ec1d1a7adedec99ccb18.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/sundered_keep/causeway_design_extract/props/sundered_water_marker_post_01.png"
-dest_files=["res://.godot/imported/sundered_water_marker_post_01.png-6e225eb23968ec1d1a7adedec99ccb18.ctex"]
 
 [params]
 

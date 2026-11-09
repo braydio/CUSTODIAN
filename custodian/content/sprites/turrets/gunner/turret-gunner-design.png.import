@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dni7rlcgp4yvg"
-path="res://.godot/imported/turret-gunner-design.png-58aad9010a11b9b66047fc4fd99a6a37.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/turrets/gunner/turret-gunner-design.png"
-dest_files=["res://.godot/imported/turret-gunner-design.png-58aad9010a11b9b66047fc4fd99a6a37.ctex"]
 
 [params]
 

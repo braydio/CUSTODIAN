@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bnms4v41bb3yt"
-path="res://.godot/imported/shadow.png-bca242a17c5f72af074da091abd002a0.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://addons/fightengine/demo/Assets/Sprites/shadow.png"
-dest_files=["res://.godot/imported/shadow.png-bca242a17c5f72af074da091abd002a0.ctex"]
 
 [params]
 

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dspcpdb1djylt"
-path="res://.godot/imported/bridge_stone_start_n_32.png-3ad53eda490261a04019d33d079962d9.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/tiles/terrain/runtime/chasm_bridge/bridge_stone_start_n_32.png"
-dest_files=["res://.godot/imported/bridge_stone_start_n_32.png-3ad53eda490261a04019d33d079962d9.ctex"]
 
 [params]
 
