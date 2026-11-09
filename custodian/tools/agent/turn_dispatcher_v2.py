@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import importlib.util
 import json
+import marshal
 import os
 import py_compile
 import re
@@ -14,6 +15,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import types
 import uuid
 from pathlib import Path
 
@@ -439,10 +441,13 @@ def _verified_python_cache(checkout: Path, rel: str) -> bool:
         data = path.read_bytes()
         if len(data) <= 16 or data[:4] != importlib.util.MAGIC_NUMBER:
             return False
+        code = marshal.loads(data[16:])
+        if not isinstance(code, types.CodeType):
+            return False
         with tempfile.TemporaryDirectory(prefix="custodian-pyc-verify-") as folder:
             regenerated = Path(folder) / path.name
             py_compile.compile(str(source), cfile=str(regenerated), doraise=True,
-                               optimize=optimize)
+                               dfile=code.co_filename, optimize=optimize)
             if regenerated.read_bytes() != data:
                 return False
     except (OSError, py_compile.PyCompileError, ValueError):
