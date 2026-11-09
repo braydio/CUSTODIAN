@@ -47,7 +47,49 @@ class TurnDispatcherTests(unittest.TestCase):
         result = td.inspect(self.repo, "example-task", "normal")
         self.assertEqual(result["branch"], "agent/example-task")
         self.assertIsNone(result["remote_head"])
-        self.assertIn("v2-identity", result["selection_policy"])
+        self.assertEqual(result["selection_policy"], "v2-round-robin-progress-and-user-design-hold-v2")
+
+    def test_task_progress_requires_landed_branch_for_archived_completion(self):
+        archive = self.repo / "custodian/docs/ai_context/task_packets/archived/EXAMPLE.md"
+        archive.parent.mkdir(parents=True)
+        archive.write_text(self.packet.read_text().replace("Status: draft", "Status: complete"), encoding="utf-8")
+        self.packet.unlink()
+        run("git", "add", "-A", cwd=self.repo)
+        run("git", "commit", "-m", "archive example task", cwd=self.repo)
+        run("git", "push", "origin", "main", cwd=self.repo)
+        main_sha = run("git", "rev-parse", "HEAD", cwd=self.repo)
+        fields = td.parse_fields(archive.read_text())
+        self.assertEqual(td.task_progress_state(
+            self.repo, main_sha, "example-task", "custodian/docs/ai_context/task_packets/archived/EXAMPLE.md", fields,
+        ), "archived-unverified")
+        run("git", "push", "origin", f"{main_sha}:refs/heads/agent/example-task", cwd=self.repo)
+        self.assertEqual(td.task_progress_state(
+            self.repo, main_sha, "example-task", "custodian/docs/ai_context/task_packets/archived/EXAMPLE.md", fields,
+        ), "completed")
+
+    def test_selection_cursor_rotates_but_is_never_required(self):
+        self.assertEqual(td.rotate_candidates(self.repo, ["z-task", "a-task"]), ["a-task", "z-task"])
+        cursor = td.record_selection(self.repo, "a-task", turn_id="a" * 32,
+                                     main_sha=run("git", "rev-parse", "HEAD", cwd=self.repo))
+        self.assertTrue(cursor)
+        self.assertEqual(td.rotate_candidates(self.repo, ["z-task", "a-task"]), ["z-task", "a-task"])
+        Path(cursor).write_text("not json")
+        self.assertEqual(td.rotate_candidates(self.repo, ["z-task", "a-task"]), ["a-task", "z-task"])
+
+    def test_archived_work_remains_explicitly_selectable_in_historical_mode(self):
+        archive = self.repo / "custodian/docs/ai_context/task_packets/archived/EXAMPLE.md"
+        archive.parent.mkdir(parents=True)
+        archive.write_text(self.packet.read_text(), encoding="utf-8")
+        self.packet.unlink()
+        run("git", "add", "-A", cwd=self.repo)
+        run("git", "commit", "-m", "archive for historical lookup", cwd=self.repo)
+        run("git", "push", "origin", "main", cwd=self.repo)
+        result = td.begin(self.repo, "example-task", "historical", self.base / "historical-archived")
+        self.assertIn("archived/EXAMPLE.md", result["packet"])
+        self.assertEqual(result["mode"], "historical")
+        checkout = Path(result["checkout"])
+        run("git", "worktree", "remove", str(checkout), cwd=self.repo)
+        run("git", "update-ref", "-d", f"refs/heads/{result['local_branch']}", result["source_sha"], cwd=self.repo)
 
     def test_historical_selection_uses_same_v2_readiness(self):
         result = td.inspect(self.repo, "example-task", "historical")

@@ -40,15 +40,20 @@ Use `custodian/AGENTS.md` as the first local stop before using this pack.
 
 ## Execution entrypoint (Dispatcher V2 cutover candidate)
 
-In the D2-005 candidate, `dispatch.py claim` / `claim-next` and
+In the D2-006 candidate, `dispatch.py claim` / `claim-next` and
 `workstream.py start` / `resume` / `checkpoint` route through the turn-scoped
 V2 implementation. V2 uses authenticated packet identity and explicit user
 design holds; legacy queue status, dependency, claim, and session-lock fields
-do not schedule acquisition. The task index is authoring metadata. A V2
-checkpoint preserves progress and is not task completion or review approval.
-The paired-review runner and `workstream.py finish` enforce separate evidence,
-validation, acceptance, landing, and teardown gates. The patch is not active on
-`origin/main` until it completes independent review and guarded merge.
+do not schedule acquisition. The task index is authoring metadata. `claim-next`
+rotates candidates using an optional advisory cursor and skips a task only with
+durable packet and landed-branch completion evidence; absent cursor/session
+state never blocks resume. A V2 checkpoint preserves progress and is not task
+completion or review approval. V2 `workstream.py finish` checkpoints and
+retires the turn using the durable V2 record without `RunTrace.resume`, a
+workstream mutex, or branch rename. Standard GitHub CI and branch protection
+govern landing; independent review is optional unless requested or warranted
+for consequential work. The patch is not active on `origin/main` until
+cutover.
 
 ## One-Paragraph Summary
 

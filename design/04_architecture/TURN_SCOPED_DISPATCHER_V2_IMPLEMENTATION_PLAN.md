@@ -1,16 +1,23 @@
 # Turn-Scoped Dispatcher V2 Implementation Plan
 
-**Status:** D2-005 Stage 3B integration candidate implemented on `agent/turn-scoped-dispatcher-v2`; fresh independent review pending; no production cutover. The legacy dispatcher remains the `origin/main` authority until reviewed merge.
+**Status:** D2-006 implementation candidate on `agent/turn-scoped-dispatcher-v2`; focused implementation and lifecycle checks pass; not activated on `origin/main`.
 **Program:** CUSTODIAN Dispatcher V2 replacement
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af12561-89a4-83ea-bc7f-c896ec89bed0
-**D2-005 candidate base:** `de9fb72d8f4f2c239c551d87797351c9093e21b8` (fetched from `origin/main` on 2026-11-09).
-**Prototype:** PR #123, branch `agent/turn-scoped-dispatcher-v2`; candidate only, not current execution authority.
+**D2-006 base:** `de9fb72d8f4f2c239c551d87797351c9093e21b8` (fetched from `origin/main` on 2026-11-09).
+**Prototype:** PR #123, branch `agent/turn-scoped-dispatcher-v2`; implementation reference only.
+
+## Owner policy amendment for D2-006
+
+This amendment replaces Stage 3 acceptance and cutover conditions below wherever they conflict. V2 `finish` is a per-turn checkpoint and retirement command: it consumes durable V2 records, runs ordinary correctness checks, publishes/verifies the handoff, and reports the turn outcome truthfully. It must not require the prior checkout/session, `RunTrace.resume`, a workstream mutex, or branch renaming. Task completion is separate and must not be inferred from archive state or a branch alone. Standard GitHub CI and branch protection govern landing. Independent review is optional for ordinary work and is used when explicitly requested or warranted for consequential changes; no universal administrative review cycle is added.
+
+Selection progress is advisory: rotation across new and resumable work is appropriate, but no cursor, session, receipt, or lock is required to resume. `claim-next` skips work as completed only when durable completion evidence agrees (packet completion and task branch reachability from `origin/main`). Ordinary task claims use no locks. If a future operation protects a truly exclusive non-Git resource, cap its lease at two hours and validate expiry plus a fencing token at every protected operation; expired holders cannot write. Git updates remain non-forcing and expected-parent/CAS guarded. Routine task completion does not require immutable evidence bundles; preserve unique user data and the durable branch/handoff.
+
 
 ## Purpose and boundary
 
 Replace the current persistent-worktree dispatcher model with a turn-scoped execution lifecycle that can acquire either a new eligible task or useful historical work, preserve recoverable work across turns, and retire temporary checkouts safely. This plan describes the implementation and cutover sequence. It does not itself replace `dispatch.py`, authorize checkout deletion, change task ownership, or alter the historical archive.
 
-The current dispatcher and `workstream.py` lifecycle remain authoritative until all implementation, independent review, validation, and cutover gates in this plan pass. The local coordination checkout used to author this draft has unrelated dirty files; they are outside this scope and must remain intact.
+The V2 candidate remains inactive until its focused validation is green and the owner directs cutover; standard GitHub CI and branch protection control landing. The local coordination checkout used to author this draft has unrelated dirty files; they are outside this scope and must remain intact.
 
 ## Goals
 
@@ -34,7 +41,7 @@ The current dispatcher and `workstream.py` lifecycle remain authoritative until 
 
 ### Acquisition modes
 
-**Normal mode** selects a task with a valid durable identity and an available task definition, authenticates those task-definition bytes against fetched `origin/main`, and creates or reuses the remote `agent/<workstream>` branch only under a non-forcing, race-safe operation. It creates a fresh checkout in a managed temporary pool and hydrates required LFS content before work begins. V2 readiness is evaluated independently: task identity and definition are valid, no unresolved user-owned design decision holds selection, and branch/checkout creation is safe. Old packet statuses, dispatcher eligibility, locks, execution claims, and dependency chains cannot block V2 task selection. Implementable technical prerequisites are absorbed into the implementation scope. Validation, independent review, human approval, and data-integrity requirements remain acceptance controls; they are not scheduling gates.
+**Normal mode** selects a task with a valid durable identity and an available task definition, authenticates those task-definition bytes against fetched `origin/main`, and creates or reuses the remote `agent/<workstream>` branch only under a non-forcing, race-safe operation. It creates a fresh checkout in a managed temporary pool and hydrates required LFS content before work begins. V2 readiness is evaluated independently: task identity and definition are valid, no unresolved user-owned design decision holds selection, and branch/checkout creation is safe. Old packet statuses, dispatcher eligibility, locks, execution claims, and dependency chains cannot block V2 task selection. Implementable technical prerequisites are absorbed into the implementation scope. Validation, any explicitly requested or consequential review, human approval, and data-integrity requirements remain appropriate controls; they are not scheduling gates.
 
 **Historical mode** selects a task with a valid durable identity and available task definition, then treats prior implementation from remote branches, handoffs, evidence references, and the historical archive as optional reference material. Reuse verified useful changes where available. Historical records are not claim authority and cannot veto fresh implementation. Historical mode must not require the original worker/session to return, preserve obsolete persistent locks, or wait on a retired ownership chain. It must respect a current human-owned design hold and all still-applicable safety, review, and acceptance requirements. If historical commits or checkout data are missing, unavailable, or cannot be authenticated, record what could not be reused and continue fresh from current `origin/main`.
 
@@ -114,8 +121,8 @@ The actual host archive still requires a stable, complete inventory and one veri
 - Inventory and migrate all repository instructions, workflow entrypoints, review/checkpoint integrations, and consumers. Update them as one bounded reviewed cutover so no tool or instruction points at a retired authority.
 - Perform an opt-in pilot on a disposable task with no active overlapping claim, then a historical restoration pilot using a verified archived example. Preserve full receipts and prove that a fresh turn can resume from branch, handoff, and archive manifest without prior process/session memory.
 - Run focused and repository-level validation from a clean, current checkout; include LFS-enabled host validation, multi-writer races, failure injection, filesystem edge cases, branch integrity checks, and verification that unrelated worktrees/refs are unchanged.
-- Obtain the required fresh-context independent technical review of the exact cutover diff. Resolve findings in bounded corrections and re-review. Do not self-approve.
-- Only after all gates pass, switch documented/default entrypoints to V2 and mark the old dispatcher superseded. Retain a documented rollback path until post-cutover validation confirms operational continuity. Remove old code only when every supported consumer has migrated and rollback is no longer required.
+- Use independent technical review for changes explicitly requested for review or warranted by consequential risk. Resolve any findings in bounded corrections. Ordinary changes use standard CI and branch protection without a universal administrative review gate.
+- After focused correctness checks pass and the owner directs cutover, use standard GitHub CI and branch protection to land V2. Retain a documented rollback path until post-cutover validation confirms operational continuity. Remove old code only when every supported consumer has migrated and rollback is no longer required.
 
 ## Acceptance gates
 
@@ -126,10 +133,10 @@ The actual host archive still requires a stable, complete inventory and one veri
 5. **Retirement safety:** Only the exact verified temporary checkout can be automatically retired. No broad prune, age sweep, `rm -rf`, unrelated branch/ref deletion, or implicit claim/review cleanup occurs. Legacy checkout retirement requires exact inventory and restore verification.
 6. **Failure recovery:** Every mutation boundary has injected-failure coverage and is safe to retry or explicitly retains the checkout. Remote mismatch, missing LFS bytes, archive mismatch, stale packet/main state, unexpected path, and ambiguous ownership fail closed with a precise reason.
 7. **Authority migration:** V2 task identity, definition provenance, review acceptance, validation, provenance, and human approval remain truthful. The behavior-difference matrix documents intentional old/new selection differences; old statuses, locks, claims, and dependency chains cannot block V2 selection. All entrypoints and guidance name the same live authority after cutover.
-8. **Operations and cutover:** Focused tests, repository validation, LFS host smoke, historical restore pilot, fresh-context independent review, and post-cutover smoke pass. The old path is retired only after a verified rollback window and consumer migration.
+8. **Operations and cutover:** Focused tests, repository validation, LFS host smoke, historical restore pilot, standard GitHub CI/branch protection, and post-cutover smoke pass; review is required only when explicitly requested or warranted for consequential risk. The old path is retired only after a verified rollback window and consumer migration.
 
 ## Evidence and reporting
 
-Each implementation stage records the exact reviewed main SHA, workstream and branch SHAs, CLI receipts, packet/handoff identities, archive manifest and verification results (when used), LFS OIDs and availability, validation commands/results, independent review outcome, and any retained checkout with its predicate and next action. Reports distinguish `inspected`, `implemented`, `published`, `verified`, `reviewed`, and `approved`; none implies another.
+Each implementation stage records the exact base/main SHA, workstream and branch SHAs, CLI receipts, packet/handoff identities, archive manifest and verification results when used, LFS OIDs and availability, validation commands/results, optional review outcome, and any retained checkout with its predicate and next action. Reports distinguish `inspected`, `implemented`, `published`, `verified`, `reviewed`, and `approved`; none implies another.
 
 The first implementation instruction should select a bounded Stage 1 slice and its paired review contract. Stage 2 and Stage 3 proceed only after the preceding implementation and review evidence establish their technical prerequisites; these are absorbed into the work and do not reintroduce task-scheduling dependencies. The current dispatcher remains in force for its existing users until the Stage 3 cutover gate is explicitly met, while V2 selection remains independent of its gates.

@@ -157,6 +157,72 @@ def remote_branch(repo: Path, branch: str) -> str | None:
     return rows[0][0] if rows else None
 
 
+def selection_cursor_path(repo: Path) -> Path:
+    common = Path(git(repo, "rev-parse", "--git-common-dir"))
+    if not common.is_absolute():
+        common = (repo / common).resolve()
+    return common / "custodian-turn-dispatcher-v2" / "selection-cursor.json"
+
+
+def rotate_candidates(repo: Path, candidates: list[str]) -> list[str]:
+    """Rotate active V2 candidates using optional, advisory local progress."""
+    ordered = sorted(set(candidates))
+    if not ordered:
+        return []
+    path = selection_cursor_path(repo)
+    if path.is_symlink() or not path.is_file():
+        return ordered
+    try:
+        state = json.loads(path.read_text(encoding="utf-8"))
+        previous = state.get("last_workstream") if isinstance(state, dict) else None
+    except (OSError, json.JSONDecodeError):
+        return ordered
+    if previous not in ordered:
+        return ordered
+    index = ordered.index(previous)
+    return ordered[index + 1:] + ordered[:index + 1]
+
+
+def record_selection(repo: Path, workstream: str, *, turn_id: str, main_sha: str) -> str | None:
+    """Persist a best-effort cursor; it never gates explicit or resumed work."""
+    path = selection_cursor_path(repo)
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+        if path.is_symlink():
+            return None
+        payload = {"schema": "custodian.turn_dispatcher_v2.selection.v1",
+                   "last_workstream": workstream, "turn_id": turn_id,
+                   "main_sha": main_sha, "recorded_at": time.time()}
+        temporary = path.with_name(path.name + f".{uuid.uuid4().hex}.tmp")
+        try:
+            with temporary.open("x", encoding="utf-8") as stream:
+                stream.write(json.dumps(payload, sort_keys=True) + "\n")
+            os.chmod(temporary, 0o600)
+            os.replace(temporary, path)
+        finally:
+            if temporary.exists():
+                temporary.unlink()
+        return str(path)
+    except OSError:
+        return None
+
+
+def task_progress_state(repo: Path, main_sha: str, workstream: str,
+                        packet_path: str, fields: dict[str, str]) -> str:
+    """Describe durable progress without turning it into an acquisition gate."""
+    archived = "/archived/" in packet_path
+    branch = f"agent/{workstream}"
+    head = remote_branch(repo, branch)
+    complete_declared = fields.get("status", "").lower().startswith("complete")
+    if complete_declared and head:
+        fetched = fetch_branch(repo, branch, head)
+        if is_ancestor(repo, fetched, main_sha):
+            return "completed"
+    if archived:
+        return "archived-unverified"
+    return "resumable" if head else "new"
+
+
 def fetch_branch(repo: Path, branch: str, expected: str | None) -> str:
     git(repo, "fetch", "--no-tags", "origin", f"refs/heads/{branch}")
     fetched = git(repo, "rev-parse", "--verify", "FETCH_HEAD^{commit}")
@@ -220,7 +286,7 @@ def inspect(repo: Path, workstream: str, mode: str,
     return {"workstream": workstream, "mode": mode, "branch": branch,
             "packet": packet_path, "task_definition_sha": main_sha,
             "remote_head": remote_branch(repo, branch),
-            "selection_policy": "v2-identity-and-user-design-hold-v1", "repo": str(repo),
+            "selection_policy": "v2-round-robin-progress-and-user-design-hold-v2", "repo": str(repo),
             "definition_kind": definition["kind"], "definition_sha256": definition["sha256"],
             "owner_authorization": authorization}
 

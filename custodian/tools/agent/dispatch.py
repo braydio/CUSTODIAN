@@ -967,8 +967,11 @@ def main(argv: list[str] | None = None) -> int:
         import turn_dispatcher_v2 as turn_v2
         workstream = getattr(args, "workstream_id", None)
         mode = args.mode
+        selection_main_sha = None
+        selection_progress = None
         if args.command == "claim-next":
             main_sha, _ = turn_v2.latest_main(repo)
+            selection_main_sha = main_sha
             packet_paths = turn_v2.git(repo, "ls-tree", "-r", "--name-only", main_sha, "--", turn_v2.PACKETS).splitlines()
             candidates = []
             for packet_path in packet_paths:
@@ -984,8 +987,9 @@ def main(argv: list[str] | None = None) -> int:
                 candidate = fields.get("workstream", "")
                 if turn_v2.ID.fullmatch(candidate):
                     candidates.append((packet_path, candidate))
-            identities = sorted({candidate for _, candidate in candidates})
+            identities = turn_v2.rotate_candidates(repo, [candidate for _, candidate in candidates])
             blocked = []
+            completed = []
             for candidate in identities:
                 try:
                     turn_v2.inspect(repo, candidate, mode)
@@ -994,10 +998,20 @@ def main(argv: list[str] | None = None) -> int:
                         blocked.append((candidate, str(exc)))
                         continue
                     raise
+                packet_path = next(path for path, identity in candidates if identity == candidate)
+                packet_text = turn_v2.git(repo, "show", f"{main_sha}:{packet_path}")
+                selection_progress = turn_v2.task_progress_state(
+                    repo, main_sha, candidate, packet_path, turn_v2.parse_fields(packet_text),
+                )
+                if selection_progress == "completed":
+                    completed.append(candidate)
+                    continue
                 workstream = candidate
                 break
             if workstream is None:
                 print("NO V2 TASK AVAILABLE")
+                for candidate in completed:
+                    print(f"- {candidate}: completed (task branch is reachable from origin/main)")
                 for candidate, reason in blocked:
                     print(f"- {candidate}: {reason}")
                 return 2
@@ -1005,6 +1019,11 @@ def main(argv: list[str] | None = None) -> int:
                                getattr(args, "authorization_url", None),
                                getattr(args, "authorization_sha256", None),
                                getattr(args, "checkout_profile", None))
+        selection_cursor = None
+        if selection_main_sha and args.command == "claim-next":
+            selection_cursor = turn_v2.record_selection(
+                repo, workstream, turn_id=result["turn_id"], main_sha=selection_main_sha,
+            )
         packet = result.get("packet") or f"owner-authorized:{result['owner_authorization']['reference']}"
         receipt = {"schema": "custodian.dispatch.claim.v2", "result": "claimed",
                    "workstream": workstream, "branch": result["local_branch"],
@@ -1014,6 +1033,7 @@ def main(argv: list[str] | None = None) -> int:
                    "turn_id": result["turn_id"], "acquisition_receipt": result["acquisition_receipt"],
                    "remote_branch": result["branch"], "source": result["source"],
                    "source_sha": result["source_sha"], "task_definition_sha": result["task_definition_sha"],
+                   "selection_progress": selection_progress, "selection_cursor": selection_cursor,
                    "acquisition_receipt": result["acquisition_receipt"], "agent": resolve_agent_id(args.agent)}
         print("CUSTODIAN_DISPATCH_RESULT_JSON:" + json.dumps(receipt, sort_keys=True))
         return 0

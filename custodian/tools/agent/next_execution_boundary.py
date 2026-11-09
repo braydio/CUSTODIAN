@@ -2,8 +2,8 @@
 """Pure execution-boundary policy for the CUSTODIAN Next skill.
 
 This module does not inspect Git, select packets, claim work, or run reviews.
-Callers supply V2 identity/design-hold availability, active-turn state, and the
-durable packet handoff. V2 itself remains the acquisition authority.
+Callers supply facts from the dispatcher, the active worktree, and the durable
+packet handoff; those authorities remain responsible for their own domains.
 """
 from __future__ import annotations
 
@@ -16,8 +16,8 @@ from typing import Any
 
 
 SCHEMA = "custodian.next_execution_boundary.v1"
-MODES = {"single-pair", "continuous-chain"}
-PHASES = {"start", "implementation", "review", "pair-boundary", "blocked"}
+MODES = {"single-task", "continuous-chain"}
+PHASES = {"start", "implementation", "task-boundary", "blocked"}
 REVIEW_STATUSES = {"none", "pending", "passed", "findings", "human_required", "blocked"}
 
 
@@ -33,15 +33,15 @@ def _nonnegative_int(value: Any, label: str) -> int:
 
 def normalize_request(raw: dict[str, Any]) -> dict[str, Any]:
     """Normalize the invocation budget; an unqualified request is one pair."""
-    mode = raw.get("mode", "single-pair")
+    mode = raw.get("mode", "single-task")
     if mode not in MODES:
-        raise BoundaryError("mode must be single-pair or continuous-chain")
-    if mode == "single-pair":
+        raise BoundaryError("mode must be single-task or continuous-chain")
+    if mode == "single-task":
         maximum = 1
     else:
-        maximum = raw.get("max_pairs")
+        maximum = raw.get("max_tasks")
         if isinstance(maximum, bool) or not isinstance(maximum, int) or maximum <= 0:
-            raise BoundaryError("continuous-chain requires a positive max_pairs")
+            raise BoundaryError("continuous-chain requires a positive max_tasks")
 
     scope = raw.get("scope")
     if scope is not None:
@@ -57,7 +57,7 @@ def normalize_request(raw: dict[str, Any]) -> dict[str, Any]:
     return {
         "schema": SCHEMA,
         "mode": mode,
-        "max_pairs": maximum,
+        "max_tasks": maximum,
         "scope": scope,
         "explicit_general_next": general_next,
     }
@@ -68,9 +68,9 @@ def _stop(request: dict[str, Any], completed: int, reason: str, **extra: Any) ->
         "schema": SCHEMA,
         "action": "stop",
         "mode": request["mode"],
-        "max_pairs": request["max_pairs"],
-        "completed_pairs": completed,
-        "remaining_pairs": max(0, request["max_pairs"] - completed),
+        "max_tasks": request["max_tasks"],
+        "completed_tasks": completed,
+        "remaining_tasks": max(0, request["max_tasks"] - completed),
         "reason": reason,
         **extra,
     }
@@ -81,25 +81,24 @@ def _claim(request: dict[str, Any], completed: int, action: str, workstream: str
         "schema": SCHEMA,
         "action": action,
         "mode": request["mode"],
-        "max_pairs": request["max_pairs"],
-        "completed_pairs": completed,
-        "remaining_pairs": max(0, request["max_pairs"] - completed),
+        "max_tasks": request["max_tasks"],
+        "completed_tasks": completed,
+        "remaining_tasks": max(0, request["max_tasks"] - completed),
         "workstream": workstream,
-        "reason": "V2 must authenticate task identity and enforce user-owned design holds",
+        "reason": "dispatcher must verify eligibility and remains claim authority",
     }
 
 
 def evaluate(request_data: dict[str, Any], facts: dict[str, Any]) -> dict[str, Any]:
     """Return one safe next action from normalized dispatcher/workstream facts.
 
-    A pair is one implementation plus its required independent review and any
-    bounded correction/re-review cycles. `completed_pairs` advances only after
-    the review receipt passes (or the packet explicitly has no paired review).
+    A task advances at a durable checkpoint boundary. Review is optional and does
+    not define the task budget.
     """
     request = normalize_request(request_data)
-    completed = _nonnegative_int(facts.get("completed_pairs", 0), "completed_pairs")
-    if completed >= request["max_pairs"]:
-        return _stop(request, completed, "pair_budget_reached")
+    completed = _nonnegative_int(facts.get("completed_tasks", 0), "completed_tasks")
+    if completed >= request["max_tasks"]:
+        return _stop(request, completed, "task_budget_reached")
 
     phase = facts.get("phase", "start")
     if phase not in PHASES:
@@ -122,85 +121,37 @@ def evaluate(request_data: dict[str, Any], facts: dict[str, Any]) -> dict[str, A
             "schema": SCHEMA,
             "action": "resume_current",
             "mode": request["mode"],
-            "max_pairs": request["max_pairs"],
-            "completed_pairs": completed,
-            "remaining_pairs": request["max_pairs"] - completed,
+            "max_tasks": request["max_tasks"],
+            "completed_tasks": completed,
+            "remaining_tasks": request["max_tasks"] - completed,
             "workstream": current,
             "reason": "verified active claim takes precedence over any new claim",
         }
 
-    if phase in {"implementation", "review"}:
+    if phase == "implementation":
         if not current:
             raise BoundaryError(f"{phase} phase requires current_workstream")
-        if phase == "review":
-            return {
-                "schema": SCHEMA,
-                "action": "run_paired_review",
-                "mode": request["mode"],
-                "max_pairs": request["max_pairs"],
-                "completed_pairs": completed,
-                "remaining_pairs": request["max_pairs"] - completed,
-                "workstream": current,
-                "reason": "paired reviews require the fresh-context review runner",
-            }
         return {
             "schema": SCHEMA,
             "action": "resume_current",
             "mode": request["mode"],
-            "max_pairs": request["max_pairs"],
-            "completed_pairs": completed,
-            "remaining_pairs": request["max_pairs"] - completed,
+            "max_tasks": request["max_tasks"],
+            "completed_tasks": completed,
+            "remaining_tasks": request["max_tasks"] - completed,
             "workstream": current,
             "reason": "finish the active implementation before considering another claim",
         }
 
-    review = facts.get("review", {})
-    if not isinstance(review, dict):
-        raise BoundaryError("review must be an object")
-    required = review.get("required", True)
-    if not isinstance(required, bool):
-        raise BoundaryError("review.required must be a boolean")
-    status = review.get("status", "pending" if required else "none")
-    if status not in REVIEW_STATUSES:
-        raise BoundaryError(f"review.status must be one of {', '.join(sorted(REVIEW_STATUSES))}")
-
-    if phase == "pair-boundary":
+    if phase == "task-boundary":
         if not current:
-            raise BoundaryError("pair-boundary phase requires current_workstream")
-        if required and status == "pending":
-            if review.get("eligible") is True:
-                return {
-                    "schema": SCHEMA,
-                    "action": "run_paired_review",
-                    "mode": request["mode"],
-                    "max_pairs": request["max_pairs"],
-                    "completed_pairs": completed,
-                    "remaining_pairs": request["max_pairs"] - completed,
-                    "workstream": current,
-                    "reason": "paired review is required before the pair can complete",
-                }
-            return _stop(request, completed, "paired_review_not_eligible", blocked_workstream=current)
-        if required and status == "findings" and review.get("correction_available") is True:
-            return {
-                "schema": SCHEMA,
-                "action": "resume_current",
-                "mode": request["mode"],
-                "max_pairs": request["max_pairs"],
-                "completed_pairs": completed,
-                "remaining_pairs": request["max_pairs"] - completed,
-                "workstream": current,
-                "reason": "bounded review correction remains inside the current pair",
-            }
-        if required and status in {"human_required", "blocked", "findings"}:
-            return _stop(request, completed, f"paired_review_{status}", blocked_workstream=current)
-        if required and status != "passed":
-            return _stop(request, completed, "paired_review_receipt_missing", blocked_workstream=current)
-        if not required and status not in {"none", "passed"}:
-            return _stop(request, completed, "unexpected_review_state", blocked_workstream=current)
+            raise BoundaryError("task-boundary phase requires current_workstream")
         completed += 1
 
-    if completed >= request["max_pairs"]:
-        return _stop(request, completed, "pair_budget_reached", completed_workstream=current)
+    if completed >= request["max_tasks"]:
+        return _stop(request, completed, "task_budget_reached", completed_workstream=current)
+
+    if phase == "blocked":
+        return _stop(request, completed, "blocked_workstream", blocked_workstream=current)
 
     handoff = facts.get("handoff", {})
     if not isinstance(handoff, dict):
@@ -222,16 +173,16 @@ def evaluate(request_data: dict[str, Any], facts: dict[str, Any]) -> dict[str, A
         gates.append("technical_blocker")
     if gates:
         return _stop(request, completed, gates[0], blockers=gates, blocked_workstream=next_id or current)
+    if phase == "blocked":
+        return _stop(request, completed, "blocked_workstream", blocked_workstream=current)
 
     scope = request["scope"]
     if next_id and scope is not None and next_id not in scope:
         return _stop(request, completed, "successor_outside_scope", next_workstream=next_id)
     if next_id and handoff.get("eligible") is True:
         kind = handoff.get("kind", "implementation")
-        if kind not in {"implementation", "review"}:
-            raise BoundaryError("handoff.kind must be implementation or review")
-        if kind == "review":
-            return _claim(request, completed, "run_named_review", next_id)
+        if kind != "implementation":
+            return _stop(request, completed, "named_successor_is_not_an_implementation", next_workstream=next_id)
         return _claim(request, completed, "claim_named_successor", next_id)
 
     predecessor = handoff.get("eligible_predecessor")
@@ -255,87 +206,53 @@ def evaluate(request_data: dict[str, Any], facts: dict[str, Any]) -> dict[str, A
     return _stop(request, completed, reason, next_workstream=next_workstream)
 
 
-def receipt(
-    *,
-    invocation_id: str,
-    workstream: str,
-    pair_index: int,
-    max_pairs: int,
-    pair_completed: bool,
-    phase: str,
-    landed_sha: str | None,
-    review_status: str,
-    elapsed_seconds: float,
-    validation_summary: str,
-    next_eligibility: str,
-) -> dict[str, Any]:
-    """Build a compact, schema-checked pair-boundary receipt for RunTrace."""
+def receipt(*, invocation_id: str, workstream: str, task_index: int, max_tasks: int,
+            task_checkpointed: bool, phase: str, checkpoint_sha: str | None,
+            review_status: str = "not-run", elapsed_seconds: float, validation_summary: str,
+            next_eligibility: str) -> dict[str, Any]:
+    """Build a compact, schema-checked task-boundary receipt for RunTrace."""
     if (not isinstance(invocation_id, str) or not invocation_id.strip()
             or not isinstance(workstream, str) or not workstream.strip()
-            or phase not in {"implementation", "review", "pair-boundary", "blocked"}):
+            or phase not in {"implementation", "task-boundary", "blocked"}):
         raise BoundaryError("receipt requires an invocation ID, workstream, and valid phase")
-    if _nonnegative_int(pair_index, "pair_index") < 1:
-        raise BoundaryError("pair_index must be at least one")
-    if isinstance(max_pairs, bool) or not isinstance(max_pairs, int) or max_pairs <= 0:
-        raise BoundaryError("max_pairs must be a positive integer")
-    if pair_index > max_pairs:
-        raise BoundaryError("pair_index cannot exceed max_pairs")
-    if not isinstance(pair_completed, bool):
-        raise BoundaryError("pair_completed must be a boolean")
-    if landed_sha is not None and not isinstance(landed_sha, str):
-        raise BoundaryError("landed_sha must be a string or null")
+    if _nonnegative_int(task_index, "task_index") < 1:
+        raise BoundaryError("task_index must be at least one")
+    if isinstance(max_tasks, bool) or not isinstance(max_tasks, int) or max_tasks <= 0 or task_index > max_tasks:
+        raise BoundaryError("task_index must fit a positive max_tasks budget")
+    if not isinstance(task_checkpointed, bool):
+        raise BoundaryError("task_checkpointed must be a boolean")
+    if checkpoint_sha is not None and not isinstance(checkpoint_sha, str):
+        raise BoundaryError("checkpoint_sha must be a string or null")
     if (isinstance(elapsed_seconds, bool) or not isinstance(elapsed_seconds, (int, float))
             or not math.isfinite(elapsed_seconds) or elapsed_seconds < 0):
         raise BoundaryError("elapsed_seconds must be a finite non-negative number")
-    if review_status not in REVIEW_STATUSES:
-        raise BoundaryError(f"review_status must be one of {', '.join(sorted(REVIEW_STATUSES))}")
-    if pair_completed and review_status not in {"passed", "none"}:
-        raise BoundaryError("a completed pair requires an accepted review or no required review")
-    if not isinstance(validation_summary, str) or not isinstance(next_eligibility, str):
-        raise BoundaryError("validation_summary and next_eligibility must be strings")
-    return {
-        "schema": SCHEMA,
-        "invocation_id": invocation_id.strip(),
-        "workstream": workstream.strip(),
-        "pair_index": pair_index,
-        "max_pairs": max_pairs,
-        "pair_completed": pair_completed,
-        "phase": phase,
-        "landed_sha": landed_sha,
-        "review_status": review_status,
-        "elapsed_seconds": round(elapsed_seconds, 2),
-        "validation_summary": validation_summary.strip(),
-        "next_eligibility": next_eligibility.strip(),
-    }
-
+    if not all(isinstance(item, str) for item in (review_status, validation_summary, next_eligibility)):
+        raise BoundaryError("review_status, validation_summary and next_eligibility must be strings")
+    return {"schema": SCHEMA, "invocation_id": invocation_id.strip(), "workstream": workstream.strip(),
+            "task_index": task_index, "max_tasks": max_tasks, "task_checkpointed": task_checkpointed,
+            "phase": phase, "checkpoint_sha": checkpoint_sha, "review_status": review_status,
+            "elapsed_seconds": round(elapsed_seconds, 2), "validation_summary": validation_summary.strip(),
+            "next_eligibility": next_eligibility.strip()}
 
 def invocation_progress(repo: Path, invocation_id: str) -> dict[str, Any]:
-    """Recover completed pair count from existing local durable RunTrace files."""
+    """Recover checkpointed task count from local durable RunTrace records."""
     if not invocation_id.strip():
         raise BoundaryError("invocation_id must be non-empty")
     from workflow_control import common_dir
-
     trace_root = common_dir(repo) / "custodian-workflow" / "traces"
-    completed: dict[str, dict[str, Any]] = {}
+    checkpointed: dict[str, dict[str, Any]] = {}
     if trace_root.exists():
         for path in sorted(trace_root.glob("*/*.jsonl")):
             try:
                 for line in path.read_text(encoding="utf-8").splitlines():
-                    event = json.loads(line)
-                    data = event.get("data", {})
-                    if (event.get("event") == "execution_boundary_receipt"
-                            and data.get("invocation_id") == invocation_id
-                            and data.get("pair_completed") is True
-                            and data.get("review_status") in {"passed", "none"}):
-                        completed[str(data["workstream"])] = {
-                            "workstream": data["workstream"],
-                            "landed_sha": data.get("landed_sha"),
-                            "review_status": data.get("review_status"),
-                        }
+                    event = json.loads(line); data = event.get("data", {})
+                    if event.get("event") == "execution_boundary_receipt" and data.get("invocation_id") == invocation_id and data.get("task_checkpointed") is True:
+                        checkpointed[str(data["workstream"])] = {"workstream": data["workstream"],
+                            "checkpoint_sha": data.get("checkpoint_sha"), "review_status": data.get("review_status", "not-run")}
             except (OSError, json.JSONDecodeError, AttributeError, KeyError, TypeError):
                 continue
-    pairs = sorted(completed.values(), key=lambda item: item["workstream"])
-    return {"schema": SCHEMA, "invocation_id": invocation_id, "completed_pairs": len(pairs), "pairs": pairs}
+    tasks = sorted(checkpointed.values(), key=lambda item: item["workstream"])
+    return {"schema": SCHEMA, "invocation_id": invocation_id, "completed_tasks": len(tasks), "tasks": tasks}
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -346,16 +263,16 @@ def main(argv: list[str] | None = None) -> int:
     receipt_parser = subs.add_parser("record-receipt", help="append a structured receipt to the active RunTrace")
     receipt_parser.add_argument("--invocation-id", required=True)
     receipt_parser.add_argument("--workstream", required=True)
-    receipt_parser.add_argument("--pair-index", type=int, required=True)
-    receipt_parser.add_argument("--max-pairs", type=int, required=True)
-    receipt_parser.add_argument("--pair-completed", choices=("true", "false"), required=True)
-    receipt_parser.add_argument("--phase", choices=("implementation", "review", "pair-boundary", "blocked"), required=True)
-    receipt_parser.add_argument("--landed-sha")
+    receipt_parser.add_argument("--task-index", type=int, required=True)
+    receipt_parser.add_argument("--max-tasks", type=int, required=True)
+    receipt_parser.add_argument("--task-checkpointed", choices=("true", "false"), required=True)
+    receipt_parser.add_argument("--phase", choices=("implementation", "task-boundary", "blocked"), required=True)
+    receipt_parser.add_argument("--checkpoint-sha")
     receipt_parser.add_argument("--review-status", required=True)
     receipt_parser.add_argument("--elapsed-seconds", type=float, required=True)
     receipt_parser.add_argument("--validation-summary", required=True)
     receipt_parser.add_argument("--next-eligibility", required=True)
-    progress_parser = subs.add_parser("progress", help="recover completed pairs for an invocation from RunTrace")
+    progress_parser = subs.add_parser("progress", help="recover completed task checkpoints for an invocation from RunTrace")
     progress_parser.add_argument("--invocation-id", required=True)
     args = parser.parse_args(argv)
     try:
@@ -374,11 +291,11 @@ def main(argv: list[str] | None = None) -> int:
         data = receipt(
             invocation_id=args.invocation_id,
             workstream=args.workstream,
-            pair_index=args.pair_index,
-            max_pairs=args.max_pairs,
-            pair_completed=args.pair_completed == "true",
+            task_index=args.task_index,
+            max_tasks=args.max_tasks,
+            task_checkpointed=args.task_checkpointed == "true",
             phase=args.phase,
-            landed_sha=args.landed_sha,
+            checkpoint_sha=args.checkpoint_sha,
             review_status=args.review_status,
             elapsed_seconds=args.elapsed_seconds,
             validation_summary=args.validation_summary,

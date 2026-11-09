@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-"""Stage or send a message to an exact ChatGPT conversation via Firefox MCP.
+"""Stage or send a message to an exact ChatGPT conversation via Chrome CDP.
 
 This script uses the visible ChatGPT composer and attachment input. It never
 navigates, creates a tab, or submits unless --submit is explicitly provided.
-Firefox must already be running with Marionette enabled on port 2828. The script
-starts a short-lived Firefox DevTools MCP client and attaches to that instance.
+Chrome must already expose remote debugging on 127.0.0.1:9223.
 
 Examples:
   python send_chatgpt_message.py --url URL --text-file note.txt
@@ -16,33 +15,48 @@ Examples:
 from __future__ import annotations
 
 import argparse
-import json
 import os
 import re
 import sys
 import time
 from pathlib import Path
+from urllib.parse import urlsplit
 
-try:
-    from .firefox_mcp_client import (
-        FirefoxMCPClient,
-        canonical_url,
-        evaluate,
-        select_conversation,
-        snapshot,
-        uid_for_snapshot_line,
-        upload_files,
-    )
-except ImportError:  # direct script invocation
-    from firefox_mcp_client import (
-        FirefoxMCPClient,
-        canonical_url,
-        evaluate,
-        select_conversation,
-        snapshot,
-        uid_for_snapshot_line,
-        upload_files,
-    )
+CDP_ENDPOINT = "http://127.0.0.1:9223"
+
+
+def canonical_url(url: str) -> str:
+    parsed = urlsplit(url)
+    host = (parsed.hostname or "").lower()
+    if parsed.scheme != "https" or host not in {"chatgpt.com", "chat.openai.com"}:
+        raise ValueError("--url must be an https://chatgpt.com conversation URL")
+    path = parsed.path.rstrip("/")
+    if "/c/" not in path:
+        raise ValueError("--url must identify one conversation (/c/<id>)")
+    return path
+
+
+def is_conversation(url: str) -> bool:
+    try:
+        canonical_url(url)
+        return True
+    except ValueError:
+        return False
+
+
+def select_tab(browser, url: str):
+    wanted = canonical_url(url)
+    matches = [
+        page
+        for context in browser.contexts
+        for page in context.pages
+        if not page.is_closed()
+        and is_conversation(page.url)
+        and canonical_url(page.url) == wanted
+    ]
+    if len(matches) != 1:
+        raise ValueError(f"expected exactly one matching conversation tab; found {len(matches)}")
+    return matches[0]
 
 
 def read_message(text: str | None, text_file: str | None) -> str:
@@ -66,93 +80,28 @@ def normalized_text(value: str) -> str:
     return re.sub(r"\s+", " ", value).strip()
 
 
-COMPOSER_STATE_JS = r"""() => {
-  const composers = Array.from(document.querySelectorAll(
-    '[contenteditable="true"][aria-label*="Ask ChatGPT"]'
-  )).filter(element => element.getClientRects().length > 0);
-  if (composers.length !== 1) return { count: composers.length };
-  const composer = composers[0];
-  const form = composer.closest('form');
-  if (!form) return { count: 1, formFound: false };
-  const chipNames = Array.from(form.querySelectorAll('button[aria-label^="Remove "]'))
-    .map(button => button.getAttribute('aria-label').replace(/^Remove\s+/, '').trim())
-    .filter(Boolean);
-  const inputNames = Array.from(form.querySelectorAll('input[type="file"]'))
-    .flatMap(input => Array.from(input.files || [], file => file.name));
-  return {
-    count: 1,
-    formFound: true,
-    text: composer.innerText || '',
-    chipNames,
-    inputNames,
-    visible: !!composer.getClientRects().length
-  };
-}"""
-
-
-def composer_state(client: FirefoxMCPClient) -> dict:
-    state = evaluate(client, COMPOSER_STATE_JS)
-    if not isinstance(state, dict):
-        raise ValueError("Firefox MCP returned an invalid ChatGPT composer state")
-    if state.get("count") != 1 or state.get("formFound") is not True or not state.get("visible"):
-        raise ValueError("could not identify exactly one visible ChatGPT composer")
-    chip_names = [name for name in state.get("chipNames", []) if name]
-    input_names = [name for name in state.get("inputNames", []) if name]
+def staged_attachment_names(composer_form) -> list[str]:
+    chip_names = composer_form.locator('button[aria-label^="Remove "]').evaluate_all(
+        "buttons => buttons.map(button => "
+        "button.getAttribute('aria-label').replace(/^Remove\\s+/, '').trim())"
+    )
+    chip_names = [name for name in chip_names if name]
+    input_names = composer_form.locator('input[type="file"]').evaluate_all(
+        "inputs => inputs.flatMap(input => Array.from(input.files || [], file => file.name))"
+    )
     if chip_names and input_names and chip_names != input_names:
         raise ValueError("attachment chips and file inputs disagree; refusing to modify the draft")
-    state["attachmentNames"] = chip_names or input_names
-    return state
+    return chip_names or input_names
 
 
-def focus_composer(client: FirefoxMCPClient) -> None:
-    focused = evaluate(
-        client,
-        "() => { const elements = Array.from(document.querySelectorAll("
-        "'[contenteditable=\"true\"][aria-label*=\"Ask ChatGPT\"]'))"
-        ".filter(element => element.getClientRects().length > 0); "
-        "if (elements.length !== 1) return false; elements[0].focus(); "
-        "return document.activeElement === elements[0]; }",
-    )
-    if focused is not True:
-        raise ValueError("could not focus the visible ChatGPT composer")
-
-
-def send_button_uid(client: FirefoxMCPClient) -> str:
-    buttons = evaluate(
-        client,
-        "() => Array.from(document.querySelectorAll('button')).filter(button => { "
-        "const label = (button.getAttribute('aria-label') || button.innerText || '').trim(); "
-        "return /^(send|send message)$/i.test(label) && "
-        "button.getClientRects().length > 0 && !button.disabled; "
-        "}).map(button => ({ariaLabel: button.getAttribute('aria-label') || '', "
-        "accessibleName: (button.getAttribute('aria-label') || button.innerText || '').trim()}))",
-    )
-    if not isinstance(buttons, list) or len(buttons) != 1:
-        raise ValueError("could not identify one enabled Send button; message remains staged")
-    button = buttons[0]
-    if not isinstance(button, dict):
-        raise ValueError("Firefox returned an invalid Send button description")
-    aria_label = button.get("ariaLabel")
-    accessible_name = button.get("accessibleName")
-    if not isinstance(aria_label, str) or not aria_label.strip() or not isinstance(accessible_name, str):
-        raise ValueError("enabled Send button has no stable accessible label; message remains staged")
-
-    button_snapshot = snapshot(
-        client,
-        selector=f"button[aria-label={json.dumps(aria_label)}]",
-        includeAll=True,
-        includeAttributes=True,
-        maxLines=100,
-    )
-    return uid_for_snapshot_line(
-        button_snapshot,
-        re.compile(r'\bbutton\s+"' + re.escape(accessible_name) + r'"', re.IGNORECASE),
-    )
-
-
-def stage_message(client: FirefoxMCPClient, message: str, attachments: list[Path]) -> None:
-    state = composer_state(client)
-    existing_names = state["attachmentNames"]
+def stage_message(page, message: str, attachments: list[Path]) -> None:
+    composer = page.locator('[contenteditable="true"][aria-label*="Ask ChatGPT"]')
+    if composer.count() != 1 or not composer.is_visible():
+        raise ValueError("could not identify exactly one visible ChatGPT composer")
+    composer_form = composer.locator("xpath=ancestor::form[1]")
+    if composer_form.count() != 1:
+        raise ValueError("could not safely scope attachment verification to the composer form")
+    existing_names = staged_attachment_names(composer_form)
     expected_names = [path.name for path in attachments]
     if len(expected_names) != len(set(expected_names)):
         raise ValueError("requested attachments contain duplicate filenames")
@@ -163,7 +112,7 @@ def stage_message(client: FirefoxMCPClient, message: str, attachments: list[Path
     if not attachments and existing_names:
         raise ValueError("composer already has attached files; refusing to send them with this message")
 
-    current_text = state.get("text", "")
+    current_text = composer.inner_text()
     if current_text.strip():
         if (
             normalized_text(current_text) == normalized_text(message)
@@ -174,50 +123,41 @@ def stage_message(client: FirefoxMCPClient, message: str, attachments: list[Path
         raise ValueError("composer already contains a different draft; refusing to overwrite it")
 
     if attachments and not existing_names:
-        upload_files(client, [str(path) for path in attachments])
+        file_input = page.locator('input[type="file"][aria-label="Attach files"]')
+        if file_input.count() != 1:
+            raise ValueError("could not identify ChatGPT's Attach files input")
+        file_input.set_input_files([str(path) for path in attachments])
         deadline = time.monotonic() + 90
         while time.monotonic() < deadline:
-            if composer_state(client)["attachmentNames"] == expected_names:
+            if staged_attachment_names(composer_form) == expected_names:
                 break
             time.sleep(0.5)
         else:
             raise TimeoutError("attachment selection was applied, but filename chips did not appear")
 
-    focus_composer(client)
-    client.call_tool("type_text", {"text": message})
-    if normalized_text(composer_state(client).get("text", "")) != normalized_text(message):
+    composer.fill(message)
+    if normalized_text(composer.inner_text()) != normalized_text(message):
         raise RuntimeError("composer text did not match the requested message")
 
 
-def submit_message(client: FirefoxMCPClient, message: str, timeout: float = 30) -> None:
-    before = evaluate(
-        client,
-        "() => ({userCount: document.querySelectorAll("
-        "'[data-message-author-role=\"user\"], [data-user-message-bubble]').length})",
-    )
-    if not isinstance(before, dict) or not isinstance(before.get("userCount"), int):
-        raise ValueError("could not identify existing user messages before submission")
-    previous_user_count = before["userCount"]
-    send_uid = send_button_uid(client)
-    client.call_tool("click_by_uid", {"uid": send_uid})
+def submit_message(page, message: str, timeout: float = 30) -> None:
+    composer = page.locator('[contenteditable="true"][aria-label*="Ask ChatGPT"]')
+    composer_form = composer.locator("xpath=ancestor::form[1]")
+    previous_user_count = page.locator('[data-message-author-role="user"]').count()
+    send = page.get_by_role("button", name=re.compile(r"^(send|send message)$", re.I))
+    if send.count() != 1 or not send.is_visible() or not send.is_enabled():
+        raise ValueError("could not identify one enabled Send button; message remains staged")
+    send.click()
 
     expected = normalized_text(message)
     deadline = time.monotonic() + timeout
     while time.monotonic() < deadline:
-        state = evaluate(
-            client,
-            "() => ({users: Array.from(document.querySelectorAll("
-            "'[data-message-author-role=\"user\"], [data-user-message-bubble]'))"
-            ".map(element => element.innerText || ''), "
-            "composer: Array.from(document.querySelectorAll("
-            "'[contenteditable=\"true\"][aria-label*=\"Ask ChatGPT\"]'))"
-            ".map(element => element.innerText || '')})",
-        )
-        if isinstance(state, dict) and len(state.get("users", [])) > previous_user_count:
-            latest_message = normalized_text(state["users"][-1])
-            composer_cleared = len(state.get("composer", [])) == 1 and not state["composer"][0].strip()
+        user_messages = page.locator('[data-message-author-role="user"]')
+        if user_messages.count() > previous_user_count:
+            latest_message = normalized_text(user_messages.last.inner_text())
+            composer_cleared = not composer.inner_text().strip()
             try:
-                attachments_cleared = not composer_state(client)["attachmentNames"]
+                attachments_cleared = not staged_attachment_names(composer_form)
             except Exception:
                 attachments_cleared = False
             if latest_message == expected and composer_cleared and attachments_cleared:
@@ -258,11 +198,14 @@ def main() -> int:
             print("No browser state changed. Add --stage to fill the composer or --submit to send.")
             return 0
 
-        with FirefoxMCPClient() as client:
-            select_conversation(client, url)
-            stage_message(client, message, attachments)
+        from playwright.sync_api import sync_playwright
+
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.connect_over_cdp(CDP_ENDPOINT, timeout=8000)
+            page = select_tab(browser, url)
+            stage_message(page, message, attachments)
             if args.submit:
-                submit_message(client, message)
+                submit_message(page, message)
                 print(f"SENT: conversation={url}; message_chars={len(message)}; attachments={len(attachments)}")
             else:
                 print(f"STAGED: conversation={url}; message_chars={len(message)}; attachments={len(attachments)}; not sent")

@@ -4208,7 +4208,7 @@ def _v2_acquisition_for_attached_checkout(repo: Path, workstream_id: str) -> tup
     if not folder.is_dir() or folder.is_symlink():
         return None
     attached_paths = {Path(item["worktree"]).resolve(): item for item in worktree_records(repo)
-                      if item.get("worktree") and item.get("branch", "").endswith(workstream_id)}
+                      if item.get("worktree") and item.get("branch")}
     matches = []
     for path in folder.glob("*.json"):
         if path.is_symlink() or not path.is_file():
@@ -4227,55 +4227,51 @@ def _v2_acquisition_for_attached_checkout(repo: Path, workstream_id: str) -> tup
     return matches[0] if matches else None
 
 
-def finish(workstream_id: str, validation_report: Path, validation_report_after_sync: Path | None = None,
-           repo: Path | None = None, *, defer_root_sync: bool = False,
-           recovery_evidence: Path | None = None, defer_teardown: bool = False) -> None:
-    repo = (repo or root_repo()).resolve()
+def _finish_v2_turn(workstream_id: str, repo: Path, pool: Path) -> dict:
+    """Publish and retire one V2 turn without reviving legacy session state."""
+    import turn_dispatcher_v2 as turn_v2
     attached_v2 = _v2_acquisition_for_attached_checkout(repo, workstream_id)
-    active = common_dir(repo) / "custodian-workflow" / "active" / f"{workstream_id}.json"
-    v2_trace_exists = False
-    try:
-        pointer = json.loads(active.read_text(encoding="utf-8"))
-        trace_path = Path(pointer["trace_path"])
-        trace_events = [json.loads(line) for line in trace_path.read_text(encoding="utf-8").splitlines() if line.strip()]
-        v2_trace_exists = any(event.get("event") == "v2_turn_acquired" for event in trace_events)
-    except (OSError, json.JSONDecodeError, KeyError, TypeError):
-        pass
-    v2_lifecycle = bool(attached_v2) or v2_trace_exists
-    if not v2_lifecycle:
-        assert_not_legacy_quarantined(repo, workstream_id, "finish")
+    if not attached_v2:
+        raise WorkstreamError(
+            f"no attached V2 turn for {workstream_id}; acquire a fresh turn with dispatch.py or workstream.py start"
+        )
+    _, checkout = attached_v2
+    local_branch = git("symbolic-ref", "--short", "HEAD", cwd=checkout)
+    acquisition = turn_v2.read_acquisition(repo, local_branch, checkout)
+    if (acquisition.get("workstream") != workstream_id
+            or acquisition.get("branch") != branch_for(workstream_id)):
+        raise WorkstreamError("V2 acquisition does not identify this exact task branch and checkout")
+    handoff = checkout / "custodian/docs/ai_context/turn_handoffs" / f"{workstream_id}.md"
+    result = turn_v2.checkpoint(
+        repo, workstream_id, checkout, handoff,
+        "turn checkpoint [skip render]", pool, retire=True,
+    )
+    print(
+        f"turn checkpointed and temporary checkout retired: origin/{result['branch']} at {result['head']}"
+    )
+    print(
+        "task completion is not asserted; standard GitHub CI/branch protection and any explicitly requested consequential review apply"
+    )
+    return result
+
+
+def finish(workstream_id: str, validation_report: Path | None = None,
+           validation_report_after_sync: Path | None = None,
+           repo: Path | None = None, *, defer_root_sync: bool = False,
+           recovery_evidence: Path | None = None, defer_teardown: bool = False,
+           pool: Path | None = None) -> None:
+    repo = (repo or root_repo()).resolve()
+    if _v2_acquisition_for_attached_checkout(repo, workstream_id):
+        return _finish_v2_turn(
+            workstream_id, repo, (pool or Path.home() / "Projects/.custodian-turns").resolve(),
+        )
+    if validation_report is None:
+        raise WorkstreamError("legacy workstream finish requires --validation-report")
+    assert_not_legacy_quarantined(repo, workstream_id, "finish")
     trace = RunTrace.resume(repo, workstream_id)
     try:
         with workstream_mutex(repo, workstream_id, trace=trace):
-            if not v2_lifecycle:
-                assert_not_legacy_quarantined(repo, workstream_id, "finish")
-            if attached_v2:
-                import turn_dispatcher_v2 as turn_v2
-                acquisition, turn_checkout = attached_v2
-                local_branch = git("branch", "--show-current", cwd=turn_checkout)
-                verified_acquisition = turn_v2.read_acquisition(repo, local_branch, turn_checkout)
-                receipt_path = turn_v2.acquisition_record_path(repo, verified_acquisition["turn_id"])
-                if (verified_acquisition.get("workstream") != workstream_id
-                        or verified_acquisition.get("branch") != branch_for(workstream_id)):
-                    raise WorkstreamError("V2 acquisition receipt does not authenticate this exact finish checkout")
-                acquisition = verified_acquisition
-                trace.packet = acquisition.get("packet")
-                existing_events = []
-                if trace.path.is_file():
-                    existing_events = [json.loads(line) for line in trace.path.read_text(encoding="utf-8").splitlines() if line.strip()]
-                if not any(event.get("event") == "v2_turn_acquired" for event in existing_events):
-                    trace.record("v2_turn_acquired", receipt=str(receipt_path), checkout=str(turn_checkout),
-                                 local_branch=local_branch, remote_branch=acquisition["branch"],
-                                 source_sha=acquisition["source_sha"])
-                if not any(event.get("event") == "v2_turn_checkpointed" for event in existing_events):
-                    handoff = turn_checkout / "custodian/docs/ai_context/turn_handoffs" / f"{workstream_id}.md"
-                    checkpoint = turn_v2.checkpoint(repo, workstream_id, turn_checkout, handoff,
-                                                    "turn acceptance checkpoint", turn_checkout.parent, retire=False)
-                    trace.record("v2_turn_checkpointed", branch=checkpoint["branch"],
-                                 remote_branch=checkpoint["branch"], head=checkpoint["head"],
-                                 handoff=checkpoint["handoff"])
-                if local_branch != branch_for(workstream_id):
-                    git("branch", "-m", branch_for(workstream_id), cwd=turn_checkout)
+            assert_not_legacy_quarantined(repo, workstream_id, "finish")
             trace.record("finish_started", validation_report=str(validation_report), after_sync_report=str(validation_report_after_sync) if validation_report_after_sync else None)
             outcome = _finish_impl(workstream_id, validation_report, validation_report_after_sync, repo, trace,
                                    defer_root_sync=defer_root_sync, recovery_evidence=recovery_evidence,
@@ -4357,7 +4353,7 @@ def main() -> int:
     mode = p.add_mutually_exclusive_group(required=True); mode.add_argument("--plan", action="store_true"); mode.add_argument("--apply", action="store_true"); p.add_argument("--plan-sha256", default=None)
     p = subs.add_parser("status"); p.add_argument("workstream_id", nargs="?")
     p = subs.add_parser("checkpoint"); p.add_argument("workstream_id"); p.add_argument("--checkout", type=Path, default=Path.cwd()); p.add_argument("--handoff", type=Path, default=None); p.add_argument("--repo", type=Path, default=None); p.add_argument("--pool", type=Path, default=Path.home() / "Projects/.custodian-turns"); p.add_argument("--keep", action="store_true")
-    p = subs.add_parser("finish"); p.add_argument("workstream_id"); p.add_argument("--validation-report", type=Path, required=True); p.add_argument("--validation-report-after-sync", type=Path)
+    p = subs.add_parser("finish"); p.add_argument("workstream_id"); p.add_argument("--validation-report", type=Path); p.add_argument("--validation-report-after-sync", type=Path); p.add_argument("--pool", type=Path, default=Path.home() / "Projects/.custodian-turns")
     p.add_argument("--defer-root-sync", action="store_true",
                     help="defer persistent root synchronization when the exact packet/recovery evidence authorizes it")
     p.add_argument("--defer-root-sync-evidence", type=Path,
@@ -4400,7 +4396,7 @@ def main() -> int:
             finish(args.workstream_id, args.validation_report, args.validation_report_after_sync,
                    defer_root_sync=args.defer_root_sync,
                    recovery_evidence=args.defer_root_sync_evidence,
-                   defer_teardown=args.defer_teardown)
+                   defer_teardown=args.defer_teardown, pool=args.pool)
         elif args.command == "preflight":
             result = preflight(args.workstream_id, args.validation_report)
             if args.json:

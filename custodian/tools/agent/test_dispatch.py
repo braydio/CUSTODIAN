@@ -1122,6 +1122,40 @@ class DispatchTests(unittest.TestCase):
         self.assertIn('"workstream": "z-implementation"', result.stdout)
         self.assertNotIn('"workstream": "a-review-only"', result.stdout)
 
+    def test_cli_v2_claim_next_rotates_without_requiring_session_state(self):
+        self.add_packet("a-first")
+        self.add_packet("b-second")
+        cursor = dispatch._git_common_dir(self.repo) / "custodian-turn-dispatcher-v2" / "selection-cursor.json"
+        self.assertFalse(cursor.exists())
+        first = subprocess.run(
+            [sys.executable, str(SCRIPT), "claim-next", "--pool", str(self.base / "rotate-turns")],
+            cwd=self.repo, text=True, capture_output=True, timeout=10,
+        )
+        self.assertEqual(first.returncode, 0, first.stdout + first.stderr)
+        self.assertIn('"workstream": "a-first"', first.stdout)
+        first_receipt = json.loads(next(
+            line.removeprefix("CUSTODIAN_DISPATCH_RESULT_JSON:")
+            for line in first.stdout.splitlines()
+            if line.startswith("CUSTODIAN_DISPATCH_RESULT_JSON:")
+        ))
+        second = subprocess.run(
+            [sys.executable, str(SCRIPT), "claim-next", "--pool", str(self.base / "rotate-turns")],
+            cwd=self.repo, text=True, capture_output=True, timeout=10,
+        )
+        self.assertEqual(second.returncode, 0, second.stdout + second.stderr)
+        self.assertIn('"workstream": "b-second"', second.stdout)
+        subprocess.run(["git", "worktree", "remove", first_receipt["worktree"]],
+                       cwd=self.repo, check=True, capture_output=True, text=True)
+        cursor.unlink()
+        third = subprocess.run(
+            [sys.executable, str(SCRIPT), "claim-next", "--pool", str(self.base / "rotate-turns")],
+            cwd=self.repo, text=True, capture_output=True, timeout=10,
+        )
+        self.assertEqual(third.returncode, 0, third.stdout + third.stderr)
+        # The cursor is advisory: removing it restarts deterministic ordering,
+        # but it never blocks acquisition or requires a prior session.
+        self.assertIn('"workstream": "a-first"', third.stdout)
+
     def _claim_output(self):
         output = []
         with mock.patch("builtins.print", side_effect=lambda *args, **kwargs: output.append(" ".join(map(str, args)))):

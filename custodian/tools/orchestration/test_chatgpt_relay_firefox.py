@@ -6,10 +6,10 @@ import unittest
 from unittest.mock import patch
 
 try:
-    from . import get_chatgpt_response, send_chatgpt_message
+    from . import get_chatgpt_response_firefox as get_chatgpt_response, send_chatgpt_message_firefox as send_chatgpt_message
 except ImportError:
-    import get_chatgpt_response
-    import send_chatgpt_message
+    import get_chatgpt_response_firefox as get_chatgpt_response
+    import send_chatgpt_message_firefox as send_chatgpt_message
 
 IN_PROGRESS = get_chatgpt_response.IN_PROGRESS
 read_once = get_chatgpt_response.read_once
@@ -41,7 +41,7 @@ class ReadOnceTests(unittest.TestCase):
             sys,
             "argv",
             [
-                "get_chatgpt_response.py",
+                "get_chatgpt_response_firefox.py",
                 "--url",
                 "https://chatgpt.com/c/conversation-1",
                 "--wait",

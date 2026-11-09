@@ -19,6 +19,7 @@ workstream = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(workstream)
 import persistent_checkout_sync as persistent_sync
 import task_packet_index
+from custodian.tools.agent import turn_dispatcher_v2
 from custodian.tools.validation import run_validation
 
 
@@ -139,6 +140,45 @@ class WorkstreamTests(unittest.TestCase):
         receipt.write_text(json.dumps(payload))
         error = workstream._source_span_sync_merge_witness_error(workstream_id, self.repo, head, trace)
         self.assertIn("V2 acquisition or checkpoint receipt", error)
+
+    def test_v2_finish_checkpoints_retires_and_rehydrates_without_legacy_session(self):
+        workstream_id = "v2-finish-turn-fixture"
+        packet = self.repo / "custodian/docs/ai_context/task_packets/V2_FINISH_TURN_FIXTURE.md"
+        packet.parent.mkdir(parents=True, exist_ok=True)
+        packet.write_text(
+            f"- Workstream: `{workstream_id}`\n- Kind: `implementation`\n- Status: `ready`\n"
+            "- Dispatch: `auto`\n- Depends on: `none`\n- Locks: `none`\n",
+            encoding="utf-8",
+        )
+        git(self.repo, "add", str(packet.relative_to(self.repo)))
+        git(self.repo, "commit", "-m", "publish v2 finish fixture")
+        git(self.repo, "push", "origin", "main")
+        pool = self.base / "turns"
+        acquisition = turn_dispatcher_v2.begin(self.repo, workstream_id, "normal", pool)
+        checkout = Path(acquisition["checkout"])
+        (checkout / "implementation.py").write_text("durable progress\n", encoding="utf-8")
+        handoff = checkout / "custodian/docs/ai_context/turn_handoffs" / f"{workstream_id}.md"
+        handoff.parent.mkdir(parents=True, exist_ok=True)
+        handoff.write_text(
+            "Original goal: prove V2 finish is a turn checkpoint.\n"
+            "Implemented: checkpoint adapter.\nRemaining: task work remains open.\n"
+            "Validation: focused lifecycle test.\nSources/evidence: temporary Git fixture.\n"
+            "Resume: start a fresh turn from the remote branch.\n",
+            encoding="utf-8",
+        )
+        stdout = io.StringIO()
+        with mock.patch.object(workstream.RunTrace, "resume", side_effect=AssertionError("legacy RunTrace used")), \
+             mock.patch.object(workstream, "workstream_mutex", side_effect=AssertionError("legacy mutex used")), \
+             mock.patch("sys.stdout", stdout):
+            workstream.finish(workstream_id, repo=self.repo, pool=pool)
+        self.assertFalse(checkout.exists())
+        self.assertIn("task completion is not asserted", stdout.getvalue())
+        branch_head = turn_dispatcher_v2.remote_branch(self.repo, f"agent/{workstream_id}")
+        self.assertTrue(branch_head)
+        fresh = turn_dispatcher_v2.begin(self.repo, workstream_id, "normal", pool)
+        fresh_checkout = Path(fresh["checkout"])
+        self.assertEqual((fresh_checkout / "implementation.py").read_text(), "durable progress\n")
+        self.assertEqual(fresh["source_sha"], branch_head)
 
     def _source_sync_merge_fixture(self, *, witness=True, packetless=False):
         workstream_id = "agent-source-sync-witness-fixture"

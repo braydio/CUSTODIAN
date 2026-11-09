@@ -54,12 +54,19 @@ provenance, not caller authentication or review approval.
 
 Each claim uses a temporary checkout from `~/Projects/.custodian-turns`.
 `workstream.py start`, `resume`, and `checkpoint` route through the same V2
-lifecycle. Checkpointing preserves a handoff and verifies the remote commit;
-it does not complete work or pass a review. `paired_review_runner.py` and
-`workstream.py finish` retain independent-review, validation, completion, and
-landing acceptance. `dispatch.py audit/status` report legacy queue state only.
-Use the stable coordination checkout as `--repo`; never use the checkout being
-retired. See `docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md` for command details.
+lifecycle. `claim-next` rotates among new and resumable work using an optional
+advisory cursor; completion requires durable packet completion plus the task
+branch being reachable from `origin/main`. Missing cursor or prior-session
+state never blocks resume. Checkpointing preserves a handoff and verifies the
+remote commit; it does not complete work or pass a review. V2 `workstream.py
+finish` is a turn checkpoint and checkout retirement boundary: it consumes the
+durable V2 record and does not require `RunTrace.resume`, a workstream mutex,
+or branch renaming. Standard GitHub CI and branch protection govern landing;
+independent review is optional unless explicitly requested or warranted for
+consequential work. Ordinary V2 task acquisition uses no administrative lock.
+`dispatch.py audit/status` report legacy queue state only. Use the stable
+coordination checkout as `--repo`; never use the checkout being retired. See
+`docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md` for command details.
 
 ## Routing Map
 
@@ -472,12 +479,14 @@ cannot override higher repository or design authority.
 Normal implementation work is autonomous through the lifecycle documented in
 `docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`: start/resume a stable
 `agent/<workstream-id>` branch in an ephemeral worktree, implement and validate
-there, push a recovery branch, and land through the normal finish/landing path.
-Completed remote task branches are deleted only after reachability from
-`origin/main` is verified. No PR or routine human approval is required.
-CUSTODIAN Next defaults to one implementation and its required paired review,
-then stops. Continuing across packets requires an explicit finite pair budget
-and follows only eligible named same-series handoffs. Stop at a genuine
+there, push the task branch, and checkpoint/retire the turn. Standard GitHub CI
+and branch protection govern landing. Completed remote task branches are
+deleted only after reachability from `origin/main` is verified. No PR or routine
+human approval is required. Independent review is optional unless explicitly
+requested or warranted for consequential work. CUSTODIAN Next defaults to one
+implementation task through a durable checkpoint, then stops. Continuing across
+packets requires an explicit finite task budget and follows eligible named
+same-series handoffs. Stop at a genuine
 human/ChatGPT refresh or decision, manual-dispatch hold, validation failure, or
 unresolved safety/ownership gate. See the lifecycle guide and repository-root
 `AGENTS.md` for invocation-boundary receipts and review routing.

@@ -1,6 +1,6 @@
 ---
 name: custodian-next
-description: Continue the active CUSTODIAN workstream or execute a bounded packet request through its paired review.
+description: Continue the active CUSTODIAN workstream or execute a bounded packet request through checkpoint and standard CI.
 ---
 
 # CUSTODIAN Next
@@ -11,16 +11,15 @@ Use this skill when the user says "next CUSTODIAN task", "claim the next packet"
 
 ## Execution boundary
 
-An unqualified invocation is `single-pair`: complete or resume at most one
-implementation packet and its required independent paired review, including
-bounded correction/re-review cycles. Then stop with a compact result. An active
-claimed workstream is resumed and counts as this pair; never claim another packet
-while its implementation or required review is unresolved.
+An unqualified invocation is `single-task`: complete or resume at most one
+implementation task through a durable turn checkpoint and standard CI/branch
+protection. Independent review is optional unless the user requests it or the
+change is consequential. Then stop with a compact result. Resume active claimed
+work; do not replace unfinished selected work with another packet.
 
 Only use `continuous-chain` when the user explicitly requests continuing across
-multiple packets. Require an explicit positive `max_pairs`; honor any explicit
-workstream scope. Each pair is one implementation/correction plus its paired
-review cycle. Never turn an open-ended request into an unlimited run.
+multiple tasks. Require an explicit positive `max_tasks`; honor any explicit
+workstream scope. Never turn an open-ended request into an unlimited run.
 
 The pure routing/budget policy lives in
 `custodian/tools/agent/next_execution_boundary.py`. At invocation start, recover
@@ -30,8 +29,8 @@ packet handoff, and review facts to `evaluate`; follow its action. The helper
 does not select packets or claim work: V2 `dispatch.py` remains the assignment
 authority.
 Record implementation and completed-pair milestones with `record-receipt`,
-including landed SHA, review status, elapsed time, validation summary, and next
-eligibility. Print a short stage update at boundaries; do not dump the queue.
+including checkpoint SHA, optional review status, elapsed time, validation
+summary, and next eligibility. Print a short stage update at boundaries; do not dump the queue.
 
 ## Routing
 
@@ -56,35 +55,28 @@ eligibility. Print a short stage update at boundaries; do not dump the queue.
 4. Respect planning refresh, human visual/design/canon decision, manual-dispatch,
    failed-validation, and safety gates. Stop at the gate and provide the exact
    recorded Authoring/Refresh chat URL where present.
-5. A paired post-land review is part of the same pair and must run in a fresh
-   reviewer context. Once the review packet is published and independent-review
-   preflight passes, invoke
-   `python3 custodian/tools/agent/paired_review_runner.py <review-workstream-id>`
-   from the coordination checkout. Do not directly claim the review from the
-   implementation context. Preserve its recovery worktree and run evidence if
-   execution fails after claim.
-6. Follow the packet and normal `workstream.py` lifecycle through validation,
-   summary, commit, landing, and safe root synchronization. Complete and archive
-   the associated packet and write its required root closing summary before
-   finish. Record the exact landing SHA and accepted review in the boundary
-   receipt.
-7. After the pair is accepted, inspect its durable `Next Handoff`. In
-   `single-pair`, stop even when that successor is ready. In explicit
-   `continuous-chain`, continue only to a published named successor with no
-   user-owned design hold within the
-   requested scope and remaining budget. A paired review or correction cycle
-   never consumes an additional pair.
-8. Use global `dispatch.py claim-next --agent codex` only when the user
+5. Follow the task and V2 `workstream.py` lifecycle through validation, durable
+   handoff, commit/push, checkpoint, and safe root synchronization when
+   possible. `finish` is a turn checkpoint/retirement operation, not proof of
+   task completion. Standard GitHub CI and branch protection govern landing.
+   Run independent review in a fresh context when explicitly requested or
+   warranted for consequential work.
+6. After the selected task reaches a durable checkpoint, inspect its handoff.
+   In `single-task`, stop. In explicit `continuous-chain`, continue only within
+   the named scope and remaining budget. A missing advisory selection cursor or
+   prior session never blocks resumption.
+7. Use global `dispatch.py claim-next --agent codex` only when the user
    explicitly requested general-next execution and there is no unfinished
    specifically selected workstream. It may select exactly one available
-   implementation for the next pair. V2 authenticates task identity and blocks
+   implementation for the next task. V2 authenticates task identity and blocks
    explicit user-owned design holds; legacy status, dependency, claim, and
-   session-lock fields do not schedule acquisition. A blocker on selected work does
-   not authorize an unrelated fallback. Never use global fallback to bypass an
-   unresolved review, human gate, stale ownership, or validation blocker.
+   session-lock fields do not schedule acquisition. A blocker on selected work
+   does not authorize an unrelated fallback. Never use global fallback to bypass
+   a human gate, stale ownership, or validation blocker.
 
-Readiness is not execution: authored, published, V2-acquired,
-implemented, landed, validated, and closed describe separate lifecycle stages.
+Readiness is not execution: authored, published, V2-acquired, implemented,
+checkpointed, landed by standard CI/branch protection, validated, and closed
+describe separate lifecycle stages.
 Report only the stage supported by current evidence. A successful publication,
 compile, or branch landing is insufficient when the packet's user-visible
 acceptance evidence is still missing. Preserve original claims, branches,
@@ -92,24 +84,13 @@ worktrees, and evidence; never erase or forge review disposition to clear a
 lock. Correct defects in their existing workflow owner without speculative
 workflow expansion.
 
-## Newly authorized packet pair (publication before claim)
-
-When an authoring handoff specifically says an approved packet/review pair is
-still `draft/manual` or exists only in a local authoring branch, do not call the
-dispatcher yet and do not ask the user for the validator command. Validate the
-implementation and review pair, promote both to `ready/auto` only if human and
-design gates are resolved, validate again, regenerate and verify the managed
-index, then land the scoped publication through the safe repository procedure.
-Fetch and verify the remote packet identity before claiming the exact
-implementation. Never claim the paired review early. This does not authorize
-promoting arbitrary parked drafts during general-next routing.
 
 ## Result
 
 Persist the full completion, process feedback, and `Next Handoff` in the required
-root summary. At a stop, return a concise status with the workstream, pair budget
-progress, landing/review state, blocker or next eligibility, and summary path.
+root summary. At a stop, return a concise status with the workstream, task budget
+progress, checkpoint/landing state, blocker or next eligibility, and summary path.
 For a planning refresh, use the exact recorded URL and workstream ID. For a
 subjective visual gate, include the exact Dropbox review manifest path and the
-review question. Do not emit routine handoffs between pairs during an explicitly
+review question. Do not emit routine handoffs between tasks during an explicitly
 bounded continuous-chain invocation.

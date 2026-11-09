@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Read the completed reply to one ChatGPT browser turn via Firefox MCP.
+"""Read the completed reply to one ChatGPT browser turn via Chrome CDP port 9223.
 
 Read-only browser adapter. No private endpoints, auth data, page navigation, or writes.
-Firefox must already be running with Marionette enabled on port 2828. The script
-starts a short-lived Firefox DevTools MCP client and attaches to that instance.
+Requires: python -m pip install playwright
+Chrome must already expose remote debugging on 127.0.0.1:9223.
 
 Exit 0: exactly 'RESPONSE IN PROGRESS' or the completed assistant text.
 Exit 2: cannot safely identify the tab, request, or browser state.
@@ -12,26 +12,12 @@ Exit 2: cannot safely identify the tab, request, or browser state.
 from __future__ import annotations
 
 import argparse
-import json
 import os
 import sys
 import time
+from urllib.parse import urlsplit
 
-try:
-    from .firefox_mcp_client import (
-        FirefoxMCPClient,
-        canonical_url,
-        evaluate,
-        select_conversation,
-    )
-except ImportError:  # direct script invocation
-    from firefox_mcp_client import (
-        FirefoxMCPClient,
-        canonical_url,
-        evaluate,
-        select_conversation,
-    )
-
+CDP_ENDPOINT = "http://127.0.0.1:9223"
 IN_PROGRESS = "RESPONSE IN PROGRESS"
 
 # Operates on visible conversation DOM, not ChatGPT's private application APIs.
@@ -91,57 +77,90 @@ PROBE_JS = r"""({requestId}) => {
 
   const stop = Array.from(document.querySelectorAll(
     'button[data-testid="stop-button"], button[data-testid="composer-stop-button"], ' +
-    'button[aria-label*="Stop generating" i], button[aria-label*="Stop streaming" i], ' +
-    'button[aria-label="Stop"], button[title="Stop"], [data-response-starting]'
+    'button[aria-label*="Stop generating" i], button[aria-label*="Stop streaming" i]'
   )).some(isVisible);
 
-  const starting = Array.from(document.querySelectorAll('[data-response-starting]'))
-    .some(isVisible);
   const streaming = !!document.querySelector(
     '[data-message-author-role="assistant"] .result-streaming, ' +
     '[data-message-author-role="assistant"][aria-busy="true"], ' +
-    '[data-dil-message-id] [aria-busy="true"], ' +
-    '[data-talvt-turn-state="in_progress"] [data-dil-message-id], ' +
-    '[data-response-starting]'
+    '[data-dil-message-id] [aria-busy="true"]'
   );
 
   return {
     kind: 'sample',
     text,
-    busy: stop || streaming || starting,
-    starting,
+    busy: stop || streaming,
     assistantCount: replies.length,
     latestUserIndex
   };
 }"""
 
 
-def probe(client: FirefoxMCPClient, request_id: str | None) -> dict:
-    function = f"() => ({PROBE_JS})({json.dumps(request_id or '')})"
-    result = evaluate(client, function)
-    if not isinstance(result, dict):
-        raise ValueError("Firefox MCP returned an invalid conversation probe")
-    return result
+def canonical_url(url: str) -> str:
+    parsed = urlsplit(url)
+    host = (parsed.hostname or "").lower()
+    if parsed.scheme != "https" or host not in {"chatgpt.com", "chat.openai.com"}:
+        raise ValueError("--url must be an https://chatgpt.com conversation URL")
+    path = parsed.path.rstrip("/")
+    if "/c/" not in path:
+        raise ValueError("--url must identify a specific conversation (/c/<id>)")
+    return path
 
 
-def read_once(client: FirefoxMCPClient, request_id: str | None, settle_seconds: float) -> str:
-    first = probe(client, request_id)
+def is_chat_conversation(url: str) -> bool:
+    try:
+        canonical_url(url)
+        return True
+    except ValueError:
+        return False
+
+
+def select_tab(browser, specified_url: str | None):
+    tabs = [
+        page
+        for context in browser.contexts
+        for page in context.pages
+        if not page.is_closed() and is_chat_conversation(page.url)
+    ]
+    if specified_url:
+        desired = canonical_url(specified_url)
+        tabs = [page for page in tabs if canonical_url(page.url) == desired]
+    if len(tabs) != 1:
+        which = (
+            "specified conversation" if specified_url else "open ChatGPT conversation"
+        )
+        raise ValueError(
+            f"expected exactly one {which} tab; found {len(tabs)}. Supply --url."
+        )
+    return tabs[0]
+
+
+def probe(page, request_id: str | None) -> dict:
+    return page.evaluate(PROBE_JS, {"requestId": request_id or ""})
+
+
+def read_once(page, request_id: str | None, settle_seconds: float) -> str:
+    first = probe(page, request_id)
     if first.get("kind") == "error":
         raise ValueError(first.get("reason", "UNKNOWN_REQUEST_ERROR"))
     if first.get("kind") != "sample":
-        raise ValueError(f"unexpected conversation probe result: {first!r}")
-    if first.get("busy") or first.get("starting"):
-        return IN_PROGRESS
+        # or first.get("busy"):
+        DEBUGGING_PLACEHOLDER = (
+            f"read_once() function returning vars page, request_id: {first}"
+        )
+        # return probe(page, request_id)
+        return DEBUGGING_PLACEHOLDER
+    if first.get("busy"):
+        return "FIRST DOT GET BUSY"
     if not first.get("text"):
-        return IN_PROGRESS
+        return page
     time.sleep(settle_seconds)
-    second = probe(client, request_id)
+    second = probe(page, request_id)
     if second.get("kind") == "error":
         raise ValueError(second.get("reason", "UNKNOWN_REQUEST_ERROR"))
     if (
         second.get("kind") != "sample"
         or second.get("busy")
-        or second.get("starting")
         or second.get("assistantCount") != first.get("assistantCount")
         or not second.get("text")
         or second.get("text") != first.get("text")
@@ -186,14 +205,22 @@ def main() -> int:
     args = parser.parse_args()
     if not 0.5 <= args.settle <= 30 or args.interval < 2 or args.max_wait < 0:
         parser.error("invalid timing arguments")
-    if args.url:
-        canonical_url(args.url)
     try:
-        with FirefoxMCPClient() as client:
-            select_conversation(client, args.url)
+        from playwright.sync_api import sync_playwright
+    except ImportError:
+        print(
+            "RELAY ERROR: install Playwright: python -m pip install playwright",
+            file=sys.stderr,
+        )
+        return 2
+    try:
+        with sync_playwright() as playwright:
+            # Attaches to the pre-existing browser; does not start or close Chrome.
+            browser = playwright.chromium.connect_over_cdp(CDP_ENDPOINT, timeout=8000)
+            page = select_tab(browser, args.url)
             deadline = time.monotonic() + args.max_wait
             while True:
-                result = read_once(client, args.request_id, args.settle)
+                result = read_once(page, args.request_id, args.settle)
                 if (
                     result != IN_PROGRESS
                     or not args.wait

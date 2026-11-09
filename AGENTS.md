@@ -253,9 +253,11 @@ sessions; no claim of instant process-wide delivery is permitted. See
 
 ## Commit Policy
 
-Normal implementation work follows `implement → validate → commit → land on
-origin/main`. Completed validated work lands automatically without per-task
-approval and without a PR or routine human-review gate. Ad hoc review-only work
+Normal V2 implementation work follows `implement → validate → commit/push →
+checkpoint`. V2 `finish` is a turn checkpoint and retirement, not task completion
+or a landing operation. Standard GitHub CI and branch protection govern landing;
+independent review is optional unless requested or warranted for consequential
+work. Legacy workstreams retain their existing closeout contracts. Ad hoc review-only work
 must carry the explicit task override `TASK OVERRIDE: review only; do not stage,
 commit, or push.` Paired post-land review packets may authorize commits only for their durable review receipt, required closing summary, review-packet lifecycle metadata, and bounded correction/re-review packets. They must never edit the reviewed implementation or unrelated work; the packet must state this bounded override explicitly. A paired review must also start from a fresh reviewer context rather than continuing the implementation session. The same model/agent family may review its own prior work only from a newly started context/workstream that reconstructs the target from durable repository evidence and records `same-agent-fresh-context`; otherwise use `different-agent`.
 
@@ -466,7 +468,7 @@ without actual user authorization.
 
 ## CUSTODIAN Task Dispatch
 
-V2 is the canonical execution path. `dispatch.py claim` and `claim-next` authenticate task identity and packet bytes from fetched `origin/main`, then acquire a turn checkout without consulting legacy `Status`, `Dispatch`, dependency chains, administrative claims, or session locks. An explicit user-owned design hold remains a hard selection boundary. Keep packet status/index metadata accurate for authoring and reporting; those fields do not schedule V2 work. The paired-review runner applies its own review-ordering and acceptance checks.
+V2 is the canonical execution path. `dispatch.py claim` and `claim-next` authenticate task identity and packet bytes from fetched `origin/main`, then acquire a turn checkout without consulting legacy `Status`, `Dispatch`, dependency chains, administrative claims, or session locks. An explicit user-owned design hold remains a hard selection boundary. `claim-next` rotates across new and resumable work with an optional advisory cursor; it skips a task as complete only when durable packet completion and the task branch's reachability from `origin/main` agree. Missing cursor or prior-session state never blocks resume. Keep packet status/index metadata accurate for authoring and reporting; those fields do not schedule V2 work. V2 `workstream.py finish` checkpoints and retires a turn using its durable V2 record, without requiring the prior `RunTrace`, workstream mutex, or branch renaming; it does not assert task completion. Standard GitHub CI and branch protection govern landing. Independent review is optional unless requested or warranted for consequential work. Ordinary V2 acquisition uses no administrative lock; if a future operation protects a truly exclusive non-Git resource, its lease must expire within two hours and validate a fencing token on every protected operation.
 
 For legacy queue diagnostics and branch/worktree reconciliation, use
 `python3 custodian/tools/agent/dispatch.py audit` (or `--json` for stable
@@ -509,14 +511,15 @@ Codex custom prompts are deprecated in favor of skills.
 
 Semantics:
 
-1. An unqualified invocation is `single-pair`: complete or resume at most one
-   implementation packet and its required fresh-context paired review, including
-   bounded correction/re-review cycles, then stop. An active claimed workstream
-   counts as that pair; do not claim another while it is unresolved.
+1. An unqualified invocation is `single-task`: complete or resume at most one
+   implementation through a durable checkpoint and standard CI/branch
+   protection, then stop. Independent review is optional unless requested or
+   warranted for consequential work. An active claimed workstream is resumed;
+   do not replace unfinished work with an unrelated packet.
 2. Use `continuous-chain` only when the user explicitly requests multiple
-   packets. Require a positive finite `max_pairs` and honor any explicit scope.
+   packets. Require a positive finite `max_tasks` and honor any explicit scope.
    Continue only through the durable `Next Handoff` DAG and dispatcher-confirmed
-   eligible predecessors; a pair is one implementation plus its paired review.
+   eligible successors.
 3. Reconcile active branch, worktree, dispatch receipt, and remote state. A stale
    `last-claim` is not ownership proof. Ambiguous/stale claims require audit and
    must never cause a duplicate claim.
