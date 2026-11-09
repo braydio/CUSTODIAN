@@ -1,0 +1,316 @@
+{
+ "schema": "custodian.pursuit_frame_3d_preview.v1",
+ "status": "candidate_preview_not_production",
+ "pixels_per_meter_render": 80,
+ "clearance_px": 4,
+ "directions": [
+  "S",
+  "SE",
+  "E",
+  "NE",
+  "N",
+  "NW",
+  "W",
+  "SW"
+ ],
+ "mirroring": false,
+ "classes": [
+  {
+   "id": "standard_256x256",
+   "width": 256,
+   "height": 256,
+   "root": [
+    128,
+    180
+   ]
+  },
+  {
+   "id": "extended_256x320",
+   "width": 256,
+   "height": 320,
+   "root": [
+    128,
+    216
+   ]
+  }
+ ],
+ "actions": {
+  "running": {
+   "viewport": "standard_256x256",
+   "root_px": [
+    128,
+    180
+   ],
+   "source_root_px": [
+    128,
+    212
+   ],
+   "source_canvas": "c256_80",
+   "frame_count": 15,
+   "authored_frame_range": [
+    0.8000000715255737,
+    16.0
+   ],
+   "authored_duration_s": 0.633333,
+   "sampling_target_fps": 24,
+   "sample_count": 15,
+   "loop": true
+  },
+  "walking": {
+   "viewport": "standard_256x256",
+   "root_px": [
+    128,
+    180
+   ],
+   "source_root_px": [
+    128,
+    212
+   ],
+   "source_canvas": "c256_80",
+   "frame_count": 25,
+   "authored_frame_range": [
+    0.8000000715255737,
+    25.599998474121094
+   ],
+   "authored_duration_s": 1.033333,
+   "sampling_target_fps": 24,
+   "sample_count": 25,
+   "loop": true
+  },
+  "alert": {
+   "viewport": "standard_256x256",
+   "root_px": [
+    128,
+    180
+   ],
+   "source_root_px": [
+    128,
+    212
+   ],
+   "source_canvas": "c256_80",
+   "frame_count": 96,
+   "authored_frame_range": [
+    0.0,
+    96.0
+   ],
+   "authored_duration_s": 4.0,
+   "sampling_target_fps": 24,
+   "sample_count": 96,
+   "loop": true
+  },
+  "agree_gesture": {
+   "viewport": "standard_256x256",
+   "root_px": [
+    128,
+    180
+   ],
+   "source_root_px": [
+    128,
+    212
+   ],
+   "source_canvas": "c256_80",
+   "frame_count": 312,
+   "authored_frame_range": [
+    0.0,
+    312.0
+   ],
+   "authored_duration_s": 13.0,
+   "sampling_target_fps": 24,
+   "sample_count": 312,
+   "loop": false
+  },
+  "casual_walk": {
+   "viewport": "standard_256x256",
+   "root_px": [
+    128,
+    180
+   ],
+   "source_root_px": [
+    128,
+    212
+   ],
+   "source_canvas": "c256_80",
+   "frame_count": 100,
+   "authored_frame_range": [
+    0.0,
+    100.0
+   ],
+   "authored_duration_s": 4.166667,
+   "sampling_target_fps": 24,
+   "sample_count": 100,
+   "loop": false
+  },
+  "arise": {
+   "viewport": "standard_256x256",
+   "root_px": [
+    128,
+    180
+   ],
+   "source_root_px": [
+    256,
+    424
+   ],
+   "source_canvas": "c512_80",
+   "frame_count": 44,
+   "authored_frame_range": [
+    0.0,
+    44.0
+   ],
+   "authored_duration_s": 1.833333,
+   "sampling_target_fps": 24,
+   "sample_count": 44,
+   "loop": false
+  },
+  "attack": {
+   "viewport": "standard_256x256",
+   "root_px": [
+    128,
+    180
+   ],
+   "source_root_px": [
+    256,
+    424
+   ],
+   "source_canvas": "c512_80",
+   "frame_count": 67,
+   "authored_frame_range": [
+    0.0,
+    67.19999694824219
+   ],
+   "authored_duration_s": 2.8,
+   "sampling_target_fps": 24,
+   "sample_count": 67,
+   "loop": false
+  },
+  "behit_flyup": {
+   "viewport": "extended_256x320",
+   "root_px": [
+    128,
+    216
+   ],
+   "source_root_px": [
+    256,
+    424
+   ],
+   "source_canvas": "c512_80",
+   "frame_count": 36,
+   "authored_frame_range": [
+    0.0,
+    36.0
+   ],
+   "authored_duration_s": 1.5,
+   "sampling_target_fps": 24,
+   "sample_count": 36,
+   "loop": false
+  },
+  "skill_01": {
+   "viewport": "standard_256x256",
+   "root_px": [
+    128,
+    180
+   ],
+   "source_root_px": [
+    256,
+    424
+   ],
+   "source_canvas": "c512_80",
+   "frame_count": 26,
+   "authored_frame_range": [
+    0.0,
+    25.60000228881836
+   ],
+   "authored_duration_s": 1.066667,
+   "sampling_target_fps": 24,
+   "sample_count": 26,
+   "loop": false
+  },
+  "skill_03": {
+   "viewport": "standard_256x256",
+   "root_px": [
+    128,
+    180
+   ],
+   "source_root_px": [
+    256,
+    424
+   ],
+   "source_canvas": "c512_80",
+   "frame_count": 39,
+   "authored_frame_range": [
+    0.0,
+    39.20000076293945
+   ],
+   "authored_duration_s": 1.633333,
+   "sampling_target_fps": 24,
+   "sample_count": 39,
+   "loop": false
+  },
+  "triple_combo_attack": {
+   "viewport": "standard_256x256",
+   "root_px": [
+    128,
+    180
+   ],
+   "source_root_px": [
+    256,
+    424
+   ],
+   "source_canvas": "c512_80",
+   "frame_count": 104,
+   "authored_frame_range": [
+    0.0,
+    104.0
+   ],
+   "authored_duration_s": 4.333333,
+   "sampling_target_fps": 24,
+   "sample_count": 104,
+   "loop": false
+  }
+ },
+ "source_hashes": {
+  "running": {
+   "canvas": "c256_80",
+   "measure_meta_sha256": "dae852b683f2c2f7a309bef0503545e3a64c8ad7f5f87771f76f9c3b257cb1ac"
+  },
+  "walking": {
+   "canvas": "c256_80",
+   "measure_meta_sha256": "d0a57e4dc7d4ea99e1d89a7f5155cbcab8b32e463e64500111b3d4535e114518"
+  },
+  "alert": {
+   "canvas": "c256_80",
+   "measure_meta_sha256": "a8e8a190cc168b8febcdb2e4be9eb9ef6a496627cef4a546028b7ffde21cc337"
+  },
+  "agree_gesture": {
+   "canvas": "c256_80",
+   "measure_meta_sha256": "ea0909506541a2fec8c2e2d4f0fb3e8e27e8b864001ded393cdfda88ad97c6e3"
+  },
+  "casual_walk": {
+   "canvas": "c256_80",
+   "measure_meta_sha256": "3a00227a546214ec5a5b179d1c558cbfa43f9a8f724f51a779dbcfc2d34e6148"
+  },
+  "arise": {
+   "canvas": "c512_80",
+   "measure_meta_sha256": "920f2acf565531a2066c2e71221a5932a645a1e36575be200495f17c49ba943b"
+  },
+  "attack": {
+   "canvas": "c512_80",
+   "measure_meta_sha256": "db824132dbb35360737ae08510dbf69ede78151b87307e567ee21b9cabc9cfd6"
+  },
+  "behit_flyup": {
+   "canvas": "c512_80",
+   "measure_meta_sha256": "6e0e498bfb85ecce73a3d90b646378f292a42972061c447b6406ab47b65e015d"
+  },
+  "skill_01": {
+   "canvas": "c512_80",
+   "measure_meta_sha256": "52e87cf788870b66999ff5af107e64bf5af1c512efc119133ce4abc49cade68a"
+  },
+  "skill_03": {
+   "canvas": "c512_80",
+   "measure_meta_sha256": "637931d01843b63601efa9a7c4ecd81d51b3eb9168cdd683816ead2cbf69b5b7"
+  },
+  "triple_combo_attack": {
+   "canvas": "c512_80",
+   "measure_meta_sha256": "a272ae9e9a6cc83aea076df8bdf612871f9b68728f4e6be41db555db84750525"
+  }
+ }
+}
