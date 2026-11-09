@@ -4,8 +4,8 @@
 - Category: agent-ops
 - Workstream: review-broken-remote-tracking-ref-repair-v1
 - Kind: review
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Authoring handoff: manual
 - Priority: P0
 - Depends on: broken-remote-tracking-ref-repair-v1
