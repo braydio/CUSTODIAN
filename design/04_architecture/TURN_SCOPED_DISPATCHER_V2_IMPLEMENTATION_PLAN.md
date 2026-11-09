@@ -1,6 +1,6 @@
 # Turn-Scoped Dispatcher V2 Implementation Plan
 
-**Status:** D2-001 planning draft; implementation not authorized by this document.
+**Status:** D2-003 Stage 2 implementation in progress; opt-in candidate only.
 **Program:** CUSTODIAN Dispatcher V2 replacement
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af12561-89a4-83ea-bc7f-c896ec89bed0
 **Reviewed main:** `841931733cd0103e5dbeb5587063d3b880e50db7` (fetched from `origin/main` on 2026-11-09).
@@ -103,6 +103,10 @@ Known gaps to close include: packet bytes are read from the local checkout rathe
 - Implement historical rehydration from remote Git state plus archive-only bytes where required. Compare restored content against the manifest before the new checkout is allowed to continue or the archived/old checkout is retired.
 - Implement automatic retirement only for the exact new temporary checkout after the Stage 1 preservation contract passes. Legacy checkout retirement remains individually verified and gated; there is no blanket cleanup or age-based sweep.
 - Prove restart/retry behavior after each boundary: archive write, archive verification, checkout creation, LFS hydration, remote push, and worktree removal.
+
+Stage 2 implementation adds `turn_archive_v1.py`, which inventories the exact filesystem tree and declared archive commit into a private SHA-256 manifest and restores into a new isolated destination only after path, type, mode, symlink, LFS pointer, and content checks pass. It records external evidence references separately and fails verification when their bytes are unavailable or changed. Dispatcher acquisition provenance is bound to the exact checkout and carried into each committed handoff. An absent historical branch can fall back to authenticated current main with a recorded reason; failed LFS hydration never falls back and always retains the checkout. Ignored content is classified per file, with only validated Python bytecode paired with tracked source considered reproducible; all other ignored paths block retirement with exact local identity receipts.
+
+The actual host archive still requires a stable, complete inventory and one verified representative historical restore before it can be relied on for recovery or retirement. Archive source files, path listings, and manifests remain private and are not task publication inputs.
 
 ### Stage 3 — Validation, compatibility, and cutover
 

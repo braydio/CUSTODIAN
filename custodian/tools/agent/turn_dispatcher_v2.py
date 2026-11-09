@@ -3,12 +3,16 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
+import importlib.util
 import json
 import os
+import py_compile
 import re
 import shutil
 import subprocess
 import sys
+import tempfile
 import time
 import uuid
 from pathlib import Path
@@ -19,7 +23,6 @@ PACKETS = "custodian/docs/ai_context/task_packets"
 HANDOFFS = Path("custodian/docs/ai_context/turn_handoffs")
 DESIGN_HOLD_FIELDS = {"user design hold", "user-owned design decision"}
 OPEN_VALUES = {"open", "true", "yes", "unresolved", "required", "pending"}
-CACHE_ROOTS = {".godot", ".venv", "venv", "node_modules", "__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache"}
 
 
 class DispatchError(RuntimeError):
@@ -235,18 +238,16 @@ def begin(repo: Path, workstream: str, mode: str, pool: Path) -> dict:
             source_sha = fetch_branch(repo, branch, remote)
             source = branch
         except DispatchError as exc:
-            if branch == fresh_branch:
-                raise DispatchError(f"fresh recovery branch cannot be fetched: {exc}") from exc
+            if mode != "historical" or branch == fresh_branch:
+                raise DispatchError(f"advertised source branch could not be fetched safely: {exc}") from exc
+            if remote_branch(repo, branch) is not None:
+                raise DispatchError(f"historical branch changed or remains advertised; refusing fallback: {exc}") from exc
+            source = f"origin/main (historical branch disappeared before fetch: {exc})"
             branch = fresh_branch
             remote = remote_branch(repo, branch)
             if remote:
-                try:
-                    source_sha = fetch_branch(repo, branch, remote)
-                    source = branch
-                except DispatchError:
-                    raise DispatchError("both prior and fresh recovery branches are unavailable") from exc
-            else:
-                source = f"origin/main (prior branch unavailable: {exc})"
+                source_sha = fetch_branch(repo, branch, remote)
+                source = f"{branch} (historical branch disappeared; existing fresh recovery branch)"
     else:
         source = "origin/main (no prior branch; fresh start)"
 
@@ -254,37 +255,46 @@ def begin(repo: Path, workstream: str, mode: str, pool: Path) -> dict:
         source_sha = info["task_definition_sha"]
         if branch == fresh_branch or remote:
             branch = fresh_branch
-            source = "origin/main (prior branch unavailable; fresh recovery branch)"
+            if mode == "historical":
+                source = "origin/main (historical branch unavailable; fresh recovery branch)"
+            else:
+                source = "origin/main (no prior branch; fresh recovery branch)"
         source_sha = ensure_fresh_branch(repo, branch, source_sha)
 
     checkout, local_branch = make_turn_checkout(repo, workstream, branch, source_sha, pool)
     try:
         lfs = hydrate_and_verify_lfs(checkout)
     except DispatchError as exc:
-        if branch != fresh_branch:
-            try:
-                retire_unmodified_turn(repo, checkout, local_branch, source_sha)
-                branch = fresh_branch
-                source = f"origin/main (prior LFS data unavailable: {exc})"
-                source_sha = ensure_fresh_branch(repo, branch, info["task_definition_sha"])
-                checkout, local_branch = make_turn_checkout(repo, workstream, branch, source_sha, pool)
-                lfs = hydrate_and_verify_lfs(checkout)
-            except DispatchError as fallback_error:
-                receipt = write_receipt(repo, {"operation": "begin", "status": "blocked",
-                    "workstream": workstream, "mode": mode, "checkout": str(checkout),
-                    "branch": branch, "source_sha": source_sha,
-                    "reason": f"historical recovery failed: {fallback_error}"})
-                raise DispatchError(f"fresh-start recovery failed; checkout retained; receipt {receipt}") from fallback_error
-        else:
-            receipt = write_receipt(repo, {"operation": "begin", "status": "blocked",
-                "workstream": workstream, "mode": mode, "checkout": str(checkout),
-                "branch": branch, "source_sha": source_sha,
-                "reason": f"LFS hydration/verification failed: {exc}"})
-            raise DispatchError(f"LFS verification failed; checkout retained at {checkout}; receipt {receipt}") from exc
-    return {**info, "branch": branch, "source": source, "source_sha": source_sha,
+        receipt = write_receipt(repo, {"operation": "begin", "status": "blocked",
+            "workstream": workstream, "mode": mode, "checkout": str(checkout),
+            "branch": branch, "source": source, "source_sha": source_sha,
+            "reason": f"required LFS data was not verified: {exc}"})
+        raise DispatchError(f"LFS verification failed; checkout retained at {checkout}; receipt {receipt}") from exc
+    result = {**info, "branch": branch, "source": source, "source_sha": source_sha,
             "checkout": str(checkout), "local_branch": local_branch,
             "turn_id": local_branch.rsplit("/", 1)[-1], "lfs_files": lfs,
             "rehydrated": bool(remote and source_sha == remote)}
+    acquisition = {"schema": "custodian.turn_dispatcher_v2.acquisition.v1",
+        "workstream": workstream, "mode": mode, "checkout": str(checkout),
+        "local_branch": local_branch, "turn_id": result["turn_id"],
+        "branch": branch, "source": source, "source_sha": source_sha,
+        "task_definition_sha": info["task_definition_sha"]}
+    acquisition_path = acquisition_record_path(repo, result["turn_id"])
+    try:
+        acquisition_path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+        if acquisition_path.is_symlink() or acquisition_path.exists():
+            raise DispatchError("acquisition receipt path already exists or is a symlink")
+        with acquisition_path.open("x", encoding="utf-8") as stream:
+            stream.write(json.dumps(acquisition, indent=2, sort_keys=True) + "\n")
+        os.chmod(acquisition_path, 0o600)
+    except (OSError, DispatchError) as exc:
+        receipt = write_receipt(repo, {"operation": "begin", "status": "blocked",
+            "workstream": workstream, "mode": mode, "checkout": str(checkout),
+            "local_branch": local_branch, "branch": branch, "source": source,
+            "source_sha": source_sha, "reason": f"acquisition provenance was not persisted: {exc}"})
+        raise DispatchError(f"acquisition provenance failed; checkout retained at {checkout}; receipt {receipt}") from exc
+    result["acquisition_receipt"] = str(acquisition_path)
+    return result
 
 
 def write_receipt(repo: Path, payload: dict) -> str:
@@ -296,7 +306,31 @@ def write_receipt(repo: Path, payload: dict) -> str:
     path = folder / f"{int(time.time())}-{uuid.uuid4().hex}.json"
     content = {"schema": "custodian.turn_dispatcher_v2.receipt.v1", **payload}
     path.write_text(json.dumps(content, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    os.chmod(path, 0o600)
     return str(path)
+
+
+def acquisition_record_path(repo: Path, turn_id: str) -> Path:
+    common = Path(git(repo, "rev-parse", "--git-common-dir"))
+    if not common.is_absolute():
+        common = (repo / common).resolve()
+    return common / "custodian-turn-dispatcher-v2" / "acquisitions" / f"{turn_id}.json"
+
+
+def read_acquisition(repo: Path, local_branch: str, checkout: Path) -> dict:
+    turn_id = local_branch.rsplit("/", 1)[-1]
+    path = acquisition_record_path(repo, turn_id)
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise DispatchError(f"missing or invalid acquisition provenance for {turn_id}") from exc
+    if not isinstance(payload, dict) or payload.get("schema") != "custodian.turn_dispatcher_v2.acquisition.v1":
+        raise DispatchError("unsupported acquisition provenance schema")
+    if payload.get("local_branch") != local_branch or Path(payload.get("checkout", "")).resolve() != checkout:
+        raise DispatchError("acquisition provenance does not identify this checkout")
+    if git(checkout, "rev-parse", "HEAD") != payload.get("source_sha"):
+        raise DispatchError("checkout base no longer matches its recorded acquisition source")
+    return payload
 
 
 def safe_untracked(checkout: Path) -> list[str]:
@@ -340,7 +374,8 @@ def assert_no_secret_content(checkout: Path, untracked: list[str]) -> None:
 
 def add_handoff_metadata(body: str, workstream: str,
                          packet: str, main_sha: str, branch: str,
-                         base_sha: str) -> str:
+                         base_sha: str, source: str, source_sha: str,
+                         mode: str) -> str:
     required = ("Original goal:", "Implemented:", "Remaining:", "Validation:",
                 "Resume:", "Sources/evidence:")
     for label in required:
@@ -349,7 +384,9 @@ def add_handoff_metadata(body: str, workstream: str,
     marker_start, marker_end = "<!-- V2 turn metadata -->", "<!-- /V2 turn metadata -->"
     lines = [marker_start, f"Task identity: {workstream}",
              f"Task definition: {packet} at origin/main {main_sha}",
-             f"Remote branch: {branch}", f"Checkpoint base: {base_sha}", marker_end]
+             f"Remote branch: {branch}", f"Acquisition mode: {mode}",
+             f"Acquisition source: {source}", f"Acquisition source commit: {source_sha}",
+             f"Checkpoint base: {base_sha}", marker_end]
     block = "\n".join(lines)
     if marker_start in body and marker_end in body:
         before = body.split(marker_start, 1)[0]
@@ -358,14 +395,93 @@ def add_handoff_metadata(body: str, workstream: str,
     return f"{block}\n\n{body.lstrip()}"
 
 
-def classify_ignored(checkout: Path) -> tuple[list[str], list[str]]:
+def ignored_paths(checkout: Path) -> list[str]:
     raw = subprocess.run(["git", "-C", str(checkout), "ls-files", "--others", "--ignored",
-                          "--exclude-standard", "-z"], capture_output=True, check=True).stdout
-    paths = [os.fsdecode(part) for part in raw.split(b"\0") if part]
+                          "--exclude-standard", "--directory", "-z"],
+                         capture_output=True, check=True).stdout
+    found: set[str] = set()
+    for part in raw.split(b"\0"):
+        if not part:
+            continue
+        rel = os.fsdecode(part).rstrip("/")
+        path = checkout / rel
+        if path.is_dir() and not path.is_symlink():
+            for root, dirs, files in os.walk(path, followlinks=False):
+                root_path = Path(root)
+                dirs[:] = [d for d in dirs if not (root_path / d).is_symlink()]
+                for name in [*files, *(d for d in os.listdir(root) if (root_path / d).is_symlink())]:
+                    candidate = root_path / name
+                    found.add(candidate.relative_to(checkout).as_posix())
+        else:
+            found.add(rel)
+    return sorted(found)
+
+
+def _verified_python_cache(checkout: Path, rel: str) -> bool:
+    path = checkout / rel
+    if path.is_symlink() or not path.is_file() or path.suffix != ".pyc":
+        return False
+    if "__pycache__" not in Path(rel).parts:
+        return False
+    source = path.parent.parent / (path.name.split(".", 1)[0] + ".py")
+    if not source.is_file() or source.is_symlink():
+        return False
+    tracked = subprocess.run(["git", "-C", str(checkout), "ls-files", "--error-unmatch",
+                              str(source.relative_to(checkout))], capture_output=True).returncode == 0
+    if not tracked:
+        return False
+    try:
+        optimize = 1 if ".opt-1." in path.name else 2 if ".opt-2." in path.name else 0
+        optimization = str(optimize) if optimize else ""
+        expected = Path(importlib.util.cache_from_source(str(source), optimization=optimization))
+        if expected != path:
+            return False
+        data = path.read_bytes()
+        if len(data) <= 16 or data[:4] != importlib.util.MAGIC_NUMBER:
+            return False
+        with tempfile.TemporaryDirectory(prefix="custodian-pyc-verify-") as folder:
+            regenerated = Path(folder) / path.name
+            py_compile.compile(str(source), cfile=str(regenerated), doraise=True,
+                               optimize=optimize)
+            if regenerated.read_bytes() != data:
+                return False
+    except (OSError, py_compile.PyCompileError, ValueError):
+        return False
+    return True
+
+
+def classify_ignored(checkout: Path) -> tuple[list[str], list[str]]:
     disposable, unresolved = [], []
-    for path in paths:
-        (disposable if path.split("/", 1)[0] in CACHE_ROOTS else unresolved).append(path)
+    for rel in ignored_paths(checkout):
+        (disposable if _verified_python_cache(checkout, rel) else unresolved).append(rel)
     return disposable, unresolved
+
+
+def ignored_inventory(checkout: Path) -> list[dict]:
+    disposable, _ = classify_ignored(checkout)
+    disposable_set = set(disposable)
+    entries = []
+    for rel in ignored_paths(checkout):
+        path = checkout / rel
+        info = path.lstat()
+        entry = {"path": rel, "mode": info.st_mode & 0o777,
+                 "classification": "reproducible-cache" if rel in disposable_set else "unresolved"}
+        if path.is_symlink():
+            target = os.readlink(path)
+            entry.update({"type": "symlink", "target": target,
+                          "sha256": hashlib.sha256(os.fsencode(target)).hexdigest()})
+        elif path.is_file():
+            digest = hashlib.sha256()
+            size = 0
+            with path.open("rb") as stream:
+                while chunk := stream.read(1024 * 1024):
+                    digest.update(chunk)
+                    size += len(chunk)
+            entry.update({"type": "file", "sha256": digest.hexdigest(), "size": size})
+        else:
+            entry["type"] = "unsupported"
+        entries.append(entry)
+    return entries
 
 
 def checkpoint(repo: Path, workstream: str, checkout: Path, handoff: Path,
@@ -387,6 +503,9 @@ def checkpoint(repo: Path, workstream: str, checkout: Path, handoff: Path,
         branch = f"agent/{workstream}-recovery-{target_tag.removeprefix('recovery-')}"
     else:
         raise DispatchError("turn branch has an invalid remote target")
+    acquisition = read_acquisition(repo, local_branch, checkout)
+    if acquisition.get("workstream") != workstream or acquisition.get("branch") != branch:
+        raise DispatchError("acquisition provenance does not match checkpoint task and target branch")
     if not handoff.is_file() or handoff.is_symlink():
         raise DispatchError("handoff must be a regular file")
     rel, target = HANDOFFS / f"{workstream}.md", checkout / HANDOFFS / f"{workstream}.md"
@@ -405,12 +524,17 @@ def checkpoint(repo: Path, workstream: str, checkout: Path, handoff: Path,
     packet_path, _, _ = remote_packet(repo, main_sha, workstream)
     base_sha = git(checkout, "rev-parse", "HEAD")
     body = add_handoff_metadata(body, workstream, packet_path, main_sha,
-                                branch, base_sha)
+                                branch, base_sha, acquisition["source"],
+                                acquisition["source_sha"], acquisition["mode"])
     target.write_text(body, encoding="utf-8")
     try:
         untracked = safe_untracked(checkout)
         assert_no_secret_content(checkout, untracked)
-        disposable, unresolved = classify_ignored(checkout)
+        ignored_before = ignored_inventory(checkout)
+        disposable = [item["path"] for item in ignored_before
+                      if item["classification"] == "reproducible-cache"]
+        unresolved = [item["path"] for item in ignored_before
+                      if item["classification"] == "unresolved"]
     except (DispatchError, subprocess.CalledProcessError) as exc:
         receipt = write_receipt(repo, {"operation": "checkpoint", "status": "blocked",
             "workstream": workstream, "checkout": str(checkout), "branch": branch,
@@ -422,6 +546,7 @@ def checkpoint(repo: Path, workstream: str, checkout: Path, handoff: Path,
             "workstream": workstream, "checkout": str(checkout), "branch": branch,
             "local_branch": local_branch, "head": git(checkout, "rev-parse", "HEAD"),
             "ignored_unresolved": unresolved, "ignored_disposable": disposable,
+            "ignored_inventory": ignored_before,
             "reason": "ignored non-cache data requires preservation classification"})
         raise DispatchError(f"unclassified ignored data; checkout retained; receipt {receipt}")
 
@@ -440,13 +565,16 @@ def checkpoint(repo: Path, workstream: str, checkout: Path, handoff: Path,
         advertised = remote_branch(repo, branch)
         if advertised != sha:
             raise DispatchError(f"remote SHA mismatch (expected {sha}, found {advertised})")
+        if ignored_inventory(checkout) != ignored_before:
+            raise DispatchError("ignored file identity changed after preservation classification")
         if git(checkout, "status", "--porcelain", "--untracked-files=all"):
             raise DispatchError("checkout changed after commit/push")
     except DispatchError as exc:
         receipt = write_receipt(repo, {"operation": "checkpoint", "status": "blocked",
             "workstream": workstream, "checkout": str(checkout), "branch": branch,
             "local_branch": local_branch, "head": sha, "ignored_disposable": disposable,
-            "untracked": untracked, "reason": str(exc)})
+            "ignored_inventory": ignored_before, "untracked": untracked,
+            "reason": str(exc)})
         raise DispatchError(f"checkpoint not verified; checkout retained at {checkout}; receipt {receipt}: {exc}") from exc
 
     if retire:
@@ -457,6 +585,7 @@ def checkpoint(repo: Path, workstream: str, checkout: Path, handoff: Path,
     receipt = write_receipt(repo, {"operation": "checkpoint", "status": "published",
         "workstream": workstream, "checkout": str(checkout), "branch": branch,
         "head": sha, "handoff": str(rel), "ignored_disposable": disposable,
+        "ignored_inventory": ignored_before,
         "retired": retire})
     return {"workstream": workstream, "branch": branch, "head": sha,
             "handoff": str(rel), "retired": retire, "receipt": receipt}

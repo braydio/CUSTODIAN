@@ -36,7 +36,8 @@ class TurnDispatcherTests(unittest.TestCase):
             "- Depends on: blocked-predecessor\n- Locks: legacy-lock\n"
             "\n## Handoff\n- Workstream: unrelated-body-value\n"
             "- Authoring chat: repeated-body-value\n", encoding="utf-8")
-        (self.repo / ".gitignore").write_text(".godot/\nevidence_local/\n", encoding="utf-8")
+        (self.repo / "cache_input.py").write_text("value = 42\n", encoding="utf-8")
+        (self.repo / ".gitignore").write_text(".godot/\nevidence_local/\n__pycache__/\n", encoding="utf-8")
         run("git", "add", ".", cwd=self.repo)
         run("git", "commit", "-m", "baseline", cwd=self.repo)
         run("git", "remote", "add", "origin", str(self.origin), cwd=self.repo)
@@ -52,6 +53,22 @@ class TurnDispatcherTests(unittest.TestCase):
         result = td.inspect(self.repo, "example-task", "historical")
         self.assertEqual(result["mode"], "historical")
         self.assertIsNone(result["remote_head"])
+
+    def test_historical_mode_rehydrates_exact_existing_remote_commit(self):
+        (self.repo / "historical.py").write_text("prior work\n", encoding="utf-8")
+        run("git", "add", "historical.py", cwd=self.repo)
+        run("git", "commit", "-m", "historical checkpoint", cwd=self.repo)
+        source_sha = run("git", "rev-parse", "HEAD", cwd=self.repo)
+        run("git", "push", "origin", f"{source_sha}:refs/heads/agent/example-task", cwd=self.repo)
+        result = td.begin(self.repo, "example-task", "historical", self.base / "historical-turns")
+        checkout = Path(result["checkout"])
+        self.assertEqual(result["source"], "agent/example-task")
+        self.assertEqual(result["source_sha"], source_sha)
+        self.assertEqual((checkout / "historical.py").read_text(encoding="utf-8"), "prior work\n")
+        receipt = json.loads(Path(result["acquisition_receipt"]).read_text(encoding="utf-8"))
+        self.assertEqual(receipt["source_sha"], source_sha)
+        run("git", "worktree", "remove", str(checkout), cwd=self.repo)
+        run("git", "update-ref", "-d", f"refs/heads/{result['local_branch']}", source_sha, cwd=self.repo)
 
     def test_explicit_unresolved_user_design_hold_blocks_both_modes(self):
         content = self.packet.read_text(encoding="utf-8")
@@ -79,25 +96,20 @@ class TurnDispatcherTests(unittest.TestCase):
         self.assertEqual(run("git", "-C", str(checkout), "rev-parse", "HEAD"), result["source_sha"])
         self.assertEqual(td.remote_branch(self.repo, "agent/example-task"), result["source_sha"])
 
-    def test_unusable_historical_data_falls_back_to_current_main(self):
+    def test_missing_historical_lfs_data_blocks_without_fallback(self):
         base = run("git", "rev-parse", "HEAD", cwd=self.repo)
         run("git", "push", "origin", f"{base}:refs/heads/agent/example-task", cwd=self.repo)
-        original = td.hydrate_and_verify_lfs
-        calls = 0
-
-        def unavailable_once(checkout):
-            nonlocal calls
-            calls += 1
-            if calls == 1:
-                raise td.DispatchError("historical LFS object unavailable")
-            return original(checkout)
-
-        with patch.object(td, "hydrate_and_verify_lfs", side_effect=unavailable_once):
-            result = td.begin(self.repo, "example-task", "historical", self.base / "turns")
-        self.assertEqual(result["source_sha"], base)
-        self.assertEqual(result["branch"], "agent/example-task-recovery-fresh")
-        self.assertIn("prior LFS data unavailable", result["source"])
-        self.assertTrue(Path(result["checkout"]).is_dir())
+        with patch.object(td, "hydrate_and_verify_lfs",
+                          side_effect=td.DispatchError("historical LFS object unavailable")):
+            with self.assertRaisesRegex(td.DispatchError, "checkout retained") as caught:
+                td.begin(self.repo, "example-task", "historical", self.base / "turns")
+        receipt_path = Path(str(caught.exception).split("receipt ", 1)[1])
+        receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+        self.assertEqual(receipt["source"], "agent/example-task")
+        self.assertEqual(receipt["source_sha"], base)
+        self.assertIn("required LFS data was not verified", receipt["reason"])
+        self.assertTrue(Path(receipt["checkout"]).is_dir())
+        self.assertIsNone(td.remote_branch(self.repo, "agent/example-task-recovery-fresh"))
 
     def turn_checkout(self):
         result = td.begin(self.repo, "example-task", "normal", self.base / "turns")
@@ -117,8 +129,12 @@ class TurnDispatcherTests(unittest.TestCase):
     def test_checkpoint_publishes_handoff_and_retires_exact_turn(self):
         result, checkout = self.turn_checkout()
         (checkout / "source.py").write_text("print('durable')\n", encoding="utf-8")
-        (checkout / ".godot/cache.bin").parent.mkdir(parents=True)
-        (checkout / ".godot/cache.bin").write_bytes(b"reproducible cache")
+        import py_compile
+        import importlib.util
+        cache_source = checkout / "cache_input.py"
+        cache = Path(importlib.util.cache_from_source(str(cache_source)))
+        cache.parent.mkdir()
+        py_compile.compile(str(cache_source), cfile=str(cache), doraise=True)
         output = td.checkpoint(self.repo, "example-task", checkout, self.handoff(),
                                "turn checkpoint", self.base / "turns")
         self.assertTrue(output["retired"])
@@ -130,7 +146,12 @@ class TurnDispatcherTests(unittest.TestCase):
         self.assertIn("turn_handoffs/example-task.md", names)
         receipt = json.loads(Path(output["receipt"]).read_text(encoding="utf-8"))
         self.assertEqual(receipt["status"], "published")
-        self.assertIn(".godot/cache.bin", receipt["ignored_disposable"])
+        self.assertEqual(Path(output["receipt"]).stat().st_mode & 0o777, 0o600)
+        self.assertIn(cache.relative_to(checkout).as_posix(), receipt["ignored_disposable"])
+        handoff = run("git", "--git-dir", str(self.origin), "show",
+                      "refs/heads/agent/example-task:custodian/docs/ai_context/turn_handoffs/example-task.md")
+        self.assertIn("Acquisition source: origin/main (no prior branch; fresh start)", handoff)
+        self.assertIn("Acquisition source commit:", handoff)
         resumed = json.loads(run("python3", str(Path(td.__file__)), "--repo", str(self.repo),
                                  "--pool", str(self.base / "turns"), "begin", "example-task",
                                  "--mode", "normal"))
@@ -181,6 +202,29 @@ class TurnDispatcherTests(unittest.TestCase):
         receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
         self.assertEqual(receipt["status"], "blocked")
         self.assertIn("evidence_local/capture.bin", receipt["ignored_unresolved"])
+
+    def test_ignored_directory_name_does_not_make_unknown_content_disposable(self):
+        cache = self.repo / ".godot/cache.bin"
+        cache.parent.mkdir()
+        cache.write_bytes(b"unknown unique bytes")
+        disposable, unresolved = td.classify_ignored(self.repo)
+        self.assertEqual(disposable, [])
+        self.assertEqual(unresolved, [".godot/cache.bin"])
+
+    def test_verified_python_bytecode_is_classified_by_contents_and_source(self):
+        import py_compile
+        import importlib.util
+        source = self.repo / "module.py"
+        source.write_text("value = 42\n", encoding="utf-8")
+        (self.repo / ".gitignore").write_text("__pycache__/\n", encoding="utf-8")
+        run("git", "add", ".gitignore", "module.py", cwd=self.repo)
+        run("git", "commit", "-m", "tracked source", cwd=self.repo)
+        cache = Path(importlib.util.cache_from_source(str(source)))
+        cache.parent.mkdir()
+        py_compile.compile(str(source), cfile=str(cache), doraise=True)
+        disposable, unresolved = td.classify_ignored(self.repo)
+        self.assertEqual(disposable, [cache.relative_to(self.repo).as_posix()])
+        self.assertEqual(unresolved, [])
 
     def test_secret_untracked_path_blocks_before_staging(self):
         _, checkout = self.turn_checkout()
