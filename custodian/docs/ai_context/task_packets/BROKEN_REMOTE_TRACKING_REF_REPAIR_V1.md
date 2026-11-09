@@ -12,7 +12,7 @@
 - Kind: implementation
 - Review: auto
 - Review stage: post-land
-- Review modes: code, workflow, safety
+- Review modes: code, workflow
 - Paired review workstream: review-broken-remote-tracking-ref-repair-v1
 - Review cycle: 0
 - Max automatic review cycles: 2
