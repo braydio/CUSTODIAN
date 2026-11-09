@@ -1,5 +1,24 @@
 # CURRENT STATE — CUSTODIAN
 
+## Dispatcher V2 cutover candidate (2026-11-09)
+
+D2-005 implements the turn-scoped dispatcher as the candidate execution path in
+`agent/turn-scoped-dispatcher-v2`. The V2 CLI authenticates task identity and
+packet bytes from fetched `origin/main`, ignores legacy status/dependency/claim/
+session-lock scheduling, and retains explicit user-owned design holds. Normal,
+historical, and owner-authorized provenance modes share one V2 acquisition and
+checkpoint implementation. Checkout profiles retain exact path/LFS validation.
+`dispatch.py audit/status` and the Ready/Auto task index are diagnostics and
+authoring metadata only. The paired review runner and `workstream.py finish`
+remain separate acceptance, validation, review, landing, and teardown gates.
+
+This is a review candidate, not a landed or activated `origin/main` change.
+Independent technical review, correction if needed, and guarded merge remain
+outstanding. The private historical archive is optional and unverified; it is
+not modified or required for ordinary Git-backed V2 acquisition. See
+`../../../design/04_architecture/TURN_SCOPED_DISPATCHER_V2.md` and the durable handoff at
+`turn_handoffs/turn-scoped-dispatcher-v2.md`.
+
 ## CUSTODIAN WIRE private pilot handoff (2026-11-08)
 
 The one-shot WIRE exporter published a private sanitized observation, and the connected Dropbox reader retrieved its pointer and observation. The recorded as-of inventory includes 482 active packet records and 421 distinct workstreams, with `raw_dispatch_inventory=complete` but detailed inventory `partial`; these **historical counts are not live dispatcher telemetry**. The source timestamp is `2026-11-08T13:40:47Z`; pointer/content metadata matched, but a separate raw-byte SHA-256 rehash was not established by the text reader. **Automated hourly consumer ingestion, sustained refresh, independent review PASS, host process liveness, and canonical teardown remain unverified.** This is the fourth distinct engineering handoff track, not an acceptance or continuation of the general recovery campaign. Preserve existing claims, locks and schedules. See [Section 9: CUSTODIAN WIRE Private Observation Pilot](reports/CUSTODIAN_CONVERSATION_RETIREMENT_HANDOFF_WIRE_ADDENDUM_20261108.md) for evidence identities, bounded counts, and outstanding gates.

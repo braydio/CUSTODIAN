@@ -42,6 +42,25 @@ If a conflict appears, prefer this authority order:
 - Deterministic fixed-step simulation remains a hard constraint
 - Rendering/UI logic should not silently absorb simulation authority
 
+## V2 task acquisition and turn lifecycle
+
+Use `custodian/tools/agent/dispatch.py claim` or `claim-next` as the canonical
+V2 task entrypoint. They authenticate task identity and packet content from
+fetched `origin/main`; legacy packet status, dependency, claim, lock, and queue
+index fields do not schedule V2. Explicit user-owned design holds still block.
+`--mode historical` opts into verified historical-source reuse, while
+`owner-authorized` requires the exact instruction conversation and SHA-256 as
+provenance, not caller authentication or review approval.
+
+Each claim uses a temporary checkout from `~/Projects/.custodian-turns`.
+`workstream.py start`, `resume`, and `checkpoint` route through the same V2
+lifecycle. Checkpointing preserves a handoff and verifies the remote commit;
+it does not complete work or pass a review. `paired_review_runner.py` and
+`workstream.py finish` retain independent-review, validation, completion, and
+landing acceptance. `dispatch.py audit/status` report legacy queue state only.
+Use the stable coordination checkout as `--repo`; never use the checkout being
+retired. See `docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md` for command details.
+
 ## Routing Map
 
 Use this map to land on the right material fast:
@@ -341,10 +360,11 @@ must, without asking the user for a missing command:
 4. Commit only these scoped queue-authority files, safely land them on
    `origin/main`, fetch, and verify the exact workstream and review
    metadata are visible there before using `dispatch.py claim <id>`.
-   Do not directly edit other agents' claim state or bypass ownership locks.
-5. Do not claim the review before the implementation lands and archives
-   complete. If publication/eligibility is blocked, report the concrete
-   reason instead of quietly downgrading status or skipping to unrelated work.
+   V2 does not use queue status or ownership locks to schedule acquisition.
+5. The paired-review runner independently enforces implementation landing,
+   archive completion, review identity, and acceptance. If a user-owned design
+   hold or packet-authentication check blocks acquisition, preserve that state
+   and report the concrete reason.
 
 The successful preflight prints the next commands but **does not perform**
 any of these mutations. Root [`AGENTS.md`](../AGENTS.md)
@@ -490,8 +510,8 @@ Every normal implementation run uses an isolated ephemeral worktree, including
 single-agent work. Exceptions are explicitly read-only/review-only tasks or a
 documented reason ephemeral worktrees cannot be used. The persistent root
 checkout is a coordination checkout, not the implementation surface. Use
-`python3 custodian/tools/agent/workstream.py start <stable-kebab-id>` to resume
-or create the canonical `agent/<id>` branch. Never reset/stash a dirty attached
+`python3 custodian/tools/agent/dispatch.py claim <stable-kebab-id> --mode normal`
+to create a V2 temporary checkout on the canonical `agent/<id>` branch. Never reset/stash a dirty attached
 worktree; preserve it and report the blocker.
 
 Codex turn-end hygiene is mandatory even when work remains open: inventory

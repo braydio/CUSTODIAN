@@ -25,9 +25,10 @@ review cycle. Never turn an open-ended request into an unlimited run.
 The pure routing/budget policy lives in
 `custodian/tools/agent/next_execution_boundary.py`. At invocation start, recover
 progress for the invocation ID with its `progress` command. At each claim or pair
-boundary, pass the dispatcher eligibility, active-claim reconciliation, packet
-handoff, and review facts to `evaluate`; follow its action. The helper does not
-select packets or claim work: `dispatch.py` remains the assignment authority.
+boundary, pass V2 identity/design-hold availability, active-turn reconciliation,
+packet handoff, and review facts to `evaluate`; follow its action. The helper
+does not select packets or claim work: V2 `dispatch.py` remains the assignment
+authority.
 Record implementation and completed-pair milestones with `record-receipt`,
 including landed SHA, review status, elapsed time, validation summary, and next
 eligibility. Print a short stage update at boundaries; do not dump the queue.
@@ -47,16 +48,17 @@ eligibility. Print a short stage update at boundaries; do not dump the queue.
    from `last-claim` alone. A stale or ambiguous receipt requires reconciliation
    or an explicit stop; never create a duplicate claim.
 3. If no workstream is active or explicitly selected, use the exact immediate
-   successor from the most recent durable `Next Handoff`. For a named dependency chain, claim only the
-   dispatcher-confirmed eligible predecessor needed to reach that successor.
-   Do not jump to unrelated lanes or edit packet metadata to manufacture
-   eligibility. `Refresh owner: execution-agent` permits a bounded live-main
+   successor from the most recent durable `Next Handoff`. Do not treat this
+   relationship as a dispatcher dependency or claim a different predecessor
+   only to satisfy legacy queue state. Do not jump to unrelated lanes or edit
+   packet metadata to manufacture availability. `Refresh owner: execution-agent` permits a bounded live-main
    refresh unless it exposes a new human decision.
 4. Respect planning refresh, human visual/design/canon decision, manual-dispatch,
    failed-validation, and safety gates. Stop at the gate and provide the exact
    recorded Authoring/Refresh chat URL where present.
 5. A paired post-land review is part of the same pair and must run in a fresh
-   reviewer context. Once eligible, invoke
+   reviewer context. Once the review packet is published and independent-review
+   preflight passes, invoke
    `python3 custodian/tools/agent/paired_review_runner.py <review-workstream-id>`
    from the coordination checkout. Do not directly claim the review from the
    implementation context. Preserve its recovery worktree and run evidence if
@@ -68,17 +70,20 @@ eligibility. Print a short stage update at boundaries; do not dump the queue.
    receipt.
 7. After the pair is accepted, inspect its durable `Next Handoff`. In
    `single-pair`, stop even when that successor is ready. In explicit
-   `continuous-chain`, continue only to an eligible named successor within the
+   `continuous-chain`, continue only to a published named successor with no
+   user-owned design hold within the
    requested scope and remaining budget. A paired review or correction cycle
    never consumes an additional pair.
 8. Use global `dispatch.py claim-next --agent codex` only when the user
    explicitly requested general-next execution and there is no unfinished
-   specifically selected workstream. It may select exactly one eligible
-   implementation for the next available pair. A blocker on selected work does
+   specifically selected workstream. It may select exactly one available
+   implementation for the next pair. V2 authenticates task identity and blocks
+   explicit user-owned design holds; legacy status, dependency, claim, and
+   session-lock fields do not schedule acquisition. A blocker on selected work does
    not authorize an unrelated fallback. Never use global fallback to bypass an
    unresolved review, human gate, stale ownership, or validation blocker.
 
-Readiness is not execution: authored, ready, dispatcher-eligible, claimed,
+Readiness is not execution: authored, published, V2-acquired,
 implemented, landed, validated, and closed describe separate lifecycle stages.
 Report only the stage supported by current evidence. A successful publication,
 compile, or branch landing is insufficient when the packet's user-visible

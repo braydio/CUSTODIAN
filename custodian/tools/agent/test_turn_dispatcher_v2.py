@@ -54,6 +54,24 @@ class TurnDispatcherTests(unittest.TestCase):
         self.assertEqual(result["mode"], "historical")
         self.assertIsNone(result["remote_head"])
 
+    def test_existing_divergent_local_agent_ref_is_preserved_and_blocks_acquisition(self):
+        main_sha = run("git", "rev-parse", "HEAD", cwd=self.repo)
+        run("git", "branch", "agent/example-task", cwd=self.repo)
+        local = self.base / "local-branch"
+        run("git", "worktree", "add", str(local), "agent/example-task", cwd=self.repo)
+        run("git", "config", "user.name", "Test", cwd=local)
+        run("git", "config", "user.email", "test@example.com", cwd=local)
+        (local / "private-local-change.py").write_text("preserve\n", encoding="utf-8")
+        run("git", "add", "private-local-change.py", cwd=local)
+        run("git", "commit", "-m", "unique local commit", cwd=local)
+        unique = run("git", "rev-parse", "HEAD", cwd=local)
+        run("git", "worktree", "remove", str(local), cwd=self.repo)
+        with self.assertRaisesRegex(td.DispatchError, "differs from the authenticated source"):
+            td.begin(self.repo, "example-task", "normal", self.base / "turns")
+        self.assertEqual(run("git", "rev-parse", "refs/heads/agent/example-task", cwd=self.repo), unique)
+        self.assertEqual(run("git", "rev-parse", "HEAD", cwd=self.repo), main_sha)
+        self.assertEqual(td.attached(self.repo), [self.repo.resolve()])
+
     def test_historical_mode_rehydrates_exact_existing_remote_commit(self):
         (self.repo / "historical.py").write_text("prior work\n", encoding="utf-8")
         run("git", "add", "historical.py", cwd=self.repo)
@@ -307,7 +325,7 @@ class TurnDispatcherTests(unittest.TestCase):
         self.assertEqual(len(td.attached(self.repo)), 1)
 
     def test_unknown_ignored_data_retains_checkout_with_machine_receipt(self):
-        _, checkout = self.turn_checkout()
+        result, checkout = self.turn_checkout()
         evidence = checkout / "evidence_local/capture.bin"
         evidence.parent.mkdir()
         evidence.write_bytes(b"unique evidence")
@@ -359,6 +377,25 @@ class TurnDispatcherTests(unittest.TestCase):
         with self.assertRaisesRegex(td.DispatchError, "Implemented"):
             td.checkpoint(self.repo, "example-task", checkout, bad,
                           "turn checkpoint", self.base / "turns")
+
+    def test_checkpoint_rejects_retiring_checkout_as_coordination_repo(self):
+        result, checkout = self.turn_checkout()
+        before = run("git", "rev-parse", "HEAD", cwd=checkout)
+        with self.assertRaisesRegex(td.DispatchError, "stable coordination checkout"):
+            td.checkpoint(checkout, "example-task", checkout, self.handoff(),
+                          "invalid coordination context", self.base / "turns")
+        self.assertTrue(checkout.is_dir())
+        self.assertEqual(run("git", "rev-parse", "HEAD", cwd=checkout), before)
+        self.assertEqual(td.remote_branch(self.repo, "agent/example-task"), result["source_sha"])
+
+    def test_checkpoint_rejects_foreign_coordination_repository(self):
+        _, checkout = self.turn_checkout()
+        foreign = self.base / "foreign"
+        run("git", "clone", str(self.origin), str(foreign))
+        with self.assertRaisesRegex(td.DispatchError, "same Git common directory"):
+            td.checkpoint(foreign, "example-task", checkout, self.handoff(),
+                          "foreign coordination context", self.base / "turns")
+        self.assertTrue(checkout.is_dir())
 
     def test_non_fast_forward_concurrent_writer_is_not_overwritten(self):
         _, checkout = self.turn_checkout()
@@ -418,7 +455,7 @@ class TurnDispatcherTests(unittest.TestCase):
         run("git", "lfs", "fetch", "origin", "HEAD", cwd=restored)
         run("git", "lfs", "checkout", cwd=restored)
         self.assertEqual((restored / "material.bin").read_bytes(), source.read_bytes())
-        checkout, local_branch = td.make_turn_checkout(
+        checkout, local_branch, _turn_id = td.make_turn_checkout(
             self.repo, "example-task", "agent/example-task", run("git", "rev-parse", "HEAD", cwd=self.repo),
             self.base / "lfs-turns")
         try:

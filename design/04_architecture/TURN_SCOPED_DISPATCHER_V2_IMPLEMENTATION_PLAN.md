@@ -1,9 +1,9 @@
 # Turn-Scoped Dispatcher V2 Implementation Plan
 
-**Status:** D2-004 Stage 3A integration candidate in progress; opt-in only, no production cutover.
+**Status:** D2-005 Stage 3B integration candidate implemented on `agent/turn-scoped-dispatcher-v2`; fresh independent review pending; no production cutover. The legacy dispatcher remains the `origin/main` authority until reviewed merge.
 **Program:** CUSTODIAN Dispatcher V2 replacement
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af12561-89a4-83ea-bc7f-c896ec89bed0
-**Reviewed main:** `841931733cd0103e5dbeb5587063d3b880e50db7` (fetched from `origin/main` on 2026-11-09).
+**D2-005 candidate base:** `de9fb72d8f4f2c239c551d87797351c9093e21b8` (fetched from `origin/main` on 2026-11-09).
 **Prototype:** PR #123, branch `agent/turn-scoped-dispatcher-v2`; candidate only, not current execution authority.
 
 ## Purpose and boundary

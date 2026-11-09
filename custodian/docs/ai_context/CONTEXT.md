@@ -38,6 +38,18 @@ Operational handoff summary for active Godot implementation work.
 Use this directory as the current AI-facing context pack.
 Use `custodian/AGENTS.md` as the first local stop before using this pack.
 
+## Execution entrypoint (Dispatcher V2 cutover candidate)
+
+In the D2-005 candidate, `dispatch.py claim` / `claim-next` and
+`workstream.py start` / `resume` / `checkpoint` route through the turn-scoped
+V2 implementation. V2 uses authenticated packet identity and explicit user
+design holds; legacy queue status, dependency, claim, and session-lock fields
+do not schedule acquisition. The task index is authoring metadata. A V2
+checkpoint preserves progress and is not task completion or review approval.
+The paired-review runner and `workstream.py finish` enforce separate evidence,
+validation, acceptance, landing, and teardown gates. The patch is not active on
+`origin/main` until it completes independent review and guarded merge.
+
 ## One-Paragraph Summary
 
 CUSTODIAN is a Godot-native tactical base-defense game with an embodied operator, deterministic runtime simulation, contract-driven deployment, and an in-world command terminal. The active game lives in `custodian/` and the active implementation specs live in `design/`.

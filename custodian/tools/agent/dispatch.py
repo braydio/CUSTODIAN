@@ -660,7 +660,7 @@ def audit_command(repo: Path, *, as_json: bool = False) -> int:
     return 0
 
 
-def claim(
+def _legacy_claim_diagnostics(
     repo: Path,
     workstream_id: str | None,
     agent: str,
@@ -930,8 +930,8 @@ def main(argv: list[str] | None = None) -> int:
     subs.add_parser("status")
     p = subs.add_parser("audit"); p.add_argument("--json", action="store_true", dest="as_json")
     p = subs.add_parser("repair"); repair_mode = p.add_mutually_exclusive_group(required=True); repair_mode.add_argument("--plan", action="store_true"); repair_mode.add_argument("--apply", action="store_true"); p.add_argument("--archive-completed", action="store_true", help="also preview/apply legacy complete records with explicit non-empty Completed evidence"); p.add_argument("--json", action="store_true", dest="as_json")
-    p = subs.add_parser("claim-next"); p.add_argument("--agent", default=None); p.add_argument("--lock-wait-seconds", type=float, default=0.0, help="bounded wait for the local assignment mutex (default: fail fast)")
-    p = subs.add_parser("claim"); p.add_argument("workstream_id"); p.add_argument("--agent", default=None); p.add_argument("--lock-wait-seconds", type=float, default=0.0, help="bounded wait for the local assignment mutex (default: fail fast)"); p.add_argument("--checkout-profile", default=None, help="tracked path-exact deferred-LFS checkout profile")
+    p = subs.add_parser("claim-next"); p.add_argument("--agent", default=None); p.add_argument("--mode", choices=("normal", "historical"), default="normal"); p.add_argument("--pool", type=Path, default=Path.home() / "Projects/.custodian-turns")
+    p = subs.add_parser("claim"); p.add_argument("workstream_id"); p.add_argument("--agent", default=None); p.add_argument("--mode", choices=("normal", "historical", "owner-authorized"), default="normal"); p.add_argument("--authorization-url", default=None); p.add_argument("--authorization-sha256", default=None); p.add_argument("--pool", type=Path, default=Path.home() / "Projects/.custodian-turns"); p.add_argument("--checkout-profile", default=None)
     p = subs.add_parser("last-claim"); p.add_argument("--json", action="store_true", dest="as_json")
     args = parser.parse_args(argv)
     try:
@@ -961,12 +961,62 @@ def main(argv: list[str] | None = None) -> int:
                     print(f"{label} {item['workstream']} [{item['path']}]: {item['change']}")
                 print(f"task_packet_repair: {'applied' if args.apply else 'plan only'}; {sum(item['changed'] == 'true' for item in actions)} file(s) changed")
             return 0
-        agent = resolve_agent_id(args.agent)
-        return claim(
-            repo, getattr(args, "workstream_id", None), agent, args.command == "claim-next",
-            lock_wait_seconds=args.lock_wait_seconds,
-            checkout_profile=getattr(args, "checkout_profile", None),
-        )
+        # The CLI is the canonical V2 execution entrypoint. The legacy claim()
+        # function remains available to historical tests/diagnostics, but it is
+        # not consulted for status, dependency, lock, claim, or session gating.
+        import turn_dispatcher_v2 as turn_v2
+        workstream = getattr(args, "workstream_id", None)
+        mode = args.mode
+        if args.command == "claim-next":
+            main_sha, _ = turn_v2.latest_main(repo)
+            packet_paths = turn_v2.git(repo, "ls-tree", "-r", "--name-only", main_sha, "--", turn_v2.PACKETS).splitlines()
+            candidates = []
+            for packet_path in packet_paths:
+                if not packet_path.endswith(".md") or "/archived/" in packet_path:
+                    continue
+                content = turn_v2.git(repo, "show", f"{main_sha}:{packet_path}")
+                fields = turn_v2.parse_fields(content)
+                # Paired reviews are launched by paired_review_runner after
+                # implementation completion; claim-next must not acquire one
+                # as ordinary feature work.
+                if fields.get("kind", "implementation").strip().lower().strip("`") == "review":
+                    continue
+                candidate = fields.get("workstream", "")
+                if turn_v2.ID.fullmatch(candidate):
+                    candidates.append((packet_path, candidate))
+            identities = sorted({candidate for _, candidate in candidates})
+            blocked = []
+            for candidate in identities:
+                try:
+                    turn_v2.inspect(repo, candidate, mode)
+                except turn_v2.DispatchError as exc:
+                    if "user-owned design decision holds" in str(exc):
+                        blocked.append((candidate, str(exc)))
+                        continue
+                    raise
+                workstream = candidate
+                break
+            if workstream is None:
+                print("NO V2 TASK AVAILABLE")
+                for candidate, reason in blocked:
+                    print(f"- {candidate}: {reason}")
+                return 2
+        result = turn_v2.begin(repo, workstream, mode, args.pool,
+                               getattr(args, "authorization_url", None),
+                               getattr(args, "authorization_sha256", None),
+                               getattr(args, "checkout_profile", None))
+        packet = result.get("packet") or f"owner-authorized:{result['owner_authorization']['reference']}"
+        receipt = {"schema": "custodian.dispatch.claim.v2", "result": "claimed",
+                   "workstream": workstream, "branch": result["local_branch"],
+                   "worktree": result["checkout"], "packet": packet,
+                   "checkout": "created", "checkout_profile": result.get("checkout_profile"),
+                   "verified": True, "mode": mode, "run_id": result["run_id"],
+                   "turn_id": result["turn_id"], "acquisition_receipt": result["acquisition_receipt"],
+                   "remote_branch": result["branch"], "source": result["source"],
+                   "source_sha": result["source_sha"], "task_definition_sha": result["task_definition_sha"],
+                   "acquisition_receipt": result["acquisition_receipt"], "agent": resolve_agent_id(args.agent)}
+        print("CUSTODIAN_DISPATCH_RESULT_JSON:" + json.dumps(receipt, sort_keys=True))
+        return 0
     except (DispatchError, WorkflowControlError) as error:
         print(f"dispatch: BLOCKED: {error}", file=sys.stderr)
         return 2

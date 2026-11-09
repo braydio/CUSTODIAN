@@ -1,5 +1,54 @@
 # Agent Workstream Lifecycle
 
+## Turn-Scoped Dispatcher V2 execution model
+
+The canonical execution entrypoint is the V2 turn lifecycle implemented by
+`turn_dispatcher_v2.py`. `dispatch.py claim` and `claim-next` route to V2;
+`workstream.py start`, `resume`, and `checkpoint` route to the same lifecycle.
+Each acquisition creates a temporary checkout under
+`~/Projects/.custodian-turns` on the canonical `agent/<workstream>` branch.
+The checkout is removed only after a verified checkpoint and preservation
+inventory. A conflicting local branch, failed LFS verification, unresolved
+ignored data, or unsafe coordination repository preserves the checkout/ref and
+fails closed.
+
+V2 authenticates task identity and packet bytes against fetched `origin/main`.
+It ignores legacy `Status`, `Dispatch`, `Depends on`, administrative claim,
+session-lock, and dependency-chain fields for task selection. An explicit open
+`User design hold` or `User-owned design decision` still blocks acquisition.
+`claim-next` considers active packet identities deterministically; it is not the
+legacy Ready/Auto queue scheduler. Queue audit/status and packet-index tools
+remain diagnostics/editorial metadata and do not grant or deny V2 acquisition.
+`--agent` records caller attribution only; it is not authentication.
+
+Use `--mode normal` for current work, `--mode historical` to reuse a verified
+existing branch or start from current main when historical state is unavailable,
+and `--mode owner-authorized` only with an exact ChatGPT conversation URL and
+the SHA-256 of the owner instruction. That authorization is provenance; it does
+not authenticate the caller or imply review approval. `--checkout-profile` is
+optional and verifies its exact current-main paths and required LFS objects.
+
+The V2 checkpoint is only a durable progress boundary. It does not complete a
+task, pass an independent review, approve a design, or land a feature. The
+existing `paired_review_runner.py` and `workstream.py finish` acceptance gates
+remain responsible for review evidence, completion truth, validation, safe
+landing, and teardown. A reviewer finding or `human_required` result cannot be
+converted to PASS by checkpointing.
+
+Examples from a stable coordination checkout:
+
+```bash
+python3 custodian/tools/agent/dispatch.py claim <workstream-id> --mode normal
+python3 custodian/tools/agent/dispatch.py claim <workstream-id> --mode historical
+python3 custodian/tools/agent/workstream.py start <workstream-id> --mode normal
+python3 custodian/tools/agent/workstream.py checkpoint <workstream-id> \
+  --repo <stable-coordination-checkout> --checkout <exact-turn-checkout>
+```
+
+Do not pass the retiring turn checkout as `--repo`. The stable coordination
+checkout must remain attached to the same Git common directory so private V2
+receipts survive turn retirement and retries.
+
 
 ## Crèche-only pre-claim source publication (2026-11-06)
 

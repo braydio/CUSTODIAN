@@ -31,8 +31,8 @@ class DispatchError(RuntimeError):
     """An unsafe or incomplete turn operation; local work remains recoverable."""
 
 
-def git(repo: Path, *args: str, check: bool = True) -> str:
-    proc = subprocess.run(["git", "-C", str(repo), *args], capture_output=True, text=True)
+def git(repo: Path, *args: str, check: bool = True, env: dict[str, str] | None = None) -> str:
+    proc = subprocess.run(["git", "-C", str(repo), *args], capture_output=True, text=True, env=env)
     if check and proc.returncode:
         detail = proc.stderr.strip() or proc.stdout.strip()
         raise DispatchError(f"git {' '.join(args)} failed: {detail}")
@@ -254,27 +254,40 @@ def hydrate_and_verify_lfs(checkout: Path) -> list[str]:
 
 
 def make_turn_checkout(repo: Path, workstream: str, branch: str, source_sha: str,
-                       pool: Path) -> tuple[Path, str]:
-    turn_id = uuid.uuid4().hex
+                       pool: Path, turn_id: str | None = None,
+                       skip_lfs_smudge: bool = False) -> tuple[Path, str, str]:
+    turn_id = turn_id or uuid.uuid4().hex
     checkout = pool / f"turn-{workstream}-{turn_id[:12]}"
     if branch == f"agent/{workstream}":
-        target_tag = "main"
+        local_branch = branch
     else:
         prefix = f"agent/{workstream}-recovery-"
         if not branch.startswith(prefix):
             raise DispatchError(f"unexpected target branch for {workstream}: {branch}")
         target_tag = "recovery-" + branch.removeprefix(prefix)
-    local_branch = f"turn/{workstream}/{target_tag}/{turn_id}"
+        local_branch = f"turn/{workstream}/{target_tag}/{turn_id}"
     pool.mkdir(parents=True, exist_ok=True)
     if checkout.exists():
         raise DispatchError(f"turn checkout path already exists: {checkout}")
-    git(repo, "worktree", "add", "-b", local_branch, str(checkout), source_sha)
-    return checkout, local_branch
+    existing = git(repo, "rev-parse", "--verify", f"refs/heads/{local_branch}", check=False)
+    if existing:
+        if any(git(item, "symbolic-ref", "--short", "HEAD", check=False) == local_branch
+               for item in attached(repo)):
+            raise DispatchError(f"canonical branch {local_branch} is already attached; preserving existing checkout")
+        if existing != source_sha:
+            raise DispatchError(f"local {local_branch} differs from the authenticated source; preserve and reconcile it")
+        git(repo, "worktree", "add", str(checkout), local_branch,
+            env={**os.environ, **({"GIT_LFS_SKIP_SMUDGE": "1"} if skip_lfs_smudge else {})})
+    else:
+        git(repo, "worktree", "add", "-b", local_branch, str(checkout), source_sha,
+            env={**os.environ, **({"GIT_LFS_SKIP_SMUDGE": "1"} if skip_lfs_smudge else {})})
+    return checkout, local_branch, turn_id
 
 
 def begin(repo: Path, workstream: str, mode: str, pool: Path,
           authorization_url: str | None = None,
-          authorization_sha256: str | None = None) -> dict:
+          authorization_sha256: str | None = None,
+          checkout_profile: str | None = None) -> dict:
     info = inspect(repo, workstream, mode, authorization_url, authorization_sha256)
     repo, pool = Path(info["repo"]), pool.expanduser().resolve()
     if pool == repo or pool in repo.parents:
@@ -318,9 +331,48 @@ def begin(repo: Path, workstream: str, mode: str, pool: Path,
                 source = "origin/main (no prior branch; fresh recovery branch)"
         source_sha = ensure_fresh_branch(repo, branch, source_sha)
 
-    checkout, local_branch = make_turn_checkout(repo, workstream, branch, source_sha, pool)
+    profile_receipt = None
+    profile = None
+    profile_inventory = None
+    if checkout_profile is not None:
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import worktree_provisioning
+        try:
+            profile = worktree_provisioning.load_profile(repo, info["task_definition_sha"], checkout_profile)
+            if profile is None:
+                raise worktree_provisioning.ProvisioningError("checkout profile was not loaded")
+            capacity = worktree_provisioning.preflight_capacity(
+                repo, profile_path=checkout_profile, ref=info["task_definition_sha"], target=pool,
+            )
+            if capacity.get("local_lfs_failures"):
+                raise worktree_provisioning.ProvisioningError("required profile LFS objects are unavailable or corrupt")
+            if not capacity.get("sufficient"):
+                raise worktree_provisioning.ProvisioningError("insufficient storage for the profiled turn checkout")
+            profile_inventory = worktree_provisioning.inventory(repo, info["task_definition_sha"], profile)
+        except worktree_provisioning.ProvisioningError as exc:
+            raise DispatchError(f"checkout profile preflight failed before turn acquisition: {exc}") from exc
+    turn_id = uuid.uuid4().hex
+    run_id = time.strftime("%Y%m%dT%H%M%SZ", time.gmtime()) + "-" + turn_id[:12]
+    checkout, local_branch, turn_id = make_turn_checkout(
+        repo, workstream, branch, source_sha, pool, turn_id,
+        skip_lfs_smudge=checkout_profile is not None,
+    )
     try:
-        lfs = hydrate_and_verify_lfs(checkout)
+        if checkout_profile is None:
+            lfs = hydrate_and_verify_lfs(checkout)
+        else:
+            import worktree_provisioning
+            profile_inventory = worktree_provisioning.configure_sparse_checkout(
+                checkout, repo, info["task_definition_sha"], profile,
+            )
+            lfs = [item.path for item in profile_inventory if item.path in profile.hydrate_lfs]
+            profile_receipt = {
+                "profile": profile.path, "profile_sha256": profile.digest,
+                "paths": [item.path for item in profile_inventory],
+                "hydrated_lfs_paths": list(profile.hydrate_lfs),
+                "hydrated_lfs": [{"path": item.path, "oid": item.lfs_oid, "size": item.lfs_size}
+                                  for item in profile_inventory if item.path in profile.hydrate_lfs],
+            }
     except DispatchError as exc:
         receipt = write_receipt(repo, {"operation": "begin", "status": "blocked",
             "workstream": workstream, "mode": mode, "checkout": str(checkout),
@@ -329,12 +381,16 @@ def begin(repo: Path, workstream: str, mode: str, pool: Path,
         raise DispatchError(f"LFS verification failed; checkout retained at {checkout}; receipt {receipt}") from exc
     result = {**info, "branch": branch, "source": source, "source_sha": source_sha,
             "checkout": str(checkout), "local_branch": local_branch,
-            "turn_id": local_branch.rsplit("/", 1)[-1], "lfs_files": lfs,
-            "rehydrated": bool(remote and source_sha == remote)}
+            "turn_id": turn_id, "lfs_files": lfs,
+            "run_id": run_id,
+            "rehydrated": bool(remote and source_sha == remote),
+            "checkout_profile": profile_receipt}
     acquisition = {"schema": "custodian.turn_dispatcher_v2.acquisition.v1",
         "workstream": workstream, "mode": mode, "checkout": str(checkout),
         "local_branch": local_branch, "turn_id": result["turn_id"],
+        "run_id": run_id,
         "branch": branch, "source": source, "source_sha": source_sha,
+        "packet": info["packet"],
         "task_definition_sha": info["task_definition_sha"],
         "definition_kind": info["definition_kind"],
         "definition_sha256": info["definition_sha256"],
@@ -460,18 +516,27 @@ def completed_retirement(repo: Path, checkout: Path, workstream: str) -> dict | 
 
 
 def read_acquisition(repo: Path, local_branch: str, checkout: Path) -> dict:
-    turn_id = local_branch.rsplit("/", 1)[-1]
-    path = acquisition_record_path(repo, turn_id)
-    try:
-        payload = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
-        raise DispatchError(f"missing or invalid acquisition provenance for {turn_id}") from exc
+    folder = acquisition_record_path(repo, "placeholder").parent
+    matches = []
+    for path in folder.glob("*.json") if folder.is_dir() and not folder.is_symlink() else []:
+        if path.is_symlink() or not path.is_file():
+            continue
+        try:
+            candidate = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        if (isinstance(candidate, dict) and candidate.get("local_branch") == local_branch
+                and Path(candidate.get("checkout", "")).resolve() == checkout):
+            matches.append(candidate)
+    if len(matches) != 1:
+        raise DispatchError("missing or ambiguous acquisition provenance for this checkout")
+    payload = matches[0]
     if not isinstance(payload, dict) or payload.get("schema") != "custodian.turn_dispatcher_v2.acquisition.v1":
         raise DispatchError("unsupported acquisition provenance schema")
     if payload.get("local_branch") != local_branch or Path(payload.get("checkout", "")).resolve() != checkout:
         raise DispatchError("acquisition provenance does not identify this checkout")
-    if git(checkout, "rev-parse", "HEAD") != payload.get("source_sha"):
-        raise DispatchError("checkout base no longer matches its recorded acquisition source")
+    if not is_ancestor(repo, str(payload.get("source_sha", "")), git(checkout, "rev-parse", "HEAD")):
+        raise DispatchError("checkout no longer descends from its recorded acquisition source")
     return payload
 
 
@@ -588,7 +653,16 @@ def _verified_python_cache(checkout: Path, rel: str) -> bool:
             regenerated = Path(folder) / path.name
             py_compile.compile(str(source), cfile=str(regenerated), doraise=True,
                                dfile=code.co_filename, optimize=optimize)
-            if regenerated.read_bytes() != data:
+            regenerated_data = regenerated.read_bytes()
+            if (len(regenerated_data) <= 16
+                    or regenerated_data[:4] != importlib.util.MAGIC_NUMBER):
+                return False
+            regenerated_code = marshal.loads(regenerated_data[16:])
+            # Python's marshal reference-sharing encoding may vary between
+            # equivalent compilations. Compare the decoded code object, not
+            # incidental serialization bytes, to prove the cache matches its
+            # tracked source.
+            if not isinstance(regenerated_code, types.CodeType) or regenerated_code != code:
                 return False
     except (OSError, py_compile.PyCompileError, ValueError):
         return False
@@ -635,23 +709,44 @@ def checkpoint(repo: Path, workstream: str, checkout: Path, handoff: Path,
     validate_id(workstream)
     if checkout.parent != pool or not checkout.name.startswith(f"turn-{workstream}-"):
         raise DispatchError("checkout is outside the managed turn pool")
+    if repo == checkout:
+        raise DispatchError("checkpoint --repo must be a stable coordination checkout, not the turn being retired")
+    if repo not in attached(repo):
+        raise DispatchError("checkpoint --repo must be an attached coordination checkout")
     if checkout not in attached(repo):
         if not checkout.exists():
             completed = completed_retirement(repo, checkout, workstream)
             if completed:
                 return completed
+        try:
+            repo_common = Path(git(repo, "rev-parse", "--path-format=absolute", "--git-common-dir")).resolve()
+            checkout_common = Path(git(checkout, "rev-parse", "--path-format=absolute", "--git-common-dir")).resolve()
+        except DispatchError as exc:
+            raise DispatchError("checkout is not attached to this Git common directory") from exc
+        if repo_common != checkout_common:
+            raise DispatchError("checkpoint --repo and turn checkout do not share the same Git common directory")
         raise DispatchError("checkout is not attached to this Git common directory")
+    try:
+        repo_common = Path(git(repo, "rev-parse", "--path-format=absolute", "--git-common-dir")).resolve()
+        checkout_common = Path(git(checkout, "rev-parse", "--path-format=absolute", "--git-common-dir")).resolve()
+    except DispatchError as exc:
+        raise DispatchError("checkpoint requires an attached coordination checkout sharing the turn's Git common directory") from exc
+    if repo_common != checkout_common:
+        raise DispatchError("checkpoint --repo and turn checkout do not share the same Git common directory")
     local_branch = git(checkout, "symbolic-ref", "--short", "HEAD")
-    parts = local_branch.split("/")
-    if len(parts) != 4 or parts[0:2] != ["turn", workstream]:
-        raise DispatchError("unexpected temporary turn branch")
-    target_tag = parts[2]
-    if target_tag == "main":
-        branch = f"agent/{workstream}"
-    elif target_tag.startswith("recovery-") and len(target_tag) > len("recovery-"):
-        branch = f"agent/{workstream}-recovery-{target_tag.removeprefix('recovery-')}"
+    if local_branch == f"agent/{workstream}":
+        branch = local_branch
     else:
-        raise DispatchError("turn branch has an invalid remote target")
+        parts = local_branch.split("/")
+        if len(parts) != 4 or parts[0:2] != ["turn", workstream]:
+            raise DispatchError("unexpected temporary turn branch")
+        target_tag = parts[2]
+        if target_tag == "main":
+            branch = f"agent/{workstream}"
+        elif target_tag.startswith("recovery-") and len(target_tag) > len("recovery-"):
+            branch = f"agent/{workstream}-recovery-{target_tag.removeprefix('recovery-')}"
+        else:
+            raise DispatchError("turn branch has an invalid remote target")
     acquisition = read_acquisition(repo, local_branch, checkout)
     if acquisition.get("workstream") != workstream or acquisition.get("branch") != branch:
         raise DispatchError("acquisition provenance does not match checkpoint task and target branch")

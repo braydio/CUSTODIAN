@@ -103,6 +103,43 @@ class WorkstreamTests(unittest.TestCase):
         self.assertFalse(changed_report["passed"])
         self.assertTrue(changed_report["source_changed_during_validation"])
 
+    def test_v2_source_span_receipt_replaces_legacy_claim_witness(self):
+        workstream_id = "v2-source-span-fixture"
+        packet = f"custodian/docs/ai_context/task_packets/{workstream_id.upper().replace('-', '_')}.md"
+        packet_path = self.repo / packet
+        packet_path.parent.mkdir(parents=True, exist_ok=True)
+        packet_path.write_text(f"# Fixture\n- Workstream: `{workstream_id}`\n")
+        git(self.repo, "add", packet)
+        git(self.repo, "commit", "-m", "publish v2 packet")
+        git(self.repo, "push", "origin", "main")
+        git(self.repo, "fetch", "origin")
+        source = git(self.repo, "rev-parse", "origin/main")
+        branch = workstream.branch_for(workstream_id)
+        git(self.repo, "checkout", "-b", branch, source)
+        (self.repo / "implementation.py").write_text("implemented\n")
+        git(self.repo, "add", "implementation.py")
+        git(self.repo, "commit", "-m", "v2 implementation")
+        head = git(self.repo, "rev-parse", "HEAD")
+        git(self.repo, "push", "origin", branch)
+        trace = workstream.RunTrace.start(self.repo, workstream_id, packet=packet)
+        receipt_dir = workstream.common_dir(self.repo) / "custodian-turn-dispatcher-v2" / "acquisitions"
+        receipt_dir.mkdir(parents=True)
+        receipt = receipt_dir / ("1" * 32 + ".json")
+        receipt.write_text(json.dumps({
+            "schema": "custodian.turn_dispatcher_v2.acquisition.v1",
+            "workstream": workstream_id, "checkout": str(self.repo), "branch": branch,
+            "source_sha": source, "packet": packet, "definition_kind": "published-packet",
+        }))
+        trace.record("v2_turn_acquired", receipt=str(receipt), checkout=str(self.repo), remote_branch=branch)
+        trace.record("v2_turn_checkpointed", branch=branch, remote_branch=branch, head=head)
+        self.assertIsNone(workstream._source_span_sync_merge_witness_error(
+            workstream_id, self.repo, head, trace))
+        payload = json.loads(receipt.read_text())
+        payload["branch"] = "agent/unrelated"
+        receipt.write_text(json.dumps(payload))
+        error = workstream._source_span_sync_merge_witness_error(workstream_id, self.repo, head, trace)
+        self.assertIn("V2 acquisition or checkpoint receipt", error)
+
     def _source_sync_merge_fixture(self, *, witness=True, packetless=False):
         workstream_id = "agent-source-sync-witness-fixture"
         branch = workstream.branch_for(workstream_id)
@@ -2335,17 +2372,21 @@ class WorkstreamTests(unittest.TestCase):
         self.assertEqual(spy.call_args.args[2], "unspecified")
         self.assertNotEqual(spy.call_args.args[2], "codex")
 
-    def test_cli_start_preserves_explicit_agent_flag(self):
+    def test_cli_start_uses_v2_owner_authorized_turn_checkout(self):
         original_cwd = Path.cwd()
         os.chdir(self.repo)
         try:
-            with mock.patch.object(workstream, "acquire_remote_claim", wraps=workstream.acquire_remote_claim) as spy, \
-                 mock.patch.object(sys, "argv", ["workstream.py", "start", "agent-cli-work", "--agent", "codex"]):
+            with mock.patch.object(sys, "argv", ["workstream.py", "start", "agent-cli-work",
+                 "--mode", "owner-authorized", "--authorization-url", "https://chatgpt.com/g/g-test/c/owner-auth",
+                 "--authorization-sha256", "a" * 64, "--repo", str(self.repo),
+                 "--pool", str(self.base / "turns")]):
                 result = workstream.main()
         finally:
             os.chdir(original_cwd)
         self.assertEqual(result, 0)
-        self.assertEqual(spy.call_args.args[2], "codex")
+        self.assertTrue((self.base / "turns").is_dir())
+        self.assertIn(str(self.base / "turns" / "turn-agent-cli-work"),
+                      git(self.repo, "worktree", "list", "--porcelain"))
 
     def test_checkpoint_pushes_and_retains_recovery_branch(self):
         path = workstream.start("checkpoint-me", self.repo)

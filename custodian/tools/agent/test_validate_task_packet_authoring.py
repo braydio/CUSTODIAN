@@ -140,7 +140,7 @@ class AuthoringPreflightTests(unittest.TestCase):
         self.assertIn("task_packet_index.py --write", rendered)
         self.assertIn("origin/main, NOT your local checkout", rendered)
         self.assertIn("dispatch.py claim sample-work --agent <agent-id>", rendered)
-        self.assertIn("Do not claim the paired post-land review", rendered)
+        self.assertIn("paired-review runner enforces", rendered)
         self.assertNotIn("PROMOTION REQUIRED", rendered)
 
     def test_preflight_handoff_draft_requires_design_authorization(self):

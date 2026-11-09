@@ -4371,6 +4371,41 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
             with self.assertRaisesRegex(runner.RunnerError, "does not verify"):
                 runner.parse_claim_receipt(runner.CLAIM_SENTINEL + json.dumps(receipt), "review-sample", repo)
 
+    def test_v2_receipt_requires_matching_private_acquisition_record(self):
+        with tempfile.TemporaryDirectory() as temp:
+            repo = Path(temp) / "repo"
+            repo.mkdir()
+            subprocess.run(["git", "init", "-q", str(repo)], check=True)
+            subprocess.run(["git", "-C", str(repo), "checkout", "-qb", "agent/review-sample"], check=True)
+            subprocess.run(["git", "-C", str(repo), "-c", "user.name=Test", "-c",
+                            "user.email=test@example.invalid", "commit", "--allow-empty", "-qm", "source"], check=True)
+            source_sha = runner.git(repo, "rev-parse", "HEAD")
+            turn_id = "a" * 32
+            run_id = "20261109T112300Z-" + turn_id[:12]
+            packet = "custodian/docs/ai_context/task_packets/REVIEW_SAMPLE.md"
+            acquisition = {
+                "schema": "custodian.turn_dispatcher_v2.acquisition.v1",
+                "workstream": "review-sample", "turn_id": turn_id, "run_id": run_id,
+                "checkout": str(repo.resolve()), "local_branch": "agent/review-sample",
+                "branch": "agent/review-sample", "packet": packet, "source_sha": source_sha,
+            }
+            acquisition_path = runner.common_dir(repo) / "custodian-turn-dispatcher-v2" / "acquisitions" / f"{turn_id}.json"
+            acquisition_path.parent.mkdir(parents=True)
+            acquisition_path.write_text(json.dumps(acquisition))
+            receipt = {"schema": "custodian.dispatch.claim.v2", "result": "claimed",
+                       "workstream": "review-sample", "verified": True,
+                       "worktree": str(repo.resolve()), "branch": "agent/review-sample",
+                       "remote_branch": "agent/review-sample", "packet": packet,
+                       "run_id": run_id, "turn_id": turn_id,
+                       "acquisition_receipt": str(acquisition_path)}
+            parsed = runner.parse_claim_receipt(runner.CLAIM_SENTINEL + json.dumps(receipt),
+                                                "review-sample", repo)
+            self.assertEqual(parsed["turn_id"], turn_id)
+            receipt["packet"] = "custodian/docs/ai_context/task_packets/OTHER.md"
+            with self.assertRaisesRegex(runner.RunnerError, "does not match"):
+                runner.parse_claim_receipt(runner.CLAIM_SENTINEL + json.dumps(receipt),
+                                           "review-sample", repo)
+
     def test_prompt_is_durable_evidence_only_and_safe_logs_redact_secrets(self):
         prompt = runner.prompt_for("review-sample", "review.md", "archived/impl.md",
                                    implementation_summary_path="SAMPLE_IMPL_CLAUDE_SUMMARY.md",

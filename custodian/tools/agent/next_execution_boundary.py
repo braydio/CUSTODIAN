@@ -2,8 +2,8 @@
 """Pure execution-boundary policy for the CUSTODIAN Next skill.
 
 This module does not inspect Git, select packets, claim work, or run reviews.
-Callers supply facts from the dispatcher, the active worktree, and the durable
-packet handoff; those authorities remain responsible for their own domains.
+Callers supply V2 identity/design-hold availability, active-turn state, and the
+durable packet handoff. V2 itself remains the acquisition authority.
 """
 from __future__ import annotations
 
@@ -85,7 +85,7 @@ def _claim(request: dict[str, Any], completed: int, action: str, workstream: str
         "completed_pairs": completed,
         "remaining_pairs": max(0, request["max_pairs"] - completed),
         "workstream": workstream,
-        "reason": "dispatcher must verify eligibility and remains claim authority",
+        "reason": "V2 must authenticate task identity and enforce user-owned design holds",
     }
 
 
