@@ -1,0 +1,212 @@
+Godot Engine v4.7.2.stable.arch_linux.ed1daf0bf (2026-08-17 01:18:38 UTC) - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce GTX 1650 SUPER
+
+[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)
+[CustodianContractMap] CONTRACT_BEGIN node=/root/WorldContractBootstrap/PrewarmedContractGenerator instance=222868541009 seed=1
+[CustodianContractMap] GENERATE_BEGIN mode=EVAL_CANDIDATE seed=2033395789 map_path=/root/WorldContractBootstrap/PrewarmedContractGenerator/MapRoot/ProcGenMap
+[ProcGenTilemap] GEN_BEGIN id=1 mode=EVAL_CANDIDATE seed=2033395789 path=/root/WorldContractBootstrap/PrewarmedContractGenerator/MapRoot/ProcGenMap output_enabled=true
+[ProcGenTilemap] intent graph nodes=17 edges=16 floor_cells=5364 regions=17
+[TerrainBuilder] === PHASES ===
+[TerrainBuilder]   build_baseline: 11 ms
+[TerrainBuilder]   reserved_region: 68 ms
+[TerrainBuilder]   ascent_route: 180 ms
+[TerrainBuilder]   mountain_boundary: 4 ms
+[TerrainBuilder]   industrial_platform: 30 ms
+[TerrainBuilder]   connectivity_validate: 26 ms
+[TerrainBuilder]   connectivity_rescue: 0 ms
+[TerrainBuilder]   TOTAL: 477 ms
+TerrainBuilder: seed=169773796559313489 mode=EVAL_CANDIDATE map_size=(176, 160) required=30 missing=0 rescue_carved=0 baseline_rescue=0 regions=3 blocked=1132 elevated=49 ramps=1 connectivity=true fallback=false
+WorldProgression: profile=sundered_keep_ascent samples=110
+[ProcgenDepthBackdrop] Chasm camera backdrop active: cells=18345
+[ProcGenTilemap] props_foliage SKIP mode=EVAL_CANDIDATE
+[ProcGen] === FILL_TILEMAPS PHASES ===
+[ProcGen]   setup_clear: 0 ms
+[ProcGen]   planet_profile: 6 ms
+[ProcGen]   substrate_ascent: 114 ms
+[ProcGen]   compound_interior_spawn: 3520 ms
+[ProcGen]   interest_paths: 33 ms
+[ProcGen]   roads_walls_capture: 48 ms
+[ProcGen]   terrain_apply_builder: 7761 ms
+[ProcGen]   terrain_route_walkability: 129 ms
+[ProcGen]   terrain_ingress_protection: 0 ms
+[ProcGen]   terrain_road_walkability: 35 ms
+[ProcGen]   terrain_road_repair: 0 ms
+[ProcGen]   terrain_connector_elevation: 0 ms
+[ProcGen]   terrain_edge_prune: 0 ms
+[ProcGen]   terrain_road_visual_refresh: 37 ms
+[ProcGen]   terrain_state_capture: 8 ms
+[ProcGen]   terrain_elevation: 7970 ms
+[ProcGen]   progress_faction_story: 747 ms
+[ProcGen]   roads_pass2: 0 ms
+[ProcGen]   road_semantics: 63 ms
+[ProcGen]   nonwalkable_surface_semantics: 365 ms
+[ProcGen]   biome_final_semantics: 75 ms
+[ProcGen]   surface_materials: 71 ms
+[ProcGen]   floor_value_clusters: 0 ms
+[ProcGen]   macro_presentation: 1075 ms
+[ProcGen]   dressing_cluster_plan: 290 ms
+[ProcGen]   streaming_reveal_or_walls: 0 ms
+[ProcGen]   props_foliage: 0 ms
+[ProcGen]   props_visual: 0 ms
+[ProcGen]   playability_audit: 452 ms
+[ProcGen]   horiz_wall_overlays: 0 ms
+[ProcGen]   FILL_TILEMAPS TOTAL: 14829 ms
+[ProcgenDepthBackdrop] Chasm camera backdrop active: cells=18345
+[ProcGenTilemap] GEN_END id=1 mode=EVAL_CANDIDATE seed=2033395789 total=14890ms
+[ProcGen] === PIPELINE TIMING ===
+[ProcGen]   mode: EVAL_CANDIDATE
+[ProcGen]   seed: 2033395789
+[ProcGen]   fill_tilemaps: 14838 ms
+[ProcGen]   refresh_shadows: 0 ms
+[ProcGen]   TOTAL: 14890 ms
+[CustodianContractMap] GENERATE_END mode=EVAL_CANDIDATE seed=2033395789
+[CustodianContractMap] ATTEMPT_DECISION_JSON:{"accepted":true,"attempt":0,"candidate_count":1,"candidate_key":"attempt_00_seed_2033395789","required_ingress_failures":[],"required_ingresses_valid":true,"semantic_fingerprint":"4070097951","semantic_stage_timing_ms":{"required_ingress_ms":134.435,"snapshot_total_ms":470.615,"walkability_and_elevation_ms":311.329},"world_fingerprint":"432625431"}
+[CustodianContractMap] Attempt 0: instantiate=0.0s generate=15.5s metrics=0.5s total=16.0s layout_valid=true candidate_valid=true connected=1.00 ingress=1.00 pre_terrain_connected=1.00 pre_terrain_missing=0 baseline_rescue=0 terrain_fallback=false terrain_connectivity=true terrain_rescue=0 terrain_rescue_limit=200 terrain_rescue_ok=true rejection_reasons=[] accepted=true score=1.10
+[CustodianContractMap] Attempt loop total: 18.9s attempts_run=1 max_attempts=12 accepted_attempt=0
+[CustodianContractMap] FINAL_VISUAL_BEGIN map_path=/root/WorldContractBootstrap/PrewarmedContractGenerator/MapRoot/ProcGenMap eval_mode_before=false
+[ProcGenTilemap] GEN_BEGIN id=1 mode=FINAL_VISUAL seed=2033395789 path=/root/WorldContractBootstrap/PrewarmedContractGenerator/MapRoot/ProcGenMap output_enabled=true
+[ProcGenTilemap] intent graph nodes=17 edges=16 floor_cells=5364 regions=17
+[TerrainBuilder] === PHASES ===
+[TerrainBuilder]   build_baseline: 11 ms
+[TerrainBuilder]   reserved_region: 65 ms
+[TerrainBuilder]   ascent_route: 182 ms
+[TerrainBuilder]   mountain_boundary: 3 ms
+[TerrainBuilder]   industrial_platform: 29 ms
+[TerrainBuilder]   connectivity_validate: 26 ms
+[TerrainBuilder]   connectivity_rescue: 0 ms
+[TerrainBuilder]   TOTAL: 476 ms
+TerrainBuilder: seed=169773796559313489 mode=FINAL_VISUAL map_size=(176, 160) required=30 missing=0 rescue_carved=0 baseline_rescue=0 regions=3 blocked=1132 elevated=49 ramps=1 connectivity=true fallback=false
+WorldProgression: profile=sundered_keep_ascent samples=110
+[ProcgenDepthBackdrop] Chasm camera backdrop active: cells=18345
+[ProcGen] floor_value_clusters SKIP no registered floor value variants
+[ProcGenTilemap] props_foliage SKIP mode=FINAL_VISUAL_STREAMING_REVEAL
+WARNING: [ProcGenStuckPocket] cleared 1 runtime collision owner(s) near tile=(4, 80)
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] validate_no_stuck_pockets (res://game/world/procgen/proc_gen_tilemap.gd:6535)
+       [1] _generate_ruin_props (res://game/world/procgen/proc_gen_tilemap.gd:8837)
+       [2] _fill_tilemaps (res://game/world/procgen/proc_gen_tilemap.gd:1525)
+       [3] _on_procgen_finished (res://game/world/procgen/proc_gen_tilemap.gd:1174)
+       [4] _on_automaton_finished (res://game/world/procgen/generator/generator.gd:32)
+       [5] generate (res://game/world/procgen/generator/automaton.gd:63)
+       [6] generate (res://game/world/procgen/generator/generator.gd:28)
+       [7] generate (res://game/world/procgen/procgen.gd:281)
+       [8] generate (res://game/world/procgen/proc_gen_tilemap.gd:1119)
+       [9] materialize_accepted_candidate (res://game/world/procgen/proc_gen_tilemap.gd:1254)
+       [10] materialize (res://game/world/procgen/generation/procgen_candidate_materializer.gd:39)
+       [11] _generate_final_map_level_data (res://game/world/procgen/custodian_contract_map.gd:897)
+       [12] generate_contract (res://game/world/procgen/custodian_contract_map.gd:524)
+       [13] _dispose_node (res://game/world/procgen/custodian_contract_map.gd:687)
+WARNING: [ProcGenStuckPocket] cleared 1 runtime collision owner(s) near tile=(124, 98)
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] validate_no_stuck_pockets (res://game/world/procgen/proc_gen_tilemap.gd:6535)
+       [1] _generate_ruin_props (res://game/world/procgen/proc_gen_tilemap.gd:8837)
+       [2] _fill_tilemaps (res://game/world/procgen/proc_gen_tilemap.gd:1525)
+       [3] _on_procgen_finished (res://game/world/procgen/proc_gen_tilemap.gd:1174)
+       [4] _on_automaton_finished (res://game/world/procgen/generator/generator.gd:32)
+       [5] generate (res://game/world/procgen/generator/automaton.gd:63)
+       [6] generate (res://game/world/procgen/generator/generator.gd:28)
+       [7] generate (res://game/world/procgen/procgen.gd:281)
+       [8] generate (res://game/world/procgen/proc_gen_tilemap.gd:1119)
+       [9] materialize_accepted_candidate (res://game/world/procgen/proc_gen_tilemap.gd:1254)
+       [10] materialize (res://game/world/procgen/generation/procgen_candidate_materializer.gd:39)
+       [11] _generate_final_map_level_data (res://game/world/procgen/custodian_contract_map.gd:897)
+       [12] generate_contract (res://game/world/procgen/custodian_contract_map.gd:524)
+       [13] _dispose_node (res://game/world/procgen/custodian_contract_map.gd:687)
+WARNING: [ProcGenStuckPocket] cleared 1 runtime collision owner(s) near tile=(74, 156)
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] validate_no_stuck_pockets (res://game/world/procgen/proc_gen_tilemap.gd:6535)
+       [1] _generate_ruin_props (res://game/world/procgen/proc_gen_tilemap.gd:8837)
+       [2] _fill_tilemaps (res://game/world/procgen/proc_gen_tilemap.gd:1525)
+       [3] _on_procgen_finished (res://game/world/procgen/proc_gen_tilemap.gd:1174)
+       [4] _on_automaton_finished (res://game/world/procgen/generator/generator.gd:32)
+       [5] generate (res://game/world/procgen/generator/automaton.gd:63)
+       [6] generate (res://game/world/procgen/generator/generator.gd:28)
+       [7] generate (res://game/world/procgen/procgen.gd:281)
+       [8] generate (res://game/world/procgen/proc_gen_tilemap.gd:1119)
+       [9] materialize_accepted_candidate (res://game/world/procgen/proc_gen_tilemap.gd:1254)
+       [10] materialize (res://game/world/procgen/generation/procgen_candidate_materializer.gd:39)
+       [11] _generate_final_map_level_data (res://game/world/procgen/custodian_contract_map.gd:897)
+       [12] generate_contract (res://game/world/procgen/custodian_contract_map.gd:524)
+       [13] _dispose_node (res://game/world/procgen/custodian_contract_map.gd:687)
+[ProcGen] ruin_props clear=0ms prepare=7720ms spawn=7ms finalize=2514ms
+[ProcGen] interior_props clear=0ms prepare=37ms spawn=0ms
+[ProcGen] === FILL_TILEMAPS PHASES ===
+[ProcGen]   setup_clear: 0 ms
+[ProcGen]   planet_profile: 0 ms
+[ProcGen]   substrate_ascent: 112 ms
+[ProcGen]   compound_interior_spawn: 3526 ms
+[ProcGen]   interest_paths: 32 ms
+[ProcGen]   roads_walls_capture: 50 ms
+[ProcGen]   terrain_apply_builder: 7858 ms
+[ProcGen]   terrain_route_walkability: 134 ms
+[ProcGen]   terrain_ingress_protection: 0 ms
+[ProcGen]   terrain_road_walkability: 38 ms
+[ProcGen]   terrain_road_repair: 0 ms
+[ProcGen]   terrain_connector_elevation: 0 ms
+[ProcGen]   terrain_edge_prune: 0 ms
+[ProcGen]   terrain_road_visual_refresh: 34 ms
+[ProcGen]   terrain_state_capture: 7 ms
+[ProcGen]   terrain_elevation: 8071 ms
+[ProcGen]   progress_faction_story: 791 ms
+[ProcGen]   roads_pass2: 0 ms
+[ProcGen]   road_semantics: 68 ms
+[ProcGen]   nonwalkable_surface_semantics: 354 ms
+[ProcGen]   biome_final_semantics: 89 ms
+[ProcGen]   surface_materials: 75 ms
+[ProcGen]   floor_value_clusters: 0 ms
+[ProcGen]   macro_presentation: 1347 ms
+[ProcGen]   dressing_cluster_plan: 294 ms
+[ProcGen]   streaming_reveal_or_walls: 583 ms
+[ProcGen]   props_foliage: 0 ms
+[ProcGen]   props_visual: 10278 ms
+[ProcGen]   playability_audit: 890 ms
+[ProcGen]   horiz_wall_overlays: 0 ms
+[ProcGen]   FILL_TILEMAPS TOTAL: 26560 ms
+[ProcgenDepthBackdrop] Chasm camera backdrop active: cells=18345
+[ProcGenTilemap] GEN_END id=1 mode=FINAL_VISUAL seed=2033395789 total=26632ms
+[ProcGen] === PIPELINE TIMING ===
+[ProcGen]   mode: FINAL_VISUAL
+[ProcGen]   seed: 2033395789
+[ProcGen]   fill_tilemaps: 26574 ms
+[ProcGen]   refresh_shadows: 0 ms
+[ProcGen]   nav_bake: 1 ms
+[ProcGen]   TOTAL: 26632 ms
+[CustodianContractMap] FINAL_PROMOTION_END total=27.8s
+[TurretPlacement] Initialized, game_state: GameState:<Node#37111203359>
+Power system found 6 sectors
+[WaveManager] Initialized with 4 spawn nodes
+Registered debug commands with DevConsole
+[ProcgenDepthBackdrop] Chasm camera backdrop active: cells=17628
+[NavigationSystem] Initialized with 607 walkable tiles
+[ContractWorldLoader] Navigation rebuilt with procgen tilemaps
+[Enemy] SHRUMB connected to navigation system
+[Enemy] SHRUMB connected to navigation system
+[NavigationSystem] Initialized with 607 walkable tiles
+[NavigationSystem] Initialized with 988 walkable tiles
+[NavigationSystem] Initialized with 1105 walkable tiles
+[NavigationSystem] Initialized with 1153 walkable tiles
+[Enemy] SHRUMB connected to navigation system
+[SupplyDropManager] Supply drop at (2690.835, 4835.872) | std:16 hv:3
+[NavigationSystem] Initialized with 2015 walkable tiles
+[Enemy] SHRUMB connected to navigation system
+[NavigationSystem] Initialized with 2128 walkable tiles
+[NavigationSystem] Initialized with 2250 walkable tiles
+[Enemy] GRUNT connected to navigation system
+[Enemy] PURSUIT FRAME connected to navigation system
+[NavigationSystem] Initialized with 2250 walkable tiles
+MELEE HIT: 1 target(s), damage=10.0
+MELEE HIT: 1 target(s), damage=10.0
+MELEE HIT: 1 target(s), damage=10.0
+MELEE HIT: 1 target(s), damage=10.0
+MELEE HIT: 1 target(s), damage=10.0
+MELEE HIT: 1 target(s), damage=10.0
+[Enemy] SHRUMB connected to navigation system
+MELEE HIT: 1 target(s), damage=10.0
+MELEE HIT: 1 target(s), damage=10.0
+MELEE HIT: 1 target(s), damage=10.0
+ENEMY DESTROYED: PURSUIT FRAME
+MELEE HIT: 1 target(s), damage=10.0
+[SupplyDropManager] Supply drop at (3635.854, 4382.58) | std:16 hv:3

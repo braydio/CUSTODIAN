@@ -1,0 +1,1151 @@
+Godot Engine v4.7.2.stable.arch_linux.ed1daf0bf (2026-08-17 01:18:38 UTC) - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce GTX 1650 SUPER
+
+[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)
+[CustodianContractMap] CONTRACT_BEGIN node=/root/WorldContractBootstrap/PrewarmedContractGenerator instance=222868541009 seed=2
+[CustodianContractMap] GENERATE_BEGIN mode=EVAL_CANDIDATE seed=3570245418 map_path=/root/WorldContractBootstrap/PrewarmedContractGenerator/MapRoot/ProcGenMap
+[ProcGenTilemap] GEN_BEGIN id=1 mode=EVAL_CANDIDATE seed=3570245418 path=/root/WorldContractBootstrap/PrewarmedContractGenerator/MapRoot/ProcGenMap output_enabled=true
+[ProcGenTilemap] intent graph nodes=17 edges=16 floor_cells=5659 regions=17
+[TerrainBuilder] === PHASES ===
+[TerrainBuilder]   build_baseline: 13 ms
+[TerrainBuilder]   reserved_region: 75 ms
+[TerrainBuilder]   ascent_route: 211 ms
+[TerrainBuilder]   mountain_boundary: 4 ms
+[TerrainBuilder]   industrial_platform: 35 ms
+[TerrainBuilder]   connectivity_validate: 30 ms
+[TerrainBuilder]   connectivity_rescue: 0 ms
+[TerrainBuilder]   TOTAL: 545 ms
+TerrainBuilder: seed=298089837643973980 mode=EVAL_CANDIDATE map_size=(176, 192) required=30 missing=0 rescue_carved=0 baseline_rescue=0 regions=3 blocked=1006 elevated=1043 ramps=127 connectivity=true fallback=false
+WorldProgression: profile=sundered_keep_ascent samples=132
+[ProcgenDepthBackdrop] Chasm camera backdrop active: cells=21771
+[ProcGenTilemap] props_foliage SKIP mode=EVAL_CANDIDATE
+[ProcGen] === FILL_TILEMAPS PHASES ===
+[ProcGen]   setup_clear: 0 ms
+[ProcGen]   planet_profile: 0 ms
+[ProcGen]   substrate_ascent: 122 ms
+[ProcGen]   compound_interior_spawn: 3928 ms
+[ProcGen]   interest_paths: 40 ms
+[ProcGen]   roads_walls_capture: 56 ms
+[ProcGen]   terrain_apply_builder: 8686 ms
+[ProcGen]   terrain_route_walkability: 92 ms
+[ProcGen]   terrain_ingress_protection: 0 ms
+[ProcGen]   terrain_road_walkability: 13 ms
+[ProcGen]   terrain_road_repair: 0 ms
+[ProcGen]   terrain_connector_elevation: 0 ms
+[ProcGen]   terrain_edge_prune: 0 ms
+[ProcGen]   terrain_road_visual_refresh: 11 ms
+[ProcGen]   terrain_state_capture: 9 ms
+[ProcGen]   terrain_elevation: 8811 ms
+[ProcGen]   progress_faction_story: 802 ms
+[ProcGen]   roads_pass2: 0 ms
+[ProcGen]   road_semantics: 87 ms
+[ProcGen]   nonwalkable_surface_semantics: 358 ms
+[ProcGen]   biome_final_semantics: 92 ms
+[ProcGen]   surface_materials: 90 ms
+[ProcGen]   floor_value_clusters: 0 ms
+[ProcGen]   macro_presentation: 611 ms
+[ProcGen]   dressing_cluster_plan: 358 ms
+[ProcGen]   streaming_reveal_or_walls: 0 ms
+[ProcGen]   props_foliage: 0 ms
+[ProcGen]   props_visual: 0 ms
+[ProcGen]   playability_audit: 635 ms
+[ProcGen]   horiz_wall_overlays: 0 ms
+[ProcGen]   FILL_TILEMAPS TOTAL: 15990 ms
+[ProcgenDepthBackdrop] Chasm camera backdrop active: cells=21771
+[ProcGenTilemap] GEN_END id=1 mode=EVAL_CANDIDATE seed=3570245418 total=16065ms
+[ProcGen] === PIPELINE TIMING ===
+[ProcGen]   mode: EVAL_CANDIDATE
+[ProcGen]   seed: 3570245418
+[ProcGen]   fill_tilemaps: 16000 ms
+[ProcGen]   refresh_shadows: 0 ms
+[ProcGen]   TOTAL: 16065 ms
+[CustodianContractMap] GENERATE_END mode=EVAL_CANDIDATE seed=3570245418
+[CustodianContractMap] ATTEMPT_DECISION_JSON:{"accepted":true,"attempt":0,"candidate_count":1,"candidate_key":"attempt_00_seed_3570245418","required_ingress_failures":[],"required_ingresses_valid":true,"semantic_fingerprint":"2923220575","semantic_stage_timing_ms":{"required_ingress_ms":1171.361,"snapshot_total_ms":1570.2,"walkability_and_elevation_ms":366.99},"world_fingerprint":"1806704955"}
+[CustodianContractMap] Attempt 0: instantiate=0.0s generate=16.7s metrics=1.6s total=18.3s layout_valid=true candidate_valid=true connected=1.00 ingress=1.00 pre_terrain_connected=1.00 pre_terrain_missing=0 baseline_rescue=0 terrain_fallback=false terrain_connectivity=true terrain_rescue=0 terrain_rescue_limit=200 terrain_rescue_ok=true rejection_reasons=[] accepted=true score=1.10
+[CustodianContractMap] Attempt loop total: 21.3s attempts_run=1 max_attempts=12 accepted_attempt=0
+[CustodianContractMap] FINAL_VISUAL_BEGIN map_path=/root/WorldContractBootstrap/PrewarmedContractGenerator/MapRoot/ProcGenMap eval_mode_before=false
+[ProcGenTilemap] GEN_BEGIN id=1 mode=FINAL_VISUAL seed=3570245418 path=/root/WorldContractBootstrap/PrewarmedContractGenerator/MapRoot/ProcGenMap output_enabled=true
+[ProcGenTilemap] intent graph nodes=17 edges=16 floor_cells=5659 regions=17
+[TerrainBuilder] === PHASES ===
+[TerrainBuilder]   build_baseline: 14 ms
+[TerrainBuilder]   reserved_region: 81 ms
+[TerrainBuilder]   ascent_route: 224 ms
+[TerrainBuilder]   mountain_boundary: 5 ms
+[TerrainBuilder]   industrial_platform: 36 ms
+[TerrainBuilder]   connectivity_validate: 32 ms
+[TerrainBuilder]   connectivity_rescue: 0 ms
+[TerrainBuilder]   TOTAL: 581 ms
+TerrainBuilder: seed=298089837643973980 mode=FINAL_VISUAL map_size=(176, 192) required=30 missing=0 rescue_carved=0 baseline_rescue=0 regions=3 blocked=1006 elevated=1043 ramps=127 connectivity=true fallback=false
+WorldProgression: profile=sundered_keep_ascent samples=132
+[ProcgenDepthBackdrop] Chasm camera backdrop active: cells=21771
+[ProcGen] floor_value_clusters SKIP no registered floor value variants
+[ProcGenTilemap] props_foliage SKIP mode=FINAL_VISUAL_STREAMING_REVEAL
+[ProcGen] ruin_props clear=0ms prepare=10253ms spawn=10ms finalize=2397ms
+[ProcGen] interior_props clear=0ms prepare=42ms spawn=0ms
+[ProcGen] === FILL_TILEMAPS PHASES ===
+[ProcGen]   setup_clear: 1 ms
+[ProcGen]   planet_profile: 0 ms
+[ProcGen]   substrate_ascent: 127 ms
+[ProcGen]   compound_interior_spawn: 3878 ms
+[ProcGen]   interest_paths: 36 ms
+[ProcGen]   roads_walls_capture: 55 ms
+[ProcGen]   terrain_apply_builder: 8785 ms
+[ProcGen]   terrain_route_walkability: 96 ms
+[ProcGen]   terrain_ingress_protection: 0 ms
+[ProcGen]   terrain_road_walkability: 12 ms
+[ProcGen]   terrain_road_repair: 0 ms
+[ProcGen]   terrain_connector_elevation: 0 ms
+[ProcGen]   terrain_edge_prune: 0 ms
+[ProcGen]   terrain_road_visual_refresh: 13 ms
+[ProcGen]   terrain_state_capture: 8 ms
+[ProcGen]   terrain_elevation: 8914 ms
+[ProcGen]   progress_faction_story: 831 ms
+[ProcGen]   roads_pass2: 0 ms
+[ProcGen]   road_semantics: 88 ms
+[ProcGen]   nonwalkable_surface_semantics: 363 ms
+[ProcGen]   biome_final_semantics: 91 ms
+[ProcGen]   surface_materials: 93 ms
+[ProcGen]   floor_value_clusters: 0 ms
+[ProcGen]   macro_presentation: 859 ms
+[ProcGen]   dressing_cluster_plan: 358 ms
+[ProcGen]   streaming_reveal_or_walls: 626 ms
+[ProcGen]   props_foliage: 0 ms
+[ProcGen]   props_visual: 12703 ms
+[ProcGen]   playability_audit: 865 ms
+[ProcGen]   horiz_wall_overlays: 0 ms
+[ProcGen]   FILL_TILEMAPS TOTAL: 29888 ms
+[ProcgenDepthBackdrop] Chasm camera backdrop active: cells=21771
+[ProcGenTilemap] GEN_END id=1 mode=FINAL_VISUAL seed=3570245418 total=29969ms
+[ProcGen] === PIPELINE TIMING ===
+[ProcGen]   mode: FINAL_VISUAL
+[ProcGen]   seed: 3570245418
+[ProcGen]   fill_tilemaps: 29899 ms
+[ProcGen]   refresh_shadows: 0 ms
+[ProcGen]   nav_bake: 1 ms
+[ProcGen]   TOTAL: 29969 ms
+[CustodianContractMap] FINAL_PROMOTION_END total=32.9s
+[SpecialRoomRuntimeInserter] Inserted campaign_empty_convoy_v1 at tile (115, 98)
+[TurretPlacement] Initialized, game_state: GameState:<Node#37111203359>
+Power system found 6 sectors
+[WaveManager] Initialized with 4 spawn nodes
+Registered debug commands with DevConsole
+[ProcgenDepthBackdrop] Chasm camera backdrop active: cells=21607
+[NavigationSystem] Initialized with 606 walkable tiles
+[ContractWorldLoader] Navigation rebuilt with procgen tilemaps
+[Enemy] SHRUMB connected to navigation system
+[Enemy] SHRUMB connected to navigation system
+[NavigationSystem] Initialized with 606 walkable tiles
+[NavigationSystem] Initialized with 990 walkable tiles
+[NavigationSystem] Initialized with 1037 walkable tiles
+[Enemy] GRUNT connected to navigation system
+[Enemy] PURSUIT FRAME connected to navigation system
+[Enemy] SHRUMB connected to navigation system
+[NavigationSystem] Initialized with 6948 walkable tiles
+[SupplyDropManager] Supply drop at (3817.637, 2823.674) | std:16 hv:3
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ENEMY DESTROYED: PURSUIT FRAME
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _show_presentation_layer (res://game/actors/operator/operator.gd:4723)
+       [3] _play_modular_action_animation (res://game/actors/operator/operator.gd:3884)
+       [4] _play_modular_action_animation_backwards (res://game/actors/operator/operator.gd:3906)
+       [5] _begin_modular_primary_ranged_lower_presentation (res://game/actors/operator/operator.gd:3778)
+       [6] _exit_ranged_ready (res://game/actors/operator/operator.gd:6052)
+       [7] _update_ranged_ready_state (res://game/actors/operator/operator.gd:5846)
+       [8] _advance_simulation (res://game/actors/operator/operator.gd:1407)
+       [9] _physics_process (res://game/actors/operator/operator.gd:1429)
+[NavigationSystem] Initialized with 8015 walkable tiles
+[Enemy] SHRUMB connected to navigation system
+[Enemy] GRUNT connected to navigation system
+[NavigationSystem] Initialized with 8343 walkable tiles
+[NavigationSystem] Initialized with 8343 walkable tiles
+[NavigationSystem] Initialized with 8343 walkable tiles
+[NavigationSystem] Initialized with 8343 walkable tiles
+[NavigationSystem] Initialized with 8415 walkable tiles
+[NavigationSystem] Initialized with 8415 walkable tiles
+[NavigationSystem] Initialized with 8415 walkable tiles
+[NavigationSystem] Initialized with 8415 walkable tiles
+[NavigationSystem] Initialized with 8415 walkable tiles
+[NavigationSystem] Initialized with 8415 walkable tiles
+[SupplyDropManager] Supply drop at (1431.058, 2803.41) | std:16 hv:3
+[SupplyDropManager] Supply drop at (-2055.202, 528.1696) | std:16 hv:3
+[NavigationSystem] Initialized with 8416 walkable tiles
+[Enemy] SHRUMB connected to navigation system
+[NavigationSystem] Initialized with 8416 walkable tiles
+MELEE HIT: 1 target(s), damage=10.0
+ENEMY DESTROYED: DUST SPORE SHRUMB
+MELEE HIT: 1 target(s), damage=10.0
+[CognitivePickup] Faint Recollection +1
+[NavigationSystem] Initialized with 8627 walkable tiles
+[NavigationSystem] Initialized with 8875 walkable tiles
+[NavigationSystem] Initialized with 9074 walkable tiles
+AMMO CACHE COLLECTED: +12 STD / +2 HVY
+AMMO CACHE COLLECTED: +1 STD / +2 HVY
+[Enemy] SHRUMB connected to navigation system
+[NavigationSystem] Initialized with 9101 walkable tiles
+[NavigationSystem] Initialized with 9101 walkable tiles
+[NavigationSystem] Initialized with 9101 walkable tiles
+[NavigationSystem] Initialized with 9102 walkable tiles
+[NavigationSystem] Initialized with 9102 walkable tiles
+[NavigationSystem] Initialized with 9102 walkable tiles
+[NavigationSystem] Initialized with 9102 walkable tiles
+[NavigationSystem] Initialized with 9102 walkable tiles
+[NavigationSystem] Initialized with 9102 walkable tiles
+[NavigationSystem] Initialized with 9102 walkable tiles
+[NavigationSystem] Initialized with 9102 walkable tiles
+[NavigationSystem] Initialized with 9102 walkable tiles
+[NavigationSystem] Initialized with 9102 walkable tiles
+[NavigationSystem] Initialized with 9102 walkable tiles
+[NavigationSystem] Initialized with 9102 walkable tiles
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_lower_body_layer (res://game/actors/operator/operator.gd:4354)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3138)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _sync_modular_upper_body_layer (res://game/actors/operator/operator.gd:4369)
+       [3] _sync_modular_ranged_ready_movement_presentation (res://game/actors/operator/operator.gd:3141)
+       [4] _update_animation (res://game/actors/operator/operator.gd:1883)
+       [5] _process (res://game/actors/operator/operator.gd:1316)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _show_presentation_layer (res://game/actors/operator/operator.gd:4723)
+       [3] _play_modular_action_animation (res://game/actors/operator/operator.gd:3884)
+       [4] _play_modular_action_animation_backwards (res://game/actors/operator/operator.gd:3906)
+       [5] _begin_modular_primary_ranged_lower_presentation (res://game/actors/operator/operator.gd:3778)
+       [6] _exit_ranged_ready (res://game/actors/operator/operator.gd:6052)
+       [7] _update_ranged_ready_state (res://game/actors/operator/operator.gd:5846)
+       [8] _advance_simulation (res://game/actors/operator/operator.gd:1407)
+       [9] _physics_process (res://game/actors/operator/operator.gd:1429)
+ERROR: Production Carbine muzzle requested without a resolved frame socket ()
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _get_ranged_muzzle_position (res://game/actors/operator/operator.gd:11496)
+       [1] _spawn_muzzle_flash (res://game/actors/operator/operator.gd:11477)
+       [2] _emit_pending_ranged_shot (res://game/actors/operator/operator.gd:5398)
+       [3] _request_ranged_shot (res://game/actors/operator/operator.gd:5286)
+       [4] _handle_attack_input (res://game/actors/operator/operator.gd:5451)
+       [5] _advance_simulation (res://game/actors/operator/operator.gd:1421)
+       [6] _physics_process (res://game/actors/operator/operator.gd:1429)
+ENEMY LOOT ROLLED: GRUNT table=practical_salvage_x_grunt drops={ &"ruin_scrap": 1 }
+ENEMY DESTROYED: GRUNT
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4665)
+       [2] _show_presentation_layer (res://game/actors/operator/operator.gd:4723)
+       [3] _play_modular_action_animation (res://game/actors/operator/operator.gd:3884)
+       [4] _play_modular_action_animation_backwards (res://game/actors/operator/operator.gd:3906)
+       [5] _begin_modular_primary_ranged_lower_presentation (res://game/actors/operator/operator.gd:3778)
+       [6] _exit_ranged_ready (res://game/actors/operator/operator.gd:6052)
+       [7] _update_ranged_ready_state (res://game/actors/operator/operator.gd:5846)
+       [8] _advance_simulation (res://game/actors/operator/operator.gd:1407)
+       [9] _physics_process (res://game/actors/operator/operator.gd:1429)
+[NavigationSystem] Initialized with 9178 walkable tiles
+[NavigationSystem] Initialized with 9178 walkable tiles
+[NavigationSystem] Initialized with 9178 walkable tiles
+[NavigationSystem] Initialized with 9178 walkable tiles
+[NavigationSystem] Initialized with 9178 walkable tiles
+[NavigationSystem] Initialized with 9272 walkable tiles
+[NavigationSystem] Initialized with 9506 walkable tiles
+[Enemy] GRUNT connected to navigation system
+MELEE HIT: 1 target(s), damage=10.0
+ENEMY DESTROYED: DUST RUST SHRUMB
+MELEE HIT: 1 target(s), damage=10.0
+[CognitivePickup] Faint Recollection +1
+[NavigationSystem] Initialized with 9599 walkable tiles
+[NavigationSystem] Initialized with 9599 walkable tiles
+[NavigationSystem] Initialized with 9599 walkable tiles
+[NavigationSystem] Initialized with 9599 walkable tiles
+MELEE HIT: 1 target(s), damage=10.0
+[NavigationSystem] Initialized with 9599 walkable tiles
+[NavigationSystem] Initialized with 9599 walkable tiles
+[NavigationSystem] Initialized with 9599 walkable tiles
+ENEMY DESTROYED: DUST TENDRILE SHRUMB
+MELEE HIT: 1 target(s), damage=10.0
+[CognitivePickup] Faint Recollection +1
+[NavigationSystem] Initialized with 9599 walkable tiles
+[NavigationSystem] Initialized with 9599 walkable tiles
+[NavigationSystem] Initialized with 9599 walkable tiles
+[NavigationSystem] Initialized with 9599 walkable tiles
+ENEMY LOOT ROLLED: GRUNT table=practical_salvage_x_grunt drops={ &"ruin_scrap": 3, &"frayed_signal_filament": 1 }
+ENEMY DESTROYED: GRUNT
+[NavigationSystem] Initialized with 9599 walkable tiles
+[NavigationSystem] Initialized with 9599 walkable tiles
+[NavigationSystem] Initialized with 9599 walkable tiles
+[NavigationSystem] Initialized with 9599 walkable tiles
+[NavigationSystem] Initialized with 9599 walkable tiles
+[NavigationSystem] Initialized with 9599 walkable tiles
+[NavigationSystem] Initialized with 9599 walkable tiles
+[NavigationSystem] Initialized with 9599 walkable tiles
+[NavigationSystem] Initialized with 9599 walkable tiles
+[NavigationSystem] Initialized with 9599 walkable tiles
+[NavigationSystem] Initialized with 9599 walkable tiles
+[NavigationSystem] Initialized with 9599 walkable tiles
+[NavigationSystem] Initialized with 9599 walkable tiles
+[NavigationSystem] Initialized with 9599 walkable tiles
+[NavigationSystem] Initialized with 9599 walkable tiles
+[NavigationSystem] Initialized with 9599 walkable tiles
+[NavigationSystem] Initialized with 9599 walkable tiles
+[NavigationSystem] Initialized with 9599 walkable tiles
+[NavigationSystem] Initialized with 9599 walkable tiles
+[NavigationSystem] Initialized with 9599 walkable tiles
+[NavigationSystem] Initialized with 9599 walkable tiles
+[NavigationSystem] Initialized with 9599 walkable tiles
+[NavigationSystem] Initialized with 9599 walkable tiles
+[Enemy] GRUNT connected to navigation system
+MELEE HIT: 1 target(s), damage=10.0
+ENEMY DESTROYED: DUST MOSS SHRUMB
+MELEE HIT: 1 target(s), damage=10.0
+[CognitivePickup] Faint Recollection +1
+MELEE HIT: 1 target(s), damage=10.0
+ENEMY DESTROYED: DUST LUMEN SHRUMB
+MELEE HIT: 1 target(s), damage=10.0
+[CognitivePickup] Faint Recollection +1
+[NavigationSystem] Initialized with 9599 walkable tiles
+[NavigationSystem] Initialized with 9599 walkable tiles
+[NavigationSystem] Initialized with 9599 walkable tiles
+[NavigationSystem] Initialized with 9599 walkable tiles
+Enemy hit Operator for 39.0 damage!
+Enemy hit Operator for 13.0 damage!
+Enemy hit Operator for 13.0 damage!
+Enemy hit Operator for 13.0 damage!
+Enemy hit Operator for 13.0 damage!
+OPERATOR DOWN!
+Enemy hit Operator for 9.0 damage!
+[DebugBus] Loading Sundered Keep Approach Blockout...
+[DevMode] debug_free_camera: ON
+[DebugBus] Loading Sundered Keep Approach Blockout...
+[DevMode] debug_free_camera: OFF
+[DevMode] infinite_health: ON
+[DevMode] infinite_stamina: ON
+[DevObservatory] Session exported: /home/braydenchaffee/Projects/.custodian-convoy-integrated-qa-5876922/.qa-home/data/godot/app_userdata/CUSTODIAN/dev_observatory/session_20261102_071005.json
+[DebugBus] Loading Sundered Keep Approach Blockout...
+[DevMode] debug_free_camera: ON
+[DevMode] infinite_health: OFF
+[DevMode] infinite_health: ON
+[DevMode] infinite_stamina: OFF

@@ -1,0 +1,235 @@
+Godot Engine v4.7.2.stable.arch_linux.ed1daf0bf (2026-08-17 01:18:38 UTC) - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce GTX 1650 SUPER
+
+[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)
+[CustodianContractMap] CONTRACT_BEGIN node=/root/WorldContractBootstrap/PrewarmedContractGenerator instance=222868541009 seed=2
+[CustodianContractMap] GENERATE_BEGIN mode=EVAL_CANDIDATE seed=3570245418 map_path=/root/WorldContractBootstrap/PrewarmedContractGenerator/MapRoot/ProcGenMap
+[ProcGenTilemap] GEN_BEGIN id=1 mode=EVAL_CANDIDATE seed=3570245418 path=/root/WorldContractBootstrap/PrewarmedContractGenerator/MapRoot/ProcGenMap output_enabled=true
+[ProcGenTilemap] intent graph nodes=17 edges=16 floor_cells=5659 regions=17
+[TerrainBuilder] === PHASES ===
+[TerrainBuilder]   build_baseline: 14 ms
+[TerrainBuilder]   reserved_region: 80 ms
+[TerrainBuilder]   ascent_route: 226 ms
+[TerrainBuilder]   mountain_boundary: 4 ms
+[TerrainBuilder]   industrial_platform: 37 ms
+[TerrainBuilder]   connectivity_validate: 33 ms
+[TerrainBuilder]   connectivity_rescue: 0 ms
+[TerrainBuilder]   TOTAL: 584 ms
+TerrainBuilder: seed=298089837643973980 mode=EVAL_CANDIDATE map_size=(176, 192) required=30 missing=0 rescue_carved=0 baseline_rescue=0 regions=3 blocked=1006 elevated=1043 ramps=127 connectivity=true fallback=false
+WorldProgression: profile=sundered_keep_ascent samples=132
+[ProcgenDepthBackdrop] Chasm camera backdrop active: cells=21771
+[ProcGenTilemap] props_foliage SKIP mode=EVAL_CANDIDATE
+[ProcGen] === FILL_TILEMAPS PHASES ===
+[ProcGen]   setup_clear: 0 ms
+[ProcGen]   planet_profile: 0 ms
+[ProcGen]   substrate_ascent: 124 ms
+[ProcGen]   compound_interior_spawn: 4084 ms
+[ProcGen]   interest_paths: 37 ms
+[ProcGen]   roads_walls_capture: 58 ms
+[ProcGen]   terrain_apply_builder: 8964 ms
+[ProcGen]   terrain_route_walkability: 102 ms
+[ProcGen]   terrain_ingress_protection: 0 ms
+[ProcGen]   terrain_road_walkability: 14 ms
+[ProcGen]   terrain_road_repair: 0 ms
+[ProcGen]   terrain_connector_elevation: 0 ms
+[ProcGen]   terrain_edge_prune: 0 ms
+[ProcGen]   terrain_road_visual_refresh: 15 ms
+[ProcGen]   terrain_state_capture: 9 ms
+[ProcGen]   terrain_elevation: 9104 ms
+[ProcGen]   progress_faction_story: 854 ms
+[ProcGen]   roads_pass2: 0 ms
+[ProcGen]   road_semantics: 96 ms
+[ProcGen]   nonwalkable_surface_semantics: 371 ms
+[ProcGen]   biome_final_semantics: 88 ms
+[ProcGen]   surface_materials: 90 ms
+[ProcGen]   floor_value_clusters: 0 ms
+[ProcGen]   macro_presentation: 649 ms
+[ProcGen]   dressing_cluster_plan: 359 ms
+[ProcGen]   streaming_reveal_or_walls: 0 ms
+[ProcGen]   props_foliage: 0 ms
+[ProcGen]   props_visual: 0 ms
+[ProcGen]   playability_audit: 622 ms
+[ProcGen]   horiz_wall_overlays: 0 ms
+[ProcGen]   FILL_TILEMAPS TOTAL: 16536 ms
+[ProcgenDepthBackdrop] Chasm camera backdrop active: cells=21771
+[ProcGenTilemap] GEN_END id=1 mode=EVAL_CANDIDATE seed=3570245418 total=16611ms
+[ProcGen] === PIPELINE TIMING ===
+[ProcGen]   mode: EVAL_CANDIDATE
+[ProcGen]   seed: 3570245418
+[ProcGen]   fill_tilemaps: 16546 ms
+[ProcGen]   refresh_shadows: 0 ms
+[ProcGen]   TOTAL: 16611 ms
+[CustodianContractMap] GENERATE_END mode=EVAL_CANDIDATE seed=3570245418
+[CustodianContractMap] ATTEMPT_DECISION_JSON:{"accepted":true,"attempt":0,"candidate_count":1,"candidate_key":"attempt_00_seed_3570245418","required_ingress_failures":[],"required_ingresses_valid":true,"semantic_fingerprint":"2923220575","semantic_stage_timing_ms":{"required_ingress_ms":1391.041,"snapshot_total_ms":1837.393,"walkability_and_elevation_ms":408.008},"world_fingerprint":"1806704955"}
+[CustodianContractMap] Attempt 0: instantiate=0.0s generate=17.2s metrics=1.9s total=19.1s layout_valid=true candidate_valid=true connected=1.00 ingress=1.00 pre_terrain_connected=1.00 pre_terrain_missing=0 baseline_rescue=0 terrain_fallback=false terrain_connectivity=true terrain_rescue=0 terrain_rescue_limit=200 terrain_rescue_ok=true rejection_reasons=[] accepted=true score=1.10
+[CustodianContractMap] Attempt loop total: 22.2s attempts_run=1 max_attempts=12 accepted_attempt=0
+[CustodianContractMap] FINAL_VISUAL_BEGIN map_path=/root/WorldContractBootstrap/PrewarmedContractGenerator/MapRoot/ProcGenMap eval_mode_before=false
+[ProcGenTilemap] GEN_BEGIN id=1 mode=FINAL_VISUAL seed=3570245418 path=/root/WorldContractBootstrap/PrewarmedContractGenerator/MapRoot/ProcGenMap output_enabled=true
+[ProcGenTilemap] intent graph nodes=17 edges=16 floor_cells=5659 regions=17
+[TerrainBuilder] === PHASES ===
+[TerrainBuilder]   build_baseline: 14 ms
+[TerrainBuilder]   reserved_region: 82 ms
+[TerrainBuilder]   ascent_route: 237 ms
+[TerrainBuilder]   mountain_boundary: 5 ms
+[TerrainBuilder]   industrial_platform: 41 ms
+[TerrainBuilder]   connectivity_validate: 37 ms
+[TerrainBuilder]   connectivity_rescue: 0 ms
+[TerrainBuilder]   TOTAL: 616 ms
+TerrainBuilder: seed=298089837643973980 mode=FINAL_VISUAL map_size=(176, 192) required=30 missing=0 rescue_carved=0 baseline_rescue=0 regions=3 blocked=1006 elevated=1043 ramps=127 connectivity=true fallback=false
+WorldProgression: profile=sundered_keep_ascent samples=132
+[ProcgenDepthBackdrop] Chasm camera backdrop active: cells=21771
+[ProcGen] floor_value_clusters SKIP no registered floor value variants
+[ProcGenTilemap] props_foliage SKIP mode=FINAL_VISUAL_STREAMING_REVEAL
+[ProcGen] ruin_props clear=0ms prepare=9717ms spawn=21ms finalize=2357ms
+[ProcGen] interior_props clear=0ms prepare=43ms spawn=0ms
+[ProcGen] === FILL_TILEMAPS PHASES ===
+[ProcGen]   setup_clear: 1 ms
+[ProcGen]   planet_profile: 0 ms
+[ProcGen]   substrate_ascent: 135 ms
+[ProcGen]   compound_interior_spawn: 4125 ms
+[ProcGen]   interest_paths: 36 ms
+[ProcGen]   roads_walls_capture: 58 ms
+[ProcGen]   terrain_apply_builder: 9143 ms
+[ProcGen]   terrain_route_walkability: 97 ms
+[ProcGen]   terrain_ingress_protection: 0 ms
+[ProcGen]   terrain_road_walkability: 13 ms
+[ProcGen]   terrain_road_repair: 0 ms
+[ProcGen]   terrain_connector_elevation: 0 ms
+[ProcGen]   terrain_edge_prune: 0 ms
+[ProcGen]   terrain_road_visual_refresh: 13 ms
+[ProcGen]   terrain_state_capture: 9 ms
+[ProcGen]   terrain_elevation: 9275 ms
+[ProcGen]   progress_faction_story: 837 ms
+[ProcGen]   roads_pass2: 0 ms
+[ProcGen]   road_semantics: 90 ms
+[ProcGen]   nonwalkable_surface_semantics: 344 ms
+[ProcGen]   biome_final_semantics: 100 ms
+[ProcGen]   surface_materials: 96 ms
+[ProcGen]   floor_value_clusters: 0 ms
+[ProcGen]   macro_presentation: 875 ms
+[ProcGen]   dressing_cluster_plan: 388 ms
+[ProcGen]   streaming_reveal_or_walls: 646 ms
+[ProcGen]   props_foliage: 0 ms
+[ProcGen]   props_visual: 12138 ms
+[ProcGen]   playability_audit: 870 ms
+[ProcGen]   horiz_wall_overlays: 0 ms
+[ProcGen]   FILL_TILEMAPS TOTAL: 30014 ms
+[ProcgenDepthBackdrop] Chasm camera backdrop active: cells=21771
+[ProcGenTilemap] GEN_END id=1 mode=FINAL_VISUAL seed=3570245418 total=30108ms
+[ProcGen] === PIPELINE TIMING ===
+[ProcGen]   mode: FINAL_VISUAL
+[ProcGen]   seed: 3570245418
+[ProcGen]   fill_tilemaps: 30036 ms
+[ProcGen]   refresh_shadows: 0 ms
+[ProcGen]   nav_bake: 1 ms
+[ProcGen]   TOTAL: 30108 ms
+[CustodianContractMap] FINAL_PROMOTION_END total=32.9s
+[SpecialRoomRuntimeInserter] Inserted campaign_empty_convoy_v1 at tile (115, 98)
+[TurretPlacement] Initialized, game_state: GameState:<Node#37111203359>
+Power system found 6 sectors
+[WaveManager] Initialized with 4 spawn nodes
+Registered debug commands with DevConsole
+[ProcgenDepthBackdrop] Chasm camera backdrop active: cells=21607
+[NavigationSystem] Initialized with 606 walkable tiles
+[ContractWorldLoader] Navigation rebuilt with procgen tilemaps
+[Enemy] SHRUMB connected to navigation system
+[Enemy] SHRUMB connected to navigation system
+[NavigationSystem] Initialized with 606 walkable tiles
+[NavigationSystem] Initialized with 990 walkable tiles
+[NavigationSystem] Initialized with 1037 walkable tiles
+[NavigationSystem] Initialized with 1497 walkable tiles
+[Enemy] GRUNT connected to navigation system
+[Enemy] PURSUIT FRAME connected to navigation system
+[NavigationSystem] Initialized with 1723 walkable tiles
+MELEE HIT: 1 target(s), damage=10.0
+MELEE HIT: 1 target(s), damage=10.0
+MELEE HIT: 1 target(s), damage=10.0
+MELEE HIT: 1 target(s), damage=10.0
+Enemy hit Operator for 45.0 damage!
+MELEE HIT: 1 target(s), damage=10.0
+MELEE HIT: 1 target(s), damage=10.0
+MELEE HIT: 1 target(s), damage=10.0
+MELEE HIT: 1 target(s), damage=10.0
+[Enemy] SHRUMB connected to navigation system
+Enemy hit Operator for 15.0 damage!
+MELEE HIT: 1 target(s), damage=10.0
+ENEMY DESTROYED: PURSUIT FRAME
+MELEE HIT: 1 target(s), damage=10.0
+[FieldPatch] restored 35.0 hp
+[SupplyDropManager] Supply drop at (3389.864, 5571.606) | std:16 hv:3
+[NavigationSystem] Initialized with 2502 walkable tiles
+MELEE HIT: 1 target(s), damage=10.0
+ENEMY DESTROYED: DUST Crystalline SHRUMB
+MELEE HIT: 1 target(s), damage=10.0
+[CognitivePickup] Faint Recollection +1
+[Enemy] GRUNT connected to navigation system
+[Enemy] SHRUMB connected to navigation system
+Enemy hit Operator for 39.0 damage!
+Enemy hit Operator for 13.0 damage!
+Enemy hit Operator for 13.0 damage!
+OPERATOR DOWN!
+Enemy hit Operator for 2.07751041666668 damage!
+[Enemy] SHRUMB connected to navigation system
+[Drones] FOLLOW: FAR | live=0 | fire=FIRE AT WILL | mode=FOLLOW
+[TurretPlacement] Initialized, game_state: GameState:<Node#37111203359>
+Power system found 6 sectors
+[WaveManager] Initialized with 4 spawn nodes
+Registered debug commands with DevConsole
+[CustodianContractMap] CONTRACT_BEGIN node=/root/WorldContractBootstrap/PrewarmedContractGenerator instance=2182044726094 seed=1534219503
+[CustodianContractMap] GENERATE_BEGIN mode=EVAL_CANDIDATE seed=3127631668 map_path=/root/WorldContractBootstrap/PrewarmedContractGenerator/MapRoot/ProcGenMap
+[ProcGenTilemap] GEN_BEGIN id=1 mode=EVAL_CANDIDATE seed=3127631668 path=/root/WorldContractBootstrap/PrewarmedContractGenerator/MapRoot/ProcGenMap output_enabled=true
+[ProcGenTilemap] intent graph nodes=19 edges=18 floor_cells=5600 regions=19
+[TerrainBuilder] === PHASES ===
+[TerrainBuilder]   build_baseline: 17 ms
+[TerrainBuilder]   reserved_region: 90 ms
+[TerrainBuilder]   ascent_route: 157 ms
+[TerrainBuilder]   mountain_boundary: 6 ms
+[TerrainBuilder]   industrial_platform: 37 ms
+[TerrainBuilder]   connectivity_validate: 31 ms
+[TerrainBuilder]   connectivity_rescue: 0 ms
+[TerrainBuilder]   TOTAL: 535 ms
+TerrainBuilder: seed=261134776294474358 mode=EVAL_CANDIDATE map_size=(208, 224) required=30 missing=0 rescue_carved=0 baseline_rescue=0 regions=3 blocked=1050 elevated=2183 ramps=131 connectivity=true fallback=false
+WorldProgression: profile=sundered_keep_ascent samples=182
+[ProcgenDepthBackdrop] Chasm camera backdrop active: cells=34317
+[ProcGenTilemap] props_foliage SKIP mode=EVAL_CANDIDATE
+[ProcGen] === FILL_TILEMAPS PHASES ===
+[ProcGen]   setup_clear: 2 ms
+[ProcGen]   planet_profile: 0 ms
+[ProcGen]   substrate_ascent: 156 ms
+[ProcGen]   compound_interior_spawn: 4098 ms
+[ProcGen]   interest_paths: 32 ms
+[ProcGen]   roads_walls_capture: 55 ms
+[ProcGen]   terrain_apply_builder: 10239 ms
+[ProcGen]   terrain_route_walkability: 132 ms
+[ProcGen]   terrain_ingress_protection: 0 ms
+[ProcGen]   terrain_road_walkability: 13 ms
+[ProcGen]   terrain_road_repair: 0 ms
+[ProcGen]   terrain_connector_elevation: 0 ms
+[ProcGen]   terrain_edge_prune: 0 ms
+[ProcGen]   terrain_road_visual_refresh: 11 ms
+[ProcGen]   terrain_state_capture: 9 ms
+[ProcGen]   terrain_elevation: 10404 ms
+[ProcGen]   progress_faction_story: 1974 ms
+[ProcGen]   roads_pass2: 0 ms
+[ProcGen]   road_semantics: 85 ms
+[ProcGen]   nonwalkable_surface_semantics: 517 ms
+[ProcGen]   biome_final_semantics: 93 ms
+[ProcGen]   surface_materials: 93 ms
+[ProcGen]   floor_value_clusters: 0 ms
+[ProcGen]   macro_presentation: 418 ms
+[ProcGen]   dressing_cluster_plan: 356 ms
+[ProcGen]   streaming_reveal_or_walls: 0 ms
+[ProcGen]   props_foliage: 0 ms
+[ProcGen]   props_visual: 0 ms
+[ProcGen]   playability_audit: 761 ms
+[ProcGen]   horiz_wall_overlays: 0 ms
+[ProcGen]   FILL_TILEMAPS TOTAL: 19044 ms
+[ProcgenDepthBackdrop] Chasm camera backdrop active: cells=34317
+[ProcGenTilemap] GEN_END id=1 mode=EVAL_CANDIDATE seed=3127631668 total=19135ms
+[ProcGen] === PIPELINE TIMING ===
+[ProcGen]   mode: EVAL_CANDIDATE
+[ProcGen]   seed: 3127631668
+[ProcGen]   fill_tilemaps: 19059 ms
+[ProcGen]   refresh_shadows: 0 ms
+[ProcGen]   TOTAL: 19135 ms
+[CustodianContractMap] GENERATE_END mode=EVAL_CANDIDATE seed=3127631668
