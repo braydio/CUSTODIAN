@@ -205,7 +205,7 @@ def print_promotion_handoff(repo: Path, packet_paths: list[str | Path]) -> None:
         print("  Use Dispatch: auto unless the user explicitly requested a manual hold.")
     else:
         print("AUTHORING VALID: supplied packets declare Status: ready; "
-              "remote publication and dispatch eligibility are NOT established.")
+              "remote publication and V2 acquisition are NOT established.")
 
     print("NEXT (required before a newly authorized packet can be claimed):")
     print("  1. After any status/dispatch changes, rerun this targeted "
@@ -216,9 +216,10 @@ def print_promotion_handoff(repo: Path, packet_paths: list[str | Path]) -> None:
           "task_packets/README.md (plus explicitly scoped changes); "
           "commit and land them on origin/main through the safe repository workflow.")
     print("  4. git fetch origin; verify BOTH packet files and the managed "
-          "ready/auto index exist on origin/main before claiming.")
-    print("  5. Dispatcher reads origin/main, NOT your local checkout or unmerged "
-          "authoring branch. Confirm dependency/review/lock eligibility, then claim.")
+          "index exist on origin/main, NOT your local checkout, before acquisition.")
+    print("  5. V2 reads authenticated task identity and packet bytes from origin/main; "
+          "it ignores legacy status/dependency/lock scheduling but blocks an "
+          "explicit user-owned design hold.")
 
     implementation_ids = [
         packet.workstream for packet in packets
@@ -230,8 +231,8 @@ def print_promotion_handoff(repo: Path, packet_paths: list[str | Path]) -> None:
     else:
         print("     python3 custodian/tools/agent/dispatch.py claim "
               "<implementation-workstream-id> --agent <agent-id>")
-    print("     (Do not claim the paired post-land review before implementation "
-          "lands and archives complete.)")
+    print("     (The paired-review runner enforces that implementation work lands "
+          "and archives complete before it launches an independent review.)")
 
 
 def main(argv: list[str] | None = None) -> int:

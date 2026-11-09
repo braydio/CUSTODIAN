@@ -1,5 +1,67 @@
 # Agent Workstream Lifecycle
 
+## Turn-Scoped Dispatcher V2 execution model
+
+The canonical execution entrypoint is the V2 turn lifecycle implemented by
+`turn_dispatcher_v2.py`. `dispatch.py claim` and `claim-next` route to V2;
+`workstream.py start`, `resume`, and `checkpoint` route to the same lifecycle.
+Each acquisition creates a temporary checkout under
+`~/Projects/.custodian-turns` on the canonical `agent/<workstream>` branch.
+The checkout is removed only after a verified checkpoint and preservation
+inventory. A conflicting local branch, failed LFS verification, unresolved
+ignored data, or unsafe coordination repository preserves the checkout/ref and
+fails closed.
+
+V2 authenticates task identity and packet bytes against fetched `origin/main`.
+It ignores legacy `Status`, `Dispatch`, `Depends on`, administrative claim,
+session-lock, and dependency-chain fields for task selection. An explicit open
+`User design hold` or `User-owned design decision` still blocks acquisition.
+`claim-next` rotates across new and resumable packet identities with an optional
+advisory cursor; it is not the legacy Ready/Auto queue scheduler. The cursor is
+not a prerequisite for acquisition or resumption. A task is skipped as complete
+only when its durable packet completion state and task branch reachability from
+`origin/main` agree. Queue audit/status and packet-index tools remain
+diagnostics/editorial metadata and do not grant or deny V2 acquisition.
+`--agent` records caller attribution only; it is not authentication.
+
+Use `--mode normal` for current work, `--mode historical` to reuse a verified
+existing branch or start from current main when historical state is unavailable,
+and `--mode owner-authorized` only with an exact ChatGPT conversation URL and
+the SHA-256 of the owner instruction. That authorization is provenance; it does
+not authenticate the caller or imply review approval. `--checkout-profile` is
+optional and verifies its exact current-main paths and required LFS objects.
+
+The V2 checkpoint is a durable progress boundary. It does not complete a task,
+pass an independent review, approve a design, or land a feature. V2
+`workstream.py finish` consumes the durable V2 acquisition/checkpoint record,
+runs ordinary correctness checks, publishes and verifies the handoff, then
+retires the temporary checkout. It does not require the prior process/session,
+`RunTrace.resume`, a workstream mutex, or branch renaming, and it does not claim
+task completion. Standard GitHub CI and branch protection govern landing.
+Independent review remains available when requested or warranted for
+consequential work; it is not a universal finish prerequisite. A reviewer
+finding or `human_required` result cannot be converted to PASS by checkpointing.
+
+Ordinary V2 acquisition uses no administrative task locks. If a future
+operation must protect an exclusive non-Git resource, use a lease capped at two
+hours, renew only while active, and validate expiry and the fencing token on
+every protected operation. Expired holders cannot continue writing. Use
+non-forcing expected-parent Git updates for Git mutation.
+
+Examples from a stable coordination checkout:
+
+```bash
+python3 custodian/tools/agent/dispatch.py claim <workstream-id> --mode normal
+python3 custodian/tools/agent/dispatch.py claim <workstream-id> --mode historical
+python3 custodian/tools/agent/workstream.py start <workstream-id> --mode normal
+python3 custodian/tools/agent/workstream.py checkpoint <workstream-id> \
+  --repo <stable-coordination-checkout> --checkout <exact-turn-checkout>
+```
+
+Do not pass the retiring turn checkout as `--repo`. The stable coordination
+checkout must remain attached to the same Git common directory so private V2
+receipts survive turn retirement and retries.
+
 
 ## Crèche-only pre-claim source publication (2026-11-06)
 
@@ -624,7 +686,7 @@ The normal endpoint of **each Codex turn** is a safe checkout-retirement
 decision, not an indefinitely attached directory. A task can remain
 `in_progress` after its local checkout is removed. Use one canonical
 `agent/<workstream-id>` remote branch as a recoverable Git state; a later
-worker should use the existing `workstream.py resume <id>` machinery to
+worker should use the existing the V2 `workstream.py start <id>` machinery to
 recreate a linked checkout, rather than making full repository clones.
 
 Before attempting removal, inspect:
@@ -742,17 +804,18 @@ path; this policy/documentation change does not alter the helper.
 
 ## Bounded Successor Continuation
 
-A successful packet finish is a pair boundary, not an unlimited continuation
-signal. The default CUSTODIAN Next invocation completes at most one
-implementation plus its required fresh-context paired review (including bounded
-corrections/re-reviews), then stops. An explicitly requested `continuous-chain`
-may continue only with a positive finite pair budget and any user-designated
-scope. The pure policy helper is
+A successful V2 checkpoint is a turn boundary, not task completion or an
+unlimited continuation signal. The default CUSTODIAN Next invocation completes
+at most one selected implementation through a durable checkpoint, then stops.
+Standard GitHub CI and branch protection govern landing. Independent review is
+optional unless requested or warranted for consequential work. An explicitly
+requested `continuous-chain` may continue only with a positive finite task
+budget and any user-designated scope. The pure policy helper is
 `custodian/tools/agent/next_execution_boundary.py`; it consumes caller-supplied
 facts but does not select packets or claim work. `dispatch.py` remains the claim
 authority. Record structured per-workstream receipts in the existing RunTrace.
 
-For each pair:
+For each selected task:
 
 1. Commit the root `<TASK>_CLAUDE_SUMMARY.md` with the packet's substantive
    completion and `Next Handoff` before finish.
@@ -763,8 +826,8 @@ For each pair:
    planning refresh, human visual/design/canon decision, manual-dispatch hold,
    failed validation, or unresolved safety/ownership blocker. `Refresh owner:
    execution-agent` is autonomous only while it exposes no new human decision.
-4. A paired review is part of its implementation pair and always uses a fresh
-   context. Once eligible, invoke
+4. If independent review is requested or warranted for consequential work,
+   perform it in a fresh reviewer context. A paired review may use
    `python3 custodian/tools/agent/paired_review_runner.py <review-workstream-id>`
    from the coordination checkout. The runner preflights Codex, claims the exact
    review through dispatch, and launches `codex exec --ephemeral` in the receipt's
@@ -773,12 +836,13 @@ For each pair:
    shared Git metadata remains restricted. A failed fetch or incomplete receipt
    is recoverable and does not count as completion. Preserve claimed branches,
    worktrees, and evidence after runner failure.
-5. At the accepted review boundary, record the landing SHA, review status,
-   elapsed time, validation summary, pair count, and next eligibility. The
-   default one-pair mode stops here even if a successor is ready. Explicit
+5. At a durable checkpoint boundary, record the checkpoint SHA, optional review
+   status, elapsed time, validation summary, task count, and next eligibility.
+   The default single-task mode stops here even if a successor is ready. Explicit
    continuous mode follows only an eligible named successor within scope and
    budget. An explicitly general-next invocation may use one global eligible
-   implementation at a boundary; it must not bypass an unresolved review or gate.
+   implementation at a boundary; it must not bypass an unresolved human or
+   safety gate.
 
 Do not jump to an unrelated global queue item just because a named chain ends.
 Stop and report the exact planning/human gate or technical blocker. Use the

@@ -42,6 +42,32 @@ If a conflict appears, prefer this authority order:
 - Deterministic fixed-step simulation remains a hard constraint
 - Rendering/UI logic should not silently absorb simulation authority
 
+## V2 task acquisition and turn lifecycle
+
+Use `custodian/tools/agent/dispatch.py claim` or `claim-next` as the canonical
+V2 task entrypoint. They authenticate task identity and packet content from
+fetched `origin/main`; legacy packet status, dependency, claim, lock, and queue
+index fields do not schedule V2. Explicit user-owned design holds still block.
+`--mode historical` opts into verified historical-source reuse, while
+`owner-authorized` requires the exact instruction conversation and SHA-256 as
+provenance, not caller authentication or review approval.
+
+Each claim uses a temporary checkout from `~/Projects/.custodian-turns`.
+`workstream.py start`, `resume`, and `checkpoint` route through the same V2
+lifecycle. `claim-next` rotates among new and resumable work using an optional
+advisory cursor; completion requires durable packet completion plus the task
+branch being reachable from `origin/main`. Missing cursor or prior-session
+state never blocks resume. Checkpointing preserves a handoff and verifies the
+remote commit; it does not complete work or pass a review. V2 `workstream.py
+finish` is a turn checkpoint and checkout retirement boundary: it consumes the
+durable V2 record and does not require `RunTrace.resume`, a workstream mutex,
+or branch renaming. Standard GitHub CI and branch protection govern landing;
+independent review is optional unless explicitly requested or warranted for
+consequential work. Ordinary V2 task acquisition uses no administrative lock.
+`dispatch.py audit/status` report legacy queue state only. Use the stable
+coordination checkout as `--repo`; never use the checkout being retired. See
+`docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md` for command details.
+
 ## Routing Map
 
 Use this map to land on the right material fast:
@@ -341,10 +367,11 @@ must, without asking the user for a missing command:
 4. Commit only these scoped queue-authority files, safely land them on
    `origin/main`, fetch, and verify the exact workstream and review
    metadata are visible there before using `dispatch.py claim <id>`.
-   Do not directly edit other agents' claim state or bypass ownership locks.
-5. Do not claim the review before the implementation lands and archives
-   complete. If publication/eligibility is blocked, report the concrete
-   reason instead of quietly downgrading status or skipping to unrelated work.
+   V2 does not use queue status or ownership locks to schedule acquisition.
+5. The paired-review runner independently enforces implementation landing,
+   archive completion, review identity, and acceptance. If a user-owned design
+   hold or packet-authentication check blocks acquisition, preserve that state
+   and report the concrete reason.
 
 The successful preflight prints the next commands but **does not perform**
 any of these mutations. Root [`AGENTS.md`](../AGENTS.md)
@@ -452,12 +479,14 @@ cannot override higher repository or design authority.
 Normal implementation work is autonomous through the lifecycle documented in
 `docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`: start/resume a stable
 `agent/<workstream-id>` branch in an ephemeral worktree, implement and validate
-there, push a recovery branch, and land through the normal finish/landing path.
-Completed remote task branches are deleted only after reachability from
-`origin/main` is verified. No PR or routine human approval is required.
-CUSTODIAN Next defaults to one implementation and its required paired review,
-then stops. Continuing across packets requires an explicit finite pair budget
-and follows only eligible named same-series handoffs. Stop at a genuine
+there, push the task branch, and checkpoint/retire the turn. Standard GitHub CI
+and branch protection govern landing. Completed remote task branches are
+deleted only after reachability from `origin/main` is verified. No PR or routine
+human approval is required. Independent review is optional unless explicitly
+requested or warranted for consequential work. CUSTODIAN Next defaults to one
+implementation task through a durable checkpoint, then stops. Continuing across
+packets requires an explicit finite task budget and follows eligible named
+same-series handoffs. Stop at a genuine
 human/ChatGPT refresh or decision, manual-dispatch hold, validation failure, or
 unresolved safety/ownership gate. See the lifecycle guide and repository-root
 `AGENTS.md` for invocation-boundary receipts and review routing.
@@ -490,8 +519,8 @@ Every normal implementation run uses an isolated ephemeral worktree, including
 single-agent work. Exceptions are explicitly read-only/review-only tasks or a
 documented reason ephemeral worktrees cannot be used. The persistent root
 checkout is a coordination checkout, not the implementation surface. Use
-`python3 custodian/tools/agent/workstream.py start <stable-kebab-id>` to resume
-or create the canonical `agent/<id>` branch. Never reset/stash a dirty attached
+`python3 custodian/tools/agent/dispatch.py claim <stable-kebab-id> --mode normal`
+to create a V2 temporary checkout on the canonical `agent/<id>` branch. Never reset/stash a dirty attached
 worktree; preserve it and report the blocker.
 
 Codex turn-end hygiene is mandatory even when work remains open: inventory

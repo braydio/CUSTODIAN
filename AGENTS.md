@@ -253,9 +253,11 @@ sessions; no claim of instant process-wide delivery is permitted. See
 
 ## Commit Policy
 
-Normal implementation work follows `implement → validate → commit → land on
-origin/main`. Completed validated work lands automatically without per-task
-approval and without a PR or routine human-review gate. Ad hoc review-only work
+Normal V2 implementation work follows `implement → validate → commit/push →
+checkpoint`. V2 `finish` is a turn checkpoint and retirement, not task completion
+or a landing operation. Standard GitHub CI and branch protection govern landing;
+independent review is optional unless requested or warranted for consequential
+work. Legacy workstreams retain their existing closeout contracts. Ad hoc review-only work
 must carry the explicit task override `TASK OVERRIDE: review only; do not stage,
 commit, or push.` Paired post-land review packets may authorize commits only for their durable review receipt, required closing summary, review-packet lifecycle metadata, and bounded correction/re-review packets. They must never edit the reviewed implementation or unrelated work; the packet must state this bounded override explicitly. A paired review must also start from a fresh reviewer context rather than continuing the implementation session. The same model/agent family may review its own prior work only from a newly started context/workstream that reconstructs the target from durable repository evidence and records `same-agent-fresh-context`; otherwise use `different-agent`.
 
@@ -451,9 +453,10 @@ refreshed), the agent assigned to promote it should complete this lifecycle
    overwrite another worker's changes or bypass claim/lock authority.
 5. `git fetch origin`; verify both packet headers **on `origin/main`**
    and the managed index entry, then run
-   `python3 custodian/tools/agent/dispatch.py claim <implementation-workstream-id> --agent <agent-id>`
-   **only if eligible**. The paired post-land review waits for the implementation
-   to land and archive complete.
+   `python3 custodian/tools/agent/dispatch.py claim <implementation-workstream-id> --mode normal --agent <agent-id>`.
+   V2 does not consult legacy status, dependency, lock, or claim eligibility;
+   it still blocks an explicit user-owned design hold. The paired-review runner
+   separately enforces review ordering and its acceptance contract.
 
 If the requested packet does not exist on `origin/main`, stop trying to claim
 it and finish this publication sequence first. `validate_task_packet_authoring.py`
@@ -465,12 +468,12 @@ without actual user authorization.
 
 ## CUSTODIAN Task Dispatch
 
-Executable packet dispatch is automatic by default. Use `Status: ready` + `Dispatch: auto` even when declared dependencies are incomplete; the dispatcher keeps the packet blocked until those dependencies archive `complete`, then makes it claimable without a manual status flip. `Dispatch: manual` is reserved only for an explicit user instruction to hold an otherwise ready packet until the user chooses claim timing. Missing inputs, predecessor API drift, review ordering, and ordinary dependency waits are not manual-dispatch reasons; represent them with status/dependencies and fail-closed execution checks instead.
+V2 is the canonical execution path. `dispatch.py claim` and `claim-next` authenticate task identity and packet bytes from fetched `origin/main`, then acquire a turn checkout without consulting legacy `Status`, `Dispatch`, dependency chains, administrative claims, or session locks. An explicit user-owned design hold remains a hard selection boundary. `claim-next` rotates across new and resumable work with an optional advisory cursor; it skips a task as complete only when durable packet completion and the task branch's reachability from `origin/main` agree. Missing cursor or prior-session state never blocks resume. Keep packet status/index metadata accurate for authoring and reporting; those fields do not schedule V2 work. V2 `workstream.py finish` checkpoints and retires a turn using its durable V2 record, without requiring the prior `RunTrace`, workstream mutex, or branch renaming; it does not assert task completion. Standard GitHub CI and branch protection govern landing. Independent review is optional unless requested or warranted for consequential work. Ordinary V2 acquisition uses no administrative lock; if a future operation protects a truly exclusive non-Git resource, its lease must expire within two hours and validate a fencing token on every protected operation.
 
-For a full live queue and branch/worktree reconciliation, use
+For legacy queue diagnostics and branch/worktree reconciliation, use
 `python3 custodian/tools/agent/dispatch.py audit` (or `--json` for stable
-machine-readable output). It shares the dispatcher's exact eligibility gate;
-the README Ready/Auto block is only a generated view. Use
+machine-readable output). Its old eligibility fields are reports only and do
+not govern V2. Use
 `dispatch.py repair --plan` to inspect the bounded metadata repair and add
 `--archive-completed` to preview only legacy records with explicit completion
 evidence. Repair apply never cleans branches or worktrees; preserve ambiguous
@@ -481,6 +484,11 @@ For “Take the next CUSTODIAN task,” run
 (for example `--agent claude` or `--agent codex`).
 For “Take CUSTODIAN workstream `<id>`,” run
 `python3 custodian/tools/agent/dispatch.py claim <id> --agent <agent-id>`.
+Add `--mode historical` to reuse verified historical work; owner-authorized
+acquisition also requires `--authorization-url` and `--authorization-sha256`.
+Every command creates a temporary turn checkout. Checkpoint with the exact
+stable coordination checkout in `--repo`; never use the retiring turn checkout
+as the coordinator.
 Omitting `--agent` falls back to the `CUSTODIAN_AGENT_ID` environment variable,
 then a neutral `unspecified` — never a silently assumed brand.
 Enter the returned worktree, read `AGENTS.md`, `custodian/AGENTS.md`, and the
@@ -503,14 +511,15 @@ Codex custom prompts are deprecated in favor of skills.
 
 Semantics:
 
-1. An unqualified invocation is `single-pair`: complete or resume at most one
-   implementation packet and its required fresh-context paired review, including
-   bounded correction/re-review cycles, then stop. An active claimed workstream
-   counts as that pair; do not claim another while it is unresolved.
+1. An unqualified invocation is `single-task`: complete or resume at most one
+   implementation through a durable checkpoint and standard CI/branch
+   protection, then stop. Independent review is optional unless requested or
+   warranted for consequential work. An active claimed workstream is resumed;
+   do not replace unfinished work with an unrelated packet.
 2. Use `continuous-chain` only when the user explicitly requests multiple
-   packets. Require a positive finite `max_pairs` and honor any explicit scope.
+   packets. Require a positive finite `max_tasks` and honor any explicit scope.
    Continue only through the durable `Next Handoff` DAG and dispatcher-confirmed
-   eligible predecessors; a pair is one implementation plus its paired review.
+   eligible successors.
 3. Reconcile active branch, worktree, dispatch receipt, and remote state. A stale
    `last-claim` is not ownership proof. Ambiguous/stale claims require audit and
    must never cause a duplicate claim.
