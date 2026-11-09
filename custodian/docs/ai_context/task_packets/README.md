@@ -104,7 +104,6 @@ normal closeout.
 - `REVIEW_TWIN_SOLARIA_ROUTE_REVIEW_AUTHORITY.md` — Independently verify fail-closed Twin Solaria route adjudication without travel or presentation authority leakage.
 - `REVIEW_TWIN_SOLARIA_ROUTE_VISTA_SAMPLES_V1.md` — Independently verify the Route Vista sample ingest/presentation without replacing human visual approval or allowing presentation to become route authority.
 - `REVIEW_TWIN_SOLARIA_SOLARIUM_I_ACQUISITION_PRESENTATION.md` — Independently verify that Solarium I acquisition is presentation-only, Asset V2-compliant, fail-closed, and never becomes Crown passage.
-- `REVIEW_VAULTWING_RUNTIME_HARDENING.md` — Independently prove Vaultwing bond timing, restore reconciliation and relationship compatibility are fixed-step and semantically correct without duplicating...
 - `REVIEW_VAULTWING_WORLD_SPAWN_INTEGRITY_RECOVERY_V1.md` — Independently verify that production Vaultwing spawn tracking, duplicate suppression, parenting, reset, and replacement work without typed-array errors or sc...
 - `REVIEW_VEHICLE_DIAGNOSIS_KNOWLEDGE_V1.md` — Independently verify that vehicle scanning produces durable, bounded mechanical knowledge and pattern evidence without becoming a resource grant, repair acti...
 - `REVIEW_VEHICLE_FIELD_SCOUT_BUGGY_ASSET_V2.md` — Independently verify that vehicle Asset V2 support is genuinely family/owner driven and the Scout family, directional seam, fallbacks, and required-assets tr...
@@ -350,7 +349,7 @@ The architecture boundary is now approved. Hearing is a shared perception facet,
 1. `archived/STEALTH_PERCEPTION_FOUNDATION.md` — P0 implementation complete and landed; S0 + narrow S1 typed acoustic event/observation seam for Enemy + Vaultwing.
 2. `archived/REVIEW_STEALTH_PERCEPTION_FOUNDATION.md` — fresh-context paired review passed with no findings.
 3. `archived/VAULTWING_RUNTIME_HARDENING.md` — P1 implementation complete and landed; fixed-step bond clocks, restore reconciliation, allegiance-sensitive compatibility, and proven Vaultwing residue only.
-4. `REVIEW_VAULTWING_RUNTIME_HARDENING.md` — ready/auto fresh-context paired review and intentional stop boundary.
+4. `archived/REVIEW_VAULTWING_RUNTIME_HARDENING.md` — fresh-context paired review passed with no findings; successor stops at the required planning refresh.
 
 After step 4 passes, autonomous execution stops at the recorded `non-player-fauna-bonded-command-convergence` planning gate. NPA-8 is intentionally **not authored yet**; it must be re-derived from reviewed stealth + Vaultwing seams and the then-current earlier NPA program so no speculative universal actor API is frozen early.
 
