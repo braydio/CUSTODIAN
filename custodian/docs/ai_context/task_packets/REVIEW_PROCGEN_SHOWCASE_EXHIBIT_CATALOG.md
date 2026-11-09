@@ -42,3 +42,12 @@
 
 ## Publication Gate
 Do not claim this draft review until the matching implementation archives complete and authoring/preflight promotion has made this review ready/auto on live main.
+
+## Review Blocker
+
+- Review workstream: `review-procgen-showcase-exhibit-catalog`
+- Pinned reviewed main and implementation: `675ccf726bb79397b7242ef3059971a6f1a39448`
+- Findings: No implementation defect found in the reviewed catalog/presenter paths. The focused catalog and gallery shell smoke scripts pass directly under headless Godot, including duplicate-ID and malformed N/A fault checks; geometry is unchanged after wing selection.
+- Blocking validation gap: The required `run_validation.py --changed --base 675ccf726bb79397b7242ef3059971a6f1a39448^ --json` run failed during import preflight. Godot emitted fatal `_sock == -1` / `ERR_CANT_CREATE` TCP listener errors in the restricted environment, so the runner did not execute its selected test set and cannot produce the required green complete-coverage report.
+- Structured evidence: `/home/braydenchaffee/Projects/CUSTODIAN/.git/custodian-review-runs/review-procgen-showcase-exhibit-catalog/20261017T031404Z-2bd02a6bc7d2/validation.json` records the runner's failed import result.
+- Disposition: Review remains open and recoverable. Do not append a passed receipt or archive this packet until the required validation completes in an environment where Godot import listeners can start.
