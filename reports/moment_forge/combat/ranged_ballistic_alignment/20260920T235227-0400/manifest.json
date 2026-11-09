@@ -1,0 +1,112 @@
+{
+  "artifacts": {
+    "assertions": "assertions.json",
+    "audio": null,
+    "contact_sheet": null,
+    "metrics": "metrics.json",
+    "probes": "probes.json",
+    "report": "index.html",
+    "telemetry": "telemetry.json",
+    "timeline": "timeline.json",
+    "video": null,
+    "visual_diff": null
+  },
+  "baseline": {
+    "status": "not_requested"
+  },
+  "baseline_compatibility": {
+    "contact_sheet_ticks": [
+      0,
+      68,
+      72,
+      82,
+      110,
+      160
+    ],
+    "end_tick": 179,
+    "fps": 60,
+    "height": 720,
+    "metrics_schema_major": 1,
+    "scenario_id": "combat/ranged_ballistic_alignment",
+    "scenario_schema_version": 1,
+    "scenario_sha256": "631e2bc0fab53c6f39637cdb34d5e55a05fcc1a0f08dd66f1c73edab26f04fb4",
+    "start_tick": 0,
+    "width": 1280
+  },
+  "capture": {
+    "audio_requested": true,
+    "fps": 60,
+    "height": 720,
+    "mode": "none",
+    "synchronization": "not_requested",
+    "width": 1280
+  },
+  "generated_at": "2026-09-20T23:52:31.862602-04:00",
+  "media": {
+    "audio_metrics": {
+      "available": false
+    },
+    "audio_state": {
+      "available": false,
+      "conversion": "source_missing",
+      "requested": true
+    },
+    "ffmpeg_available": true,
+    "visual_diff": null
+  },
+  "repository": {
+    "branch": "unarmed-posture-runtime",
+    "changed_files": [
+      "M custodian/game/actors/operator/operator.gd",
+      " M custodian/tools/validation/validation_manifest.json",
+      "?? custodian/content/sprites/operator/source/source_work/unarmed/posture/idle_lower_relaxed_e_5f.png.import",
+      "?? custodian/content/sprites/operator/source/source_work/unarmed/posture/idle_ready_final_east_5f_96.png.import",
+      "?? custodian/content/sprites/operator/source/source_work/unarmed/posture/idle_upper_relaxed_e_5f.png.import",
+      "?? custodian/content/sprites/operator/source/source_work/unarmed/posture/lower_idle_ready_final_east_5f_96.png.import",
+      "?? custodian/content/sprites/operator/source/source_work/unarmed/posture/upper_idle_ready_final_east_5f_96.png.import",
+      "?? custodian/content/sprites/weapons/carbine_rifle_mk1/source/reference/reload_01/gun_sprite_carbine_reload_east_pixel_64x64_sheet.png.import",
+      "?? custodian/tools/validation/awakening_reveal_transition_capture.gd.uid",
+      "?? custodian/tools/validation/operator_armed_melee_body_visibility_smoke.gd",
+      "?? custodian/tools/validation/operator_armed_melee_body_visibility_smoke.gd.uid",
+      "?? custodian/tools/validation/road_of_witnesses_production_smoke.gd.uid"
+    ],
+    "commit": "72954b736a1109e852b8e4427044da6ecf9f04cf",
+    "dirty": true,
+    "root": "/home/braydenchaffee/Projects/CUSTODIAN-posture"
+  },
+  "run_id": "20260920T235227-0400",
+  "runtime": {
+    "godot": {
+      "build": "arch_linux",
+      "hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+      "hex": 263938,
+      "major": 4,
+      "minor": 7,
+      "patch": 2,
+      "status": "stable",
+      "string": "4.7.2-stable (arch_linux)",
+      "timestamp": 1786929518
+    },
+    "physics_hz": 60,
+    "renderer": "vulkan"
+  },
+  "scenario": {
+    "id": "combat/ranged_ballistic_alignment",
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN-posture/reports/moment_forge/combat/ranged_ballistic_alignment/20260920T235227-0400/scenario.snapshot.json",
+    "schema_version": 1,
+    "sha256": "631e2bc0fab53c6f39637cdb34d5e55a05fcc1a0f08dd66f1c73edab26f04fb4"
+  },
+  "schema": "custodian.moment_forge.run_manifest.v1",
+  "stable_assertions_passed": true,
+  "stable_fingerprint": {
+    "algorithm": "sha256",
+    "schema": "custodian.moment_forge.stable_fingerprint.v1",
+    "value": "355ebf14934d247f36d448437cac42a6dad1a8ecd3ff326ce4a71eee10ab897e"
+  },
+  "status": "partial_media",
+  "tools": {
+    "ffmpeg": "/usr/bin/ffmpeg",
+    "pillow": "12.3.0",
+    "python": "3.14.7"
+  }
+}

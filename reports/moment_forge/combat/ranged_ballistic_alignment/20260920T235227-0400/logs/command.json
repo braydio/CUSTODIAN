@@ -1,0 +1,43 @@
+{
+  "argv": [
+    "/usr/bin/godot",
+    "--path",
+    "/home/braydenchaffee/Projects/CUSTODIAN-posture/custodian",
+    "--fixed-fps",
+    "60",
+    "--headless",
+    "--script",
+    "res://tools/iteration/godot/moment_runner.gd",
+    "--",
+    "--custodian-dev",
+    "--observe",
+    "--moment-forge",
+    "--moment-scenario",
+    "/home/braydenchaffee/Projects/CUSTODIAN-posture/reports/moment_forge/combat/ranged_ballistic_alignment/20260920T235227-0400/scenario.snapshot.json",
+    "--moment-output",
+    "/home/braydenchaffee/Projects/CUSTODIAN-posture/reports/moment_forge/combat/ranged_ballistic_alignment/20260920T235227-0400",
+    "--moment-capture-mode",
+    "none"
+  ],
+  "capture_mode": "none",
+  "repository": {
+    "branch": "unarmed-posture-runtime",
+    "changed_files": [
+      "M custodian/game/actors/operator/operator.gd",
+      " M custodian/tools/validation/validation_manifest.json",
+      "?? custodian/content/sprites/operator/source/source_work/unarmed/posture/idle_lower_relaxed_e_5f.png.import",
+      "?? custodian/content/sprites/operator/source/source_work/unarmed/posture/idle_ready_final_east_5f_96.png.import",
+      "?? custodian/content/sprites/operator/source/source_work/unarmed/posture/idle_upper_relaxed_e_5f.png.import",
+      "?? custodian/content/sprites/operator/source/source_work/unarmed/posture/lower_idle_ready_final_east_5f_96.png.import",
+      "?? custodian/content/sprites/operator/source/source_work/unarmed/posture/upper_idle_ready_final_east_5f_96.png.import",
+      "?? custodian/content/sprites/weapons/carbine_rifle_mk1/source/reference/reload_01/gun_sprite_carbine_reload_east_pixel_64x64_sheet.png.import",
+      "?? custodian/tools/validation/awakening_reveal_transition_capture.gd.uid",
+      "?? custodian/tools/validation/operator_armed_melee_body_visibility_smoke.gd",
+      "?? custodian/tools/validation/operator_armed_melee_body_visibility_smoke.gd.uid",
+      "?? custodian/tools/validation/road_of_witnesses_production_smoke.gd.uid"
+    ],
+    "commit": "72954b736a1109e852b8e4427044da6ecf9f04cf",
+    "dirty": true
+  },
+  "scenario_sha256": "631e2bc0fab53c6f39637cdb34d5e55a05fcc1a0f08dd66f1c73edab26f04fb4"
+}
