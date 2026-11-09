@@ -1,53 +1,56 @@
-# Turn-Scoped Dispatcher V2 (candidate)
+# Turn-Scoped Dispatcher V2
 
-**Status:** opt-in implementation candidate, not a live replacement for dispatch.py or current AGENTS.md policy.
-
+**Status:** Stage 1 implementation candidate; opt-in only. It does not replace current repository execution guidance.
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af12561-89a4-83ea-bc7f-c896ec89bed0
+**Implementation plan:** [TURN_SCOPED_DISPATCHER_V2_IMPLEMENTATION_PLAN.md](TURN_SCOPED_DISPATCHER_V2_IMPLEMENTATION_PLAN.md)
 
-## Contract
+## Operating contract
 
-Two acquisition modes use one task-packet ID and one remote agent branch.
+V2 offers two acquisition modes over a durable task identity:
 
-- **Normal:** Requires a ready/auto task packet. Creates the remote agent branch from advertised origin/main if absent. Builds a disposable checkout and performs Git LFS hydration.
-- **Historical:** Accepts a previously worked, non-draft packet and requires its existing remote agent branch. If an old checkout is attached, inspect it before proceeding. Unique dirty/ignored content blocks deletion; do not forcibly remove it. A clean old checkout still requires its original-owner retirement route. After that, rehydrate from the remote branch and committed handoff.
+- **Normal** selects a task with one valid definition on fetched `origin/main`, creates or resumes its non-forcing remote agent branch, and makes a fresh temporary checkout with verified Git LFS content.
+- **Historical** uses prior branch and handoff state when it can be verified. If that evidence is absent or cannot be recovered, it records the gap and starts fresh from current `origin/main`. Historical work is reference material; old sessions, statuses, claims, locks, dependency chains, or worktrees cannot veto new execution.
 
-No persistent session locks and no dispatcher dependency-chain eligibility blockers. A task's real implementation prerequisites become scoped tasks listed in the handoff, not an excuse for indefinite parked work. Git atomic remote-branch creation and non-force push are still required to avoid duplicate history or overwriting concurrent work. A human-owned design refresh (draft packet) remains a gate.
+V2 readiness depends on a valid task identity, an available task definition, safe branch/checkout creation, and no explicit unresolved user-owned design decision. Existing task packet status, dispatcher eligibility, execution locks/claims, and dependency chains are not V2 selection gates. Implementable prerequisites become part of the execution scope. Validation, independent review, owner approval, and data-integrity checks remain acceptance controls after or alongside implementation, not scheduling controls.
 
-**Every turn ends with a checkpoint** which stages tracked modifications and enumerated nonignored untracked source, verifies a minimum handoff, commits, pushes, verifies the advertised remote SHA and removes the turn checkout using non-forced git worktree remove. If unsafe secrets, ignored data, broken LFS, dirty post-commit state, or remote disagreement is detected, it fails closed and preserves the checkout. There is no blanket rm -rf.
+Each turn follows:
 
-The mandatory handoff is a Markdown file containing:
+`Acquire → Execute → Checkpoint → Commit and push → Verify remote SHA → Retire exact temporary checkout → Rehydrate on a later turn`
 
-- Original goal:
-- Implemented:
-- Remaining:
-- Validation:
-- Resume:
+The temporary checkout uses a unique local `turn/<workstream>/...` branch and publishes to the workstream's remote branch with a non-forcing push. A conflicting writer must be preserved and reconciled; the tool never force-pushes. Each checkpoint includes implementation work and a durable handoff at `custodian/docs/ai_context/turn_handoffs/<workstream>.md` with:
 
-The durable handoff path is custodian/docs/ai_context/turn_handoffs/<workstream>.md. Include exact branch SHA, task packet, acceptance criteria, source/master locations, evidence, remaining steps, and design decisions in the content. A newer turn rehydrates from the branch and reads this file.
+- `Original goal:`
+- `Implemented:`
+- `Remaining:`
+- `Validation:`
+- `Sources/evidence:`
+- `Resume:`
 
-## CLI examples
+The checkpoint adds a versioned metadata block with task identity, authenticated task-definition path and main SHA, remote branch, and checkpoint base. The receipt identifies the exact published commit SHA. The handoff must also describe outstanding acceptance and next action. A checkpoint does not claim task completion or review acceptance.
 
-From the repository root:
+## Preservation and failure behavior
 
-    python3 custodian/tools/agent/turn_dispatcher_v2.py inspect my-workstream --mode normal
-    python3 custodian/tools/agent/turn_dispatcher_v2.py begin my-workstream --mode normal
-    python3 custodian/tools/agent/turn_dispatcher_v2.py begin my-workstream --mode historical
+Tracked changes and explicitly inventoried non-ignored untracked source are committed with the handoff. Known reproducible caches may be classified for disposal. Unknown ignored data, suspected secrets, nested repositories, missing LFS objects, a failed push, a mismatched advertised SHA, or a changed checkout blocks retirement and emits a machine-readable local recovery receipt. The checkout remains available for recovery. Never use blanket `git add -A`, force-push, recursive pool cleanup, or age-based deletion.
 
-After performing work and writing a local handoff file:
+The remote Git commit and retrievable LFS objects are durable implementation state. A remote pointer alone does not prove that the LFS payload is available. Non-Git evidence needed for future work must have an explicit content-addressed, independently verified preservation path before the checkout is retired. The private historical archive is optional reference material; archive completeness and restore evidence must be verified before any implementation relies on it.
 
-    python3 custodian/tools/agent/turn_dispatcher_v2.py checkpoint my-workstream --checkout ~/Projects/.custodian-turns/turn-my-workstream --handoff /tmp/my-workstream-handoff.md --message "task progress and handoff"
+## Stage 1 command examples
 
-The default turn pool is ~/Projects/.custodian-turns, distinct from the historical .custodian-worktrees directory.
+From a trusted coordination clone with `origin` configured and Git LFS installed when task files use LFS (`git lfs install --local`):
 
-## Integration gates still outstanding
+```bash
+python3 custodian/tools/agent/turn_dispatcher_v2.py inspect <workstream> --mode normal
+python3 custodian/tools/agent/turn_dispatcher_v2.py begin <workstream> --mode normal
+python3 custodian/tools/agent/turn_dispatcher_v2.py begin <workstream> --mode historical
+python3 custodian/tools/agent/turn_dispatcher_v2.py checkpoint <workstream> \
+  --checkout <exact-turn-checkout> --handoff <handoff.md> \
+  --message "checkpoint and handoff"
+```
 
-1. Independently validate the exact published implementation in isolated Git fixtures, including real LFS hydration, concurrent first claim, failure midway through checkout and push, hostile symlinks, private source and ignored data preservation.
-2. The normal acquisition currently reads the local checkout's packet snapshot. Before cutover, authenticate the packet bytes against the advertised main and add a remote concurrency safety gate for simultaneous writers. The existing remote branch is not an exclusive lease.
-3. Historical mode currently refuses to auto-destroy a preexisting legacy checkout. Implement exact clean-owner migration and rehydration under an independently verified preservation gate. Never force-remove a dirty old checkout.
-4. Explicitly identify and handle cached Git LFS source data not retrievable from remote, secret scanners, file size caps, task-specific non-Git evidence, submodules and worktree output outside Git.
-5. Migrate root AGENTS.md, custodian/AGENTS.md, workstream/dispatcher integration, review handoffs, packet index and service launchers in a separately validated cutover. Old dispatcher remains operative until then.
-6. Run full repository validation and host smoke. Only then consider replacing dispatch.py; never use this candidate to perform an actual worktree cleanup until the preservation and cutover gates pass.
+The default pool is `~/Projects/.custodian-turns`, separate from historical worktree storage. `inspect` is read-only with respect to branches and checkouts, though it fetches `origin/main` to authenticate the task definition. `begin` and `checkpoint` return JSON. A blocked mutation prints a JSON failure; if an exact checkout exists, it is retained and the receipt records its recovery location.
 
-## Current scope
+## Scope and remaining gates
 
-The opt-in candidate adds only a new CLI, isolated tests and this design note. It does not mutate the current dispatcher, delete worktrees, rewrite task packets, remove refs, repair the legacy ref store or land source changes.
+Stage 1 supplies opt-in normal/historical selection, remote task-definition authentication, safe branch initialization, temporary worktree creation, LFS hydration/verification, durable handoff/checkpoint, non-forcing publish, exact remote verification, inspect output, and receipts. It does not change the old dispatcher, remove historical worktrees, edit the private archive, configure a sync service, or change repository-wide default instructions.
+
+Before production use, Stage 2 must validate historical archive manifests and recovery of ignored/untracked/LFS evidence, then automate only individually verified checkout retirement. Stage 3 must publish an intentional old/new behavior-difference matrix (not require eligibility parity), validate integration and failure recovery, update every execution entrypoint, complete fresh-context independent review, verify a rollback route, and only then cut over from the old dispatcher.
