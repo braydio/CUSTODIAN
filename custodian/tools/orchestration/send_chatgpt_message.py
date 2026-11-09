@@ -16,6 +16,7 @@ Examples:
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import re
 import sys
@@ -116,6 +117,39 @@ def focus_composer(client: FirefoxMCPClient) -> None:
         raise ValueError("could not focus the visible ChatGPT composer")
 
 
+def send_button_uid(client: FirefoxMCPClient) -> str:
+    buttons = evaluate(
+        client,
+        "() => Array.from(document.querySelectorAll('button')).filter(button => { "
+        "const label = (button.getAttribute('aria-label') || button.innerText || '').trim(); "
+        "return /^(send|send message)$/i.test(label) && "
+        "button.getClientRects().length > 0 && !button.disabled; "
+        "}).map(button => ({ariaLabel: button.getAttribute('aria-label') || '', "
+        "accessibleName: (button.getAttribute('aria-label') || button.innerText || '').trim()}))",
+    )
+    if not isinstance(buttons, list) or len(buttons) != 1:
+        raise ValueError("could not identify one enabled Send button; message remains staged")
+    button = buttons[0]
+    if not isinstance(button, dict):
+        raise ValueError("Firefox returned an invalid Send button description")
+    aria_label = button.get("ariaLabel")
+    accessible_name = button.get("accessibleName")
+    if not isinstance(aria_label, str) or not aria_label.strip() or not isinstance(accessible_name, str):
+        raise ValueError("enabled Send button has no stable accessible label; message remains staged")
+
+    button_snapshot = snapshot(
+        client,
+        selector=f"button[aria-label={json.dumps(aria_label)}]",
+        includeAll=True,
+        includeAttributes=True,
+        maxLines=100,
+    )
+    return uid_for_snapshot_line(
+        button_snapshot,
+        re.compile(r'\bbutton\s+"' + re.escape(accessible_name) + r'"', re.IGNORECASE),
+    )
+
+
 def stage_message(client: FirefoxMCPClient, message: str, attachments: list[Path]) -> None:
     state = composer_state(client)
     existing_names = state["attachmentNames"]
@@ -159,19 +193,12 @@ def submit_message(client: FirefoxMCPClient, message: str, timeout: float = 30) 
     before = evaluate(
         client,
         "() => ({userCount: document.querySelectorAll("
-        "'[data-message-author-role=\"user\"]').length, "
-        "sendButtons: Array.from(document.querySelectorAll('button')).filter(button => { "
-        "const label = (button.getAttribute('aria-label') || button.innerText || '').trim(); "
-        "return /^(send|send message)$/i.test(label) && "
-        "button.getClientRects().length > 0 && !button.disabled; }).length})",
+        "'[data-message-author-role=\"user\"], [data-user-message-bubble]').length})",
     )
-    if not isinstance(before, dict) or before.get("sendButtons") != 1:
-        raise ValueError("could not identify one enabled Send button; message remains staged")
+    if not isinstance(before, dict) or not isinstance(before.get("userCount"), int):
+        raise ValueError("could not identify existing user messages before submission")
     previous_user_count = before["userCount"]
-    send_uid = uid_for_snapshot_line(
-        snapshot(client, includeAll=True, includeAttributes=True, maxLines=400),
-        re.compile(r'\bbutton\s+"(?:send|send message)"', re.IGNORECASE),
-    )
+    send_uid = send_button_uid(client)
     client.call_tool("click_by_uid", {"uid": send_uid})
 
     expected = normalized_text(message)
@@ -180,7 +207,8 @@ def submit_message(client: FirefoxMCPClient, message: str, timeout: float = 30) 
         state = evaluate(
             client,
             "() => ({users: Array.from(document.querySelectorAll("
-            "'[data-message-author-role=\"user\"]')).map(element => element.innerText || ''), "
+            "'[data-message-author-role=\"user\"], [data-user-message-bubble]'))"
+            ".map(element => element.innerText || ''), "
             "composer: Array.from(document.querySelectorAll("
             "'[contenteditable=\"true\"][aria-label*=\"Ask ChatGPT\"]'))"
             ".map(element => element.innerText || '')})",

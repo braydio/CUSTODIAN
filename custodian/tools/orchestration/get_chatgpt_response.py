@@ -92,19 +92,24 @@ PROBE_JS = r"""({requestId}) => {
   const stop = Array.from(document.querySelectorAll(
     'button[data-testid="stop-button"], button[data-testid="composer-stop-button"], ' +
     'button[aria-label*="Stop generating" i], button[aria-label*="Stop streaming" i], ' +
-    'button[aria-label="Stop"], button[title="Stop"]'
+    'button[aria-label="Stop"], button[title="Stop"], [data-response-starting]'
   )).some(isVisible);
 
+  const starting = Array.from(document.querySelectorAll('[data-response-starting]'))
+    .some(isVisible);
   const streaming = !!document.querySelector(
     '[data-message-author-role="assistant"] .result-streaming, ' +
     '[data-message-author-role="assistant"][aria-busy="true"], ' +
-    '[data-dil-message-id] [aria-busy="true"]'
+    '[data-dil-message-id] [aria-busy="true"], ' +
+    '[data-talvt-turn-state="in_progress"] [data-dil-message-id], ' +
+    '[data-response-starting]'
   );
 
   return {
     kind: 'sample',
     text,
-    busy: stop || streaming,
+    busy: stop || streaming || starting,
+    starting,
     assistantCount: replies.length,
     latestUserIndex
   };
@@ -125,7 +130,7 @@ def read_once(client: FirefoxMCPClient, request_id: str | None, settle_seconds: 
         raise ValueError(first.get("reason", "UNKNOWN_REQUEST_ERROR"))
     if first.get("kind") != "sample":
         raise ValueError(f"unexpected conversation probe result: {first!r}")
-    if first.get("busy"):
+    if first.get("busy") or first.get("starting"):
         return IN_PROGRESS
     if not first.get("text"):
         return IN_PROGRESS
@@ -136,6 +141,7 @@ def read_once(client: FirefoxMCPClient, request_id: str | None, settle_seconds: 
     if (
         second.get("kind") != "sample"
         or second.get("busy")
+        or second.get("starting")
         or second.get("assistantCount") != first.get("assistantCount")
         or not second.get("text")
         or second.get("text") != first.get("text")
