@@ -7,6 +7,8 @@ const GRUNT_ANIMATION_LIBRARY := preload(
 )
 const GENERATED_CAMP_GROUP := &"generated_procgen_ambient_camp"
 const CAMP_CREATED_META := &"ambient_enemy_camp_created"
+const MAX_MANAGED_SLOT_IDENTITIES := 256
+const MAX_MANAGED_TERMINAL_TOKENS := 256
 
 @export var enemy_scene: PackedScene
 @export var enemy_scenes: Array[PackedScene] = []
@@ -25,6 +27,13 @@ var _max_spawn_usec := 0
 var _last_spawn_usec := 0
 var _spawned_count := 0
 var _prewarm_usec := 0
+var _managed_activity_state: AbstractActivitySimulationState
+var _managed_reification_coordinator: ActorReificationCoordinator
+var _managed_slot_records: Dictionary = {}
+var _managed_slot_by_address: Dictionary = {}
+var _managed_slot_epoch_by_address: Dictionary = {}
+var _managed_terminal_order: Array[String] = []
+var _next_managed_slot_token := 1
 
 
 func _ready() -> void:
@@ -39,6 +48,155 @@ func _physics_process(_delta: float) -> void:
 		return
 	var request := _spawn_queue.pop_front() as Dictionary
 	_spawn_queued_enemy(request)
+
+
+func bind_managed_population_state(
+	activity_state: AbstractActivitySimulationState,
+	reification_coordinator: ActorReificationCoordinator = null
+) -> bool:
+	if activity_state == null or not _managed_slot_by_address.is_empty():
+		return false
+	_managed_activity_state = activity_state
+	_managed_reification_coordinator = reification_coordinator
+	return true
+
+
+func reserve_managed_slot(
+	domain_id: String,
+	group_id: String,
+	actor_id: String,
+	location_id: String,
+	camp_source_id: String,
+	epoch: int,
+	source_camp: AmbientEnemyCamp
+) -> Dictionary:
+	if _managed_activity_state == null:
+		return _managed_rejection("managed population state is not bound")
+	if not _valid_managed_id(domain_id) or not _valid_managed_id(group_id) \
+		or not _valid_managed_id(actor_id) or not _valid_managed_id(location_id) \
+		or not _valid_managed_id(camp_source_id):
+		return _managed_rejection("invalid managed domain, group, actor, location, or camp identity")
+	if epoch <= 0:
+		return _managed_rejection("managed slot epoch must be a positive integer")
+	if source_camp == null or not is_instance_valid(source_camp) \
+		or source_camp.is_queued_for_deletion() or not source_camp.is_inside_tree():
+		return _managed_rejection("managed camp source is not live")
+	if String(source_camp.camp_id) != camp_source_id:
+		return _managed_rejection("managed camp source identity does not match the request")
+	var group := _managed_activity_state.get_group(domain_id, group_id)
+	if group.is_empty():
+		return _managed_rejection("managed group identity is unknown")
+	if String(group.get("actor_id", "")) != actor_id:
+		return _managed_rejection("managed actor identity does not match the F14 group")
+	if String(group.get("location_id", "")) != location_id:
+		return _managed_rejection("managed location does not match the current F14 group location")
+	if String(group.get("representation", "abstract")) != "abstract":
+		return _managed_rejection("managed actor is already F14 physical-owned")
+	if not (group.get("actor_projection", {}) as Dictionary).is_empty():
+		return _managed_rejection("managed actor already has a physical projection")
+	if _managed_actor_is_physical(domain_id, group_id, actor_id):
+		return _managed_rejection("managed actor identity already has a physical instance")
+	if _has_pending_managed_reification(domain_id, group_id, actor_id):
+		return _managed_rejection("managed actor has a pending physical reification")
+	var address := _managed_address_key(domain_id, group_id, actor_id)
+	if _managed_slot_by_address.has(address):
+		return _managed_rejection("managed actor slot already has a pending or consumed allocation")
+	if _managed_slot_epoch_by_address.has(address) \
+		and epoch <= int(_managed_slot_epoch_by_address[address]):
+		return _managed_rejection("managed slot epoch is stale or replayed")
+	if _managed_slot_epoch_by_address.size() >= MAX_MANAGED_SLOT_IDENTITIES \
+		and not _managed_slot_epoch_by_address.has(address):
+		return _managed_rejection("managed slot identity bound exceeded")
+	var token := "managed-slot:%d:%d" % [get_instance_id(), _next_managed_slot_token]
+	_next_managed_slot_token += 1
+	_managed_slot_epoch_by_address[address] = epoch
+	_managed_slot_by_address[address] = token
+	_managed_slot_records[token] = {
+		"token": token,
+		"domain_id": domain_id,
+		"group_id": group_id,
+		"actor_id": actor_id,
+		"location_id": location_id,
+		"camp_source_id": camp_source_id,
+		"source_camp": source_camp,
+		"epoch": epoch,
+		"address": address,
+		"status": "reserved",
+		"reason": "",
+		"settled": false,
+		"request": {},
+	}
+	_obs_increment("ambient_enemy_managed_slot_reserved")
+	return {"ok": true, "token": token, "epoch": epoch}
+
+
+func queue_managed_enemy_spawn(
+	token: String,
+	scene: PackedScene,
+	parent: Node2D,
+	spawn_position: Vector2,
+	home_position: Vector2,
+	leash_radius_px: float,
+	behavior_profile_id: StringName,
+	completion: Callable,
+	settled: Callable
+) -> bool:
+	var record: Dictionary = _managed_slot_records.get(token, {})
+	if record.is_empty() or String(record.get("status", "")) != "reserved":
+		return false
+	var source_camp := record.get("source_camp") as AmbientEnemyCamp
+	if scene == null or parent == null or not is_instance_valid(parent) \
+		or source_camp == null or not is_instance_valid(source_camp) \
+		or not completion.is_valid() or not settled.is_valid():
+		_cancel_managed_slot(token, "managed spawn request has an invalid scene, parent, source, or callback", false)
+		return false
+	if max_active_ambient_enemies <= 0 \
+		or get_active_enemy_count() + get_pending_spawn_count() >= max_active_ambient_enemies:
+		_cancel_managed_slot(token, "ambient spawn cap is saturated", false)
+		return false
+	var request := {
+		"scene": scene,
+		"parent": parent,
+		"spawn_position": spawn_position,
+		"home_position": home_position,
+		"camp_id": source_camp.camp_id,
+		"leash_radius_px": leash_radius_px,
+		"behavior_profile_id": behavior_profile_id,
+		"completion": completion,
+		"managed_settled": settled,
+		"managed_token": token,
+		"managed_epoch": int(record.epoch),
+		"managed_source_camp": source_camp,
+		"spawn_ordinal": _next_spawn_ordinal,
+	}
+	_next_spawn_ordinal += 1
+	record.status = "queued"
+	record.request = request
+	_managed_slot_records[token] = record
+	_spawn_queue.append(request)
+	_obs_set_gauge("ambient_enemy_spawn_queue_depth", _spawn_queue.size())
+	return true
+
+
+func cancel_managed_slot(token: String, reason: String = "managed request canceled") -> bool:
+	return _cancel_managed_slot(token, reason, true)
+
+
+func get_managed_slot_status(token: String) -> Dictionary:
+	var record: Dictionary = _managed_slot_records.get(token, {})
+	if record.is_empty():
+		return {}
+	return {
+		"token": token,
+		"domain_id": String(record.get("domain_id", "")),
+		"group_id": String(record.get("group_id", "")),
+		"actor_id": String(record.get("actor_id", "")),
+		"location_id": String(record.get("location_id", "")),
+		"camp_source_id": String(record.get("camp_source_id", "")),
+		"epoch": int(record.get("epoch", 0)),
+		"status": String(record.get("status", "")),
+		"reason": String(record.get("reason", "")),
+	}
 
 
 func queue_enemy_spawn(

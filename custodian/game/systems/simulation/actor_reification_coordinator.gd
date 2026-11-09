@@ -51,6 +51,20 @@ func take_result(request_id: int) -> Dictionary:
 	return result.duplicate(true)
 
 
+func has_pending_physical_request(domain_id: String, group_id: String, actor_id: String) -> bool:
+	if kernel == null or kernel.state == null:
+		return false
+	var group := kernel.state.abstract_activity.get_group(domain_id, group_id)
+	if group.is_empty() or String(group.get("actor_id", "")) != actor_id:
+		return false
+	for request in _requests:
+		if String(request.get("kind", "")) == "physical" \
+			and String(request.get("domain_id", "")) == domain_id \
+			and String(request.get("group_id", "")) == group_id:
+			return true
+	return false
+
+
 func _queue_request(request: Dictionary) -> int:
 	if kernel == null:
 		return -1
