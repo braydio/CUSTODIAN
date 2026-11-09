@@ -7786,6 +7786,50 @@
       ],
       "timeout_sec": 60,
       "needs_import": false
+    },
+    {
+      "id": "chatgpt_relay_chrome_unit",
+      "type": "python",
+      "script": "custodian/tools/orchestration/test_chatgpt_relay_chrome.py",
+      "tier": "unit",
+      "tags": ["orchestration", "chat_relay"],
+      "owners": [
+        "custodian/tools/orchestration/get_chatgpt_response.py",
+        "custodian/tools/orchestration/send_chatgpt_message.py",
+        "custodian/tools/orchestration/test_chatgpt_relay_chrome.py",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
+      "id": "chatgpt_relay_firefox_unit",
+      "type": "python",
+      "script": "custodian/tools/orchestration/test_chatgpt_relay_firefox.py",
+      "tier": "unit",
+      "tags": ["orchestration", "chat_relay", "firefox"],
+      "owners": [
+        "custodian/tools/orchestration/get_chatgpt_response_firefox.py",
+        "custodian/tools/orchestration/send_chatgpt_message_firefox.py",
+        "custodian/tools/orchestration/test_chatgpt_relay_firefox.py",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
+      "id": "firefox_mcp_client_unit",
+      "type": "python",
+      "script": "custodian/tools/orchestration/test_firefox_mcp_client.py",
+      "tier": "unit",
+      "tags": ["orchestration", "chat_relay", "firefox"],
+      "owners": [
+        "custodian/tools/orchestration/firefox_mcp_client.py",
+        "custodian/tools/orchestration/test_firefox_mcp_client.py",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
     }
   ]
 }
