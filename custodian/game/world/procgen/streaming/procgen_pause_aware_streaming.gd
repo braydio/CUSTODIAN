@@ -37,6 +37,8 @@ var _get_prepare_budget: Callable = Callable()
 var _on_tile_prepared: Callable = Callable()
 var _on_tile_committed: Callable = Callable()
 var _resume_event_pending: bool = false
+var _priority_rank: Dictionary = {}
+var _priority_order: Array[Vector2i] = []
 
 
 func _ready() -> void:
@@ -74,6 +76,8 @@ func reset() -> void:
 	resumed_count = 0
 	committed_count = 0
 	_resume_event_pending = false
+	_priority_rank.clear()
+	_priority_order.clear()
 
 
 ## Appends already-sorted reveal tiles to the shared queue. Callers keep
@@ -87,8 +91,61 @@ func enqueue_many(tiles: Array[Vector2i]) -> void:
 	requested_count += tiles.size()
 
 
+## Reorders only pending identities supplied by the tilemap's bounded local
+## priority pass. Relative order of all untouched work remains unchanged.
+func reprioritize_pending(ordered_tiles: Array[Vector2i]) -> void:
+	_priority_rank.clear()
+	_priority_order.clear()
+	for index in range(ordered_tiles.size()):
+		_priority_rank[ordered_tiles[index]] = index
+		_priority_order.append(ordered_tiles[index])
+	var reordered_queue := _promote_tiles(_queue, _priority_rank)
+	_queue.clear()
+	_queue.append_array(reordered_queue)
+	var promoted_prepared: Array[Dictionary] = []
+	var remaining_prepared: Array[Dictionary] = []
+	for record in _prepared:
+		var tile: Vector2i = record.get("tile", Vector2i.ZERO)
+		if _priority_rank.has(tile):
+			promoted_prepared.append(record)
+		else:
+			remaining_prepared.append(record)
+	promoted_prepared.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		return int(_priority_rank[a.get("tile", Vector2i.ZERO)]) < int(_priority_rank[b.get("tile", Vector2i.ZERO)])
+	)
+	promoted_prepared.append_array(remaining_prepared)
+	_prepared.clear()
+	_prepared.append_array(promoted_prepared)
+
+
+func _promote_tiles(source: Array[Vector2i], rank: Dictionary) -> Array[Vector2i]:
+	var promoted: Array[Vector2i] = []
+	var remaining: Array[Vector2i] = []
+	for tile in source:
+		if rank.has(tile):
+			promoted.append(tile)
+		else:
+			remaining.append(tile)
+	promoted.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		return int(rank[a]) < int(rank[b])
+	)
+	promoted.append_array(remaining)
+	return promoted
+
+
 func has_prepared() -> bool:
 	return not _prepared.is_empty()
+
+
+func get_pending_tiles() -> Array[Vector2i]:
+	var result: Array[Vector2i] = []
+	for tile in _queue:
+		result.append(tile)
+	for record in _prepared:
+		var tile: Variant = record.get("tile")
+		if tile is Vector2i:
+			result.append(tile)
+	return result
 
 
 func is_idle() -> bool:
@@ -123,21 +180,44 @@ func get_snapshot() -> Dictionary:
 func drain_commit(max_count: int) -> int:
 	var remaining := max_count
 	var committed := 0
-	while remaining > 0 and not _prepared.is_empty():
-		var record: Dictionary = _prepared.pop_front()
-		_commit_record.call(record)
-		_notify_committed(record.get("tile"))
-		committed += 1
-		committed_count += 1
-		remaining -= 1
-	while remaining > 0 and not _queue.is_empty():
-		var tile: Vector2i = _queue.pop_front()
-		_commit_record.call(_build_record.call(tile))
-		_notify_committed(tile)
+	while remaining > 0 and (not _prepared.is_empty() or not _queue.is_empty()):
+		var take_prepared := not _prepared.is_empty()
+		if not _priority_order.is_empty():
+			var queued_priority_index := _index_of_next_priority(_queue)
+			var prepared_priority_index := _index_of_next_prepared_priority()
+			if queued_priority_index >= 0 or prepared_priority_index >= 0:
+				if prepared_priority_index < 0 or (queued_priority_index >= 0 and queued_priority_index < prepared_priority_index):
+					take_prepared = false
+				elif prepared_priority_index >= 0:
+					take_prepared = true
+		if take_prepared:
+			var record: Dictionary = _prepared.pop_front()
+			var record_tile: Variant = record.get("tile")
+			_commit_record.call(record)
+			_notify_committed(record_tile)
+		else:
+			var tile: Vector2i = _queue.pop_front()
+			_commit_record.call(_build_record.call(tile))
+			_notify_committed(tile)
 		committed += 1
 		committed_count += 1
 		remaining -= 1
 	return committed
+
+
+func _index_of_next_priority(tiles: Array[Vector2i]) -> int:
+	for index in range(_priority_order.size()):
+		if tiles.has(_priority_order[index]):
+			return index
+	return -1
+
+
+func _index_of_next_prepared_priority() -> int:
+	for index in range(_priority_order.size()):
+		for record in _prepared:
+			if record.get("tile") == _priority_order[index]:
+				return index
+	return -1
 
 
 func _notify_committed(tile: Vector2i) -> void:
@@ -164,7 +244,16 @@ func _advance_prepare() -> void:
 	var prepared_any := false
 	while budget > 0 and not _queue.is_empty():
 		var tile: Vector2i = _queue.pop_front()
-		_prepared.append(_build_record.call(tile))
+		var record: Dictionary = _build_record.call(tile)
+		var rank := int(_priority_rank.get(tile, 2147483647))
+		var insert_at := _prepared.size()
+		if rank < 2147483647:
+			for index in range(_prepared.size()):
+				var existing_tile: Vector2i = _prepared[index].get("tile", Vector2i.ZERO)
+				if rank < int(_priority_rank.get(existing_tile, 2147483647)):
+					insert_at = index
+					break
+		_prepared.insert(insert_at, record)
 		prepared_count += 1
 		prepared_any = true
 		budget -= 1

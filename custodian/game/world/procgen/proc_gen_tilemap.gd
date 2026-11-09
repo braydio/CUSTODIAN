@@ -528,6 +528,7 @@ var _chunk_payload_cache: ProcGenChunkPayloadCache = null
 var _chunk_residency_policy: ProcGenChunkResidencyPolicy = null
 var _streaming_player: Node2D = null
 var _streaming_current_chunk: Vector2i = Vector2i(999999, 999999)
+var _streaming_priority_center_tile: Vector2i = Vector2i(999999, 999999)
 var _navigation_rebuild_pending: bool = false
 var _navigation_rebuild_deferred: bool = false
 var _streaming_visual_rebuild_pending: bool = false
@@ -1039,6 +1040,9 @@ func _process(delta: float) -> void:
 			if player_chunk != _streaming_current_chunk:
 				_streaming_current_chunk = player_chunk
 				_update_streaming_chunks(player_chunk, player_tile)
+			if player_tile != _streaming_priority_center_tile:
+				_streaming_priority_center_tile = player_tile
+				_reprioritize_pending_streaming_tiles(player_tile)
 			_update_foliage_occlusion(_streaming_player)
 		_update_ruin_prop_occlusion(_streaming_player)
 	else:
@@ -10397,6 +10401,7 @@ func _prepare_streaming_reveal() -> void:
 	_archive_resolve_ingress_done = false
 	_streaming_player = null
 	_streaming_current_chunk = Vector2i(999999, 999999)
+	_streaming_priority_center_tile = Vector2i(999999, 999999)
 	_navigation_rebuild_pending = false
 	_navigation_rebuild_deferred = false
 	_streaming_visual_rebuild_pending = false
@@ -10436,6 +10441,8 @@ func _prime_streaming_chunks(center_tile: Vector2i) -> void:
 	_streaming_visual_rebuild_pending = false
 	_streaming_reveal_flush_owed = false
 	_streaming_visual_rebuild_accum = 0.0
+	_streaming_priority_center_tile = center_tile
+	_reprioritize_pending_streaming_tiles(center_tile)
 
 
 func _update_streaming_chunks(center_chunk: Vector2i, center_tile: Vector2i) -> void:
@@ -10449,6 +10456,7 @@ func _update_streaming_chunks(center_chunk: Vector2i, center_tile: Vector2i) -> 
 	for x in range(-streaming_active_chunk_radius, streaming_active_chunk_radius + 1):
 		for y in range(-streaming_active_chunk_radius, streaming_active_chunk_radius + 1):
 			_queue_chunk_for_reveal(center_chunk + Vector2i(x, y), center_tile)
+	_reprioritize_pending_streaming_tiles(center_tile)
 	_chunk_lifecycle.sync_active_window(center_chunk, streaming_active_chunk_radius)
 	# M6: refresh the bounded eviction candidate queue here (every player-
 	# chunk transition) rather than unloading directly -- actual unload is
@@ -10626,6 +10634,82 @@ func _streaming_reveal_priority(tile: Vector2i, center_tile: Vector2i) -> float:
 	if _generated_wall_cells.has(tile):
 		score += 12.0
 	return score
+
+
+## Refreshes a bounded neighborhood of already-requested work. M3 continues
+## to own queue/prepared storage and lifecycle counts; this tilemap owns the
+## local geometry and semantic priority calculation.
+func _reprioritize_pending_streaming_tiles(center_tile: Vector2i) -> void:
+	if _pause_aware_streaming == null:
+		return
+	const INSPECTION_RADIUS := 8
+	const NEAR_RADIUS := 3
+	var bounds := Rect2i(center_tile - Vector2i.ONE * INSPECTION_RADIUS, Vector2i.ONE * (INSPECTION_RADIUS * 2 + 1))
+	var pending: Dictionary = {}
+	var pending_tiles: Array[Vector2i] = _pause_aware_streaming.get_pending_tiles()
+	for tile in pending_tiles:
+		if bounds.has_point(tile):
+			pending[tile] = true
+	if pending.is_empty():
+		_pause_aware_streaming.reprioritize_pending([])
+		return
+	var near: Array[Vector2i] = []
+	var pockets: Array[Vector2i] = []
+	for tile in pending.keys():
+		var point := tile as Vector2i
+		if point.distance_squared_to(center_tile) <= NEAR_RADIUS * NEAR_RADIUS:
+			near.append(point)
+	near.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		return _streaming_priority_less(a, b, center_tile)
+	)
+	var visited: Dictionary = {}
+	for tile in pending.keys():
+		var start := tile as Vector2i
+		if visited.has(start) or near.has(start):
+			continue
+		var component: Array[Vector2i] = []
+		var frontier: Array[Vector2i] = [start]
+		var touches_boundary := false
+		var exceeds_pocket_size := false
+		visited[start] = true
+		while not frontier.is_empty():
+			var current: Vector2i = frontier.pop_back()
+			component.append(current)
+			if component.size() > 3:
+				exceeds_pocket_size = true
+				break
+			if current.x == bounds.position.x or current.y == bounds.position.y \
+					or current.x == bounds.position.x + bounds.size.x - 1 \
+					or current.y == bounds.position.y + bounds.size.y - 1:
+				touches_boundary = true
+			for neighbor in [current + Vector2i.LEFT, current + Vector2i.RIGHT, current + Vector2i.UP, current + Vector2i.DOWN]:
+				if pending.has(neighbor) and not near.has(neighbor) and not visited.has(neighbor):
+					visited[neighbor] = true
+					frontier.append(neighbor)
+		if not exceeds_pocket_size and component.size() <= 3 and not touches_boundary and frontier.is_empty():
+			pockets.append_array(component)
+	pockets.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		return _streaming_priority_less(a, b, center_tile)
+	)
+	var ordered: Array[Vector2i] = near
+	ordered.append_array(pockets)
+	var ordered_pending: Dictionary = {}
+	for tile in ordered:
+		ordered_pending[tile] = true
+	for tile in pending_tiles:
+		if not ordered_pending.has(tile):
+			ordered.append(tile)
+	_pause_aware_streaming.reprioritize_pending(ordered)
+
+
+func _streaming_priority_less(a: Vector2i, b: Vector2i, center_tile: Vector2i) -> bool:
+	var a_score := _streaming_reveal_priority(a, center_tile)
+	var b_score := _streaming_reveal_priority(b, center_tile)
+	if not is_equal_approx(a_score, b_score):
+		return a_score < b_score
+	if a.y != b.y:
+		return a.y < b.y
+	return a.x < b.x
 
 
 func _reveal_chunk_immediately(chunk_pos: Vector2i) -> void:
