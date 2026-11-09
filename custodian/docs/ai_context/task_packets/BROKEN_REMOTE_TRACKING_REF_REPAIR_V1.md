@@ -3,8 +3,8 @@
 - Packet schema: custodian.task_packet.v2
 - Category: agent-ops
 - Workstream: broken-remote-tracking-ref-repair-v1
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Authoring handoff: manual
 - Priority: P0
 - Depends on: none
