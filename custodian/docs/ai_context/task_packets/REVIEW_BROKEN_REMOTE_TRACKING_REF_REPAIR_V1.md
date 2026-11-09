@@ -34,7 +34,7 @@
 - Review focus: Git common-dir identity, safe enumerated scope, null/zero-byte loose refs, packfile interaction, concurrent ref writers, backup and atomicity, unusual paths, idempotence, original W2 dependency/claim invariants and no retroactive reinterpretation of historic claims.
 - Acceptance: PASS only with independently proven data-neutral host repair and complete required tests. Otherwise record stable R0-NN findings with a bounded correction and re-review; never mark the blocked W2 packet claimable by inference.
 - Non-goals: No broad ref cleanup, direct W2 claim, worktree retirement, approval of unknown process owners, or new dispatcher implementation.
-- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only its durable receipt, review-packet lifecycle/archive metadata, required closing summary and bounded correction/re-review packets; do not modify reviewed implementation source or unrelated work.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 - Authoring status: Draft only. Not a review receipt or implementation approval.
 
 ## Handoff
