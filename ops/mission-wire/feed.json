@@ -1,9 +1,154 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-08T18:44:38Z",
-  "source_main_sha": "5b74eb565b47b1b9c7f7edcf4fadffc1e65f62db",
+  "generated_at": "2026-11-09T11:07:41Z",
+  "source_main_sha": "841931733cd0103e5dbeb5587063d3b880e50db7",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "broken-ref-repair-packets-84193173",
+      "headline": "Malformed Git references block dispatcher audits; a narrowly scoped repair enters the queue",
+      "summary": "CUSTODIAN published an implementation/review packet pair to address malformed local remote-tracking references reported to obstruct canonical dispatcher audits. The repair is specified as manifest-driven, backed up, reversible and independently reviewed. No host repair, restored audit, or accepted review is yet verified.",
+      "body": "A new main-branch commit adds a P0 agent-ops implementation packet and its independent review for a reported host-local Git reference obstruction. The packet cites host preflight reports of sixteen zero-byte loose remote-tracking refs, but those observations are not independently refreshed in this watch. The implementation must operate on an exact reviewed manifest, preserve private backups and unrelated Git state, default to dry-run, fail closed on races and mismatches, and prove rollback and dispatcher audit behavior. The paired review must independently validate host evidence and reject any damage to valid refs, worktrees or claims. Both packets carry ready/auto metadata, but their authoring text still says draft and not to auto-dispatch until approvals and claim checks complete. This documentation-versus-metadata discrepancy requires canonical dispatcher resolution, not an inferred claim. No code implementation, host mutation, independent PASS or verified teardown was observed. The separate WIRE pilot pointer remains stale; no private counts were imported.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "broken-remote-tracking-ref-repair-v1",
+      "occurred_at": "2026-11-09T10:20:51Z",
+      "bullets": [
+        "One implementation packet and one paired review packet landed on main.",
+        "Host reports cite 16 malformed refs; this is not a fresh exhaustive audit.",
+        "Ready/auto metadata conflicts with draft authoring warnings; dispatch eligibility is unverified.",
+        "Next gate: reconcile packet authority, then independently validate an exact-scope dry-run before any authorized repair."
+      ],
+      "links": [
+        {
+          "title": "Scoped repair and independent review packet commit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/841931733cd0103e5dbeb5587063d3b880e50db7"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN has documented a new obstacle in its task-dispatch machinery: malformed local Git references reportedly prevent the canonical audit from completing. A narrowly bounded repair and an independent review are now defined, but no repair has been demonstrated.",
+        "sections": [
+          {
+            "heading": "A small Git defect with a wide operational impact",
+            "text": "The new packet cites host reports of sixteen empty remote-tracking reference files. These are local Git bookkeeping entries, not evidence that remote branches should be deleted. Until the host problem is safely resolved, the dispatcher cannot provide a trustworthy full queue audit."
+          },
+          {
+            "heading": "The repair must preserve more than it changes",
+            "text": "The proposed tool must check a reviewed exact-file manifest, back up original evidence outside Git, reject concurrent changes, and support rollback. Its separate reviewer must test failure cases and prove that unrelated references, worktrees and claims were untouched. Ready/auto packet metadata does not establish execution, especially while the authoring text still calls the packets draft."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The audit itself is the blocked capability",
+            "explanation": "Without a healthy local ref store, a full dispatcher count is not available. GitHub packet inventory cannot replace a canonical live audit."
+          },
+          {
+            "title": "Repair authority needs reconciliation",
+            "explanation": "The packets are labeled ready/auto but retain draft-only authoring warnings. The canonical dispatcher and repository lifecycle must resolve that discrepancy before treating them as claimable."
+          }
+        ],
+        "takeaway": "The repair workstream is now documented on main; the host fault, execution eligibility, successful repair and independent acceptance remain unverified.",
+        "next_watch": "Watch for reconciled packet authority, a reviewed dry-run and backup manifest, a safe host repair, and an independently accepted canonical audit."
+      },
+      "scorecard": {
+        "stage": "Repair specified; execution and review unverified",
+        "as_of": "2026-11-09T11:07:41Z",
+        "scope": "One new agent-ops implementation packet and one paired review packet, not full dispatcher coverage",
+        "metrics": [
+          {
+            "id": "new-packets",
+            "label": "NEW PACKETS",
+            "value": 2,
+            "verification": "verified",
+            "basis": "Exactly two new packet files in commit 84193173",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/841931733cd0103e5dbeb5587063d3b880e50db7"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Repair and paired review packets authored",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "84193173 adds both files."
+          },
+          {
+            "label": "Resolve authoring and dispatcher eligibility",
+            "status": "current",
+            "verification": "unknown",
+            "evidence": "Ready/auto metadata coexists with draft-only authoring warning."
+          },
+          {
+            "label": "Validate exact manifest and dry-run",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No host validation observed."
+          },
+          {
+            "label": "Safely repair and verify canonical audit",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No host repair or full audit observed."
+          },
+          {
+            "label": "Independent review and acceptance",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No independent PASS receipt observed."
+          }
+        ],
+        "next_gate": "Repository/dispatcher owner: reconcile packet authoring authority and claim eligibility before any host action."
+      },
+      "details": {
+        "overview": "Main commit 84193173 adds the repair implementation and review packet, plus packet index entries. The packet cites B-006/B-007 host preflight evidence retained privately; the watch cannot independently confirm host state. Combined GitHub commit status has no status contexts, which is not CI PASS.",
+        "ledger": [
+          {
+            "stage": "Packet publication",
+            "status": "verified landed",
+            "evidence": "84193173 on main"
+          },
+          {
+            "stage": "Host reference defect",
+            "status": "host-reported, not independently verified",
+            "evidence": "Packet cites 16 empty loose refs in B-006/B-007"
+          },
+          {
+            "stage": "Implementation and focused validation",
+            "status": "unknown",
+            "evidence": "No landed repair or test receipt"
+          },
+          {
+            "stage": "Canonical audit",
+            "status": "unknown",
+            "evidence": "No complete host audit available"
+          },
+          {
+            "stage": "Independent review",
+            "status": "unknown",
+            "evidence": "No PASS receipt"
+          },
+          {
+            "stage": "Canonical teardown",
+            "status": "unknown",
+            "evidence": "No host evidence"
+          }
+        ],
+        "notes": [
+          "A canonical audit may fetch/prune, so its side effects must be disclosed rather than called purely read-only."
+        ],
+        "unknowns": [
+          "Actual host ref state, current claims, worktree/disk totals",
+          "Whether draft warning or ready/auto metadata governs dispatch"
+        ],
+        "actions": [
+          "Owner: reconcile authoring approval and canonical dispatcher eligibility.",
+          "Authorized host operator: validate exact manifest and backup before repair.",
+          "Independent reviewer: inspect immutable evidence and audit results before PASS."
+        ]
+      },
+      "related": []
+    },
     {
       "id": "presentation-libraries-plan-e217115f",
       "headline": "Four presentation libraries enter CUSTODIAN's task queue, with first implementation packets ready",
@@ -1505,120 +1650,6 @@
         ],
         "actions": [
           "Workflow owner: correct blocked-to-general fallback under protected review."
-        ]
-      },
-      "related": []
-    },
-    {
-      "id": "memorial-slab-hub-install-695179d2",
-      "headline": "Memorial Slab artwork reaches the playable Hub; packet archived",
-      "summary": "CUSTODIAN landed the approved Sepulcher Memorial Slab as an Asset Pipeline V2 world prop bound to the Hub grave scene, then marked its packet complete and archived it. The implementation reports focused validation; independent visual/runtime acceptance and host cleanup were not independently observed.",
-      "body": "The approved slab image was normalized and registered as one world_prop state and wired into SepulcherGraveEvidence drawing while retaining reading positions and gameplay behavior. The implementation summary reports focused tests and a HubRuntimeHost rendering check. Subsequent archival commit marks the packet complete. The packet did not require paired review. GitHub evidence proves code and asset landing, not current host execution or verified teardown.",
-      "severity": "milestone",
-      "verification": "verified",
-      "category": "general",
-      "workstream": "sepulcher-memorial-slab-production-art-v1",
-      "occurred_at": "2026-11-07T07:23:06Z",
-      "bullets": [
-        "The approved memorial artwork is landed and the task packet archived; live-host and cleanup claims remain unverified.",
-        "Watch for a separately evidenced in-game visual acceptance or a reported regression in the Hub."
-      ],
-      "links": [
-        {
-          "title": "Art installation",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/02f2b285dac0fab09b62ee22f77177809b0d2e9c"
-        },
-        {
-          "title": "Packet archival",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/695179d2ba6c9233147984f427ba5476e3f47475"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "The Sepulcher's memorial grave now has its approved illustrated slab integrated into the Hub's game scene. This replaces the earlier procedural drawing without changing the grave's interaction points or story logic.",
-        "sections": [
-          {
-            "heading": "Artwork becomes a game asset",
-            "text": "The approved image was normalized into the Asset Pipeline V2 world-prop format and connected to the existing grave renderer. The implementation deliberately leaves dialogue, collision, reading markers and persistence behavior alone."
-          },
-          {
-            "heading": "The packet is closed in the repository",
-            "text": "A follow-up commit marks the implementation packet complete and archives it. The author records focused validation, but the GitHub landing does not independently establish a currently running host or clean teardown."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Visual upgrades need not disturb gameplay",
-            "explanation": "The change is isolated to the slab drawing, reducing the chance that art replacement changes the memorial's established interactions."
-          }
-        ],
-        "takeaway": "The approved memorial artwork is landed and the task packet archived; live-host and cleanup claims remain unverified.",
-        "next_watch": "Watch for a separately evidenced in-game visual acceptance or a reported regression in the Hub."
-      },
-      "scorecard": {
-        "stage": "Landed and archived; host state unknown",
-        "as_of": "2026-11-07T07:47:12Z",
-        "scope": "Named Sepulcher Memorial Slab packet, not full queue",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Approve art source",
-            "status": "done",
-            "verification": "reported",
-            "evidence": "Packet records human approval and source receipt."
-          },
-          {
-            "label": "Install Hub asset binding",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Implementation commit 02f2b285."
-          },
-          {
-            "label": "Run focused checks",
-            "status": "current",
-            "verification": "reported",
-            "evidence": "Author summary reports validation."
-          },
-          {
-            "label": "Archive packet",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Commit 695179d2."
-          },
-          {
-            "label": "Verify host cleanup",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No canonical host audit."
-          }
-        ],
-        "next_gate": "Runtime owner: provide bounded in-game visual evidence if further acceptance is required."
-      },
-      "details": {
-        "overview": "Main installation and archival commits inspected. Packet says no paired review required. Host worktree, process, disk and lock states not inspected.",
-        "ledger": [
-          {
-            "stage": "Asset installation",
-            "status": "verified landed",
-            "evidence": "02f2b285 on main"
-          },
-          {
-            "stage": "Packet archive",
-            "status": "verified landed",
-            "evidence": "695179d2 on main"
-          },
-          {
-            "stage": "Host teardown",
-            "status": "unknown",
-            "evidence": "No host audit"
-          }
-        ],
-        "notes": [],
-        "unknowns": [
-          "Current host state and canonical teardown"
-        ],
-        "actions": [
-          "Runtime owner: obtain direct Hub visual evidence if needed."
         ]
       },
       "related": []
