@@ -1,29 +1,29 @@
 # Operator C2b — canonical animation authority
 
-Two slices, recorded in order. **C2b** (first pass) and **C2b.1** (blocker
-removal). C2b is still not closed; what remains is smaller and better understood
-than when it started.
+**C2b is complete.** Three slices, recorded in order: **C2b** (first pass),
+**C2b.1** (blocker removal), and the **final demolition** (this pass), which
+retired `AnimationResolver` and `DirectionalAnimationFallback` entirely.
 
 Read `OPERATOR_SLICE_D_CLAUDE_SUMMARY.md` for D.3, which opened this work as its
 regression gate and passed.
 
-## Measured result, both slices
+## Measured result, all three slices
 
 ```
-architecture debt      119 -> 98 -> 95
-operator.gd         15,231 -> 14,841 -> 14,849 lines
-operator.gd            723 ->    709 ->     709 functions
+architecture debt      119 -> 98 -> 95 -> 75
+operator.gd         15,231 -> 14,841 -> 14,849 -> 14,744 lines
+operator.gd            723 ->    709 ->    709 ->    709 functions
 ```
 
 Per category:
 
 ```
-                                 start   C2b   C2b.1   target
-operator_animation_catalog           4     0       0        0   done
-attack_fallback_animation           13     0       0        0   done
-actor_local_spriteframes             5     1       0        0   done
-animation_resolver                  18    18      16        0   deferred
-directional_animation_fallback       4     4       4        0   deferred (out of scope)
+                                 start   C2b   C2b.1  final   target
+operator_animation_catalog           4     0       0      0        0   done
+attack_fallback_animation           13     0       0      0        0   done
+actor_local_spriteframes             5     1       0      0        0   done
+animation_resolver                  18    18      16      0        0   done
+directional_animation_fallback       4     4       4      0        0   done
 ```
 
 The baseline was refreshed to measured truth after each slice, through the
@@ -522,11 +522,149 @@ economy, parry window or ranged-threshold change. No artwork changed, no
 production PNGs added, `OperatorBodyPresenter` untouched, and no domain state
 moved merely because `operator.gd` is large.
 
+## C2b final demolition
+
+Worked from an isolated worktree (`../CUSTODIAN-operator`,
+`claude/operator-c2b-final`) so `--changed` and diffs mean this slice, not
+whatever else was dirty in the shared checkout.
+
+### The measurement that made this fast
+
+`animated_sprite` and `melee_fx_overlay_sprite` bind only the canonical
+database (proven in C2b.1), and every identity in that database is
+slash-delimited (proven in C2b). A legacy compatibility clip name -- a bare
+base, a `_right`/`_left` suffix, `attack_right_old` -- therefore can never
+match there, for any caller, permanently. That single fact, not per-call-site
+archaeology, is what proved most of the remaining `AnimationResolver` tail
+dead:
+
+- `_play_melee_anim_resolved()`'s entire compatibility tail (the resolver call,
+  the `_right` suffix, the bare-base probe, `attack_right_old`) — collapsed to
+  just the canonical branch it already tried first.
+- `_retarget_ranged_sprite_preserving_progress()`'s and
+  `_play_modular_action_animation()`'s `else` branches — their one caller that
+  could ever reach them, the modular cape, has been permanently gated off by
+  `const ACTIVE_MODULAR_CAPE := false` since before this slice. Confirmed, not
+  assumed: every live caller of both functions passes either the canonical
+  lower/upper body layer or an already-resolved `resolved` argument.
+- `_active_melee_attack_has_authored_fx()`'s `fx_map` + resolver probe — the
+  two visibility checks ahead of it already answer the question; the probe
+  behind them could never independently return true.
+- `_get_parry_attempt_remaining_duration()`'s and `_play_parry_animation()`'s
+  `animated_sprite` resolution attempts — `unarmed/defense/parry_01` and
+  `unarmed/attack/parry_recovery_01` publish only `lower_body`/`upper_body`/
+  `fx`, never `full_body`. No full-body parry art was ever authored, so armed
+  and modular-disabled parry has always fallen through to a block animation.
+  That fallback is unchanged; only the compatibility probe in front of it
+  (which could never have succeeded) is gone. Reported as a real, pre-existing
+  gap rather than papered over with new compatibility machinery.
+
+Cape's own remaining resolver dependency —
+`AnimationResolver._get_direction_suffix()` inside its authored-direction gate
+— was replaced with the existing `_get_direction_suffix()` wrapper already used
+elsewhere in the file (a rename, not new logic).
+
+### The bug that measurement also found
+
+`get_damage_reaction_animation()` and `play_damage_reaction_fx()` were pure
+dead code: both checked bare legacy names (`unarmed_light_hitreact_down`,
+`unarmed_bodyslam_knockdown_left/right`, and FX equivalents) against
+canonical-only sprites, and always returned/played nothing. Because
+`begin_modular_damage_reaction()` explicitly excludes HEAVY, this meant **heavy
+knockdown played no animation at all** in the live build, and light hit-react
+was silently blank whenever the modular rig couldn't claim it.
+
+Both canonical identities already existed
+(`unarmed/reaction/bodyslam_knockdown_01/{e,w}` and
+`unarmed/reaction/light_hitreact_01/s`, body and fx), so this was fixed rather
+than left dead: both functions now resolve through
+`OperatorAnimationSelector`. `finish_damage_reaction_presentation()`'s cleanup
+also still matched the retired bare names and had quietly stopped hiding the FX
+overlay on state exit -- repointed at the same canonical names.
+
+`operator_knockdown_animation_smoke.gd` already covered exactly this (both
+directions, both frame counts, FPS, loop, movement lock, duration, FX
+lifecycle) but was **never registered in `validation_manifest.json`**, which is
+how a fully dead damage-reaction path shipped silently. Extended to cover the
+light hit-react path too and registered it.
+
+### Dodge: a deliberate quantizer choice, not a mechanical swap
+
+`operator_dodge_charge_windup` and `operator_dodge_chain_link` are both
+published across all eight sectors (verified against the generated manifest,
+not assumed), so `_resolve_dodge_presentation_animation()`'s
+nearest-available-sector search never ran for either of its two real callers.
+Simplified to canonical-only. The requested-sector telemetry now comes from
+`OperatorAnimationSelector.vector_to_sector` rather than the retired
+`DirectionalAnimationFallback.vector_to_sector` -- a deliberate choice, since
+the two disagree at exactly +/-157.5 and +/-112.5 degrees and at a
+0.0001-magnitude near-zero vector (characterized in C2b.1, never resolved).
+Now that every sector is genuinely published, there is no more
+nearest-available-sector question to answer differently at those points; the
+selector's quantizer is simply correct there too. `DODGE_PRESENTATION_SUFFIXES`
+had no other reader and is deleted with it.
+
+`operator_animation_selector_smoke.gd` gained the characterization this
+deserved: all eight cardinal/diagonal directions, both sides of every
+22.5-degree sector boundary, and the near-zero/zero cases, so a future change
+to either threshold is a decision, not silent drift.
+
+### Deleted
+
+`custodian/game/actors/operator/animations/animation_resolver.gd`,
+`custodian/game/systems/presentation/directional_animation_fallback.gd`
+(zero remaining consumers, confirmed by repo-wide search before deletion), and
+`directional_animation_fallback_smoke.gd`, an orphaned smoke that only tested
+the retired class in isolation and was not in the manifest either. Their
+`const ... = preload(...)` lines in `operator.gd` are gone with them. Five
+explanatory comments that named `AnimationResolver` to describe its historical
+fallback behavior were reworded to describe the behavior without naming a
+class that no longer exists -- prose changes, not code changes, in the same
+spirit as C2b's `attack_fallback_animation` comment correction.
+
+### What did not move, on purpose
+
+`animation_state_actor_glue` (34) and `weapon_definition_runtime_state` (3) are
+untouched -- different debt categories, out of this packet's scope, and
+`weapon_definition_runtime_state` (`current_magazine`/`is_reloading`/
+`reload_timer`) has nothing to do with animation. `absolute_scene_lookups`
+(38) is likewise untouched.
+
+### Validation
+
+Focused, run individually while editing: `operator_vigil_dagger`,
+`operator_sword_cleaver`, `operator_unarmed_fast_chain`, `operator_melee_posture`,
+`operator_melee_sheathe`, `operator_attack_phase_cadence`,
+`operator_animated_sprite_canonical`, `operator_timing_preservation`,
+`operator_runtime_spine_immutable`, `operator_dodge_flow`,
+`operator_dodge_fx_canonical`, `operator_parry_presentation`,
+`operator_primary_ranged_modular_fire`, `operator_sidearm_canonical`,
+`operator_ranged_ballistic_aim`, `operator_modular_defense_ranged`,
+`operator_knockdown_animation` (new/fixed). All PASS.
+`operator_parry_presentation` still logs its expected
+`unarmed_parry_success` -> `unarmed_block_hitreact` warning, unchanged, proving
+the parry fallback behavior really is identical.
+
+Closeout, run once: `operator_architecture_debt_audit.py --json` (75, both
+target categories 0), `run_validation.py --changed --json`, and the actor tier
+-- see the completion report in the reply for the actual results, recorded
+there rather than duplicated here.
+
+Baseline refreshed: 95 -> 75, measured, not manufactured.
+
+## Non-goals respected
+
+Slice E and Slice F not started. No combat balance, attack cadence, dodge
+economy, parry window or ranged-threshold change beyond the damage-reaction fix
+above (which restores a silently-broken presentation rather than changing an
+intended one). No artwork changed, no production PNGs added,
+`OperatorBodyPresenter` untouched.
+
 ## Recommended next step
 
-Not Slice E. The honest ordering is a small pipeline slice that publishes the
-per-weapon full-body and `fx` identities named above, plus an audit rule for
-runtime mutation of the canonical `SpriteFrames`. With those, the rest of C2b is
-the mechanical cleanup it was originally scoped as. Starting Slice E now would
-build action arbitration on top of a live `AnimationResolver`, which is the exact
-thing C2b existed to prevent.
+Slice E (`OperatorActionController`). C2b existed to make sure action
+arbitration would be built on canonical selection rather than a live
+`AnimationResolver`; that is now true. Remaining debt
+(`animation_state_actor_glue`, `absolute_scene_lookups`,
+`weapon_definition_runtime_state`) is orthogonal call-site cleanup, not a
+blocker.

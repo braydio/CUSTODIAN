@@ -1,10 +1,10 @@
 # Task Packet — Operator Runtime Decomposition
 
-**Status:** Slices A, B, B-final, C1, **D** (through D.3) and **C2b in part**
-(through **C2b.1**) complete (2026-09-24). C2a/R4 landed some time ago --
-`animated_sprite` is canonical and the modular body is canonical -- so the older
-"C2a blocked / R4 next" prose below is history, not present reality.
-Architecture debt is **97**, down from **347** at the start of the migration.
+**Status:** Slices A, B, B-final, C1, **D** (through D.3), and **C2b (complete,
+2026-09-27)**. C2a/R4 landed some time ago -- `animated_sprite` is canonical and
+the modular body is canonical -- so the older "C2a blocked / R4 next" prose
+below is history, not present reality. Architecture debt is **75**, down from
+**347** at the start of the migration.
 
 **C2b.1 (blocker removal).** C2b discovered that equipping a melee weapon copied
 that weapon's `body_frames_resource` into the shared canonical `SpriteFrames`,
@@ -14,10 +14,24 @@ across equip/unequip/cycling, armed melee selects canonical semantic identities
 derived from weapon data, the per-weapon `SpriteFrames` fields and their six
 resources are deleted, and `actor_local_spriteframes` reached 0.
 `operator_runtime_spine_immutable` is the executable form of that invariant.
-`animation_resolver` (18) and `directional_animation_fallback` (4) remain for
-non-armed callers and retire in the C2b demolition pass. The figure previously given
-here as the migration's starting point, 201, was an intermediate state, not the
-opening balance.
+The figure previously given here as the migration's starting point, 201, was an
+intermediate state, not the opening balance.
+
+**C2b final demolition (2026-09-27).** `animation_resolver` (18 -> 0) and
+`directional_animation_fallback` (4 -> 0) are both retired. `animated_sprite`
+and `melee_fx_overlay_sprite` bind only the canonical database, and every
+canonical identity is slash-delimited, so every remaining legacy-clip-name
+probe was provably dead for any caller -- not archaeologically per site, but as
+one general fact. `AnimationResolver`, `DirectionalAnimationFallback`, and the
+orphaned smoke that only tested the latter in isolation are deleted outright.
+Measurement also found two real gaps: parry has never had full-body art (only
+the modular lower/upper layers), so armed/modular-disabled parry has always
+fallen through to a block animation -- left as-is, reported rather than
+compatibility-patched; and `get_damage_reaction_animation()`/
+`play_damage_reaction_fx()` were fully dead, so heavy knockdown played no
+animation at all in the live build -- fixed, wired to the
+`unarmed/reaction/{bodyslam_knockdown_01,light_hitreact_01}` identities that
+already existed. Full account in `OPERATOR_C2B_CLAUDE_SUMMARY.md`.
 
 **Slice D (done, after the D.1 and D.2 seal corrections).** `operator/input/` is the sole owner of raw Operator input
 sampling: `OperatorInputFrame` (one immutable tick of intent),

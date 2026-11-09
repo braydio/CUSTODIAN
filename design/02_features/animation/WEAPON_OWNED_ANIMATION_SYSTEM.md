@@ -1,13 +1,13 @@
 # WEAPON_OWNED_ANIMATION_SYSTEM
 
 > **Superseded in part.** The `AnimationResolver` target architecture described
-> below is transitional and is being retired. Live animation lookup authority is
+> below was transitional and has been retired (C2b, 2026-09-27); the class
+> itself is deleted. Live animation lookup authority is
 > `design/02_features/animation/OPERATOR_RUNTIME_ANIMATION_AUTHORITY.md`
 > (`OperatorAnimationSelector` plus the one generated
-> `operator_runtime_frames.tres`), and the retirement is tracked as Slice C of
-> `custodian/docs/ai_context/task_packets/OPERATOR_RUNTIME_DECOMPOSITION.md`.
-> Read the weapon-ownership semantics here; do not implement new
-> `AnimationResolver` consumers from it.
+> `operator_runtime_frames.tres`). Read the weapon-ownership semantics here;
+> the `AnimationResolver` code below is historical reference only, not a
+> pattern to implement against.
 
 > Frame-aware ranged placement is authoritative in
 > `design/02_features/operator_modular_weapon/HYBRID_WEAPON_SOCKET_SYSTEM.md`.

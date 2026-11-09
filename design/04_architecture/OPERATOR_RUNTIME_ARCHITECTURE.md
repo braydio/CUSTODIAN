@@ -15,29 +15,35 @@ the project as a whole.
 
 Measured at the start of this migration (`--emit-baseline`, 2026-09-10). The
 table's own total is the opening figure: **347**. It stood at 201 partway through,
-and after Slice D and its D.1/D.2 corrections it is **119**. The Slice D rows are
-struck through because they are now zero:
+119 after Slice D and its D.1/D.2 corrections, and **75** after C2b's final
+demolition (2026-09-27). Struck-through rows are now zero:
 
 | Overlapping authority | Violations | Should be owned by |
 |---|---:|---|
 | ~~direct `Input.*` sampling~~ | ~~65~~ → **0** | `OperatorInputRouter` (Slice D) |
 | `AnimatedSprite2D.play()` outside presentation | 94 | `OperatorAnimationPlayer` |
-| retired `AnimationResolver` | 45 | `OperatorAnimationSelector` |
+| ~~retired `AnimationResolver`~~ | ~~45~~ → **0** | `OperatorAnimationSelector` (C2b) |
 | absolute `/root/...` scene lookups | 38 | injected dependencies |
 | `AnimationState` → actor `has_method()`/`call()` glue | 34 | `OperatorActionController` |
 | body-layer visibility writes outside presentation | ~~25~~ **0** | `OperatorBodyPresenter` (Slice B) |
 | attack `fallback_animation` indirection | 16 | selector exact-identity contract |
 | simulation advanced from the render tick | 12 | the fixed physics tick |
-| retired `DirectionalAnimationFallback` | 6 | `OperatorAnimationSelector` |
+| ~~retired `DirectionalAnimationFallback`~~ | ~~6~~ → **0** | `OperatorAnimationSelector` (C2b) |
 | actor-local `SpriteFrames` construction | 5 | one generated `operator_runtime_frames.tres` |
 | retired `OperatorAnimationCatalog` | 4 | `OperatorAnimationSelector` |
 | mutable state in `OperatorWeaponDefinition` | 3 | `OperatorWeaponRuntimeState` |
-| **total** | **347** → **119** | |
+| **total** | **347** → **75** | |
 
 The rows are the measured figures the audit prints today; the total is their sum,
 and the audit's own total is the acceptance test. An earlier revision of this
 table carried a stale `347 → 322` while the prose said 119, which is the kind of
-drift the seal exists to remove.
+drift the seal exists to remove. The two rows above struck through for C2b are
+current per the live audit (2026-09-27); the remaining non-armed rows
+(`AnimatedSprite2D.play()`, `absolute_scene_lookups`, the glue, the render-tick
+row, `actor_local_spriteframes`, `OperatorAnimationCatalog`) were not
+re-measured for this pass and several are known to have moved in slices between
+D and C2b -- `custodian/tools/validation/operator_architecture_debt_audit.py
+--json` is the source of truth for any row not struck through here.
 
 `operator.gd` is 613,598 bytes / 15,231 lines / 723 functions after D.2, and acts
 simultaneously as input

@@ -4,12 +4,12 @@ const OPERATOR_SCENE := preload("res://game/actors/operator/operator.tscn")
 const CombatConstants := preload("res://game/systems/combat/combat_constants.gd")
 
 const BODY_ANIMATIONS := {
-	&"unarmed_bodyslam_knockdown_right": 12,
-	&"unarmed_bodyslam_knockdown_left": 12,
+	&"unarmed/reaction/bodyslam_knockdown_01/e/full_body": 12,
+	&"unarmed/reaction/bodyslam_knockdown_01/w/full_body": 12,
 }
 const FX_ANIMATIONS := {
-	&"unarmed_bodyslam_knockdown_fx_right": 12,
-	&"unarmed_bodyslam_knockdown_fx_left": 12,
+	&"unarmed/reaction/bodyslam_knockdown_01/e/fx": 12,
+	&"unarmed/reaction/bodyslam_knockdown_01/w/fx": 12,
 }
 
 var _failed := false
@@ -40,14 +40,37 @@ func _run() -> void:
 		"hit_strength": CombatConstants.HitStrength.HEAVY,
 		"hit_direction": Vector2.LEFT,
 	})
-	_assert_true(body.animation == &"unarmed_bodyslam_knockdown_left", "leftward heavy impact should select the authored west body strip")
+	_assert_true(body.animation == &"unarmed/reaction/bodyslam_knockdown_01/w/full_body", "leftward heavy impact should select the canonical west body strip")
 	_assert_true(body.visible and not body.flip_h, "authored knockdown body should be visible and unmirrored")
-	_assert_true(fx.visible and fx.animation == &"unarmed_bodyslam_knockdown_fx_left", "heavy hit should start the synchronized west FX strip")
+	_assert_true(fx.visible and fx.animation == &"unarmed/reaction/bodyslam_knockdown_01/w/fx", "heavy hit should start the synchronized west FX strip")
 	_assert_true(bool(operator.call("_is_movement_locked")), "knockdown recovery should retain movement lock until the full-body strip completes")
 	_assert_true(is_equal_approx(float(operator.call("get_damage_reaction_duration", "hit_recoil")), 1.0), "knockdown state should preserve the full 12-frame playback duration")
 
 	operator.call("_update_animation_state_machine", 1.01)
 	_assert_true(not fx.visible, "knockdown FX should hide when the reaction state exits")
+
+	operator.call("take_damage", 1.0, true, {
+		"hit_strength": CombatConstants.HitStrength.HEAVY,
+		"hit_direction": Vector2.RIGHT,
+	})
+	_assert_true(body.animation == &"unarmed/reaction/bodyslam_knockdown_01/e/full_body", "rightward heavy impact should select the canonical east body strip")
+	_assert_true(fx.visible and fx.animation == &"unarmed/reaction/bodyslam_knockdown_01/e/fx", "heavy hit should start the synchronized east FX strip")
+	operator.call("_update_animation_state_machine", 1.01)
+
+	# Light hit-react normally presents through the modular rig
+	# (begin_modular_damage_reaction), so the legacy full-body/FX resolution
+	# below is exercised directly rather than through take_damage -- it is the
+	# fallback for whenever the modular composition cannot claim the reaction.
+	operator.set("_damage_reaction_strength", CombatConstants.HitStrength.LIGHT)
+	operator.set("_last_damage_reaction_direction", Vector2.DOWN)
+	_assert_true(
+		StringName(operator.call("get_damage_reaction_animation", "hit_recoil"))
+			== &"unarmed/reaction/light_hitreact_01/s/full_body",
+		"light hit-react should resolve the canonical south full-body strip"
+	)
+	operator.call("play_damage_reaction_fx", &"unarmed/reaction/light_hitreact_01/s/full_body", false)
+	_assert_true(fx.visible and fx.animation == &"unarmed/reaction/light_hitreact_01/s/fx", "light hit should start the synchronized south FX strip")
+	_assert_true(body.sprite_frames.get_frame_count(&"unarmed/reaction/light_hitreact_01/s/full_body") == 3, "light hit-react should play its authored 3-frame strip")
 
 	operator.queue_free()
 	if _failed:

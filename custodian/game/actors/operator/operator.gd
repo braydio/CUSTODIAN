@@ -12,10 +12,6 @@ signal dodge_chain_ended(count: int, flow: float, reason: StringName)
 signal dodge_flow_changed(value: float, direction: Vector2)
 signal integrity_reclaim_changed(status: Dictionary)
 
-const AnimationResolver = preload("res://game/actors/operator/animations/animation_resolver.gd")
-const DirectionalAnimationFallback = preload(
-	"res://game/systems/presentation/directional_animation_fallback.gd"
-)
 const WeaponSocketTracks = preload("res://game/actors/operator/animations/operator_weapon_socket_tracks.gd")
 const AnimationStateMachine = preload("res://game/actors/operator/animations/animation_state_machine.gd")
 const AttackFastState = preload("res://game/actors/operator/animations/states/attack_fast_state.gd")
@@ -881,16 +877,6 @@ const DODGE_FULL_SOUTH_SHEET_PATH := "res://content/sprites/operator/runtime/ani
 const DODGE_CHARGE_WINDUP_BASE := &"operator_dodge_charge_windup"
 const DODGE_CHAIN_LINK_BASE := &"operator_dodge_chain_link"
 const DODGE_CHAIN_LINK_FPS := 20.0
-const DODGE_PRESENTATION_SUFFIXES := {
-	&"n": "up",
-	&"ne": "up_right",
-	&"e": "right",
-	&"se": "down_right",
-	&"s": "down",
-	&"sw": "down_left",
-	&"w": "left",
-	&"nw": "up_left",
-}
 const DODGE_FX_BACK_ALPHA := 0.72
 const DODGE_FX_BACK_OFFSET_BY_DIRECTION := {
 	"up": Vector2(0, 14),
@@ -1757,11 +1743,10 @@ func _update_animation():
 				return
 		# The weapon-authored stance base still arrives from resource data, which
 		# C2a section 7 leaves to its own slice. What changes here is only how it is
-		# resolved: through the canonical identity table rather than
-		# `AnimationResolver` against the compatibility names. A base with no
-		# canonical identity -- the per-weapon stances -- resolves empty and falls
-		# through to canonical idle, which is what the absent legacy clips already
-		# did.
+		# resolved: through the canonical identity table rather than a compatibility
+		# clip-name probe. A base with no canonical identity -- the per-weapon
+		# stances -- resolves empty and falls through to canonical idle, which is
+		# what the absent legacy clips already did.
 		var melee_body_stance_anim := _get_authored_melee_body_stance_animation()
 		if _is_melee_loadout_active() and not melee_body_stance_anim.is_empty():
 			if not _play_canonical_full_body(String(melee_body_stance_anim), animation_dir).is_empty():
@@ -3230,8 +3215,6 @@ func _retarget_ranged_sprite_preserving_progress(
 			expected = _resolve_modular_body_animation(base_animation, &"lower_body", direction)
 		elif sprite == modular_upper_body_sprite:
 			expected = _resolve_modular_body_animation(base_animation, &"upper_body", direction)
-		else:
-			expected = AnimationResolver.resolve(base_animation, direction, sprite)
 	if expected.is_empty() or not _has_playable_sprite_animation(sprite.sprite_frames, expected):
 		return
 	if sprite.animation == expected:
@@ -3623,8 +3606,6 @@ func _play_modular_action_animation(
 			animation_name = _resolve_modular_body_animation(base_animation, &"lower_body", direction)
 		elif sprite == modular_upper_body_sprite:
 			animation_name = _resolve_modular_body_animation(base_animation, &"upper_body", direction)
-		else:
-			animation_name = AnimationResolver.resolve(base_animation, direction, sprite)
 	if animation_name.is_empty() or not _has_playable_sprite_animation(sprite.sprite_frames, animation_name):
 		return {"played": false, "duration": 0.0}
 
@@ -3668,7 +3649,7 @@ func _play_optional_modular_cape_animation(base_animation: String, direction: Ve
 	# Cape art only exists for upward-facing directions (up, up_left, up_right).
 	# Hide the cape when running in directions without authored art to avoid
 	# showing the wrong directional sprite from the fallback animation.
-	var dir_suffix := AnimationResolver._get_direction_suffix(direction)
+	var dir_suffix := _get_direction_suffix(direction)
 	if dir_suffix != "up" and dir_suffix != "up_left" and dir_suffix != "up_right":
 		_hide_modular_cape_layer()
 		return {"played": false, "duration": 0.0}
@@ -3940,6 +3921,7 @@ const FULL_BODY_IDENTITIES := {
 	"melee_2h_heavy_anticipation": ["melee_1h_heavy", "attack", "heavy_windup_01"],
 	"death": ["unarmed", "reaction", "death_01"],
 	"operator_dodge_full": ["shared", "transition", "dodge_01"],
+	"unarmed_light_hitreact": ["unarmed", "reaction", "light_hitreact_01"],
 }
 
 #: Which authored sector a requested direction presents, per canonical identity.
@@ -3981,6 +3963,18 @@ const FULL_BODY_AUTHORED_SECTORS := {
 		&"nw": &"s",
 	},
 	"melee_1h_heavy/attack/fast_recovery_01/full_body": {
+		&"n": &"s",
+		&"ne": &"s",
+		&"e": &"s",
+		&"se": &"s",
+		&"s": &"s",
+		&"sw": &"s",
+		&"w": &"s",
+		&"nw": &"s",
+	},
+	# Light hit-react is authored south-only, the same directionless pattern as
+	# the two entries above.
+	"unarmed/reaction/light_hitreact_01/full_body": {
 		&"n": &"s",
 		&"ne": &"s",
 		&"e": &"s",
@@ -4160,8 +4154,8 @@ func _sync_modular_head_locomotion(base_animation: String, direction: Vector2, s
 	var action := base_animation.trim_prefix("unarmed_")
 	var head_base := "%s_%s" % [String(modular_head_profile), action]
 	# Head coverage is cosmetic and sparse. Require the exact authored direction
-	# instead of allowing AnimationResolver to reuse the south/base alias for a
-	# missing direction, which would leave a south-facing head on an east walk.
+	# instead of falling back to a south/base alias for a missing direction,
+	# which would leave a south-facing head on an east walk.
 	var head_animation := StringName("%s_%s" % [head_base, _get_direction_suffix(direction)])
 	if not _has_playable_sprite_animation(modular_head_sprite.sprite_frames, head_animation):
 		_hide_modular_head_layer()
@@ -4226,8 +4220,8 @@ const SIDEARM_AUTHORED_SECTORS := {
 ## The ranged_2h actions on this renderer are published in partial sets. These
 ## tables were characterized from the compatibility resource rather than invented:
 ## that resource already sources canonical PNGs, its unsuffixed clips are the `e`
-## art, and `AnimationResolver` fell through to `_left` when x < 0 and otherwise to
-## `_right`. Each row therefore reproduces what the player sees today.
+## art, and the retired resolver fell through to `_left` when x < 0 and otherwise
+## to `_right`. Each row therefore reproduces what the player sees today.
 const RANGED_2H_AUTHORED_SECTORS := {
 	# authored: e se sw w
 	&"aim_01": {
@@ -4366,7 +4360,7 @@ func _present_parry_fx(base_animation: String, direction: Vector2) -> StringName
 ## The authored facing for art published east/west only.
 ##
 ## Caller-owned presentation policy, characterized from what the compatibility
-## renderer actually did: `AnimationResolver` took `_left` when x < 0 and
+## renderer actually did: the retired resolver took `_left` when x < 0 and
 ## otherwise fell through to `_right`, so vertical and eastward requests both
 ## resolved east. The selector is not taught this.
 func _reduced_horizontal_sector(direction: Vector2) -> StringName:
@@ -4472,7 +4466,7 @@ func _direction_from_suffix(suffix: StringName) -> Vector2:
 ## weapon layer's — fire_01 publishes a weapon strip for `n` but no fx strip — so
 ## the two cannot share a table. Characterized from the compatibility resource,
 ## where the fx clips are e/se/sw/w plus an unsuffixed clip that is the `e` art,
-## and AnimationResolver fell through to `_left` when x < 0 and otherwise
+## and the retired resolver fell through to `_left` when x < 0 and otherwise
 ## `_right`. FX therefore always rendered something; it never rendered nothing.
 const RANGED_2H_FX_AUTHORED_SECTORS := {
 	&"fire_01": {
@@ -5965,9 +5959,9 @@ func _get_parry_attempt_remaining_duration() -> float:
 		if modular_upper_body_sprite != null and modular_upper_body_sprite.sprite_frames != null:
 			var upper_anim := _resolve_modular_body_animation("unarmed_parry", &"upper_body", direction)
 			duration = maxf(duration, _get_sprite_frames_animation_duration(modular_upper_body_sprite.sprite_frames, upper_anim))
-	if animated_sprite != null and animated_sprite.sprite_frames != null:
-		var body_anim := AnimationResolver.resolve("unarmed_parry", direction, animated_sprite)
-		duration = maxf(duration, _get_sprite_frames_animation_duration(animated_sprite.sprite_frames, body_anim))
+	# No full-body parry art was ever authored (only the modular lower/upper
+	# layers above carry `unarmed/defense/parry_01`), so an armed or
+	# modular-disabled parry has no duration to contribute here.
 	if duration <= 0.0:
 		return 0.0
 	return maxf(0.0, duration - maxf(0.0, parry_windup_sec) - maxf(0.0, parry_active_sec))
@@ -7408,19 +7402,10 @@ func _play_parry_animation(
 		and _play_modular_unarmed_parry(String(base_animation), direction):
 		return
 
-	if animated_sprite == null or animated_sprite.sprite_frames == null:
-		_play_block_animation(fallback)
-		return
-
-	var resolved := AnimationResolver.resolve(String(base_animation), direction, animated_sprite)
-	if animated_sprite.sprite_frames.has_animation(resolved):
-		_set_body_presentation_owner(OperatorBodyPresenter.Owner.LEGACY_FULL_BODY)
-		animated_sprite.flip_h = _is_facing_left(direction)
-		_animation_player.play(animated_sprite, resolved)
-		_clear_modular_upper_action_layer()
-		return
-
-	_warn_missing_animation_once(String(resolved), String(fallback))
+	# No full-body parry art exists (`unarmed/defense/parry_01` only publishes
+	# the modular lower/upper layers), so armed and modular-disabled parry
+	# presents as a block instead. Reported, not rebuilt as compatibility art.
+	_warn_missing_animation_once(String(base_animation), String(fallback))
 	_play_block_animation(fallback)
 
 
@@ -8623,54 +8608,25 @@ func _prepare_armed_melee_full_body() -> void:
 		_hide_modular_locomotion_layers()
 
 
-## Play the full-body clip for a melee attack.
+## Play the full-body clip for a melee attack, or report nothing was authored.
 ##
-## The compatibility tail below is reached only when a caller has no canonical
-## identity to play. C2b.1 removed the mutation that used to make it live for
-## armed melee: nothing copies a weapon's `body_frames_resource` into the shared
-## canonical database any more, so no legacy clip name is reachable through
-## `animated_sprite`. It is kept for the remaining non-armed callers and retires
-## with them in the C2b demolition pass.
+## `animated_sprite` binds only the canonical database, whose identities are all
+## slash-delimited, so a legacy compatibility clip name can never resolve here.
+## Empty means the caller's base name has no canonical identity to play.
 func _play_melee_anim_resolved(base_animation: StringName, direction: Vector2, attack_key: String) -> bool:
 	if animated_sprite == null:
 		return false
 	var canonical_animation := _resolve_full_body_animation(String(base_animation), direction)
-	if not canonical_animation.is_empty() and animated_sprite.sprite_frames \
-	and _has_playable_sprite_animation(animated_sprite.sprite_frames, canonical_animation):
-		_prepare_armed_melee_full_body()
-		animated_sprite.flip_h = false
-		animated_sprite.speed_scale = _get_melee_animation_speed_scale(attack_key)
-		_animation_player.play(animated_sprite, canonical_animation)
-		_play_melee_overlay_from_key(attack_key)
-		_sync_melee_hitbox_window_from_animation()
-		return true
-	animated_sprite.flip_h = _is_facing_left(direction)
-	var resolved_animation := AnimationResolver.resolve(String(base_animation), direction, animated_sprite)
-	if animated_sprite.sprite_frames and _has_playable_sprite_animation(animated_sprite.sprite_frames, resolved_animation):
-		_prepare_armed_melee_full_body()
-		animated_sprite.flip_h = _is_facing_left(direction) and not String(resolved_animation).ends_with("_left")
-		animated_sprite.speed_scale = _get_melee_animation_speed_scale(attack_key)
-		_animation_player.play(animated_sprite, resolved_animation)
-		_play_melee_overlay_from_key(attack_key)
-		_sync_melee_hitbox_window_from_animation()
-		return true
-	var right_fallback := StringName("%s_right" % String(base_animation))
-	if animated_sprite.sprite_frames and _has_playable_sprite_animation(animated_sprite.sprite_frames, right_fallback):
-		_prepare_armed_melee_full_body()
-		animated_sprite.speed_scale = _get_melee_animation_speed_scale(attack_key)
-		_animation_player.play(animated_sprite, right_fallback)
-		return true
-	if animated_sprite.sprite_frames and _has_playable_sprite_animation(animated_sprite.sprite_frames, base_animation):
-		_prepare_armed_melee_full_body()
-		animated_sprite.speed_scale = _get_melee_animation_speed_scale(attack_key)
-		_animation_player.play(animated_sprite, base_animation)
-		return true
-	if animated_sprite.sprite_frames and _has_playable_sprite_animation(animated_sprite.sprite_frames, &"attack_right_old"):
-		_prepare_armed_melee_full_body()
-		animated_sprite.speed_scale = _get_melee_animation_speed_scale(attack_key)
-		_animation_player.play(animated_sprite, "attack_right_old")
-		return true
-	return false
+	if canonical_animation.is_empty() or not animated_sprite.sprite_frames \
+	or not _has_playable_sprite_animation(animated_sprite.sprite_frames, canonical_animation):
+		return false
+	_prepare_armed_melee_full_body()
+	animated_sprite.flip_h = false
+	animated_sprite.speed_scale = _get_melee_animation_speed_scale(attack_key)
+	_animation_player.play(animated_sprite, canonical_animation)
+	_play_melee_overlay_from_key(attack_key)
+	_sync_melee_hitbox_window_from_animation()
+	return true
 
 
 func _warn_missing_animation_once(animation_name: String, fallback_name: String) -> void:
@@ -9033,13 +8989,9 @@ func _play_melee_overlay_from_key(attack_key: String) -> void:
 		melee_fx_overlay_sprite.frame = 0
 	_melee_overlay_clock_owner = MeleeOverlayClockOwner.LEGACY_BODY
 	if not fx_anim.is_empty() and melee_fx_overlay_sprite:
-		# Canonical first; the `fx_map` spelling only resolves against the
-		# retired compatibility resource.
-		var canonical_fx := _resolve_melee_fx_identity()
-		if not canonical_fx.is_empty():
-			fx_anim = canonical_fx
-		else:
-			fx_anim = AnimationResolver.resolve(String(fx_anim), _melee_forward, melee_fx_overlay_sprite)
+		# The `fx_map` spelling only ever named a clip in the retired
+		# compatibility resource, so canonical is the only real candidate.
+		fx_anim = _resolve_melee_fx_identity()
 	if melee_fx_overlay_sprite and melee_fx_overlay_sprite.sprite_frames and melee_fx_overlay_sprite.sprite_frames.has_animation(fx_anim):
 		melee_fx_overlay_sprite.visible = true
 		melee_fx_overlay_sprite.flip_h = (
@@ -9240,26 +9192,10 @@ func _active_melee_attack_has_authored_fx() -> bool:
 			and melee_fx_overlay_sprite.visible \
 			and not String(melee_fx_overlay_sprite.animation).is_empty():
 		return true
-	var weapon_definition: OperatorWeaponDefinition = (
-		_active_attack_profile
-		if _active_attack_profile != null
-		else _get_equipped_primary_weapon_definition()
-	)
-	if weapon_definition == null or not (weapon_definition.fx_map is Dictionary):
-		return false
-	var overlay_data: Variant = weapon_definition.fx_map.get(_melee_attack_key, {})
-	if not (overlay_data is Dictionary):
-		return false
-	var fx_animation := StringName(str((overlay_data as Dictionary).get("fx_anim", "")))
-	if fx_animation.is_empty() or melee_fx_overlay_sprite == null:
-		return false
-	fx_animation = AnimationResolver.resolve(
-		String(fx_animation),
-		_melee_forward,
-		melee_fx_overlay_sprite
-	)
-	return melee_fx_overlay_sprite.sprite_frames != null \
-		and melee_fx_overlay_sprite.sprite_frames.has_animation(fx_animation)
+	# Both overlays above already report whether FX is genuinely showing;
+	# `melee_fx_overlay_sprite` binds the canonical database only, so a legacy
+	# `fx_map` clip name could never resolve here as a third, independent check.
+	return false
 
 
 func _resolve_melee_impact_position(target: Node2D) -> Vector2:
@@ -10061,58 +9997,25 @@ func _finish_dodge_charge_presentation() -> void:
 		_update_animation()
 
 
+## Both dodge bases this serves (`operator_dodge_charge_windup`,
+## `operator_dodge_chain_link`) are published canonically across all eight
+## sectors, so the identity always resolves exactly and `fallback` is always
+## false. `OperatorAnimationSelector.vector_to_sector` is the sole quantizer;
+## see `operator_animation_selector_smoke.gd` for the boundary/near-zero
+## characterization that made this the deliberate choice.
 func _resolve_dodge_presentation_animation(
 	base_animation: StringName,
 	direction: Vector2
 ) -> Dictionary:
-	var requested_sector := DirectionalAnimationFallback.vector_to_sector(direction)
-	# A canonical identity resolves exactly, so no nearest-sector search runs for
-	# it. The search below remains only for bases still published under legacy
-	# names with partial coverage.
-	var canonical_animation := _resolve_full_body_animation(String(base_animation), direction)
-	if not canonical_animation.is_empty() and animated_sprite != null \
-	and animated_sprite.sprite_frames != null \
-	and _has_playable_sprite_animation(animated_sprite.sprite_frames, canonical_animation):
-		_dodge_requested_presentation_sector = requested_sector
-		_dodge_resolved_presentation_sector = requested_sector
-		return {
-			"animation": canonical_animation,
-			"requested_sector": requested_sector,
-			"resolved_sector": requested_sector,
-			"fallback": false,
-		}
-	var available_sectors: Array[StringName] = []
-	if animated_sprite != null and animated_sprite.sprite_frames != null:
-		for sector: StringName in DirectionalAnimationFallback.SECTOR_ORDER:
-			var suffix := str(DODGE_PRESENTATION_SUFFIXES.get(sector, ""))
-			var candidate := StringName("%s_%s" % [String(base_animation), suffix])
-			if _has_playable_sprite_animation(
-				animated_sprite.sprite_frames,
-				candidate
-			):
-				available_sectors.append(sector)
-	var resolved_sector := DirectionalAnimationFallback.nearest_available_sector(
-		requested_sector,
-		available_sectors,
-		_dodge_resolved_presentation_sector
-	)
-	var animation_name := &""
-	if not resolved_sector.is_empty():
-		animation_name = StringName("%s_%s" % [
-			String(base_animation),
-			str(DODGE_PRESENTATION_SUFFIXES.get(resolved_sector, "")),
-		])
-	_dodge_requested_presentation_sector = requested_sector
-	if not resolved_sector.is_empty():
-		_dodge_resolved_presentation_sector = resolved_sector
+	var sector := OperatorAnimationSelector.vector_to_sector(direction)
+	var animation := _resolve_full_body_animation(String(base_animation), direction)
+	_dodge_requested_presentation_sector = sector
+	_dodge_resolved_presentation_sector = sector
 	return {
-		"animation": animation_name,
-		"requested_sector": requested_sector,
-		"resolved_sector": resolved_sector,
-		"fallback": (
-			not resolved_sector.is_empty()
-			and requested_sector != resolved_sector
-		),
+		"animation": animation,
+		"requested_sector": sector,
+		"resolved_sector": sector,
+		"fallback": false,
 	}
 
 
@@ -14289,23 +14192,11 @@ func get_damage_reaction_animation(_reaction_name: String) -> StringName:
 	if animated_sprite == null or animated_sprite.sprite_frames == null:
 		return &""
 	if _damage_reaction_strength == CombatConstants.HitStrength.HEAVY:
-		var knockdown_animation := &"unarmed_bodyslam_knockdown_left" if _last_damage_reaction_direction.x < 0.0 else &"unarmed_bodyslam_knockdown_right"
-		if _has_playable_sprite_animation(animated_sprite.sprite_frames, knockdown_animation):
-			return knockdown_animation
-	var profile := get_current_combat_profile()
-	var mapped := _get_weapon_animation_name(profile, "unarmed_light_hitreact", &"") if profile != null else &""
-	if mapped == StringName() and unarmed_definition != null:
-		mapped = _get_weapon_animation_name(unarmed_definition, "unarmed_light_hitreact", &"")
-	if mapped == StringName():
-		mapped = &"unarmed_light_hitreact"
-	var resolved := AnimationResolver.resolve(String(mapped), _last_damage_reaction_direction, animated_sprite)
-	if _has_playable_sprite_animation(animated_sprite.sprite_frames, resolved):
-		return resolved
-	if _has_playable_sprite_animation(animated_sprite.sprite_frames, &"unarmed_light_hitreact_down"):
-		return &"unarmed_light_hitreact_down"
-	if _has_playable_sprite_animation(animated_sprite.sprite_frames, &"unarmed_light_hitreact"):
-		return &"unarmed_light_hitreact"
-	return &""
+		var sector := &"w" if _last_damage_reaction_direction.x < 0.0 else &"e"
+		return _get_operator_animation_selector().resolve_sector(
+			&"unarmed", &"reaction", &"bodyslam_knockdown_01", sector, &"full_body"
+		)
+	return _resolve_full_body_animation("unarmed_light_hitreact", _last_damage_reaction_direction)
 
 
 func get_damage_reaction_duration(_reaction_name: String) -> float:
@@ -14341,10 +14232,14 @@ func play_damage_reaction_fx(_animation_name: StringName, modular_active: bool =
 		return
 	if melee_fx_overlay_sprite == null or melee_fx_overlay_sprite.sprite_frames == null:
 		return
-	var fx_animation := &"unarmed_light_hitreact_fx_down"
+	var selector = _get_operator_animation_selector()
+	var fx_animation: StringName
 	if _damage_reaction_strength == CombatConstants.HitStrength.HEAVY:
-		fx_animation = &"unarmed_bodyslam_knockdown_fx_left" if _last_damage_reaction_direction.x < 0.0 else &"unarmed_bodyslam_knockdown_fx_right"
-	if not melee_fx_overlay_sprite.sprite_frames.has_animation(fx_animation):
+		var sector := &"w" if _last_damage_reaction_direction.x < 0.0 else &"e"
+		fx_animation = selector.resolve_sector(&"unarmed", &"reaction", &"bodyslam_knockdown_01", sector, &"fx")
+	else:
+		fx_animation = selector.resolve_sector(&"unarmed", &"reaction", &"light_hitreact_01", &"s", &"fx")
+	if fx_animation.is_empty() or not melee_fx_overlay_sprite.sprite_frames.has_animation(fx_animation):
 		return
 	melee_fx_overlay_sprite.visible = true
 	melee_fx_overlay_sprite.flip_h = false
@@ -14417,7 +14312,8 @@ func finish_damage_reaction_presentation() -> void:
 			_set_body_presentation_owner(OperatorBodyPresenter.Owner.LEGACY_FULL_BODY)
 	if melee_fx_overlay_sprite != null:
 		var animation_name := String(melee_fx_overlay_sprite.animation)
-		if animation_name.begins_with("unarmed_light_hitreact") or animation_name.begins_with("unarmed_bodyslam_knockdown"):
+		if animation_name.begins_with("unarmed/reaction/light_hitreact_01") \
+		or animation_name.begins_with("unarmed/reaction/bodyslam_knockdown_01"):
 			melee_fx_overlay_sprite.visible = false
 			melee_fx_overlay_sprite.stop()
 			melee_fx_overlay_sprite.frame = 0
