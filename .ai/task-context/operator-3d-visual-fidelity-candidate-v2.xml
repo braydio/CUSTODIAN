@@ -1,0 +1,2083 @@
+This file is a merged representation of a subset of the codebase, containing specifically included files, combined into a single document by Repomix.
+The content has been processed where content has been compressed (code blocks are separated by ⋮---- delimiter).
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of a subset of the repository's contents that is considered the most important context.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Only files matching these patterns are included: AGENTS.md, custodian/AGENTS.md, custodian/tools/operator/animation_compiler/schemas/master.v1.schema.json, custodian/tools/operator/animation_compiler/blender_neutral_idle_proof.py, custodian/tools/operator/animation_compiler/retarget_calibration.py, custodian/tools/operator/animation_compiler/neutral_idle_proof_contract.py, design/02_features/animation/OPERATOR_2_5D_VISUAL_CONTRACT.md, design/02_features/animation/OPERATOR_3D_TO_2_5D_PRODUCTION_ROADMAP_V1.md
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Content has been compressed - code blocks are separated by ⋮---- delimiter
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+custodian/
+  tools/
+    operator/
+      animation_compiler/
+        schemas/
+          master.v1.schema.json
+        blender_neutral_idle_proof.py
+        neutral_idle_proof_contract.py
+        retarget_calibration.py
+  AGENTS.md
+design/
+  02_features/
+    animation/
+      OPERATOR_2_5D_VISUAL_CONTRACT.md
+      OPERATOR_3D_TO_2_5D_PRODUCTION_ROADMAP_V1.md
+AGENTS.md
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="custodian/tools/operator/animation_compiler/blender_neutral_idle_proof.py">
+"""Single-clip Blender adapter for the experimental Neutral Idle proof.
+
+Run with Blender 5.2: blender -b --python this_file.py -- <retarget|render> <args...>
+It never saves or writes the supplied FBX or master blend.
+"""
+⋮----
+LOOP_DUPLICATE_TOLERANCE = {
+⋮----
+def sha_file(path: Path) -> str
+⋮----
+h = hashlib.sha256()
+⋮----
+def canonical(value) -> bytes
+⋮----
+def sha_json(value) -> str
+⋮----
+def armature_signature(arm)
+⋮----
+bones = []
+⋮----
+def rot3(matrix)
+⋮----
+def xyzw(quaternion)
+⋮----
+def set_pose_world_rotation(armature, pose_bone, world_rotation)
+⋮----
+arm_world_rot = rot3(armature.matrix_world)
+arm_rotation = arm_world_rot.inverted() @ world_rotation
+⋮----
+def solve_two_bone_leg_from_source(target, source, side, ankle_raise_m=0.0)
+⋮----
+"""Fit target thigh/shin directions to source pelvis-relative ankle placement."""
+⋮----
+target_hip = target.matrix_world @ target.pose.bones[thigh_name].head
+source_hip = source.matrix_world @ source.pose.bones[thigh_name].head
+source_ankle = source.matrix_world @ source.pose.bones[foot_name].head
+source_knee = source.matrix_world @ source.pose.bones[shin_name].head
+world_scale = lambda arm, bone: (arm.matrix_world.to_3x3() @ arm.data.bones[bone].vector).length
+source_upper = world_scale(source, thigh_name)
+source_lower = world_scale(source, shin_name)
+target_upper = world_scale(target, thigh_name)
+target_lower = world_scale(target, shin_name)
+scale = (target_upper + target_lower) / (source_upper + source_lower)
+goal = target_hip + (source_ankle - source_hip) * scale
+⋮----
+knee_hint = target_hip + (source_knee - source_hip) * scale
+thigh = target.pose.bones[thigh_name]
+shin = target.pose.bones[shin_name]
+foot = target.pose.bones[foot_name]
+desired_foot_world = rot3(target.matrix_world @ foot.matrix)
+root = target.matrix_world @ thigh.head
+to_goal = goal - root
+raw_distance = to_goal.length
+epsilon = 1e-5
+distance = min(max(raw_distance, abs(target_upper - target_lower) + epsilon),
+axis = to_goal.normalized()
+along = (target_upper * target_upper - target_lower * target_lower + distance * distance) / (2.0 * distance)
+height = math.sqrt(max(0.0, target_upper * target_upper - along * along))
+bend = knee_hint - (root + axis * (knee_hint - root).dot(axis))
+⋮----
+knee_goal = root + axis * along + bend * height
+⋮----
+current_thigh_world = rot3(target.matrix_world @ thigh.matrix)
+current_thigh_direction = (target.matrix_world.to_3x3() @ (thigh.tail - thigh.head)).normalized()
+thigh_delta = current_thigh_direction.rotation_difference((knee_goal - root).normalized())
+⋮----
+current_knee = target.matrix_world @ shin.head
+current_shin_world = rot3(target.matrix_world @ shin.matrix)
+current_shin_direction = (target.matrix_world.to_3x3() @ (shin.tail - shin.head)).normalized()
+shin_delta = current_shin_direction.rotation_difference((goal - current_knee).normalized())
+⋮----
+actual_ankle = target.matrix_world @ foot.head
+⋮----
+def discover_sole_vertices(mesh, side)
+⋮----
+foot = mesh.vertex_groups.get(f"mixamorig:{side}Foot")
+toe = mesh.vertex_groups.get(f"mixamorig:{side}ToeBase")
+⋮----
+result = []
+⋮----
+foot_weight = toe_weight = 0.0
+⋮----
+foot_weight = foot.weight(vertex.index)
+⋮----
+toe_weight = toe.weight(vertex.index)
+⋮----
+def minimum_sole_z(mesh, vertex_indices)
+⋮----
+depsgraph = bpy.context.evaluated_depsgraph_get()
+evaluated = mesh.evaluated_get(depsgraph)
+evaluated_mesh = evaluated.to_mesh()
+result = min((mesh.matrix_world @ evaluated_mesh.vertices[index].co).z for index in vertex_indices)
+⋮----
+def source_contact_frames(source, start, end, side, speed_limit_m=0.005, ground_height_m=0.04)
+⋮----
+"""Identify stable source foot/toe landmarks that also lie near source ground."""
+scene = bpy.context.scene
+toe_name = f"mixamorig:{side}ToeBase"
+foot_name = f"mixamorig:{side}Foot"
+hip_name = "mixamorig:Hips"
+⋮----
+relative = []
+⋮----
+hip = source.matrix_world @ source.pose.bones[hip_name].head
+toe = source.matrix_world @ source.pose.bones[toe_name].head
+foot = source.matrix_world @ source.pose.bones[foot_name].head
+toe_tail = source.matrix_world @ source.pose.bones[toe_name].tail
+foot_tail = source.matrix_world @ source.pose.bones[foot_name].tail
+⋮----
+toe_indices = stable_contact_frame_indices([tuple(value[0]) for value in relative], speed_limit_m)
+foot_indices = stable_contact_frame_indices([tuple(value[1]) for value in relative], speed_limit_m)
+stable = toe_indices & foot_indices
+grounded = source_ground_contact_indices(stable, [value[2] for value in relative], ground_height_m)
+⋮----
+def target_armature()
+⋮----
+matches = [obj for obj in bpy.data.objects if obj.type == "ARMATURE" and obj.name == "SmartRigArmature"]
+⋮----
+def inventory(master_path: Path, fbx_path: Path, output_path: Path)
+⋮----
+arm = target_armature()
+mesh_matches = [obj for obj in bpy.data.objects if obj.type == "MESH" and len(obj.vertex_groups)]
+⋮----
+mesh = mesh_matches[0]
+arm_sig = armature_signature(arm)
+rest_pose = [{"name": b.name, "matrix": [[round(float(v), 8) for v in row] for row in b.matrix_local]}
+identity = {"object_name": arm.name, "data_name": arm.data.name, "library": arm.library.filepath if arm.library else None}
+mesh_data = {"name": mesh.data.name, "vertices": [[round(float(v), 8) for v in vert.co] for vert in mesh.data.vertices],
+materials = []
+textures = []
+texture_dir = output_path.parent / "textures"
+⋮----
+node_graph = []
+⋮----
+item = {"type": node.bl_idname, "name": node.name}
+⋮----
+image = node.image
+packed = image.packed_file
+⋮----
+filename = f"{image.name.replace('/', '_')}_{len(textures):02d}.bin"
+path = texture_dir / filename
+⋮----
+before = {obj.name for obj in bpy.data.objects}
+⋮----
+imported = [obj for obj in bpy.data.objects if obj.name not in before and obj.type == "ARMATURE"]
+⋮----
+source = imported[0]
+action = source.animation_data.action if source.animation_data else None
+⋮----
+data = {
+⋮----
+target = target_armature()
+# The master carries ITER005 Running for inspection. Clear it from this
+# in-memory candidate scene so it cannot contaminate the calibrated pose.
+# The source .blend and its action datablock on disk remain untouched.
+⋮----
+target_signature = armature_signature(target)
+target_bones = {bone.name: bone for bone in target.data.bones}
+target_rest_world = {name: rot3(target.matrix_world @ bone.matrix_local) for name, bone in target_bones.items()}
+target_names_before = {obj.name for obj in bpy.data.objects}
+⋮----
+sources = [obj for obj in bpy.data.objects if obj.name not in target_names_before and obj.type == "ARMATURE"]
+⋮----
+source = sources[0]
+⋮----
+source_fps = int(scene.render.fps)
+source_fps_base = float(scene.render.fps_base)
+⋮----
+policy = json.loads(policy_path.read_text())
+⋮----
+source_bones = {bone.name: bone for bone in source.data.bones}
+⋮----
+source_signature = armature_signature(source)
+mapped = sorted(set(source_bones) & set(target_bones))
+inherited = sorted(set(target_bones) - set(source_bones))
+unmapped_source = sorted(set(source_bones) - set(target_bones))
+mapping_policy = json.loads(mapping_policy_path.read_text())
+⋮----
+source_rest_world = {name: rot3(source.matrix_world @ source_bones[name].matrix_local) for name in mapped}
+target_meshes = [obj for obj in bpy.data.objects if obj.type == "MESH" and len(obj.vertex_groups)
+⋮----
+target_mesh = target_meshes[0]
+sole_vertices = {side: discover_sole_vertices(target_mesh, side) for side in ("Left", "Right")}
+source_contact = {side: source_contact_frames(source, start, end, side) for side in ("Left", "Right")}
+⋮----
+reference = source
+⋮----
+objects_before_reference = {obj.name for obj in bpy.data.objects}
+⋮----
+reference_armatures = [obj for obj in bpy.data.objects
+⋮----
+reference = reference_armatures[0]
+reference_signature = armature_signature(reference)
+⋮----
+reference_action = reference.animation_data.action if reference.animation_data else None
+⋮----
+reference_frame = int(policy["reference_pose"]["frame"])
+⋮----
+source_reference_world = {name: rot3(reference.matrix_world @ reference.pose.bones[name].matrix) for name in mapped}
+calibration_data = {name: {
+depth = lambda bone: len(bone.parent_recursive)
+ordered = sorted((target_bones[name] for name in mapped), key=depth)
+rest_hips = target_bones["mixamorig:Hips"].matrix_local.translation.copy()
+frames = []
+leg_ik_diagnostics = []
+trajectory = []
+trajectory_origin = None
+⋮----
+source_hips = source.matrix_world @ source.pose.bones["mixamorig:Hips"].matrix.translation
+⋮----
+trajectory_origin = source_hips.copy()
+⋮----
+name = bone.name
+source_world_pose = rot3(source.matrix_world @ source.pose.bones[name].matrix)
+desired_world_xyzw = calibrated_target_world_xyzw(
+desired_world = Quaternion((
+desired_local = rot3(rot3(target.matrix_world).inverted() @ desired_world)
+pose_bone = target.pose.bones[name]
+translation = rest_hips if name == "mixamorig:Hips" else pose_bone.matrix.translation.copy()
+⋮----
+legs = []
+⋮----
+diagnostic = solve_two_bone_leg_from_source(target, source, side)
+sole_z_before = minimum_sole_z(target_mesh, sole_vertices[side])
+ankle_raise = 0.0
+⋮----
+ankle_raise = min(0.030, 0.001 - sole_z_before)
+diagnostic = solve_two_bone_leg_from_source(target, source, side, ankle_raise)
+sole_z_after = minimum_sole_z(target_mesh, sole_vertices[side])
+⋮----
+ankle_raise = min(0.030, ankle_raise + (0.001 - sole_z_after))
+⋮----
+locals_for_frame = {}
+⋮----
+basis = pose_bone.matrix_basis
+q = basis.to_quaternion()
+⋮----
+# Action endpoints are compared on the source armature using global rotations.
+⋮----
+first = {n: rot3(source.matrix_world @ source.pose.bones[n].matrix) for n in source_bones}
+first_heads = {n: source.matrix_world @ source.pose.bones[n].head for n in source_bones}
+⋮----
+last = {n: rot3(source.matrix_world @ source.pose.bones[n].matrix) for n in source_bones}
+last_heads = {n: source.matrix_world @ source.pose.bones[n].head for n in source_bones}
+source_seam = max(math.degrees((last[n] @ first[n].inverted()).to_quaternion().angle) for n in source_bones)
+source_position_seam = max((last_heads[n] - first_heads[n]).length for n in source_bones)
+⋮----
+target_rotation_seam = max(math.degrees(2 * math.acos(min(1.0, abs(sum(
+target_position_seam = max(Vector(last_target[n]["location"]).__sub__(Vector(first_target[n]["location"])).length
+terminal_duplicate = (
+policy_sha = sha_file(policy_path)
+animation_id = "_".join(fbx_path.stem.lower().replace("-", " ").split())
+motion = {
+trajectory_doc = {"schema": "custodian.operator_root_trajectory.v1", "animation_id": animation_id,
+trajectory_path = out_path.with_name(f"{animation_id}_root_trajectory.v1.json")
+⋮----
+mapping_doc = {"schema": "custodian.operator_skeleton_mapping.v1", "source": source_signature,
+mapping_path = out_path.with_name(f"{animation_id}_skeleton_mapping.v1.json")
+⋮----
+meshes = [obj for obj in bpy.data.objects if obj.type == "MESH" and len(obj.vertex_groups)]
+⋮----
+mesh = meshes[0]
+motion = json.loads(motion_path.read_text())
+⋮----
+vertices = [mesh.matrix_world @ v.co for v in evaluated_mesh.vertices]
+⋮----
+low = [min(v[i] for v in vertices) for i in range(3)]
+high = [max(v[i] for v in vertices) for i in range(3)]
+raw_height = high[2] - low[2]
+scale = float(fixed_scale) if fixed_scale is not None else 85.0 / (raw_height * 50.0)
+⋮----
+# Preserve each object's world transform while placing it under one fixed master-derived root.
+root = bpy.data.objects.new("NEUTRAL_IDLE_RENDER_ROOT", None)
+⋮----
+world = obj.matrix_world.copy()
+⋮----
+def place(value)
+⋮----
+directions = {"N": 180, "NE": -135, "E": -90, "SE": -45, "S": 0, "SW": 45, "W": 90, "NW": 135}
+root_pixels = {}
+camera_data = bpy.data.cameras.new("NeutralIdleCamera")
+camera = bpy.data.objects.new("NeutralIdleCamera", camera_data)
+⋮----
+light_data = bpy.data.lights.new("NeutralIdleKey", "AREA")
+light = bpy.data.objects.new("NeutralIdleKey", light_data)
+⋮----
+# Fit once from the experimental master rest pose in the canonical S view;
+# the resulting scale is fixed for every frame and direction.
+⋮----
+camera_angle = math.radians(directions["S"])
+camera_elevation = math.radians(45)
+⋮----
+probe_path = out_dir / "_scale_probe.png"
+⋮----
+probe = bpy.data.images.load(str(probe_path), check_existing=False)
+pixels = np.empty(len(probe.pixels), dtype=np.float32)
+⋮----
+alpha = pixels.reshape((resolution, resolution, 4))[:, :, 3]
+rows = np.where((alpha > (32 / 255)).any(axis=1))[0]
+⋮----
+measured_height = int(rows[-1] - rows[0] + 1)
+⋮----
+expected_height = 85 * resolution // 128
+⋮----
+frames = motion["frames"]
+last_duplicate = motion["loop"]["terminal_pose_duplicate"]
+⋮----
+frames = frames[:-1]
+⋮----
+by_frame = {record["source_frame"]: record for record in frames}
+⋮----
+frames = [by_frame[frame] for frame in selected_frames]
+⋮----
+frames = [frames[index] for index in sorted(set((0, len(frames) // 2, len(frames) - 1)))]
+render_directions = directions if selected_directions is None else {
+⋮----
+angle = math.radians(azimuth)
+elevation = math.radians(45)
+⋮----
+projected = world_to_camera_view(scene, camera, root.matrix_world.translation)
+⋮----
+pb = arm.pose.bones[pb_name]
+⋮----
+render_info = {"schema": "custodian.operator_neutral_idle_render_metadata.v1",
+info_path = out_dir / "render_metadata.v1.json"
+⋮----
+def main()
+⋮----
+args = sys.argv[sys.argv.index("--") + 1:]
+mode = args.pop(0)
+⋮----
+sample_arg = next((arg.partition("=")[2] for arg in args[3:] if arg.startswith("--sample-frames=")), "")
+selected_frames = [int(value) for value in sample_arg.split(",") if value] or None
+direction_arg = next((arg.partition("=")[2] for arg in args[3:] if arg.startswith("--directions=")), "")
+selected_directions = direction_arg.split(",") if direction_arg else None
+resolution_arg = next((arg.partition("=")[2] for arg in args[3:] if arg.startswith("--resolution=")), "128")
+scale_arg = next((arg.partition("=")[2] for arg in args[3:] if arg.startswith("--fixed-scale=")), "")
+</file>
+
+<file path="custodian/tools/operator/animation_compiler/neutral_idle_proof_contract.py">
+"""Pure contract checks shared by the Blender adapter and focused tests."""
+⋮----
+def sampled_frames(start: int, end: int, duplicate_terminal: bool) -> list[int]
+⋮----
+result = list(range(start, end + 1))
+⋮----
+def validate_motion(motion: dict) -> None
+⋮----
+source = motion.get("source", {})
+⋮----
+indices = [frame.get("source_frame") for frame in motion["frames"]]
+⋮----
+forbidden = {"master_sha256", "master_file_sha256", "mesh_sha256", "material_sha256", "texture_sha256", "camera_sha256"}
+def scan(value)
+⋮----
+root = motion.get("root_motion", {})
+⋮----
+target_bones = motion.get("target_rig", {}).get("bone_names", [])
+⋮----
+bones = frame.get("bones", {})
+⋮----
+hips = bones.get("mixamorig:Hips", {})
+⋮----
+q = transform.get("rotation_xyzw", [])
+⋮----
+def blender_quaternion(xyzw: list[float]) -> tuple[float, float, float, float]
+</file>
+
+<file path="custodian/tools/operator/animation_compiler/retarget_calibration.py">
+"""Pure quaternion operations for the validated Mixamo neutral-reference mapping."""
+⋮----
+def stable_contact_frame_indices(landmark_samples, speed_limit_m=0.005)
+⋮----
+"""Return both endpoints of source-relative landmark steps within the contact threshold."""
+⋮----
+planted = set()
+⋮----
+distance = math.sqrt(sum((float(right[axis]) - float(left[axis])) ** 2 for axis in range(3)))
+⋮----
+def source_ground_contact_indices(stable_indices, source_foot_heights, max_height_m=0.04)
+⋮----
+"""Keep stable samples whose source foot/toe sole is near the source ground plane."""
+⋮----
+def normalize_xyzw(value)
+⋮----
+q = tuple(float(component) for component in value)
+⋮----
+length = math.sqrt(sum(component * component for component in q))
+⋮----
+def multiply_xyzw(left, right)
+⋮----
+"""Hamilton product; applying right then left to a vector."""
+⋮----
+def inverse_xyzw(value)
+⋮----
+def calibrated_target_world_xyzw(source_pose, source_reference, target_rest)
+⋮----
+"""Apply the source world-space delta from a fixed calibrated reference pose.
+
+    Q_target(t) = (Q_source(t) * inverse(Q_source_reference)) * Q_target_rest.
+    """
+source_delta = multiply_xyzw(source_pose, inverse_xyzw(source_reference))
+</file>
+
+<file path="design/02_features/animation/OPERATOR_2_5D_VISUAL_CONTRACT.md">
+# Operator 2.5D Visual Contract
+
+## Authority and status
+
+The approved design lock at `custodian/asset_drop/source_work/operator/operator_2_5d_design_reference/operator_2_5d_design_lock_v1_source.png` is the authority for anatomy, armor and cloak topology, projection, materials, palette, and directional identity. Its direction order is `N, NE, E, SE, S, SW, W, NW`. The exact 2048x256 RGBA source hash is `41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b`.
+
+The supplied relaxed idle at `custodian/asset_drop/source_work/operator/operator_2_5d_first_animation/unarmed_posture_idle_relaxed_01_full_body_v1_source.png` is the accepted first canonical animation source family: 15 frames per direction, 128x128 cells, eight direction rows in the same order, looping. Its source hash is `d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3`. FPS remains `unknown/null`; timing is not inferred from image data and is not a visual-contract blocker.
+
+The 128px profile is **accepted** as the canonical body/reference registration frame (profile SHA-256 `05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761`). The 96px profile remains readable and selectable as `legacy_96`; production selectors and runtime art remain unchanged. The design-derived 128px rotation reference uses one crisp sheet-wide scale and is an accepted comparison reference, not runtime art (SHA-256 `e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9`). Profile/reference hashes and measurements are recorded under `reports/operator_presentation/canonical_visual_contract/`.
+
+## Registration and canvas
+
+The 128x128 body/reference frame uses center axis x=64, projected root `[64,106]`, and shadow origin/ground `[64,107]`, fixed across all eight directions. Registration is based on the projected root, hip center, left/right support contacts, and shadow origin. Alpha bounds report clipping and silhouette extent only; alpha bottom and head top are not registration invariants. Never recenter on the alpha box, weapon, effect, cloak tip, or extended limb.
+
+Use one shared body scale across all eight directions. Direction-specific adjustment may use whole-sprite integer translation only. Do not independently scale, rotate, shear, or warp a direction or frame. Pose motion may move joints while preserving anatomy, body scale, costume topology, and the root/floor coordinate system. Weapons and effects may use separate presentation envelopes; they never justify shrinking the body.
+
+## Visual identity and pixel contract
+
+Preserve direction-specific projection and near/far overlap. Do not mirror a view to invent a missing direction. Preserve the approved palette and material brightness hierarchy, including the directional visor behavior in the design lock. Keep hard pixel clusters and true alpha. The immutable high-resolution source is never recolored or cleaned. The normalized 128 reference is accepted unchanged at SHA-256 `e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9`; no cleanup pixels are authorized.
+
+## Review gates
+
+The accepted registration was reviewed against the authored idle in one deterministic eight-direction overlay. The registration decision is fixed; candidate semantic points inferred from pixels remain measurements and do not override approved coordinates.
+
+The accepted 128px profile defines the canonical body/reference frame; **universal action-envelope fit is not asserted**. Future extreme actions receive per-action fit validation. If genuinely canonical body content cannot fit without clipping, distortion, or scale reduction, use a root-preserving expanded action envelope and/or modular presentation. Do not change global body scale or root to fit legacy proxy extents. Weapon/effect overflow remains separate.
+
+The pre-migration proxy scan is cautionary evidence only: mapping legacy anchor `[48,84]` to accepted root `[64,106]` by whole-sprite translation puts 46/180 fast-chain frames and 16/47 long one-handed reach frames outside the 128px canvas. The largest fast-chain proxy is `melee_1h/attack/fast_02`, east frame 4, with source alpha bounds `[35,11,136,85]` and translated bounds `[51,33,152,107]`. Human review determined this legacy art is not a valid maximum-body proxy and does not redefine the canonical body frame, root, or scale. Universal action-envelope fit remains intentionally unasserted. Ranged aim (modular union), wide block-hit, and future extreme actions require their own validation and may use root-preserving action-specific envelopes.
+
+Hard failures include wrong profile/cell size, per-frame or per-direction scaling, wrong direction order, clipping, invalid alpha/layer ownership, or a changed canonical reference hash. Structural warnings cover root/support registration and anatomy ratios. Palette/material differences are art-direction warnings. Valid pose-specific joint motion is informational unless it violates the hard contract. No automatic anatomy warping is allowed.
+
+## Accepted decision authority and executable guards
+
+This matrix records the existing owners of accepted decisions. It does not create a second mutable decision registry.
+
+| Accepted decision | Authority | Executable negative control |
+| --- | --- | --- |
+| Eight independent directions stay in `N, NE, E, SE, S, SW, W, NW` order at 128x128 with the accepted profile/reference hashes and fixed projected root. | This contract; `operator_art_profile.json`; canonical visual-contract report. | `operator_2_5d_canonical_visual_contract_smoke.py` rejects reordered directions, wrong dimensions, altered reference bytes, and registration drift. |
+| Direction art is never mirrored or independently rescaled to fill a missing target. | This contract and `operator_2_5d_ingress.py`. | `operator_2_5d_ingress_smoke.py` rejects a missing direction/invalid source contract; the target smoke asserts each direction remains an independent target. |
+| Source work, editable Workbench, review verification, and production runtime are separate stages. | Asset Pipeline V2 source schema; `operator_2_5d_ingress.py`; `operator_2_5d_review.py`; runtime manifest/catalog/SpriteFrames and `OperatorAnimationSelector`. | `operator_2_5d_ingress_smoke.py` proves intake does not publish; `operator_2_5d_review_smoke.py` proves receipts do not publish; `operator_workbench_production_queue_smoke.py` refuses to report draft work as published. |
+| Null source FPS and the 8 FPS editor preview do not grant timing authority. A 2.5D clock requires a deliberate Workbench preview followed by an explicit confirmation of FPS, loop mode, and every saved-frame multiplier. Only the live Textual confirmation-button event reaches `ui/timing_decision_writer.py`; generic `WorkbenchService` preview/consume calls are read-only. | Saved Aseprite document plus `operator_2_5d_timing_authority.py`; `ui/app.py` handles the observed confirmation button event and is the sole caller of the timing decision writer. | `operator_workbench_ui_smoke.py` drives actual Preview/Confirm controls and proves direct service calls create no decision. `operator_2_5d_review_smoke.py` rejects `timing_authority=true` without matching decision evidence and rejects altered physical timing. `operator_animation_timing_smoke.py` retains legacy authored-clock coverage. Run the registered review smoke through `run_validation.py` in a fresh worktree so its import preflight precedes Godot sandbox execution. |
+| QA, human art approval, timing approval, and sandbox presentation are separate evidence gates. | `operator_2_5d_review.py::current_receipt`; timing decision records bind the exact manifest, document, target plan, profile, and reference. | `operator_2_5d_review_smoke.py` tests missing/forged/stale timing, art approval without timing, and RED rejection; `operator_workbench_ui_smoke.py` guards the explicit preview/confirm controls. |
+| A family is verified only when every planned direction/layer has a current passing receipt. | `operator_animation_targets.py` plan projection and `Operator2DReview.family()`. | `operator_2_5d_review_smoke.py` removes a direction or required layer and asserts the family cannot complete. |
+| Runtime generation/cohort policy remains under WB25-6; legacy 96px timing and sidecar publication remain compatible. | WB25-6 packet; runtime manifest/catalog/SpriteFrames and `OperatorAnimationSelector`; legacy Workbench timing path. | `operator_animation_timing_smoke.py` checks existing 10 FPS authored timing and runtime sidecars; queue/review smokes assert draft 2.5D assets do not publish. |
+
+The explicit timing record is local audit evidence, not cryptographic proof against a malicious local user. Its purpose is to prevent preview defaults, generic service calls, imports, QA, or sandbox execution from silently promoting timing. A saved-document/profile/reference/plan change makes the prior decision stale and requires a new Workbench confirmation.
+</file>
+
+<file path="custodian/tools/operator/animation_compiler/schemas/master.v1.schema.json">
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "custodian.operator_3d_master.v1",
+  "title": "Content-addressed Operator 3D animation master",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "master_id", "approval_state", "blender", "armature", "mesh_materials", "textures", "retarget_policy", "camera_registration"],
+  "properties": {
+    "schema": {"const": "custodian.operator_3d_master.v1"},
+    "master_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{2,95}$"},
+    "approval_state": {"enum": ["experimental", "approved"]},
+    "blender": {
+      "type": "object", "additionalProperties": false,
+      "required": ["project_path", "project_sha256"],
+      "properties": {
+        "project_path": {"$ref": "#/$defs/relative_path"},
+        "project_sha256": {"$ref": "#/$defs/sha256"},
+        "blender_version": {"type": "string", "minLength": 1}
+      }
+    },
+    "glb": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"$ref": "#/$defs/relative_path"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "lfs_oid": {"$ref": "#/$defs/sha256"},
+        "bytes": {"type": "integer", "minimum": 20}
+      }
+    },
+    "source_provenance": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source_branch", "source_commit", "blender_source_path", "blender_lfs_oid", "blender_bytes", "glb_source_path", "glb_lfs_oid", "glb_bytes", "hydrated_bytes_verified", "derivation"],
+      "properties": {
+        "source_branch": {"type": "string", "minLength": 1},
+        "source_commit": {"type": "string", "pattern": "^[a-f0-9]{40}$"},
+        "blender_source_path": {"$ref": "#/$defs/relative_path"},
+        "blender_lfs_oid": {"$ref": "#/$defs/sha256"},
+        "blender_bytes": {"type": "integer", "minimum": 20},
+        "glb_source_path": {"$ref": "#/$defs/relative_path"},
+        "glb_lfs_oid": {"$ref": "#/$defs/sha256"},
+        "glb_bytes": {"type": "integer", "minimum": 20},
+        "hydrated_bytes_verified": {"const": true},
+        "derivation": {"const": "byte_for_byte_copy_of_source_branch_master"}
+      }
+    },
+    "armature": {
+      "type": "object", "additionalProperties": false,
+      "required": ["object_name", "identity_sha256", "rest_pose_sha256", "skeleton_signature_sha256"],
+      "properties": {
+        "object_name": {"type": "string", "minLength": 1},
+        "identity_sha256": {"$ref": "#/$defs/sha256"},
+        "rest_pose_sha256": {"$ref": "#/$defs/sha256"},
+        "skeleton_signature_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "mesh_materials": {
+      "type": "array", "minItems": 1,
+      "items": {"type": "object", "additionalProperties": false, "required": ["mesh_id", "mesh_sha256", "material_ids"], "properties": {
+        "mesh_id": {"type": "string", "minLength": 1},
+        "mesh_sha256": {"$ref": "#/$defs/sha256"},
+        "weights_sha256": {"$ref": "#/$defs/sha256"},
+        "material_ids": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["id", "sha256"], "properties": {"id": {"type": "string", "minLength": 1}, "sha256": {"$ref": "#/$defs/sha256"}}}}
+      }}
+    },
+    "textures": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["path", "sha256"], "properties": {"path": {"$ref": "#/$defs/relative_path"}, "sha256": {"$ref": "#/$defs/sha256"}, "name": {"type": "string", "minLength": 1}, "bytes": {"type": "integer", "minimum": 1}, "format": {"type": "string", "minLength": 1}, "packed_in_blend": {"type": "boolean"}}}},
+    "retarget_policy": {"type": "object", "additionalProperties": false, "required": ["policy_id", "version", "config_path", "config_sha256"], "properties": {
+      "policy_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{1,63}$"},
+      "version": {"type": "string", "pattern": "^[0-9]+(?:\\.[0-9]+){1,2}$"},
+      "config_path": {"$ref": "#/$defs/relative_path"},
+      "config_sha256": {"$ref": "#/$defs/sha256"}
+    }},
+    "camera_registration": {"type": "object", "additionalProperties": false, "required": ["contract_id", "profile_sha256", "elevation_degrees", "pixels_per_meter", "root_pixel", "scale_policy", "direction_policy"], "properties": {
+      "contract_id": {"type": "string", "minLength": 1},
+      "profile_sha256": {"$ref": "#/$defs/sha256"},
+      "profile_path": {"$ref": "#/$defs/relative_path"},
+      "elevation_degrees": {"const": 45},
+      "pixels_per_meter": {"const": 50},
+      "root_pixel": {"const": [64, 106]},
+      "scale_policy": {"const": "fixed_from_master"},
+      "direction_policy": {"const": "independent_no_mirroring"}
+    }}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "relative_path": {"type": "string", "minLength": 1, "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\)[^\u0000]+$"}
+  }
+}
+</file>
+
+<file path="custodian/AGENTS.md">
+# CUSTODIAN AGENTS PRIMER
+
+Mandatory entrypoint for any agent or developer working inside `custodian/`.
+
+If you entered from the repository root, stop here first before changing runtime code, docs, assets, pipelines, or design references.
+
+## Mission
+
+This primer exists to route all work through one consistent authority chain, one current-state summary, and one repeatable process for:
+
+- finding the right active docs quickly
+- checking adjacent files before editing
+- detecting documentation drift
+- remediating drift before it compounds
+- executing migrations without leaving stale references behind
+
+## First-Read Order
+
+Read these in order before making changes:
+
+1. `../design/` for active Godot-native implementation specs
+2. `docs/ai_context/CURRENT_STATE.md` for the latest runtime and documentation state
+3. `docs/ai_context/CONTEXT.md` for project rules and handoff context
+4. `docs/ai_context/FILE_INDEX.md` for high-signal file ownership and entrypoints
+5. `docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md` and any relevant packet in `docs/ai_context/task_packets/` when the packet-selection rules below call for one
+6. `docs/ai_context/VALIDATION_RECIPES.md` and relevant prompt templates in `docs/ai_context/prompts/`
+7. Relevant runtime/docs files for the feature or asset area you are touching
+
+If a conflict appears, prefer this authority order:
+
+1. `../design/`
+2. `docs/ai_context/`
+3. `docs/`
+4. live runtime and content under `custodian/`
+
+## Current Design And Development State
+
+- Active runtime authority is the Godot 4.x project in `custodian/`
+- Active implementation specs live in `../design/`, with feature work normalized under `../design/02_features/`; do not add new specs under the retired `../design/20_features/` tree
+- Active AI-facing context pack lives in `docs/ai_context/`
+- Legacy Python runtime and Python AI context are historical reference only
+- Deterministic fixed-step simulation remains a hard constraint
+- Rendering/UI logic should not silently absorb simulation authority
+
+## Routing Map
+
+Use this map to land on the right material fast:
+
+| Need | Read First | Then Check |
+|---|---|---|
+| Runtime feature behavior | `../design/` matching feature/system doc | `game/` scripts and `docs/ai_context/*` |
+| Architecture or ownership | `docs/ai_context/FILE_INDEX.md` | `docs/ARCHITECTURE.md`, `docs/ai_context/ARCHITECTURE_OWNERSHIP_MAP.md`, `../design/04_architecture/` |
+| Current implementation status | `docs/ai_context/CURRENT_STATE.md` | `../design/TRACKING.md`, active feature docs |
+| Asset layout or content placement | `docs/ASSET_LAYOUT_CONVENTION.md` | nearby `README.md` files in `content/` |
+| Scene/runtime structure | `docs/SCENE_HIERARCHY.md` | `scenes/`, `game/`, `project.godot` |
+| Migration or drift cleanup | `docs/AGENT_MIGRATION_PLAYBOOK.md` | this primer, `docs/ai_context/*` |
+| Validation command selection | `docs/ai_context/VALIDATION_RECIPES.md` | task packet acceptance checks when a packet exists |
+| Reusable agent prompts | `docs/ai_context/prompts/README.md` | task-specific prompt template |
+| Agent workflow automation | `docs/ai_context/AGENT_AUTOMATION_BACKLOG.md` | `tools/agent/` when scripts exist |
+
+## Packet Categories for ChatGPT Authoring and Mission Control
+
+Before authoring a new implementation, review or correction packet, read
+`docs/ai_context/TASK_PACKET_CATEGORIES.json` and
+`docs/ai_context/TASK_PACKET_CATEGORY_AUTHORING.md` from current main. Use
+one valid `Category:` ID based on the work's primary domain; reviews and
+corrections inherit their implementation category. Validate newly authored
+packets with `tools/agent/check_packet_categories.py` before publication.
+The category is display metadata, not a dispatcher status or new claim gate.
+Old packets without a category remain valid and display as Uncategorized until
+explicitly backfilled.
+
+## Automatic Task Packet Handoff
+
+### Automatic task packet authoring handoff
+
+For a newly authorized V2 implementation/correction packet and its paired
+post-land review, set `- Authoring handoff: auto` on **both** and publish them
+together to `origin/main` as `draft/manual`. The push-triggered
+`.github/workflows/packet-authoring-handoff.yml` runs the targeted
+`packet_authoring_handoff.py` tool. It validates the pair, promotes both
+to `ready/auto`, checks their queue and referenced validation scripts,
+updates the bounded Ready/Auto index, then commits and fast-forward pushes
+only the two packets and the generated README.
+
+This is opt-in: no marker means no automatic promotion. Do **not** opt in
+planning/human-decision holds, blocked reviews, or unreconciled refreshes.
+Failures stop without publication, force pushing, claiming or overriding
+locks. An hourly retry checks only remaining explicit opt-ins, so a main-branch
+race does not require another user/Codex preflight. The GitHub action runs authoring, **not local Codex execution**;
+`dispatch.py` remains the sole execution/dependency/lock authority.
+A normal Codex dispatcher worker can claim later if the live audit says
+eligible. CI write permission and allowed non-force main push are required.
+
+## Name the Brief
+
+For active work under `custodian/`, a user-supplied task name, slice name, packet nickname, or recognizable brief resolves to the matching active task packet/workstream before implementation.
+
+- Claim the resolved workstream through the dispatcher/workstream lifecycle.
+- Preserve the packet's authority, acceptance, review, completion, and handoff contract unless the user explicitly changes one of those requirements.
+- User instructions in the current turn may narrow or pause execution and win where they explicitly conflict, but shorthand naming alone does not convert packeted work into an unstructured task.
+- Prefer an existing packet that matches the durable DAG/current-state evidence; do not create a duplicate packet because the user used an alias.
+- Finish through the ordinary packet/workstream closeout.
+
+## Summary Backlink
+
+When a CUSTODIAN task packet or review packet contains an `Authoring chat:` or `Refresh planning chat:` URL, every durable implementation summary, review summary, correction summary, recovery summary, closeout summary/handoff, and final user-facing handoff authored for that packet must include that exact URL as an explicit `Authoring chat` line. Do not omit, shorten, redirect, or replace it with a generic project link. The finish-time artifact gate programmatically checks the committed root closing summary.
+
+This applies whether the summary is written at repository root, beside archived packet evidence, or generated during workstream finish. The backlink is part of the durable handoff so the user can return to the exact planning/review conversation before a required refresh or human decision.
+
+## Tooling And Scripts
+
+Use the indexed scripts before inventing one-off commands. `docs/ai_context/FILE_INDEX.md` is the high-signal map for tool ownership, and `docs/ai_context/VALIDATION_RECIPES.md` is the command-selection authority.
+
+- Search/read: prefer `rg`, `rg --files`, and targeted `sed`/`nl` reads. Use RTK wrappers only where the validation recipe recommends them or compact command output matters.
+- Godot validation: use focused `custodian/tools/validation/*_smoke.gd` scripts for behavior checks; do not treat `godot --headless --quit` or import alone as sufficient for gameplay/presentation changes.
+- Sprite and asset pipeline: start with `custodian/tools/pipelines/ingest.py`, `generate_inbox_manifests.py`, and the relevant validation recipe. For modular Operator work, `custodian/tools/operator/operator_ingest.sh` is the thin wrapper; default is dry-run, `--apply` runs rebuild/import/resource update/smoke/report.
+- Operator animation reports: use `custodian/tools/validation/operator_animation_contract_report.py` for required/optional/missing/suspicious asset coverage. Reports belong under `reports/`, not active runtime folders.
+- Preview/review helpers: use `custodian/tools/pipelines/operator_action_preview.py` and the review tools listed in `docs/ai_context/AGENT_TOOLING_BY_ASK.md`; generated preview output is review-only.
+- Agent memory: check `agentmemory status`, start the worker with `agentmemory` when needed, and use it selectively for durable cross-session decisions or handoffs while keeping repository docs authoritative.
+
+## Dropbox Source Art Review / Ingest
+
+For asset batches delivered through Dropbox, see `../design/04_architecture/DROPBOX_ASSET_LIFECYCLE_RECONCILIATION_V1.md` and `docs/ai_context/DROPBOX_ASSET_BATCH_REGISTRY.md`. Run the read-only audit before accepting a new asset intake task:
+
+```bash
+python3 tools/assets/dropbox_asset_audit.py scan --json
+python3 tools/assets/dropbox_asset_audit.py report --format markdown
+```
+
+For explicit source staging, use `python3 tools/assets/dropbox_asset_stage.py <batch-id> --dropbox-path <exact-source-ZIP> [--normalize] --apply` after a SHA256-pinned human approval receipt is committed. Normalization refuses unregistered states, mismatched frame counts and geometry. For durable external status publication, use `python3 tools/assets/dropbox_asset_publish.py --apply` after a clean read-only audit; this writes only derived lifecycle index/immutable audit receipts, not source assets. Neither command ingests or replaces runtime art.
+
+Dropbox archive presence or the legacy registry's `active` status is **not** human source approval or runtime publication. A future asset may only be ingested after an explicit review receipt pins its immutable SHA256 and state mapping. Keep full-resolution approved masters in source_work; derive normalized inbox locally using the existing pixel-art/Asset V2 tools, then check `asset.py plan/status/doctor/needs --check`, consumers, and focused scene tests. Do not ingest review-only media or copy remote assets directly into runtime. The audit is read-only and does not require modification of Dropbox index or asset files.
+
+## Production Asset Requirements
+
+- Discovery: update `content/metadata/assets/required_assets.registry.json`, choose the real fulfillment route, regenerate/check the generated view, and report the added need.
+- Fulfillment: Asset V2 completion is derived from live family/catalog evidence; non-V2 requirements may become `fulfilled` only after real fulfillment. Retain fulfilled records and regenerate/check the view.
+- Never hand-edit generated root `REQUIRED_ASSETS.md`.
+
+## Visual Validation Economy
+
+For runtime/presentation work, treat visual inspection as the last layer of proof.
+The ordinary edit/test loop should be code- and telemetry-first.
+
+Prefer these alternatives before rendered-image review:
+
+- **Asset contract checks:** canvas/frame dimensions, alpha bounds, silhouette/edge
+  margins, matte detection, registration anchors, frame-count/FPS/layout, source →
+  runtime identity, Asset V2 plan/status/doctor, and exact file hashes.
+- **Scene/presentation probes:** node/resource identity, global position/rect,
+  texture size, visibility, modulate/self_modulate alpha, effective z-order,
+  canvas/camera transform, ownership of collision/navigation, and whether an
+  Operator/path sample is covered by an opaque presentation layer.
+- **Transition/state checks:** deterministic state-machine snapshots, current
+  animation/frame/progress, one-shot generation/token state, forward/reverse
+  traversal equivalence, restore/idempotence, and presentation-state hashes.
+- **Pixel checks without model vision:** alpha/opaque coverage in a named region,
+  edge/seam discontinuity metrics, expected-overlap comparison, border-connected
+  matte/void detection, image diff/fingerprint, and cropped-region statistics.
+- **Targeted renderer evidence:** only after the above cannot prove acceptance.
+  Capture the smallest ROI and fewest authored ticks needed. Prefer one contact
+  sheet of tight crops to several full-screen images.
+
+Moment Forge iteration defaults to `--capture-mode none`. Use `evidence` only
+for a closeout proof that really depends on renderer output. Use `full` only when
+global composition, movement, audiovisual synchronization, or game feel itself is
+the acceptance criterion and no structured alternative can settle it.
+
+Do not repeatedly inspect equivalent full-resolution screenshots with Codex.
+When the implementation already produced durable evidence, a paired review should
+consume the report/telemetry/crops instead of recapturing the same views unless the
+evidence is stale, missing, or the reviewer has a concrete reason to distrust it.
+
+Objective presentation defects may be validated automatically. Subjective visual
+baselines, art direction, aesthetic cohesion, composition preference, and game-feel
+judgment remain human-owned.
+
+If those subjective questions are important enough to require review after the
+objective checks are green, publish a compact external evidence bundle with
+`python3 custodian/tools/iteration/publish_review_artifacts.py --important --reason ...`.
+When the packet has an `Authoring chat:` URL, include it with
+`--authoring-chat <exact-url>`. The agent supplies focused reviewer questions,
+the exact authoring-chat URL, and the Dropbox `REVIEW_MANIFEST.json` path, then
+stops rather than performing its own aesthetic critique. ChatGPT web in that
+authoring conversation should inspect the exact Dropbox path through the connected
+Dropbox source. After the user/ChatGPT records the review decision, resume the
+same workstream and execute the emitted cleanup command; review uploads default to
+`delete-after-review`, with `--retain-after-review` reserved for an explicit
+retention requirement. Use `custodian/docs/ai_context/VISUAL_REVIEW_HANDOFF.md`
+for the gate, evidence budget, rclone/Dropbox path contract, handoff, and cleanup
+format. Do not commit the cloud review binaries to Git as routine evidence.
+
+For task authoring, any request for more than two full-frame stills, repeated
+full-frame capture after each edit, or full-motion capture must explain why the
+non-visual alternatives above cannot falsify the defect. Otherwise rewrite the
+acceptance around structured assertions and targeted ROIs.
+
+## Moment Forge Selection
+
+Use Moment Forge for repeatable 2–8 second gameplay moments whose acceptance
+depends on timing, audiovisual synchronization, movement/displacement,
+readability, camera composition, or game feel.
+
+1. After changing combat timing, animation playback or assets, VFX, SFX,
+   healing presentation, attack movement, camera behavior, or curated vista
+   presentation, run:
+
+   ```bash
+   python3 custodian/tools/iteration/run_moment.py --changed
+   ```
+
+2. Treat selection output as advice. Run the smallest relevant scenario
+   explicitly; do not invoke every suggestion or use `--execute-suggested`
+   without reviewing the matched paths and reasons.
+
+   This is a resource rule as much as a signal-to-noise one. Each selected
+   scenario and each `godot_script` validation entry launches its own headless
+   Godot process, so a wide selection is a fleet of them. Check `free -h` before
+   a broad sweep, run one sweep at a time rather than overlapping them, and
+   confirm with `pgrep -af godot` that an interrupted run left nothing behind.
+   See Resource Budget Before Broad Sweeps in
+   `custodian/docs/ai_context/VALIDATION_RECIPES.md`.
+
+3. Use:
+
+   * `--capture-mode none` for deterministic assertions and fingerprints;
+   * `--capture-mode evidence` for telemetry and authored-tick keyframes;
+   * `--capture-mode full` when acceptance depends on audiovisual timing,
+     readability, feel, or baseline comparison.
+
+4. Focused smoke tests remain required for stable logic contracts. Moment Forge
+   is additional experiential and regression evidence, not a replacement for
+   narrow validation.
+
+5. Moment Forge may be skipped for docs-only changes, tooling-only work,
+   generated review artifacts, or refactors with no plausible runtime or
+   presentation effect. State `Moment Forge: not run — <reason>` in the
+   completion report.
+
+6. When a repeatable high-value regression lacks a scenario, propose or add the
+   narrowest stable scenario when it belongs to the task. Do not block unrelated
+   work solely because scenario coverage is absent.
+
+7. Never approve or replace a baseline automatically. Baseline acceptance
+   requires explicit developer judgment.
+
+8. Record scenario IDs, capture mode, pass/fail status, and report path under
+   task completion or handoff. Reports belong under `reports/moment_forge/`,
+   never runtime content.
+
+## Validation Iteration Economy
+
+During implementation, optimize for the narrowest proof loop that can falsify
+the change quickly. Validation should broaden at task closeout, not become the
+ordinary edit/test loop.
+
+- Before starting validation, check for existing `godot`, `run_validation.py`,
+  or `run_moment.py` processes. Do not start a second broad sweep while one is
+  active.
+- Run focused tests first. Run `run_validation.py --changed --json` once at the
+  closeout boundary unless a materially different changed set genuinely requires
+  another sweep.
+- For Moment Forge, use `--capture-mode none` while debugging deterministic
+  logic, then `--capture-mode evidence` for the first reviewable green run.
+  Use `--capture-mode full` only for final audiovisual review when full capture
+  is actually required; do not use full capture as the ordinary iteration loop.
+- Do not run a focused validation concurrently with a broad sweep against the
+  same Godot project. Stop, wait for, or reuse the in-flight result instead.
+- Avoid tight process polling. If a healthy validation or capture is making
+  progress, wait a reasonable interval before checking it again.
+- In an ephemeral/linked worktree, make at most one cheap code-review-graph
+  attempt. If it reports `missing_graph`, `not_ready`, empty/unmapped or stale
+  coverage, fall back immediately to targeted symbol/file reads. Do not cold-build
+  a worktree-local graph merely to satisfy graph-first guidance. The persistent
+  coordination-root graph may be used for baseline architecture only; verify every
+  implementation/review fact against the current worktree.
+- When the current task packet contains a bounded `## Context Pack`, generate it
+  once from the claimed worktree with `scripts/ai/pack-context.sh task ...`.
+  Prefer that scoped Repomix dossier over broad file dumps.
+- If the user switches to another substantial task mid-implementation, checkpoint
+  the current task cleanly before switching. Do not interleave two substantial
+  implementation/validation loops in the same worktree unless explicitly required.
+
+See `docs/ai_context/VALIDATION_RECIPES.md` for concrete command sequencing and
+resource checks.
+
+## Reusable Context Fetch Pipeline
+
+Before editing, run this retrieval pipeline:
+
+1. Define the work surface.
+   Identify the exact runtime area, doc area, or asset area being changed.
+2. If the task packet supplies `## Context Pack`, generate that bounded Repomix
+   snapshot from the current checkout once. Do not substitute a whole-repository
+   pack and do not commit the generated `.ai/task-context/` file.
+3. Pull the active authority.
+   Read the matching file in `../design/` first.
+4. Pull current state.
+   Read `docs/ai_context/CURRENT_STATE.md` and `docs/ai_context/FILE_INDEX.md`.
+5. Decide whether a task packet adds value.
+   Skip it for narrow, low-risk, single-session work. Use the compact template when scope, acceptance, or deferred work needs a durable record. Expand it for high-risk, multi-session, architecture, ownership, migration, or substantial handoff work.
+6. Pull validation and prompt guidance.
+   Read `docs/ai_context/VALIDATION_RECIPES.md` and any matching prompt template in `docs/ai_context/prompts/`.
+7. Pull adjacent context.
+   Read neighboring docs, scene files, READMEs, and directly related scripts/assets.
+8. Do not consult historical pre-Godot material unless the task explicitly
+   requires archaeology or an active document identifies a specific unresolved
+   migration question. Historical material never overrides active design or
+   runtime.
+9. Record any mismatch immediately.
+   If names, paths, behavior, or ownership disagree, treat that as drift and remediate before or alongside the main change.
+
+Minimum adjacency check:
+
+- the file you will edit
+- one upstream authority doc
+- one downstream runtime or content consumer
+- one neighboring doc or index that would become stale if ignored
+- the relevant task packet when the work requires one
+- the validation recipe and prompt template when the work matches one
+
+## New Packet Publication Gate
+
+If an agent is given an authorized **draft packet pair** or asked to unpark
+a workstream, the work is not claimable merely because both local files pass
+authoring validation. **Dispatch reads fetched `origin/main`, never the
+authoring branch or local working-tree index.** The authoring/promoting agent
+must, without asking the user for a missing command:
+
+1. Run `python3 custodian/tools/agent/validate_task_packet_authoring.py`
+   on the implementation **and** paired review. Respect any genuine
+   design/human hold before changing state.
+2. Promote authorized pairs to `Status: ready`, `Dispatch: auto`
+   together (unless the user requested manual claim timing); **rerun
+   the targeted preflight** on the promoted files.
+3. Run `python3 custodian/tools/agent/task_packet_index.py --write`,
+   followed by the same command **without** `--write` to verify the managed
+   ready/auto README block.
+4. Commit only these scoped queue-authority files, safely land them on
+   `origin/main`, fetch, and verify the exact workstream and review
+   metadata are visible there before using `dispatch.py claim <id>`.
+   Do not directly edit other agents' claim state or bypass ownership locks.
+5. Do not claim the review before the implementation lands and archives
+   complete. If publication/eligibility is blocked, report the concrete
+   reason instead of quietly downgrading status or skipping to unrelated work.
+
+The successful preflight prints the next commands but **does not perform**
+any of these mutations. Root [`AGENTS.md`](../AGENTS.md)
+owns the longer publication checklist; `AGENT_TASK_PACKET_TEMPLATE.md`
+owns exact schema/pairing checks. Existing auto/ready dependency-gated packets
+do not need redundant publication if the current `origin/main` already
+contains them.
+
+For queue drift or recovery, inspect `python3 tools/agent/dispatch.py audit`
+(`--json` for identity-level records) before changing packet or claim state.
+Pre-landing checks run the shared AI-context, review-pairing, README-index, and
+focused agent-tool tests; do not infer claimability from `Status: ready` or the
+README projection alone.
+
+## Agent Task Packets
+
+For packet metadata, executable work defaults to `Dispatch: auto`. Dependency ordering belongs in `Depends on`; incomplete design belongs in `Status: draft`; runtime/input failures belong in fail-closed execution evidence. Do not use `Dispatch: manual` as a generic blocker or refresh gate. It is valid only when the user explicitly asks to decide when an otherwise ready packet may be claimed.
+
+Task packets are optional risk-control and handoff records, not mandatory ceremony.
+When a packet is used, give it the stable workstream ID. Before a completed
+implementation workstream is torn down, mark its packet complete, move it to
+`docs/ai_context/task_packets/archived/`, and remove stale active-index entries.
+`workstream.py finish` enforces this association and fails closed on unresolved
+untracked run artifacts; it does not silently delete scratch, evidence, or Asset
+V2 source material.
+
+Choose the lightest useful level:
+
+- Skip: narrow, low-risk, single-session fixes; obvious validation; small documentation corrections.
+- Compact packet: ordinary non-trivial work where scope, constraints, acceptance, or deferred work should survive the current session.
+- Full packet: multi-session work; architecture or ownership changes; migrations; high-risk runtime or asset-pipeline changes; reviews producing substantial follow-up implementation.
+
+Do not create a packet merely because a task touches several files.
+
+Choose independent review by risk and evidence quality, not by file count or
+the word “runtime.” Express work may skip a packet and paired review for a
+narrow, reversible, low-risk single-session change while retaining focused
+validation and Git safety. Standard work may use a compact packet when scope
+or acceptance needs a durable record; its ordinary default is `Review: none`
+when focused checks directly prove correctness and scope, with a concise
+concrete risk rationale. Protected work keeps `Review: auto` and a fresh
+independent acceptance pass for consequential persistence/save-load,
+concurrency, irreversible operations, authority cutovers, dispatch/review/
+validation enforcement, dangerous asset-pipeline writes, or material evidence
+uncertainty. Human-owned visual and canon decisions remain human-owned. Existing
+published review decisions and dependencies do not change retroactively.
+
+Task packet workflow:
+
+1. Select skip, compact, or full based on risk and handoff value.
+2. When using a packet, copy `docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md` into `docs/ai_context/task_packets/` and name it after the task.
+3. Fill the compact fields first; add full-packet sections only when their information is useful.
+4. Keep the packet current when scope, blockers, acceptance, or deferred work materially changes.
+5. Mark it `complete` only after implementation, required documentation, feasible validation, and completion notes are done.
+
+Task packets do not replace design docs. Use `../design/` as implementation authority, and use task packets to make the current agent slice explicit.
+
+## Instruction Inheritance And Prompt Compression
+
+Repository defaults live in this file and the active authority chain. Prompt
+templates, task packets, and handoffs describe the current task's delta; they
+should not repeat repository defaults for reassurance.
+
+Unless a task explicitly overrides them, agents inherit authority/read order,
+archive boundaries, deterministic fixed-step and simulation/presentation
+ownership, graph/tool routing, task-packet selection, consequence-driven docs
+drift, validation economy, Moment Forge selection, asset and Operator animation
+authority, commit/push policy, and closing-summary requirements from this
+primer and the root `AGENTS.md`.
+
+Task prompts should normally specify only the goal, narrower task authority or
+work surface, task-specific changes and invariants, non-goals, acceptance,
+necessary task-specific validation, and any actual blockers or deferred work.
+Repeating an inherited rule does not make it stricter. Do not add extra work,
+validation, documentation edits, checkpoints, or confirmation gates just
+because a generated prompt repeats a repository default.
+
+Do not omit explicit user-requested behavior, acceptance criteria, non-goals,
+preservation requirements, named regressions, asset/data compatibility, or
+architecture ownership changes. A deliberate task-level exception must be
+marked `TASK OVERRIDE:` with its reason. It applies only within that task and
+cannot override higher repository or design authority.
+
+Normal implementation work is autonomous through the lifecycle documented in
+`docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`: start/resume a stable
+`agent/<workstream-id>` branch in an ephemeral worktree, implement and validate
+there, push a recovery branch, and land through the normal finish/landing path.
+Completed remote task branches are deleted only after reachability from
+`origin/main` is verified. No PR or routine human approval is required.
+CUSTODIAN Next defaults to one implementation and its required paired review,
+then stops. Continuing across packets requires an explicit finite pair budget
+and follows only eligible named same-series handoffs. Stop at a genuine
+human/ChatGPT refresh or decision, manual-dispatch hold, validation failure, or
+unresolved safety/ownership gate. See the lifecycle guide and repository-root
+`AGENTS.md` for invocation-boundary receipts and review routing.
+After landing, agents must also keep the persistent project-root `CUSTODIAN/`
+checkout synchronized with `origin/main` without requiring user approval for
+this routine step. Fast-forward only when the root is on `main`, clean, and
+strictly behind; preserve dirty files, untracked files, local commits, and
+diverged history exactly as found. Never reset, clean, stash, rebase, switch
+branches, or overwrite local work to make synchronization succeed. If the root
+cannot safely fast-forward, report the concrete blocker and pending sync, then
+continue closeout without an approval prompt. Retry automatically once the
+checkout is safe. See the repository-root `AGENTS.md` for the exact sync steps.
+Ad hoc review-only work must explicitly say
+`TASK OVERRIDE: review only; do not stage, commit, or push.` A paired post-land
+review may commit only its durable review receipt, required closing summary,
+review-packet lifecycle metadata, and bounded correction/re-review packets
+when its packet carries that explicit bounded override. It must not edit the
+reviewed implementation or unrelated work. A truly read-only review needs no
+repository mutation; never infer mutation permission from the word “review.”
+
+Use the narrowest test that can falsify a change during implementation, then
+broaden once at closeout according to Validation Iteration Economy. Multiple
+commands are separate acceptance gates only when the task explains why each
+proves a distinct property. Update documents when their owned truth changes;
+do not edit an otherwise-correct document only because a prompt listed it.
+
+### Ephemeral Worktrees
+
+Every normal implementation run uses an isolated ephemeral worktree, including
+single-agent work. Exceptions are explicitly read-only/review-only tasks or a
+documented reason ephemeral worktrees cannot be used. The persistent root
+checkout is a coordination checkout, not the implementation surface. Use
+`python3 custodian/tools/agent/workstream.py start <stable-kebab-id>` to resume
+or create the canonical `agent/<id>` branch. Never reset/stash a dirty attached
+worktree; preserve it and report the blocker.
+
+Keep work together through the smallest coherent completion boundary. Separate
+commits inside that boundary are fine; do not create review-dependent micro-
+packets when sequential migration steps share one architectural acceptance gate.
+
+## Prompt Templates And Validation
+
+Reusable prompts live in `docs/ai_context/prompts/`.
+
+Use these agent work modes:
+
+- Design Audit: compare active design docs, AI context, and runtime files for drift before implementation.
+- Implementation: make the scoped change, update active docs, and run feasible validation.
+- Review: inspect diffs for behavior regressions, determinism risks, stale paths, missing validation, and unsafe workflow assumptions.
+
+Use these prompts to standardize recurring agent work:
+
+- runtime feature implementation
+- runtime change review
+- docs-drift review
+- sprite pipeline updates
+- procgen handoff inspection
+- combat feel tuning
+- git state and commit preparation
+
+After changing reusable prompt templates, run
+`python3 tools/agent/validate_prompt_contract.py --templates-only --strict`.
+The linter can also report repeated repository-default boilerplate in active
+task packets during packet maintenance.
+
+Validation recipes live in `docs/ai_context/VALIDATION_RECIPES.md`.
+
+Use the recipes to choose the narrowest command that proves the change. Prefer RTK subcommands for compact output when they support the command shape, such as `rtk git status`, `rtk grep ...`, and `rtk find ...`. Do not treat `rtk` as a blind prefix for arbitrary commands; use `rtk proxy <command> ...` only when RTK has no matching subcommand and token tracking is still useful. Use raw commands when RTK argument rewriting would hide or alter needed output.
+
+When editing a design doc that will drive follow-up implementation, add or refresh a `Next Agent Slice` section with goal, files, constraints, and acceptance checks. This keeps design docs usable as executable work queues without replacing task packets.
+
+Planned automation for these workflows is tracked in `docs/ai_context/AGENT_AUTOMATION_BACKLOG.md`. Add scripts only when they support a listed check or update the backlog with the new rationale.
+
+## Docs Drift Review
+
+Treat any of the following as documentation drift:
+
+- a path moved but indexes still point to the old location
+- implementation status changed but `docs/ai_context/` was not updated
+- runtime behavior changed but design/docs still describe the old behavior
+- a migration created duplicate instructions with no clear primary source
+- asset layout changed but submission/layout conventions were left behind
+
+Drift review checklist:
+
+1. Does the active design doc still describe the current implementation target?
+2. Does `docs/ai_context/CURRENT_STATE.md` still describe the live state?
+3. Does `docs/ai_context/FILE_INDEX.md` still point to the right entry files?
+4. Does any README or local guide still route newcomers to deprecated paths?
+5. Did this change create a new local authority that needs to be indexed?
+
+## Drift Remediation Procedure
+
+When you detect drift, do this automatically unless the user explicitly says not to:
+
+1. Update the primary authority doc first.
+2. Update `docs/ai_context/CURRENT_STATE.md` if runtime state, ownership, or workflow changed.
+3. Update `docs/ai_context/CONTEXT.md` if the working model or guardrails changed.
+4. Update `docs/ai_context/FILE_INDEX.md` if entry files, locations, or ownership changed.
+5. Update the relevant task packet, when one exists, if scope, acceptance, status, or deferred work changed.
+6. Update local routing docs such as `README.md` or folder `README.md` files if discoverability changed.
+7. Note any intentionally deferred cleanup explicitly so the drift is tracked, not hidden.
+
+## Migration Execution Instructions
+
+Use this whenever you are restructuring docs, moving asset guidance, consolidating primers, or changing canonical paths.
+
+1. Define the new canonical destination.
+   Example: `custodian/AGENTS.md` becomes the local entrypoint for all work under `custodian/`.
+2. Add the destination before deleting or de-emphasizing old routes.
+3. Add prominent routing from every high-probability entrypoint.
+   Typical entrypoints: repository `AGENTS.md`, local `README.md`, AI context indexes, and directory `README.md` files.
+4. Migrate current state into the new destination.
+   Do not create an empty shell that only links elsewhere.
+5. Update the indexes and context pack.
+6. Validate that old entrypoints now forward clearly to the new canonical location.
+7. Leave historical docs in place unless removal is explicitly requested.
+
+## Expected Behavior For Agents
+
+- Ask concise clarification questions when ambiguity would risk wrong work.
+- State temporary assumptions when you proceed under uncertainty.
+- Keep deterministic gameplay logic separate from presentation logic.
+- Do not silently promote legacy Python docs back into active authority.
+- When changing behavior or architecture, update docs as part of the same task.
+- Dear ImGui and Better Terrain are retired from this repository. Use the Godot `Control`-based F12 debug screen, `DebugBus`, `DebugSnapshotCollector`, and `DevObservatory`; do not reintroduce either plugin without a new active design decision.
+- Debug surfaces must consume read-only snapshots from `DebugBus`. Mutation must go through debug overrides or queued commands that gameplay systems drain at safe boundaries, never direct per-frame UI writes into deterministic systems.
+- New debug instrumentation should route through `DevObservatory` (`/root/DevObservatory`), not raw `print()` or ad-hoc labels. Use `log_event` for state transitions, `increment`/`set_counter` for counts, `set_gauge` for live values, and `mark_warning` for anomalies. Keep it observability-only — never let observatory state influence simulation, generation, AI, collision, navigation, combat, or saves. See `design/02_features/debug_ui/DEVELOPER_OBSERVATORY_SYSTEM.md` for the full pattern and examples.
+
+## Operator Animation And Sprite Runtime Authority
+
+### Required Pixel-Art Conversion Rule
+
+When converting or resizing pixel art for the Operator main character, source
+the repository aliases from `tools/custodian_aliases.sh` and invoke the
+`pixelart` alias. Always select resizing option 1 explicitly:
+
+```bash
+source tools/custodian_aliases.sh
+pixelart <source> --choose 1 ...
+```
+
+Option 1 means crisp nearest-neighbor reduction. Do not invoke the underlying
+converter directly, and do not select options 2 or 3 for Operator main-character
+art unless an active Operator design specification explicitly says otherwise.
+This rule governs pixel-art authoring and review preparation; canonical runtime
+publication still goes through the Operator source-to-runtime pipeline below.
+
+For active Operator gameplay and presentation code:
+
+- Gameplay may request animations by semantic identity only.
+- Do not preload or load individual Operator animation PNGs from
+  `content/sprites/operator/runtime/animations/`.
+- Do not load Operator animation art from `source/`.
+- Do not create actor-local `AtlasTexture`, `SpriteFrames`, texture dictionaries,
+  or animation databases for normal gameplay wiring.
+
+When adding or wiring a new animation, transition, attack, reaction, or state:
+
+1. Ensure the art exists in canonical source authority.
+2. Run the Operator source to runtime synchronization pipeline.
+3. Ensure the semantic identity exists in
+   `operator_runtime_manifest.generated.json`.
+4. Rebuild `operator_runtime_frames.tres`.
+5. Wire gameplay using `OperatorAnimationSelector` and the semantic identity.
+
+A new state needing a new animation is not an exception to this rule. The state
+must be wired to semantic animation authority rather than directly to its PNG.
+
+Direct PNG access is allowed only in explicit migration, validation, inspection,
+or asset-authoring tooling outside active gameplay runtime.
+
+### Operator 2.5D Workbench decision guard
+
+For `operator_2_5d_128`, use the accepted profile/visual contract at
+`design/02_features/animation/OPERATOR_2_5D_VISUAL_CONTRACT.md` and
+`OPERATOR_2_5D_WORKBENCH_MIGRATION_ROADMAP.md`. These decisions are already
+human-locked: eight independently authored directions, 128px full-body
+registration/root/scale, source-work versus Workbench versus runtime separation,
+and the explicit QA, human review, sandbox and coherent-cohort release gates.
+An agent must not silently retune their values or derive missing directions from
+mirroring, a legacy proxy, or an image-generation default.
+
+**A saved Aseprite document or Workbench manifest is descriptive evidence, not
+automatic permission.** A default preview FPS (currently 8 for the imported
+canonical relaxed idle) does not approve animation timing. The manifest Boolean
+`timing_authority` alone is insufficient to establish an explicit human timing
+decision; effective 2.5D verification must use independently validated,
+current-input-bound intent provenance once the dedicated timing decision workflow
+is implemented. Do not fake approval by toggling a flag, inventing FPS, reusing
+stale review receipts or copying them between directions. Until proper provenance
+exists, fail closed and leave the idle Workbenches editable and unverified.
+WB25-6 generation switching remains a separate human/cohort-gated operation.
+Keep legacy 96px timing/publication behavior intact.
+
+**Presentation composition policy (approved 2026-10-11):** Follow the
+single owning doctrine in
+`design/04_architecture/OPERATOR_RUNTIME_ARCHITECTURE.md`,
+"Operator presentation composition doctrine." Canonical 128px 2.5D neutral
+idle, ordinary movement and committed whole-body actions use independently
+authored `full_body` by default. Retain selectively modular
+`lower_body+upper_body` whenever legal locomotion and aiming, weapon-ready,
+firing, guard or parry phases **actually** need independent upper/lower
+motion. Weapons/FX remain owner-scoped overlays. A full-body source must
+never be auto-sliced into half-bodies. Never mix 96px and 128px *body*
+layers in one active presentation; preflight a complete compatible body,
+visible clock, facing, registration and weapon/socket before atomic handoff.
+The current 69 canonical 2.5D families are **full-body authoring
+baselines**, not already-authorized modular alternatives. Do not add or
+publish split targets without demonstrated gameplay need and explicit
+Asset Pipeline V2/human design approval. Preserve legacy 96px behavior
+and all existing one-body presenter/selector ownership; WB25-6 is still
+held.
+
+## Commit Policy
+
+The root `AGENTS.md` owns commit and closing-summary policy. Follow it: commit
+completed, validated work at task boundaries and finish it with
+`python3 custodian/tools/agent/workstream.py finish ...`. `land_main.py` is
+an internal helper and must not be used as a substitute for finish. Stage only current-task files, preserve
+other sessions' work, and never amend or force-push unless explicitly asked.
+Use the repository's short lowercase, comma-joined commit style.
+
+Paired post-land reviews must run in a mechanically fresh context. From the
+coordination checkout, invoke
+`python3 custodian/tools/agent/paired_review_runner.py <review-workstream-id>`
+for an exact eligible review successor; do not claim it in the implementation
+context. The runner uses the dispatcher receipt, launches `codex exec
+--ephemeral` in that worktree, stores sanitized evidence under Git-common-dir
+workflow state, and returns the durable `Next Handoff`. If a process fails after
+claim, preserve the claimed branch/worktree and follow its recovery card.
+
+## Design Codex Governance
+
+`../design/90_codex/` is the project's idea inventory and design memory layer.
+
+Use it for:
+
+- preserving wanted features
+- comparing future-system candidates
+- maintaining long-term design continuity
+- deciding what should graduate next
+
+Do not treat codex cards as active implementation authority. Before building from a codex card, graduate the idea into the active design authority under `../design/02_features/`, `../design/04_architecture/`, or another appropriate active design location.
+
+Codex tracker:
+
+- `../design/90_codex/TRACKER.md`
+
+Codex validation:
+
+```bash
+python tools/validate_design_codex.py
+```
+
+Optional local hook install from repository root:
+
+```bash
+bash tools/install_git_hooks.sh
+```
+
+When touching `../design/90_codex/`, agents should:
+
+1. update `../design/90_codex/00_index.md`
+2. update `../design/90_codex/TRACKER.md` when governance, status semantics, or graduation rules change
+3. run `python tools/validate_design_codex.py`
+4. avoid implementing directly from codex cards unless explicitly instructed
+5. add active-spec/runtime links when a codex card graduates
+
+## Migration Shortcut
+
+If the task is “where do I start?” or “what do I read first?”, the answer for `custodian/` work is:
+
+1. `custodian/AGENTS.md`
+2. `custodian/docs/ai_context/CURRENT_STATE.md`
+3. the relevant file in `design/`
+
+## Agentmemory Note
+
+- Check worker health with `agentmemory status`; if it is not running, start it with `agentmemory` and verify status again.
+- Use agentmemory when durable cross-session context, recurring decisions, or handoff continuity would be helpful. It supplements rather than replaces `design/`, `docs/ai_context/`, task packets, and live runtime inspection.
+- Start the worker service before running `agentmemory demo`.
+- `agentmemory demo` is a smoke test for a live worker on `http://localhost:3111`.
+- The demo prints a cleanup command for `/tmp/agentmemory-demo` sessions when it finishes.
+</file>
+
+<file path="AGENTS.md">
+# CUSTODIAN Repository Router
+
+This repository contains multiple eras of the project. For all active Godot work under `custodian/`, the mandatory local authority and workflow primer is:
+
+1. `custodian/AGENTS.md`
+2. the matching implementation spec under `design/`
+3. `custodian/docs/ai_context/CURRENT_STATE.md`
+
+Active Godot feature specifications live under `design/02_features/`. Do not add new work to the retired `design/20_features/` tree.
+
+## Historical Archive Boundary
+
+`python-sim/` is a historical pre-Godot archive. It is not an active runtime,
+design, architecture, implementation, validation, tooling, or source-of-truth
+dependency. Do not include it in an active authority chain. Consult it only
+when a task explicitly requires historical archaeology; it never overrides
+current design or runtime.
+
+The active authority chain is:
+
+1. `design/`
+2. `custodian/docs/ai_context/`
+3. `custodian/docs/`
+4. live runtime and content under `custodian/`
+
+Repository-root path equivalents used by the local primer are:
+
+- active design: `design/`
+- current state/context/index: `custodian/docs/ai_context/`
+- active runtime: `custodian/game/`, `custodian/content/`, and `custodian/project.godot`
+- validation: `custodian/docs/ai_context/VALIDATION_RECIPES.md` and `custodian/tools/validation/`
+- validation resource cost: broad sweeps launch one headless Godot process per test
+  (`--tier actor` is roughly fifty). Check `free -h` before one and run a single sweep at
+  a time; see Resource Budget Before Broad Sweeps in `VALIDATION_RECIPES.md`.
+- active project doctrine: `design/00_meta/MASTER_DESIGN_DOCTRINE.md`
+- deterministic micro-playtest review: route through `custodian/AGENTS.md`,
+  `design/02_features/debug_ui/MOMENT_FORGE_SYSTEM.md`, and the Moment Forge
+  section of `custodian/docs/ai_context/VALIDATION_RECIPES.md`
+
+If root guidance conflicts with `custodian/AGENTS.md` for Godot runtime work, follow `custodian/AGENTS.md`.
+
+## Visual Validation Economy
+
+Visual/media inspection is a last-mile proof, not the default validation loop.
+Prefer machine-checkable state, geometry, asset-contract, telemetry, and pixel
+metrics before asking an agent to inspect rendered frames.
+
+Use this order:
+
+1. Prove code/data invariants first: dimensions, registration, bounds, node/resource
+   identity, visibility/modulate alpha, z-order, collision/navigation ownership,
+   animation/state/progress, route authority, Asset V2 status, and deterministic
+   forward/reverse snapshots.
+2. When pixels themselves are part of acceptance, prefer automated image checks
+   such as alpha/silhouette bounds, matte/opaque-void detection, overlap/coverage,
+   edge/seam discontinuity metrics, targeted image diffs, and exact region hashes.
+3. If renderer evidence is still needed, capture the smallest authored region and
+   fewest keyframes that can falsify the defect. Prefer tight crops/contact sheets
+   over repeated full-resolution screenshots.
+4. Use full-frame or full-motion capture only when acceptance genuinely depends on
+   global composition, motion, audiovisual synchronization, or game feel that the
+   structured checks cannot establish.
+
+During iteration, Moment Forge defaults to `--capture-mode none`; escalate to
+`evidence` for the final objective proof and to `full` only with a task-specific
+reason. Do not repeatedly feed equivalent full-resolution captures to Codex.
+Independent reviewers should reuse durable implementation evidence and structured
+metrics unless it is missing, stale, or insufficient for the review contract.
+
+Agents may automatically decide objective technical visual failures such as wrong
+registration, clipping, missing/duplicate presentation, invalid alpha, visibility,
+or layering when those are established by deterministic evidence. Subjective art
+direction, composition preference, aesthetic cohesion, and baseline approval stay
+human-owned.
+
+When objective checks are green but an important subjective presentation question
+remains, do not spend the coding-agent review loop judging its own screenshots.
+Publish one compact external review handoff with
+`custodian/tools/iteration/publish_review_artifacts.py` and return the emitted
+Dropbox manifest path plus the exact reviewer questions. The publisher is opt-in:
+use `--important --reason ...` only when the human/ChatGPT visual decision is
+material. When the packet records an `Authoring chat:` URL, pass it through
+`--authoring-chat <exact-url>` and report both that URL and the exact
+`/CUSTODIAN/visual_review/<workstream>/<run-id>/REVIEW_MANIFEST.json` path. The
+authoring ChatGPT/web conversation owns the human visual decision and should use
+that Dropbox path directly instead of asking the coding agent to duplicate the
+media into chat. Reviewed cloud evidence defaults to `delete-after-review`: after
+the ChatGPT/user decision is recorded, resume the same workstream and run the
+emitted cleanup command. Use `--retain-after-review` only when the user/packet
+explicitly requires retained cloud evidence. Prefer ROI/contact sheets and sparse
+authored keyframes; do not commit bulk review media to Git. See
+`custodian/docs/ai_context/VISUAL_REVIEW_HANDOFF.md`.
+
+Task packets that require substantial visual evidence must state why non-visual
+checks are insufficient and minimize the capture budget. More than two full-frame
+stills, any repeated full-frame pass, or full-motion capture needs explicit
+task-specific justification.
+
+## Operator Main-Character Pixel-Art Resizing
+
+For any pixel-art conversion or resizing of the Operator main character's
+artwork, use the repository alias defined in `tools/custodian_aliases.sh`:
+
+```bash
+source tools/custodian_aliases.sh
+pixelart <source> --choose 1 ...
+```
+
+The `pixelart` alias is the required entrypoint; do not bypass it by invoking
+the converter script directly. `--choose 1` is the required resizing method
+(crisp nearest-neighbor reduction) for Operator main-character art. Do not use
+options 2 or 3 for this artwork unless an active Operator design specification
+explicitly overrides this rule. This requirement applies to authoring and
+review-preparation conversions; it does not replace the canonical Operator
+source-to-runtime ingest pipeline.
+
+For long-horizon wanted-feature tracking, use `design/90_codex/` and its tracker at `design/90_codex/TRACKER.md`; codex cards are idea inventory until graduated into active design authority.
+
+## Render Automatic Deploy Isolation
+
+The Render service named `CUSTODIAN` is linked to this repository. Without a
+service-side Build Filter, **every push to the linked branch can trigger a
+deploy**, including Godot implementation work, packet metadata, and reviews that
+have nothing to do with the legacy hosted terminal.
+
+- For a commit that changes **only files outside `python-sim/`** and does not
+  change Render configuration or dependencies used by the hosted terminal, put
+  `[skip render]` in the commit message. Do this for routine task-packet
+  authoring, review receipts, Godot code/art, documentation, and automation.
+  Render recognizes the marker; GitHub still receives and processes the commit.
+- Do **not** use the marker for commits that change the hosted terminal or its
+  runtime/deployment dependencies. Do not rewrite published commits to add it.
+- Commit-message markers are a defense in depth, **not a replacement** for a
+  service-side filter. The existing `python-sim/render.yaml` targets the legacy
+  `custodian-terminal` Blueprint service and already declares an include filter,
+  but that does not prove the live `CUSTODIAN` service is configured with it.
+- For the permanent fix, set **Build Filters > Included Paths** on the existing
+  live Render `CUSTODIAN` service to `python-sim/**` (no ignored paths), after
+  verifying this is the Python-terminal service. This setting controls existing
+  standalone services; merely adding or editing YAML does not apply it.
+  See `RENDER_DEPLOY_POLICY.md` for the safe validation procedure.
+
+## Atomic Task Packet Publication (required)
+
+When a new implementation/correction packet and its paired review are published,
+publish every existing task-required supporting tool, script, test fixture, schema,
+configuration, manifest, and authoring note in the **same atomic main publication**
+as those packets. The packet must enumerate these concrete paths under
+`Publication inputs:` (or `none` if no auxiliary inputs are needed). Confirm
+that every declared input is tracked at the landed `origin/main` SHA before
+claiming. A sandbox download, pasted script, private chat attachment, stale
+branch, or unmerged worktree is **not** a published dependency. Do not instruct
+Codex to retrieve required implementation inputs exclusively from ChatGPT.
+
+Distinguish already-required inputs from source files the workstream is expressly
+tasked with creating. If a prerequisite is host-private or cannot safely be
+committed, describe the original owner and local verification procedure; do not
+pretend the data was published or silently bypass its gate. Such a packet cannot
+claim readiness if that prerequisite is indispensable and unavailable. This rule
+does **not** authorize altering third-party claims, review verdicts, locks, or
+worktree preservation requirements. Preserve the ordinary workflow and review
+contracts.
+
+## Direct Repository Execution With Connected Tools
+
+**Project-owner directive (2026-10-29):** An assistant with connected repository
+write tools is an implementation participant, not merely an author of Codex or
+Claude instructions. For a user-requested change, prefer inspecting the live
+repository, making the smallest safe change directly, performing available
+focused checks, committing/publishing when permitted, and reporting verified
+results. Do not create a task packet or delegate a trivial documentation fix,
+metadata correction, or bounded housekeeping change solely to have another
+agent perform the edit.
+
+Before mutating, read the applicable repository authority, check current
+`origin/main`, resolve any existing workstream/packet and claim ownership, and
+identify the exact paths and validation obligations. Connected GitHub write
+access does **not** establish access to the user's local host, process liveness,
+worktrees, Blender/Godot runtime, or private source artifacts. Preserve all
+claimed branches, independent-review evidence, locks, and human approval gates.
+Never use direct API writes to bypass a claimed workstream, mandatory review,
+worktree/dispatcher requirements, runtime or Asset V2 approval, or a failed
+validation.
+
+For a **bounded, unclaimed documentation or packet-metadata correction** with
+no host-only acceptance requirement, the project owner permits a direct GitHub
+API edit as a documented exception to the usual local-worktree implementation
+route when that is the available write surface. Use an exact expected
+`origin/main` parent, a non-force atomic update, and narrow changed-path
+verification; include `[skip render]` when the Render isolation rule applies.
+Report the resulting commit and re-read the landed contents. Do not represent
+GitHub publication as synchronization of the user's persistent local checkout;
+that still requires its existing guarded local sync procedure.
+
+For normal packeted implementations, source or runtime edits, and work needing
+host-local tests, use the established dispatcher/workstream lifecycle and
+independent review. Delegate only operations unavailable through connected
+tools or those requiring a distinct reviewer context. Clearly distinguish
+inspected, edited, landed, tested, independently reviewed, and approved.
+
+## Existing-workstream continuity: ownership is not a session veto
+
+**Project-owner directive (2026-10-27):** A Codex session is an expendable worker;
+the canonical workstream ID, existing branch, checkout, Git history, evidence,
+and reviews are the durable work. An absent OR1 supervisor journal or the
+`UNMANAGED_UNKNOWN` diagnosis **alone** does not forbid a new, explicitly
+user-authorized session from continuing the same claim. Do not demand OR2
+parking, a new claim, or a new recovery packet before attempting the supported
+`python3 custodian/tools/agent/workstream.py resume <existing-id>` command.
+
+Before continuation, check the exact branch and attached checkout, latest
+origin state, live processes/writers on the current host, and both tracked and
+untracked changes. Respect any known live competing worker or unresolved
+foreign-host ownership; do not infer process death from age. A clean checkout
+with no conflicting writer may be resumed using the existing lifecycle and its
+mutex under the project owner's authorization. If resume refuses, report its
+**actual failed invariant** rather than citing missing supervisor history.
+Dirty/unique work must be preserved and reconciled, not silently cleaned,
+reset, overwritten, or abandoned. Do not delete or release claims/locks by
+this rule. Pinned independent reviews and evidence/validation gates still apply.
+
+For work already in progress when this policy lands: on the **next safe
+decision boundary**, fetch the current main instructions and re-evaluate
+owner-blocked work against this rule without resetting the active worktree.
+A GitHub commit does not hot-replace prompts already loaded into running agent
+sessions; no claim of instant process-wide delivery is permitted. See
+`custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`.
+
+## Commit Policy
+
+Normal implementation work follows `implement → validate → commit → land on
+origin/main`. Completed validated work lands automatically without per-task
+approval and without a PR or routine human-review gate. Ad hoc review-only work
+must carry the explicit task override `TASK OVERRIDE: review only; do not stage,
+commit, or push.` Paired post-land review packets may authorize commits only for their durable review receipt, required closing summary, review-packet lifecycle metadata, and bounded correction/re-review packets. They must never edit the reviewed implementation or unrelated work; the packet must state this bounded override explicitly. A paired review must also start from a fresh reviewer context rather than continuing the implementation session. The same model/agent family may review its own prior work only from a newly started context/workstream that reconstructs the target from durable repository evidence and records `same-agent-fresh-context`; otherwise use `different-agent`.
+
+- Every normal implementation run uses `python3 custodian/tools/agent/workstream.py`
+  in an isolated ephemeral worktree. Exceptions are explicitly read-only/review-only
+  tasks or a documented reason an ephemeral worktree cannot be used. The persistent
+  project-root checkout is for coordination and safe post-landing main sync.
+- Commit at task boundaries once the change is implemented and validated (parse checks, smoke tests, or the recipe in `custodian/docs/ai_context/VALIDATION_RECIPES.md`).
+- Never `git add -A` blindly, and never commit secrets, logs or generated artifacts.
+- Stage only files belonging to the current task. Preserve staged and unstaged
+  work from other sessions; do not commit it as routine cleanup. Coordinate
+  before including another session's work.
+- Use short, lowercase, comma-joined summaries in the repo's existing style (for example `combat feel authoring, FPS chasing`).
+- Push completed work to the remote once committed.
+- Use stable `agent/<workstream-id>` branches and the `workstream.py` lifecycle;
+  push recovery work before landing and delete completed task branches only after
+  verifying reachability from `origin/main`. See
+  `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`.
+- The normal completion entrypoint is `python3 custodian/tools/agent/workstream.py finish ...`.
+  Do not invoke `land_main.py` directly for destructive landing; it is an internal
+  race-safe landing primitive used by `workstream.py finish`. Direct dry-run
+  inspection remains allowed.
+- After landing a scoped task branch on `origin/main`, keep the user's persistent
+  project-root checkout synchronized as a required post-push step; updating only
+  the scoped worktree is not sufficient. This safe synchronization is routine
+  repository maintenance and requires no user approval. Fetch/check the latest
+  `origin/main`, then run `git -C <project-root> pull --ff-only origin main` when
+  the root checkout is on `main`, clean, and only behind. Never reset, clean,
+  stash, rebase, switch branches, or overwrite local files to force the sync. If
+  local changes, local commits, divergence, or another unsafe state prevents a
+  fast-forward, leave every byte and commit intact, report the exact blocker and
+  that synchronization is pending, and continue the task closeout without
+  asking for routine approval. Resume the safe sync automatically after the
+  blocker is independently resolved.
+  Rebase conflicts and failed required validation are blockers; never force-push.
+- Do not amend or force-push unless explicitly asked.
+
+## Automatic Task Packet Handoff
+
+### Automatic task packet authoring handoff
+
+For a newly authorized V2 implementation/correction packet and its paired
+post-land review, set `- Authoring handoff: auto` on **both** and publish them
+together to `origin/main` as `draft/manual`. The push-triggered
+`.github/workflows/packet-authoring-handoff.yml` runs the targeted
+`packet_authoring_handoff.py` tool. It validates the pair, promotes both
+to `ready/auto`, checks their queue and referenced validation scripts,
+updates the bounded Ready/Auto index, then commits and fast-forward pushes
+only the two packets and the generated README.
+
+This is opt-in: no marker means no automatic promotion. Do **not** opt in
+planning/human-decision holds, blocked reviews, or unreconciled refreshes.
+Failures stop without publication, force pushing, claiming or overriding
+locks. An hourly retry checks only remaining explicit opt-ins, so a main-branch
+race does not require another user/Codex preflight. The GitHub action runs authoring, **not local Codex execution**;
+`dispatch.py` remains the sole execution/dependency/lock authority.
+A normal Codex dispatcher worker can claim later if the live audit says
+eligible. CI write permission and allowed non-force main push are required.
+
+## Name the Brief
+
+When the user names a CUSTODIAN task, slice, workstream, packet, or recognizable brief, resolve that name to the active task packet before implementing. Claim the packeted workstream through the dispatcher/lifecycle rather than treating the user's short name as a free-form prompt.
+
+The user's explicit current-turn instructions may narrow, pause, or override execution details, but they do not silently discard the packet's authority, acceptance, review, completion, or handoff requirements unless the user explicitly changes those requirements.
+
+If a recognizable name is ambiguous, prefer the packet/workstream whose durable metadata and current DAG position match the conversation. Do not invent a new packet merely because the user used a nickname or shorthand. Close out through the packet and ordinary workstream lifecycle.
+
+## Codex Activity Attribution (low overhead)
+
+Keep Codex usage attribution aligned with the existing canonical CUSTODIAN
+workstream lifecycle. Once a dispatcher claim/resume or the active worktree has
+**verified** the assignment, begin the first substantive user-visible progress
+or completion reply **in each Codex turn** with this plain-text line:
+
+```text
+Workstream: <canonical-workstream-id>
+```
+
+Use the exact `Workstream:` value in the task packet or verified claim receipt,
+including the `review-...` prefix for independent reviews and the full
+`...-review-corrections-N` name for corrections. Do not substitute a feature
+nickname, packet filename, agent name, or previously completed workstream.
+When autonomous continuation claims a successor, announce the new exact ID in
+the first reply for that successor. If no assignment is verified, omit the line
+rather than guessing. Where possible, keep one workstream per Codex turn; a
+turn spanning multiple assignments must not be reported as single-workstream
+usage.
+
+This line is a lightweight attribution hint, **not** a dispatch claim, an
+approval, or a required extra status message. Do not create extra Codex calls,
+commit telemetry files, or extend task summaries solely for usage tracking.
+Model, reasoning effort, wall time, input/cached/output/reasoning tokens, and
+quota snapshots must be measured by the local Codex session-log tracker, not
+estimated by the agent or inferred from this label. Existing packet metadata,
+branches, independent reviews, validation requirements, and durable handoffs
+remain authoritative. Prefer compact tool output and non-duplicative context,
+without skipping required checks to optimize tokens.
+
+## Summary Backlink
+
+When a CUSTODIAN task packet or review packet contains an `Authoring chat:` or `Refresh planning chat:` URL, every durable implementation summary, review summary, correction summary, recovery summary, and closeout handoff authored for that packet must include that exact URL as an explicit `Authoring chat` line. Do not omit, shorten, redirect, or replace it with a generic project link.
+
+This applies whether the summary is written at repository root, beside archived packet evidence, or generated during workstream finish. `workstream.py finish` fails closed when a packet with a recorded authoring/refresh URL has a committed root closing summary that omits the exact `Authoring chat: <url>` line. The backlink is part of the durable handoff so the user can return to the exact planning/review conversation before a required refresh or human decision.
+
+## Task-Packet Promotion Before Dispatch (mandatory for newly authored or unparked packets)
+
+**A local authoring PASS does not publish a packet or authorize a dispatcher claim.**
+When an implementation/review pair has been authored as `draft/manual` (or materially
+refreshed), the agent assigned to promote it should complete this lifecycle
+*without requiring the user to supply the command*:
+
+1. Confirm the design/refresh lock and check that the target workstream is not
+   already claimed, archived, or superseded on fetched `origin/main`. Do not
+   silently convert a real human-held `ready/manual` packet into auto dispatch.
+2. Run the **targeted** authoring check against the implementation **and paired
+   review** while still unpromoted:
+   ```bash
+   python3 custodian/tools/agent/validate_task_packet_authoring.py \
+     custodian/docs/ai_context/task_packets/<IMPLEMENTATION>.md \
+     custodian/docs/ai_context/task_packets/REVIEW_<IMPLEMENTATION>.md
+   ```
+3. Only if the design lock explicitly permits execution, set both metadata headers
+   to `Status: ready`, `Dispatch: auto` (unless the user explicitly requested
+   manual claim timing). Re-run the same targeted preflight **after** editing
+   those headers, then regenerate and verify the managed queue index:
+   ```bash
+   python3 custodian/tools/agent/task_packet_index.py --write
+   python3 custodian/tools/agent/task_packet_index.py
+   ```
+4. Stage only the authorized implementation/review files and
+   `custodian/docs/ai_context/task_packets/README.md` (plus explicitly
+   required scoped authority changes). Commit and **land on `origin/main`**
+   using the safe repository landing process. Do not treat an unmerged branch,
+   local `main`, or locally generated README as dispatcher visibility. Never
+   overwrite another worker's changes or bypass claim/lock authority.
+5. `git fetch origin`; verify both packet headers **on `origin/main`**
+   and the managed index entry, then run
+   `python3 custodian/tools/agent/dispatch.py claim <implementation-workstream-id> --agent <agent-id>`
+   **only if eligible**. The paired post-land review waits for the implementation
+   to land and archive complete.
+
+If the requested packet does not exist on `origin/main`, stop trying to claim
+it and finish this publication sequence first. `validate_task_packet_authoring.py`
+prints these publication/claim instructions after PASS; its output never performs
+a promotion, commit, push, or claim. See
+`custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md` for the full
+authoring contract. For standalone read-only audit packets, do not promote
+without actual user authorization.
+
+## CUSTODIAN Task Dispatch
+
+Executable packet dispatch is automatic by default. Use `Status: ready` + `Dispatch: auto` even when declared dependencies are incomplete; the dispatcher keeps the packet blocked until those dependencies archive `complete`, then makes it claimable without a manual status flip. `Dispatch: manual` is reserved only for an explicit user instruction to hold an otherwise ready packet until the user chooses claim timing. Missing inputs, predecessor API drift, review ordering, and ordinary dependency waits are not manual-dispatch reasons; represent them with status/dependencies and fail-closed execution checks instead.
+
+For a full live queue and branch/worktree reconciliation, use
+`python3 custodian/tools/agent/dispatch.py audit` (or `--json` for stable
+machine-readable output). It shares the dispatcher's exact eligibility gate;
+the README Ready/Auto block is only a generated view. Use
+`dispatch.py repair --plan` to inspect the bounded metadata repair and add
+`--archive-completed` to preview only legacy records with explicit completion
+evidence. Repair apply never cleans branches or worktrees; preserve ambiguous
+ownership for explicit recovery.
+
+For “Take the next CUSTODIAN task,” run
+`python3 custodian/tools/agent/dispatch.py claim-next --agent <agent-id>`
+(for example `--agent claude` or `--agent codex`).
+For “Take CUSTODIAN workstream `<id>`,” run
+`python3 custodian/tools/agent/dispatch.py claim <id> --agent <agent-id>`.
+Omitting `--agent` falls back to the `CUSTODIAN_AGENT_ID` environment variable,
+then a neutral `unspecified` — never a silently assumed brand.
+Enter the returned worktree, read `AGENTS.md`, `custodian/AGENTS.md`, and the
+returned packet. The claim receipt also exposes `authoring_chat`, `visual_review`,
+`visual_review_root`, and the default review retention policy so autonomous agents
+carry the human-review route without reconstructing it from prose. Then execute
+only that workstream through the lifecycle in
+`custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`.
+
+### CUSTODIAN Next Shortcut
+
+The repository owns a context-aware next-task workflow at
+`.agents/skills/custodian-next/SKILL.md`. In Codex, invoke it directly as
+`$custodian-next`.
+
+It is also available through Codex's slash UI: type `/skills` and choose
+**CUSTODIAN Next**. Enabled skills may also appear directly in the slash picker
+when you type `/`. Do not create a project-local custom prompt for this workflow;
+Codex custom prompts are deprecated in favor of skills.
+
+Semantics:
+
+1. An unqualified invocation is `single-pair`: complete or resume at most one
+   implementation packet and its required fresh-context paired review, including
+   bounded correction/re-review cycles, then stop. An active claimed workstream
+   counts as that pair; do not claim another while it is unresolved.
+2. Use `continuous-chain` only when the user explicitly requests multiple
+   packets. Require a positive finite `max_pairs` and honor any explicit scope.
+   Continue only through the durable `Next Handoff` DAG and dispatcher-confirmed
+   eligible predecessors; a pair is one implementation plus its paired review.
+3. Reconcile active branch, worktree, dispatch receipt, and remote state. A stale
+   `last-claim` is not ownership proof. Ambiguous/stale claims require audit and
+   must never cause a duplicate claim.
+4. The pure invocation policy is
+   `custodian/tools/agent/next_execution_boundary.py`. Use its `evaluate`,
+   `progress`, and `record-receipt` commands at invocation/pair boundaries. It
+   does not select or claim packets. `dispatch.py` remains the assignment
+   authority. Record compact receipts with pair progress, landed SHA, review,
+   validation, elapsed time, and next eligibility.
+5. Paired post-land review remains a fresh-context operation. Once eligible,
+   invoke `python3 custodian/tools/agent/paired_review_runner.py <review-workstream-id>`
+   from the coordination checkout. Corrections and
+   re-reviews remain inside the same pair.
+6. Stop at planning refresh, human visual/design/canon decision,
+   manual-dispatch, failed validation, or unresolved safety/ownership gates.
+   `Refresh owner: execution-agent` allows a bounded refresh unless it exposes a
+   new human-owned decision. Never edit packet status to manufacture eligibility.
+7. After one pair, default mode stops even if the handoff names another ready
+   packet. Global `dispatch.py claim-next --agent codex` is allowed only when the
+   user explicitly requested general-next execution and no current pair remains
+   unresolved; it selects one eligible implementation within the stated budget.
+
+The dispatcher receipt remains assignment authority; the shortcut never edits
+packet status to manufacture a claim.
+
+### Naming Work: The Task Packet Is the Brief
+
+When the user names CUSTODIAN work in any form — "claim X", "start X", "take X",
+"do X", a short code (`AR2`, `ARR1`, `C2A-R4`), a workstream id, a task, feature,
+requirement, or ask — treat the **task packet as the complete brief**. Do not
+ask the user to re-explain it, and do not work from the chat message alone.
+
+1. **Resolve the name to a packet.** Search
+   `custodian/docs/ai_context/task_packets/` (and `archived/`) for the name:
+   `rtk grep -i "<name>" custodian/docs/ai_context/task_packets`. Short codes
+   appear in packet text, roadmaps (e.g.
+   `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`), and
+   `*_CLAUDE_SUMMARY.md` files; the packet's `Workstream:` line is the canonical
+   id. `python3 custodian/tools/agent/dispatch.py status` lists claimable work.
+   Paired review packets are `REVIEW_<NAME>.md` (workstream `review-<id>`).
+2. **If the user says a packet is "ready" but your tree shows `blocked`,** the
+   claim reads fetched `origin/main`; run `dispatch.py claim` and let it verify
+   rather than editing status by hand. Re-read the packet in the claimed worktree.
+   If the explicitly requested packet is dependency-blocked, recursively work
+   its incomplete dependency chain in DAG order: dispatch-claim each immediate
+   `ready`/`auto` predecessor, complete it through its required review and normal
+   lifecycle, then re-check and continue until the requested packet is claimable
+   or a real blocker is reached. Do not jump lanes or change packet metadata to
+   manufacture eligibility. Stop at manual-dispatch, refresh, human-decision,
+   planning-return, failed-prerequisite, or other unresolved execution gates.
+3. **Claim, then read the packet in the worktree.** Its fields are the
+   instructions: `Goal`, `Completion boundary`, `Work surface`, `Change`,
+   `Preserve`, `Non-goals`, `Acceptance`, `Validation`, `Visual review`,
+   `Task overrides`, `Deferred`, plus `Depends on` / `Locks` / dependency gates and
+   `Recommended Implementation Order`. Also read the packet's `Task-specific
+   authority` and `Evidence` files (design docs, prior summaries) before editing.
+4. **Explicit user instructions win** over the packet only where the user states
+   them; otherwise do not invent scope, and do not expand past `Non-goals`.
+   Stop and report if a packet gate says to return to planning.
+5. **Close out in the packet's own terms:** fill `Completion Truth` and
+   `Execution Feedback`, follow `Validation` and `Visual review` (the agent never
+   self-approves aesthetics), and write the closing summary file below.
+
+If a packet is missing information an agent needed, that is packet drift: note
+it in `Execution Feedback` → `Tooling / docs drift discovered`.
+
+## Closing Summary Files
+
+Every agent writes the summary that normally closes a message to
+`<TASK_NAME>_CLAUDE_SUMMARY.md` at the repo root, and pushes it with the work.
+
+- **Name it after the work slice, not the message.** `C2A_R4_CLAUDE_SUMMARY.md`,
+  `UNARMED_FAST_CHAIN_PART_C_CLAUDE_SUMMARY.md`, `OPERATOR_SLICE_D_CLAUDE_SUMMARY.md`.
+- **One file per task.** Overwrite the previous version as the task advances;
+  never append, never create a second file for the same slice.
+- **Stage it in the same commit as the work it describes.** If the work has
+  already landed, a follow-up commit is the fallback, not the intent.
+- **The durable file is the canonical handoff record.** Keep the substantive
+  completion/handoff summary in the file. During autonomous successor execution,
+  do not stop merely to paste that full summary into terminal/chat; claim the
+  eligible named successor and continue. When a human/ChatGPT gate is reached,
+  the user-facing message may be the compact lifecycle unblock card instead of
+  duplicating the entire summary. At final chain completion, a concise ordinary
+  completion reply is still appropriate.
+- **It is not a substitute for the authority docs, and they are not a substitute
+  for it.** Updating `CURRENT_STATE.md`, a task packet, `FILE_INDEX.md`, an
+  architecture contract or an ownership map does not discharge this. Those record
+  what the repo now *is*; the summary records what this slice *did* — the
+  measurements, the negative controls, what was deferred, and what went wrong on
+  the way. This distinction is exactly where it tends to get skipped.
+
+**Why:** the work is followed across sessions and machines. A summary that exists
+only in terminal scrollback is gone the moment the session ends or context is
+compacted. In the repo it travels with the branch and is reviewable next to the
+diff.
+
+Say the awkward parts in it. A summary that only records what worked is not worth
+reading next to the diff, which already shows that.
+
+Every normal implementation closing summary also includes this compact process
+receipt:
+
+```text
+## Process Feedback
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: success | partial | blocked
+- Friction severity: none | low | medium | high
+- What went wrong: none | ...
+- Root cause / contributing factors: none | ...
+- Prevention / pipeline improvement: none | ...
+- Tooling / docs drift discovered: none | ...
+- Follow-up: none | fixed-in-scope | <workstream-id> | manual-follow-up
+- What worked: optional
+```
+
+Every packeted closing summary ends with:
+
+```text
+## Next Handoff
+- Next workstream: <workstream-id | none>
+- Next packet state: ready | dependency-gated | refresh-required | human-required | none
+- Refresh owner: none | chatgpt-user | execution-agent
+- ChatGPT/user planning refresh required: yes | no
+- Authoring chat: <ChatGPT conversation URL | not-recorded | n/a>
+- Refresh reason: none | ...
+- Next action: ...
+- Blockers or open questions: none | ...
+```
+
+This durable `Next Handoff` drives autonomous continuation. When
+`ChatGPT/user planning refresh required: no` and the exact successor is
+eligible, the execution agent claims it itself and continues rather than
+handing the packet name to the user. When that field is `yes`, the user-facing
+terminal/chat handoff should normally collapse to:
+
+```text
+PLANNING REFRESH REQUIRED
+Authoring Chat: <exact recorded URL>
+Workstream: <workstream-id>
+Persistent Summary: <repo-relative *_CLAUDE_SUMMARY.md path>
+```
+
+The user should only need to open the linked conversation and paste the
+workstream ID; the durable summary/packet carries the recap.
+
+This is the immediate successor in the current packet's own program/DAG, not a
+random globally eligible task. Architecture/design-sensitive refreshes belong to
+`chatgpt-user`: the execution/review agent reports exact live drift and evidence,
+then tells the user to bring the originating ChatGPT conversation back to ChatGPT
+when its URL is available. Conversation URLs must be copied only from durable
+packet/history metadata or user-provided input; never infer or invent one.
+A purely mechanical live-main refresh may be assigned to `execution-agent`.
+
+The purpose is to improve the agent pipeline, not praise the run. Keep
+`What worked` terse. For packeted V2 work, mirror the same receipt into the
+packet's `## Execution Feedback` section before archive. If a repeatable
+medium/high-severity process problem is found, fix the small safe issue in-scope
+or name/create the follow-up rather than burying it in prose.
+
+## Run Artifact Finalization
+
+Before `workstream.py finish` may tear down an implementation worktree, run
+artifacts must be resolved explicitly. Associated task packets must be marked
+complete, moved to `custodian/docs/ai_context/task_packets/archived/`, and
+removed from active/recently-complete packet-index sections. Untracked files are
+classified and block finish until the agent deliberately commits durable
+artifacts or removes disposable scratch output. Asset V2 source/inbox material
+is never treated as disposable run debris. Validation JSON may remain ephemeral
+unless the task requires durable evidence; the required `<TASK>_CLAUDE_SUMMARY.md`
+remains committed at repository root. The finish path never silently deletes an
+ambiguous artifact.
+
+<!-- code-review-graph MCP tools -->
+## MCP Tools: code-review-graph
+
+Use code-review-graph as an **opportunistic structural accelerator**, not as a
+cold-start prerequisite for every ephemeral worktree.
+
+### CUSTODIAN worktree policy
+
+- The persistent coordination checkout is the maintained/shared CRG baseline.
+  In a linked agent worktree, derive it with:
+  `COORD_ROOT="$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")"`.
+- A linked/ephemeral worktree does **not** need its own graph by default. Do not
+  run `build_or_update_graph` or a full `code-review-graph update` merely
+  because the first graph call reports `missing_graph`, `not_ready`, an empty
+  graph, stale coverage, or no mapped symbols.
+- From a linked worktree, CRG may point at `$COORD_ROOT` for baseline
+  architecture, callers/dependents, and likely-test orientation. Treat that as
+  a hint only. Confirm every symbol/path used for implementation or review
+  against the **current worktree** and use the worktree diff as change truth.
+- Never use the coordination-root graph as proof of branch-local changes that
+  are not present in that checkout.
+- Build/maintain a worktree-local graph only when the task explicitly benefits
+  from it; opt in with `CRG_HOOK_WORKTREES=1`.
+- If one cheap graph attempt is unusable, fall back immediately to targeted
+  symbol/path reads. Do not spend task time repairing CRG ceremony.
+
+### CRG install contract
+
+- Claude (`.mcp.json`), the refresh hook (`tools/crg-refresh.sh`), and the
+  user-level `~/.codex/config.toml` all run the same pinned, lightweight
+  `code-review-graph==<CRG_VERSION>` from `tools/crg-pin.env`. Do not add the
+  `[embeddings]` extra: it pulls torch + CUDA (~5.9 GB in the uv cache) and the
+  root graph has no embeddings. Without them `semantic_search_nodes_tool` is
+  keyword/FTS search, not vector search.
+- MCP servers run with a read-only `--tools` allowlist, so build/postprocess/
+  embed/refactor-apply tools are not exposed. Graph updates go through
+  `tools/crg-refresh.sh` (the post-commit and session-start hooks). This does
+  not intercept a direct `code-review-graph build|update` CLI call; the
+  worktree skip above covers only `crg-refresh.sh`.
+- Verify drift with `python3 tools/check_crg_config.py` after touching any CRG
+  config. Each MCP server is one process per session over one shared database;
+  that is expected.
+
+### Task-scoped Repomix context
+
+For broad multi-file tasks, a packet may provide a bounded `## Context Pack`
+with repo-relative Repomix include globs. Generate it **from the claimed
+worktree**, not the persistent coordination checkout:
+
+```bash
+scripts/ai/pack-context.sh task "<comma-separated include globs>" "<workstream-id>"
+```
+
+The output is ignored under `.ai/task-context/`. Generate it once at task
+start (and again only after a material scope change). It is a navigation/context
+snapshot, never repository authority; exact live files and `git diff` remain
+truth.
+
+### When the graph is usable
+
+- **Exploring code**: `semantic_search_nodes_tool` or `query_graph_tool`
+- **Understanding impact**: `get_impact_radius_tool`
+- **Code review**: `detect_changes_tool` + `get_review_context_tool`
+- **Finding relationships**: `query_graph_tool` with callers_of/callees_of/imports_of/tests_for
+- **Architecture questions**: `get_architecture_overview_tool` + `list_communities_tool`
+
+Keep graph calls narrow and token-efficient. Prefer `detail_level="minimal"`
+and escalate only when needed.
+</file>
+
+<file path="design/02_features/animation/OPERATOR_3D_TO_2_5D_PRODUCTION_ROADMAP_V1.md">
+# Operator 3D to 2.5D Production Roadmap V1
+
+Status: planned; candidate-only; no production approval
+Reviewed main: 4e3e88df4512f5bc8e4088d087b7bee3b974d3fe
+Authoring chat: not-recorded
+Date: 2026-10-30
+
+## Purpose
+
+Build a repeatable offline Operator 3D/FBX -> verified local rig motion -> eight independent 128x128 RGBA views -> candidate package / atlases -> Godot preview -> human review -> established Operator Workbench/Asset Pipeline V2 release process. This does not revive live 3D gameplay or create an alternate runtime selector.
+
+## Current source and tool ownership (2026-10-31)
+
+- The exact experimental ITER005 Blender master and GLB were Git-LFS objects on
+  `agent/operator-3d-master-modeling-proof-v1-iter005` at
+  `6b89c4d503bb2d73d2783443d4280f313c681bfa`. The source/tooling integration
+  workstream has prepared a byte-verified snapshot under
+  `custodian/asset_drop/source_work/operator/operator_3d_master/masters/`;
+  this lineage does not make the model production-approved.
+- Static, unrigged GLB inspection and static eight-direction proofs belong to
+  `custodian/tools/operator/model_to_sprite.py`. The historical static
+  Meshy/GLB pipeline is an inspected source archive; its old README reference
+  to `custodian/tools/iteration/asset_pipeline.py` is stale. The live command is
+  the model-to-sprite entrypoint. Rigged GLBs remain outside this static path.
+- FBX action inspection, retargeting, reusable motion, animated renders, motion
+  QA and animation candidate receipts remain owned by
+  `custodian/tools/operator/animation_compiler/`. The old static renderer is not
+  an animation renderer. Neither path publishes runtime assets or grants art
+  approval.
+- The accepted 128px full-body 2.5D source is the visual-design authority, but
+  its complete animation cohort is not runtime-promoted. The runtime-promotion
+  record still identifies `legacy_96` as live. This distinction does not change
+  runtime selection or timing authority.
+- The Neutral Idle proof and executor review cited below are historical
+  evidence snapshots. The candidate remains artistically unapproved; their old
+  workstream heads and review paths are not current branch-state claims.
+
+## Already-owned workstreams
+
+- Historical executor snapshot (recorded 2026-10-30): branch `agent/operator-3d-animation-batch-executor-v1` at `16e6b0b353d00731541721818e98fc8cf343974b`; corrected Neutral Idle receipt `5c237de902397e1bae1f0de6bc3951334369b95db46c9b9e9064ef38b916853b`; Awakening preview manifest `/CUSTODIAN/visual_review/operator-3d-animation-batch-executor-v1/20261030T032053Z/REVIEW_MANIFEST.json`. This records that snapshot only. Check the dispatcher and workstream lifecycle for current ownership; the candidate remains artistically unapproved.
+- The existing executor packet already owns Slices B–D: INSPECT, RETARGET, RENDER, QA, PACKAGE, deterministic cache/resume, real multi-FBX first batch and downstream handoff DEFINITION. Do not create duplicate executor/batch packets. Finish and independently review this scope first.
+- Running Task 015 ITER005 remains experimental on agent/operator-3d-master-modeling-proof-v1-iter005; the last evidence commit is 6b89c4d503bb2d73d2783443d4280f313c681bfa. Run cycle: 21 frames / 30fps / 0.70s. Integer-frame penetration was cleared, but subframes retain right -8.82mm and left -6.09mm examples. RUN_MOTION_NEEDS_REPAIR and existing owner preservation remain.
+- The 42-bone ITER005 master and gated legacy .meshy tooling belong to experimental model branches; an exact compatible rig is not itself an approved character model.
+- Production Operator timing, verified art, single selector/catalog and coherent generation-cohort promotion remain governed by design/02_features/animation/OPERATOR_2_5D_VISUAL_CONTRACT.md and existing draft/manual operator-2-5d-runtime-promotion (WB25-6). Do not mint a competing 3D runtime promotion packet.
+
+## Newly authored successor packet pairs
+
+| Workstream | Intended new boundary | Initial state | Refresh |
+| --- | --- | --- | --- |
+| operator-3d-directional-atlas-packaging-v1 | Candidate-only multi-page, deterministic 8-way RGBA atlas index and round-trip QA, not executor PACKAGE or runtime ingest | draft/manual | After review-operator-3d-animation-batch-executor-v1, inspect actual PACKAGE first; cancel this task if already equivalent |
+| operator-3d-running-contact-followup-v1 | One reversible experimental contact derivative, not the preserved Task 015 claim | draft/manual | Reconcile original owner and human gait review; resume old Task 015 if still active |
+| operator-3d-master-source-compatibility-v1 | Read-only source/master compatibility proof for future authorized GLB/Blender masters | draft/manual | Reconcile model branches/validator and authorized source; no model approval |
+
+Each pair has its own fresh-context post-land review. Draft/manual means explicitly NOT claimable. For promotion, first resolve the recorded gate, run targeted validate_task_packet_authoring.py on both packet files, regenerate the Ready/Auto index ONLY with task_packet_index.py --write, verify publication inputs at main, and run dispatch.py audit.
+
+## Gates
+
+1. Human visual refresh: Decide whether the corrected Neutral Idle hands, stance, Southwest last-row contact (152/263 frames) and subtle motion are acceptable. Preview mechanism acceptance does not imply art approval. Candidate-only executor development may be authorized separately.
+2. Execution-agent technical refresh: After the original executor and its independent review land, inspect cache identity, PACKAGE behavior and observed repeat-render nondeterminism (19/24 decoded RGBA repeats, 0/24 PNG byte repeats). Do not rebrand failed repeatability as deterministic; escalate new material design decisions.
+3. Human/model refresh: Running ITER005 gait and subframe contact verdict, old model workstream claim and source provenance before any new derivative or master admission.
+4. Human production refresh: Choose real complete animation cohort and frame projection/loop/FPS policy. The 128px canonical frame root (64,106), direction order N/NE/E/SE/S/SW/W/NW, fixed scale and no mirroring are already locked. Source FBX FPS is preview-only. WB25-6 controls actual release, not this roadmap.
+
+## Candidate outputs and Asset V2 boundary
+
+Verified Neutral Idle: 8 x 263 x 128x128 RGBA at 30 authored preview FPS. A separate verified Idle source targets 250 unique frames per direction if its duplicate endpoint proof remains valid. One atlas page may hold 16x16 128px cells (2048x2048), with a second partial page for a 263-frame direction. Preserve per-cell frame mapping and exact decoded RGBA, including RGB beneath zero alpha. All candidate-only renders/atlases remain in ignored custodian/.ai or an external proof root. Do not invent asset_drop/inbox family IDs or production runtime filenames. Once a real family/state is chosen and approved, derive its custodian/asset_drop/inbox/<registered-family>/<registered-state>.png path and family schema from the current registered Asset Pipeline V2/Operator contract.
+
+Do not modify original FBX/.blend masters, release claims/locks, delete visual reviews, or claim production timing. The compiler example batch intentionally records unavailable repository inputs; host-only files must be separately verified, not silently assigned fabricated hashes.
+
+## Next
+
+Historical next step recorded 2026-10-30: resolve the executor's human visual gate before resuming that executor. For current source/tooling and model work, use the live dispatcher and the dependency-gated packet states; this roadmap's older branch and claim snapshots do not establish current ownership.
+</file>
+
+</files>
