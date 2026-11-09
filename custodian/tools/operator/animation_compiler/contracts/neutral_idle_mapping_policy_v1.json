@@ -1,0 +1,26 @@
+{
+  "schema": "custodian.operator_neutral_idle_mapping_policy.v1",
+  "policy_id": "neutral_idle_mixamo_to_smartrig_iter005",
+  "version": "1.0",
+  "strategy": "same_name_world_rotation_delta",
+  "source_only_bone_policy": "ignore_only_explicitly_listed_finger_chains",
+  "allowed_unmapped_source_bones": [
+    "mixamorig:LeftHandIndex1", "mixamorig:LeftHandIndex2", "mixamorig:LeftHandIndex3", "mixamorig:LeftHandIndex4",
+    "mixamorig:LeftHandMiddle1", "mixamorig:LeftHandMiddle2", "mixamorig:LeftHandMiddle3", "mixamorig:LeftHandMiddle4",
+    "mixamorig:LeftHandPinky1", "mixamorig:LeftHandPinky2", "mixamorig:LeftHandPinky3", "mixamorig:LeftHandPinky4",
+    "mixamorig:LeftHandRing1", "mixamorig:LeftHandRing2", "mixamorig:LeftHandRing3", "mixamorig:LeftHandRing4",
+    "mixamorig:LeftHandThumb1", "mixamorig:LeftHandThumb2", "mixamorig:LeftHandThumb3", "mixamorig:LeftHandThumb4",
+    "mixamorig:RightHandIndex1", "mixamorig:RightHandIndex2", "mixamorig:RightHandIndex3", "mixamorig:RightHandIndex4",
+    "mixamorig:RightHandMiddle1", "mixamorig:RightHandMiddle2", "mixamorig:RightHandMiddle3", "mixamorig:RightHandMiddle4",
+    "mixamorig:RightHandPinky1", "mixamorig:RightHandPinky2", "mixamorig:RightHandPinky3", "mixamorig:RightHandPinky4",
+    "mixamorig:RightHandRing1", "mixamorig:RightHandRing2", "mixamorig:RightHandRing3", "mixamorig:RightHandRing4",
+    "mixamorig:RightHandThumb1", "mixamorig:RightHandThumb2", "mixamorig:RightHandThumb3", "mixamorig:RightHandThumb4"
+  ],
+  "target_only_bone_policy": "leave_local_pose_at_rest_and_inherit_parent_motion",
+  "allowed_hierarchy_inherited_target_bones": [
+    "Bone_004", "Bone_005", "Bone_006", "Bone_007", "Bone_008", "Bone_009", "Bone_010", "Bone_011",
+    "Bone_012", "Bone_013", "Bone_017", "Bone_018", "Bone_022", "Bone_023", "Bone_027", "Bone_028", "headfront"
+  ],
+  "root_bone": "mixamorig:Hips",
+  "root_motion": "extract_displacement_to_metadata_and_hold_sprite_root_in_place"
+}

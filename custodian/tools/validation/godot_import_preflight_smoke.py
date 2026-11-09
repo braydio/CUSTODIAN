@@ -180,6 +180,32 @@ def main() -> int:
             print(f"FAIL: missing remap path was not rejected: {detail}")
             return 1
 
+    # Sparse checkouts leave tracked sidecars off disk on purpose; a referenced
+    # sidecar that is skip-worktree must not read as "unreadable".
+    with tempfile.TemporaryDirectory(prefix="godot-import-sparse-") as temp:
+        root = Path(temp)
+        project = root / "custodian"
+        assets = project / "content" / "sparse"
+        assets.mkdir(parents=True)
+        (project / "scenes").mkdir()
+        _git(root, "init", "-q")
+        relative = "content/sparse/omitted.png"
+        (assets / "omitted.png").write_bytes(b"fixture source")
+        (assets / "omitted.png.import").write_text(_sidecar(relative, "uid://omitted"), encoding="utf-8")
+        (project / "scenes" / "sparse.tscn").write_text(
+            f'[gd_scene]\n[ext_resource type="Texture2D" path="res://{relative}" id="1"]\n', encoding="utf-8"
+        )
+        _git(root, "add", "custodian")
+        (assets / "omitted.png.import").unlink()
+        detail = preflight_detail(project)
+        if not detail or "unreadable sidecar" not in detail:
+            print(f"FAIL: a referenced sidecar missing without sparse omission must still block: {detail}")
+            return 1
+        _git(root, "update-index", "--skip-worktree", f"custodian/{relative}.import")
+        if preflight_detail(project) is not None:
+            print("FAIL: sparse-omitted sidecar blocked import")
+            return 1
+
     print("godot_import_preflight_smoke: PASS")
     return 0
 

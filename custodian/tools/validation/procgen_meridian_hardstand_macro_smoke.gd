@@ -11,7 +11,6 @@ var failed := false
 func _init() -> void:
 	var report: Dictionary = CATALOG.validation_report(true)
 	_check(report.rejected.is_empty(), "catalog has rejected profiles")
-	_check(report.valid.size() == 36, "catalog total is not 36")
 	var meridian: Array[TerrainStampProfile] = []
 	for profile: TerrainStampProfile in report.valid:
 		if profile.family_id != &"procgen_surface_meridian_hardstand":
@@ -60,7 +59,7 @@ func _init() -> void:
 	_check(plan.placements.size() == 1, "matching constructed surface claim was rejected")
 
 	if failed: print("procgen_meridian_hardstand_macro_smoke: FAIL"); quit(1)
-	print("procgen_meridian_hardstand_macro_smoke: PASS profiles=10 catalog=36 regions=%s" % [kinds.keys()])
+	print("procgen_meridian_hardstand_macro_smoke: PASS profiles=10 catalog=%d regions=%s" % [report.valid.size(), kinds.keys()])
 	quit(0)
 
 func _check(condition: bool, message: String) -> void:

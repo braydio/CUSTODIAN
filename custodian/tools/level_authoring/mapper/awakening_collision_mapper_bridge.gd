@@ -114,6 +114,7 @@ static func make_draft(polylines: Array, owner_id: String, purpose: String, geom
 			if point is Vector2:
 				world_points.append([point.x, point.y])
 		var metadata: Dictionary = proposal_metadata[index] if index < proposal_metadata.size() and proposal_metadata[index] is Dictionary else {}
+		var source_art: Variant = metadata.get("source_art", {"resource": "", "world_transform": [], "source_pixel_points": []})
 		proposals.append({
 			"id": str(metadata.get("id", "awakening-proposal-%03d" % (index + 1))),
 			"zone_id": zone_for_point((points[0] as Vector2) if not points.is_empty() else Vector2.ZERO),
@@ -123,7 +124,7 @@ static func make_draft(polylines: Array, owner_id: String, purpose: String, geom
 			"world_points_px": world_points,
 			"geometry_form": _geometry_form(points),
 			"bounds_px": _point_bounds(points),
-			"source_art": {"resource": "", "world_transform": [], "source_pixel_points": []},
+			"source_art": source_art.duplicate(true) if source_art is Dictionary else source_art,
 		})
 	return {"schema": SCHEMA, "revision": 1.0, "base": {"scene_git_sha": scene_sha, "layout_git_sha": layout_sha}, "snap_px": snap, "proposals": proposals}
 
@@ -160,7 +161,11 @@ static func zone_for_point(point: Vector2) -> String:
 static func art_provenance(root: Node, points: Array) -> Dictionary:
 	if points.is_empty(): return {"resource": "", "world_transform": [], "source_pixel_points": []}
 	var sprite := _sprite_for_world_point(root, points[0] as Vector2)
-	if sprite == null or sprite.texture == null:
+	return art_provenance_for_sprite(sprite, points)
+
+
+static func art_provenance_for_sprite(sprite: Sprite2D, points: Array) -> Dictionary:
+	if sprite == null or sprite.texture == null or points.is_empty():
 		return {"resource": "", "world_transform": [], "source_pixel_points": []}
 	var source_points: Array = []
 	var source_rect := sprite.get_rect()
@@ -221,6 +226,9 @@ static func validate_draft(draft: Variant, scene_sha: String, layout_sha: String
 	if not draft is Dictionary or str((draft as Dictionary).get("schema", "")) != SCHEMA:
 		return ["malformed_or_unknown_draft_schema"]
 	var data := draft as Dictionary
+	var snap: Variant = data.get("snap_px", 0.0)
+	if not _finite_number(snap) or float(snap) <= 0.0:
+		errors.append("invalid_snap_interval")
 	var base: Variant = data.get("base")
 	if not base is Dictionary:
 		return ["draft_base_provenance_missing"]
@@ -235,6 +243,35 @@ static func validate_draft(draft: Variant, scene_sha: String, layout_sha: String
 			errors.append("malformed_proposal")
 			continue
 		var proposal := proposal_variant as Dictionary
+		if str(proposal.get("id", "")).strip_edges().is_empty():
+			errors.append("missing_proposal_id")
+		if str(proposal.get("proposal_mode", "")) not in ["additive", "replace_existing"]:
+			errors.append("invalid_proposal_mode")
+		var source_art: Variant = proposal.get("source_art")
+		if not source_art is Dictionary:
+			errors.append("source_art_provenance_missing")
+		else:
+			var art := source_art as Dictionary
+			var transform: Variant = art.get("world_transform")
+			var source_points: Variant = art.get("source_pixel_points")
+			if not art.has("resource") or typeof(art.get("resource")) != TYPE_STRING or not transform is Array or not source_points is Array:
+				errors.append("source_art_provenance_malformed")
+			elif not str(art.get("resource", "")).is_empty():
+				var world_points: Variant = proposal.get("world_points_px")
+				if (transform as Array).size() != 6 or not world_points is Array or (source_points as Array).size() != (world_points as Array).size():
+					errors.append("source_art_provenance_malformed")
+				else:
+					for value: Variant in transform:
+						if not _finite_number(value):
+							errors.append("source_art_provenance_malformed")
+							break
+					for source_point: Variant in source_points:
+						if not source_point is Array or (source_point as Array).size() != 2:
+							errors.append("source_art_provenance_malformed")
+							break
+						if not _finite_number(source_point[0]) or not _finite_number(source_point[1]):
+							errors.append("source_art_provenance_malformed")
+							break
 		if str(proposal.get("owner_id", "")).strip_edges().is_empty():
 			errors.append("missing_owner")
 		if str(proposal.get("purpose", "")).strip_edges().is_empty():
@@ -248,6 +285,9 @@ static func validate_draft(draft: Variant, scene_sha: String, layout_sha: String
 		var parsed_points: Array[Vector2] = []
 		for raw_point: Variant in points:
 			if not raw_point is Array or (raw_point as Array).size() != 2:
+				errors.append("malformed_vertex")
+				continue
+			if not _finite_number(raw_point[0]) or not _finite_number(raw_point[1]):
 				errors.append("malformed_vertex")
 				continue
 			parsed_points.append(Vector2(float(raw_point[0]), float(raw_point[1])))
@@ -386,6 +426,10 @@ static func _bounds(points: Array[Vector2]) -> Rect2:
 	return Rect2(min_point, max_point - min_point)
 
 
+static func _finite_number(value: Variant) -> bool:
+	return typeof(value) in [TYPE_INT, TYPE_FLOAT] and is_finite(float(value))
+
+
 static func atomic_write_readback(path: String, draft: Dictionary) -> bool:
 	var json := JSON.stringify(draft, "  ")
 	var parsed: Variant = JSON.parse_string(json)
@@ -421,3 +465,42 @@ static func atomic_write_readback(path: String, draft: Dictionary) -> bool:
 		return false
 	DirAccess.remove_absolute(path + ".bak")
 	return true
+
+
+static func write_capture_bundle(base_path: String, image: Image, payload: Dictionary) -> Dictionary:
+	if base_path.strip_edges().is_empty(): return {"ok": false, "error": "output_path_empty"}
+	if not base_path.is_absolute_path(): return {"ok": false, "error": "output_path_must_be_absolute"}
+	if image == null or image.is_empty(): return {"ok": false, "error": "viewport_capture_unavailable"}
+	var png_path := base_path + ".png"
+	var json_path := base_path + ".json"
+	if FileAccess.file_exists(png_path) or FileAccess.file_exists(json_path) or FileAccess.file_exists(png_path + ".tmp") or FileAccess.file_exists(json_path + ".tmp"):
+		return {"ok": false, "error": "output_path_occupied"}
+	var json := JSON.stringify(payload, "  ")
+	var png_temp := png_path + ".tmp"
+	var json_temp := json_path + ".tmp"
+	DirAccess.make_dir_recursive_absolute(base_path.get_base_dir())
+	if image.save_png(png_temp) != OK:
+		DirAccess.remove_absolute(png_temp)
+		return {"ok": false, "error": "png_write_failed"}
+	var file := FileAccess.open(json_temp, FileAccess.WRITE)
+	if file == null:
+		DirAccess.remove_absolute(png_temp)
+		return {"ok": false, "error": "json_write_failed"}
+	file.store_string(json)
+	file.close()
+	var readback := FileAccess.open(json_temp, FileAccess.READ)
+	var parsed: Variant = JSON.parse_string(readback.get_as_text()) if readback != null else null
+	if readback != null: readback.close()
+	if not parsed is Dictionary or JSON.stringify(parsed, "  ") != json:
+		DirAccess.remove_absolute(png_temp)
+		DirAccess.remove_absolute(json_temp)
+		return {"ok": false, "error": "json_readback_mismatch"}
+	if DirAccess.rename_absolute(png_temp, png_path) != OK:
+		DirAccess.remove_absolute(png_temp)
+		DirAccess.remove_absolute(json_temp)
+		return {"ok": false, "error": "png_publish_failed"}
+	if DirAccess.rename_absolute(json_temp, json_path) != OK:
+		DirAccess.remove_absolute(png_path)
+		DirAccess.remove_absolute(json_temp)
+		return {"ok": false, "error": "json_publish_failed"}
+	return {"ok": true, "png_path": png_path, "json_path": json_path, "json_sha256": FileAccess.get_sha256(json_path)}

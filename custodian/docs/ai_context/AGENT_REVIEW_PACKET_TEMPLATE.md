@@ -1,5 +1,7 @@
 # AGENT REVIEW PACKET TEMPLATE
 
+Use full 40-character Reviewed main SHAs: the paired-review archived implementation resolver rejects abbreviated hashes.
+
 Repository defaults are inherited from `custodian/AGENTS.md` and the root
 `AGENTS.md`. This template is the paired post-land review counterpart to
 `AGENT_TASK_PACKET_TEMPLATE.md`; see `task_packets/README.md` for the full
@@ -8,6 +10,10 @@ paired review and correction lifecycle this packet participates in.
 Copy this file into `custodian/docs/ai_context/task_packets/` alongside the
 implementation packet it pairs with, only when that packet declares
 `Review: auto`.
+
+Inherit the implementation packet's `Category:` ID exactly. Verify it exists
+in `TASK_PACKET_CATEGORIES.json` and validate both packet headers with
+`custodian/tools/agent/check_packet_categories.py` before publication.
 
 Naming convention:
 
@@ -33,6 +39,7 @@ required fresh-review metadata without being blocked by unrelated packet drift.
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-<implementation-id>`
+- Category: `<choose-id-from-TASK_PACKET_CATEGORIES.json>`
 - Kind: `review`
 - Status: `ready`
 - Dispatch: `auto`
@@ -42,7 +49,7 @@ required fresh-review metadata without being blocked by unrelated packet drift.
 - Review: `none`
 - Review target workstream: `<implementation-id>`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/<IMPLEMENTATION_NAME>.md`
-- Reviewed main: `<full or short main SHA being reviewed>`
+- Reviewed main: `<full 40-character immutable main commit SHA>`
 - Authoring chat: `<copy exact implementation Authoring chat URL | not-recorded | n/a>`
 - Visual review: `none | conditional | required`
 - Reviewer context: `fresh`

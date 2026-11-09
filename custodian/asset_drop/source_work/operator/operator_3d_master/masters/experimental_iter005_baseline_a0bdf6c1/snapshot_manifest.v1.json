@@ -1,0 +1,50 @@
+{
+  "approval_state": "experimental",
+  "files": [
+    {
+      "bytes": 76466,
+      "path": "inspection/blend_inspection.v1.json",
+      "sha256": "e9400fcf18d186b071f4024038b6d5b7be353934d4e718b5d46605b2ca9909ab"
+    },
+    {
+      "bytes": 2655,
+      "path": "inspection/glb_inspection.v1.json",
+      "sha256": "d89d4af7795ba2dc76f3d8bdbecab6a44d70dac032af583632bd4648259d95f3"
+    },
+    {
+      "bytes": 4352,
+      "path": "master.v1.json",
+      "sha256": "e7e49c41fcf5c0a5e1835d0afda9f0358b832faf8ebc50f960640f5ece17e672"
+    },
+    {
+      "bytes": 47225804,
+      "path": "operator_run_mixamo_iter005_contact_ik.blend",
+      "sha256": "a0bdf6c1143d23386721299c42d2e76178c0dff841a7e54bd9d9df1bf17dd969"
+    },
+    {
+      "bytes": 47298084,
+      "path": "operator_run_mixamo_iter005_contact_ik.glb",
+      "sha256": "3968f0bbb47b9f0a9775537b669e7b69c972ad948da0ff121b216f26e5021479"
+    },
+    {
+      "bytes": 16163414,
+      "path": "textures/normal.png",
+      "sha256": "99104bf59973815afe271982e7d506dcb0b387a9471b8ed222670ef2a7b88cb6"
+    },
+    {
+      "bytes": 18661874,
+      "path": "textures/texture_0.png",
+      "sha256": "817980f1cb24a817248a88b62d1db0f4aab05952f576ea71b16e1e34d52a6a31"
+    },
+    {
+      "bytes": 11441929,
+      "path": "textures/texture_0_metallic_roughness.png",
+      "sha256": "d0e7094812bfcf4221c2b993a2293fe0cc74b635e705ef4ec003abaaadaded26"
+    }
+  ],
+  "master_contract_sha256": "e7e49c41fcf5c0a5e1835d0afda9f0358b832faf8ebc50f960640f5ece17e672",
+  "master_id": "experimental_iter005_baseline",
+  "schema": "custodian.operator_3d_master_snapshot.v1",
+  "source_branch": "agent/operator-3d-master-modeling-proof-v1-iter005",
+  "source_commit": "6b89c4d503bb2d73d2783443d4280f313c681bfa"
+}

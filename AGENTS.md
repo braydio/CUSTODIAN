@@ -140,6 +140,92 @@ have nothing to do with the legacy hosted terminal.
   standalone services; merely adding or editing YAML does not apply it.
   See `RENDER_DEPLOY_POLICY.md` for the safe validation procedure.
 
+## Atomic Task Packet Publication (required)
+
+When a new implementation/correction packet and its paired review are published,
+publish every existing task-required supporting tool, script, test fixture, schema,
+configuration, manifest, and authoring note in the **same atomic main publication**
+as those packets. The packet must enumerate these concrete paths under
+`Publication inputs:` (or `none` if no auxiliary inputs are needed). Confirm
+that every declared input is tracked at the landed `origin/main` SHA before
+claiming. A sandbox download, pasted script, private chat attachment, stale
+branch, or unmerged worktree is **not** a published dependency. Do not instruct
+Codex to retrieve required implementation inputs exclusively from ChatGPT.
+
+Distinguish already-required inputs from source files the workstream is expressly
+tasked with creating. If a prerequisite is host-private or cannot safely be
+committed, describe the original owner and local verification procedure; do not
+pretend the data was published or silently bypass its gate. Such a packet cannot
+claim readiness if that prerequisite is indispensable and unavailable. This rule
+does **not** authorize altering third-party claims, review verdicts, locks, or
+worktree preservation requirements. Preserve the ordinary workflow and review
+contracts.
+
+## Direct Repository Execution With Connected Tools
+
+**Project-owner directive (2026-10-29):** An assistant with connected repository
+write tools is an implementation participant, not merely an author of Codex or
+Claude instructions. For a user-requested change, prefer inspecting the live
+repository, making the smallest safe change directly, performing available
+focused checks, committing/publishing when permitted, and reporting verified
+results. Do not create a task packet or delegate a trivial documentation fix,
+metadata correction, or bounded housekeeping change solely to have another
+agent perform the edit.
+
+Before mutating, read the applicable repository authority, check current
+`origin/main`, resolve any existing workstream/packet and claim ownership, and
+identify the exact paths and validation obligations. Connected GitHub write
+access does **not** establish access to the user's local host, process liveness,
+worktrees, Blender/Godot runtime, or private source artifacts. Preserve all
+claimed branches, independent-review evidence, locks, and human approval gates.
+Never use direct API writes to bypass a claimed workstream, mandatory review,
+worktree/dispatcher requirements, runtime or Asset V2 approval, or a failed
+validation.
+
+For a **bounded, unclaimed documentation or packet-metadata correction** with
+no host-only acceptance requirement, the project owner permits a direct GitHub
+API edit as a documented exception to the usual local-worktree implementation
+route when that is the available write surface. Use an exact expected
+`origin/main` parent, a non-force atomic update, and narrow changed-path
+verification; include `[skip render]` when the Render isolation rule applies.
+Report the resulting commit and re-read the landed contents. Do not represent
+GitHub publication as synchronization of the user's persistent local checkout;
+that still requires its existing guarded local sync procedure.
+
+For normal packeted implementations, source or runtime edits, and work needing
+host-local tests, use the established dispatcher/workstream lifecycle and
+independent review. Delegate only operations unavailable through connected
+tools or those requiring a distinct reviewer context. Clearly distinguish
+inspected, edited, landed, tested, independently reviewed, and approved.
+
+## Existing-workstream continuity: ownership is not a session veto
+
+**Project-owner directive (2026-10-27):** A Codex session is an expendable worker;
+the canonical workstream ID, existing branch, checkout, Git history, evidence,
+and reviews are the durable work. An absent OR1 supervisor journal or the
+`UNMANAGED_UNKNOWN` diagnosis **alone** does not forbid a new, explicitly
+user-authorized session from continuing the same claim. Do not demand OR2
+parking, a new claim, or a new recovery packet before attempting the supported
+`python3 custodian/tools/agent/workstream.py resume <existing-id>` command.
+
+Before continuation, check the exact branch and attached checkout, latest
+origin state, live processes/writers on the current host, and both tracked and
+untracked changes. Respect any known live competing worker or unresolved
+foreign-host ownership; do not infer process death from age. A clean checkout
+with no conflicting writer may be resumed using the existing lifecycle and its
+mutex under the project owner's authorization. If resume refuses, report its
+**actual failed invariant** rather than citing missing supervisor history.
+Dirty/unique work must be preserved and reconciled, not silently cleaned,
+reset, overwritten, or abandoned. Do not delete or release claims/locks by
+this rule. Pinned independent reviews and evidence/validation gates still apply.
+
+For work already in progress when this policy lands: on the **next safe
+decision boundary**, fetch the current main instructions and re-evaluate
+owner-blocked work against this rule without resetting the active worktree.
+A GitHub commit does not hot-replace prompts already loaded into running agent
+sessions; no claim of instant process-wide delivery is permitted. See
+`custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`.
+
 ## Commit Policy
 
 Normal implementation work follows `implement → validate → commit → land on
@@ -539,6 +625,23 @@ cold-start prerequisite for every ephemeral worktree.
   from it; opt in with `CRG_HOOK_WORKTREES=1`.
 - If one cheap graph attempt is unusable, fall back immediately to targeted
   symbol/path reads. Do not spend task time repairing CRG ceremony.
+
+### CRG install contract
+
+- Claude (`.mcp.json`), the refresh hook (`tools/crg-refresh.sh`), and the
+  user-level `~/.codex/config.toml` all run the same pinned, lightweight
+  `code-review-graph==<CRG_VERSION>` from `tools/crg-pin.env`. Do not add the
+  `[embeddings]` extra: it pulls torch + CUDA (~5.9 GB in the uv cache) and the
+  root graph has no embeddings. Without them `semantic_search_nodes_tool` is
+  keyword/FTS search, not vector search.
+- MCP servers run with a read-only `--tools` allowlist, so build/postprocess/
+  embed/refactor-apply tools are not exposed. Graph updates go through
+  `tools/crg-refresh.sh` (the post-commit and session-start hooks). This does
+  not intercept a direct `code-review-graph build|update` CLI call; the
+  worktree skip above covers only `crg-refresh.sh`.
+- Verify drift with `python3 tools/check_crg_config.py` after touching any CRG
+  config. Each MCP server is one process per session over one shared database;
+  that is expected.
 
 ### Task-scoped Repomix context
 

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "custodian.operator_fbx_inspection_proof.v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "proof_id", "evidence_kind", "inspector_version", "source", "master", "skeleton", "action", "root_motion", "retarget_policy", "compatibility"],
+  "properties": {
+    "schema": {"const": "custodian.operator_fbx_inspection_proof.v1"},
+    "proof_id": {"type": "string", "minLength": 1},
+    "evidence_kind": {"enum": ["blender_inspector", "synthetic_test"]},
+    "inspector_version": {"type": "string", "minLength": 1},
+    "source": {"type": "object", "additionalProperties": false, "required": ["sha256", "importer", "importer_version", "import_settings_sha256"], "properties": {"sha256": {"$ref": "#/$defs/sha256"}, "importer": {"type": "string", "minLength": 1}, "importer_version": {"type": "string", "minLength": 1}, "import_settings_sha256": {"$ref": "#/$defs/sha256"}}},
+    "master": {"type": "object", "additionalProperties": false, "required": ["master_id", "contract_sha256", "blender_project_sha256", "armature_identity_sha256", "rest_pose_sha256", "skeleton_signature_sha256", "mesh_materials_sha256"], "properties": {"master_id": {"type": "string", "minLength": 1}, "contract_sha256": {"$ref": "#/$defs/sha256"}, "blender_project_sha256": {"$ref": "#/$defs/sha256"}, "armature_identity_sha256": {"$ref": "#/$defs/sha256"}, "rest_pose_sha256": {"$ref": "#/$defs/sha256"}, "skeleton_signature_sha256": {"$ref": "#/$defs/sha256"}, "mesh_materials_sha256": {"$ref": "#/$defs/sha256"}}},
+    "skeleton": {"type": "object", "additionalProperties": false, "required": ["identity", "signature_sha256"], "properties": {"identity": {"type": "string", "minLength": 1}, "signature_sha256": {"$ref": "#/$defs/sha256"}}},
+    "action": {"type": "object", "additionalProperties": false, "required": ["identity", "fps", "frame_start", "frame_end", "duration_seconds", "loop_endpoint_duplicate"], "properties": {"identity": {"type": "string", "minLength": 1}, "fps": {"type": "number", "minimum": 0}, "frame_start": {"type": "integer"}, "frame_end": {"type": "integer"}, "duration_seconds": {"type": "number", "minimum": 0}, "loop_endpoint_duplicate": {"type": ["boolean", "null"]}}},
+    "root_motion": {"type": "object", "additionalProperties": false, "required": ["source_state", "trajectory_sha256"], "properties": {"source_state": {"enum": ["present", "absent"]}, "trajectory_sha256": {"oneOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]}}},
+    "retarget_policy": {"type": "object", "additionalProperties": false, "required": ["policy_id", "version", "config_sha256"], "properties": {"policy_id": {"type": "string", "minLength": 1}, "version": {"type": "string", "minLength": 1}, "config_sha256": {"$ref": "#/$defs/sha256"}}},
+    "compatibility": {"type": "object", "additionalProperties": false, "required": ["result", "target_skeleton_signature_sha256"], "properties": {"result": {"enum": ["compatible", "incompatible"]}, "target_skeleton_signature_sha256": {"$ref": "#/$defs/sha256"}}}
+  },
+  "$defs": {"sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}
+}

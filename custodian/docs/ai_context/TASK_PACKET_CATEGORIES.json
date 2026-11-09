@@ -1,0 +1,60 @@
+{
+  "schema": "custodian.packet_categories.v1",
+  "description": "Stable editorial classification for CUSTODIAN task packets. Does not affect dispatcher eligibility or review acceptance.",
+  "categories": [
+    {
+      "id": "operator-actors",
+      "label": "Operator & Actors",
+      "short": "ACTORS",
+      "description": "Operator, characters, rigs, animation, and character presentation."
+    },
+    {
+      "id": "combat-ai",
+      "label": "Combat & AI",
+      "short": "COMBAT",
+      "description": "Weapons, enemies, combat behavior, tactics and encounter AI."
+    },
+    {
+      "id": "world-procgen",
+      "label": "World & Procgen",
+      "short": "WORLD",
+      "description": "Terrain, spatial generation, streaming, physical environment and world simulation."
+    },
+    {
+      "id": "campaign-lore",
+      "label": "Campaign & Lore",
+      "short": "STORY",
+      "description": "Campaign progression, missions, authored destinations, story and environmental narrative."
+    },
+    {
+      "id": "assets-art",
+      "label": "Assets & Art",
+      "short": "ART",
+      "description": "Asset V2, source intake, visual production, rendering materials, audio and VFX pipelines."
+    },
+    {
+      "id": "gameplay-systems",
+      "label": "Gameplay Systems",
+      "short": "SYSTEMS",
+      "description": "Interactions, player systems, buildings, economy, crafting, recovery and other game rules."
+    },
+    {
+      "id": "tools-ux",
+      "label": "Tools & UX",
+      "short": "TOOLS",
+      "description": "Editor/workbench tools, in-game user interfaces, mapping and developer experience."
+    },
+    {
+      "id": "agent-ops",
+      "label": "Agent Operations",
+      "short": "AGENTS",
+      "description": "Task packet lifecycle, dispatcher, agents, validation, reviews and Mission Control."
+    },
+    {
+      "id": "platform-performance",
+      "label": "Platform & Performance",
+      "short": "PLATFORM",
+      "description": "Build infrastructure, deployment, CI, runtime optimization, host and system integration."
+    }
+  ]
+}

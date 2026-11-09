@@ -1,0 +1,41 @@
+# REVIEW: VEHICLE ART DERIVATION V1
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `review-vehicle-art-derivation-v1`
+- Kind: `review`
+- Status: `ready`
+- Dispatch: `auto`
+- Authoring handoff: `auto`
+- Priority: `P1`
+- Depends on: `vehicle-art-derivation-v1`
+- Locks: `none`
+- Review: `none`
+- Review target workstream: `vehicle-art-derivation-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/VEHICLE_ART_DERIVATION_V1.md`
+- Reviewed main: `ad846c21ef7f3d41cb437a9042555e907c3a2a63`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b`
+- Visual review: `conditional`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture, asset-pipeline`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Goal: Independently verify VI3 deterministic derivation and shared sprite-import compatibility.
+- Reviewed implementation acceptance: Verify every Acceptance clause from the archived implementation packet against live main.
+- Review evidence: Durable plan/receipt evidence plus focused fresh transform/Asset V2 tests.
+- Correction threshold: Create correction work only for a confirmed acceptance defect or material evidence gap.
+- Focused validation: Re-run explicit-region, common-registration, derived-state, skin and fixed-layout regression checks.
+- Review focus: SHA binding, stable family registration, derivation lineage, socket-overlay reuse of the body registration, non-destructive skin composition and no second image pipeline.
+- Acceptance: Produce a findings-first independent review with stable IDs/dispositions. Do not patch implementation.
+- Non-goals: Do not redesign or fix implementation directly.
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+
+## Handoff
+- Next workstream: `vehicle-integrator-v1`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b`
+- Refresh reason: `none`
+- Next action: Release VI4 when VI2 review is also complete.
+- Blockers or open questions: `none`
