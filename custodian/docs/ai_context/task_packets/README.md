@@ -144,7 +144,6 @@ normal closeout.
 - `REVIEW_CODEX_ART_IMPORT_MCP_CONTROL.md` — Independently falsify every implementation Acceptance clause of `codex-art-import-mcp` against landed source/tests and the immutable authority chain.
 - `REVIEW_CODEX_ART_IMPORT_QUALITY_GATES.md` — Independently falsify every implementation Acceptance clause of `codex-art-import-quality-gates` against landed source/tests and the immutable authority chain.
 - `REVIEW_CODEX_ART_IMPORT_SEMANTIC_REGISTRATION.md` — Independently falsify every implementation Acceptance clause of `codex-art-import-registration` against landed source/tests and the immutable authority chain.
-- `REVIEW_CODEX_ART_IMPORT_SHARED_TRANSFORM.md` — Independently falsify every implementation Acceptance clause of `codex-art-import-shared-transform` against landed source/tests and the immutable authority c...
 - `REVIEW_COMBAT_ATTACK_TELL_CONTACT_ALIGNMENT_V1.md` — Prove that the shipped actor-wide cue/contact alignment fixes unfair invisible or prematurely resolved contact without breaking damage, parry, dash or ranged...
 - `REVIEW_COMPOUND_ARCHETYPE_PLAYABLE_PROOF.md` — Independently verify the landed implementation of compound-archetype-playable-proof.
 - `REVIEW_COMPOUND_CONNECTED_BUNKER_BLOCKOUT.md` — Independently verify the landed implementation of compound-connected-bunker-blockout.
