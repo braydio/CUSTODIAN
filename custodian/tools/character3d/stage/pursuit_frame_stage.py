@@ -12,7 +12,7 @@ Hard checks per frame:
 - transparent pixels carry zero RGB.
 
 Usage:
-  python3 -I custodian/tools/debug/pursuit_frame_3d_stage.py \
+  python3 -I custodian/tools/character3d/stage/pursuit_frame_stage.py \
       --workspace ~/Projects/.operator-3d-animation-proof/pursuit_frame_3d_v1
 """
 import argparse

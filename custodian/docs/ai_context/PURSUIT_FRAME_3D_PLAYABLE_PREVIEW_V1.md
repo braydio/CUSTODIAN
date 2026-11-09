@@ -13,7 +13,7 @@ A dev-only Godot scene that runs the real game systems with a candidate 3D body:
 - Scene: `custodian/scenes/debug/pursuit_frame_3d_playable_preview.tscn`
 - Root: `custodian/tools/debug/pursuit_frame_3d_playable_preview.gd`
 - Adapter: `custodian/tools/debug/pursuit_frame_3d_candidate_adapter.gd`
-- Staging: `custodian/tools/debug/pursuit_frame_3d_stage.py` → `custodian/.ai/pursuit_frame_3d_preview/` (gitignored)
+- Staging: `custodian/tools/character3d/stage/pursuit_frame_stage.py` → `custodian/.ai/pursuit_frame_3d_preview/` (gitignored)
 
 The scene instances the existing combat playground (real controllable Operator, arena walls)
 and spawns two real `pursuit_frame.tscn` actors under identical conditions: a **legacy**
@@ -140,4 +140,4 @@ enemy position and velocity, root and shadow positions, visible body count and d
 - Extents: `reports/extents_c512_80_clearance4.json`
 - Staged manifest (per action, with source meta hashes): `custodian/.ai/pursuit_frame_3d_preview/manifest.json`
 
-Staging: `python3 -I custodian/tools/debug/pursuit_frame_3d_stage.py --workspace <proof workspace>`
+Staging: `python3 -I custodian/tools/character3d/stage/pursuit_frame_stage.py --workspace <proof workspace>`

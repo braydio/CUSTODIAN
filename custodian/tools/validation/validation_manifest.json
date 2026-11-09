@@ -7806,6 +7806,21 @@
       ],
       "timeout_sec": 60,
       "needs_import": false
+    },
+    {
+      "id": "character3d_tools_unit",
+      "type": "python",
+      "script": "custodian/tools/validation/test_character3d_tools.py",
+      "tier": "unit",
+      "tags": ["character3d", "pursuit_frame", "operator", "contract"],
+      "owners": [
+        "custodian/tools/character3d/**",
+        "custodian/tools/validation/test_character3d_tools.py",
+        "custodian/tools/debug/pursuit_frame_3d_*",
+        "custodian/tools/debug/operator_3d_*"
+      ],
+      "timeout_sec": 120,
+      "needs_import": false
     }
   ]
 }

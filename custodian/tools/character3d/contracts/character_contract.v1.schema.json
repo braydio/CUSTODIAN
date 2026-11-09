@@ -1,0 +1,399 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "custodian.character3d_contract.v1",
+  "title": "Character 3D-to-2.5D contract (v1)",
+  "description": "Describes one rigged character's source identity, eight-direction ordering, physical pixel density, root pivot, canvas classes, per-action metadata, semantics and hashes. Consumed by the stagers, the pipeline driver and the game-side adapter. Validation uses tools/character3d/validate_contract.py, which implements the subset of JSON Schema used here.",
+  "type": "object",
+  "required": [
+    "schema",
+    "character_id",
+    "status",
+    "source",
+    "directions",
+    "render",
+    "game",
+    "canvas_classes",
+    "actions",
+    "staging",
+    "registration"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "custodian.character3d_contract.v1"
+    },
+    "character_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "display_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "enum": [
+        "experimental_debug_preview",
+        "candidate_unapproved",
+        "production_approved"
+      ]
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "master",
+        "motions"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "master": {
+          "type": "object",
+          "required": [
+            "path_hint",
+            "sha256",
+            "skin_joints"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "path_hint": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "skin_joints": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "motions": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": [
+              "included",
+              "path_hint",
+              "sha256",
+              "exclusion_reason"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "included": {
+                "type": "boolean"
+              },
+              "path_hint": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "exclusion_reason": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "directions": {
+      "type": "object",
+      "required": [
+        "order",
+        "azimuth_deg",
+        "mirroring",
+        "screen_convention"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "order": {
+          "const": [
+            "S",
+            "SE",
+            "E",
+            "NE",
+            "N",
+            "NW",
+            "W",
+            "SW"
+          ]
+        },
+        "azimuth_deg": {
+          "const": [
+            0,
+            45,
+            90,
+            135,
+            180,
+            225,
+            270,
+            315
+          ]
+        },
+        "mirroring": {
+          "const": false
+        },
+        "screen_convention": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "render": {
+      "type": "object",
+      "required": [
+        "projection",
+        "elevation_deg",
+        "px_per_m",
+        "root_bone",
+        "root_mode",
+        "engine"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "projection": {
+          "const": "orthographic"
+        },
+        "elevation_deg": {
+          "const": 45
+        },
+        "px_per_m": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "root_bone": {
+          "type": "string",
+          "minLength": 1
+        },
+        "root_mode": {
+          "const": "object"
+        },
+        "engine": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "game": {
+      "type": "object",
+      "required": [
+        "px_per_m",
+        "display_scale",
+        "display_scale_rule"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "px_per_m": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "display_scale": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "display_scale_rule": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "canvas_classes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "width",
+          "height",
+          "root_px",
+          "clearance_px"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+$"
+          },
+          "width": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "height": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "root_px": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "clearance_px": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "actions": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "status",
+          "semantic",
+          "viewport",
+          "source_canvas",
+          "frame_count",
+          "sample_count",
+          "sampling_target_fps",
+          "authored_frame_range",
+          "loop",
+          "clip_fit"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "enum": [
+              "mapped_debug",
+              "inspect_only",
+              "unmapped"
+            ]
+          },
+          "semantic": {
+            "type": "string",
+            "minLength": 1
+          },
+          "viewport": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+$"
+          },
+          "source_canvas": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "frame_count": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sample_count": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sampling_target_fps": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "authored_frame_range": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "type": "number"
+            }
+          },
+          "loop": {
+            "type": "boolean"
+          },
+          "clip_fit": {
+            "enum": [
+              "fits_class",
+              "fits_with_clearance_check_pending",
+              "exceeds_all_classes"
+            ]
+          },
+          "root_px": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "flags": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "viewport_px": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        }
+      }
+    },
+    "staging": {
+      "type": "object",
+      "required": [
+        "output_root",
+        "gitignored",
+        "manifest_name"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "output_root": {
+          "type": "string",
+          "pattern": "^custodian/\\.ai/"
+        },
+        "gitignored": {
+          "const": true
+        },
+        "manifest_name": {
+          "type": "string",
+          "pattern": "^[A-Za-z_]+\\.json$"
+        }
+      }
+    },
+    "dependencies_external": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "registration": {
+      "type": "object",
+      "required": [
+        "policy",
+        "rule"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "policy": {
+          "enum": [
+            "fixed_per_class",
+            "per_action_pivot"
+          ]
+        },
+        "rule": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

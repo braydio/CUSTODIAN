@@ -4,7 +4,7 @@ extends SceneTree
 ## Runs scenes/debug/pursuit_frame_3d_playable_preview.tscn, which instances the real
 ## combat playground, the real Operator and two real pursuit_frame.tscn actors. Checks
 ## movement, presentation, grounding, reversibility and unchanged gameplay stats.
-## Requires the staged candidate frames (custodian/tools/debug/pursuit_frame_3d_stage.py).
+## Requires the staged candidate frames (custodian/tools/character3d/stage/pursuit_frame_stage.py).
 ##
 ## Run: godot --headless --path custodian --script res://tools/validation/pursuit_frame_3d_playable_preview_smoke.gd
 

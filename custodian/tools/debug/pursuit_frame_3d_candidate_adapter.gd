@@ -82,7 +82,7 @@ func _exit_tree() -> void:
 
 func _load_manifest() -> Dictionary:
 	var file := FileAccess.open(MANIFEST_PATH, FileAccess.READ)
-	assert(file != null, "Staged candidate manifest missing: run custodian/tools/debug/pursuit_frame_3d_stage.py")
+	assert(file != null, "Staged candidate manifest missing: run custodian/tools/character3d/stage/pursuit_frame_stage.py")
 	var parsed: Variant = JSON.parse_string(file.get_as_text())
 	assert(parsed is Dictionary, "Staged candidate manifest is not a JSON object")
 	return parsed
