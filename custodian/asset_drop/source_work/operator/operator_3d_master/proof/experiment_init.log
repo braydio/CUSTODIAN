@@ -1,0 +1,32 @@
+{
+  "asset": "/mnt/data/operator_3d_starter/experiments/exp-001/candidate.glb",
+  "sha256": "6cf4f14e0bf507cbcce3a70c33f679a23da130d6a84715aba8721285c29868e2",
+  "parts": 72,
+  "vertices": 6527
+}
+{
+  "schema": "custodian.operator_3d_candidate_qa.v1",
+  "status": "TECHNICAL_PASS_ART_UNREVIEWED",
+  "asset_sha256": "6cf4f14e0bf507cbcce3a70c33f679a23da130d6a84715aba8721285c29868e2",
+  "geometry_count": 72,
+  "bounds_xyz_m": [
+    [
+      -0.74,
+      -0.393,
+      0.022
+    ],
+    [
+      0.74,
+      0.5985,
+      2.002
+    ]
+  ],
+  "nonwatertight_parts": 2,
+  "failures": [],
+  "warnings": [
+    "2 nonwatertight surfaces (expected open cape/hood; inspect those only)"
+  ],
+  "subjective_art_accepted": false,
+  "blender_animation_tested": false
+}
+Immutable experiment staged: /mnt/data/operator_3d_starter/experiments/exp-001

@@ -1,0 +1,14 @@
+07:50:27 | INFO: Data are loaded, start creating Blender stuff
+Info: Saved as "operator_exp007.blend"
+{
+ "saved_blend": "/home/braydenchaffee/Projects/.custodian-worktrees/operator-3d-master-modeling-proof-v1-20261027T094310Z-29f13eccf5dc/custodian/asset_drop/source_work/operator/operator_3d_master/experiments/exp-007/operator_exp007.blend",
+ "parts": 79,
+ "max_ik_reach_error_m": 0.0
+}
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-26 14:00:03)
+
+Blender quit
+/home/braydenchaffee/Projects/.custodian-worktrees/operator-3d-master-modeling-proof-v1-20261027T094310Z-29f13eccf5dc/custodian/asset_drop/source_work/operator/operator_3d_master/scripts/create_blend.py:101: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  mat = bpy.data.materials.new('M__' + cls); mat.use_nodes = True
+/home/braydenchaffee/Projects/.custodian-worktrees/operator-3d-master-modeling-proof-v1-20261027T094310Z-29f13eccf5dc/custodian/asset_drop/source_work/operator/operator_3d_master/scripts/create_blend.py:209: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  scene.world = scene.world or bpy.data.worlds.new('W'); scene.world.use_nodes = False; scene.world.color = (.10, .10, .11)
