@@ -1,0 +1,127 @@
+{
+  "action_count": 16,
+  "completed": true,
+  "duration_ticks": 795,
+  "event_count": 16,
+  "fixture": {
+    "position": [
+      0.0,
+      0.0
+    ]
+  },
+  "media": {
+    "audio": {
+      "available": false
+    },
+    "baseline_audio": null,
+    "visual_diff": null
+  },
+  "operator": {
+    "position": [
+      704.0,
+      -1984.0
+    ]
+  },
+  "probe_sample_count": 102,
+  "registered_parent": {
+    "position": [
+      349.0,
+      -2585.0
+    ]
+  },
+  "road_foreground": {
+    "position": [
+      6.0,
+      -6592.0
+    ]
+  },
+  "road_underlay": {
+    "position": [
+      6.0,
+      -6592.0
+    ]
+  },
+  "stable": {
+    "completed_tick": 795,
+    "visible_visual_anchor_delta_px": null,
+    "visible_visual_anchor_sample_count": 0
+  },
+  "stable_fingerprint": {
+    "algorithm": "sha256",
+    "schema": "custodian.moment_forge.stable_fingerprint.v1",
+    "value": "5fb0e6779a0f65dd0ce433b6332309e070b2622ddab65ad6a6e4ea846cbcc4fd"
+  },
+  "warning_count": 0,
+  "z05_connector": {
+    "position": [
+      349.0,
+      -2585.0
+    ]
+  },
+  "z05_foreground": {
+    "position": [
+      0.0,
+      -3200.0
+    ]
+  },
+  "z05_locker": {
+    "position": [
+      349.0,
+      -2585.0
+    ]
+  },
+  "z05_underlay": {
+    "position": [
+      349.0,
+      -2585.0
+    ]
+  },
+  "z06_foreground": {
+    "position": [
+      0.0,
+      -4320.0
+    ]
+  },
+  "z06_underlay": {
+    "position": [
+      0.0,
+      -4320.0
+    ]
+  },
+  "z07_foreground": {
+    "position": [
+      0.0,
+      -5184.0
+    ]
+  },
+  "z07_underlay": {
+    "position": [
+      0.0,
+      -5184.0
+    ]
+  },
+  "z08_foreground": {
+    "position": [
+      0.0,
+      -5872.0
+    ]
+  },
+  "z08_underlay": {
+    "position": [
+      0.0,
+      -5872.0
+    ]
+  },
+  "z09_foreground": {
+    "position": [
+      -736.0,
+      -5728.0
+    ]
+  },
+  "z09_underlay": {
+    "position": [
+      -736.0,
+      -5728.0
+    ]
+  }
+}

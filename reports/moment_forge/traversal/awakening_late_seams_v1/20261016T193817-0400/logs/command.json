@@ -1,0 +1,43 @@
+{
+  "argv": [
+    "/usr/bin/godot",
+    "--path",
+    "/home/braydenchaffee/Projects/.custodian-worktrees/operator-2-5d-ne-walk-retargeting-20261016T085104Z-d287e799512d/custodian",
+    "--fixed-fps",
+    "60",
+    "--headless",
+    "--script",
+    "res://tools/iteration/godot/moment_runner.gd",
+    "--",
+    "--custodian-dev",
+    "--observe",
+    "--moment-forge",
+    "--moment-scenario",
+    "/home/braydenchaffee/Projects/.custodian-worktrees/operator-2-5d-ne-walk-retargeting-20261016T085104Z-d287e799512d/reports/moment_forge/traversal/awakening_late_seams_v1/20261016T193817-0400/scenario.snapshot.json",
+    "--moment-output",
+    "/home/braydenchaffee/Projects/.custodian-worktrees/operator-2-5d-ne-walk-retargeting-20261016T085104Z-d287e799512d/reports/moment_forge/traversal/awakening_late_seams_v1/20261016T193817-0400",
+    "--moment-capture-mode",
+    "none"
+  ],
+  "capture_mode": "none",
+  "repository": {
+    "branch": "agent/operator-2-5d-ne-walk-retargeting",
+    "changed_files": [
+      "M OPERATOR_2_5D_NE_WALK_RETARGETING_CLAUDE_SUMMARY.md",
+      " M custodian/docs/ai_context/FILE_INDEX.md",
+      " M custodian/tools/operator/ne_walk_retarget/README.md",
+      " M custodian/tools/operator/ne_walk_retarget/run.py",
+      " M custodian/tools/validation/validation_manifest.json",
+      "?? custodian/tools/operator/ne_walk_retarget/MASTER_AUDIT_BRIEF.md",
+      "?? custodian/tools/operator/ne_walk_retarget/master_audit.py",
+      "?? custodian/tools/operator/ne_walk_retarget/rig_audit.lua",
+      "?? custodian/tools/validation/carrow_operations_house_interior_smoke.gd.uid",
+      "?? custodian/tools/validation/npa_showcase_existing_enemy_smoke.gd.uid",
+      "?? custodian/tools/validation/operator_2_5d_composition_preflight_smoke.gd.uid",
+      "?? custodian/tools/validation/operator_ne_rig_master_audit_smoke.py"
+    ],
+    "commit": "ece5a79203b1a8807589e0d8e65bf51b7197d255",
+    "dirty": true
+  },
+  "scenario_sha256": "eb96f4bd28ea3708feb67e0fb961be4c1f734197f499e58d0646ac5c43cf823c"
+}

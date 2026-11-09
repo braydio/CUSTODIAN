@@ -1,0 +1,1484 @@
+{
+	"failures": [],
+	"records": [
+		{
+			"id": "fixture_state",
+			"role": "fixture",
+			"tick": 30,
+			"values": {
+				"checkpoint": "locker_interior"
+			}
+		},
+		{
+			"id": "operator_position",
+			"role": "operator",
+			"tick": 30,
+			"values": {
+				"global_position": [
+					704.0,
+					-1984.0
+				]
+			}
+		},
+		{
+			"id": "z05_underlay_facts",
+			"role": "z05_underlay",
+			"tick": 30,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 0.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": false,
+				"z_index": 0
+			}
+		},
+		{
+			"id": "z05_connector_facts",
+			"role": "z05_connector",
+			"tick": 30,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 0.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": false,
+				"z_index": 1
+			}
+		},
+		{
+			"id": "z05_locker_facts",
+			"role": "z05_locker",
+			"tick": 30,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": true,
+				"z_index": 2
+			}
+		},
+		{
+			"id": "registered_parent_facts",
+			"role": "registered_parent",
+			"tick": 30,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_position": [
+					349.0,
+					-2585.0
+				],
+				"visible": true,
+				"z_index": -4
+			}
+		},
+		{
+			"id": "fixture_state",
+			"role": "fixture",
+			"tick": 90,
+			"values": {
+				"checkpoint": "04_05_a"
+			}
+		},
+		{
+			"id": "operator_position",
+			"role": "operator",
+			"tick": 90,
+			"values": {
+				"global_position": [
+					704.0,
+					-2352.0
+				]
+			}
+		},
+		{
+			"id": "z05_underlay_facts",
+			"role": "z05_underlay",
+			"tick": 90,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": true,
+				"z_index": 0
+			}
+		},
+		{
+			"id": "z05_connector_facts",
+			"role": "z05_connector",
+			"tick": 90,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": true,
+				"z_index": 1
+			}
+		},
+		{
+			"id": "z05_locker_facts",
+			"role": "z05_locker",
+			"tick": 90,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": true,
+				"z_index": 2
+			}
+		},
+		{
+			"id": "registered_parent_facts",
+			"role": "registered_parent",
+			"tick": 90,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_position": [
+					349.0,
+					-2585.0
+				],
+				"visible": true,
+				"z_index": -4
+			}
+		},
+		{
+			"id": "z06_underlay_facts",
+			"role": "z06_underlay",
+			"tick": 95,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 0.0,
+				"global_bounds": [
+					-768.0,
+					-4928.0,
+					1536.0,
+					1216.0
+				],
+				"visible": true,
+				"z_index": 0
+			}
+		},
+		{
+			"id": "z06_foreground_facts",
+			"role": "z06_foreground",
+			"tick": 95,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 0.0,
+				"global_bounds": [
+					-768.0,
+					-4928.0,
+					1536.0,
+					1216.0
+				],
+				"visible": true,
+				"z_index": 10
+			}
+		},
+		{
+			"id": "fixture_state",
+			"role": "fixture",
+			"tick": 150,
+			"values": {
+				"checkpoint": "04_05_b"
+			}
+		},
+		{
+			"id": "operator_position",
+			"role": "operator",
+			"tick": 150,
+			"values": {
+				"global_position": [
+					352.0,
+					-2496.0
+				]
+			}
+		},
+		{
+			"id": "z05_underlay_facts",
+			"role": "z05_underlay",
+			"tick": 150,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": true,
+				"z_index": 0
+			}
+		},
+		{
+			"id": "z05_connector_facts",
+			"role": "z05_connector",
+			"tick": 150,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": true,
+				"z_index": 1
+			}
+		},
+		{
+			"id": "z05_locker_facts",
+			"role": "z05_locker",
+			"tick": 150,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": true,
+				"z_index": 2
+			}
+		},
+		{
+			"id": "registered_parent_facts",
+			"role": "registered_parent",
+			"tick": 150,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_position": [
+					349.0,
+					-2585.0
+				],
+				"visible": true,
+				"z_index": -4
+			}
+		},
+		{
+			"id": "z07_underlay_facts",
+			"role": "z07_underlay",
+			"tick": 160,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 0.0,
+				"global_bounds": [
+					-768.0,
+					-5568.0,
+					1536.0,
+					768.0
+				],
+				"visible": true,
+				"z_index": 0
+			}
+		},
+		{
+			"id": "z07_foreground_facts",
+			"role": "z07_foreground",
+			"tick": 160,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 0.0,
+				"global_bounds": [
+					-768.0,
+					-5568.0,
+					1536.0,
+					768.0
+				],
+				"visible": true,
+				"z_index": 10
+			}
+		},
+		{
+			"id": "fixture_state",
+			"role": "fixture",
+			"tick": 210,
+			"values": {
+				"checkpoint": "04_05_c"
+			}
+		},
+		{
+			"id": "operator_position",
+			"role": "operator",
+			"tick": 210,
+			"values": {
+				"global_position": [
+					0.0,
+					-2608.0
+				]
+			}
+		},
+		{
+			"id": "z05_underlay_facts",
+			"role": "z05_underlay",
+			"tick": 210,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": true,
+				"z_index": 0
+			}
+		},
+		{
+			"id": "z05_connector_facts",
+			"role": "z05_connector",
+			"tick": 210,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": true,
+				"z_index": 1
+			}
+		},
+		{
+			"id": "z05_locker_facts",
+			"role": "z05_locker",
+			"tick": 210,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": true,
+				"z_index": 2
+			}
+		},
+		{
+			"id": "registered_parent_facts",
+			"role": "registered_parent",
+			"tick": 210,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_position": [
+					349.0,
+					-2585.0
+				],
+				"visible": true,
+				"z_index": -4
+			}
+		},
+		{
+			"id": "z08_underlay_facts",
+			"role": "z08_underlay",
+			"tick": 225,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 0.0,
+				"global_bounds": [
+					-512.0,
+					-6304.0,
+					1024.0,
+					864.0
+				],
+				"visible": true,
+				"z_index": 0
+			}
+		},
+		{
+			"id": "z08_foreground_facts",
+			"role": "z08_foreground",
+			"tick": 225,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 0.0,
+				"global_bounds": [
+					-512.0,
+					-6304.0,
+					1024.0,
+					864.0
+				],
+				"visible": true,
+				"z_index": 10
+			}
+		},
+		{
+			"id": "road_underlay_facts",
+			"role": "road_underlay",
+			"tick": 225,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 0.0,
+				"global_bounds": [
+					-378.0,
+					-7040.0,
+					768.0,
+					896.0
+				],
+				"visible": true,
+				"z_index": 0
+			}
+		},
+		{
+			"id": "road_foreground_facts",
+			"role": "road_foreground",
+			"tick": 225,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 0.0,
+				"global_bounds": [
+					-378.0,
+					-7040.0,
+					768.0,
+					896.0
+				],
+				"visible": true,
+				"z_index": 4
+			}
+		},
+		{
+			"id": "fixture_state",
+			"role": "fixture",
+			"tick": 270,
+			"values": {
+				"checkpoint": "dust_interior"
+			}
+		},
+		{
+			"id": "operator_position",
+			"role": "operator",
+			"tick": 270,
+			"values": {
+				"global_position": [
+					0.0,
+					-3200.0
+				]
+			}
+		},
+		{
+			"id": "z05_underlay_facts",
+			"role": "z05_underlay",
+			"tick": 270,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": true,
+				"z_index": 0
+			}
+		},
+		{
+			"id": "z05_connector_facts",
+			"role": "z05_connector",
+			"tick": 270,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 0.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": false,
+				"z_index": 1
+			}
+		},
+		{
+			"id": "z05_locker_facts",
+			"role": "z05_locker",
+			"tick": 270,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 0.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": false,
+				"z_index": 2
+			}
+		},
+		{
+			"id": "registered_parent_facts",
+			"role": "registered_parent",
+			"tick": 270,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_position": [
+					349.0,
+					-2585.0
+				],
+				"visible": true,
+				"z_index": -4
+			}
+		},
+		{
+			"id": "z09_underlay_facts",
+			"role": "z09_underlay",
+			"tick": 290,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 0.0,
+				"global_bounds": [
+					-1088.0,
+					-6112.0,
+					704.0,
+					768.0
+				],
+				"visible": true,
+				"z_index": 0
+			}
+		},
+		{
+			"id": "z09_foreground_facts",
+			"role": "z09_foreground",
+			"tick": 290,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 0.0,
+				"global_bounds": [
+					-1088.0,
+					-6112.0,
+					704.0,
+					768.0
+				],
+				"visible": true,
+				"z_index": 10
+			}
+		},
+		{
+			"id": "fixture_state",
+			"role": "fixture",
+			"tick": 330,
+			"values": {
+				"checkpoint": "05_06"
+			}
+		},
+		{
+			"id": "operator_position",
+			"role": "operator",
+			"tick": 330,
+			"values": {
+				"global_position": [
+					0.0,
+					-3792.0
+				]
+			}
+		},
+		{
+			"id": "z05_underlay_facts",
+			"role": "z05_underlay",
+			"tick": 330,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": true,
+				"z_index": 0
+			}
+		},
+		{
+			"id": "z05_connector_facts",
+			"role": "z05_connector",
+			"tick": 330,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 0.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": false,
+				"z_index": 1
+			}
+		},
+		{
+			"id": "z05_locker_facts",
+			"role": "z05_locker",
+			"tick": 330,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 0.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": false,
+				"z_index": 2
+			}
+		},
+		{
+			"id": "registered_parent_facts",
+			"role": "registered_parent",
+			"tick": 330,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_position": [
+					349.0,
+					-2585.0
+				],
+				"visible": true,
+				"z_index": -4
+			}
+		},
+		{
+			"id": "z05_foreground_facts",
+			"role": "z05_foreground",
+			"tick": 330,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_bounds": [
+					-608.0,
+					-3808.0,
+					1216.0,
+					1216.0
+				],
+				"visible": false,
+				"z_index": 10
+			}
+		},
+		{
+			"id": "fixture_state",
+			"role": "fixture",
+			"tick": 390,
+			"values": {
+				"checkpoint": "06_07"
+			}
+		},
+		{
+			"id": "operator_position",
+			"role": "operator",
+			"tick": 390,
+			"values": {
+				"global_position": [
+					0.0,
+					-4752.0
+				]
+			}
+		},
+		{
+			"id": "z05_underlay_facts",
+			"role": "z05_underlay",
+			"tick": 390,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 0.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": false,
+				"z_index": 0
+			}
+		},
+		{
+			"id": "z05_connector_facts",
+			"role": "z05_connector",
+			"tick": 390,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 0.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": false,
+				"z_index": 1
+			}
+		},
+		{
+			"id": "z05_locker_facts",
+			"role": "z05_locker",
+			"tick": 390,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 0.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": false,
+				"z_index": 2
+			}
+		},
+		{
+			"id": "registered_parent_facts",
+			"role": "registered_parent",
+			"tick": 390,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_position": [
+					349.0,
+					-2585.0
+				],
+				"visible": true,
+				"z_index": -4
+			}
+		},
+		{
+			"id": "fixture_state",
+			"role": "fixture",
+			"tick": 450,
+			"values": {
+				"checkpoint": "07_08"
+			}
+		},
+		{
+			"id": "operator_position",
+			"role": "operator",
+			"tick": 450,
+			"values": {
+				"global_position": [
+					0.0,
+					-5528.0
+				]
+			}
+		},
+		{
+			"id": "z05_underlay_facts",
+			"role": "z05_underlay",
+			"tick": 450,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 0.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": false,
+				"z_index": 0
+			}
+		},
+		{
+			"id": "z05_connector_facts",
+			"role": "z05_connector",
+			"tick": 450,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 0.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": false,
+				"z_index": 1
+			}
+		},
+		{
+			"id": "z05_locker_facts",
+			"role": "z05_locker",
+			"tick": 450,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 0.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": false,
+				"z_index": 2
+			}
+		},
+		{
+			"id": "registered_parent_facts",
+			"role": "registered_parent",
+			"tick": 450,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_position": [
+					349.0,
+					-2585.0
+				],
+				"visible": true,
+				"z_index": -4
+			}
+		},
+		{
+			"id": "fixture_state",
+			"role": "fixture",
+			"tick": 510,
+			"values": {
+				"checkpoint": "08_10"
+			}
+		},
+		{
+			"id": "operator_position",
+			"role": "operator",
+			"tick": 510,
+			"values": {
+				"global_position": [
+					0.0,
+					-6224.0
+				]
+			}
+		},
+		{
+			"id": "z05_underlay_facts",
+			"role": "z05_underlay",
+			"tick": 510,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 0.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": false,
+				"z_index": 0
+			}
+		},
+		{
+			"id": "z05_connector_facts",
+			"role": "z05_connector",
+			"tick": 510,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 0.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": false,
+				"z_index": 1
+			}
+		},
+		{
+			"id": "z05_locker_facts",
+			"role": "z05_locker",
+			"tick": 510,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 0.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": false,
+				"z_index": 2
+			}
+		},
+		{
+			"id": "registered_parent_facts",
+			"role": "registered_parent",
+			"tick": 510,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_position": [
+					349.0,
+					-2585.0
+				],
+				"visible": true,
+				"z_index": -4
+			}
+		},
+		{
+			"id": "fixture_state",
+			"role": "fixture",
+			"tick": 570,
+			"values": {
+				"checkpoint": "08_09"
+			}
+		},
+		{
+			"id": "operator_position",
+			"role": "operator",
+			"tick": 570,
+			"values": {
+				"global_position": [
+					-368.0,
+					-5800.0
+				]
+			}
+		},
+		{
+			"id": "z05_underlay_facts",
+			"role": "z05_underlay",
+			"tick": 570,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 0.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": false,
+				"z_index": 0
+			}
+		},
+		{
+			"id": "z05_connector_facts",
+			"role": "z05_connector",
+			"tick": 570,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 0.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": false,
+				"z_index": 1
+			}
+		},
+		{
+			"id": "z05_locker_facts",
+			"role": "z05_locker",
+			"tick": 570,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 0.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": false,
+				"z_index": 2
+			}
+		},
+		{
+			"id": "registered_parent_facts",
+			"role": "registered_parent",
+			"tick": 570,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_position": [
+					349.0,
+					-2585.0
+				],
+				"visible": true,
+				"z_index": -4
+			}
+		},
+		{
+			"id": "fixture_state",
+			"role": "fixture",
+			"tick": 630,
+			"values": {
+				"checkpoint": "dust_interior"
+			}
+		},
+		{
+			"id": "operator_position",
+			"role": "operator",
+			"tick": 630,
+			"values": {
+				"global_position": [
+					0.0,
+					-3200.0
+				]
+			}
+		},
+		{
+			"id": "z05_underlay_facts",
+			"role": "z05_underlay",
+			"tick": 630,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": true,
+				"z_index": 0
+			}
+		},
+		{
+			"id": "z05_connector_facts",
+			"role": "z05_connector",
+			"tick": 630,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 0.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": false,
+				"z_index": 1
+			}
+		},
+		{
+			"id": "z05_locker_facts",
+			"role": "z05_locker",
+			"tick": 630,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 0.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": false,
+				"z_index": 2
+			}
+		},
+		{
+			"id": "registered_parent_facts",
+			"role": "registered_parent",
+			"tick": 630,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_position": [
+					349.0,
+					-2585.0
+				],
+				"visible": true,
+				"z_index": -4
+			}
+		},
+		{
+			"id": "z05_foreground_facts",
+			"role": "z05_foreground",
+			"tick": 630,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_bounds": [
+					-608.0,
+					-3808.0,
+					1216.0,
+					1216.0
+				],
+				"visible": false,
+				"z_index": 10
+			}
+		},
+		{
+			"id": "fixture_state",
+			"role": "fixture",
+			"tick": 670,
+			"values": {
+				"checkpoint": "04_05_c"
+			}
+		},
+		{
+			"id": "operator_position",
+			"role": "operator",
+			"tick": 670,
+			"values": {
+				"global_position": [
+					0.0,
+					-2608.0
+				]
+			}
+		},
+		{
+			"id": "z05_underlay_facts",
+			"role": "z05_underlay",
+			"tick": 670,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": true,
+				"z_index": 0
+			}
+		},
+		{
+			"id": "z05_connector_facts",
+			"role": "z05_connector",
+			"tick": 670,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": true,
+				"z_index": 1
+			}
+		},
+		{
+			"id": "z05_locker_facts",
+			"role": "z05_locker",
+			"tick": 670,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": true,
+				"z_index": 2
+			}
+		},
+		{
+			"id": "registered_parent_facts",
+			"role": "registered_parent",
+			"tick": 670,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_position": [
+					349.0,
+					-2585.0
+				],
+				"visible": true,
+				"z_index": -4
+			}
+		},
+		{
+			"id": "fixture_state",
+			"role": "fixture",
+			"tick": 710,
+			"values": {
+				"checkpoint": "04_05_b"
+			}
+		},
+		{
+			"id": "operator_position",
+			"role": "operator",
+			"tick": 710,
+			"values": {
+				"global_position": [
+					352.0,
+					-2496.0
+				]
+			}
+		},
+		{
+			"id": "z05_underlay_facts",
+			"role": "z05_underlay",
+			"tick": 710,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": true,
+				"z_index": 0
+			}
+		},
+		{
+			"id": "z05_connector_facts",
+			"role": "z05_connector",
+			"tick": 710,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": true,
+				"z_index": 1
+			}
+		},
+		{
+			"id": "z05_locker_facts",
+			"role": "z05_locker",
+			"tick": 710,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": true,
+				"z_index": 2
+			}
+		},
+		{
+			"id": "registered_parent_facts",
+			"role": "registered_parent",
+			"tick": 710,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_position": [
+					349.0,
+					-2585.0
+				],
+				"visible": true,
+				"z_index": -4
+			}
+		},
+		{
+			"id": "fixture_state",
+			"role": "fixture",
+			"tick": 750,
+			"values": {
+				"checkpoint": "04_05_a"
+			}
+		},
+		{
+			"id": "operator_position",
+			"role": "operator",
+			"tick": 750,
+			"values": {
+				"global_position": [
+					704.0,
+					-2352.0
+				]
+			}
+		},
+		{
+			"id": "z05_underlay_facts",
+			"role": "z05_underlay",
+			"tick": 750,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": true,
+				"z_index": 0
+			}
+		},
+		{
+			"id": "z05_connector_facts",
+			"role": "z05_connector",
+			"tick": 750,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": true,
+				"z_index": 1
+			}
+		},
+		{
+			"id": "z05_locker_facts",
+			"role": "z05_locker",
+			"tick": 750,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": true,
+				"z_index": 2
+			}
+		},
+		{
+			"id": "registered_parent_facts",
+			"role": "registered_parent",
+			"tick": 750,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_position": [
+					349.0,
+					-2585.0
+				],
+				"visible": true,
+				"z_index": -4
+			}
+		},
+		{
+			"id": "fixture_state",
+			"role": "fixture",
+			"tick": 790,
+			"values": {
+				"checkpoint": "locker_interior"
+			}
+		},
+		{
+			"id": "operator_position",
+			"role": "operator",
+			"tick": 790,
+			"values": {
+				"global_position": [
+					704.0,
+					-1984.0
+				]
+			}
+		},
+		{
+			"id": "z05_underlay_facts",
+			"role": "z05_underlay",
+			"tick": 790,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 0.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": false,
+				"z_index": 0
+			}
+		},
+		{
+			"id": "z05_connector_facts",
+			"role": "z05_connector",
+			"tick": 790,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 0.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": false,
+				"z_index": 1
+			}
+		},
+		{
+			"id": "z05_locker_facts",
+			"role": "z05_locker",
+			"tick": 790,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_bounds": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"visible": true,
+				"z_index": 2
+			}
+		},
+		{
+			"id": "registered_parent_facts",
+			"role": "registered_parent",
+			"tick": 790,
+			"values": {
+				"collision_shape_count": 0,
+				"effective_alpha": 1.0,
+				"global_position": [
+					349.0,
+					-2585.0
+				],
+				"visible": true,
+				"z_index": -4
+			}
+		}
+	]
+}

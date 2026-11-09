@@ -1,0 +1,855 @@
+{
+	"counters": {},
+	"engine": {
+		"frames_per_second": 1.0,
+		"time_scale": 1.0,
+		"version": {
+			"build": "arch_linux",
+			"hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+			"hex": 263938,
+			"major": 4,
+			"minor": 7,
+			"patch": 2,
+			"status": "stable",
+			"string": "4.7.2-stable (arch_linux)",
+			"timestamp": 1786929518
+		}
+	},
+	"events": [
+		{
+			"data": {},
+			"kind": "observatory_cleared",
+			"time_msec": 4241,
+			"uptime_sec": 1.325
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "fixture_command",
+					"args": {
+						"checkpoint": "locker_interior",
+						"direction": "forward"
+					},
+					"name": "show_checkpoint",
+					"tick": 5.0
+				},
+				"moment_tick": 5,
+				"result": {
+					"action": "fixture_command",
+					"ok": true,
+					"response": true,
+					"tick": 5
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 4243,
+			"uptime_sec": 1.327
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "fixture_command",
+					"args": {
+						"checkpoint": "04_05_a",
+						"direction": "forward"
+					},
+					"name": "show_checkpoint",
+					"tick": 65.0
+				},
+				"moment_tick": 65,
+				"result": {
+					"action": "fixture_command",
+					"ok": true,
+					"response": true,
+					"tick": 65
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 4250,
+			"uptime_sec": 1.334
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "fixture_command",
+					"args": {
+						"checkpoint": "04_05_b",
+						"direction": "forward"
+					},
+					"name": "show_checkpoint",
+					"tick": 125.0
+				},
+				"moment_tick": 125,
+				"result": {
+					"action": "fixture_command",
+					"ok": true,
+					"response": true,
+					"tick": 125
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 4257,
+			"uptime_sec": 1.341
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "fixture_command",
+					"args": {
+						"checkpoint": "04_05_c",
+						"direction": "forward"
+					},
+					"name": "show_checkpoint",
+					"tick": 185.0
+				},
+				"moment_tick": 185,
+				"result": {
+					"action": "fixture_command",
+					"ok": true,
+					"response": true,
+					"tick": 185
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 4264,
+			"uptime_sec": 1.348
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "fixture_command",
+					"args": {
+						"checkpoint": "dust_interior",
+						"direction": "forward"
+					},
+					"name": "show_checkpoint",
+					"tick": 245.0
+				},
+				"moment_tick": 245,
+				"result": {
+					"action": "fixture_command",
+					"ok": true,
+					"response": true,
+					"tick": 245
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 4271,
+			"uptime_sec": 1.355
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "fixture_command",
+					"args": {
+						"checkpoint": "05_06",
+						"direction": "forward"
+					},
+					"name": "show_checkpoint",
+					"tick": 305.0
+				},
+				"moment_tick": 305,
+				"result": {
+					"action": "fixture_command",
+					"ok": true,
+					"response": true,
+					"tick": 305
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 4278,
+			"uptime_sec": 1.362
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "fixture_command",
+					"args": {
+						"checkpoint": "06_07",
+						"direction": "forward"
+					},
+					"name": "show_checkpoint",
+					"tick": 365.0
+				},
+				"moment_tick": 365,
+				"result": {
+					"action": "fixture_command",
+					"ok": true,
+					"response": true,
+					"tick": 365
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 4286,
+			"uptime_sec": 1.37
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "fixture_command",
+					"args": {
+						"checkpoint": "07_08",
+						"direction": "forward"
+					},
+					"name": "show_checkpoint",
+					"tick": 425.0
+				},
+				"moment_tick": 425,
+				"result": {
+					"action": "fixture_command",
+					"ok": true,
+					"response": true,
+					"tick": 425
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 4293,
+			"uptime_sec": 1.377
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "fixture_command",
+					"args": {
+						"checkpoint": "08_10",
+						"direction": "forward"
+					},
+					"name": "show_checkpoint",
+					"tick": 485.0
+				},
+				"moment_tick": 485,
+				"result": {
+					"action": "fixture_command",
+					"ok": true,
+					"response": true,
+					"tick": 485
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 4301,
+			"uptime_sec": 1.385
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "fixture_command",
+					"args": {
+						"checkpoint": "08_09",
+						"direction": "forward"
+					},
+					"name": "show_checkpoint",
+					"tick": 545.0
+				},
+				"moment_tick": 545,
+				"result": {
+					"action": "fixture_command",
+					"ok": true,
+					"response": true,
+					"tick": 545
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 4308,
+			"uptime_sec": 1.392
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "fixture_command",
+					"args": {
+						"checkpoint": "dust_interior",
+						"direction": "reverse"
+					},
+					"name": "show_checkpoint",
+					"tick": 605.0
+				},
+				"moment_tick": 605,
+				"result": {
+					"action": "fixture_command",
+					"ok": true,
+					"response": true,
+					"tick": 605
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 4314,
+			"uptime_sec": 1.398
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "fixture_command",
+					"args": {
+						"checkpoint": "04_05_c",
+						"direction": "reverse"
+					},
+					"name": "show_checkpoint",
+					"tick": 645.0
+				},
+				"moment_tick": 645,
+				"result": {
+					"action": "fixture_command",
+					"ok": true,
+					"response": true,
+					"tick": 645
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 4319,
+			"uptime_sec": 1.403
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "fixture_command",
+					"args": {
+						"checkpoint": "04_05_b",
+						"direction": "reverse"
+					},
+					"name": "show_checkpoint",
+					"tick": 685.0
+				},
+				"moment_tick": 685,
+				"result": {
+					"action": "fixture_command",
+					"ok": true,
+					"response": true,
+					"tick": 685
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 4324,
+			"uptime_sec": 1.408
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "fixture_command",
+					"args": {
+						"checkpoint": "04_05_a",
+						"direction": "reverse"
+					},
+					"name": "show_checkpoint",
+					"tick": 725.0
+				},
+				"moment_tick": 725,
+				"result": {
+					"action": "fixture_command",
+					"ok": true,
+					"response": true,
+					"tick": 725
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 4329,
+			"uptime_sec": 1.413
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "fixture_command",
+					"args": {
+						"checkpoint": "locker_interior",
+						"direction": "reverse"
+					},
+					"name": "show_checkpoint",
+					"tick": 765.0
+				},
+				"moment_tick": 765,
+				"result": {
+					"action": "fixture_command",
+					"ok": true,
+					"response": true,
+					"tick": 765
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 4333,
+			"uptime_sec": 1.417
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "finish",
+					"tick": 795.0
+				},
+				"moment_tick": 795,
+				"result": {
+					"action": "finish",
+					"finish": true,
+					"ok": true,
+					"tick": 795
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 4336,
+			"uptime_sec": 1.42
+		}
+	],
+	"export_path": "/home/braydenchaffee/Projects/.custodian-worktrees/operator-2-5d-ne-walk-retargeting-20261016T085104Z-d287e799512d/reports/moment_forge/traversal/awakening_late_seams_v1/20261016T193817-0400/telemetry.json",
+	"exported_at": "2026-10-16 19:38:21",
+	"gauges": {
+		"active_combat_audio": 0,
+		"active_enemies": 0,
+		"active_projectiles": 0,
+		"active_vfx": 0,
+		"ambient_critters": 0,
+		"collision_shape_count": 426,
+		"collision_shape_count_enemies": 0,
+		"collision_shape_count_foliage": 0,
+		"collision_shape_count_peak": 426,
+		"collision_shape_count_projectiles": 0,
+		"collision_shape_count_ruin_props": 0,
+		"collision_shape_count_runtime_walls": 0,
+		"corpse_enemies": 0,
+		"director_behavior_agents": 0,
+		"enemy_tier_active": 0,
+		"enemy_tier_active_physics_enabled": 0,
+		"enemy_tier_background": 0,
+		"enemy_tier_background_physics_enabled": 0,
+		"enemy_tier_dormant": 0,
+		"enemy_tier_dormant_physics_enabled": 0,
+		"enemy_tier_nearby": 0,
+		"enemy_tier_nearby_physics_enabled": 0,
+		"field_patch_active": false,
+		"field_patches_max": 2,
+		"field_patches_remaining": 1,
+		"fps": 1.0,
+		"heat_player_presence_cells": 10,
+		"heatmap_cells": 10,
+		"heatmap_samples": 25,
+		"interest_active": 0,
+		"interest_background": 0,
+		"interest_dormant": 0,
+		"interest_nearby": 0,
+		"legacy_combat_agents": 0,
+		"living_enemies": 0,
+		"loaded_procgen_root_count": 0,
+		"loaded_world_branch_count": 0,
+		"node_class_histogram": {
+			"AnimatedSprite2D": 22,
+			"Area2D": 20,
+			"AudioStreamPlayer2D": 4,
+			"Camera2D": 1,
+			"CanvasLayer": 4,
+			"CanvasModulate": 1,
+			"CharacterBody2D": 1,
+			"CollisionPolygon2D": 2,
+			"CollisionShape2D": 424,
+			"ColorRect": 1,
+			"Control": 4,
+			"DirectionalLight2D": 1,
+			"HBoxContainer": 5,
+			"Label": 16,
+			"LightOccluder2D": 6,
+			"Line2D": 26,
+			"MarginContainer": 4,
+			"Marker2D": 31,
+			"NinePatchRect": 4,
+			"Node": 32,
+			"Node2D": 154,
+			"Panel": 2,
+			"PanelContainer": 5,
+			"PointLight2D": 6,
+			"Polygon2D": 114,
+			"ProgressBar": 5,
+			"RichTextLabel": 1,
+			"Sprite2D": 47,
+			"StaticBody2D": 12,
+			"TextureRect": 5,
+			"VBoxContainer": 6,
+			"Window": 1
+		},
+		"node_count": 967,
+		"node_count_collision": 459,
+		"node_count_peak": 967,
+		"node_count_procgen": 0,
+		"node_count_props": 1,
+		"node_count_ui": 62,
+		"node_count_vfx": 1,
+		"node_count_world": 0,
+		"observatory_full_tree_scan_count": 1,
+		"observatory_scan_usec": 11167,
+		"performance_draw_calls": 0,
+		"performance_frame_ms_average": 0.118868333523472,
+		"performance_frame_ms_current": 0.0810000002384186,
+		"performance_frame_ms_p95": 0.207000002264977,
+		"performance_frame_ms_p99": 0.254000008106232,
+		"performance_frame_ms_worst": 0.315,
+		"performance_frame_sample_count": 600,
+		"performance_hitch_count": 0,
+		"performance_incident_auto_trigger_count": 0,
+		"performance_incident_external_stall_count": 0,
+		"performance_incident_manual_trigger_count": 0,
+		"performance_incident_rearm_progress_sec": 0.0,
+		"performance_incident_state": "ARMED",
+		"performance_physics_ms": 0.493,
+		"performance_process_ms": 0.125,
+		"performance_rendered_objects": 0,
+		"performance_severe_hitch_count": 0,
+		"physics_body_count": 13,
+		"physics_body_count_foliage": 0,
+		"physics_body_count_peak": 13,
+		"physics_body_count_ruin_props": 0,
+		"physics_body_count_runtime_walls": 0,
+		"physics_process_enabled_node_count": 1,
+		"player_active_weapon_id": "carbine_mk1",
+		"player_active_weapon_state_key": "carbine_mk1",
+		"player_alive": true,
+		"player_ammo_per_shot": 1,
+		"player_dead": false,
+		"player_health": 100.0,
+		"player_last_live_loaded_ammo": 0,
+		"player_last_live_reserve_ammo": 48,
+		"player_last_live_stamina": 100.0,
+		"player_last_live_weapon_id": "carbine_mk1",
+		"player_loaded_ammo": 0,
+		"player_magazine_capacity": 24,
+		"player_material": "unknown",
+		"player_material_footstep_noise_mult": 1.0,
+		"player_max_health": 100.0,
+		"player_position": {
+			"x": 704,
+			"y": -1984
+		},
+		"player_reserve_ammo": 48,
+		"player_sprinting": false,
+		"player_stamina": 100.0,
+		"player_stamina_max": 100.0,
+		"player_weapon_heat": 0.0,
+		"player_weapon_overheated": false,
+		"process_enabled_node_count": 20,
+		"procgen_reveal_queue": 0,
+		"procgen_runtime_wall_collision_isolation_enabled": false,
+		"procgen_snapshot_active": false,
+		"procgen_snapshot_captured_uptime_sec": 1.43,
+		"procgen_snapshot_source": "none_loaded",
+		"procgen_wall_shadow_isolation_enabled": false,
+		"render_atmosphere_enabled": false,
+		"render_directional_light_enabled": true,
+		"render_isolation_mode": "atmosphere_off",
+		"render_point_light_count": 4,
+		"render_procgen_depth_backdrop_enabled": false,
+		"render_procgen_floor_enabled": false,
+		"render_procgen_major_visuals_enabled": false,
+		"render_procgen_walls_enabled": false,
+		"top_level_subtree_counts": {
+			"ARRNManager": 1,
+			"AwakeningLateSeamsMoment": 931,
+			"BuildInventory": 1,
+			"CognitiveState": 1,
+			"DebugBus": 1,
+			"DebugSnapshotCollector": 1,
+			"DevConsole": 1,
+			"DevMode": 3,
+			"DevObservatory": 1,
+			"DevObservatoryOverlay": 4,
+			"EnemyEngagementCoordinator": 1,
+			"FabPipeline": 1,
+			"GameState": 1,
+			"GameStats": 1,
+			"InfrastructureRegistry": 1,
+			"InputPromptService": 1,
+			"InstantReplayRecorder": 1,
+			"InventoryManager": 1,
+			"MaterialIntelligence": 1,
+			"MusicManager": 1,
+			"NoiseEventBus": 1,
+			"ResourceLedger": 1,
+			"SectorHeatmap": 1,
+			"SimulationInterestManager": 1,
+			"VaultManager": 1,
+			"WorldContractBootstrap": 1,
+			"WorldEventMemory": 1,
+			"WorldHistory": 1,
+			"WorldStateGraph": 1,
+			"WorldTransitionManager": 1,
+			"_mcp_game_helper": 1,
+			"root": 1
+		},
+		"uptime_sec": 1.43
+	},
+	"heatmap": {
+		"cell_count": 10,
+		"cell_size_px": 64.0,
+		"cells": {
+			"-6,-91": {
+				"by_type": {
+					"presence": 2.0
+				},
+				"cell": {
+					"x": -6,
+					"y": -91
+				},
+				"first_seen_sec": 1.392,
+				"last_seen_sec": 1.396,
+				"sample_count": 2,
+				"total": 2.0,
+				"world": {
+					"x": -384.0,
+					"y": -5824.0
+				}
+			},
+			"0,-41": {
+				"by_type": {
+					"presence": 3.0
+				},
+				"cell": {
+					"x": 0,
+					"y": -41
+				},
+				"first_seen_sec": 1.351,
+				"last_seen_sec": 1.407,
+				"sample_count": 3,
+				"total": 3.0,
+				"world": {
+					"x": 0.0,
+					"y": -2624.0
+				}
+			},
+			"0,-50": {
+				"by_type": {
+					"presence": 4.0
+				},
+				"cell": {
+					"x": 0,
+					"y": -50
+				},
+				"first_seen_sec": 1.358,
+				"last_seen_sec": 1.402,
+				"sample_count": 4,
+				"total": 4.0,
+				"world": {
+					"x": 0.0,
+					"y": -3200.0
+				}
+			},
+			"0,-60": {
+				"by_type": {
+					"presence": 2.0
+				},
+				"cell": {
+					"x": 0,
+					"y": -60
+				},
+				"first_seen_sec": 1.366,
+				"last_seen_sec": 1.369,
+				"sample_count": 2,
+				"total": 2.0,
+				"world": {
+					"x": 0.0,
+					"y": -3840.0
+				}
+			},
+			"0,-75": {
+				"by_type": {
+					"presence": 2.0
+				},
+				"cell": {
+					"x": 0,
+					"y": -75
+				},
+				"first_seen_sec": 1.373,
+				"last_seen_sec": 1.377,
+				"sample_count": 2,
+				"total": 2.0,
+				"world": {
+					"x": 0.0,
+					"y": -4800.0
+				}
+			},
+			"0,-87": {
+				"by_type": {
+					"presence": 1.0
+				},
+				"cell": {
+					"x": 0,
+					"y": -87
+				},
+				"first_seen_sec": 1.382,
+				"last_seen_sec": 1.382,
+				"sample_count": 1,
+				"total": 1.0,
+				"world": {
+					"x": 0.0,
+					"y": -5568.0
+				}
+			},
+			"0,-98": {
+				"by_type": {
+					"presence": 2.0
+				},
+				"cell": {
+					"x": 0,
+					"y": -98
+				},
+				"first_seen_sec": 1.386,
+				"last_seen_sec": 1.389,
+				"sample_count": 2,
+				"total": 2.0,
+				"world": {
+					"x": 0.0,
+					"y": -6272.0
+				}
+			},
+			"11,-31": {
+				"by_type": {
+					"presence": 3.0
+				},
+				"cell": {
+					"x": 11,
+					"y": -31
+				},
+				"first_seen_sec": 1.329,
+				"last_seen_sec": 1.417,
+				"sample_count": 3,
+				"total": 3.0,
+				"world": {
+					"x": 704.0,
+					"y": -1984.0
+				}
+			},
+			"11,-37": {
+				"by_type": {
+					"presence": 3.0
+				},
+				"cell": {
+					"x": 11,
+					"y": -37
+				},
+				"first_seen_sec": 1.336,
+				"last_seen_sec": 1.414,
+				"sample_count": 3,
+				"total": 3.0,
+				"world": {
+					"x": 704.0,
+					"y": -2368.0
+				}
+			},
+			"5,-39": {
+				"by_type": {
+					"presence": 3.0
+				},
+				"cell": {
+					"x": 5,
+					"y": -39
+				},
+				"first_seen_sec": 1.343,
+				"last_seen_sec": 1.41,
+				"sample_count": 3,
+				"total": 3.0,
+				"world": {
+					"x": 320.0,
+					"y": -2496.0
+				}
+			}
+		},
+		"event_type_counts": {
+			"presence": 25.0
+		},
+		"schema": "custodian.sector_heatmap.v1",
+		"total_samples": 25
+	},
+	"material_intelligence": {
+		"contact_counts_by_kind": {},
+		"contact_counts_by_material": {},
+		"default_cell_size_px": 64.0,
+		"material_counts": {},
+		"override_cell_count": 0,
+		"schema": "custodian.material_intelligence.summary.v1",
+		"total_contacts": 0
+	},
+	"metadata": {
+		"project_name": "CUSTODIAN",
+		"project_version": ""
+	},
+	"performance": {
+		"frame_ms_average": 0.118868333523472,
+		"frame_ms_current": 0.0810000002384186,
+		"frame_ms_p95": 0.207000002264977,
+		"frame_ms_p99": 0.254000008106232,
+		"frame_ms_worst": 0.315,
+		"hitch_count": 0,
+		"incident_active": false,
+		"incident_phase": "baseline",
+		"incident_sample_count": 0,
+		"sample_capacity": 600,
+		"sample_count": 600,
+		"severe_hitch_count": 0
+	},
+	"performance_incident": {
+		"aggregate_spans": {},
+		"deltas": {
+			"active_audio_delta": 0,
+			"active_audio_players_delta": 0,
+			"active_vfx_delta": 0,
+			"corpse_enemies_delta": 0,
+			"draw_calls_delta": 0,
+			"living_enemies_delta": 0,
+			"node_count_delta": 0,
+			"rendered_objects_delta": 0
+		},
+		"end_snapshot": {},
+		"ended_uptime_sec": 1.442,
+		"external_stalls": [],
+		"lifetime_deltas": {
+			"active_audio_delta": 0,
+			"active_audio_players_delta": 0,
+			"active_vfx_delta": 0,
+			"corpse_enemies_delta": 0,
+			"draw_calls_delta": 0,
+			"living_enemies_delta": 0,
+			"node_count_delta": 0,
+			"rendered_objects_delta": 0
+		},
+		"likely_owner": {
+			"classification": "unclassified — inspect worst-frame spans",
+			"evidence": []
+		},
+		"phase_snapshots": [],
+		"phase_summaries": {},
+		"recent_procgen_mutations": [],
+		"samples_dropped": 0,
+		"samples_retained": 0,
+		"schema": "custodian.dev_observatory.performance_incident.v1",
+		"start_snapshot": {},
+		"started_uptime_sec": 0.0,
+		"state": "ARMED",
+		"summary": {
+			"frame_ms_average": 0.0,
+			"frame_ms_p95": 0.0,
+			"frame_ms_p99": 0.0,
+			"frame_ms_worst": 0.0,
+			"hitch_count": 0,
+			"sample_count": 0,
+			"severe_hitch_count": 0
+		},
+		"top_spans": [],
+		"trigger": "",
+		"worst_frames": []
+	},
+	"procgen_runtime_health": {
+		"snapshot_active": false,
+		"snapshot_captured_uptime_sec": 1.442,
+		"snapshot_source": "none_loaded"
+	},
+	"scene": {
+		"name": "AwakeningLateSeamsMoment",
+		"path": "res://tools/validation/fixtures/awakening_late_seams_moment.tscn"
+	},
+	"schema": "custodian.dev_observatory.session.v1",
+	"session": {
+		"boot_time_msec": 2916,
+		"counter_count": 0,
+		"dropped_event_count": 0,
+		"event_buffer_saturated": false,
+		"event_capacity": 300,
+		"event_count": 17,
+		"gauge_count": 110,
+		"observatory_enabled": false,
+		"total_events_logged": 17,
+		"uptime_sec": 1.441,
+		"warning_count": 0
+	},
+	"warnings": []
+}

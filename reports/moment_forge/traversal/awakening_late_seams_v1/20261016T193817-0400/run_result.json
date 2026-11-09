@@ -1,0 +1,1515 @@
+{
+	"actions": [
+		{
+			"action": "fixture_command",
+			"ok": true,
+			"response": true,
+			"tick": 5
+		},
+		{
+			"action": "fixture_command",
+			"ok": true,
+			"response": true,
+			"tick": 65
+		},
+		{
+			"action": "fixture_command",
+			"ok": true,
+			"response": true,
+			"tick": 125
+		},
+		{
+			"action": "fixture_command",
+			"ok": true,
+			"response": true,
+			"tick": 185
+		},
+		{
+			"action": "fixture_command",
+			"ok": true,
+			"response": true,
+			"tick": 245
+		},
+		{
+			"action": "fixture_command",
+			"ok": true,
+			"response": true,
+			"tick": 305
+		},
+		{
+			"action": "fixture_command",
+			"ok": true,
+			"response": true,
+			"tick": 365
+		},
+		{
+			"action": "fixture_command",
+			"ok": true,
+			"response": true,
+			"tick": 425
+		},
+		{
+			"action": "fixture_command",
+			"ok": true,
+			"response": true,
+			"tick": 485
+		},
+		{
+			"action": "fixture_command",
+			"ok": true,
+			"response": true,
+			"tick": 545
+		},
+		{
+			"action": "fixture_command",
+			"ok": true,
+			"response": true,
+			"tick": 605
+		},
+		{
+			"action": "fixture_command",
+			"ok": true,
+			"response": true,
+			"tick": 645
+		},
+		{
+			"action": "fixture_command",
+			"ok": true,
+			"response": true,
+			"tick": 685
+		},
+		{
+			"action": "fixture_command",
+			"ok": true,
+			"response": true,
+			"tick": 725
+		},
+		{
+			"action": "fixture_command",
+			"ok": true,
+			"response": true,
+			"tick": 765
+		},
+		{
+			"action": "finish",
+			"finish": true,
+			"ok": true,
+			"tick": 795
+		}
+	],
+	"assertions": [
+		{
+			"actual": true,
+			"expected": {
+				"role": "operator",
+				"severity": "error",
+				"type": "role_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "role_exists"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"role": "z05_underlay",
+				"severity": "error",
+				"type": "role_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "role_exists"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"role": "road_underlay",
+				"severity": "error",
+				"type": "role_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "role_exists"
+		},
+		{
+			"actual": false,
+			"expected": {
+				"severity": "error",
+				"type": "no_unreleased_inputs"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "no_unreleased_inputs"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"path": "telemetry.json",
+				"severity": "error",
+				"type": "output_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "output_exists"
+		},
+		{
+			"actual": {
+				"equal": true,
+				"value_a": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"value_b": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				]
+			},
+			"expected": {
+				"field": "global_bounds",
+				"message": "registered 04-05 layers must use one shared canvas and transform",
+				"probe_a": "z05_underlay_facts",
+				"probe_b": "z05_connector_facts",
+				"severity": "error",
+				"tick_a": 30.0,
+				"tick_b": 30.0,
+				"tolerance": 0.01,
+				"type": "probe_field_equal"
+			},
+			"message": "registered 04-05 layers must use one shared canvas and transform",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_field_equal"
+		},
+		{
+			"actual": {
+				"equal": true,
+				"value_a": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				],
+				"value_b": [
+					-402.0,
+					-3609.0,
+					1502.0,
+					2048.0
+				]
+			},
+			"expected": {
+				"field": "global_bounds",
+				"message": "registered 04-05 layers must use one shared canvas and transform",
+				"probe_a": "z05_underlay_facts",
+				"probe_b": "z05_locker_facts",
+				"severity": "error",
+				"tick_a": 30.0,
+				"tick_b": 30.0,
+				"tolerance": 0.01,
+				"type": "probe_field_equal"
+			},
+			"message": "registered 04-05 layers must use one shared canvas and transform",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_field_equal"
+		},
+		{
+			"actual": {
+				"equal": true,
+				"value_a": [
+					-768.0,
+					-4928.0,
+					1536.0,
+					1216.0
+				],
+				"value_b": [
+					-768.0,
+					-4928.0,
+					1536.0,
+					1216.0
+				]
+			},
+			"expected": {
+				"field": "global_bounds",
+				"message": "zone06 underlay/foreground registration must match",
+				"probe_a": "z06_underlay_facts",
+				"probe_b": "z06_foreground_facts",
+				"severity": "error",
+				"tick_a": 95.0,
+				"tick_b": 95.0,
+				"tolerance": 0.01,
+				"type": "probe_field_equal"
+			},
+			"message": "zone06 underlay/foreground registration must match",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_field_equal"
+		},
+		{
+			"actual": {
+				"equal": true,
+				"value_a": [
+					-768.0,
+					-5568.0,
+					1536.0,
+					768.0
+				],
+				"value_b": [
+					-768.0,
+					-5568.0,
+					1536.0,
+					768.0
+				]
+			},
+			"expected": {
+				"field": "global_bounds",
+				"message": "zone07 underlay/foreground registration must match",
+				"probe_a": "z07_underlay_facts",
+				"probe_b": "z07_foreground_facts",
+				"severity": "error",
+				"tick_a": 160.0,
+				"tick_b": 160.0,
+				"tolerance": 0.01,
+				"type": "probe_field_equal"
+			},
+			"message": "zone07 underlay/foreground registration must match",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_field_equal"
+		},
+		{
+			"actual": {
+				"equal": true,
+				"value_a": [
+					-512.0,
+					-6304.0,
+					1024.0,
+					864.0
+				],
+				"value_b": [
+					-512.0,
+					-6304.0,
+					1024.0,
+					864.0
+				]
+			},
+			"expected": {
+				"field": "global_bounds",
+				"message": "zone08 underlay/foreground registration must match",
+				"probe_a": "z08_underlay_facts",
+				"probe_b": "z08_foreground_facts",
+				"severity": "error",
+				"tick_a": 225.0,
+				"tick_b": 225.0,
+				"tolerance": 0.01,
+				"type": "probe_field_equal"
+			},
+			"message": "zone08 underlay/foreground registration must match",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_field_equal"
+		},
+		{
+			"actual": {
+				"equal": true,
+				"value_a": [
+					-1088.0,
+					-6112.0,
+					704.0,
+					768.0
+				],
+				"value_b": [
+					-1088.0,
+					-6112.0,
+					704.0,
+					768.0
+				]
+			},
+			"expected": {
+				"field": "global_bounds",
+				"message": "zone09 underlay/foreground registration must match",
+				"probe_a": "z09_underlay_facts",
+				"probe_b": "z09_foreground_facts",
+				"severity": "error",
+				"tick_a": 290.0,
+				"tick_b": 290.0,
+				"tolerance": 0.01,
+				"type": "probe_field_equal"
+			},
+			"message": "zone09 underlay/foreground registration must match",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_field_equal"
+		},
+		{
+			"actual": {
+				"equal": true,
+				"value_a": [
+					-378.0,
+					-7040.0,
+					768.0,
+					896.0
+				],
+				"value_b": [
+					-378.0,
+					-7040.0,
+					768.0,
+					896.0
+				]
+			},
+			"expected": {
+				"field": "global_bounds",
+				"message": "Road South Reach civic axis underlay/foreground registration must match",
+				"probe_a": "road_underlay_facts",
+				"probe_b": "road_foreground_facts",
+				"severity": "error",
+				"tick_a": 225.0,
+				"tick_b": 225.0,
+				"tolerance": 0.01,
+				"type": "probe_field_equal"
+			},
+			"message": "Road South Reach civic axis underlay/foreground registration must match",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_field_equal"
+		},
+		{
+			"actual": 0,
+			"expected": {
+				"field": "collision_shape_count",
+				"op": "eq",
+				"probe": "z05_underlay_facts",
+				"severity": "error",
+				"tick": 30.0,
+				"type": "probe_compare",
+				"value": 0.0
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0,
+			"expected": {
+				"field": "collision_shape_count",
+				"op": "eq",
+				"probe": "z06_underlay_facts",
+				"severity": "error",
+				"tick": 95.0,
+				"type": "probe_compare",
+				"value": 0.0
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0,
+			"expected": {
+				"field": "collision_shape_count",
+				"op": "eq",
+				"probe": "z07_underlay_facts",
+				"severity": "error",
+				"tick": 160.0,
+				"type": "probe_compare",
+				"value": 0.0
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0,
+			"expected": {
+				"field": "collision_shape_count",
+				"op": "eq",
+				"probe": "z08_underlay_facts",
+				"severity": "error",
+				"tick": 225.0,
+				"type": "probe_compare",
+				"value": 0.0
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0,
+			"expected": {
+				"field": "collision_shape_count",
+				"op": "eq",
+				"probe": "z09_underlay_facts",
+				"severity": "error",
+				"tick": 290.0,
+				"type": "probe_compare",
+				"value": 0.0
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0,
+			"expected": {
+				"field": "collision_shape_count",
+				"op": "eq",
+				"probe": "road_underlay_facts",
+				"severity": "error",
+				"tick": 225.0,
+				"type": "probe_compare",
+				"value": 0.0
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "registered composition parent must remain a fixed opaque placement container",
+				"op": "eq",
+				"probe": "registered_parent_facts",
+				"severity": "error",
+				"tick": 30.0,
+				"type": "probe_compare",
+				"value": 1.0
+			},
+			"message": "registered composition parent must remain a fixed opaque placement container",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "registered composition parent must remain a fixed opaque placement container",
+				"op": "eq",
+				"probe": "registered_parent_facts",
+				"severity": "error",
+				"tick": 90.0,
+				"type": "probe_compare",
+				"value": 1.0
+			},
+			"message": "registered composition parent must remain a fixed opaque placement container",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "registered composition parent must remain a fixed opaque placement container",
+				"op": "eq",
+				"probe": "registered_parent_facts",
+				"severity": "error",
+				"tick": 150.0,
+				"type": "probe_compare",
+				"value": 1.0
+			},
+			"message": "registered composition parent must remain a fixed opaque placement container",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "registered composition parent must remain a fixed opaque placement container",
+				"op": "eq",
+				"probe": "registered_parent_facts",
+				"severity": "error",
+				"tick": 210.0,
+				"type": "probe_compare",
+				"value": 1.0
+			},
+			"message": "registered composition parent must remain a fixed opaque placement container",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "registered composition parent must remain a fixed opaque placement container",
+				"op": "eq",
+				"probe": "registered_parent_facts",
+				"severity": "error",
+				"tick": 270.0,
+				"type": "probe_compare",
+				"value": 1.0
+			},
+			"message": "registered composition parent must remain a fixed opaque placement container",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "registered composition parent must remain a fixed opaque placement container",
+				"op": "eq",
+				"probe": "registered_parent_facts",
+				"severity": "error",
+				"tick": 330.0,
+				"type": "probe_compare",
+				"value": 1.0
+			},
+			"message": "registered composition parent must remain a fixed opaque placement container",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "registered composition parent must remain a fixed opaque placement container",
+				"op": "eq",
+				"probe": "registered_parent_facts",
+				"severity": "error",
+				"tick": 390.0,
+				"type": "probe_compare",
+				"value": 1.0
+			},
+			"message": "registered composition parent must remain a fixed opaque placement container",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "registered composition parent must remain a fixed opaque placement container",
+				"op": "eq",
+				"probe": "registered_parent_facts",
+				"severity": "error",
+				"tick": 450.0,
+				"type": "probe_compare",
+				"value": 1.0
+			},
+			"message": "registered composition parent must remain a fixed opaque placement container",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "registered composition parent must remain a fixed opaque placement container",
+				"op": "eq",
+				"probe": "registered_parent_facts",
+				"severity": "error",
+				"tick": 510.0,
+				"type": "probe_compare",
+				"value": 1.0
+			},
+			"message": "registered composition parent must remain a fixed opaque placement container",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "registered composition parent must remain a fixed opaque placement container",
+				"op": "eq",
+				"probe": "registered_parent_facts",
+				"severity": "error",
+				"tick": 570.0,
+				"type": "probe_compare",
+				"value": 1.0
+			},
+			"message": "registered composition parent must remain a fixed opaque placement container",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "registered composition parent must remain a fixed opaque placement container",
+				"op": "eq",
+				"probe": "registered_parent_facts",
+				"severity": "error",
+				"tick": 630.0,
+				"type": "probe_compare",
+				"value": 1.0
+			},
+			"message": "registered composition parent must remain a fixed opaque placement container",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "registered composition parent must remain a fixed opaque placement container",
+				"op": "eq",
+				"probe": "registered_parent_facts",
+				"severity": "error",
+				"tick": 670.0,
+				"type": "probe_compare",
+				"value": 1.0
+			},
+			"message": "registered composition parent must remain a fixed opaque placement container",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "registered composition parent must remain a fixed opaque placement container",
+				"op": "eq",
+				"probe": "registered_parent_facts",
+				"severity": "error",
+				"tick": 710.0,
+				"type": "probe_compare",
+				"value": 1.0
+			},
+			"message": "registered composition parent must remain a fixed opaque placement container",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "registered composition parent must remain a fixed opaque placement container",
+				"op": "eq",
+				"probe": "registered_parent_facts",
+				"severity": "error",
+				"tick": 750.0,
+				"type": "probe_compare",
+				"value": 1.0
+			},
+			"message": "registered composition parent must remain a fixed opaque placement container",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "registered composition parent must remain a fixed opaque placement container",
+				"op": "eq",
+				"probe": "registered_parent_facts",
+				"severity": "error",
+				"tick": 790.0,
+				"type": "probe_compare",
+				"value": 1.0
+			},
+			"message": "registered composition parent must remain a fixed opaque placement container",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+				"op": "gte",
+				"probe": "z05_underlay_facts",
+				"severity": "error",
+				"tick": 90.0,
+				"type": "probe_compare",
+				"value": 0.999
+			},
+			"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+				"op": "gte",
+				"probe": "z05_connector_facts",
+				"severity": "error",
+				"tick": 90.0,
+				"type": "probe_compare",
+				"value": 0.999
+			},
+			"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+				"op": "gte",
+				"probe": "z05_locker_facts",
+				"severity": "error",
+				"tick": 90.0,
+				"type": "probe_compare",
+				"value": 0.999
+			},
+			"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+				"op": "gte",
+				"probe": "z05_underlay_facts",
+				"severity": "error",
+				"tick": 150.0,
+				"type": "probe_compare",
+				"value": 0.999
+			},
+			"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+				"op": "gte",
+				"probe": "z05_connector_facts",
+				"severity": "error",
+				"tick": 150.0,
+				"type": "probe_compare",
+				"value": 0.999
+			},
+			"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+				"op": "gte",
+				"probe": "z05_locker_facts",
+				"severity": "error",
+				"tick": 150.0,
+				"type": "probe_compare",
+				"value": 0.999
+			},
+			"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+				"op": "gte",
+				"probe": "z05_underlay_facts",
+				"severity": "error",
+				"tick": 210.0,
+				"type": "probe_compare",
+				"value": 0.999
+			},
+			"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+				"op": "gte",
+				"probe": "z05_connector_facts",
+				"severity": "error",
+				"tick": 210.0,
+				"type": "probe_compare",
+				"value": 0.999
+			},
+			"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+				"op": "gte",
+				"probe": "z05_locker_facts",
+				"severity": "error",
+				"tick": 210.0,
+				"type": "probe_compare",
+				"value": 0.999
+			},
+			"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+				"op": "gte",
+				"probe": "z05_underlay_facts",
+				"severity": "error",
+				"tick": 670.0,
+				"type": "probe_compare",
+				"value": 0.999
+			},
+			"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+				"op": "gte",
+				"probe": "z05_connector_facts",
+				"severity": "error",
+				"tick": 670.0,
+				"type": "probe_compare",
+				"value": 0.999
+			},
+			"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+				"op": "gte",
+				"probe": "z05_locker_facts",
+				"severity": "error",
+				"tick": 670.0,
+				"type": "probe_compare",
+				"value": 0.999
+			},
+			"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+				"op": "gte",
+				"probe": "z05_underlay_facts",
+				"severity": "error",
+				"tick": 710.0,
+				"type": "probe_compare",
+				"value": 0.999
+			},
+			"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+				"op": "gte",
+				"probe": "z05_connector_facts",
+				"severity": "error",
+				"tick": 710.0,
+				"type": "probe_compare",
+				"value": 0.999
+			},
+			"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+				"op": "gte",
+				"probe": "z05_locker_facts",
+				"severity": "error",
+				"tick": 710.0,
+				"type": "probe_compare",
+				"value": 0.999
+			},
+			"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+				"op": "gte",
+				"probe": "z05_underlay_facts",
+				"severity": "error",
+				"tick": 750.0,
+				"type": "probe_compare",
+				"value": 0.999
+			},
+			"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+				"op": "gte",
+				"probe": "z05_connector_facts",
+				"severity": "error",
+				"tick": 750.0,
+				"type": "probe_compare",
+				"value": 0.999
+			},
+			"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+				"op": "gte",
+				"probe": "z05_locker_facts",
+				"severity": "error",
+				"tick": 750.0,
+				"type": "probe_compare",
+				"value": 0.999
+			},
+			"message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "registered Locker art stays opaque in the Reliquary interior",
+				"op": "gte",
+				"probe": "z05_locker_facts",
+				"severity": "error",
+				"tick": 30.0,
+				"type": "probe_compare",
+				"value": 0.999
+			},
+			"message": "registered Locker art stays opaque in the Reliquary interior",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "registered Locker art stays opaque in the Reliquary interior",
+				"op": "gte",
+				"probe": "z05_locker_facts",
+				"severity": "error",
+				"tick": 790.0,
+				"type": "probe_compare",
+				"value": 0.999
+			},
+			"message": "registered Locker art stays opaque in the Reliquary interior",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "registered Dust art stays opaque in Dust Lung and the 05-06 passage",
+				"op": "gte",
+				"probe": "z05_underlay_facts",
+				"severity": "error",
+				"tick": 270.0,
+				"type": "probe_compare",
+				"value": 0.999
+			},
+			"message": "registered Dust art stays opaque in Dust Lung and the 05-06 passage",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "registered Dust art stays opaque in Dust Lung and the 05-06 passage",
+				"op": "gte",
+				"probe": "z05_underlay_facts",
+				"severity": "error",
+				"tick": 630.0,
+				"type": "probe_compare",
+				"value": 0.999
+			},
+			"message": "registered Dust art stays opaque in Dust Lung and the 05-06 passage",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 1.0,
+			"expected": {
+				"field": "effective_alpha",
+				"message": "registered Dust art stays opaque in Dust Lung and the 05-06 passage",
+				"op": "gte",
+				"probe": "z05_underlay_facts",
+				"severity": "error",
+				"tick": 330.0,
+				"type": "probe_compare",
+				"value": 0.999
+			},
+			"message": "registered Dust art stays opaque in Dust Lung and the 05-06 passage",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": {
+				"equal": true,
+				"values": [
+					1.0,
+					1.0
+				]
+			},
+			"expected": {
+				"field": "effective_alpha",
+				"message": "Locker interior forward/reverse fade state is deterministic",
+				"points": [
+					{
+						"probe": "z05_locker_facts",
+						"tick": 30.0
+					},
+					{
+						"probe": "z05_locker_facts",
+						"tick": 790.0
+					}
+				],
+				"severity": "error",
+				"tolerance": 0.001,
+				"type": "probe_sequence_equal"
+			},
+			"message": "Locker interior forward/reverse fade state is deterministic",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_sequence_equal"
+		},
+		{
+			"actual": {
+				"equal": true,
+				"values": [
+					1.0,
+					1.0
+				]
+			},
+			"expected": {
+				"field": "effective_alpha",
+				"message": "Dust interior forward/reverse fade state is deterministic",
+				"points": [
+					{
+						"probe": "z05_underlay_facts",
+						"tick": 270.0
+					},
+					{
+						"probe": "z05_underlay_facts",
+						"tick": 630.0
+					}
+				],
+				"severity": "error",
+				"tolerance": 0.001,
+				"type": "probe_sequence_equal"
+			},
+			"message": "Dust interior forward/reverse fade state is deterministic",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_sequence_equal"
+		},
+		{
+			"actual": {
+				"equal": true,
+				"values": [
+					1.0,
+					1.0
+				]
+			},
+			"expected": {
+				"field": "effective_alpha",
+				"message": "connector A forward/reverse Locker fade is deterministic",
+				"points": [
+					{
+						"probe": "z05_locker_facts",
+						"tick": 90.0
+					},
+					{
+						"probe": "z05_locker_facts",
+						"tick": 750.0
+					}
+				],
+				"severity": "error",
+				"tolerance": 0.001,
+				"type": "probe_sequence_equal"
+			},
+			"message": "connector A forward/reverse Locker fade is deterministic",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_sequence_equal"
+		},
+		{
+			"actual": {
+				"equal": true,
+				"values": [
+					1.0,
+					1.0
+				]
+			},
+			"expected": {
+				"field": "effective_alpha",
+				"message": "connector B forward/reverse Locker fade is deterministic",
+				"points": [
+					{
+						"probe": "z05_locker_facts",
+						"tick": 150.0
+					},
+					{
+						"probe": "z05_locker_facts",
+						"tick": 710.0
+					}
+				],
+				"severity": "error",
+				"tolerance": 0.001,
+				"type": "probe_sequence_equal"
+			},
+			"message": "connector B forward/reverse Locker fade is deterministic",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_sequence_equal"
+		},
+		{
+			"actual": {
+				"equal": true,
+				"values": [
+					1.0,
+					1.0
+				]
+			},
+			"expected": {
+				"field": "effective_alpha",
+				"message": "connector C forward/reverse Locker fade is deterministic",
+				"points": [
+					{
+						"probe": "z05_locker_facts",
+						"tick": 210.0
+					},
+					{
+						"probe": "z05_locker_facts",
+						"tick": 670.0
+					}
+				],
+				"severity": "error",
+				"tolerance": 0.001,
+				"type": "probe_sequence_equal"
+			},
+			"message": "connector C forward/reverse Locker fade is deterministic",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_sequence_equal"
+		},
+		{
+			"actual": {
+				"equal": true,
+				"values": [
+					1.0,
+					1.0
+				]
+			},
+			"expected": {
+				"field": "effective_alpha",
+				"message": "connector A forward/reverse Dust fade is deterministic",
+				"points": [
+					{
+						"probe": "z05_underlay_facts",
+						"tick": 90.0
+					},
+					{
+						"probe": "z05_underlay_facts",
+						"tick": 750.0
+					}
+				],
+				"severity": "error",
+				"tolerance": 0.001,
+				"type": "probe_sequence_equal"
+			},
+			"message": "connector A forward/reverse Dust fade is deterministic",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_sequence_equal"
+		},
+		{
+			"actual": {
+				"equal": true,
+				"values": [
+					1.0,
+					1.0
+				]
+			},
+			"expected": {
+				"field": "effective_alpha",
+				"message": "connector B forward/reverse Dust fade is deterministic",
+				"points": [
+					{
+						"probe": "z05_underlay_facts",
+						"tick": 150.0
+					},
+					{
+						"probe": "z05_underlay_facts",
+						"tick": 710.0
+					}
+				],
+				"severity": "error",
+				"tolerance": 0.001,
+				"type": "probe_sequence_equal"
+			},
+			"message": "connector B forward/reverse Dust fade is deterministic",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_sequence_equal"
+		},
+		{
+			"actual": {
+				"equal": true,
+				"values": [
+					1.0,
+					1.0
+				]
+			},
+			"expected": {
+				"field": "effective_alpha",
+				"message": "connector C forward/reverse Dust fade is deterministic",
+				"points": [
+					{
+						"probe": "z05_underlay_facts",
+						"tick": 210.0
+					},
+					{
+						"probe": "z05_underlay_facts",
+						"tick": 670.0
+					}
+				],
+				"severity": "error",
+				"tolerance": 0.001,
+				"type": "probe_sequence_equal"
+			},
+			"message": "connector C forward/reverse Dust fade is deterministic",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_sequence_equal"
+		},
+		{
+			"actual": {
+				"equal": true,
+				"values": [
+					1.0,
+					1.0
+				]
+			},
+			"expected": {
+				"field": "effective_alpha",
+				"message": "connector A forward/reverse Connector fade is deterministic",
+				"points": [
+					{
+						"probe": "z05_connector_facts",
+						"tick": 90.0
+					},
+					{
+						"probe": "z05_connector_facts",
+						"tick": 750.0
+					}
+				],
+				"severity": "error",
+				"tolerance": 0.001,
+				"type": "probe_sequence_equal"
+			},
+			"message": "connector A forward/reverse Connector fade is deterministic",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_sequence_equal"
+		},
+		{
+			"actual": {
+				"equal": true,
+				"values": [
+					1.0,
+					1.0
+				]
+			},
+			"expected": {
+				"field": "effective_alpha",
+				"message": "connector B forward/reverse Connector fade is deterministic",
+				"points": [
+					{
+						"probe": "z05_connector_facts",
+						"tick": 150.0
+					},
+					{
+						"probe": "z05_connector_facts",
+						"tick": 710.0
+					}
+				],
+				"severity": "error",
+				"tolerance": 0.001,
+				"type": "probe_sequence_equal"
+			},
+			"message": "connector B forward/reverse Connector fade is deterministic",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_sequence_equal"
+		},
+		{
+			"actual": {
+				"equal": true,
+				"values": [
+					1.0,
+					1.0
+				]
+			},
+			"expected": {
+				"field": "effective_alpha",
+				"message": "connector C forward/reverse Connector fade is deterministic",
+				"points": [
+					{
+						"probe": "z05_connector_facts",
+						"tick": 210.0
+					},
+					{
+						"probe": "z05_connector_facts",
+						"tick": 670.0
+					}
+				],
+				"severity": "error",
+				"tolerance": 0.001,
+				"type": "probe_sequence_equal"
+			},
+			"message": "connector C forward/reverse Connector fade is deterministic",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_sequence_equal"
+		},
+		{
+			"actual": {
+				"equal": true,
+				"values": [
+					1.0,
+					1.0
+				]
+			},
+			"expected": {
+				"field": "effective_alpha",
+				"message": "Zone05 foreground state is deterministic at passage and reverse Dust interior checkpoints",
+				"points": [
+					{
+						"probe": "z05_foreground_facts",
+						"tick": 330.0
+					},
+					{
+						"probe": "z05_foreground_facts",
+						"tick": 630.0
+					}
+				],
+				"severity": "error",
+				"tolerance": 0.001,
+				"type": "probe_sequence_equal"
+			},
+			"message": "Zone05 foreground state is deterministic at passage and reverse Dust interior checkpoints",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_sequence_equal"
+		}
+	],
+	"capture_failures": [],
+	"capture_mode": "none",
+	"completed": true,
+	"completed_tick": 795,
+	"failures": [],
+	"keyframes": [],
+	"markers": [],
+	"passed": true,
+	"probe_failures": [],
+	"runtime": {
+		"godot": {
+			"build": "arch_linux",
+			"hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+			"hex": 263938,
+			"major": 4,
+			"minor": 7,
+			"patch": 2,
+			"status": "stable",
+			"string": "4.7.2-stable (arch_linux)",
+			"timestamp": 1786929518
+		},
+		"physics_hz": 60,
+		"renderer": "vulkan"
+	},
+	"scenario_id": "traversal/awakening_late_seams_v1",
+	"scenario_path": "/home/braydenchaffee/Projects/.custodian-worktrees/operator-2-5d-ne-walk-retargeting-20261016T085104Z-d287e799512d/reports/moment_forge/traversal/awakening_late_seams_v1/20261016T193817-0400/scenario.snapshot.json",
+	"schema": "custodian.moment_forge.run_result.v1",
+	"seed": 1901
+}
