@@ -3,6 +3,7 @@ extends SceneTree
 const GAME_SCENE := preload("res://scenes/game.tscn")
 const WORLD_ORIGIN_BRANCH_GROUP := &"world_origin_branch"
 const REQUIRED_ORIGIN_BRANCHES := [
+	"Ambient",
 	"DebugDraw",
 	"InspectorProbe",
 	"NavigationDebug",
@@ -26,6 +27,7 @@ const REQUIRED_ORIGIN_BRANCHES := [
 	"ConstructionPlacement",
 ]
 const PERSISTENT_WORLD_NODES := [
+	"WorldEnvironmentDirector",
 	"LevelLoader",
 	"RouteTraversalManager",
 	"CanvasModulate",
