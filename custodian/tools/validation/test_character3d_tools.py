@@ -142,6 +142,21 @@ class OperatorStageTests(unittest.TestCase):
             operator_stage.main([])
 
 
+class RenderToolTests(unittest.TestCase):
+    def test_master_is_an_argument_not_a_location_relative_path(self):
+        # Regression: the proof-workspace copy derived the master from its own location
+        # (parents[1]), which resolves to the wrong folder once the script lives in the repository.
+        text = (TOOLS / "render/measure_render.py").read_text()
+        self.assertNotIn("parents[", text)
+        self.assertIn('"--master"', text)
+
+    def test_no_script_derives_inputs_from_its_own_location(self):
+        for path in (TOOLS / "render/measure_render.py", TOOLS / "render/alpha_cleanup.py",
+                     TOOLS / "render/root_motion_audit.py", TOOLS / "adapt/adapt_motion_to_master.py",
+                     TOOLS / "review/make_review_sheets.py"):
+            self.assertNotIn("parents[1] /", path.read_text(), path.name)
+
+
 class PipelinePlanningTests(unittest.TestCase):
     def setUp(self):
         self.contract = _good_pursuit_contract()

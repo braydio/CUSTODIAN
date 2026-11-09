@@ -26,11 +26,11 @@ import bpy
 from mathutils import Vector
 
 argv = sys.argv[sys.argv.index("--") + 1:]
-args = {"action": None, "clip": None, "out": None, "meta": None, "fps": 24, "samples": 64, "ppm": 50.0, "canvas": 128, "root_mode": "object"}
+args = {"action": None, "clip": None, "out": None, "meta": None, "master": "inputs/character_master.glb", "fps": 24, "samples": 64, "ppm": 50.0, "canvas": 128, "root_mode": "object"}
 i = 0
 while i < len(argv):
     k = argv[i]
-    if k in ("--action", "--clip", "--out", "--meta"):
+    if k in ("--action", "--clip", "--out", "--meta", "--master"):
         args[k[2:]] = argv[i + 1]; i += 1
     elif k == "--fps":
         args["fps"] = int(argv[i + 1]); i += 1
@@ -44,7 +44,8 @@ while i < len(argv):
         args["root_mode"] = argv[i + 1]; i += 1
     i += 1
 
-MASTER = Path(__file__).resolve().parents[1] / "inputs/character_master.glb"
+# Master comes from --master (default: inputs/ under the working directory). Never derived from this file's location.
+MASTER = Path(args["master"]).expanduser().resolve()
 PX = args["canvas"]
 PX_PER_M = args["ppm"]
 ROOT_PIXEL = (PX / 2, PX * 106 / 128)

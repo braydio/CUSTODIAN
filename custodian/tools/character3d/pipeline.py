@@ -113,6 +113,7 @@ def commands_for(stage: str, contract: dict, workspace: Path, canvas_override: i
                              "--action", a, "--clip", str(workspace / f"output/derived/{a}_skinned.glb"),
                              "--out", str(workspace / "output/measure"),
                              "--meta", str(workspace / f"reports/measure_{a}_c{canvas}_{ppm:g}.json"),
+                             "--master", str(workspace / "inputs/character_master.glb"),
                              "--ppm", f"{ppm:g}", "--canvas", str(canvas),
                              "--root-mode", contract["render"]["root_mode"]], workspace))
     elif stage == "clean":

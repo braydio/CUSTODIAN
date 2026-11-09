@@ -23,11 +23,13 @@ and what it does not.
 **Repository-owned (committed, runnable from this checkout):**
 
 - `custodian/tools/character3d/` holds every tool the Pursuit Frame workflow runs, plus the
-  Operator staging tool. Each file is either a byte-identical copy of the proof-workspace script, or
-  a repository version with paths turned into arguments (section 6 lists which).
+  Operator staging tool. `adapt/adapt_motion_to_master.py`, `adapt/verify_derived_pose.py`,
+  `render/alpha_cleanup.py`, `render/root_motion_audit.py` and `review/make_review_sheets.py` are
+  byte-identical copies of the proof-workspace scripts. `render/measure_render.py` and
+  `stage/operator_stage.py` are repository versions with paths turned into arguments (section 6).
 - `custodian/tools/character3d/pipeline.py` is the single driver. `validate_contract.py` and
   `contracts/*.json` describe each character.
-- Tests: `custodian/tools/validation/test_character3d_tools.py` (21 unit tests) and the two Godot
+- Tests: `custodian/tools/validation/test_character3d_tools.py` (23 unit tests) and the two Godot
   preview smokes.
 
 **External (named, not committed, required to reproduce):** see the register in section 16. The short
@@ -39,20 +41,27 @@ probe reports, Blender 5.2.3, Godot 4.7, the LFS sprite content, and Python with
 | Check | Result |
 |---|---|
 | `pipeline.py verify-inputs` on the Pursuit inputs | 12 of 12 `OK` against the recorded SHA-256 |
-| `pipeline.py adapt --action arise` in a scratch workspace | Derived clip byte-identical to the original (`539badb66ea92740…`) |
+| `pipeline.py adapt` for `arise` and `running`, scratch workspace | Derived clips byte-identical to the originals (`539badb6…`, `79924d0c…`) |
+| `pipeline.py verify` for `running`, scratch workspace | Same pass result, keyframe count (20) and zero failures as the original |
+| `pipeline.py render` for `running`, scratch workspace | Metadata identical in every key. 91 of 120 frames pixel-identical; the rest differ by at most 4 of 255 per channel. The same tool run twice gives 90 of 120 and at most 2 (section 1, note) |
+| `pipeline.py clean` for `running`, from the original frames | 120 of 120 frames byte-identical |
+| `pipeline.py sheets` for `running`, from the original frames | Sheet byte-identical to the original |
 | Adapter determinism (three runs) | Identical hashes |
 | `validate_contract.py` on `pursuit_frame.v1.json` and `operator.v1.json` | Both `VALID` |
-| `test_character3d_tools.py` | 21 of 21 pass |
+| `test_character3d_tools.py` | 23 of 23 pass |
 | `pipeline.py stage` for Pursuit | 11 actions staged at eight directions each; manifest written |
 | `pipeline.py stage` for Operator | 4,936 frames staged (4,616 at 80 px/m, 320 at 50 px/m) |
 | Pursuit preview smoke | 23 of 23 pass |
 | Operator preview smoke | `PASS` |
 | Pursuit `agree_gesture` inspect, headless, eight directions × 312 frames (2,496 loads) | No crash (section 13) |
 
-**Not re-run in that session:** the full Blender chain (verify, render, clean, sheets) for every
-action. The render and cleanup tools are repository copies of the workspace scripts, and a full
-re-run has not yet shown their output identical to the workspace. Do not claim end-to-end
-reproduction until the gate in section 14, item 1 is green.
+**Renderer determinism.** The Blender renderer is not bit-deterministic. The same render, run twice,
+differs by a few units in 255 on some frames, so frame-level equality is the wrong test. The test that
+holds is metadata equality plus per-frame pixel differences bounded by the renderer's own run-to-run
+variation.
+
+**Not yet reproduced:** the full chain for every action and both characters. The `running` action is
+reproduced end to end. Section 14, item 1 tracks the rest.
 
 ---
 
@@ -249,12 +258,17 @@ order. Frames are `frame_NN.png`, zero-based. Staged viewport folders are
 `<class_id>/<action>/<direction>/frame_NN.png`. Reports are `measure_<action>_c<canvas>_<ppm>.json` and
 `<action>_derived_verification.json`. Workstream IDs are lowercase kebab-case with a version suffix.
 
-**What the copies changed.** `pursuit_frame_stage.py` is the original stager, moved with history kept.
-`operator_stage.py` was copied from `operator_running_scale_probe_v1/scripts/stage_godot_preview.py`
-with one change: the hard-coded `REPO = ~/Projects/CUSTODIAN` and its probe and batch paths became the
-`--repo`, `--probe` and `--batch` arguments. The original wrote into the coordination checkout, not the
-worktree running the preview. The other copies are byte-identical to the proof-workspace scripts. The
-adapt copy has no path changes, but the driver passes it relative paths (section 7, stage 3).
+**What the copies changed.** Three files differ from their sources; the rest are byte-identical.
+
+- `pursuit_frame_stage.py` is the original stager, moved with history kept.
+- `operator_stage.py` was copied from `operator_running_scale_probe_v1/scripts/stage_godot_preview.py`.
+  The hard-coded `REPO = ~/Projects/CUSTODIAN` and its probe and batch paths became the `--repo`,
+  `--probe` and `--batch` arguments. The original wrote into the coordination checkout.
+- `measure_render.py` derived its master from its own location (`parents[1]`). That works in the
+  proof workspace and fails in the repository, where it resolves to the wrong folder. The master is
+  now the `--master` argument, which the driver always passes. A regression test forbids the pattern.
+
+The driver also runs `adapt` from inside the workspace with relative paths (section 7, stage 3).
 
 ---
 
@@ -330,8 +344,8 @@ transparency test, in which the derived clip reproduces the original's pose matr
 
 ### Stage 5: Render with object-level root removal
 
-`render/measure_render.py --root-mode object` removes the root's horizontal translation at the object level,
-not the bone level:
+`render/measure_render.py --root-mode object --master <workspace>/inputs/character_master.glb` removes the
+root's horizontal translation at the object level, not the bone level:
 
 ```python
 delta_arm = Vector((rest_head.x - head_arm.x, rest_head.y - head_arm.y, 0.0))
@@ -584,6 +598,8 @@ Rollback is a commit-level revert on the workstream branch. Do not run `git chec
 | Derived clip hash differs from the workspace | Absolute and relative input paths produce different provenance | Run `adapt` from the workspace with relative paths (the driver does this) |
 | Render metadata labelled `_m` looks 100× too large | Armature-local units, armature scale 0.01 | Convert with the armature scale, or use world space |
 | Hips drift after render | Bone-level root correction is discarded at render | Use `--root-mode object` |
+| Render fails with `Error: Please select a file` | `measure_render.py` cannot find its master (it was once derived from the script's own location) | Pass `--master`. The driver does this; the regression test guards the pattern |
+| Rendered frames differ slightly from the originals | Renderer run-to-run variation (section 1) | Compare metadata exactly and pixels within the variation bound, not byte for byte |
 | `operator_stage.py` wrote into the coordination checkout | Old hard-coded `REPO` path | Pass `--repo` the worktree root (the driver does this) |
 | Smoke fails at `behit_flyup uses the 256x320 viewport` | Inspect clip not advanced before the check | Call `adapter.advance(0.0)` first |
 | `ERROR: N resources still in use at exit` after a headless run | Scene not freed before `quit` | Harmless for a passing run. Free nodes to silence it |
@@ -605,9 +621,8 @@ inspect-only, so gameplay should never load it. If a gameplay path does load it,
 
 **Next steps for reuse, in order.**
 
-1. **Gate: reproduce the full Blender chain.** Run verify, render, clean and sheets for one Pursuit action with the
-   repository tools, and compare the output hashes with the workspace. The adapt stage already passes this test. Until
-   render and clean pass it too, the render chain is not reproduced.
+1. **Gate: reproduce the full chain for every action.** `running` passes end to end (section 1). Run the same
+   comparison for the other ten Pursuit actions, then for the Operator, whose render and cleanup are still external.
 2. Give the Operator a render and cleanup stage in the repository, so its chain stops depending on the external probe
    scripts (`compact_viewports.py`, `render_operator_scale.py`, `measure_render.py`, `alpha_cleanup.py`,
    `root_motion_audit.py` and `stage_godot_preview.py` in its probe workspace).
@@ -645,7 +660,8 @@ need. Keep candidate art out of Git. Stop processes by PID.
 
 - **Operator physical reference** (section 5.3): 50 px/m runtime versus the 80 px/m preview default. Open.
 - **Operator render and cleanup chain** is external (section 14, item 2).
-- **Full Blender chain reproduction** is not yet shown for the repository copies (section 14, item 1).
+- **Full chain reproduction** is shown for the Pursuit `running` action only (section 14, item 1).
+- **Renderer determinism:** EEVEE output varies by a few units in 255 between runs (section 1).
 - **Positional ground truth** is unverified for both characters. Rotation and deformation checks pass.
 - **Attacks, reactions and deaths** are not authored in the Pursuit candidate. The held locomotion pose shows instead.
 - **Idle** is a labelled fallback for Pursuit. There is no authored 3D idle.
