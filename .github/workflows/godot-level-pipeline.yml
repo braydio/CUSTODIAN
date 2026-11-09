@@ -58,8 +58,93 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - name: Detect changes needing the Godot level suite
+        id: level_scope
+        shell: bash
+        env:
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PUSH_BEFORE_SHA: ${{ github.event.before }}
+        run: |
+          set -euo pipefail
+          if [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" ]]; then
+            echo 'run_levels=true' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            base="$PR_BASE_SHA"
+          else
+            base="$PUSH_BEFORE_SHA"
+          fi
+          if [[ -z "$base" || "$base" =~ ^0+$ ]]; then
+            base="$(git rev-parse HEAD^)"
+          fi
+          changed="$(git diff --name-only "$base" HEAD)"
+          # The validation manifest changes for agent/browser tests too.
+          relevant="$(printf '%s\n' "$changed" | grep -v -E '^(custodian/tools/validation/validation_manifest\.json|\.github/workflows/godot-level-pipeline\.yml)
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+
+      - name: Import project
+        if: steps.level_scope.outputs.run_levels == 'true'
+        working-directory: custodian
+        run: godot --headless --path . --import --quit
+
+      - name: Run authored-level lifecycle suite
+        if: steps.level_scope.outputs.run_levels == 'true'
+        working-directory: custodian
+        shell: bash
+        run: |
+          set -euo pipefail
+          tests=(
+            authored_level_ingress_return_smoke.gd
+            authored_level_reentry_smoke.gd
+            level_presentation_profile_smoke.gd
+            level_entry_rollback_smoke.gd
+            world_ingress_physics_reentry_smoke.gd
+            level_return_single_authority_smoke.gd
+            level_return_rejected_smoke.gd
+            level_origin_destroyed_smoke.gd
+            level_camera_rebind_smoke.gd
+            level_named_spawn_smoke.gd
+            level_registry_contract_smoke.gd
+            world_origin_branch_contract_smoke.gd
+            sundered_keep_ingress_smoke.gd
+            sundered_keep_level_chain_smoke.gd
+            sundered_keep_approach_smoke.gd
+            sundered_keep_parallax_depth_smoke.gd
+            sundered_keep_vista_polish_smoke.gd
+          )
+
+          for test in "${tests[@]}"; do
+            godot --headless --path . \
+              --script "res://tools/validation/${test}"
+          done
+
+      - name: Run route traversal suite
+        if: steps.level_scope.outputs.run_levels == 'true'
+        working-directory: custodian
+        shell: bash
+        run: bash tools/validation/run_route_pipeline_suite.sh
+ || true)"
+          if printf '%s\n' "$relevant" | grep -Eq '^(custodian/(game/world/levels/|game/world/procgen/ingress/|game/world/approaches/sundered_keep/|game/world/sundered_keep/|game/world/routes/|game/systems/core/systems/contract_world_loader\.gd$|scenes/game\.tscn$|content/(levels/|routes/|backgrounds/sundered_keep/)|tools/level_authoring/|tools/validation/)|design/04_architecture/ROUTE_TRAVERSAL_SYSTEM\.md$|design/05_levels/SUNDERED_KEEP_(VISTA_APPROACH|ROUTE_STAGES)\.md$|custodian/docs/SCENE_HIERARCHY\.md$)'; then
+            echo 'run_levels=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'run_levels=false' >> "$GITHUB_OUTPUT"
+            echo 'No level/runtime changes; skipping authored-level suite.'
+          fi
+
+      - name: Hydrate level LFS assets
+        if: steps.level_scope.outputs.run_levels == 'true'
+        run: git lfs pull --include="custodian/content/**"
 
       - name: Install Godot 4.7
+        if: steps.level_scope.outputs.run_levels == 'true'
         uses: chickensoft-games/setup-godot@v2
         with:
           version: 4.7.0
