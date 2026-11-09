@@ -1,0 +1,113 @@
+{
+  "schema": "custodian.operator_animation_workbench.v2",
+  "identity": {
+    "profile": "unarmed",
+    "group": "transition",
+    "action": "dodge_charge_release_01",
+    "direction": "omni"
+  },
+  "context": {
+    "weapon_id": "",
+    "linked_profile": "",
+    "presentation_mode": "",
+    "fingerprint": "720c545901fade83490b5e2c017afb126c79755f82d482ce39a92105802c0c28"
+  },
+  "weapon_context": null,
+  "timeline": {
+    "frames": 6,
+    "source_clock_frames": 6,
+    "workspace_clock_frames": 6,
+    "document_frames": 6,
+    "preview_fps": 12,
+    "timing_authority": false,
+    "clock_owner": "fx"
+  },
+  "canvas": {
+    "width": 96,
+    "height": 96
+  },
+  "aseprite": {
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/unarmed/transition/dodge_charge_release_01/omni/workbench.aseprite",
+    "last_synced_sha256": "ee0100052871eab3827ca23976f015ae6aa03791be6b14a78b9de61413168568"
+  },
+  "layers": [
+    {
+      "binding_id": "fx",
+      "aseprite_layer_name": "fx",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "unarmed",
+      "group": "transition",
+      "action": "dodge_charge_release_01",
+      "direction": "omni",
+      "layer": "fx",
+      "source_path": "custodian/content/sprites/operator/source/animations/unarmed/transition/dodge_charge_release_01/operator__fx__unarmed__transition__dodge_charge_release_01__omni__6f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/unarmed/transition/dodge_charge_release_01/operator__fx__unarmed__transition__dodge_charge_release_01__omni__6f__96.png",
+      "source_file_sha256": "0b3856c33ee57068dd375d18402f5694312dd8378e4bca5ae89c614f921e2111",
+      "source_pixel_sha256": "b174ef489285881c1f69253af8108e8acd4b2afe82dd77a212e535046e5e8663",
+      "frames": 6,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "fx",
+        "profile": "unarmed",
+        "group": "transition",
+        "action": "dodge_charge_release_01",
+        "direction": "omni"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/unarmed/transition/dodge_charge_release_01/operator__fx__unarmed__transition__dodge_charge_release_01__omni__6f__96.png",
+        "frames": 6,
+        "frame_size": [
+          96,
+          96
+        ],
+        "file_sha256": "0b3856c33ee57068dd375d18402f5694312dd8378e4bca5ae89c614f921e2111",
+        "pixel_sha256": "b174ef489285881c1f69253af8108e8acd4b2afe82dd77a212e535046e5e8663"
+      },
+      "workspace_contract": {
+        "frames": 6,
+        "frame_size": [
+          96,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/unarmed/transition/dodge_charge_release_01/operator__fx__unarmed__transition__dodge_charge_release_01__omni__6f__96.png",
+        "frames": 6,
+        "frame_size": [
+          96,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/unarmed/transition/dodge_charge_release_01/omni/baseline/fx.png"
+    }
+  ],
+  "references": [],
+  "pending_migration": null,
+  "last_publish": {
+    "timestamp": null,
+    "validation_status": null
+  }
+}

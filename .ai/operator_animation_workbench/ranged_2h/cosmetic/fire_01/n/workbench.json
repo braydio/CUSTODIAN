@@ -1,0 +1,329 @@
+{
+  "schema": "custodian.operator_animation_workbench.v2",
+  "identity": {
+    "profile": "ranged_2h",
+    "group": "cosmetic",
+    "action": "fire_01",
+    "direction": "n"
+  },
+  "context": {
+    "weapon_id": "carbine_rifle_mk1",
+    "linked_profile": "ranged_2h",
+    "presentation_mode": "hybrid",
+    "fingerprint": "f89f8e3cf66c7e0955619d4b5c2d8ec96dbe70f5cee60cbefb424b1d7657d536"
+  },
+  "weapon_context": {
+    "weapon_id": "carbine_rifle_mk1",
+    "animation_profile": "ranged_2h",
+    "presentation_mode": "hybrid"
+  },
+  "timeline": {
+    "frames": 5,
+    "source_clock_frames": 5,
+    "workspace_clock_frames": 5,
+    "document_frames": 5,
+    "preview_fps": 12,
+    "timing_authority": false,
+    "clock_owner": "lower_body"
+  },
+  "canvas": {
+    "width": 96,
+    "height": 96
+  },
+  "aseprite": {
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/ranged_2h/cosmetic/fire_01/n/workbench.aseprite",
+    "last_synced_sha256": "96524c4f78963b6b298d482deb4e610940e48a76a890dd2dbc0ee85243dc22b3"
+  },
+  "layers": [
+    {
+      "binding_id": "lower_body",
+      "aseprite_layer_name": "lower_body",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "ranged_2h",
+      "group": "cosmetic",
+      "action": "fire_01",
+      "direction": "n",
+      "layer": "lower_body",
+      "source_path": "custodian/content/sprites/operator/source/animations/ranged_2h/cosmetic/fire_01/operator__lower_body__ranged_2h__cosmetic__fire_01__n__5f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/ranged_2h/cosmetic/fire_01/operator__lower_body__ranged_2h__cosmetic__fire_01__n__5f__96.png",
+      "source_file_sha256": "7b22302bb14ce896fb1f4948099e1e92a9e95d41f16287b621d8b882d9d30cd0",
+      "source_pixel_sha256": "eca7f0a79ca2920c660c2e272bb500971010005820054ff93eae55c0879e2918",
+      "frames": 5,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "lower_body",
+        "profile": "ranged_2h",
+        "group": "cosmetic",
+        "action": "fire_01",
+        "direction": "n"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/ranged_2h/cosmetic/fire_01/operator__lower_body__ranged_2h__cosmetic__fire_01__n__5f__96.png",
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ],
+        "file_sha256": "7b22302bb14ce896fb1f4948099e1e92a9e95d41f16287b621d8b882d9d30cd0",
+        "pixel_sha256": "eca7f0a79ca2920c660c2e272bb500971010005820054ff93eae55c0879e2918"
+      },
+      "workspace_contract": {
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/ranged_2h/cosmetic/fire_01/operator__lower_body__ranged_2h__cosmetic__fire_01__n__5f__96.png",
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/ranged_2h/cosmetic/fire_01/n/baseline/lower_body.png"
+    },
+    {
+      "binding_id": "upper_body",
+      "aseprite_layer_name": "upper_body",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "ranged_2h",
+      "group": "cosmetic",
+      "action": "fire_01",
+      "direction": "n",
+      "layer": "upper_body",
+      "source_path": "custodian/content/sprites/operator/source/animations/ranged_2h/cosmetic/fire_01/operator__upper_body__ranged_2h__cosmetic__fire_01__n__5f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/ranged_2h/cosmetic/fire_01/operator__upper_body__ranged_2h__cosmetic__fire_01__n__5f__96.png",
+      "source_file_sha256": "27c7367cb935271f9aa49967d3aea7dcfa0c2385d42fcaf7aaf5d3df848a9f8b",
+      "source_pixel_sha256": "1f1286cee5e3d719efea4ef35ee75e1009d7fa03070ad7c1c4a862a22aeecfa4",
+      "frames": 5,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "upper_body",
+        "profile": "ranged_2h",
+        "group": "cosmetic",
+        "action": "fire_01",
+        "direction": "n"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/ranged_2h/cosmetic/fire_01/operator__upper_body__ranged_2h__cosmetic__fire_01__n__5f__96.png",
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ],
+        "file_sha256": "27c7367cb935271f9aa49967d3aea7dcfa0c2385d42fcaf7aaf5d3df848a9f8b",
+        "pixel_sha256": "1f1286cee5e3d719efea4ef35ee75e1009d7fa03070ad7c1c4a862a22aeecfa4"
+      },
+      "workspace_contract": {
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/ranged_2h/cosmetic/fire_01/operator__upper_body__ranged_2h__cosmetic__fire_01__n__5f__96.png",
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/ranged_2h/cosmetic/fire_01/n/baseline/upper_body.png"
+    },
+    {
+      "binding_id": "weapon",
+      "aseprite_layer_name": "weapon",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "ranged_2h",
+      "group": "cosmetic",
+      "action": "fire_01",
+      "direction": "n",
+      "layer": "weapon",
+      "source_path": "custodian/content/sprites/operator/source/animations/ranged_2h/cosmetic/fire_01/operator__weapon__ranged_2h__cosmetic__fire_01__n__5f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/ranged_2h/cosmetic/fire_01/operator__weapon__ranged_2h__cosmetic__fire_01__n__5f__96.png",
+      "source_file_sha256": "52d4da8a82d778624ade33afd24b77f1b2edabd8e851812f2277ea88721e7f6f",
+      "source_pixel_sha256": "7ffe87bcd056890b258dc520fad757e2b0f6f4a8baef02bfec3227028fafa0f1",
+      "frames": 5,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "weapon",
+        "profile": "ranged_2h",
+        "group": "cosmetic",
+        "action": "fire_01",
+        "direction": "n"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/ranged_2h/cosmetic/fire_01/operator__weapon__ranged_2h__cosmetic__fire_01__n__5f__96.png",
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ],
+        "file_sha256": "52d4da8a82d778624ade33afd24b77f1b2edabd8e851812f2277ea88721e7f6f",
+        "pixel_sha256": "7ffe87bcd056890b258dc520fad757e2b0f6f4a8baef02bfec3227028fafa0f1"
+      },
+      "workspace_contract": {
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/ranged_2h/cosmetic/fire_01/operator__weapon__ranged_2h__cosmetic__fire_01__n__5f__96.png",
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/ranged_2h/cosmetic/fire_01/n/baseline/weapon.png"
+    },
+    {
+      "binding_id": "weapon",
+      "aseprite_layer_name": "weapon",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "ranged_2h",
+      "group": "cosmetic",
+      "action": "fire_01",
+      "direction": "n",
+      "layer": "weapon",
+      "source_path": "custodian/content/sprites/operator/source/animations/ranged_2h/cosmetic/fire_01/operator__weapon__ranged_2h__cosmetic__fire_01__n__5f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/ranged_2h/cosmetic/fire_01/operator__weapon__ranged_2h__cosmetic__fire_01__n__5f__96.png",
+      "source_file_sha256": "52d4da8a82d778624ade33afd24b77f1b2edabd8e851812f2277ea88721e7f6f",
+      "source_pixel_sha256": "7ffe87bcd056890b258dc520fad757e2b0f6f4a8baef02bfec3227028fafa0f1",
+      "frames": 5,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "weapon",
+        "profile": "ranged_2h",
+        "group": "cosmetic",
+        "action": "fire_01",
+        "direction": "n"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/ranged_2h/cosmetic/fire_01/operator__weapon__ranged_2h__cosmetic__fire_01__n__5f__96.png",
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ],
+        "file_sha256": "52d4da8a82d778624ade33afd24b77f1b2edabd8e851812f2277ea88721e7f6f",
+        "pixel_sha256": "7ffe87bcd056890b258dc520fad757e2b0f6f4a8baef02bfec3227028fafa0f1"
+      },
+      "workspace_contract": {
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/ranged_2h/cosmetic/fire_01/operator__weapon__ranged_2h__cosmetic__fire_01__n__5f__96.png",
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/ranged_2h/cosmetic/fire_01/n/baseline/weapon.png"
+    }
+  ],
+  "references": [],
+  "pending_migration": null,
+  "last_publish": {
+    "timestamp": null,
+    "validation_status": null
+  }
+}

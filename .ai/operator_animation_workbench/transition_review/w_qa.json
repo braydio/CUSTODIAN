@@ -1,0 +1,6 @@
+{
+  "schema": "custodian.operator_art_qa.v2",
+  "status": "GREEN",
+  "publish_authorized": false,
+  "findings": []
+}

@@ -1,0 +1,267 @@
+{
+  "schema": "custodian.operator_animation_workbench.v2",
+  "identity": {
+    "profile": "melee_1h",
+    "group": "locomotion",
+    "action": "walk_01",
+    "direction": "e"
+  },
+  "context": {
+    "weapon_id": "vigil_pattern_dagger",
+    "linked_profile": "melee_1h_dagger",
+    "presentation_mode": "authored_overlay",
+    "fingerprint": "79a8e5c532226c6e8f356b54628ea9d6a1ac99fe8da59b28b572cc260c7ddb8d"
+  },
+  "weapon_context": {
+    "weapon_id": "vigil_pattern_dagger",
+    "animation_profile": "melee_1h_dagger",
+    "presentation_mode": "authored_overlay"
+  },
+  "timeline": {
+    "frames": 8,
+    "source_clock_frames": 8,
+    "workspace_clock_frames": 8,
+    "document_frames": 8,
+    "preview_fps": 12,
+    "timing_authority": false,
+    "clock_owner": "lower_body"
+  },
+  "canvas": {
+    "width": 96,
+    "height": 96
+  },
+  "aseprite": {
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/locomotion/walk_01/e/workbench.aseprite",
+    "last_synced_sha256": "d23082c8b827c81df1ce97221183dc747e787132dfdae562fe1a17ea626707bb"
+  },
+  "layers": [
+    {
+      "binding_id": "lower_body",
+      "aseprite_layer_name": "lower_body",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "melee_1h",
+      "group": "locomotion",
+      "action": "walk_01",
+      "direction": "e",
+      "layer": "lower_body",
+      "source_path": "custodian/content/sprites/operator/source/animations/melee_1h/locomotion/walk_01/operator__lower_body__melee_1h__locomotion__walk_01__e__8f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/melee_1h/locomotion/walk_01/operator__lower_body__melee_1h__locomotion__walk_01__e__8f__96.png",
+      "source_file_sha256": "e8b464f6c7449684c61c271baa53f88ff14c1360dc343fa5df9c38afaa08e07e",
+      "source_pixel_sha256": "762372f4b3051f1bb2907c3026359ee94181730e5b2e6431901e64d06b17040c",
+      "frames": 8,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "lower_body",
+        "profile": "melee_1h",
+        "group": "locomotion",
+        "action": "walk_01",
+        "direction": "e"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/locomotion/walk_01/operator__lower_body__melee_1h__locomotion__walk_01__e__8f__96.png",
+        "frames": 8,
+        "frame_size": [
+          96,
+          96
+        ],
+        "file_sha256": "e8b464f6c7449684c61c271baa53f88ff14c1360dc343fa5df9c38afaa08e07e",
+        "pixel_sha256": "762372f4b3051f1bb2907c3026359ee94181730e5b2e6431901e64d06b17040c"
+      },
+      "workspace_contract": {
+        "frames": 8,
+        "frame_size": [
+          96,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/locomotion/walk_01/operator__lower_body__melee_1h__locomotion__walk_01__e__8f__96.png",
+        "frames": 8,
+        "frame_size": [
+          96,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/locomotion/walk_01/e/baseline/lower_body.png"
+    },
+    {
+      "binding_id": "upper_body",
+      "aseprite_layer_name": "upper_body",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "melee_1h",
+      "group": "locomotion",
+      "action": "walk_01",
+      "direction": "e",
+      "layer": "upper_body",
+      "source_path": "custodian/content/sprites/operator/source/animations/melee_1h/locomotion/walk_01/operator__upper_body__melee_1h__locomotion__walk_01__e__8f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/melee_1h/locomotion/walk_01/operator__upper_body__melee_1h__locomotion__walk_01__e__8f__96.png",
+      "source_file_sha256": "535c127c53b70e2c74dc937d9f621a747f9ad65ce100862bf6aac22163c3da53",
+      "source_pixel_sha256": "b98b7b7ea7ba5b14cf3f57c08d0d0ecfab8da411fb1ad4ec8ad1ff7ef05b855a",
+      "frames": 8,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "upper_body",
+        "profile": "melee_1h",
+        "group": "locomotion",
+        "action": "walk_01",
+        "direction": "e"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/locomotion/walk_01/operator__upper_body__melee_1h__locomotion__walk_01__e__8f__96.png",
+        "frames": 8,
+        "frame_size": [
+          96,
+          96
+        ],
+        "file_sha256": "535c127c53b70e2c74dc937d9f621a747f9ad65ce100862bf6aac22163c3da53",
+        "pixel_sha256": "b98b7b7ea7ba5b14cf3f57c08d0d0ecfab8da411fb1ad4ec8ad1ff7ef05b855a"
+      },
+      "workspace_contract": {
+        "frames": 8,
+        "frame_size": [
+          96,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/locomotion/walk_01/operator__upper_body__melee_1h__locomotion__walk_01__e__8f__96.png",
+        "frames": 8,
+        "frame_size": [
+          96,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/locomotion/walk_01/e/baseline/upper_body.png"
+    },
+    {
+      "binding_id": "weapon__vigil_pattern_dagger",
+      "aseprite_layer_name": "weapon__vigil_pattern_dagger",
+      "role": "linked_weapon",
+      "editable": true,
+      "owner": "operator",
+      "profile": "melee_1h_dagger",
+      "group": "locomotion",
+      "action": "walk_01",
+      "direction": "e",
+      "layer": "weapon",
+      "source_path": "custodian/content/sprites/operator/source/animations/melee_1h_dagger/locomotion/walk_01/operator__weapon__melee_1h_dagger__locomotion__walk_01__e__8f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/melee_1h_dagger/locomotion/walk_01/operator__weapon__melee_1h_dagger__locomotion__walk_01__e__8f__96.png",
+      "source_file_sha256": "fe43cd480f5047f820e9ea7d025873f773cb576289483aaeb127b8e6155431f9",
+      "source_pixel_sha256": "d01c81118aad5f34c01ed0e89134f0b9db1576e9e50446d6c3cf1e1fff331d77",
+      "frames": 8,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "weapon",
+        "profile": "melee_1h_dagger",
+        "group": "locomotion",
+        "action": "walk_01",
+        "direction": "e"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h_dagger/locomotion/walk_01/operator__weapon__melee_1h_dagger__locomotion__walk_01__e__8f__96.png",
+        "frames": 8,
+        "frame_size": [
+          96,
+          96
+        ],
+        "file_sha256": "fe43cd480f5047f820e9ea7d025873f773cb576289483aaeb127b8e6155431f9",
+        "pixel_sha256": "d01c81118aad5f34c01ed0e89134f0b9db1576e9e50446d6c3cf1e1fff331d77"
+      },
+      "workspace_contract": {
+        "frames": 8,
+        "frame_size": [
+          96,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h_dagger/locomotion/walk_01/operator__weapon__melee_1h_dagger__locomotion__walk_01__e__8f__96.png",
+        "frames": 8,
+        "frame_size": [
+          96,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/locomotion/walk_01/e/baseline/weapon__vigil_pattern_dagger.png"
+    }
+  ],
+  "references": [],
+  "pending_migration": null,
+  "last_publish": {
+    "timestamp": null,
+    "validation_status": null
+  }
+}

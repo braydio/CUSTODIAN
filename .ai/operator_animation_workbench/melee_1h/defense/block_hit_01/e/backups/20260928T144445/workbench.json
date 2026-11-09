@@ -1,0 +1,183 @@
+{
+  "schema": "custodian.operator_animation_workbench.v2",
+  "identity": {
+    "profile": "melee_1h",
+    "group": "defense",
+    "action": "block_hit_01",
+    "direction": "e"
+  },
+  "context": {
+    "weapon_id": "",
+    "linked_profile": "",
+    "presentation_mode": "",
+    "fingerprint": "9b3c23b8c6820e90e7b613b151d41fba02e619a7876b88d75afa3f357efb9cb4"
+  },
+  "weapon_context": null,
+  "timeline": {
+    "frames": 5,
+    "source_clock_frames": 5,
+    "workspace_clock_frames": 5,
+    "document_frames": 5,
+    "preview_fps": 12,
+    "timing_authority": false,
+    "clock_owner": "lower_body"
+  },
+  "canvas": {
+    "width": 96,
+    "height": 96
+  },
+  "aseprite": {
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/defense/block_hit_01/e/workbench.aseprite",
+    "last_synced_sha256": "c5cb802d8e18e575e3090c282c5880ceb9f970004079ea5cb7d875a52eb4e55f"
+  },
+  "layers": [
+    {
+      "binding_id": "lower_body",
+      "aseprite_layer_name": "lower_body",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "melee_1h",
+      "group": "defense",
+      "action": "block_hit_01",
+      "direction": "e",
+      "layer": "lower_body",
+      "source_path": "custodian/content/sprites/operator/source/animations/melee_1h/defense/block_hit_01/operator__lower_body__melee_1h__defense__block_hit_01__e__5f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/melee_1h/defense/block_hit_01/operator__lower_body__melee_1h__defense__block_hit_01__e__5f__96.png",
+      "source_file_sha256": "b83733e2a03ac249b0c41d0beefa52cc356883aea043b7d0d2283ea342c6367c",
+      "source_pixel_sha256": "9f9cf3bee4be06dfb573f8610ef2acdea7f4be6f1d021bd5bef1bb2d7fb18172",
+      "frames": 5,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "lower_body",
+        "profile": "melee_1h",
+        "group": "defense",
+        "action": "block_hit_01",
+        "direction": "e"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/defense/block_hit_01/operator__lower_body__melee_1h__defense__block_hit_01__e__5f__96.png",
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ],
+        "file_sha256": "b83733e2a03ac249b0c41d0beefa52cc356883aea043b7d0d2283ea342c6367c",
+        "pixel_sha256": "9f9cf3bee4be06dfb573f8610ef2acdea7f4be6f1d021bd5bef1bb2d7fb18172"
+      },
+      "workspace_contract": {
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/defense/block_hit_01/operator__lower_body__melee_1h__defense__block_hit_01__e__5f__96.png",
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/defense/block_hit_01/e/baseline/lower_body.png"
+    },
+    {
+      "binding_id": "upper_body",
+      "aseprite_layer_name": "upper_body",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "melee_1h",
+      "group": "defense",
+      "action": "block_hit_01",
+      "direction": "e",
+      "layer": "upper_body",
+      "source_path": "custodian/content/sprites/operator/source/animations/melee_1h/defense/block_hit_01/operator__upper_body__melee_1h__defense__block_hit_01__e__5f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/melee_1h/defense/block_hit_01/operator__upper_body__melee_1h__defense__block_hit_01__e__5f__96.png",
+      "source_file_sha256": "2a4b18dda2d35dc256a01e2081cf9949c2d6aed8a7e69b4db75314de1f334dad",
+      "source_pixel_sha256": "36e076993af8bf6f0cb9884cacc925ebae0e2cae46e9483662d3e89a74bd007b",
+      "frames": 5,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "upper_body",
+        "profile": "melee_1h",
+        "group": "defense",
+        "action": "block_hit_01",
+        "direction": "e"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/defense/block_hit_01/operator__upper_body__melee_1h__defense__block_hit_01__e__5f__96.png",
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ],
+        "file_sha256": "2a4b18dda2d35dc256a01e2081cf9949c2d6aed8a7e69b4db75314de1f334dad",
+        "pixel_sha256": "36e076993af8bf6f0cb9884cacc925ebae0e2cae46e9483662d3e89a74bd007b"
+      },
+      "workspace_contract": {
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/defense/block_hit_01/operator__upper_body__melee_1h__defense__block_hit_01__e__5f__96.png",
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/defense/block_hit_01/e/baseline/upper_body.png"
+    }
+  ],
+  "references": [],
+  "pending_migration": null,
+  "last_publish": {
+    "timestamp": null,
+    "validation_status": null
+  }
+}

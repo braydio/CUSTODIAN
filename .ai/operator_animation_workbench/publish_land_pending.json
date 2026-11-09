@@ -1,0 +1,14 @@
+{
+  "branch": "workbench/operator-art",
+  "commit": "84c3b73382863e36f1b90c3d9a52834000dda6fc",
+  "error": "Command '['/home/braydenchaffee/Projects/CUSTODIAN/.ai/operator-ui-venv/bin/python', '/home/braydenchaffee/Projects/CUSTODIAN-operator-art/custodian/tools/agent/land_main.py', '--approved-operator-publication']' returned non-zero exit status 2.",
+  "identity": {
+    "action": "idle_relaxed_01",
+    "direction": "e",
+    "group": "posture",
+    "profile": "unarmed"
+  },
+  "schema": "custodian.operator_art_publish_land.v1",
+  "status": "land_pending",
+  "summary": "operator art publish, unarmed/posture/idle_relaxed_01/e, mirror counterpart"
+}

@@ -1,0 +1,115 @@
+{
+  "schema": "custodian.operator_animation_workbench.v2",
+  "identity": {
+    "profile": "melee_1h",
+    "group": "attack",
+    "action": "critical_execution_01",
+    "direction": "e"
+  },
+  "context": {
+    "weapon_id": "",
+    "linked_profile": "",
+    "presentation_mode": "",
+    "fingerprint": "99b2b4be07d273a65149eeca597db77e049f9dd742ca787f832efdeb6c8bfc5b"
+  },
+  "weapon_context": null,
+  "timeline": {
+    "frames": 8,
+    "source_clock_frames": 8,
+    "workspace_clock_frames": 8,
+    "document_frames": 8,
+    "preview_fps": 12,
+    "timing_authority": false,
+    "clock_owner": "weapon"
+  },
+  "canvas": {
+    "width": 156,
+    "height": 96
+  },
+  "aseprite": {
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/attack/critical_execution_01/e/workbench.aseprite",
+    "last_synced_sha256": "f8670724435224b4fb43ab7c9eb888ff02be8bf5a8d837eb2b9018ce1aee027b"
+  },
+  "layers": [
+    {
+      "binding_id": "weapon",
+      "aseprite_layer_name": "weapon",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "melee_1h",
+      "group": "attack",
+      "action": "critical_execution_01",
+      "direction": "e",
+      "layer": "weapon",
+      "source_path": "custodian/content/sprites/operator/source/animations/melee_1h/attack/critical_execution_01/operator__weapon__melee_1h__attack__critical_execution_01__e__8f__156x96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/melee_1h/attack/critical_execution_01/operator__weapon__melee_1h__attack__critical_execution_01__e__8f__156x96.png",
+      "source_file_sha256": "3751eaef31b82f717d0cbdff6d67d64291b0f199d469baf70aae62049fe6f7d7",
+      "source_pixel_sha256": "6b3d3805d5cd0d39e5737979cff5226bd30de5fbb06f97bc4f852e1629a2a7d2",
+      "frames": 8,
+      "frame_size": [
+        156,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "weapon",
+        "profile": "melee_1h",
+        "group": "attack",
+        "action": "critical_execution_01",
+        "direction": "e"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/attack/critical_execution_01/operator__weapon__melee_1h__attack__critical_execution_01__e__8f__156x96.png",
+        "frames": 8,
+        "frame_size": [
+          156,
+          96
+        ],
+        "file_sha256": "3751eaef31b82f717d0cbdff6d67d64291b0f199d469baf70aae62049fe6f7d7",
+        "pixel_sha256": "6b3d3805d5cd0d39e5737979cff5226bd30de5fbb06f97bc4f852e1629a2a7d2"
+      },
+      "workspace_contract": {
+        "frames": 8,
+        "frame_size": [
+          156,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/attack/critical_execution_01/operator__weapon__melee_1h__attack__critical_execution_01__e__8f__156x96.png",
+        "frames": 8,
+        "frame_size": [
+          156,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/attack/critical_execution_01/e/baseline/weapon.png"
+    }
+  ],
+  "references": [],
+  "pending_migration": null,
+  "last_publish": {
+    "timestamp": null,
+    "validation_status": null
+  }
+}

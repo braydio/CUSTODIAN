@@ -1,0 +1,211 @@
+{
+  "schema": "custodian.operator_animation_workbench.v2",
+  "identity": {
+    "profile": "unarmed",
+    "group": "locomotion",
+    "action": "run_01",
+    "direction": "s"
+  },
+  "context": {
+    "weapon_id": "",
+    "linked_profile": "",
+    "presentation_mode": "",
+    "fingerprint": "e3b7fa6a976aa12374b9fa46ff422f521870c4c9a70af320369190bfe77ef180"
+  },
+  "weapon_context": null,
+  "timeline": {
+    "frames": 7,
+    "source_clock_frames": 5,
+    "workspace_clock_frames": 5,
+    "document_frames": 7,
+    "preview_fps": 12,
+    "timing_authority": false,
+    "clock_owner": "lower_body"
+  },
+  "canvas": {
+    "width": 96,
+    "height": 96
+  },
+  "aseprite": {
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/unarmed/locomotion/run_01/s/workbench.aseprite",
+    "last_synced_sha256": "6e1fc15b0b42878b762650788fad83151bba90aa95f0535eba8190f6e0a20275"
+  },
+  "layers": [
+    {
+      "binding_id": "lower_body",
+      "aseprite_layer_name": "lower_body",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "unarmed",
+      "group": "locomotion",
+      "action": "run_01",
+      "direction": "s",
+      "layer": "lower_body",
+      "source_path": "custodian/content/sprites/operator/source/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__s__5f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__s__5f__96.png",
+      "source_file_sha256": "84c857f91d8708893ea5d4cc2ddadeef7e2d4e74c5f836ffd5bb5d9233e3a382",
+      "source_pixel_sha256": "8252f3073c46355a6a4ee5bb91325254bc3edf695e4dcbdaf87a067775f1f31f",
+      "frames": 5,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "group": "locomotion",
+        "action": "run_01",
+        "direction": "s"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__s__5f__96.png",
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ],
+        "file_sha256": "84c857f91d8708893ea5d4cc2ddadeef7e2d4e74c5f836ffd5bb5d9233e3a382",
+        "pixel_sha256": "8252f3073c46355a6a4ee5bb91325254bc3edf695e4dcbdaf87a067775f1f31f"
+      },
+      "workspace_contract": {
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__s__5f__96.png",
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/unarmed/locomotion/run_01/s/baseline/lower_body.png"
+    },
+    {
+      "binding_id": "upper_body",
+      "aseprite_layer_name": "upper_body",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "unarmed",
+      "group": "locomotion",
+      "action": "run_01",
+      "direction": "s",
+      "layer": "upper_body",
+      "source_path": "custodian/content/sprites/operator/source/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__s__5f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__s__5f__96.png",
+      "source_file_sha256": "48dc80049e69f64637174a58784c0a80cd8a620acf1529c0cf2b1f569735d678",
+      "source_pixel_sha256": "f4fa9f3ea222c5e54001f29d017982283b5bd961b160f58a1179d9eff1faa8d0",
+      "frames": 5,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "upper_body",
+        "profile": "unarmed",
+        "group": "locomotion",
+        "action": "run_01",
+        "direction": "s"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__s__5f__96.png",
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ],
+        "file_sha256": "48dc80049e69f64637174a58784c0a80cd8a620acf1529c0cf2b1f569735d678",
+        "pixel_sha256": "f4fa9f3ea222c5e54001f29d017982283b5bd961b160f58a1179d9eff1faa8d0"
+      },
+      "workspace_contract": {
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__s__5f__96.png",
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/unarmed/locomotion/run_01/s/baseline/upper_body.png"
+    }
+  ],
+  "references": [
+    {
+      "binding_id": "full_body_reference",
+      "aseprite_layer_name": "__REFERENCE_FULL_BODY",
+      "role": "reference",
+      "editable": false,
+      "source_path": "custodian/content/sprites/operator/source/animations/unarmed/locomotion/run_01/operator__full_body__unarmed__locomotion__run_01__s__7f__96.png",
+      "frames": 7,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_slots": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/unarmed/locomotion/run_01/s/baseline/full_body_reference.png"
+    }
+  ],
+  "pending_migration": null,
+  "last_publish": {
+    "timestamp": "2026-09-06T07:51:49.426963+00:00",
+    "validation_status": "passed"
+  },
+  "export_stamp": "20260906T035125"
+}

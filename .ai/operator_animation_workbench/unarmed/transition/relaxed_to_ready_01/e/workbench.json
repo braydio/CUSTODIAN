@@ -1,0 +1,183 @@
+{
+  "schema": "custodian.operator_animation_workbench.v2",
+  "identity": {
+    "profile": "unarmed",
+    "group": "transition",
+    "action": "relaxed_to_ready_01",
+    "direction": "e"
+  },
+  "context": {
+    "weapon_id": "",
+    "linked_profile": "",
+    "presentation_mode": "",
+    "fingerprint": "9e54c5a6fe45dcc9979322a6cec67fb6b79966d3d546ce4dbe698335548c1ff2"
+  },
+  "weapon_context": null,
+  "timeline": {
+    "frames": 1,
+    "source_clock_frames": 1,
+    "workspace_clock_frames": 1,
+    "document_frames": 1,
+    "preview_fps": 8.0,
+    "timing_authority": true,
+    "clock_owner": "lower_body",
+    "fps": 8.0,
+    "loop": false,
+    "durations": [
+      1.0
+    ],
+    "frame_durations_ms": [
+      125.0
+    ]
+  },
+  "canvas": {
+    "width": 96,
+    "height": 96
+  },
+  "aseprite": {
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/unarmed/transition/relaxed_to_ready_01/e/workbench.aseprite",
+    "last_synced_sha256": "6c97abe8f77a84af76c06dfae3d845d2b9fffb85d865ff8355580608a56ab9a9"
+  },
+  "layers": [
+    {
+      "binding_id": "lower_body",
+      "aseprite_layer_name": "lower_body",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "unarmed",
+      "group": "transition",
+      "action": "relaxed_to_ready_01",
+      "direction": "e",
+      "layer": "lower_body",
+      "source_path": "custodian/content/sprites/operator/source/animations/unarmed/transition/relaxed_to_ready_01/operator__lower_body__unarmed__transition__relaxed_to_ready_01__e__1f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/unarmed/transition/relaxed_to_ready_01/operator__lower_body__unarmed__transition__relaxed_to_ready_01__e__1f__96.png",
+      "source_file_sha256": "a3d0d87ba382434c95d5a92ed7411c5959c67a010eea88964fb12891cbe41363",
+      "source_pixel_sha256": "a7e98eff4a1786255cf3dc3989a95503c7527ba0d48c2002edf32717c4316309",
+      "frames": 1,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "group": "transition",
+        "action": "relaxed_to_ready_01",
+        "direction": "e"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/unarmed/transition/relaxed_to_ready_01/operator__lower_body__unarmed__transition__relaxed_to_ready_01__e__1f__96.png",
+        "frames": 1,
+        "frame_size": [
+          96,
+          96
+        ],
+        "file_sha256": "a3d0d87ba382434c95d5a92ed7411c5959c67a010eea88964fb12891cbe41363",
+        "pixel_sha256": "a7e98eff4a1786255cf3dc3989a95503c7527ba0d48c2002edf32717c4316309"
+      },
+      "workspace_contract": {
+        "frames": 1,
+        "frame_size": [
+          96,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/unarmed/transition/relaxed_to_ready_01/operator__lower_body__unarmed__transition__relaxed_to_ready_01__e__1f__96.png",
+        "frames": 1,
+        "frame_size": [
+          96,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/unarmed/transition/relaxed_to_ready_01/e/baseline/lower_body.png"
+    },
+    {
+      "binding_id": "upper_body",
+      "aseprite_layer_name": "upper_body",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "unarmed",
+      "group": "transition",
+      "action": "relaxed_to_ready_01",
+      "direction": "e",
+      "layer": "upper_body",
+      "source_path": "custodian/content/sprites/operator/source/animations/unarmed/transition/relaxed_to_ready_01/operator__upper_body__unarmed__transition__relaxed_to_ready_01__e__1f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/unarmed/transition/relaxed_to_ready_01/operator__upper_body__unarmed__transition__relaxed_to_ready_01__e__1f__96.png",
+      "source_file_sha256": "b0671785db4974a2f9ac9d311d9290b37f5eed801b75b0ef818d349b736c3149",
+      "source_pixel_sha256": "740962d68cfa218445461442985ff50f1b9ef21f9d4849a6fe7ccfa1ced71914",
+      "frames": 1,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "upper_body",
+        "profile": "unarmed",
+        "group": "transition",
+        "action": "relaxed_to_ready_01",
+        "direction": "e"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/unarmed/transition/relaxed_to_ready_01/operator__upper_body__unarmed__transition__relaxed_to_ready_01__e__1f__96.png",
+        "frames": 1,
+        "frame_size": [
+          96,
+          96
+        ],
+        "file_sha256": "b0671785db4974a2f9ac9d311d9290b37f5eed801b75b0ef818d349b736c3149",
+        "pixel_sha256": "740962d68cfa218445461442985ff50f1b9ef21f9d4849a6fe7ccfa1ced71914"
+      },
+      "workspace_contract": {
+        "frames": 1,
+        "frame_size": [
+          96,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/unarmed/transition/relaxed_to_ready_01/operator__upper_body__unarmed__transition__relaxed_to_ready_01__e__1f__96.png",
+        "frames": 1,
+        "frame_size": [
+          96,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/unarmed/transition/relaxed_to_ready_01/e/baseline/upper_body.png"
+    }
+  ],
+  "references": [],
+  "pending_migration": null,
+  "last_publish": {
+    "timestamp": null,
+    "validation_status": null
+  }
+}

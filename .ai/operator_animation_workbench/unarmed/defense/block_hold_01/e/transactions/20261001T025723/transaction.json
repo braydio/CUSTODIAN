@@ -1,0 +1,176 @@
+{
+  "transaction_id": "20261001T025723",
+  "state": "COMMITTED",
+  "sources": [
+    {
+      "binding_id": "lower_body",
+      "mirror": false,
+      "operation": "REPLACE",
+      "old_path": "custodian/content/sprites/operator/source/animations/unarmed/defense/block_hold_01/operator__lower_body__unarmed__defense__block_hold_01__e__5f__96.png",
+      "old_sha256": "072098ae1c7304e371a59cc785033903ce88a06f828e6ac3192d4c1c7b858cd2",
+      "target_path": "custodian/content/sprites/operator/source/animations/unarmed/defense/block_hold_01/operator__lower_body__unarmed__defense__block_hold_01__e__5f__96.png",
+      "target_sha256": "550d3f3234a904132be320a95cbcb0f08d6fe4c9b81280444a8f0ee54c4de927",
+      "backup_path": ".ai/operator_animation_workbench/unarmed/defense/block_hold_01/e/transactions/20261001T025723/backups/sources/lower_body.png",
+      "import_backup_path": ".ai/operator_animation_workbench/unarmed/defense/block_hold_01/e/transactions/20261001T025723/backups/sources/lower_body.png.import",
+      "timing_backup_path": ".ai/operator_animation_workbench/unarmed/defense/block_hold_01/e/transactions/20261001T025723/backups/sources/lower_body.animation.json"
+    },
+    {
+      "binding_id": "lower_body",
+      "mirror": true,
+      "operation": "REPLACE",
+      "old_path": "custodian/content/sprites/operator/source/animations/unarmed/defense/block_hold_01/operator__lower_body__unarmed__defense__block_hold_01__w__5f__96.png",
+      "old_sha256": "cad800c85a15ebc4e1e3f2c89f4cbd05d3006af720b1c41e91b60f4621298a91",
+      "target_path": "custodian/content/sprites/operator/source/animations/unarmed/defense/block_hold_01/operator__lower_body__unarmed__defense__block_hold_01__w__5f__96.png",
+      "target_sha256": "28cf02a8c611673395b989dbc9a3fe577c20705798eaedc3272f601ee2bf4830",
+      "backup_path": ".ai/operator_animation_workbench/unarmed/defense/block_hold_01/e/transactions/20261001T025723/backups/sources/mirror__lower_body.png",
+      "import_backup_path": ".ai/operator_animation_workbench/unarmed/defense/block_hold_01/e/transactions/20261001T025723/backups/sources/mirror__lower_body.png.import",
+      "timing_backup_path": ".ai/operator_animation_workbench/unarmed/defense/block_hold_01/e/transactions/20261001T025723/backups/sources/mirror__lower_body.animation.json"
+    },
+    {
+      "binding_id": "upper_body",
+      "mirror": false,
+      "operation": "REPLACE",
+      "old_path": "custodian/content/sprites/operator/source/animations/unarmed/defense/block_hold_01/operator__upper_body__unarmed__defense__block_hold_01__e__5f__96.png",
+      "old_sha256": "2a57b42ada015c35711084f7e1a5cf66eb1f1d98d8a27fb1b3725c8cea959f5b",
+      "target_path": "custodian/content/sprites/operator/source/animations/unarmed/defense/block_hold_01/operator__upper_body__unarmed__defense__block_hold_01__e__5f__96.png",
+      "target_sha256": "9161b2fca4d6223ca5b47cfd67b418819d21e124219132b6ccc22349201918b6",
+      "backup_path": ".ai/operator_animation_workbench/unarmed/defense/block_hold_01/e/transactions/20261001T025723/backups/sources/upper_body.png",
+      "import_backup_path": ".ai/operator_animation_workbench/unarmed/defense/block_hold_01/e/transactions/20261001T025723/backups/sources/upper_body.png.import",
+      "timing_backup_path": ""
+    },
+    {
+      "binding_id": "upper_body",
+      "mirror": true,
+      "operation": "REPLACE",
+      "old_path": "custodian/content/sprites/operator/source/animations/unarmed/defense/block_hold_01/operator__upper_body__unarmed__defense__block_hold_01__w__5f__96.png",
+      "old_sha256": "2d48fcc1c8e48418c776d4e05435b97999060ad3e56e9c6624121555b767fd87",
+      "target_path": "custodian/content/sprites/operator/source/animations/unarmed/defense/block_hold_01/operator__upper_body__unarmed__defense__block_hold_01__w__5f__96.png",
+      "target_sha256": "0384d3cc35b4a0149cc7cf3fb92f73a76a5aad9ec22c5e6fddacf057f6125ad8",
+      "backup_path": ".ai/operator_animation_workbench/unarmed/defense/block_hold_01/e/transactions/20261001T025723/backups/sources/mirror__upper_body.png",
+      "import_backup_path": ".ai/operator_animation_workbench/unarmed/defense/block_hold_01/e/transactions/20261001T025723/backups/sources/mirror__upper_body.png.import",
+      "timing_backup_path": ""
+    },
+    {
+      "binding_id": "fx",
+      "mirror": false,
+      "operation": "REPLACE",
+      "old_path": "custodian/content/sprites/operator/source/animations/unarmed/defense/block_hold_01/operator__fx__unarmed__defense__block_hold_01__e__5f__96.png",
+      "old_sha256": "a5a2633bfd33fd1168ccf262857da42655da3493e976bd1b02e280731c529dce",
+      "target_path": "custodian/content/sprites/operator/source/animations/unarmed/defense/block_hold_01/operator__fx__unarmed__defense__block_hold_01__e__5f__96.png",
+      "target_sha256": "bb7b685f1ca4ddfca3f8d54e2bf92e357f46d37930db160335cb49c20d40c400",
+      "backup_path": ".ai/operator_animation_workbench/unarmed/defense/block_hold_01/e/transactions/20261001T025723/backups/sources/fx.png",
+      "import_backup_path": ".ai/operator_animation_workbench/unarmed/defense/block_hold_01/e/transactions/20261001T025723/backups/sources/fx.png.import",
+      "timing_backup_path": ""
+    },
+    {
+      "binding_id": "fx",
+      "mirror": true,
+      "operation": "REPLACE",
+      "old_path": "custodian/content/sprites/operator/source/animations/unarmed/defense/block_hold_01/operator__fx__unarmed__defense__block_hold_01__w__5f__96.png",
+      "old_sha256": "76031ff7884fdf6b82de10442c3892345a8b0eb28cac4c47a0899ece9e0eabba",
+      "target_path": "custodian/content/sprites/operator/source/animations/unarmed/defense/block_hold_01/operator__fx__unarmed__defense__block_hold_01__w__5f__96.png",
+      "target_sha256": "71f35032f64213cde1971e3c49fe68cc9e3e2b4ebb26093709a7e443d14c7f8b",
+      "backup_path": ".ai/operator_animation_workbench/unarmed/defense/block_hold_01/e/transactions/20261001T025723/backups/sources/mirror__fx.png",
+      "import_backup_path": ".ai/operator_animation_workbench/unarmed/defense/block_hold_01/e/transactions/20261001T025723/backups/sources/mirror__fx.png.import",
+      "timing_backup_path": ""
+    }
+  ],
+  "resources": [
+    {
+      "path": "custodian/content/sprites/operator/runtime/operator_runtime_frames.tres",
+      "old_sha256": "6173db20322904e5fd340ce4ae1d13521d10434bc345d2764f8ac5a911e5783a",
+      "target_sha256": "57650f3b5cd1e0ccee8a7ae12a5c21f0500ea97dd87c19dd5ad2c8038e708639",
+      "backup_path": ".ai/operator_animation_workbench/unarmed/defense/block_hold_01/e/transactions/20261001T025723/backups/resources/custodian/content/sprites/operator/runtime/operator_runtime_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_runtime_frames.tres",
+      "old_sha256": "16c9561d27257edcd667c297961adff19666d94ada54beb3ed10dbb150a3693d",
+      "target_sha256": "16c9561d27257edcd667c297961adff19666d94ada54beb3ed10dbb150a3693d",
+      "backup_path": ".ai/operator_animation_workbench/unarmed/defense/block_hold_01/e/transactions/20261001T025723/backups/resources/custodian/game/actors/operator/operator_runtime_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_weapon_frames.tres",
+      "old_sha256": "b1474deff719ef0463cdd2fb4445ac50369a293350c1b1b577120edbb9fd126c",
+      "target_sha256": "b1474deff719ef0463cdd2fb4445ac50369a293350c1b1b577120edbb9fd126c",
+      "backup_path": ".ai/operator_animation_workbench/unarmed/defense/block_hold_01/e/transactions/20261001T025723/backups/resources/custodian/game/actors/operator/operator_weapon_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_melee_overlay_frames.tres",
+      "old_sha256": "b2566191f9fd5e57bf244425a89a4dc11336c3a0aaf4522121061e60a9d12ad6",
+      "target_sha256": "b2566191f9fd5e57bf244425a89a4dc11336c3a0aaf4522121061e60a9d12ad6",
+      "backup_path": ".ai/operator_animation_workbench/unarmed/defense/block_hold_01/e/transactions/20261001T025723/backups/resources/custodian/game/actors/operator/operator_melee_overlay_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_ranged_fx_frames.tres",
+      "old_sha256": "17e088cfcee8edafeee524af193f5d7ff3ecb47ce96e102f839ee14cc81a766f",
+      "target_sha256": "17e088cfcee8edafeee524af193f5d7ff3ecb47ce96e102f839ee14cc81a766f",
+      "backup_path": ".ai/operator_animation_workbench/unarmed/defense/block_hold_01/e/transactions/20261001T025723/backups/resources/custodian/game/actors/operator/operator_ranged_fx_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_modular_lower_body_frames.tres",
+      "old_sha256": "6a9310ef8181b5b6840c74a8ba4af166361c46c1a4db461a7520e07470a84792",
+      "target_sha256": "acf8f2692f5b159b73e6b2420e2245d60591e0f7cf75ef3a40ebcfa2aca8171e",
+      "backup_path": ".ai/operator_animation_workbench/unarmed/defense/block_hold_01/e/transactions/20261001T025723/backups/resources/custodian/game/actors/operator/operator_modular_lower_body_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_modular_upper_body_frames.tres",
+      "old_sha256": "94c2634688b257994b7ba7e7bb6ec73c5e4cd97d71ef387661ec99d946200277",
+      "target_sha256": "94c2634688b257994b7ba7e7bb6ec73c5e4cd97d71ef387661ec99d946200277",
+      "backup_path": ".ai/operator_animation_workbench/unarmed/defense/block_hold_01/e/transactions/20261001T025723/backups/resources/custodian/game/actors/operator/operator_modular_upper_body_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_modular_sidearm_frames.tres",
+      "old_sha256": "a35771ae9a727f3e01e54a973e9484affe3cae64ec66751a3eb6e2743de08f76",
+      "target_sha256": "a35771ae9a727f3e01e54a973e9484affe3cae64ec66751a3eb6e2743de08f76",
+      "backup_path": ".ai/operator_animation_workbench/unarmed/defense/block_hold_01/e/transactions/20261001T025723/backups/resources/custodian/game/actors/operator/operator_modular_sidearm_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_modular_upper_fx_frames.tres",
+      "old_sha256": "c0778af12d1509ce1c774601adf3f4b60174049beaa9e95d1e274941ce93ad0e",
+      "target_sha256": "c0778af12d1509ce1c774601adf3f4b60174049beaa9e95d1e274941ce93ad0e",
+      "backup_path": ".ai/operator_animation_workbench/unarmed/defense/block_hold_01/e/transactions/20261001T025723/backups/resources/custodian/game/actors/operator/operator_modular_upper_fx_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_modular_cape_frames.tres",
+      "old_sha256": "c46a1c64d150cedf1b347c61e424528278b62423da53edfcc64700fd1896ea3a",
+      "target_sha256": "c46a1c64d150cedf1b347c61e424528278b62423da53edfcc64700fd1896ea3a",
+      "backup_path": ".ai/operator_animation_workbench/unarmed/defense/block_hold_01/e/transactions/20261001T025723/backups/resources/custodian/game/actors/operator/operator_modular_cape_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_modular_head_frames.tres",
+      "old_sha256": "57afb19a5c18428f5a7a9709e1d89d920f0a9ab73116149d195209171dd970de",
+      "target_sha256": "57afb19a5c18428f5a7a9709e1d89d920f0a9ab73116149d195209171dd970de",
+      "backup_path": ".ai/operator_animation_workbench/unarmed/defense/block_hold_01/e/transactions/20261001T025723/backups/resources/custodian/game/actors/operator/operator_modular_head_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_animation_catalog_frames.tres",
+      "old_sha256": "ceabd39055d85814290506405e26f9b467039c62e1f8bb2e0216c7cbcdd1fdf4",
+      "target_sha256": "ceabd39055d85814290506405e26f9b467039c62e1f8bb2e0216c7cbcdd1fdf4",
+      "backup_path": ".ai/operator_animation_workbench/unarmed/defense/block_hold_01/e/transactions/20261001T025723/backups/resources/custodian/game/actors/operator/operator_animation_catalog_frames.tres"
+    }
+  ],
+  "pending_migration": null,
+  "validation_stages_completed": [
+    "source_swap",
+    "runtime_build",
+    "compatibility_resource_generation",
+    "godot_import",
+    "catalog_resource_generation",
+    "validation:--check",
+    "validation:operator_animation_contract_report.py",
+    "validation:operator_animation_workbench_smoke.py",
+    "validation:operator_modular_layers_smoke.gd",
+    "mandatory_validation",
+    "manifest_sync"
+  ],
+  "mirror_promotion": {
+    "enabled": true,
+    "source_direction": "e",
+    "target_direction": "w",
+    "bindings": [
+      "lower_body",
+      "upper_body",
+      "fx"
+    ]
+  }
+}

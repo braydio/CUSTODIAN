@@ -1,0 +1,111 @@
+{
+  "schema": "custodian.operator_animation_workbench.v2",
+  "identity": {
+    "profile": "melee_1h_dagger",
+    "group": "posture",
+    "action": "draw_01",
+    "direction": "e"
+  },
+  "context": {
+    "weapon_id": "",
+    "linked_profile": "",
+    "presentation_mode": "",
+    "fingerprint": "9342128a59dd54d7c4b90f2ac643880e16e2b61b82a72d7aec69369fba47ccb3"
+  },
+  "weapon_context": null,
+  "timeline": {
+    "frames": 4,
+    "source_clock_frames": 4,
+    "workspace_clock_frames": 4,
+    "document_frames": 4,
+    "preview_fps": 12,
+    "timing_authority": false,
+    "clock_owner": "weapon"
+  },
+  "canvas": {
+    "width": 128,
+    "height": 96
+  },
+  "aseprite": {
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h_dagger/posture/draw_01/e/workbench.aseprite",
+    "last_synced_sha256": "57fb94a06422307077c93aaa01589793d65f628caa4a8d8825d03f461b3b09df"
+  },
+  "layers": [
+    {
+      "binding_id": "weapon",
+      "aseprite_layer_name": "weapon",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "melee_1h_dagger",
+      "group": "posture",
+      "action": "draw_01",
+      "direction": "e",
+      "layer": "weapon",
+      "source_path": "custodian/content/sprites/operator/source/animations/melee_1h_dagger/posture/draw_01/operator__weapon__melee_1h_dagger__posture__draw_01__e__4f__128x96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/melee_1h_dagger/posture/draw_01/operator__weapon__melee_1h_dagger__posture__draw_01__e__4f__128x96.png",
+      "source_file_sha256": "48fb6fe6a381fe941c11ec913a845587eaeb78e8c1c5d62700442433d93e2a79",
+      "source_pixel_sha256": "2651989629490e8176640cce7dc8aef94aad0c7ca4de7111408c0fd4399c0276",
+      "frames": 4,
+      "frame_size": [
+        128,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "weapon",
+        "profile": "melee_1h_dagger",
+        "group": "posture",
+        "action": "draw_01",
+        "direction": "e"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h_dagger/posture/draw_01/operator__weapon__melee_1h_dagger__posture__draw_01__e__4f__128x96.png",
+        "frames": 4,
+        "frame_size": [
+          128,
+          96
+        ],
+        "file_sha256": "48fb6fe6a381fe941c11ec913a845587eaeb78e8c1c5d62700442433d93e2a79",
+        "pixel_sha256": "2651989629490e8176640cce7dc8aef94aad0c7ca4de7111408c0fd4399c0276"
+      },
+      "workspace_contract": {
+        "frames": 4,
+        "frame_size": [
+          128,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h_dagger/posture/draw_01/operator__weapon__melee_1h_dagger__posture__draw_01__e__4f__128x96.png",
+        "frames": 4,
+        "frame_size": [
+          128,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h_dagger/posture/draw_01/e/baseline/weapon.png"
+    }
+  ],
+  "references": [],
+  "pending_migration": null,
+  "last_publish": {
+    "timestamp": null,
+    "validation_status": null
+  }
+}

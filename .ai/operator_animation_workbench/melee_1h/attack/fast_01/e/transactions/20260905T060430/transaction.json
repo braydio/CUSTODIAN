@@ -1,0 +1,116 @@
+{
+  "transaction_id": "20260905T060430",
+  "state": "COMMITTED",
+  "sources": [
+    {
+      "binding_id": "lower_body",
+      "old_path": "custodian/content/sprites/operator/source/animations/melee_1h/attack/fast_01/operator__lower_body__melee_1h__attack__fast_01__e__10f__96.png",
+      "old_sha256": "dbcbaf3456261f87d35218bdc99da20637056aa3973f90347b92f663bb0c2157",
+      "target_path": "custodian/content/sprites/operator/source/animations/melee_1h/attack/fast_01/operator__lower_body__melee_1h__attack__fast_01__e__10f__96.png",
+      "target_sha256": "8babdad395da8e663e982417a846527e8ab090fcbd52bc8cd82b34560b5c9d7f",
+      "backup_path": ".ai/operator_animation_workbench/melee_1h/attack/fast_01/e/transactions/20260905T060430/backups/sources/lower_body.png",
+      "import_backup_path": ".ai/operator_animation_workbench/melee_1h/attack/fast_01/e/transactions/20260905T060430/backups/sources/lower_body.png.import"
+    },
+    {
+      "binding_id": "upper_body",
+      "old_path": "custodian/content/sprites/operator/source/animations/melee_1h/attack/fast_01/operator__upper_body__melee_1h__attack__fast_01__e__10f__96.png",
+      "old_sha256": "90d86611b660cf7b94b1806bf0c887b1704cdf307232eb2724cf19841a4c20ee",
+      "target_path": "custodian/content/sprites/operator/source/animations/melee_1h/attack/fast_01/operator__upper_body__melee_1h__attack__fast_01__e__10f__96.png",
+      "target_sha256": "ae481fc2e8cea0e6e65491039c70bd098f208da115fb4a9ddfa66dcfaafdb98b",
+      "backup_path": ".ai/operator_animation_workbench/melee_1h/attack/fast_01/e/transactions/20260905T060430/backups/sources/upper_body.png",
+      "import_backup_path": ".ai/operator_animation_workbench/melee_1h/attack/fast_01/e/transactions/20260905T060430/backups/sources/upper_body.png.import"
+    },
+    {
+      "binding_id": "fx",
+      "old_path": "custodian/content/sprites/operator/source/animations/melee_1h/attack/fast_01/operator__fx__melee_1h__attack__fast_01__e__10f__156x96.png",
+      "old_sha256": "acd9aa37a851fb1979cdedb5c478a89f3c0802be1c64fdad9bc749664066ef8f",
+      "target_path": "custodian/content/sprites/operator/source/animations/melee_1h/attack/fast_01/operator__fx__melee_1h__attack__fast_01__e__10f__156x96.png",
+      "target_sha256": "e2153d41453339e69ff52d8c704f5830d80e13649e4837d73c31be6a13f38f11",
+      "backup_path": ".ai/operator_animation_workbench/melee_1h/attack/fast_01/e/transactions/20260905T060430/backups/sources/fx.png",
+      "import_backup_path": ".ai/operator_animation_workbench/melee_1h/attack/fast_01/e/transactions/20260905T060430/backups/sources/fx.png.import"
+    }
+  ],
+  "resources": [
+    {
+      "path": "custodian/game/actors/operator/operator_runtime_frames.tres",
+      "old_sha256": "a89d3953565c122288f1c0bddb930a12728e526ba43aa14ec3dcd64ef3b27e20",
+      "target_sha256": "a89d3953565c122288f1c0bddb930a12728e526ba43aa14ec3dcd64ef3b27e20",
+      "backup_path": ".ai/operator_animation_workbench/melee_1h/attack/fast_01/e/transactions/20260905T060430/backups/resources/operator_runtime_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_weapon_frames.tres",
+      "old_sha256": "8cea5358d5cdd51e3e770e468e8f5e44db1b041c3e0423b6bd1f3130c2246f01",
+      "target_sha256": "8cea5358d5cdd51e3e770e468e8f5e44db1b041c3e0423b6bd1f3130c2246f01",
+      "backup_path": ".ai/operator_animation_workbench/melee_1h/attack/fast_01/e/transactions/20260905T060430/backups/resources/operator_weapon_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_melee_overlay_frames.tres",
+      "old_sha256": "148f5774c77f491def605ab6ee63297f5503cdccc503c2c65515dc0e959d2bc7",
+      "target_sha256": "148f5774c77f491def605ab6ee63297f5503cdccc503c2c65515dc0e959d2bc7",
+      "backup_path": ".ai/operator_animation_workbench/melee_1h/attack/fast_01/e/transactions/20260905T060430/backups/resources/operator_melee_overlay_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_ranged_fx_frames.tres",
+      "old_sha256": "17e088cfcee8edafeee524af193f5d7ff3ecb47ce96e102f839ee14cc81a766f",
+      "target_sha256": "17e088cfcee8edafeee524af193f5d7ff3ecb47ce96e102f839ee14cc81a766f",
+      "backup_path": ".ai/operator_animation_workbench/melee_1h/attack/fast_01/e/transactions/20260905T060430/backups/resources/operator_ranged_fx_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_modular_lower_body_frames.tres",
+      "old_sha256": "6fe84318afa1320ee34bb155124a5119d61c92ac023dea6279756a3d190a9b3d",
+      "target_sha256": "6fe84318afa1320ee34bb155124a5119d61c92ac023dea6279756a3d190a9b3d",
+      "backup_path": ".ai/operator_animation_workbench/melee_1h/attack/fast_01/e/transactions/20260905T060430/backups/resources/operator_modular_lower_body_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_modular_upper_body_frames.tres",
+      "old_sha256": "270991c4198e12a9ce269b6e14e70b1c58f2ef30f606fdd99411f79cd39cf1a0",
+      "target_sha256": "270991c4198e12a9ce269b6e14e70b1c58f2ef30f606fdd99411f79cd39cf1a0",
+      "backup_path": ".ai/operator_animation_workbench/melee_1h/attack/fast_01/e/transactions/20260905T060430/backups/resources/operator_modular_upper_body_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_modular_sidearm_frames.tres",
+      "old_sha256": "9b7137b5c0aed0209afd613ef09e5d66aad6dda5bbebf9c1c34b2f79206d55ea",
+      "target_sha256": "9b7137b5c0aed0209afd613ef09e5d66aad6dda5bbebf9c1c34b2f79206d55ea",
+      "backup_path": ".ai/operator_animation_workbench/melee_1h/attack/fast_01/e/transactions/20260905T060430/backups/resources/operator_modular_sidearm_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_modular_upper_fx_frames.tres",
+      "old_sha256": "f2ff2e0f7dd11da98d12b58efd76646fbb7fb99f46fd45eb16bdf998142d02ee",
+      "target_sha256": "f2ff2e0f7dd11da98d12b58efd76646fbb7fb99f46fd45eb16bdf998142d02ee",
+      "backup_path": ".ai/operator_animation_workbench/melee_1h/attack/fast_01/e/transactions/20260905T060430/backups/resources/operator_modular_upper_fx_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_modular_cape_frames.tres",
+      "old_sha256": "b26ca7064847d5a4eb38ff0c05a3e2adbc4fb90e9bfa0b7e379306aac71d6dd1",
+      "target_sha256": "b26ca7064847d5a4eb38ff0c05a3e2adbc4fb90e9bfa0b7e379306aac71d6dd1",
+      "backup_path": ".ai/operator_animation_workbench/melee_1h/attack/fast_01/e/transactions/20260905T060430/backups/resources/operator_modular_cape_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_modular_head_frames.tres",
+      "old_sha256": "57afb19a5c18428f5a7a9709e1d89d920f0a9ab73116149d195209171dd970de",
+      "target_sha256": "57afb19a5c18428f5a7a9709e1d89d920f0a9ab73116149d195209171dd970de",
+      "backup_path": ".ai/operator_animation_workbench/melee_1h/attack/fast_01/e/transactions/20260905T060430/backups/resources/operator_modular_head_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_animation_catalog_frames.tres",
+      "old_sha256": "973e4800e03e7a766333b6dbeedfacd228dbcc47295992745828be6378f634ab",
+      "target_sha256": "973e4800e03e7a766333b6dbeedfacd228dbcc47295992745828be6378f634ab",
+      "backup_path": ".ai/operator_animation_workbench/melee_1h/attack/fast_01/e/transactions/20260905T060430/backups/resources/operator_animation_catalog_frames.tres"
+    }
+  ],
+  "pending_migration": null,
+  "validation_stages_completed": [
+    "source_swap",
+    "runtime_build",
+    "compatibility_resource_generation",
+    "godot_import",
+    "catalog_resource_generation",
+    "validation:--check",
+    "validation:operator_animation_contract_report.py",
+    "validation:operator_animation_workbench_smoke.py",
+    "validation:operator_modular_layers_smoke.gd",
+    "validation:operator_vigil_dagger_smoke.gd",
+    "mandatory_validation",
+    "manifest_sync"
+  ]
+}

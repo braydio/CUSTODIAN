@@ -1,0 +1,120 @@
+{
+  "transaction_id": "20260910T013415",
+  "state": "COMMITTED",
+  "sources": [
+    {
+      "binding_id": "lower_body",
+      "old_path": "custodian/content/sprites/operator/source/animations/melee_1h/posture/idle_ready_01/operator__lower_body__melee_1h__posture__idle_ready_01__e__5f__128x96.png",
+      "old_sha256": "c059efd737cd40e843e894d7366dfc3d940fc89057c0258876fc38ced4aded5e",
+      "target_path": "custodian/content/sprites/operator/source/animations/melee_1h/posture/idle_ready_01/operator__lower_body__melee_1h__posture__idle_ready_01__e__5f__128x96.png",
+      "target_sha256": "12e854d61993d27e5a764e5ab00730f65ce7fdf9b0e80abb7d3cc8c2ac1ec47a",
+      "backup_path": ".ai/operator_animation_workbench/melee_1h/posture/idle_ready_01/e/transactions/20260910T013415/backups/sources/lower_body.png",
+      "import_backup_path": ".ai/operator_animation_workbench/melee_1h/posture/idle_ready_01/e/transactions/20260910T013415/backups/sources/lower_body.png.import",
+      "timing_backup_path": ""
+    },
+    {
+      "binding_id": "upper_body",
+      "old_path": "custodian/content/sprites/operator/source/animations/melee_1h/posture/idle_ready_01/operator__upper_body__melee_1h__posture__idle_ready_01__e__5f__128x96.png",
+      "old_sha256": "c79979e329446c38e3dfdec1aed2db9890dcf28c3afe5ac0d440bfe633a97cf1",
+      "target_path": "custodian/content/sprites/operator/source/animations/melee_1h/posture/idle_ready_01/operator__upper_body__melee_1h__posture__idle_ready_01__e__5f__128x96.png",
+      "target_sha256": "28e5d0ef1ce6d0ba991999c8436b4dfe34bd312d45489168174d70e0162a5511",
+      "backup_path": ".ai/operator_animation_workbench/melee_1h/posture/idle_ready_01/e/transactions/20260910T013415/backups/sources/upper_body.png",
+      "import_backup_path": ".ai/operator_animation_workbench/melee_1h/posture/idle_ready_01/e/transactions/20260910T013415/backups/sources/upper_body.png.import",
+      "timing_backup_path": ""
+    },
+    {
+      "binding_id": "weapon__vigil_pattern_dagger",
+      "old_path": "custodian/content/sprites/operator/source/animations/melee_1h_dagger/posture/idle_ready_01/operator__weapon__melee_1h_dagger__posture__idle_ready_01__e__5f__128x96.png",
+      "old_sha256": "4dcafc755184c261c5b6fd9709a578e52d9cb261ddae2bf0b617c3056c367174",
+      "target_path": "custodian/content/sprites/operator/source/animations/melee_1h_dagger/posture/idle_ready_01/operator__weapon__melee_1h_dagger__posture__idle_ready_01__e__5f__128x96.png",
+      "target_sha256": "4dcafc755184c261c5b6fd9709a578e52d9cb261ddae2bf0b617c3056c367174",
+      "backup_path": ".ai/operator_animation_workbench/melee_1h/posture/idle_ready_01/e/transactions/20260910T013415/backups/sources/weapon__vigil_pattern_dagger.png",
+      "import_backup_path": ".ai/operator_animation_workbench/melee_1h/posture/idle_ready_01/e/transactions/20260910T013415/backups/sources/weapon__vigil_pattern_dagger.png.import",
+      "timing_backup_path": ""
+    }
+  ],
+  "resources": [
+    {
+      "path": "custodian/game/actors/operator/operator_runtime_frames.tres",
+      "old_sha256": "30a2e8d5baeb84fe3a6216b15daa9d46e1555490851ee24a6109c15d3e4b3668",
+      "target_sha256": "30a2e8d5baeb84fe3a6216b15daa9d46e1555490851ee24a6109c15d3e4b3668",
+      "backup_path": ".ai/operator_animation_workbench/melee_1h/posture/idle_ready_01/e/transactions/20260910T013415/backups/resources/operator_runtime_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_weapon_frames.tres",
+      "old_sha256": "8cea5358d5cdd51e3e770e468e8f5e44db1b041c3e0423b6bd1f3130c2246f01",
+      "target_sha256": "8cea5358d5cdd51e3e770e468e8f5e44db1b041c3e0423b6bd1f3130c2246f01",
+      "backup_path": ".ai/operator_animation_workbench/melee_1h/posture/idle_ready_01/e/transactions/20260910T013415/backups/resources/operator_weapon_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_melee_overlay_frames.tres",
+      "old_sha256": "148f5774c77f491def605ab6ee63297f5503cdccc503c2c65515dc0e959d2bc7",
+      "target_sha256": "148f5774c77f491def605ab6ee63297f5503cdccc503c2c65515dc0e959d2bc7",
+      "backup_path": ".ai/operator_animation_workbench/melee_1h/posture/idle_ready_01/e/transactions/20260910T013415/backups/resources/operator_melee_overlay_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_ranged_fx_frames.tres",
+      "old_sha256": "17e088cfcee8edafeee524af193f5d7ff3ecb47ce96e102f839ee14cc81a766f",
+      "target_sha256": "17e088cfcee8edafeee524af193f5d7ff3ecb47ce96e102f839ee14cc81a766f",
+      "backup_path": ".ai/operator_animation_workbench/melee_1h/posture/idle_ready_01/e/transactions/20260910T013415/backups/resources/operator_ranged_fx_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_modular_lower_body_frames.tres",
+      "old_sha256": "137c7f5ab56b8feda14c5ff27cb822bae5ea01348d358bfe90fa4af4754be300",
+      "target_sha256": "137c7f5ab56b8feda14c5ff27cb822bae5ea01348d358bfe90fa4af4754be300",
+      "backup_path": ".ai/operator_animation_workbench/melee_1h/posture/idle_ready_01/e/transactions/20260910T013415/backups/resources/operator_modular_lower_body_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_modular_upper_body_frames.tres",
+      "old_sha256": "d4476fb5067485670f86378a33a1e01ded6188eaf376709e46e9d7ae98f91793",
+      "target_sha256": "d4476fb5067485670f86378a33a1e01ded6188eaf376709e46e9d7ae98f91793",
+      "backup_path": ".ai/operator_animation_workbench/melee_1h/posture/idle_ready_01/e/transactions/20260910T013415/backups/resources/operator_modular_upper_body_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_modular_sidearm_frames.tres",
+      "old_sha256": "9b7137b5c0aed0209afd613ef09e5d66aad6dda5bbebf9c1c34b2f79206d55ea",
+      "target_sha256": "9b7137b5c0aed0209afd613ef09e5d66aad6dda5bbebf9c1c34b2f79206d55ea",
+      "backup_path": ".ai/operator_animation_workbench/melee_1h/posture/idle_ready_01/e/transactions/20260910T013415/backups/resources/operator_modular_sidearm_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_modular_upper_fx_frames.tres",
+      "old_sha256": "f2ff2e0f7dd11da98d12b58efd76646fbb7fb99f46fd45eb16bdf998142d02ee",
+      "target_sha256": "f2ff2e0f7dd11da98d12b58efd76646fbb7fb99f46fd45eb16bdf998142d02ee",
+      "backup_path": ".ai/operator_animation_workbench/melee_1h/posture/idle_ready_01/e/transactions/20260910T013415/backups/resources/operator_modular_upper_fx_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_modular_cape_frames.tres",
+      "old_sha256": "b26ca7064847d5a4eb38ff0c05a3e2adbc4fb90e9bfa0b7e379306aac71d6dd1",
+      "target_sha256": "b26ca7064847d5a4eb38ff0c05a3e2adbc4fb90e9bfa0b7e379306aac71d6dd1",
+      "backup_path": ".ai/operator_animation_workbench/melee_1h/posture/idle_ready_01/e/transactions/20260910T013415/backups/resources/operator_modular_cape_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_modular_head_frames.tres",
+      "old_sha256": "57afb19a5c18428f5a7a9709e1d89d920f0a9ab73116149d195209171dd970de",
+      "target_sha256": "57afb19a5c18428f5a7a9709e1d89d920f0a9ab73116149d195209171dd970de",
+      "backup_path": ".ai/operator_animation_workbench/melee_1h/posture/idle_ready_01/e/transactions/20260910T013415/backups/resources/operator_modular_head_frames.tres"
+    },
+    {
+      "path": "custodian/game/actors/operator/operator_animation_catalog_frames.tres",
+      "old_sha256": "e7e14918c03ab7abbba232cfcb2c28143feafb45c51d646e51e4cb35b9784b66",
+      "target_sha256": "e7e14918c03ab7abbba232cfcb2c28143feafb45c51d646e51e4cb35b9784b66",
+      "backup_path": ".ai/operator_animation_workbench/melee_1h/posture/idle_ready_01/e/transactions/20260910T013415/backups/resources/operator_animation_catalog_frames.tres"
+    }
+  ],
+  "pending_migration": null,
+  "validation_stages_completed": [
+    "source_swap",
+    "runtime_build",
+    "compatibility_resource_generation",
+    "godot_import",
+    "catalog_resource_generation",
+    "validation:--check",
+    "validation:operator_animation_contract_report.py",
+    "validation:operator_animation_workbench_smoke.py",
+    "validation:operator_modular_layers_smoke.gd",
+    "validation:operator_melee_posture_smoke.gd",
+    "validation:operator_vigil_dagger_smoke.gd",
+    "mandatory_validation",
+    "manifest_sync"
+  ]
+}

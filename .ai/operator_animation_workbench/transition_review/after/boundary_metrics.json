@@ -1,0 +1,14 @@
+{
+  "e": {
+    "draw_frames": 4,
+    "idle_frames": 5,
+    "boundary_pixel_equal": true,
+    "changed_boundary_pixels": 0
+  },
+  "w": {
+    "draw_frames": 4,
+    "idle_frames": 4,
+    "boundary_pixel_equal": true,
+    "changed_boundary_pixels": 0
+  }
+}

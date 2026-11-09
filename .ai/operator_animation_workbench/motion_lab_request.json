@@ -1,0 +1,17 @@
+{
+  "schema": "custodian.operator_motion_request.v2",
+  "identity": {
+    "profile": "unarmed",
+    "group": "locomotion",
+    "action": "walk_01",
+    "direction": "e"
+  },
+  "source": "runtime",
+  "fps": 12.0,
+  "travel_px": 128.0,
+  "curve": "attack_lunge",
+  "ground": "ritualant_cavern",
+  "mode": "treadmill",
+  "loop": true,
+  "loop_cycles": 3
+}

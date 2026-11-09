@@ -1,0 +1,185 @@
+{
+  "schema": "custodian.operator_animation_workbench.v2",
+  "identity": {
+    "profile": "melee_1h",
+    "group": "locomotion",
+    "action": "run_01",
+    "direction": "e"
+  },
+  "context": {
+    "weapon_id": "",
+    "linked_profile": "",
+    "presentation_mode": "",
+    "fingerprint": "dff9889fd51c8963782a362f0f243d1a644961f901a85e995e5c1eacc981cd5b"
+  },
+  "weapon_context": null,
+  "timeline": {
+    "frames": 6,
+    "source_clock_frames": 6,
+    "workspace_clock_frames": 6,
+    "document_frames": 6,
+    "preview_fps": 12,
+    "timing_authority": false,
+    "clock_owner": "lower_body"
+  },
+  "canvas": {
+    "width": 96,
+    "height": 96
+  },
+  "aseprite": {
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/locomotion/run_01/e/workbench.aseprite",
+    "last_synced_sha256": "befabfb29444efe81768a7d40b258a15854c50d6436f531960e03674631c9ff8"
+  },
+  "layers": [
+    {
+      "binding_id": "lower_body",
+      "aseprite_layer_name": "lower_body",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "melee_1h",
+      "group": "locomotion",
+      "action": "run_01",
+      "direction": "e",
+      "layer": "lower_body",
+      "source_path": "custodian/content/sprites/operator/source/animations/melee_1h/locomotion/run_01/operator__lower_body__melee_1h__locomotion__run_01__e__6f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/melee_1h/locomotion/run_01/operator__lower_body__melee_1h__locomotion__run_01__e__6f__96.png",
+      "source_file_sha256": "ff5164347b9495f85d9bf1239d43955c22ac953e4c99cbf22fcb42f2190e0951",
+      "source_pixel_sha256": "1b62537886c11d99805e74fa088a3f7111c3094f2e2f15a7306ba3cba0649e5d",
+      "frames": 6,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "lower_body",
+        "profile": "melee_1h",
+        "group": "locomotion",
+        "action": "run_01",
+        "direction": "e"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/locomotion/run_01/operator__lower_body__melee_1h__locomotion__run_01__e__6f__96.png",
+        "frames": 6,
+        "frame_size": [
+          96,
+          96
+        ],
+        "file_sha256": "ff5164347b9495f85d9bf1239d43955c22ac953e4c99cbf22fcb42f2190e0951",
+        "pixel_sha256": "1b62537886c11d99805e74fa088a3f7111c3094f2e2f15a7306ba3cba0649e5d"
+      },
+      "workspace_contract": {
+        "frames": 6,
+        "frame_size": [
+          96,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/locomotion/run_01/operator__lower_body__melee_1h__locomotion__run_01__e__6f__96.png",
+        "frames": 6,
+        "frame_size": [
+          96,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/locomotion/run_01/e/baseline/lower_body.png"
+    },
+    {
+      "binding_id": "upper_body",
+      "aseprite_layer_name": "upper_body",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "melee_1h",
+      "group": "locomotion",
+      "action": "run_01",
+      "direction": "e",
+      "layer": "upper_body",
+      "source_path": "custodian/content/sprites/operator/source/animations/melee_1h/locomotion/run_01/operator__upper_body__melee_1h__locomotion__run_01__e__6f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/melee_1h/locomotion/run_01/operator__upper_body__melee_1h__locomotion__run_01__e__6f__96.png",
+      "source_file_sha256": "4a3670ce4c5d821b97ee50a36387d74f6496606733a0b2304f501bf034493638",
+      "source_pixel_sha256": "f3304abb8de77028242ed0c63517e7dbdb8a1e713d8ace4bcb49ea3e4e95c104",
+      "frames": 6,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "upper_body",
+        "profile": "melee_1h",
+        "group": "locomotion",
+        "action": "run_01",
+        "direction": "e"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/locomotion/run_01/operator__upper_body__melee_1h__locomotion__run_01__e__6f__96.png",
+        "frames": 6,
+        "frame_size": [
+          96,
+          96
+        ],
+        "file_sha256": "4a3670ce4c5d821b97ee50a36387d74f6496606733a0b2304f501bf034493638",
+        "pixel_sha256": "f3304abb8de77028242ed0c63517e7dbdb8a1e713d8ace4bcb49ea3e4e95c104"
+      },
+      "workspace_contract": {
+        "frames": 6,
+        "frame_size": [
+          96,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/melee_1h/locomotion/run_01/operator__upper_body__melee_1h__locomotion__run_01__e__6f__96.png",
+        "frames": 6,
+        "frame_size": [
+          96,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/melee_1h/locomotion/run_01/e/baseline/upper_body.png"
+    }
+  ],
+  "references": [],
+  "pending_migration": null,
+  "last_publish": {
+    "timestamp": null,
+    "validation_status": null
+  }
+}

@@ -1,0 +1,200 @@
+{
+  "schema": "custodian.operator_animation_workbench.v2",
+  "identity": {
+    "profile": "unarmed",
+    "group": "defense",
+    "action": "block_hit_01",
+    "direction": "e"
+  },
+  "context": {
+    "weapon_id": "",
+    "linked_profile": "",
+    "presentation_mode": "",
+    "fingerprint": "2d34acb0d8f089028ba69f3272000aac7fc4afc4bd63b3ca709502a3b9a5aca4"
+  },
+  "weapon_context": null,
+  "timeline": {
+    "frames": 5,
+    "source_clock_frames": 5,
+    "workspace_clock_frames": 5,
+    "document_frames": 5,
+    "preview_fps": 14.0,
+    "timing_authority": true,
+    "clock_owner": "lower_body",
+    "fps": 14.0,
+    "loop": false,
+    "durations": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "frame_durations_ms": [
+      71.42857142857143,
+      71.42857142857143,
+      71.42857142857143,
+      71.42857142857143,
+      71.42857142857143
+    ]
+  },
+  "canvas": {
+    "width": 96,
+    "height": 96
+  },
+  "aseprite": {
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/unarmed/defense/block_hit_01/e/workbench.aseprite",
+    "last_synced_sha256": "a12e5bacf0bdc3fc65ee9a75938641c064367700504a761a5f6b7f224f5b9823"
+  },
+  "layers": [
+    {
+      "binding_id": "lower_body",
+      "aseprite_layer_name": "lower_body",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "unarmed",
+      "group": "defense",
+      "action": "block_hit_01",
+      "direction": "e",
+      "layer": "lower_body",
+      "source_path": "custodian/content/sprites/operator/source/animations/unarmed/defense/block_hit_01/operator__lower_body__unarmed__defense__block_hit_01__e__5f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/unarmed/defense/block_hit_01/operator__lower_body__unarmed__defense__block_hit_01__e__5f__96.png",
+      "source_file_sha256": "2ca5d33cd8d3542ccd01e3f778671421d49529ab4182a355fd224bdfa684f3ea",
+      "source_pixel_sha256": "18d324fc626c32bb92ab510e857726d2b8d6802b0564bb4c6735fef77ea51420",
+      "frames": 5,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "group": "defense",
+        "action": "block_hit_01",
+        "direction": "e"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/unarmed/defense/block_hit_01/operator__lower_body__unarmed__defense__block_hit_01__e__5f__96.png",
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ],
+        "file_sha256": "2ca5d33cd8d3542ccd01e3f778671421d49529ab4182a355fd224bdfa684f3ea",
+        "pixel_sha256": "18d324fc626c32bb92ab510e857726d2b8d6802b0564bb4c6735fef77ea51420"
+      },
+      "workspace_contract": {
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/unarmed/defense/block_hit_01/operator__lower_body__unarmed__defense__block_hit_01__e__5f__96.png",
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/unarmed/defense/block_hit_01/e/baseline/lower_body.png"
+    },
+    {
+      "binding_id": "upper_body",
+      "aseprite_layer_name": "upper_body",
+      "role": "editable",
+      "editable": true,
+      "owner": "operator",
+      "profile": "unarmed",
+      "group": "defense",
+      "action": "block_hit_01",
+      "direction": "e",
+      "layer": "upper_body",
+      "source_path": "custodian/content/sprites/operator/source/animations/unarmed/defense/block_hit_01/operator__upper_body__unarmed__defense__block_hit_01__e__5f__96.png",
+      "runtime_path": "custodian/content/sprites/operator/runtime/animations/unarmed/defense/block_hit_01/operator__upper_body__unarmed__defense__block_hit_01__e__5f__96.png",
+      "source_file_sha256": "59ce3a055b4f7d817550a2c4135790742a2c7007f1aa507419c1667f4eff86b1",
+      "source_pixel_sha256": "2e0355eb18a883644ff3ba7841285079d33a98859a22992f92a76382bf36ffd8",
+      "frames": 5,
+      "frame_size": [
+        96,
+        96
+      ],
+      "placement": [
+        0,
+        0
+      ],
+      "timeline_mapping": "exact",
+      "semantic_identity": {
+        "owner": "operator",
+        "layer": "upper_body",
+        "profile": "unarmed",
+        "group": "defense",
+        "action": "block_hit_01",
+        "direction": "e"
+      },
+      "source_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/unarmed/defense/block_hit_01/operator__upper_body__unarmed__defense__block_hit_01__e__5f__96.png",
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ],
+        "file_sha256": "59ce3a055b4f7d817550a2c4135790742a2c7007f1aa507419c1667f4eff86b1",
+        "pixel_sha256": "2e0355eb18a883644ff3ba7841285079d33a98859a22992f92a76382bf36ffd8"
+      },
+      "workspace_contract": {
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ],
+        "placement": [
+          0,
+          0
+        ],
+        "timeline_slots": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "publish_contract": {
+        "path": "custodian/content/sprites/operator/source/animations/unarmed/defense/block_hit_01/operator__upper_body__unarmed__defense__block_hit_01__e__5f__96.png",
+        "frames": 5,
+        "frame_size": [
+          96,
+          96
+        ]
+      },
+      "input_path": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench/unarmed/defense/block_hit_01/e/baseline/upper_body.png"
+    }
+  ],
+  "references": [],
+  "pending_migration": null,
+  "last_publish": {
+    "timestamp": "2026-10-01T09:49:56.359495+00:00",
+    "validation_status": "passed"
+  },
+  "export_stamp": "20261001T054939"
+}

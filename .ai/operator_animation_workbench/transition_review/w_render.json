@@ -1,0 +1,16 @@
+{
+  "strip": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_art_agent/melee_1h/posture/draw_01/w/f4e1a247280c/previews/current.png",
+  "baseline": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_art_agent/melee_1h/posture/draw_01/w/f4e1a247280c/previews/baseline.png",
+  "contact_sheet": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_art_agent/melee_1h/posture/draw_01/w/f4e1a247280c/previews/contact_sheet.png",
+  "diff": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_art_agent/melee_1h/posture/draw_01/w/f4e1a247280c/previews/diff.png",
+  "before_after": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_art_agent/melee_1h/posture/draw_01/w/f4e1a247280c/previews/before_after.png",
+  "silhouette": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_art_agent/melee_1h/posture/draw_01/w/f4e1a247280c/previews/silhouette_contact_sheet.png",
+  "onion_skin": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_art_agent/melee_1h/posture/draw_01/w/f4e1a247280c/previews/onion_skin.png",
+  "animation": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_art_agent/melee_1h/posture/draw_01/w/f4e1a247280c/previews/animation.gif",
+  "frames": [
+    "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_art_agent/melee_1h/posture/draw_01/w/f4e1a247280c/previews/frames/001.png",
+    "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_art_agent/melee_1h/posture/draw_01/w/f4e1a247280c/previews/frames/002.png",
+    "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_art_agent/melee_1h/posture/draw_01/w/f4e1a247280c/previews/frames/003.png",
+    "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_art_agent/melee_1h/posture/draw_01/w/f4e1a247280c/previews/frames/004.png"
+  ]
+}
