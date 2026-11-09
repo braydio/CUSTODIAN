@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Moment Forge — combat/ranged_ballistic_alignment</title>
+<style>
+:root{color-scheme:dark;--bg:#090d13;--panel:#111925;--line:#2d425a;--text:#dce8f2;--muted:#8ca0b4;--cyan:#66d9ef;--red:#ff6b72;--green:#72d69b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,sans-serif}main{max-width:1600px;margin:auto;padding:24px}code{color:var(--cyan)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.panel{background:var(--panel);border:1px solid var(--line);padding:16px;border-radius:8px;overflow:auto;margin-bottom:16px}video,img{width:100%;height:auto;background:#000}table{width:100%;border-collapse:collapse}th,td{padding:7px 9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.pass{color:var(--green)}.fail{color:var(--red)}.muted{color:var(--muted)}button,input{margin:4px}@media(max-width:900px){.grid{grid-template-columns:1fr}}
+</style></head><body><main>
+<h1>CUSTODIAN Moment Forge</h1>
+<p><code>combat/ranged_ballistic_alignment</code> — Committed Carbine snap-fire keeps its authored visual sector while the projectile remains centered on the trigger-time accepted aim point.</p>
+<p>Status: <b>partial_media</b> · fingerprint <code>355ebf14934d247f</code></p>
+<section class="panel"><button id="playBoth">Play both</button><button id="pauseBoth">Pause</button><label>Scrub <input id="scrub" type="range" min="0" max="1000" value="0"></label>
+<div class="grid"><div><h2>Baseline</h2><p class='muted'>Unavailable.</p></div><div><h2>Current</h2><p class='muted'>Unavailable.</p></div></div></section>
+<div class="grid"><section class="panel"><h2>Baseline contact sheet</h2><p class='muted'>Unavailable.</p></section><section class="panel"><h2>Current contact sheet</h2><p class='muted'>Unavailable.</p></section></div>
+<section class="panel"><h2>Visual difference (advisory)</h2><p class='muted'>Unavailable.</p></section>
+<section class="panel"><h2>Assertions</h2><ul><li class='pass'><b>role_exists</b> [error]: </li>
+<li class='pass'><b>no_unreleased_inputs</b> [error]: </li>
+<li class='pass'><b>output_exists</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li></ul></section>
+<section class="panel"><h2>Metric deltas</h2><table><thead><tr><th>Metric</th><th>Baseline</th><th>Current</th><th>Delta</th></tr></thead><tbody><tr><td>completed_tick</td><td>None</td><td>178</td><td>None</td></tr>
+<tr><td>visible_visual_anchor_delta_px</td><td>None</td><td>2.0</td><td>None</td></tr>
+<tr><td>visible_visual_anchor_sample_count</td><td>None</td><td>6</td><td>None</td></tr></tbody></table></section>
+<section class="panel"><h2>Tick-enriched timeline</h2><table><thead><tr><th>Tick</th><th>Kind</th><th>Evidence</th></tr></thead><tbody><tr><td>4</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;aim_at_role&quot;, &quot;role&quot;: &quot;operator&quot;, &quot;target_role&quot;: &quot;target_a&quot;, &quot;tick&quot;: 4.0}, &quot;moment_tick&quot;: 4, &quot;result&quot;: {&quot;action&quot;: &quot;aim_at_role&quot;, &quot;ok&quot;: true, &quot;tick&quot;: 4}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 4}</code></td></tr>
+<tr><td>8</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;input_press&quot;, &quot;name&quot;: &quot;aim_hold&quot;, &quot;tick&quot;: 8.0}, &quot;moment_tick&quot;: 8, &quot;result&quot;: {&quot;action&quot;: &quot;input_press&quot;, &quot;ok&quot;: true, &quot;tick&quot;: 8}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 8}</code></td></tr>
+<tr><td>68</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;input_tap&quot;, &quot;hold_ticks&quot;: 1.0, &quot;name&quot;: &quot;attack_primary&quot;, &quot;tick&quot;: 68.0}, &quot;moment_tick&quot;: 68, &quot;result&quot;: {&quot;action&quot;: &quot;input_tap&quot;, &quot;ok&quot;: true, &quot;tick&quot;: 68}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 68}</code></td></tr>
+<tr><td>68</td><td>player_weapon_feedback</td><td><code>{&quot;data&quot;: {&quot;event_id&quot;: &quot;fire&quot;, &quot;weapon&quot;: &quot;carbine_mk1&quot;}, &quot;kind&quot;: &quot;player_weapon_feedback&quot;, &quot;tick&quot;: 68}</code></td></tr>
+<tr><td>68</td><td>player_ranged_shot</td><td><code>{&quot;data&quot;: {&quot;accepted_aim_direction&quot;: &quot;(0.988936, -0.14834)&quot;, &quot;accepted_aim_world_position&quot;: &quot;(528.783, 343.6826)&quot;, &quot;ballistic_direction&quot;: &quot;(0.979131, 0.203233)&quot;, &quot;damage&quot;: 11.0, &quot;direction&quot;: &quot;(0.978565, 0.205937)&quot;, &quot;final_shot_direction&quot;: &quot;(0.978565, 0.205937)&quot;, &quot;loaded_ammo&quot;: 23, &quot;muzzle&quot;: &quot;(450.1626, 327.3637)&quot;, &quot;position&quot;: &quot;(420.0, 360.0)&quot;, &quot;radius&quot;: 3.0, &quot;reserve_ammo&quot;: 48, &quot;speed&quot;: 900.0, &quot;spread_deg&quot;: 2.38, &quot;weapon&quot;: &quot;carbine_mk1&quot;}, &quot;kind&quot;: &quot;player_ranged_shot&quot;, &quot;tick&quot;: 68}</code></td></tr>
+<tr><td>69</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;aim_at_role&quot;, &quot;role&quot;: &quot;operator&quot;, &quot;target_role&quot;: &quot;target_b&quot;, &quot;tick&quot;: 69.0}, &quot;moment_tick&quot;: 69, &quot;result&quot;: {&quot;action&quot;: &quot;aim_at_role&quot;, &quot;ok&quot;: true, &quot;tick&quot;: 69}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 69}</code></td></tr>
+<tr><td>72</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;capture_marker&quot;, &quot;name&quot;: &quot;committed_snap_release&quot;, &quot;tick&quot;: 72.0}, &quot;moment_tick&quot;: 72, &quot;result&quot;: {&quot;action&quot;: &quot;capture_marker&quot;, &quot;ok&quot;: true, &quot;tick&quot;: 72}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 72}</code></td></tr>
+<tr><td>112</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;input_tap&quot;, &quot;hold_ticks&quot;: 1.0, &quot;name&quot;: &quot;attack_primary&quot;, &quot;tick&quot;: 112.0}, &quot;moment_tick&quot;: 112, &quot;result&quot;: {&quot;action&quot;: &quot;input_tap&quot;, &quot;ok&quot;: true, &quot;tick&quot;: 112}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 112}</code></td></tr>
+<tr><td>112</td><td>player_weapon_feedback</td><td><code>{&quot;data&quot;: {&quot;event_id&quot;: &quot;fire&quot;, &quot;weapon&quot;: &quot;carbine_mk1&quot;}, &quot;kind&quot;: &quot;player_weapon_feedback&quot;, &quot;tick&quot;: 112}</code></td></tr>
+<tr><td>112</td><td>player_ranged_shot</td><td><code>{&quot;data&quot;: {&quot;accepted_aim_direction&quot;: &quot;(-0.988936, 0.14834)&quot;, &quot;accepted_aim_world_position&quot;: &quot;(311.217, 376.3174)&quot;, &quot;ballistic_direction&quot;: &quot;(-0.88664, 0.46246)&quot;, &quot;damage&quot;: 11.0, &quot;direction&quot;: &quot;(-0.903761, 0.428038)&quot;, &quot;final_shot_direction&quot;: &quot;(-0.903761, 0.428038)&quot;, &quot;loaded_ammo&quot;: 22, &quot;muzzle&quot;: &quot;(386.8706, 336.8575)&quot;, &quot;position&quot;: &quot;(420.0, 360.0)&quot;, &quot;radius&quot;: 3.0, &quot;reserve_ammo&quot;: 48, &quot;speed&quot;: 900.0, &quot;spread_deg&quot;: 2.38, &quot;weapon&quot;: &quot;carbine_mk1&quot;}, &quot;kind&quot;: &quot;player_ranged_shot&quot;, &quot;tick&quot;: 112}</code></td></tr>
+<tr><td>150</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;input_release&quot;, &quot;name&quot;: &quot;aim_hold&quot;, &quot;tick&quot;: 150.0}, &quot;moment_tick&quot;: 150, &quot;result&quot;: {&quot;action&quot;: &quot;input_release&quot;, &quot;ok&quot;: true, &quot;tick&quot;: 150}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 150}</code></td></tr>
+<tr><td>178</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;finish&quot;, &quot;tick&quot;: 178.0}, &quot;moment_tick&quot;: 178, &quot;result&quot;: {&quot;action&quot;: &quot;finish&quot;, &quot;finish&quot;: true, &quot;ok&quot;: true, &quot;tick&quot;: 178}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 178}</code></td></tr></tbody></table></section>
+<section class="panel"><h2>Provenance</h2><pre>{
+  &quot;capture&quot;: {
+    &quot;audio_requested&quot;: true,
+    &quot;fps&quot;: 60,
+    &quot;height&quot;: 720,
+    &quot;mode&quot;: &quot;none&quot;,
+    &quot;synchronization&quot;: &quot;not_requested&quot;,
+    &quot;width&quot;: 1280
+  },
+  &quot;repository&quot;: {
+    &quot;branch&quot;: &quot;c2a-r4-animated-sprite&quot;,
+    &quot;changed_files&quot;: [
+      &quot;M custodian/tools/validation/operator_runtime_path_audit.py&quot;,
+      &quot;?? custodian/content/sprites/operator/source/source_work/unarmed/posture/idle_lower_relaxed_e_5f.png.import&quot;,
+      &quot;?? custodian/content/sprites/operator/source/source_work/unarmed/posture/idle_ready_final_east_5f_96.png.import&quot;,
+      &quot;?? custodian/content/sprites/operator/source/source_work/unarmed/posture/idle_upper_relaxed_e_5f.png.import&quot;,
+      &quot;?? custodian/content/sprites/operator/source/source_work/unarmed/posture/lower_idle_ready_final_east_5f_96.png.import&quot;,
+      &quot;?? custodian/content/sprites/operator/source/source_work/unarmed/posture/upper_idle_ready_final_east_5f_96.png.import&quot;,
+      &quot;?? custodian/content/sprites/weapons/carbine_rifle_mk1/source/reference/reload_01/gun_sprite_carbine_reload_east_pixel_64x64_sheet.png.import&quot;,
+      &quot;?? custodian/tools/validation/road_of_witnesses_production_smoke.gd.uid&quot;
+    ],
+    &quot;commit&quot;: &quot;1343b0f24fdc28b2616d13abb79e68c8ce6bb6d1&quot;,
+    &quot;dirty&quot;: true,
+    &quot;root&quot;: &quot;/home/braydenchaffee/Projects/CUSTODIAN-r4&quot;
+  },
+  &quot;runtime&quot;: {
+    &quot;godot&quot;: {
+      &quot;build&quot;: &quot;arch_linux&quot;,
+      &quot;hash&quot;: &quot;ed1daf0bf001b61586d9930840f2f1394092c079&quot;,
+      &quot;hex&quot;: 263938,
+      &quot;major&quot;: 4,
+      &quot;minor&quot;: 7,
+      &quot;patch&quot;: 2,
+      &quot;status&quot;: &quot;stable&quot;,
+      &quot;string&quot;: &quot;4.7.2-stable (arch_linux)&quot;,
+      &quot;timestamp&quot;: 1786929518
+    },
+    &quot;physics_hz&quot;: 60,
+    &quot;renderer&quot;: &quot;vulkan&quot;
+  },
+  &quot;scenario&quot;: {
+    &quot;id&quot;: &quot;combat/ranged_ballistic_alignment&quot;,
+    &quot;path&quot;: &quot;/home/braydenchaffee/Projects/CUSTODIAN-r4/reports/moment_forge/combat/ranged_ballistic_alignment/20260920T201508-0400/scenario.snapshot.json&quot;,
+    &quot;schema_version&quot;: 1,
+    &quot;sha256&quot;: &quot;631e2bc0fab53c6f39637cdb34d5e55a05fcc1a0f08dd66f1c73edab26f04fb4&quot;
+  }
+}</pre></section>
+</main><script>
+const videos=[...document.querySelectorAll('video')],scrub=document.getElementById('scrub');
+document.getElementById('playBoth').onclick=()=>videos.forEach(v=>v.play());
+document.getElementById('pauseBoth').onclick=()=>videos.forEach(v=>v.pause());
+scrub.oninput=()=>videos.forEach(v=>{if(Number.isFinite(v.duration))v.currentTime=v.duration*Number(scrub.value)/1000});
+</script></body></html>
