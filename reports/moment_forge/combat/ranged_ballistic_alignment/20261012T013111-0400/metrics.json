@@ -1,0 +1,49 @@
+{
+  "action_count": 8,
+  "camera": {
+    "position": [
+      420.000061035156,
+      319.999938964844
+    ]
+  },
+  "completed": true,
+  "duration_ticks": 178,
+  "event_count": 10,
+  "media": {
+    "audio": {
+      "available": false
+    },
+    "baseline_audio": null,
+    "visual_diff": null
+  },
+  "operator": {
+    "position": [
+      420.0,
+      360.0
+    ]
+  },
+  "probe_sample_count": 6,
+  "stable": {
+    "completed_tick": 178,
+    "visible_visual_anchor_delta_px": 0.0,
+    "visible_visual_anchor_sample_count": 6
+  },
+  "stable_fingerprint": {
+    "algorithm": "sha256",
+    "schema": "custodian.moment_forge.stable_fingerprint.v1",
+    "value": "e40a5a8a069f83e53d356586b347ce734dbb7a6c8cb27ff4f52de1180e779845"
+  },
+  "target_a": {
+    "position": [
+      620.0,
+      330.0
+    ]
+  },
+  "target_b": {
+    "position": [
+      220.0,
+      390.0
+    ]
+  },
+  "warning_count": 0
+}

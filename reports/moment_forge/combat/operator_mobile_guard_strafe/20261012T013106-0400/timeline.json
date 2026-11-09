@@ -1,0 +1,169 @@
+[
+	{
+		"data": {
+			"angle_error_degrees": 0.0,
+			"distance": 80.0,
+			"from": "",
+			"score": 0.686060606060606,
+			"to": "EnemyGrunt1"
+		},
+		"kind": "player_melee_soft_target_changed",
+		"tick": 0
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "aim_at_role",
+				"role": "operator",
+				"target_role": "target",
+				"tick": 12.0
+			},
+			"moment_tick": 12,
+			"result": {
+				"action": "aim_at_role",
+				"ok": true,
+				"tick": 12
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 12
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "input_press",
+				"name": "attack_secondary",
+				"tick": 18.0
+			},
+			"moment_tick": 18,
+			"result": {
+				"action": "input_press",
+				"ok": true,
+				"tick": 18
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 18
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "input_press",
+				"name": "move_left",
+				"tick": 19.0
+			},
+			"moment_tick": 19,
+			"result": {
+				"action": "input_press",
+				"ok": true,
+				"tick": 19
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 19
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "input_tap",
+				"hold_ticks": 1.0,
+				"name": "attack_primary",
+				"tick": 40.0
+			},
+			"moment_tick": 40,
+			"result": {
+				"action": "input_tap",
+				"ok": true,
+				"tick": 40
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 40
+	},
+	{
+		"data": {
+			"active_window_sec": 0.1,
+			"position": "(386.3499, 360.0)",
+			"stamina": 92.0
+		},
+		"kind": "player_parry_started",
+		"tick": 40
+	},
+	{
+		"data": {
+			"position": "(367.3748, 360.0)",
+			"window_sec": 0.1
+		},
+		"kind": "player_parry_active",
+		"tick": 51
+	},
+	{
+		"data": {
+			"angle_error_degrees": 0.0,
+			"distance": 0.0,
+			"from": "EnemyGrunt1",
+			"score": 0.0,
+			"to": ""
+		},
+		"kind": "player_melee_soft_target_changed",
+		"tick": 58
+	},
+	{
+		"data": {
+			"position": "(355.2998, 360.0)"
+		},
+		"kind": "player_parry_expired",
+		"tick": 58
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "input_release",
+				"name": "attack_secondary",
+				"tick": 66.0
+			},
+			"moment_tick": 66,
+			"result": {
+				"action": "input_release",
+				"ok": true,
+				"tick": 66
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 66
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "input_release",
+				"name": "move_left",
+				"tick": 84.0
+			},
+			"moment_tick": 84,
+			"result": {
+				"action": "input_release",
+				"ok": true,
+				"tick": 84
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 84
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "finish",
+				"tick": 118.0
+			},
+			"moment_tick": 118,
+			"result": {
+				"action": "finish",
+				"finish": true,
+				"ok": true,
+				"tick": 118
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 118
+	}
+]

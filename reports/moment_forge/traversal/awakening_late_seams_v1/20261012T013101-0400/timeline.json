@@ -1,0 +1,349 @@
+[
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"args": {
+					"checkpoint": "locker_interior",
+					"direction": "forward"
+				},
+				"name": "show_checkpoint",
+				"tick": 5.0
+			},
+			"moment_tick": 5,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": true,
+				"tick": 5
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 5
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"args": {
+					"checkpoint": "04_05_a",
+					"direction": "forward"
+				},
+				"name": "show_checkpoint",
+				"tick": 65.0
+			},
+			"moment_tick": 65,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": true,
+				"tick": 65
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 65
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"args": {
+					"checkpoint": "04_05_b",
+					"direction": "forward"
+				},
+				"name": "show_checkpoint",
+				"tick": 125.0
+			},
+			"moment_tick": 125,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": true,
+				"tick": 125
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 125
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"args": {
+					"checkpoint": "04_05_c",
+					"direction": "forward"
+				},
+				"name": "show_checkpoint",
+				"tick": 185.0
+			},
+			"moment_tick": 185,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": true,
+				"tick": 185
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 185
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"args": {
+					"checkpoint": "dust_interior",
+					"direction": "forward"
+				},
+				"name": "show_checkpoint",
+				"tick": 245.0
+			},
+			"moment_tick": 245,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": true,
+				"tick": 245
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 245
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"args": {
+					"checkpoint": "05_06",
+					"direction": "forward"
+				},
+				"name": "show_checkpoint",
+				"tick": 305.0
+			},
+			"moment_tick": 305,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": true,
+				"tick": 305
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 305
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"args": {
+					"checkpoint": "06_07",
+					"direction": "forward"
+				},
+				"name": "show_checkpoint",
+				"tick": 365.0
+			},
+			"moment_tick": 365,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": true,
+				"tick": 365
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 365
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"args": {
+					"checkpoint": "07_08",
+					"direction": "forward"
+				},
+				"name": "show_checkpoint",
+				"tick": 425.0
+			},
+			"moment_tick": 425,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": true,
+				"tick": 425
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 425
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"args": {
+					"checkpoint": "08_10",
+					"direction": "forward"
+				},
+				"name": "show_checkpoint",
+				"tick": 485.0
+			},
+			"moment_tick": 485,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": true,
+				"tick": 485
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 485
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"args": {
+					"checkpoint": "08_09",
+					"direction": "forward"
+				},
+				"name": "show_checkpoint",
+				"tick": 545.0
+			},
+			"moment_tick": 545,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": true,
+				"tick": 545
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 545
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"args": {
+					"checkpoint": "dust_interior",
+					"direction": "reverse"
+				},
+				"name": "show_checkpoint",
+				"tick": 605.0
+			},
+			"moment_tick": 605,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": true,
+				"tick": 605
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 605
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"args": {
+					"checkpoint": "04_05_c",
+					"direction": "reverse"
+				},
+				"name": "show_checkpoint",
+				"tick": 645.0
+			},
+			"moment_tick": 645,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": true,
+				"tick": 645
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 645
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"args": {
+					"checkpoint": "04_05_b",
+					"direction": "reverse"
+				},
+				"name": "show_checkpoint",
+				"tick": 685.0
+			},
+			"moment_tick": 685,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": true,
+				"tick": 685
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 685
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"args": {
+					"checkpoint": "04_05_a",
+					"direction": "reverse"
+				},
+				"name": "show_checkpoint",
+				"tick": 725.0
+			},
+			"moment_tick": 725,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": true,
+				"tick": 725
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 725
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"args": {
+					"checkpoint": "locker_interior",
+					"direction": "reverse"
+				},
+				"name": "show_checkpoint",
+				"tick": 765.0
+			},
+			"moment_tick": 765,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": true,
+				"tick": 765
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 765
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "finish",
+				"tick": 795.0
+			},
+			"moment_tick": 795,
+			"result": {
+				"action": "finish",
+				"finish": true,
+				"ok": true,
+				"tick": 795
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 795
+	}
+]

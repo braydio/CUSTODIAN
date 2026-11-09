@@ -1,0 +1,317 @@
+{
+	"actions": [
+		{
+			"action": "aim_at_role",
+			"ok": true,
+			"tick": 12
+		},
+		{
+			"action": "input_press",
+			"ok": true,
+			"tick": 18
+		},
+		{
+			"action": "input_press",
+			"ok": true,
+			"tick": 19
+		},
+		{
+			"action": "input_tap",
+			"ok": true,
+			"tick": 40
+		},
+		{
+			"action": "input_release",
+			"ok": true,
+			"tick": 66
+		},
+		{
+			"action": "input_release",
+			"ok": true,
+			"tick": 84
+		},
+		{
+			"action": "finish",
+			"finish": true,
+			"ok": true,
+			"tick": 118
+		}
+	],
+	"assertions": [
+		{
+			"actual": true,
+			"expected": {
+				"role": "target",
+				"severity": "error",
+				"type": "role_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "role_exists"
+		},
+		{
+			"actual": "unarmed/locomotion/walk_01/w/lower_body",
+			"expected": {
+				"field": "animation",
+				"op": "eq",
+				"probe": "lower_body_state",
+				"severity": "error",
+				"tick": 20.0,
+				"type": "probe_compare",
+				"value": "unarmed/locomotion/walk_01/w/lower_body"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": "unarmed/defense/block_enter_01/e/upper_body",
+			"expected": {
+				"field": "animation",
+				"op": "eq",
+				"probe": "upper_body_state",
+				"severity": "error",
+				"tick": 20.0,
+				"type": "probe_compare",
+				"value": "unarmed/defense/block_enter_01/e/upper_body"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": "unarmed/defense/block_hold_01/e/upper_body",
+			"expected": {
+				"field": "animation",
+				"op": "eq",
+				"probe": "upper_body_state",
+				"severity": "error",
+				"tick": 24.0,
+				"type": "probe_compare",
+				"value": "unarmed/defense/block_hold_01/e/upper_body"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": "unarmed/locomotion/walk_01/w/upper_body",
+			"expected": {
+				"field": "animation",
+				"op": "eq",
+				"probe": "upper_body_state",
+				"severity": "error",
+				"tick": 78.0,
+				"type": "probe_compare",
+				"value": "unarmed/locomotion/walk_01/w/upper_body"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": [
+				-1.0,
+				0.0
+			],
+			"expected": {
+				"field": "movement_direction",
+				"op": "eq",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 48.0,
+				"type": "probe_compare",
+				"value": [
+					-1.0,
+					0.0
+				]
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": [
+				1.0,
+				0.0
+			],
+			"expected": {
+				"field": "aim_direction",
+				"op": "eq",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 48.0,
+				"type": "probe_compare",
+				"value": [
+					1.0,
+					0.0
+				]
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": "unarmed/locomotion/walk_01/w/lower_body",
+			"expected": {
+				"field": "animation",
+				"op": "eq",
+				"probe": "lower_body_state",
+				"severity": "error",
+				"tick": 48.0,
+				"type": "probe_compare",
+				"value": "unarmed/locomotion/walk_01/w/lower_body"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": "unarmed/defense/parry_01/e/upper_body",
+			"expected": {
+				"field": "animation",
+				"op": "eq",
+				"probe": "upper_body_state",
+				"severity": "error",
+				"tick": 48.0,
+				"type": "probe_compare",
+				"value": "unarmed/defense/parry_01/e/upper_body"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": {
+				"equal": true,
+				"values": [
+					"unarmed/locomotion/walk_01/w/lower_body",
+					"unarmed/locomotion/walk_01/w/lower_body",
+					"unarmed/locomotion/walk_01/w/lower_body",
+					"unarmed/locomotion/walk_01/w/lower_body"
+				]
+			},
+			"expected": {
+				"field": "animation",
+				"points": [
+					{
+						"probe": "lower_body_state",
+						"tick": 20.0
+					},
+					{
+						"probe": "lower_body_state",
+						"tick": 24.0
+					},
+					{
+						"probe": "lower_body_state",
+						"tick": 48.0
+					},
+					{
+						"probe": "lower_body_state",
+						"tick": 78.0
+					}
+				],
+				"probe": "lower_body_state",
+				"severity": "error",
+				"tolerance": 0.0,
+				"type": "probe_sequence_equal"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_sequence_equal"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"field": "effective_visible",
+				"op": "eq",
+				"probe": "lower_body_state",
+				"severity": "error",
+				"tick": 24.0,
+				"type": "probe_compare",
+				"value": true
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"field": "effective_visible",
+				"op": "eq",
+				"probe": "upper_body_state",
+				"severity": "error",
+				"tick": 24.0,
+				"type": "probe_compare",
+				"value": true
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": false,
+			"expected": {
+				"severity": "error",
+				"type": "no_unreleased_inputs"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "no_unreleased_inputs"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"path": "telemetry.json",
+				"severity": "error",
+				"type": "output_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "output_exists"
+		}
+	],
+	"capture_failures": [],
+	"capture_mode": "none",
+	"completed": true,
+	"completed_tick": 118,
+	"failures": [],
+	"keyframes": [],
+	"markers": [],
+	"passed": true,
+	"probe_failures": [],
+	"runtime": {
+		"godot": {
+			"build": "arch_linux",
+			"hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+			"hex": 263938,
+			"major": 4,
+			"minor": 7,
+			"patch": 2,
+			"status": "stable",
+			"string": "4.7.2-stable (arch_linux)",
+			"timestamp": 1786929518
+		},
+		"physics_hz": 60,
+		"renderer": "vulkan"
+	},
+	"scenario_id": "combat/operator_mobile_guard_strafe",
+	"scenario_path": "/home/braydenchaffee/Projects/.custodian-worktrees/review-agent-next-execution-boundary-v1-20261011T233504Z-84e8373152d9/reports/moment_forge/combat/operator_mobile_guard_strafe/20261012T013106-0400/scenario.snapshot.json",
+	"schema": "custodian.moment_forge.run_result.v1",
+	"seed": 104729
+}

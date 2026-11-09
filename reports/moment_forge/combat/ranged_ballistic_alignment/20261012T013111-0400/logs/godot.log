@@ -1,0 +1,58 @@
+Godot Engine v4.7.2.stable.arch_linux.ed1daf0bf (2026-08-17 01:18:38 UTC) - https://godotengine.org
+
+[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)
+Registered debug commands with DevConsole
+[DevObservatory] Session exported: /home/braydenchaffee/Projects/.custodian-worktrees/review-agent-next-execution-boundary-v1-20261011T233504Z-84e8373152d9/reports/moment_forge/combat/ranged_ballistic_alignment/20261012T013111-0400/telemetry.json
+
+WARNING: [Enemy] GRUNT no navigation system found, using direct movement
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _initialize_navigation (res://game/actors/enemies/enemy.gd:497)
+         [1] _ready (res://game/actors/enemies/enemy.gd:435)
+         [2] _load_and_configure_scene (res://tools/iteration/godot/moment_runner.gd:184)
+         [3] _run (res://tools/iteration/godot/moment_runner.gd:37)
+WARNING: [Enemy] GRUNT no navigation system found, using direct movement
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _initialize_navigation (res://game/actors/enemies/enemy.gd:497)
+         [1] _ready (res://game/actors/enemies/enemy.gd:435)
+         [2] _load_and_configure_scene (res://tools/iteration/godot/moment_runner.gd:184)
+         [3] _run (res://tools/iteration/godot/moment_runner.gd:37)
+WARNING: [Enemy] GRUNT no navigation system found, using direct movement
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _initialize_navigation (res://game/actors/enemies/enemy.gd:497)
+         [1] _ready (res://game/actors/enemies/enemy.gd:435)
+         [2] _load_and_configure_scene (res://tools/iteration/godot/moment_runner.gd:184)
+         [3] _run (res://tools/iteration/godot/moment_runner.gd:37)
+WARNING: [Camera] Map bounds rebuild failed; disabling camera clamp for this session
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _rebuild_bounds (res://game/world/camera.gd:1061)
+         [1] _ready (res://game/world/camera.gd:213)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4513)
+       [2] _show_presentation_layer (res://game/actors/operator/operator.gd:4571)
+       [3] _play_modular_action_animation (res://game/actors/operator/operator.gd:3750)
+       [4] _play_modular_action_animation_backwards (res://game/actors/operator/operator.gd:3772)
+       [5] _begin_modular_primary_ranged_lower_presentation (res://game/actors/operator/operator.gd:3640)
+       [6] _exit_ranged_ready (res://game/actors/operator/operator.gd:5924)
+       [7] _update_ranged_ready_state (res://game/actors/operator/operator.gd:5718)
+       [8] _advance_simulation (res://game/actors/operator/operator.gd:1345)
+       [9] _physics_process (res://game/actors/operator/operator.gd:1367)
+ERROR: [OperatorBodyPresenter] show_layer() for owner 2 while owner is 1; use preempt_with_owner() to take the body explicitly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] show_layer (res://game/actors/operator/presentation/operator_body_presenter.gd:332)
+       [1] _show_body_layer (res://game/actors/operator/operator.gd:4513)
+       [2] _show_presentation_layer (res://game/actors/operator/operator.gd:4571)
+       [3] _play_modular_action_animation (res://game/actors/operator/operator.gd:3750)
+       [4] _play_modular_action_animation_backwards (res://game/actors/operator/operator.gd:3772)
+       [5] _begin_modular_primary_ranged_lower_presentation (res://game/actors/operator/operator.gd:3640)
+       [6] _exit_ranged_ready (res://game/actors/operator/operator.gd:5924)
+       [7] _update_ranged_ready_state (res://game/actors/operator/operator.gd:5718)
+       [8] _advance_simulation (res://game/actors/operator/operator.gd:1345)
+       [9] _physics_process (res://game/actors/operator/operator.gd:1367)

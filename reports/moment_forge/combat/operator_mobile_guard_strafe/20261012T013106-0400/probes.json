@@ -1,0 +1,229 @@
+{
+	"failures": [],
+	"records": [
+		{
+			"id": "operator_state",
+			"role": "operator",
+			"tick": 20,
+			"values": {
+				"_block_phase": "enter",
+				"_enemy_impact_lock_timer": 0.0,
+				"_parry_phase": "",
+				"aim_direction": [
+					1.0,
+					0.0
+				],
+				"global_position": [
+					418.700012207031,
+					360.0
+				],
+				"movement_direction": [
+					-1.0,
+					0.0
+				]
+			}
+		},
+		{
+			"id": "lower_body_state",
+			"role": "lower_body",
+			"tick": 20,
+			"values": {
+				"animation": "unarmed/locomotion/walk_01/w/lower_body",
+				"effective_visible": true,
+				"frame": 0,
+				"frame_progress": 0.200000002980232,
+				"global_bounds": [
+					370.700012207031,
+					294.0,
+					96.0,
+					96.0
+				]
+			}
+		},
+		{
+			"id": "upper_body_state",
+			"role": "upper_body",
+			"tick": 20,
+			"values": {
+				"animation": "unarmed/defense/block_enter_01/e/upper_body",
+				"effective_visible": true,
+				"frame": 0,
+				"frame_progress": 0.5,
+				"global_bounds": [
+					370.700012207031,
+					294.0,
+					96.0,
+					96.0
+				]
+			}
+		},
+		{
+			"id": "operator_state",
+			"role": "operator",
+			"tick": 24,
+			"values": {
+				"_block_phase": "hold",
+				"_enemy_impact_lock_timer": 0.0,
+				"_parry_phase": "",
+				"aim_direction": [
+					1.0,
+					0.0
+				],
+				"global_position": [
+					412.225006103516,
+					360.0
+				],
+				"movement_direction": [
+					-1.0,
+					0.0
+				]
+			}
+		},
+		{
+			"id": "lower_body_state",
+			"role": "lower_body",
+			"tick": 24,
+			"values": {
+				"animation": "unarmed/locomotion/walk_01/w/lower_body",
+				"effective_visible": true,
+				"frame": 0,
+				"frame_progress": 0.600000023841858,
+				"global_bounds": [
+					364.225006103516,
+					294.0,
+					96.0,
+					96.0
+				]
+			}
+		},
+		{
+			"id": "upper_body_state",
+			"role": "upper_body",
+			"tick": 24,
+			"values": {
+				"animation": "unarmed/defense/block_hold_01/e/upper_body",
+				"effective_visible": true,
+				"frame": 0,
+				"frame_progress": 0.133333340287209,
+				"global_bounds": [
+					364.225006103516,
+					294.0,
+					96.0,
+					96.0
+				]
+			}
+		},
+		{
+			"id": "operator_state",
+			"role": "operator",
+			"tick": 48,
+			"values": {
+				"_block_phase": "parry",
+				"_enemy_impact_lock_timer": 0.0,
+				"_parry_phase": "windup",
+				"aim_direction": [
+					1.0,
+					0.0
+				],
+				"global_position": [
+					370.824859619141,
+					360.0
+				],
+				"movement_direction": [
+					-1.0,
+					0.0
+				]
+			}
+		},
+		{
+			"id": "lower_body_state",
+			"role": "lower_body",
+			"tick": 48,
+			"values": {
+				"animation": "unarmed/locomotion/walk_01/w/lower_body",
+				"effective_visible": true,
+				"frame": 1,
+				"frame_progress": 0.500000059604645,
+				"global_bounds": [
+					322.824859619141,
+					294.0,
+					96.0,
+					96.0
+				]
+			}
+		},
+		{
+			"id": "upper_body_state",
+			"role": "upper_body",
+			"tick": 48,
+			"values": {
+				"animation": "unarmed/defense/parry_01/e/upper_body",
+				"effective_visible": true,
+				"frame": 1,
+				"frame_progress": 0.800000011920929,
+				"global_bounds": [
+					322.824859619141,
+					294.0,
+					96.0,
+					96.0
+				]
+			}
+		},
+		{
+			"id": "operator_state",
+			"role": "operator",
+			"tick": 78,
+			"values": {
+				"_block_phase": "",
+				"_enemy_impact_lock_timer": 0.0,
+				"_parry_phase": "",
+				"aim_direction": [
+					1.0,
+					0.0
+				],
+				"global_position": [
+					307.424743652344,
+					360.0
+				],
+				"movement_direction": [
+					-1.0,
+					0.0
+				]
+			}
+		},
+		{
+			"id": "lower_body_state",
+			"role": "lower_body",
+			"tick": 78,
+			"values": {
+				"animation": "unarmed/locomotion/walk_01/w/lower_body",
+				"effective_visible": true,
+				"frame": 1,
+				"frame_progress": 0.500000357627869,
+				"global_bounds": [
+					259.424743652344,
+					294.0,
+					96.0,
+					96.0
+				]
+			}
+		},
+		{
+			"id": "upper_body_state",
+			"role": "upper_body",
+			"tick": 78,
+			"values": {
+				"animation": "unarmed/locomotion/walk_01/w/upper_body",
+				"effective_visible": true,
+				"frame": 1,
+				"frame_progress": 0.666666746139526,
+				"global_bounds": [
+					259.424743652344,
+					294.0,
+					96.0,
+					96.0
+				]
+			}
+		}
+	]
+}

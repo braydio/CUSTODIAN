@@ -1,0 +1,249 @@
+[
+	{
+		"actual": true,
+		"expected": {
+			"role": "target",
+			"severity": "error",
+			"type": "role_exists"
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "role_exists"
+	},
+	{
+		"actual": "unarmed/locomotion/walk_01/w/lower_body",
+		"expected": {
+			"field": "animation",
+			"op": "eq",
+			"probe": "lower_body_state",
+			"severity": "error",
+			"tick": 20.0,
+			"type": "probe_compare",
+			"value": "unarmed/locomotion/walk_01/w/lower_body"
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": "unarmed/defense/block_enter_01/e/upper_body",
+		"expected": {
+			"field": "animation",
+			"op": "eq",
+			"probe": "upper_body_state",
+			"severity": "error",
+			"tick": 20.0,
+			"type": "probe_compare",
+			"value": "unarmed/defense/block_enter_01/e/upper_body"
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": "unarmed/defense/block_hold_01/e/upper_body",
+		"expected": {
+			"field": "animation",
+			"op": "eq",
+			"probe": "upper_body_state",
+			"severity": "error",
+			"tick": 24.0,
+			"type": "probe_compare",
+			"value": "unarmed/defense/block_hold_01/e/upper_body"
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": "unarmed/locomotion/walk_01/w/upper_body",
+		"expected": {
+			"field": "animation",
+			"op": "eq",
+			"probe": "upper_body_state",
+			"severity": "error",
+			"tick": 78.0,
+			"type": "probe_compare",
+			"value": "unarmed/locomotion/walk_01/w/upper_body"
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": [
+			-1.0,
+			0.0
+		],
+		"expected": {
+			"field": "movement_direction",
+			"op": "eq",
+			"probe": "operator_state",
+			"severity": "error",
+			"tick": 48.0,
+			"type": "probe_compare",
+			"value": [
+				-1.0,
+				0.0
+			]
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": [
+			1.0,
+			0.0
+		],
+		"expected": {
+			"field": "aim_direction",
+			"op": "eq",
+			"probe": "operator_state",
+			"severity": "error",
+			"tick": 48.0,
+			"type": "probe_compare",
+			"value": [
+				1.0,
+				0.0
+			]
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": "unarmed/locomotion/walk_01/w/lower_body",
+		"expected": {
+			"field": "animation",
+			"op": "eq",
+			"probe": "lower_body_state",
+			"severity": "error",
+			"tick": 48.0,
+			"type": "probe_compare",
+			"value": "unarmed/locomotion/walk_01/w/lower_body"
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": "unarmed/defense/parry_01/e/upper_body",
+		"expected": {
+			"field": "animation",
+			"op": "eq",
+			"probe": "upper_body_state",
+			"severity": "error",
+			"tick": 48.0,
+			"type": "probe_compare",
+			"value": "unarmed/defense/parry_01/e/upper_body"
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": {
+			"equal": true,
+			"values": [
+				"unarmed/locomotion/walk_01/w/lower_body",
+				"unarmed/locomotion/walk_01/w/lower_body",
+				"unarmed/locomotion/walk_01/w/lower_body",
+				"unarmed/locomotion/walk_01/w/lower_body"
+			]
+		},
+		"expected": {
+			"field": "animation",
+			"points": [
+				{
+					"probe": "lower_body_state",
+					"tick": 20.0
+				},
+				{
+					"probe": "lower_body_state",
+					"tick": 24.0
+				},
+				{
+					"probe": "lower_body_state",
+					"tick": 48.0
+				},
+				{
+					"probe": "lower_body_state",
+					"tick": 78.0
+				}
+			],
+			"probe": "lower_body_state",
+			"severity": "error",
+			"tolerance": 0.0,
+			"type": "probe_sequence_equal"
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_sequence_equal"
+	},
+	{
+		"actual": true,
+		"expected": {
+			"field": "effective_visible",
+			"op": "eq",
+			"probe": "lower_body_state",
+			"severity": "error",
+			"tick": 24.0,
+			"type": "probe_compare",
+			"value": true
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": true,
+		"expected": {
+			"field": "effective_visible",
+			"op": "eq",
+			"probe": "upper_body_state",
+			"severity": "error",
+			"tick": 24.0,
+			"type": "probe_compare",
+			"value": true
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": false,
+		"expected": {
+			"severity": "error",
+			"type": "no_unreleased_inputs"
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "no_unreleased_inputs"
+	},
+	{
+		"actual": true,
+		"expected": {
+			"path": "telemetry.json",
+			"severity": "error",
+			"type": "output_exists"
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "output_exists"
+	}
+]

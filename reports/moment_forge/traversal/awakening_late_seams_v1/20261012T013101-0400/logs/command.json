@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "/usr/bin/godot",
+    "--path",
+    "/home/braydenchaffee/Projects/.custodian-worktrees/review-agent-next-execution-boundary-v1-20261011T233504Z-84e8373152d9/custodian",
+    "--fixed-fps",
+    "60",
+    "--headless",
+    "--script",
+    "res://tools/iteration/godot/moment_runner.gd",
+    "--",
+    "--custodian-dev",
+    "--observe",
+    "--moment-forge",
+    "--moment-scenario",
+    "/home/braydenchaffee/Projects/.custodian-worktrees/review-agent-next-execution-boundary-v1-20261011T233504Z-84e8373152d9/reports/moment_forge/traversal/awakening_late_seams_v1/20261012T013101-0400/scenario.snapshot.json",
+    "--moment-output",
+    "/home/braydenchaffee/Projects/.custodian-worktrees/review-agent-next-execution-boundary-v1-20261011T233504Z-84e8373152d9/reports/moment_forge/traversal/awakening_late_seams_v1/20261012T013101-0400",
+    "--moment-capture-mode",
+    "none"
+  ],
+  "capture_mode": "none",
+  "repository": {
+    "branch": "agent/review-agent-next-execution-boundary-v1",
+    "changed_files": [
+      "?? custodian/tools/validation/npa_showcase_existing_enemy_smoke.gd.uid",
+      "?? custodian/tools/validation/operator_2_5d_composition_preflight_smoke.gd.uid"
+    ],
+    "commit": "e8e66232e0e3a0c0af32aaf65530e15bbe172034",
+    "dirty": true
+  },
+  "scenario_sha256": "eb96f4bd28ea3708feb67e0fb961be4c1f734197f499e58d0646ac5c43cf823c"
+}

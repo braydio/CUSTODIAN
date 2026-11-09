@@ -1,0 +1,356 @@
+{
+  "assertions": [
+    {
+      "role": "target",
+      "severity": "error",
+      "type": "role_exists"
+    },
+    {
+      "field": "animation",
+      "op": "eq",
+      "probe": "lower_body_state",
+      "severity": "error",
+      "tick": 20,
+      "type": "probe_compare",
+      "value": "unarmed/locomotion/walk_01/w/lower_body"
+    },
+    {
+      "field": "animation",
+      "op": "eq",
+      "probe": "upper_body_state",
+      "severity": "error",
+      "tick": 20,
+      "type": "probe_compare",
+      "value": "unarmed/defense/block_enter_01/e/upper_body"
+    },
+    {
+      "field": "animation",
+      "op": "eq",
+      "probe": "upper_body_state",
+      "severity": "error",
+      "tick": 24,
+      "type": "probe_compare",
+      "value": "unarmed/defense/block_hold_01/e/upper_body"
+    },
+    {
+      "field": "animation",
+      "op": "eq",
+      "probe": "upper_body_state",
+      "severity": "error",
+      "tick": 78,
+      "type": "probe_compare",
+      "value": "unarmed/locomotion/walk_01/w/upper_body"
+    },
+    {
+      "field": "movement_direction",
+      "op": "eq",
+      "probe": "operator_state",
+      "severity": "error",
+      "tick": 48,
+      "type": "probe_compare",
+      "value": [
+        -1.0,
+        0.0
+      ]
+    },
+    {
+      "field": "aim_direction",
+      "op": "eq",
+      "probe": "operator_state",
+      "severity": "error",
+      "tick": 48,
+      "type": "probe_compare",
+      "value": [
+        1.0,
+        0.0
+      ]
+    },
+    {
+      "field": "animation",
+      "op": "eq",
+      "probe": "lower_body_state",
+      "severity": "error",
+      "tick": 48,
+      "type": "probe_compare",
+      "value": "unarmed/locomotion/walk_01/w/lower_body"
+    },
+    {
+      "field": "animation",
+      "op": "eq",
+      "probe": "upper_body_state",
+      "severity": "error",
+      "tick": 48,
+      "type": "probe_compare",
+      "value": "unarmed/defense/parry_01/e/upper_body"
+    },
+    {
+      "field": "animation",
+      "points": [
+        {
+          "probe": "lower_body_state",
+          "tick": 20
+        },
+        {
+          "probe": "lower_body_state",
+          "tick": 24
+        },
+        {
+          "probe": "lower_body_state",
+          "tick": 48
+        },
+        {
+          "probe": "lower_body_state",
+          "tick": 78
+        }
+      ],
+      "probe": "lower_body_state",
+      "severity": "error",
+      "tolerance": 0.0,
+      "type": "probe_sequence_equal"
+    },
+    {
+      "field": "effective_visible",
+      "op": "eq",
+      "probe": "lower_body_state",
+      "severity": "error",
+      "tick": 24,
+      "type": "probe_compare",
+      "value": true
+    },
+    {
+      "field": "effective_visible",
+      "op": "eq",
+      "probe": "upper_body_state",
+      "severity": "error",
+      "tick": 24,
+      "type": "probe_compare",
+      "value": true
+    },
+    {
+      "severity": "error",
+      "type": "no_unreleased_inputs"
+    },
+    {
+      "path": "telemetry.json",
+      "severity": "error",
+      "type": "output_exists"
+    }
+  ],
+  "capture": {
+    "audio": true,
+    "background": "opaque",
+    "contact_sheet_ticks": [
+      0,
+      24,
+      36,
+      48,
+      72,
+      78
+    ],
+    "end_tick": 119,
+    "fps": 60,
+    "height": 720,
+    "required_keyframes": true,
+    "start_tick": 0,
+    "width": 1280
+  },
+  "description": "Runtime-scale westward strafe through unarmed guard and parry attempt while aiming east.",
+  "duration_ticks": 120,
+  "id": "combat/operator_mobile_guard_strafe",
+  "probes": [
+    {
+      "fields": [
+        "global_position",
+        "movement_direction",
+        "aim_direction",
+        "_block_phase",
+        "_parry_phase",
+        "_enemy_impact_lock_timer"
+      ],
+      "id": "operator_state",
+      "required": true,
+      "role": "operator",
+      "ticks": [
+        20,
+        24,
+        48,
+        78
+      ]
+    },
+    {
+      "fields": [
+        "animation",
+        "frame",
+        "frame_progress",
+        "effective_visible",
+        "global_bounds"
+      ],
+      "id": "lower_body_state",
+      "required": true,
+      "role": "lower_body",
+      "ticks": [
+        20,
+        24,
+        48,
+        78
+      ]
+    },
+    {
+      "fields": [
+        "animation",
+        "frame",
+        "frame_progress",
+        "effective_visible",
+        "global_bounds"
+      ],
+      "id": "upper_body_state",
+      "required": true,
+      "role": "upper_body",
+      "ticks": [
+        20,
+        24,
+        48,
+        78
+      ]
+    }
+  ],
+  "scene": "res://scenes/debug/combat_playground.tscn",
+  "schema_version": 1,
+  "seed": 104729,
+  "setup": {
+    "fixture": {
+      "config": {
+        "stationary_target": true
+      },
+      "id": "combat_playground"
+    },
+    "processing": [
+      {
+        "physics": false,
+        "process": false,
+        "role": "target"
+      }
+    ],
+    "properties": [
+      {
+        "property": "global_position",
+        "role": "operator",
+        "value": [
+          420,
+          360
+        ]
+      },
+      {
+        "property": "arrow_aim_enabled",
+        "role": "operator",
+        "value": true
+      },
+      {
+        "property": "combat_loadout_mode",
+        "role": "operator",
+        "value": "melee"
+      },
+      {
+        "property": "primary_weapon_equipped",
+        "role": "operator",
+        "value": false
+      },
+      {
+        "property": "using_unarmed",
+        "role": "operator",
+        "value": true
+      },
+      {
+        "property": "global_position",
+        "role": "target",
+        "value": [
+          500,
+          360
+        ]
+      }
+    ],
+    "remove_nodes": [
+      "World/Enemies/EnemyGrunt2",
+      "World/Enemies/EnemyGrunt3",
+      "World/DroneManager"
+    ],
+    "roles": {
+      "lower_body": {
+        "node_path": "World/Operator/ModularLowerBodySprite"
+      },
+      "operator": {
+        "node_path": "World/Operator"
+      },
+      "target": {
+        "node_path": "World/Enemies/EnemyGrunt1"
+      },
+      "upper_body": {
+        "node_path": "World/Operator/ModularUpperBodySprite"
+      }
+    },
+    "spawns": []
+  },
+  "simulation": {
+    "max_wall_seconds": 30,
+    "pause_during_setup": true,
+    "physics_hz": 60,
+    "warmup_ticks": 2
+  },
+  "stable_fingerprint": {
+    "counters": [],
+    "event_payload_fields": {},
+    "float_quantum": 0.0001,
+    "position_quantum_px": 0.25,
+    "probes": [
+      "operator_state",
+      "lower_body_state",
+      "upper_body_state"
+    ]
+  },
+  "tags": [
+    "combat",
+    "operator",
+    "guard",
+    "mobile_guard",
+    "presentation",
+    "operator_animation"
+  ],
+  "timeline": [
+    {
+      "action": "aim_at_role",
+      "role": "operator",
+      "target_role": "target",
+      "tick": 12
+    },
+    {
+      "action": "input_press",
+      "name": "attack_secondary",
+      "tick": 18
+    },
+    {
+      "action": "input_press",
+      "name": "move_left",
+      "tick": 19
+    },
+    {
+      "action": "input_tap",
+      "hold_ticks": 1,
+      "name": "attack_primary",
+      "tick": 40
+    },
+    {
+      "action": "input_release",
+      "name": "attack_secondary",
+      "tick": 66
+    },
+    {
+      "action": "input_release",
+      "name": "move_left",
+      "tick": 84
+    },
+    {
+      "action": "finish",
+      "tick": 118
+    }
+  ]
+}
