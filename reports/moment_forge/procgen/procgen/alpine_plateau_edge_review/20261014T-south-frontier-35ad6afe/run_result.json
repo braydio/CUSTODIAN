@@ -1,0 +1,192 @@
+{
+	"actions": [
+		{
+			"action": "fixture_command",
+			"ok": true,
+			"response": {
+				"ok": true
+			},
+			"tick": 5
+		},
+		{
+			"action": "fixture_command",
+			"ok": true,
+			"response": {
+				"ok": true
+			},
+			"tick": 35
+		},
+		{
+			"action": "fixture_command",
+			"ok": true,
+			"response": {
+				"ok": true
+			},
+			"tick": 65
+		},
+		{
+			"action": "fixture_command",
+			"ok": true,
+			"response": {
+				"ok": true
+			},
+			"tick": 95
+		},
+		{
+			"action": "finish",
+			"finish": true,
+			"ok": true,
+			"tick": 128
+		}
+	],
+	"assertions": [
+		{
+			"actual": true,
+			"expected": {
+				"role": "fixture",
+				"severity": "error",
+				"type": "role_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "role_exists"
+		},
+		{
+			"actual": false,
+			"expected": {
+				"severity": "error",
+				"type": "no_unreleased_inputs"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "no_unreleased_inputs"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"path": "telemetry.json",
+				"severity": "error",
+				"type": "output_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "output_exists"
+		},
+		{
+			"actual": 4,
+			"expected": {
+				"field": "attached_contact_count",
+				"op": "eq",
+				"probe": "frame",
+				"severity": "error",
+				"tick": 40.0,
+				"type": "probe_compare",
+				"value": 4.0
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "max_socket_error_px",
+				"op": "lte",
+				"probe": "frame",
+				"severity": "error",
+				"tick": 40.0,
+				"type": "probe_compare",
+				"value": 8.0
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 24,
+			"expected": {
+				"field": "min_socket_embed_depth_px",
+				"op": "gte",
+				"probe": "frame",
+				"severity": "error",
+				"tick": 40.0,
+				"type": "probe_compare",
+				"value": 24.0
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		}
+	],
+	"capture_failures": [],
+	"capture_mode": "evidence",
+	"completed": true,
+	"completed_tick": 128,
+	"failures": [],
+	"keyframes": [
+		{
+			"path": "/home/braydenchaffee/Projects/.custodian-worktrees/procgen-alpine-cliff-south-final-35ad6afe/reports/moment_forge/procgen/procgen/alpine_plateau_edge_review/20261014T-south-frontier-35ad6afe/keyframes/tick_000010.png",
+			"render_frame": 14,
+			"sha256": "32afca88cfbc62cd2847a0741e5f22484363158daa02466602d7350513576253",
+			"tick": 10
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/.custodian-worktrees/procgen-alpine-cliff-south-final-35ad6afe/reports/moment_forge/procgen/procgen/alpine_plateau_edge_review/20261014T-south-frontier-35ad6afe/keyframes/tick_000025.png",
+			"render_frame": 29,
+			"sha256": "32afca88cfbc62cd2847a0741e5f22484363158daa02466602d7350513576253",
+			"tick": 25
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/.custodian-worktrees/procgen-alpine-cliff-south-final-35ad6afe/reports/moment_forge/procgen/procgen/alpine_plateau_edge_review/20261014T-south-frontier-35ad6afe/keyframes/tick_000055.png",
+			"render_frame": 59,
+			"sha256": "071f549d2ef19a20f3ad0599f91cf373820f118d2b0e7c22d8484280dbc3c37a",
+			"tick": 55
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/.custodian-worktrees/procgen-alpine-cliff-south-final-35ad6afe/reports/moment_forge/procgen/procgen/alpine_plateau_edge_review/20261014T-south-frontier-35ad6afe/keyframes/tick_000085.png",
+			"render_frame": 89,
+			"sha256": "4061704a578aa5b92b0948f2ce2af71f1966f8c57af72b76c05952b033998eaa",
+			"tick": 85
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/.custodian-worktrees/procgen-alpine-cliff-south-final-35ad6afe/reports/moment_forge/procgen/procgen/alpine_plateau_edge_review/20261014T-south-frontier-35ad6afe/keyframes/tick_000115.png",
+			"render_frame": 119,
+			"sha256": "de8b1e0b5f51491f8806f8710b4c4bfb323e999b23486b8019a7813ab52bdcaa",
+			"tick": 115
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/.custodian-worktrees/procgen-alpine-cliff-south-final-35ad6afe/reports/moment_forge/procgen/procgen/alpine_plateau_edge_review/20261014T-south-frontier-35ad6afe/keyframes/tick_000125.png",
+			"render_frame": 129,
+			"sha256": "de8b1e0b5f51491f8806f8710b4c4bfb323e999b23486b8019a7813ab52bdcaa",
+			"tick": 125
+		}
+	],
+	"markers": [],
+	"passed": true,
+	"probe_failures": [],
+	"runtime": {
+		"godot": {
+			"build": "arch_linux",
+			"hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+			"hex": 263938,
+			"major": 4,
+			"minor": 7,
+			"patch": 2,
+			"status": "stable",
+			"string": "4.7.2-stable (arch_linux)",
+			"timestamp": 1786929518
+		},
+		"physics_hz": 60,
+		"renderer": "vulkan"
+	},
+	"scenario_id": "procgen/alpine_plateau_edge_review",
+	"scenario_path": "/home/braydenchaffee/Projects/.custodian-worktrees/procgen-alpine-cliff-south-final-35ad6afe/reports/moment_forge/procgen/procgen/alpine_plateau_edge_review/20261014T-south-frontier-35ad6afe/scenario.snapshot.json",
+	"schema": "custodian.moment_forge.run_result.v1",
+	"seed": 424242
+}

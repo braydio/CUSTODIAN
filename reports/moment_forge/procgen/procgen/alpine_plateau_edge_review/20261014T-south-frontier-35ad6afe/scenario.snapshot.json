@@ -1,0 +1,180 @@
+{
+  "assertions": [
+    {
+      "role": "fixture",
+      "severity": "error",
+      "type": "role_exists"
+    },
+    {
+      "severity": "error",
+      "type": "no_unreleased_inputs"
+    },
+    {
+      "path": "telemetry.json",
+      "severity": "error",
+      "type": "output_exists"
+    },
+    {
+      "field": "attached_contact_count",
+      "op": "eq",
+      "probe": "frame",
+      "severity": "error",
+      "tick": 40,
+      "type": "probe_compare",
+      "value": 4
+    },
+    {
+      "field": "max_socket_error_px",
+      "op": "lte",
+      "probe": "frame",
+      "severity": "error",
+      "tick": 40,
+      "type": "probe_compare",
+      "value": 8.0
+    },
+    {
+      "field": "min_socket_embed_depth_px",
+      "op": "gte",
+      "probe": "frame",
+      "severity": "error",
+      "tick": 40,
+      "type": "probe_compare",
+      "value": 24
+    }
+  ],
+  "capture": {
+    "audio": false,
+    "background": "opaque",
+    "contact_sheet_ticks": [
+      10,
+      25,
+      55,
+      85,
+      115,
+      125
+    ],
+    "end_tick": 129,
+    "fps": 60,
+    "height": 720,
+    "required_keyframes": true,
+    "start_tick": 0,
+    "width": 1280
+  },
+  "description": "Alpine Plateau permanent underlay at gameplay scale (zoom 0.74) on a real renderer from the north, east, south and west exterior edges: FAR world / FOG / NEAR cliff-mist bound by the alpine_plateau Region Frame, with bounded parallax and guaranteed viewport coverage.",
+  "duration_ticks": 130,
+  "id": "procgen/alpine_plateau_edge_review",
+  "probes": [
+    {
+      "fields": [
+        "frame_id",
+        "underlay_profile_id",
+        "visual_fallback",
+        "backdrop_visible",
+        "backdrop_mode",
+        "direction",
+        "review_combo",
+        "contact_north_count",
+        "contact_east_count",
+        "contact_south_count",
+        "contact_west_count",
+        "attached_contact_count",
+        "max_socket_error_px",
+        "contact_socket_min_embed_px",
+        "min_socket_embed_depth_px",
+        "contact_core_frontier_count",
+        "contact_shoulder_frontier_count",
+        "contact_suppressed_cell_count",
+        "longest_north_run_tiles",
+        "longest_east_run_tiles",
+        "longest_south_run_tiles",
+        "longest_west_run_tiles",
+        "variant_far",
+        "variant_middle",
+        "variant_near",
+        "stack_scale",
+        "parallax_far_px",
+        "parallax_near_px",
+        "coverage_ok"
+      ],
+      "id": "frame",
+      "required": true,
+      "role": "fixture",
+      "ticks": [
+        10,
+        25,
+        40,
+        55,
+        70,
+        85,
+        100,
+        115,
+        125
+      ]
+    }
+  ],
+  "scene": "res://scenes/debug/alpine_plateau_edge_moment.tscn",
+  "schema_version": 1,
+  "seed": 424242,
+  "setup": {
+    "fixture": {
+      "config": {},
+      "id": "alpine_plateau_edge"
+    },
+    "processing": [],
+    "properties": [],
+    "remove_nodes": [],
+    "roles": {
+      "fixture": {
+        "node_path": "."
+      }
+    },
+    "spawns": []
+  },
+  "simulation": {
+    "max_wall_seconds": 240,
+    "pause_during_setup": true,
+    "physics_hz": 60,
+    "warmup_ticks": 2
+  },
+  "stable_fingerprint": {
+    "counters": [],
+    "event_payload_fields": {},
+    "float_quantum": 0.0001,
+    "position_quantum_px": 0.25,
+    "probes": [
+      "frame"
+    ]
+  },
+  "tags": [
+    "procgen",
+    "alpine_plateau",
+    "region_frame",
+    "visual_review"
+  ],
+  "timeline": [
+    {
+      "action": "fixture_command",
+      "name": "at_north",
+      "tick": 5
+    },
+    {
+      "action": "fixture_command",
+      "name": "at_east",
+      "tick": 35
+    },
+    {
+      "action": "fixture_command",
+      "name": "at_south",
+      "tick": 65
+    },
+    {
+      "action": "fixture_command",
+      "name": "at_west",
+      "tick": 95
+    },
+    {
+      "action": "finish",
+      "tick": 128
+    }
+  ]
+}

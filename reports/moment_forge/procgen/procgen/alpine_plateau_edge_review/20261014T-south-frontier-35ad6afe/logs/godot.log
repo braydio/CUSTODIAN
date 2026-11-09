@@ -1,0 +1,66 @@
+Godot Engine v4.7.2.stable.arch_linux.ed1daf0bf (2026-08-17 01:18:38 UTC) - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce GTX 1650 SUPER
+
+[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)
+[ProcGenTilemap] GEN_BEGIN id=1 mode=FINAL_VISUAL seed=424242 path=/root/AlpinePlateauEdgeMoment/ProcGenRuntime/ProcGenMap output_enabled=true
+[ProcGenTilemap] intent graph nodes=18 edges=17 floor_cells=4987 regions=18
+[TerrainBuilder] === PHASES ===
+[TerrainBuilder]   build_baseline: 18 ms
+[TerrainBuilder]   reserved_region: 91 ms
+[TerrainBuilder]   ascent_route: 172 ms
+[TerrainBuilder]   mountain_boundary: 7 ms
+[TerrainBuilder]   industrial_platform: 42 ms
+[TerrainBuilder]   connectivity_validate: 38 ms
+[TerrainBuilder]   connectivity_rescue: 0 ms
+[TerrainBuilder]   TOTAL: 570 ms
+TerrainBuilder: seed=35298381048036 mode=FINAL_VISUAL map_size=(224, 224) required=30 missing=0 rescue_carved=0 baseline_rescue=0 regions=3 blocked=1417 elevated=1976 ramps=116 connectivity=true fallback=false
+WorldProgression: profile=sundered_keep_ascent samples=196
+[ProcgenDepthBackdrop] Chasm camera backdrop active: cells=38246
+[ProcGen] floor_value_clusters SKIP no registered floor value variants
+[ProcGenTilemap] props_foliage SKIP mode=FINAL_VISUAL
+[ProcGen] === FILL_TILEMAPS PHASES ===
+[ProcGen]   setup_clear: 0 ms
+[ProcGen]   planet_profile: 0 ms
+[ProcGen]   substrate_ascent: 142 ms
+[ProcGen]   compound_interior_spawn: 4356 ms
+[ProcGen]   interest_paths: 43 ms
+[ProcGen]   roads_walls_capture: 71 ms
+[ProcGen]   terrain_apply_builder: 9991 ms
+[ProcGen]   terrain_route_walkability: 127 ms
+[ProcGen]   terrain_ingress_protection: 0 ms
+[ProcGen]   terrain_road_walkability: 37 ms
+[ProcGen]   terrain_road_repair: 0 ms
+[ProcGen]   terrain_connector_elevation: 0 ms
+[ProcGen]   terrain_edge_prune: 0 ms
+[ProcGen]   terrain_road_visual_refresh: 39 ms
+[ProcGen]   terrain_state_capture: 23 ms
+[ProcGen]   terrain_elevation: 10217 ms
+[ProcGen]   progress_faction_story: 1027 ms
+[ProcGen]   roads_pass2: 0 ms
+[ProcGen]   road_semantics: 102 ms
+[ProcGen]   nonwalkable_surface_semantics: 514 ms
+[ProcGen]   biome_final_semantics: 95 ms
+[ProcGen]   surface_materials: 98 ms
+[ProcGen]   floor_value_clusters: 0 ms
+[ProcGen]   macro_presentation: 702 ms
+[ProcGen]   dressing_cluster_plan: 358 ms
+[ProcGen]   streaming_reveal_or_walls: 20 ms
+[ProcGen]   props_foliage: 0 ms
+[ProcGen]   props_visual: 0 ms
+[ProcGen]   playability_audit: 405 ms
+[ProcGen]   horiz_wall_overlays: 0 ms
+[ProcGen]   FILL_TILEMAPS TOTAL: 18150 ms
+[ProcgenDepthBackdrop] Chasm camera backdrop active: cells=38246
+[ProcGenTilemap] GEN_END id=1 mode=FINAL_VISUAL seed=424242 total=18239ms
+[ProcGen] === PIPELINE TIMING ===
+[ProcGen]   mode: FINAL_VISUAL
+[ProcGen]   seed: 424242
+[ProcGen]   fill_tilemaps: 18166 ms
+[ProcGen]   refresh_shadows: 0 ms
+[ProcGen]   TOTAL: 18239 ms
+[DevObservatory] Session exported: /home/braydenchaffee/Projects/.custodian-worktrees/procgen-alpine-cliff-south-final-35ad6afe/reports/moment_forge/procgen/procgen/alpine_plateau_edge_review/20261014T-south-frontier-35ad6afe/telemetry.json
+
+WARNING: 18 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 2 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

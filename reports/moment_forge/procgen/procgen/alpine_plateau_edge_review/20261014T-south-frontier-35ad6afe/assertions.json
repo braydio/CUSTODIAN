@@ -1,0 +1,85 @@
+[
+	{
+		"actual": true,
+		"expected": {
+			"role": "fixture",
+			"severity": "error",
+			"type": "role_exists"
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "role_exists"
+	},
+	{
+		"actual": false,
+		"expected": {
+			"severity": "error",
+			"type": "no_unreleased_inputs"
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "no_unreleased_inputs"
+	},
+	{
+		"actual": true,
+		"expected": {
+			"path": "telemetry.json",
+			"severity": "error",
+			"type": "output_exists"
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "output_exists"
+	},
+	{
+		"actual": 4,
+		"expected": {
+			"field": "attached_contact_count",
+			"op": "eq",
+			"probe": "frame",
+			"severity": "error",
+			"tick": 40.0,
+			"type": "probe_compare",
+			"value": 4.0
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": 0.0,
+		"expected": {
+			"field": "max_socket_error_px",
+			"op": "lte",
+			"probe": "frame",
+			"severity": "error",
+			"tick": 40.0,
+			"type": "probe_compare",
+			"value": 8.0
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": 24,
+		"expected": {
+			"field": "min_socket_embed_depth_px",
+			"op": "gte",
+			"probe": "frame",
+			"severity": "error",
+			"tick": 40.0,
+			"type": "probe_compare",
+			"value": 24.0
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_compare"
+	}
+]

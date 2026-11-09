@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "/usr/bin/godot",
+    "--path",
+    "/home/braydenchaffee/Projects/.custodian-worktrees/procgen-alpine-cliff-south-final-35ad6afe/custodian",
+    "--fixed-fps",
+    "60",
+    "--disable-vsync",
+    "--script",
+    "res://tools/iteration/godot/moment_runner.gd",
+    "--",
+    "--custodian-dev",
+    "--observe",
+    "--moment-forge",
+    "--moment-scenario",
+    "/home/braydenchaffee/Projects/.custodian-worktrees/procgen-alpine-cliff-south-final-35ad6afe/reports/moment_forge/procgen/procgen/alpine_plateau_edge_review/20261014T-south-frontier-35ad6afe/scenario.snapshot.json",
+    "--moment-output",
+    "/home/braydenchaffee/Projects/.custodian-worktrees/procgen-alpine-cliff-south-final-35ad6afe/reports/moment_forge/procgen/procgen/alpine_plateau_edge_review/20261014T-south-frontier-35ad6afe",
+    "--moment-capture-mode",
+    "evidence"
+  ],
+  "capture_mode": "evidence",
+  "repository": {
+    "branch": "",
+    "changed_files": [],
+    "commit": "35ad6afe6d92ad0e6b9c442139d1f092de0d01fc",
+    "dirty": false
+  },
+  "scenario_sha256": "d61ee93962c0f2005fcc937806cdb0872132bbfd2de662c6d5781f186f710e9f"
+}
