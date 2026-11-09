@@ -40,3 +40,14 @@
 - Refresh reason: H5 must refresh against latest main after both independent spawn owner lanes land and pass review.
 - Next action: Resume H5, synchronize current main, and require a complete green changed-file report before finish; then launch its independent review in fresh context.
 - Blockers or open questions: none from H5 ownership. If the landed implementation changes loader/bootstrap behavior or candidate/ingress decisions rather than only measured evaluation cost + the smoke fixture, treat that as a blocking scope violation.
+
+## Independent Review Outcome
+
+- Status: blocked; no pass receipt recorded.
+- Reviewed main: `075025f41a6a7f6bafb6df13a816d54a23dc87af`
+- Reviewed implementation commit: `1dc7f5883e4047cd7852d9ceaff346a1dc17a0ae`
+- Exact-seed smoke: passed; attempt/rejection and accepted-world fingerprints match the archived implementation evidence; real NavigationSystem and both enemy families verified.
+- Remaining required regressions and complete changed-file validation: blocked before test launch because `/home/braydenchaffee/.cache/custodian/locks/` is read-only in the restricted reviewer checkout. `--no-godot-lock` does not bypass the separate job-budget lock.
+- Validation evidence: `/home/braydenchaffee/Projects/CUSTODIAN/.git/custodian-review-runs/review-procgen-ambient-real-world-spawn-recovery-v1/20261015T224943Z-5a721f81880e/validation.json` (`passed: false`, incomplete coverage).
+- Summary: `PROCGEN_AMBIENT_REAL_WORLD_SPAWN_RECOVERY_V1_REVIEW_CLAUDE_SUMMARY.md`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
