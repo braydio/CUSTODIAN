@@ -12,7 +12,7 @@
 - Locks: git-ref-maintenance, agent-dispatcher
 - Review: none
 - Review stage: post-land
-- Review modes: code, workflow, safety
+- Review modes: code, workflow
 - Paired review workstream: none
 - Review cycle: 0
 - Max automatic review cycles: 2
