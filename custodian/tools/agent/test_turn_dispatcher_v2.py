@@ -64,6 +64,8 @@ class TurnDispatcherTests(unittest.TestCase):
         checkout = Path(result["checkout"])
         self.assertEqual(result["source"], "agent/example-task")
         self.assertEqual(result["source_sha"], source_sha)
+        self.assertFalse(result["source_is_ancestor_of_current_main"])
+        self.assertTrue(result["current_main_is_ancestor_of_source"])
         self.assertEqual((checkout / "historical.py").read_text(encoding="utf-8"), "prior work\n")
         receipt = json.loads(Path(result["acquisition_receipt"]).read_text(encoding="utf-8"))
         self.assertEqual(receipt["source_sha"], source_sha)
@@ -87,6 +89,67 @@ class TurnDispatcherTests(unittest.TestCase):
         self.assertTrue(result["packet"].endswith("EXAMPLE.md"))
         self.assertEqual(result["task_definition_sha"], run("git", "rev-parse", "origin/main", cwd=self.repo))
 
+    def test_owner_authorized_new_work_requires_conversation_and_exact_instruction_digest(self):
+        with self.assertRaisesRegex(td.DispatchError, "authorization URL"):
+            td.inspect(self.repo, "new-owner-task", "owner-authorized")
+        with self.assertRaisesRegex(td.DispatchError, "exact ChatGPT"):
+            td.inspect(self.repo, "new-owner-task", "owner-authorized", "https://example.com/c/1", "a" * 64)
+        with self.assertRaisesRegex(td.DispatchError, "exact ChatGPT"):
+            td.inspect(self.repo, "new-owner-task", "owner-authorized", "https://chatgpt.com/g/g-test/c/", "a" * 64)
+        with self.assertRaisesRegex(td.DispatchError, "lowercase SHA-256"):
+            td.inspect(self.repo, "new-owner-task", "owner-authorized", "https://chatgpt.com/g/g-test/c/owner-auth", "A" * 64)
+        result = td.inspect(self.repo, "new-owner-task", "owner-authorized",
+                            "https://chatgpt.com/g/g-test/c/owner-auth", "a" * 64)
+        self.assertEqual(result["definition_kind"], "missing")
+        self.assertEqual(result["owner_authorization"]["instruction_sha256"], "a" * 64)
+        self.assertFalse(result["owner_authorization"]["identity_verified"])
+
+    def test_owner_authorized_new_work_acquires_and_checkpoints_with_provenance(self):
+        auth_url = "https://chatgpt.com/g/g-test/c/owner-auth"
+        digest = "b" * 64
+        result = td.begin(self.repo, "new-owner-task", "owner-authorized", self.base / "owner-turns",
+                          auth_url, digest)
+        checkout = Path(result["checkout"])
+        run("git", "config", "user.name", "Test", cwd=checkout)
+        run("git", "config", "user.email", "test@example.com", cwd=checkout)
+        (checkout / "owner_work.py").write_text("print('authorized')\n", encoding="utf-8")
+        receipt = json.loads(Path(result["acquisition_receipt"]).read_text(encoding="utf-8"))
+        self.assertEqual(receipt["definition_kind"], "missing")
+        self.assertEqual(receipt["owner_authorization"]["reference"], auth_url)
+        output = td.checkpoint(self.repo, "new-owner-task", checkout, self.handoff(),
+                               "owner-authorized checkpoint", self.base / "owner-turns")
+        self.assertTrue(output["retired"])
+        branch_text = run("git", "--git-dir", str(self.origin), "show",
+                          f"{output['branch']}:custodian/docs/ai_context/turn_handoffs/new-owner-task.md")
+        self.assertIn(f"owner-authorized:{auth_url}#sha256={digest}", branch_text)
+        self.assertEqual(td.remote_branch(self.repo, "agent/new-owner-task"), output["head"])
+
+    def test_owner_authorized_checkpoint_requires_reacquisition_if_packet_is_published(self):
+        result = td.begin(self.repo, "new-owner-task", "owner-authorized", self.base / "owner-turns",
+                          "https://chatgpt.com/g/g-test/c/owner-auth", "c" * 64)
+        checkout = Path(result["checkout"])
+        run("git", "config", "user.name", "Test", cwd=checkout)
+        run("git", "config", "user.email", "test@example.com", cwd=checkout)
+        packets = self.repo / "custodian/docs/ai_context/task_packets"
+        (packets / "NEW_OWNER.md").write_text("- Workstream: new-owner-task\n- Status: draft\n", encoding="utf-8")
+        run("git", "add", ".", cwd=self.repo)
+        run("git", "commit", "-m", "publish owner task definition", cwd=self.repo)
+        run("git", "push", "origin", "main", cwd=self.repo)
+        with self.assertRaisesRegex(td.DispatchError, "appeared after owner-authorized"):
+            td.checkpoint(self.repo, "new-owner-task", checkout, self.handoff(),
+                          "blocked checkpoint", self.base / "owner-turns")
+        self.assertTrue(checkout.exists())
+
+    def test_ambiguous_published_packet_identity_fails_closed(self):
+        packets = self.repo / "custodian/docs/ai_context/task_packets"
+        (packets / "DUPLICATE.md").write_text("- Workstream: example-task\n- Status: draft\n", encoding="utf-8")
+        run("git", "add", ".", cwd=self.repo)
+        run("git", "commit", "-m", "ambiguous task identity", cwd=self.repo)
+        run("git", "push", "origin", "main", cwd=self.repo)
+        with self.assertRaisesRegex(td.DispatchError, "ambiguous authenticated"):
+            td.inspect(self.repo, "example-task", "owner-authorized",
+                       "https://chatgpt.com/g/g-test/c/owner-auth", "d" * 64)
+
     def test_missing_historical_branch_starts_fresh_from_main(self):
         result = td.begin(self.repo, "example-task", "historical", self.base / "turns")
         self.assertTrue(result["source"].startswith("origin/main"))
@@ -95,6 +158,26 @@ class TurnDispatcherTests(unittest.TestCase):
         self.assertTrue(checkout.is_dir())
         self.assertEqual(run("git", "-C", str(checkout), "rev-parse", "HEAD"), result["source_sha"])
         self.assertEqual(td.remote_branch(self.repo, "agent/example-task"), result["source_sha"])
+
+    def test_historical_branch_diverged_from_main_is_reused_and_marked(self):
+        main_sha = run("git", "rev-parse", "HEAD", cwd=self.repo)
+        run("git", "checkout", "--orphan", "historical-root", cwd=self.repo)
+        run("git", "rm", "-rf", ".", cwd=self.repo)
+        (self.repo / "historical_only.py").write_text("preserve history\n", encoding="utf-8")
+        run("git", "add", "historical_only.py", cwd=self.repo)
+        run("git", "commit", "-m", "divergent historical base", cwd=self.repo)
+        old_sha = run("git", "rev-parse", "HEAD", cwd=self.repo)
+        run("git", "push", "origin", f"{old_sha}:refs/heads/agent/example-task", cwd=self.repo)
+        run("git", "checkout", "main", cwd=self.repo)
+        result = td.begin(self.repo, "example-task", "historical", self.base / "diverged-turns")
+        self.assertEqual(result["source_sha"], old_sha)
+        self.assertFalse(result["source_is_ancestor_of_current_main"])
+        self.assertFalse(result["current_main_is_ancestor_of_source"])
+        self.assertEqual(run("git", "rev-parse", "origin/main", cwd=self.repo), main_sha)
+        self.assertTrue((Path(result["checkout"]) / "historical_only.py").is_file())
+        checkout = Path(result["checkout"])
+        run("git", "worktree", "remove", str(checkout), cwd=self.repo)
+        run("git", "update-ref", "-d", f"refs/heads/{result['local_branch']}", old_sha, cwd=self.repo)
 
     def test_missing_historical_lfs_data_blocks_without_fallback(self):
         base = run("git", "rev-parse", "HEAD", cwd=self.repo)
@@ -139,6 +222,13 @@ class TurnDispatcherTests(unittest.TestCase):
                                "turn checkpoint", self.base / "turns")
         self.assertTrue(output["retired"])
         self.assertFalse(checkout.exists())
+        retirement = json.loads(Path(output["retirement_receipt"]).read_text(encoding="utf-8"))
+        self.assertEqual(retirement["status"], "retired")
+        self.assertEqual(Path(output["retirement_receipt"]).stat().st_mode & 0o777, 0o600)
+        again = td.checkpoint(self.repo, "example-task", checkout, self.handoff(),
+                              "retry retirement", self.base / "turns")
+        self.assertTrue(again["idempotent"])
+        self.assertEqual(again["head"], output["head"])
         self.assertEqual(td.remote_branch(self.repo, "agent/example-task"), output["head"])
         names = run("git", "--git-dir", str(self.origin), "ls-tree", "-r", "--name-only",
                     "refs/heads/agent/example-task")
@@ -161,6 +251,33 @@ class TurnDispatcherTests(unittest.TestCase):
         resumed_sha = run("git", "-C", str(resumed_checkout), "rev-parse", "HEAD")
         run("git", "worktree", "remove", str(resumed_checkout), cwd=self.repo)
         run("git", "update-ref", "-d", f"refs/heads/{resumed['local_branch']}", resumed_sha, cwd=self.repo)
+
+    def test_checkpoint_retries_after_crash_beneath_exact_checkout_removal(self):
+        result, checkout = self.turn_checkout()
+        (checkout / "durable.py").write_text("verified\n", encoding="utf-8")
+        original_git = td.git
+        interrupted = False
+
+        def fail_after_remove(repo, *args, **kwargs):
+            nonlocal interrupted
+            value = original_git(repo, *args, **kwargs)
+            if not interrupted and args[:2] == ("worktree", "remove"):
+                interrupted = True
+                raise td.DispatchError("injected crash after checkout removal")
+            return value
+
+        with patch.object(td, "git", side_effect=fail_after_remove):
+            with self.assertRaisesRegex(td.DispatchError, "injected crash"):
+                td.checkpoint(self.repo, "example-task", checkout, self.handoff(),
+                              "interrupted retirement", self.base / "turns")
+        self.assertFalse(checkout.exists())
+        resumed = td.checkpoint(self.repo, "example-task", checkout, self.handoff(),
+                                "retry after retirement", self.base / "turns")
+        self.assertTrue(resumed["idempotent"])
+        self.assertEqual(td.remote_branch(self.repo, "agent/example-task"), resumed["head"])
+        local_ref = subprocess.run(["git", "-C", str(self.repo), "show-ref", "--verify", "--quiet",
+                                    f"refs/heads/{result['local_branch']}"], capture_output=True)
+        self.assertNotEqual(local_ref.returncode, 0)
 
     def test_non_force_first_branch_creation_preserves_racing_writer(self):
         other = self.base / "other"

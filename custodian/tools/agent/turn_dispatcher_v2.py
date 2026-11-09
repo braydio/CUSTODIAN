@@ -112,6 +112,39 @@ def remote_packet(repo: Path, main_sha: str, workstream: str) -> tuple[str, str,
     return chosen[0]
 
 
+def remote_definition(repo: Path, main_sha: str, workstream: str) -> dict:
+    """Resolve a task definition only from the authenticated main commit."""
+    try:
+        path, content, fields = remote_packet(repo, main_sha, workstream)
+    except DispatchError as exc:
+        if not str(exc).startswith("missing authenticated task definition"):
+            raise
+        return {"kind": "missing", "path": None, "content": None, "fields": {},
+                "sha256": None, "error": str(exc)}
+    return {"kind": "published-packet", "path": path, "content": content,
+            "fields": fields, "sha256": hashlib.sha256(content.encode("utf-8")).hexdigest()}
+
+
+def validate_owner_authorization(reference: str | None, digest: str | None) -> dict:
+    """Record explicit caller authorization without treating a local file as authority.
+
+    The caller must supply a conversation URL and the digest of the exact owner
+    instruction. This is a provenance attestation, not an identity signature.
+    """
+    if not reference or not digest:
+        raise DispatchError("owner-authorized acquisition requires an authorization URL and instruction SHA-256")
+    from urllib.parse import urlsplit
+    parsed = urlsplit(reference)
+    if (parsed.scheme != "https"
+            or (parsed.hostname or "").lower() not in {"chatgpt.com", "chat.openai.com"}
+            or not re.search(r"/c/[A-Za-z0-9-]+/?$", parsed.path)):
+        raise DispatchError("owner authorization must identify an exact ChatGPT conversation URL")
+    if not re.fullmatch(r"[0-9a-f]{64}", digest):
+        raise DispatchError("owner authorization instruction digest must be lowercase SHA-256")
+    return {"type": "explicit-owner-instruction", "reference": reference,
+            "instruction_sha256": digest, "identity_verified": False}
+
+
 def has_design_hold(fields: dict[str, str]) -> bool:
     return any(fields.get(key, "").strip().lower() in OPEN_VALUES for key in DESIGN_HOLD_FIELDS)
 
@@ -130,6 +163,14 @@ def fetch_branch(repo: Path, branch: str, expected: str | None) -> str:
     if expected and fetched != expected:
         raise DispatchError(f"{branch} changed during fetch")
     return fetched
+
+
+def is_ancestor(repo: Path, ancestor: str, descendant: str) -> bool:
+    proc = subprocess.run(["git", "-C", str(repo), "merge-base", "--is-ancestor",
+                          ancestor, descendant], capture_output=True, text=True)
+    if proc.returncode not in {0, 1}:
+        raise DispatchError(f"could not compare historical source with current main: {proc.stderr.strip()}")
+    return proc.returncode == 0
 
 
 def recovery_branch(workstream: str) -> str:
@@ -156,20 +197,32 @@ def retire_unmodified_turn(repo: Path, checkout: Path, local_branch: str, base_s
     git(repo, "update-ref", "-d", f"refs/heads/{local_branch}", base_sha)
 
 
-def inspect(repo: Path, workstream: str, mode: str) -> dict:
+def inspect(repo: Path, workstream: str, mode: str,
+            authorization_url: str | None = None,
+            authorization_sha256: str | None = None) -> dict:
     repo = repo_root(repo)
     validate_id(workstream)
-    if mode not in {"normal", "historical"}:
+    if mode not in {"normal", "historical", "owner-authorized"}:
         raise DispatchError(f"unknown acquisition mode: {mode}")
     main_sha, _ = latest_main(repo)
-    packet_path, _, fields = remote_packet(repo, main_sha, workstream)
+    definition = remote_definition(repo, main_sha, workstream)
+    if definition["kind"] == "missing":
+        if mode != "owner-authorized":
+            raise DispatchError(definition["error"])
+        authorization = validate_owner_authorization(authorization_url, authorization_sha256)
+        packet_path, fields = None, {}
+    else:
+        packet_path, fields = definition["path"], definition["fields"]
+        authorization = None
     if has_design_hold(fields):
         raise DispatchError("unresolved user-owned design decision holds task selection")
     branch = f"agent/{workstream}"
     return {"workstream": workstream, "mode": mode, "branch": branch,
             "packet": packet_path, "task_definition_sha": main_sha,
             "remote_head": remote_branch(repo, branch),
-            "selection_policy": "v2-identity-and-user-design-hold-v1", "repo": str(repo)}
+            "selection_policy": "v2-identity-and-user-design-hold-v1", "repo": str(repo),
+            "definition_kind": definition["kind"], "definition_sha256": definition["sha256"],
+            "owner_authorization": authorization}
 
 
 def attached(repo: Path) -> list[Path]:
@@ -219,8 +272,10 @@ def make_turn_checkout(repo: Path, workstream: str, branch: str, source_sha: str
     return checkout, local_branch
 
 
-def begin(repo: Path, workstream: str, mode: str, pool: Path) -> dict:
-    info = inspect(repo, workstream, mode)
+def begin(repo: Path, workstream: str, mode: str, pool: Path,
+          authorization_url: str | None = None,
+          authorization_sha256: str | None = None) -> dict:
+    info = inspect(repo, workstream, mode, authorization_url, authorization_sha256)
     repo, pool = Path(info["repo"]), pool.expanduser().resolve()
     if pool == repo or pool in repo.parents:
         raise DispatchError("turn pool must be outside the repository")
@@ -280,7 +335,14 @@ def begin(repo: Path, workstream: str, mode: str, pool: Path) -> dict:
         "workstream": workstream, "mode": mode, "checkout": str(checkout),
         "local_branch": local_branch, "turn_id": result["turn_id"],
         "branch": branch, "source": source, "source_sha": source_sha,
-        "task_definition_sha": info["task_definition_sha"]}
+        "task_definition_sha": info["task_definition_sha"],
+        "definition_kind": info["definition_kind"],
+        "definition_sha256": info["definition_sha256"],
+        "source_is_ancestor_of_current_main": is_ancestor(repo, source_sha, info["task_definition_sha"]),
+        "current_main_is_ancestor_of_source": is_ancestor(repo, info["task_definition_sha"], source_sha),
+        "owner_authorization": info["owner_authorization"]}
+    result["source_is_ancestor_of_current_main"] = acquisition["source_is_ancestor_of_current_main"]
+    result["current_main_is_ancestor_of_source"] = acquisition["current_main_is_ancestor_of_source"]
     acquisition_path = acquisition_record_path(repo, result["turn_id"])
     try:
         acquisition_path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
@@ -317,6 +379,84 @@ def acquisition_record_path(repo: Path, turn_id: str) -> Path:
     if not common.is_absolute():
         common = (repo / common).resolve()
     return common / "custodian-turn-dispatcher-v2" / "acquisitions" / f"{turn_id}.json"
+
+
+def retirement_record_path(repo: Path, turn_id: str) -> Path:
+    common = Path(git(repo, "rev-parse", "--git-common-dir"))
+    if not common.is_absolute():
+        common = (repo / common).resolve()
+    return common / "custodian-turn-dispatcher-v2" / "retirements" / f"{turn_id}.json"
+
+
+def write_retirement_record(repo: Path, turn_id: str, payload: dict) -> Path:
+    path = retirement_record_path(repo, turn_id)
+    path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+    if path.is_symlink():
+        raise DispatchError("retirement receipt path is a symbolic link")
+    temporary = path.with_name(path.name + f".{uuid.uuid4().hex}.tmp")
+    try:
+        with temporary.open("x", encoding="utf-8") as stream:
+            stream.write(json.dumps(payload, indent=2, sort_keys=True) + "\n")
+        os.chmod(temporary, 0o600)
+        os.replace(temporary, path)
+    finally:
+        if temporary.exists():
+            temporary.unlink()
+    return path
+
+
+def prior_acquisition_for_checkout(repo: Path, checkout: Path, workstream: str) -> dict | None:
+    folder = acquisition_record_path(repo, "placeholder").parent
+    if not folder.is_dir() or folder.is_symlink():
+        return None
+    matches = []
+    for path in folder.glob("*.json"):
+        if path.is_symlink() or not path.is_file():
+            continue
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        if (isinstance(payload, dict) and payload.get("workstream") == workstream
+                and Path(payload.get("checkout", "")).resolve() == checkout):
+            matches.append(payload)
+    if len(matches) > 1:
+        raise DispatchError("multiple acquisition receipts identify the retired checkout")
+    return matches[0] if matches else None
+
+
+def completed_retirement(repo: Path, checkout: Path, workstream: str) -> dict | None:
+    acquisition = prior_acquisition_for_checkout(repo, checkout, workstream)
+    if not acquisition:
+        return None
+    turn_id = acquisition.get("turn_id")
+    if not isinstance(turn_id, str) or not re.fullmatch(r"[0-9a-f]{32}", turn_id):
+        return None
+    path = retirement_record_path(repo, turn_id)
+    if path.is_symlink() or not path.is_file():
+        return None
+    try:
+        receipt = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise DispatchError("retirement receipt is invalid; refusing to infer completion") from exc
+    if (not isinstance(receipt, dict) or receipt.get("schema") != "custodian.turn_dispatcher_v2.retirement.v1"
+            or receipt.get("turn_id") != turn_id or receipt.get("checkout") != str(checkout)
+            or receipt.get("workstream") != workstream or receipt.get("status") not in {"remote-verified", "retired"}):
+        raise DispatchError("retirement receipt does not authenticate this exact checkout")
+    advertised = remote_branch(repo, receipt.get("branch", ""))
+    if advertised != receipt.get("head"):
+        raise DispatchError("retirement receipt remote head changed; preserving uncertainty")
+    local_ref = f"refs/heads/{receipt.get('local_branch', '')}"
+    local_head = git(repo, "rev-parse", "--verify", local_ref, check=False)
+    if local_head and local_head != receipt.get("head"):
+        raise DispatchError("temporary branch changed after retirement receipt; preserving uncertainty")
+    if local_head:
+        git(repo, "update-ref", "-d", local_ref, local_head)
+    receipt["status"] = "retired"
+    write_retirement_record(repo, turn_id, receipt)
+    return {"workstream": workstream, "branch": receipt["branch"], "head": receipt["head"],
+            "handoff": receipt["handoff"], "retired": True, "receipt": str(path),
+            "idempotent": True}
 
 
 def read_acquisition(repo: Path, local_branch: str, checkout: Path) -> dict:
@@ -496,6 +636,10 @@ def checkpoint(repo: Path, workstream: str, checkout: Path, handoff: Path,
     if checkout.parent != pool or not checkout.name.startswith(f"turn-{workstream}-"):
         raise DispatchError("checkout is outside the managed turn pool")
     if checkout not in attached(repo):
+        if not checkout.exists():
+            completed = completed_retirement(repo, checkout, workstream)
+            if completed:
+                return completed
         raise DispatchError("checkout is not attached to this Git common directory")
     local_branch = git(checkout, "symbolic-ref", "--short", "HEAD")
     parts = local_branch.split("/")
@@ -526,7 +670,18 @@ def checkpoint(repo: Path, workstream: str, checkout: Path, handoff: Path,
         shutil.copyfile(handoff, target)
     body = target.read_text(encoding="utf-8")
     main_sha, _ = latest_main(repo)
-    packet_path, _, _ = remote_packet(repo, main_sha, workstream)
+    definition = remote_definition(repo, main_sha, workstream)
+    if definition["kind"] == "missing":
+        if acquisition.get("mode") != "owner-authorized" or not acquisition.get("owner_authorization"):
+            raise DispatchError("authenticated task definition disappeared before checkpoint")
+        auth = acquisition["owner_authorization"]
+        packet_path = f"owner-authorized:{auth['reference']}#sha256={auth['instruction_sha256']}"
+    else:
+        if acquisition.get("definition_kind") == "missing":
+            raise DispatchError("a published task definition appeared after owner-authorized acquisition; re-acquire before checkpoint")
+        packet_path = definition["path"]
+        if acquisition.get("definition_kind") == "published-packet" and definition["sha256"] != acquisition.get("definition_sha256"):
+            raise DispatchError("published task definition changed after acquisition; re-acquire before checkpoint")
     base_sha = git(checkout, "rev-parse", "HEAD")
     body = add_handoff_metadata(body, workstream, packet_path, main_sha,
                                 branch, base_sha, acquisition["source"],
@@ -582,18 +737,29 @@ def checkpoint(repo: Path, workstream: str, checkout: Path, handoff: Path,
             "reason": str(exc)})
         raise DispatchError(f"checkpoint not verified; checkout retained at {checkout}; receipt {receipt}: {exc}") from exc
 
+    retirement_path = None
     if retire:
+        turn_id = acquisition["turn_id"]
+        retirement = {"schema": "custodian.turn_dispatcher_v2.retirement.v1",
+            "status": "remote-verified", "turn_id": turn_id,
+            "workstream": workstream, "checkout": str(checkout),
+            "local_branch": local_branch, "branch": branch, "head": sha,
+            "handoff": str(rel), "ignored_inventory": ignored_before}
+        retirement_path = write_retirement_record(repo, turn_id, retirement)
         git(repo, "worktree", "remove", str(checkout))
         if checkout.exists() or checkout in attached(repo):
             raise DispatchError("worktree retirement did not remove the exact registered checkout")
         git(repo, "update-ref", "-d", f"refs/heads/{local_branch}", sha)
+        retirement["status"] = "retired"
+        retirement_path = write_retirement_record(repo, turn_id, retirement)
     receipt = write_receipt(repo, {"operation": "checkpoint", "status": "published",
         "workstream": workstream, "checkout": str(checkout), "branch": branch,
         "head": sha, "handoff": str(rel), "ignored_disposable": disposable,
         "ignored_inventory": ignored_before,
         "retired": retire})
     return {"workstream": workstream, "branch": branch, "head": sha,
-            "handoff": str(rel), "retired": retire, "receipt": receipt}
+            "handoff": str(rel), "retired": retire, "receipt": receipt,
+            "retirement_receipt": str(retirement_path) if retirement_path else None}
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -604,7 +770,9 @@ def main(argv: list[str] | None = None) -> int:
     for action in ("inspect", "begin"):
         cmd = sub.add_parser(action)
         cmd.add_argument("workstream")
-        cmd.add_argument("--mode", choices=("normal", "historical"), default="normal")
+        cmd.add_argument("--mode", choices=("normal", "historical", "owner-authorized"), default="normal")
+        cmd.add_argument("--authorization-url")
+        cmd.add_argument("--authorization-sha256")
     cmd = sub.add_parser("checkpoint")
     cmd.add_argument("workstream")
     cmd.add_argument("--checkout", type=Path, required=True)
@@ -614,9 +782,11 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         if args.action == "inspect":
-            result = inspect(args.repo, args.workstream, args.mode)
+            result = inspect(args.repo, args.workstream, args.mode,
+                             args.authorization_url, args.authorization_sha256)
         elif args.action == "begin":
-            result = begin(args.repo, args.workstream, args.mode, args.pool)
+            result = begin(args.repo, args.workstream, args.mode, args.pool,
+                           args.authorization_url, args.authorization_sha256)
         else:
             result = checkpoint(args.repo, args.workstream, args.checkout,
                                 args.handoff, args.message, args.pool, not args.keep)

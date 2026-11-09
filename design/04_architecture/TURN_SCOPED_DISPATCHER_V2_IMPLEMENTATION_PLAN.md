@@ -1,6 +1,6 @@
 # Turn-Scoped Dispatcher V2 Implementation Plan
 
-**Status:** D2-003 Stage 2 implementation in progress; opt-in candidate only.
+**Status:** D2-004 Stage 3A integration candidate in progress; opt-in only, no production cutover.
 **Program:** CUSTODIAN Dispatcher V2 replacement
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af12561-89a4-83ea-bc7f-c896ec89bed0
 **Reviewed main:** `841931733cd0103e5dbeb5587063d3b880e50db7` (fetched from `origin/main` on 2026-11-09).

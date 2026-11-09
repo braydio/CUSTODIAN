@@ -1,6 +1,6 @@
 # Turn-Scoped Dispatcher V2
 
-**Status:** Stage 2 implementation candidate; opt-in only. It does not replace current repository execution guidance.
+**Status:** Stage 3A integration candidate; opt-in only. It does not replace current repository execution guidance.
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af12561-89a4-83ea-bc7f-c896ec89bed0
 **Implementation plan:** [TURN_SCOPED_DISPATCHER_V2_IMPLEMENTATION_PLAN.md](TURN_SCOPED_DISPATCHER_V2_IMPLEMENTATION_PLAN.md)
 
@@ -36,7 +36,7 @@ The remote Git commit and retrievable LFS objects are durable implementation sta
 
 `custodian/tools/agent/turn_archive_v1.py` defines a private, versioned inventory and restore contract. It records the archive commit, every relative path, SHA-256, file size and mode, symlink target and target hash, Git LFS OID/size when present, external evidence references, and a digest of the canonical manifest. Inventory rejects unsupported filesystem types and records symlinks without following them; restore rejects path traversal, escaping symlinks, duplicate paths, mismatched bytes, and non-empty destinations. Restore writes to a new sibling staging directory, verifies it against the manifest, then renames it into place. External evidence must be listed as a regular-file reference with its own exact identity; changed or unavailable evidence blocks verification. Keep manifests in a permission-restricted private directory and never commit an archive inventory or its source paths to public CUSTODIAN.
 
-## Stage 2 command examples
+## Candidate command examples
 
 From a trusted coordination clone with `origin` configured and Git LFS installed when task files use LFS (`git lfs install --local`):
 
@@ -44,6 +44,9 @@ From a trusted coordination clone with `origin` configured and Git LFS installed
 python3 custodian/tools/agent/turn_dispatcher_v2.py inspect <workstream> --mode normal
 python3 custodian/tools/agent/turn_dispatcher_v2.py begin <workstream> --mode normal
 python3 custodian/tools/agent/turn_dispatcher_v2.py begin <workstream> --mode historical
+python3 custodian/tools/agent/turn_dispatcher_v2.py begin <workstream> \
+  --mode owner-authorized --authorization-url <exact-chat-url> \
+  --authorization-sha256 <instruction-sha256>
 python3 custodian/tools/agent/turn_dispatcher_v2.py checkpoint <workstream> \
   --checkout <exact-turn-checkout> --handoff <handoff.md> \
   --message "checkpoint and handoff"
@@ -60,8 +63,10 @@ python3 custodian/tools/agent/turn_archive_v1.py restore \
 
 The default pool is `~/Projects/.custodian-turns`, separate from historical worktree storage. `inspect` is read-only with respect to branches and checkouts, though it fetches `origin/main` to authenticate the task definition. `begin` and `checkpoint` return JSON. A blocked mutation prints a JSON failure; if an exact checkout exists, it is retained and the receipt records its recovery location.
 
+Owner-authorized acquisition is for an explicitly instructed new task identity with no published packet. The private receipt records the exact ChatGPT conversation URL and instruction digest as caller provenance and states that identity was not independently verified. A local file alone does not authorize work. If a packet is published after acquisition, checkpoint requires reacquisition against its authenticated bytes. See [Stage 3A integration readiness](TURN_SCOPED_DISPATCHER_V2_STAGE3A.md).
+
 ## Scope and remaining gates
 
-Stages 1–2 supply opt-in normal/historical selection, remote task-definition authentication, safe branch initialization, temporary worktree creation, LFS hydration/verification, acquisition provenance, durable handoff/checkpoint, content-aware ignored-file classification, archive inventory/restore tooling, non-forcing publish, exact remote verification, inspect output, and receipts. Stage 2 does not change the old dispatcher, edit the private archive, configure a sync service, or change repository-wide default instructions. Historical archive completeness remains explicitly unproven until the host-private inventory and representative restores verify without racing mutable archive state.
+Stages 1–2 supply opt-in normal/historical selection, remote task-definition authentication, safe branch initialization, temporary worktree creation, LFS hydration/verification, acquisition provenance, durable handoff/checkpoint, content-aware ignored-file classification, archive inventory/restore tooling, non-forcing publish, exact remote verification, inspect output, and receipts. Stage 3A adds owner-authorized task-definition provenance and a consumer migration map, without changing the old dispatcher, editing the private archive, configuring a sync service, or changing repository-wide default instructions. Historical archive completeness remains explicitly unproven until the host-private inventory and representative restores verify without racing mutable archive state.
 
-Before production use, Stage 2 must validate historical archive manifests and recovery of ignored/untracked/LFS evidence, then automate only individually verified checkout retirement. Stage 3 must publish an intentional old/new behavior-difference matrix (not require eligibility parity), validate integration and failure recovery, update every execution entrypoint, complete fresh-context independent review, verify a rollback route, and only then cut over from the old dispatcher.
+Before production use, Stage 2 must validate historical archive manifests and recovery of ignored/untracked/LFS evidence, then automate only individually verified checkout retirement. Stage 3A documents an intentional old/new behavior-difference matrix and exact consumer migration map, but does not activate them. Remaining Stage 3 work must validate the historical archive and integration, update every execution entrypoint in one reviewed cutover, complete fresh-context independent review, verify a rollback route, and only then replace the old dispatcher authority.
