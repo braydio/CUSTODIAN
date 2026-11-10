@@ -58,7 +58,7 @@
 
 ## Publication hold
 
-This pair is `draft/manual` only for atomic authoring validation and the push-triggered auto handoff. Do not claim until the handoff promotes both packets and the live dispatcher audit reports eligible. The original findings claim remains protected throughout.
+Resolved: the atomic authoring handoff promoted the implementation/review pair to `ready/auto`, and implementation PR #133 landed at `e311c9c6417cf4f403bd2586dcf6449a87743dbd`. This archival closeout is pending publication; the paired review must remain unclaimed until the archive is on `origin/main` and a fresh dispatcher audit confirms eligibility. The original findings claim remains protected throughout.
 
 ## Execution Feedback
 
