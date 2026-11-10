@@ -968,6 +968,57 @@ _CHASSIS_METADATA_EXTRA_ARCHIVE_PATHS = {
     "custodian/tools/agent/test_paired_review_runner.py",
 }
 
+# One owner-authorized direct-PR fallback whose V2 acquisition receipt predates
+# a packet-definition refresh. Keep this exception bound to immutable Git and
+# host receipt identities; it is not a general substitute for lifecycle traces.
+_OWNER_PR_RECOVERY_WORKSTREAM = "agent-owner-review-exception-closeout-recovery-v1"
+_OWNER_PR_RECOVERY_PACKET = (
+    f"{PACKET_ROOT}/archived/AGENT_OWNER_REVIEW_EXCEPTION_CLOSEOUT_RECOVERY_V1.md"
+)
+_OWNER_PR_RECOVERY_BASE = "d64f588bcf74ccc10ba7e976729e6215acfbdc71"
+_OWNER_PR_RECOVERY_SOURCE = "74b22e1775f09ae50e3da5cd9f19d5108d97dc1a"
+_OWNER_PR_RECOVERY_ARCHIVE = "f6cd173576ddf54142f141afda7e81ca88915605"
+_OWNER_PR_RECOVERY_HANDOFF = "9359fa3c5080b18a5c33707d6d8ce1f6b1fbb476"
+_OWNER_PR_RECOVERY_BRANCH_MERGE = "8b8c038678eafb4e7883141f85dc008deb650cc9"
+_OWNER_PR_RECOVERY_PR_MERGE = "8e23d8b5418d7298dccc438c430652fe66d96333"
+_OWNER_PR_RECOVERY_REVIEWED_MAIN = "a3fb2f8b4fe854af9607ee71a8beb3022014de58"
+_OWNER_PR_RECOVERY_MAIN_BASE = "2adb9f165328ee9e6176a44b24ee6d513c10cdf6"
+_OWNER_PR_RECOVERY_PACKET_BLOB = "0ba283ddb0f627ed5dee0a8bd98a6c6097fe12db"
+_OWNER_PR_RECOVERY_HANDOFF_PATH = (
+    "custodian/docs/ai_context/turn_handoffs/"
+    "agent-owner-review-exception-closeout-recovery-v1.md"
+)
+_OWNER_PR_RECOVERY_HANDOFF_BLOB = "ed3286c1459a2bf2ee29cca96dd842de199241a5"
+_OWNER_PR_RECOVERY_SUMMARY = "AGENT_OWNER_REVIEW_EXCEPTION_CLOSEOUT_RECOVERY_V1_CLAUDE_SUMMARY.md"
+_OWNER_PR_RECOVERY_SUMMARY_BLOB = "7cd76b8b7bfec0e345bd40d59656abc05628d14f"
+_OWNER_PR_RECOVERY_CODE_BLOBS = {
+    "custodian/tools/agent/dispatch.py": "9debea3ae3df60027b88642d5774c3afbfdcb252",
+    "custodian/tools/agent/paired_review_host_validation.py": "3e484a6ac581bfc2536a31e72a5b1e2929212a0b",
+    "custodian/tools/agent/test_dispatch.py": "4e83f9639dff5a3e80096b34dcd631db15b2f174",
+    "custodian/tools/agent/test_paired_review_runner.py": "d856442df64323fe9f33c1434c7c9d571022c261",
+}
+_OWNER_PR_RECOVERY_SOURCE_PATHS = {
+    _OWNER_PR_RECOVERY_SUMMARY, *_OWNER_PR_RECOVERY_CODE_BLOBS,
+}
+_OWNER_PR_RECOVERY_ACQUISITION_ID = "e675dd2bc8ed480b9e1a3fb7a33cefdb"
+_OWNER_PR_RECOVERY_ACQUISITION_SHA256 = (
+    "ae765606f58b2bb8dc8bf749f28fa6095bad5b74c971d98b669fd00fc82f7880"
+)
+_OWNER_PR_RECOVERY_ACQUISITION = {
+    "schema": "custodian.turn_dispatcher_v2.acquisition.v1",
+    "turn_id": _OWNER_PR_RECOVERY_ACQUISITION_ID,
+    "workstream": _OWNER_PR_RECOVERY_WORKSTREAM,
+    "run_id": "20261110T031412Z-e675dd2bc8ed",
+    "branch": f"agent/{_OWNER_PR_RECOVERY_WORKSTREAM}",
+    "checkout": (
+        "/home/braydenchaffee/Projects/.custodian-turns/"
+        "turn-agent-owner-review-exception-closeout-recovery-v1-e675dd2bc8ed"
+    ),
+    "packet": f"{PACKET_ROOT}/AGENT_OWNER_REVIEW_EXCEPTION_CLOSEOUT_RECOVERY_V1.md",
+    "source_sha": _OWNER_PR_RECOVERY_BASE,
+    "task_definition_sha": _OWNER_PR_RECOVERY_BASE,
+}
+
 _OWNER_EXCEPTION_LANE_SOURCE_WORKSTREAM = "owner-review-exception-lane-v1"
 _OWNER_EXCEPTION_LANE_SOURCE_ARCHIVE = "aaa2c3e9f0915ca90d168d9b65aafe2483439d07"
 _OWNER_EXCEPTION_LANE_SOURCE_PARENT = "a283d2a71279e657e1e1ddb485f9e99e48954e63"
@@ -2397,6 +2448,185 @@ def _chassis_attestation_review_metadata_path(
             or new_line != old_line.replace(b", ", b"; ")):
         raise HostValidationError("chassis metadata changed Publication inputs beyond delimiters")
     return review_path
+
+
+def _owner_pr_recovery_source_span(
+    repo: Path, reviewed_main: str, landing_commit: str,
+) -> dict:
+    """Authenticate the single owner-approved direct-PR recovery source span."""
+    def parents(revision: str) -> list[str]:
+        return _git(repo, "show", "-s", "--format=%P", revision).split()
+
+    def tree(revision: str) -> str:
+        return _git(repo, "rev-parse", f"{revision}^{{tree}}")
+
+    def require_commit(revision: str) -> None:
+        _git(repo, "cat-file", "-e", f"{revision}^{{commit}}")
+        tree(revision)
+
+    expected_parents = {
+        _OWNER_PR_RECOVERY_BASE: ["aaa2c3e9f0915ca90d168d9b65aafe2483439d07"],
+        _OWNER_PR_RECOVERY_SOURCE: [_OWNER_PR_RECOVERY_BASE],
+        _OWNER_PR_RECOVERY_ARCHIVE: [_OWNER_PR_RECOVERY_SOURCE],
+        _OWNER_PR_RECOVERY_HANDOFF: [_OWNER_PR_RECOVERY_ARCHIVE],
+        _OWNER_PR_RECOVERY_BRANCH_MERGE: [
+            _OWNER_PR_RECOVERY_HANDOFF, _OWNER_PR_RECOVERY_MAIN_BASE,
+        ],
+        _OWNER_PR_RECOVERY_PR_MERGE: [
+            _OWNER_PR_RECOVERY_MAIN_BASE, _OWNER_PR_RECOVERY_BRANCH_MERGE,
+        ],
+    }
+    expected_trees = {
+        "aaa2c3e9f0915ca90d168d9b65aafe2483439d07": "ae5a6fb55991ba7dedd18fdf8ffec51cda4774b2",
+        _OWNER_PR_RECOVERY_BASE: "20aed237404440e64c312f364e17e7101a5c9b3f",
+        _OWNER_PR_RECOVERY_SOURCE: "9ecb46ee95791c2c3d9f1fc7735658a600b1908b",
+        _OWNER_PR_RECOVERY_ARCHIVE: "8efaf6d46e362a000c93104f1b5de1895bd14e2a",
+        _OWNER_PR_RECOVERY_HANDOFF: "25c316fd4f8d4eab8f74303691cbe55057f6b433",
+        _OWNER_PR_RECOVERY_MAIN_BASE: "9fa2f70c7bea9a5b210049746a788b370840105f",
+        _OWNER_PR_RECOVERY_BRANCH_MERGE: "f8016f44b7ef1d7753f57ad19003ea193cf3ce13",
+        _OWNER_PR_RECOVERY_PR_MERGE: "f8016f44b7ef1d7753f57ad19003ea193cf3ce13",
+    }
+    for revision, expected in expected_parents.items():
+        require_commit(revision)
+        if parents(revision) != expected or tree(revision) != expected_trees[revision]:
+            raise HostValidationError("owner PR recovery commit parent identity changed")
+    require_commit("aaa2c3e9f0915ca90d168d9b65aafe2483439d07")
+    require_commit(_OWNER_PR_RECOVERY_MAIN_BASE)
+    if tree("aaa2c3e9f0915ca90d168d9b65aafe2483439d07") != expected_trees[
+        "aaa2c3e9f0915ca90d168d9b65aafe2483439d07"
+    ] or tree(_OWNER_PR_RECOVERY_MAIN_BASE) != expected_trees[_OWNER_PR_RECOVERY_MAIN_BASE]:
+        raise HostValidationError("owner PR recovery base tree identity changed")
+
+    if landing_commit != _OWNER_PR_RECOVERY_ARCHIVE:
+        raise HostValidationError("owner PR recovery archive identity changed")
+    if not _git_tree_entry(repo, _OWNER_PR_RECOVERY_ARCHIVE, _OWNER_PR_RECOVERY_PACKET) or (
+        _git_tree_entry(repo, _OWNER_PR_RECOVERY_ARCHIVE, _OWNER_PR_RECOVERY_PACKET)
+        != ("100644", _OWNER_PR_RECOVERY_PACKET_BLOB)
+    ):
+        raise HostValidationError("owner PR recovery archived packet blob changed")
+    if (_git_tree_entry(repo, _OWNER_PR_RECOVERY_SOURCE,
+                        _OWNER_PR_RECOVERY_PACKET.replace("/archived/", "/", 1)) is None
+            or _git_tree_entry(repo, _OWNER_PR_RECOVERY_ARCHIVE,
+                               _OWNER_PR_RECOVERY_PACKET.replace("/archived/", "/", 1)) is not None
+            or _git_tree_entry(repo, _OWNER_PR_RECOVERY_SOURCE,
+                               _OWNER_PR_RECOVERY_PACKET) is not None):
+        raise HostValidationError("owner PR recovery archive transition changed")
+    if _git_tree_entry(repo, reviewed_main, _OWNER_PR_RECOVERY_PACKET) != (
+        "100644", _OWNER_PR_RECOVERY_PACKET_BLOB,
+    ):
+        raise HostValidationError("owner PR recovery reviewed packet blob changed")
+    if subprocess.run(
+        ["git", "merge-base", "--is-ancestor", _OWNER_PR_RECOVERY_PR_MERGE, reviewed_main],
+        cwd=repo, capture_output=True,
+    ).returncode:
+        raise HostValidationError("reviewed main does not descend from owner PR #126")
+
+    subject = _git(repo, "show", "-s", "--format=%s", _OWNER_PR_RECOVERY_PR_MERGE)
+    if subject != "Merge pull request #126 from braydio/agent/agent-owner-review-exception-closeout-recovery-v1":
+        raise HostValidationError("owner PR recovery merge identity changed")
+
+    diff = subprocess.run(
+        ["git", "diff-tree", "--no-commit-id", "--name-only", "-r",
+         _OWNER_PR_RECOVERY_BASE, _OWNER_PR_RECOVERY_SOURCE],
+        cwd=repo, text=True, capture_output=True, check=True,
+    )
+    source_paths = sorted(path for path in diff.stdout.splitlines() if path)
+    if set(source_paths) != _OWNER_PR_RECOVERY_SOURCE_PATHS:
+        raise HostValidationError("owner PR recovery source path inventory changed")
+    for path, expected_blob in _OWNER_PR_RECOVERY_CODE_BLOBS.items():
+        for revision in (_OWNER_PR_RECOVERY_SOURCE, reviewed_main):
+            if _git_tree_entry(repo, revision, path) != ("100644", expected_blob):
+                raise HostValidationError("owner PR recovery source blob changed")
+    for revision in (_OWNER_PR_RECOVERY_SOURCE, reviewed_main):
+        if _git_tree_entry(repo, revision, _OWNER_PR_RECOVERY_SUMMARY) != (
+            "100644", _OWNER_PR_RECOVERY_SUMMARY_BLOB,
+        ):
+            raise HostValidationError("owner PR recovery closing summary blob changed")
+
+    handoff_entry = _git_tree_entry(
+        repo, _OWNER_PR_RECOVERY_HANDOFF, _OWNER_PR_RECOVERY_HANDOFF_PATH,
+    )
+    if handoff_entry != ("100644", _OWNER_PR_RECOVERY_HANDOFF_BLOB):
+        raise HostValidationError("owner PR recovery handoff blob changed")
+    handoff_text = _git(repo, "show", f"{_OWNER_PR_RECOVERY_HANDOFF}:{_OWNER_PR_RECOVERY_HANDOFF_PATH}")
+    if ("one-time owner-authorized PR fallback" not in handoff_text
+            or "V2 checkpoint was blocked" not in handoff_text
+            or "Require GitHub checks and normal merge." not in handoff_text):
+        raise HostValidationError("owner PR recovery handoff lacks its authorization record")
+
+    acquisition = _read_owner_pr_recovery_acquisition(repo)
+    if (not isinstance(acquisition, dict) or any(
+        acquisition.get(field) != value
+        for field, value in _OWNER_PR_RECOVERY_ACQUISITION.items()
+    )):
+        raise HostValidationError("owner PR recovery V2 acquisition identity changed")
+    local_refs, remote_refs = _owner_pr_recovery_diagnostic_refs(repo)
+    if local_refs or remote_refs:
+        raise HostValidationError("owner recovery diagnostics refs conflict with direct-PR provenance")
+
+    provenance = {
+        "kind": "authenticated-owner-authorized-direct-pr-v2-recovery",
+        "source_base": _OWNER_PR_RECOVERY_BASE,
+        "source_commit": _OWNER_PR_RECOVERY_SOURCE,
+        "archive_commit": _OWNER_PR_RECOVERY_ARCHIVE,
+        "handoff_commit": _OWNER_PR_RECOVERY_HANDOFF,
+        "branch_merge": _OWNER_PR_RECOVERY_BRANCH_MERGE,
+        "pull_request": 126,
+        "pull_request_merge": _OWNER_PR_RECOVERY_PR_MERGE,
+        "reviewed_main": reviewed_main,
+        "source_code_blobs": dict(_OWNER_PR_RECOVERY_CODE_BLOBS),
+        "archived_packet_blob": _OWNER_PR_RECOVERY_PACKET_BLOB,
+        "handoff_blob": _OWNER_PR_RECOVERY_HANDOFF_BLOB,
+        "acquisition_id": _OWNER_PR_RECOVERY_ACQUISITION_ID,
+        "acquisition_sha256": _OWNER_PR_RECOVERY_ACQUISITION_SHA256,
+        "acquisition": acquisition,
+        "diagnostic_refs": [],
+    }
+    return {
+        "base": _OWNER_PR_RECOVERY_BASE,
+        "head": _OWNER_PR_RECOVERY_SOURCE,
+        "commits": [_OWNER_PR_RECOVERY_SOURCE],
+        "paths": source_paths,
+        "provenance": provenance,
+    }
+
+
+def _read_owner_pr_recovery_acquisition(repo: Path) -> dict:
+    common_dir = Path(_git(repo, "rev-parse", "--path-format=absolute", "--git-common-dir"))
+    acquisition_path = (common_dir / "custodian-turn-dispatcher-v2" / "acquisitions"
+                        / f"{_OWNER_PR_RECOVERY_ACQUISITION_ID}.json")
+    try:
+        acquisition_bytes = acquisition_path.read_bytes()
+        if hashlib.sha256(acquisition_bytes).hexdigest() != _OWNER_PR_RECOVERY_ACQUISITION_SHA256:
+            raise HostValidationError("owner PR recovery V2 acquisition bytes changed")
+        acquisition = json.loads(acquisition_bytes)
+    except (OSError, json.JSONDecodeError) as exc:
+        raise HostValidationError("owner PR recovery V2 acquisition is unavailable or malformed") from exc
+    if not isinstance(acquisition, dict) or any(
+        acquisition.get(field) != value
+        for field, value in _OWNER_PR_RECOVERY_ACQUISITION.items()
+    ):
+        raise HostValidationError("owner PR recovery V2 acquisition identity changed")
+    return {field: acquisition[field] for field in _OWNER_PR_RECOVERY_ACQUISITION}
+
+
+def _owner_pr_recovery_diagnostic_refs(repo: Path) -> tuple[list[str], list[str]]:
+    local_prefix = f"refs/remotes/origin/agent-diagnostics/{_OWNER_PR_RECOVERY_WORKSTREAM}/"
+    local_refs = subprocess.run(
+        ["git", "for-each-ref", "--format=%(refname)", local_prefix],
+        cwd=repo, text=True, capture_output=True,
+    )
+    if local_refs.returncode:
+        raise HostValidationError("could not inspect local owner recovery diagnostics refs")
+    remote_prefix = f"refs/heads/agent-diagnostics/{_OWNER_PR_RECOVERY_WORKSTREAM}/"
+    remote_refs = subprocess.run(
+        ["git", "ls-remote", "--heads", "origin", f"{remote_prefix}*"],
+        cwd=repo, text=True, capture_output=True,
+    )
+    if remote_refs.returncode:
+        raise HostValidationError("could not inspect published owner recovery diagnostics refs")
+    return ([line for line in local_refs.stdout.splitlines() if line],
+            [line for line in remote_refs.stdout.splitlines() if line])
 
 
 def _owner_exception_lane_review_metadata_path(
@@ -5172,6 +5402,10 @@ def resolve_validation_source_span(repo: Path, reviewed_main: str, implementatio
         archive_transition = (has_path(parent, active_packet) and not has_path(landing, active_packet)
                              and not has_path(parent, target_packet_path)
                              and has_path(landing, target_packet_path))
+    if (target_workstream == _OWNER_PR_RECOVERY_WORKSTREAM
+            and target_packet_path == _OWNER_PR_RECOVERY_PACKET
+            and landing == _OWNER_PR_RECOVERY_ARCHIVE):
+        return _owner_pr_recovery_source_span(repo, reviewed_main, landing)
     if _source_code_paths(landing_paths) and not archive_transition:
         return {"base": parent, "head": landing, "commits": [landing], "paths": landing_paths,
                 "provenance": {"kind": "canonical-implementation-commit"}}
