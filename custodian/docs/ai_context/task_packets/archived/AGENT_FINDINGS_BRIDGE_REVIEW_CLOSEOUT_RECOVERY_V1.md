@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-findings-bridge-review-closeout-recovery-v1`
 - Category: `agent-ops`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P0`
@@ -18,6 +18,7 @@
 - Max automatic review cycles: `2`
 - Review rationale: `This exact-run recovery must distinguish an authentic nonpassing findings disposition from a failed or forged reviewer session while preserving the protected claim, checkout and source evidence.`
 - Reviewed main: `4d3b1978c09d51753cd63b2b8f416201284b4170`
+- Implementation commit: `d0fd3f0fb37328ed31fe1419571c131115ca0154`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af0b3b3-e168-83ea-a136-5047fc969fbe
 - Visual review: `none`
 - Goal: Preserve a verifiable `findings / R0-01` disposition from one protected paired-review run whose strict session parser rejects its exact nonempty stderr.
@@ -54,3 +55,24 @@ On the authorized host, locate the run by the pinned workstream and run ID in th
 ## Publication hold
 
 This pair is `draft/manual` for atomic authoring validation and the push-triggered packet-authoring handoff only. Do not claim or execute implementation work until the pair is promoted and a separate orchestration instruction authorizes Phase 2.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: yes
+- Completion boundary satisfied: no
+- Acceptance satisfied: no
+- Superseded/legacy production path disposition: n/a
+- Evidence: The exact-run read-only plan authenticated and retained the original `findings / R0-01` disposition; implementation landed at `d0fd3f0fb37328ed31fe1419571c131115ca0154` and checkpoint `d640f45ba0e51b17b26b7e8ffcce5bbaa1d0501c` is reachable from the main merge `81c39888de2231a424d9e64b9893212882f713c0`. Recovery apply remains deliberately disabled because no independently verifiable project-owner authorization source is available. Apply was not run; no recovery closeout or review PASS was produced. Original acceptance requirements remain unchanged for independent review.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: partial
+- Friction severity: medium
+- What went wrong: A full detached checkout failed during Git file materialization; the first underlying write errno was not retained. The attempted filesystem is a 16 GB `/tmp` tmpfs with 5.4 GB free and 869,835 free inodes; a 17 MB sparse checkout succeeded without LFS hydration.
+- Root cause / contributing factors: The full checkout's asset and file footprint exceeded the useful temporary-checkout budget; exact first failure cause is unconfirmed.
+- Prevention / pipeline improvement: Use the supported sparse checkout profile for Python-only recovery review and avoid unnecessary game-asset hydration.
+- Tooling / docs drift discovered: none
+- Follow-up: manual-follow-up
+- What worked: Authenticated exact-run read-only verification and full implementation CI passed while protected evidence remained unchanged.

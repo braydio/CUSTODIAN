@@ -61,7 +61,6 @@ packet and its paired review, not as chat-only downloads.
 
 
 <!-- task_packet_index:managed:start -->
-- `AGENT_FINDINGS_BRIDGE_REVIEW_CLOSEOUT_RECOVERY_V1.md` — Preserve a verifiable `findings / R0-01` disposition from one protected paired-review run whose strict session parser rejects its exact nonempty stderr.
 - `AGENT_NEXT_EXECUTION_BOUNDARY_V1_REVIEW_CORRECTIONS_1.md` — Make scoped general fallback fail closed unless the dispatcher supplies a candidate identity that can be checked against the requested scope.
 - `AGENT_OPERATOR_IDLE_RETARGET_SOURCE_SCOPE_ATTESTATION_V1.md` — Let the preserved independent technical review validate the exact two source files omitted from the original archived Task 015 source declaration, without re...
 - `AGENT_PAIRED_REVIEW_CHASSIS_HISTORICAL_FIXTURE_OVERLAY_V1.md` — Let the preserved chassis-attestation review's canonical host validation run its four historical approval-fixture tests by repairing one obsolete fixture bas...
