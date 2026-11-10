@@ -169,6 +169,9 @@ jobs:
       - name: Install validation dependencies
         run: python -m pip install -r requirements.txt pillow numpy requests textual
 
+      - name: Import Godot project classes and resources
+        run: godot --headless --editor --path custodian --quit
+
       - name: Run downstream changed validation
         run: >-
           python3 custodian/tools/validation/run_validation.py
