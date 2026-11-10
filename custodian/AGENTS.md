@@ -114,10 +114,7 @@ This is opt-in: no marker means no automatic promotion. Do **not** opt in
 planning/human-decision holds, blocked reviews, or unreconciled refreshes.
 Failures stop without publication, force pushing, claiming or overriding
 locks. An hourly retry checks only remaining explicit opt-ins, so a main-branch
-race does not require another user/Codex preflight. The GitHub action runs authoring, **not local Codex execution**;
-`dispatch.py` remains the sole execution/dependency/lock authority.
-A normal Codex dispatcher worker can claim later if the live audit says
-eligible. CI write permission and allowed non-force main push are required.
+race does not require another user/Codex preflight. The GitHub action runs authoring, **not local Codex execution**. `dispatch.py claim` and `claim-next` are the canonical V2 acquisition path: they authenticate task identity and packet bytes from fetched `origin/main`, then apply V2-specific hold, source, checkout, storage, LFS, and provenance checks. `dispatch.py audit/status` report legacy queue metadata; their dependency and lock classifications do not decide V2 eligibility. Use them for legacy diagnostics and branch/worktree reconciliation, not as claim authorization. The paired-review runner enforces its separate ordering, identity, evidence, and acceptance gates. CI write permission and allowed non-force main push are required.
 
 ## Name the Brief
 

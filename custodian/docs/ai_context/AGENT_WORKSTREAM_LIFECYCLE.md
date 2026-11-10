@@ -72,21 +72,9 @@ packet work, prefer `dispatch.py claim-next --agent <agent-id>` (for example
 `--agent claude` or `--agent codex`), or use `dispatch.py claim <id> --agent
 <agent-id>` for explicit selection. Omitting `--agent` falls back to the
 `CUSTODIAN_AGENT_ID` environment variable, then a neutral `unspecified` —
-never a silently assumed agent brand. The dispatcher
-reads fetched `origin/main`, checks packet dependencies and locks, then
-delegates branch/worktree creation to `workstream.py` under a shared local
-assignment mutex and the remote unique-claim protocol. The mutex covers packet
-selection, remote temporary-claim CAS, canonical `agent/<id>` publication,
-post-start verification, temporary-claim release, and the durable last-claim
-receipt. Best-effort diagnostic publication happens only after the mutex is
-released. Direct `workstream.py start <id>` uses
-that exclusive protocol for manual/unpacketed starts and fails closed if the
-branch, claim, or checkout already exists. It never silently adopts existing
-state. Truly read-only reviews may stay in
-the coordination checkout; paired post-land reviews that commit durable
-artifacts use their own workstream worktree. If a worktree cannot be
-used, document the reason in the task record. The project-root checkout is not
-the default implementation surface.
+never a silently assumed agent brand. Older lock/dependency scheduler descriptions refer to the legacy dispatcher model. On current main, `dispatch.py claim` and `claim-next` route to V2 and do not use legacy `Depends on`, `Locks`, or queue-status fields as acquisition gates. The legacy audit may still classify a packet as `dependency_lock_blocked`; that is diagnostic only and does not determine V2 eligibility. Do not infer V2 eligibility from it. V2 authenticates the packet from fetched `origin/main` and applies its own explicit-design-hold, branch/source, checkout, storage, LFS, and provenance checks.
+
+`workstream.py start`, `resume`, and `checkpoint` route through the V2 turn lifecycle on current main. Paired reviews use `paired_review_runner.py` and its separate review identity, ordering, evidence, and acceptance checks; a legacy queue audit does not replace or waive those checks. Truly read-only reviews may stay in the coordination checkout, while paired post-land reviews that commit durable artifacts use their supported review lifecycle. The project-root checkout is not the default implementation surface.
 
 ## Supervised session observability (OR1; automatic parking remains unimplemented)
 

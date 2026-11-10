@@ -34,7 +34,7 @@
 
 ## Authoring handoff
 
-Do not claim from this temporary `draft/manual` publication state. The pair is explicitly opted into the atomic authoring handoff; after both packets and the evidence manifest land on `origin/main`, the handoff must validate and promote both packets to `ready/auto`. Claim only after the promoted pair is verified on `origin/main` and a fresh dispatcher audit confirms eligibility. No human design decision is pending.
+Do not claim from this temporary `draft/manual` publication state. The pair is explicitly opted into the atomic authoring handoff; after both packets and the evidence manifest land on `origin/main`, the handoff must validate and promote both packets to `ready/auto`. The legacy queue audit's dependency/lock classification is diagnostic, not a V2 acquisition result. Preserve the review's existing ordering, identity, evidence, and acceptance requirements: launch this post-land review only through the supported `paired_review_runner.py` lifecycle after the bridge implementation is complete and archived. The audit does not grant or waive that review launch. No packet-level human design decision is pending; the orchestration hold is separate from packet design approval.
 
 ## Procedure
 
