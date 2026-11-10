@@ -39,16 +39,29 @@ def _plan_digest(payload: dict) -> str:
     body={k:v for k,v in payload.items() if k!="plan_sha256"}
     return digest(json.dumps(body,sort_keys=True,separators=(",",":"),ensure_ascii=False).encode())
 def _validate_apply_authorization(receipt: dict, plan_sha256: str):
-    if not isinstance(receipt,dict) or receipt.get("schema")!="custodian.chat_owner_approval.v1": raise ValueError("missing authenticated owner-authorization receipt")
-    if receipt.get("source_url")!=CHAT or receipt.get("approver")!="project-owner": raise ValueError("apply authorization is not from the packet's project-owner chat")
-    message=receipt.get("user_message")
-    if not isinstance(message,str) or not message.strip() or receipt.get("user_message_sha256")!=digest(message.encode()): raise ValueError("owner authorization message digest is invalid")
-    required=(WORKSTREAM,RUN_ID,plan_sha256,"authorize","apply")
-    normalized=message.casefold()
-    if not all(token.casefold() in normalized for token in required): raise ValueError("owner message does not authorize this exact findings apply and plan")
-    if re.search(r"\b(?:review|outcome)\s+(?:is\s+)?(?:passed|pass)\b",normalized): raise ValueError("owner message cannot convert the findings review to PASS")
-    if receipt.get("review_outcome")!="findings" or receipt.get("finding_ids")!=["R0-01"]: raise ValueError("authorization receipt has the wrong review disposition")
-    return True
+    del receipt, plan_sha256
+    raise ValueError("apply is blocked: no independently verifiable project-owner authorization source is configured")
+
+def public_plan_report(prepared: dict) -> dict:
+    """Return the bounded plan projection safe for terminals and orchestration logs."""
+    return {
+        "schema": prepared["schema"], "workstream": prepared["workstream"],
+        "run_id": prepared["run_id"], "reviewed_main_baseline": prepared["reviewed_main_baseline"],
+        "run_source_sha": prepared["run_source_sha"], "implementation_commit": prepared["implementation_commit"],
+        "branch_tip": prepared["branch_tip"], "plan_sha256": prepared["plan_sha256"],
+        "outcome": prepared["outcome"].get("Outcome"),
+        "finding_ids": list(review_outcome.finding_ids(prepared["outcome"])),
+        "run_file_count": len(prepared["run_manifest"]),
+        "session": prepared["session"], "host_validation_sha256": prepared["host"].get("report_sha256"),
+        "archive_sha256": prepared["archive_sha256"], "summary_sha256": prepared["summary_sha256"],
+        "target_sha256": prepared["target_sha256"],
+        "inventory_entry_count": len(prepared["checkout_inventory"]["entries"]),
+        "ignored_path_count": len(prepared["checkout_inventory"]["ignored"]),
+        "protected_status_path_count": len(prepared["protected_checkout_status"]),
+        "owner_count": len(prepared["process_owner_scan"]["owners"]),
+        "integrity_report_sha256": prepared["integrity_report_sha256"],
+        "write_performed": False,
+    }
 def _reviewed_main(text: str):
     match=re.search(r"(?m)^- Reviewed main: `([0-9a-f]{40,64})`$",text)
     return match.group(1) if match else None
@@ -178,11 +191,9 @@ def _verified_user_pam(pid: int, *, proc_root: Path=Path("/proc"), uid: int | No
 
 def _review_process_owners(worktree: Path, workstream: str, run_id: str, *, proc_root: Path=Path("/proc"), service_lookup=None):
     if not proc_root.is_dir(): raise ValueError("host process ownership cannot be verified")
-    excluded={os.getpid()}; parent=os.getppid()
-    while parent>1 and parent not in excluded:
-        excluded.add(parent)
-        try: parent=int(_proc_identity(proc_root/str(parent)) and (proc_root/str(parent)/"stat").read_text().rsplit(")",1)[1].split()[1])
-        except (OSError,ValueError,IndexError): break
+    # Exclude only this verifier process. Its ancestors must still be checked:
+    # launching the verifier does not make an ancestor unrelated to the review.
+    excluded={os.getpid()}
     expected=str(worktree.resolve()); owners=[]; verified=[]
     for entry in proc_root.iterdir():
         if not entry.name.isdigit() or int(entry.name) in excluded: continue
@@ -469,7 +480,7 @@ def main(argv=None):
             _validate_apply_authorization(receipt,current["plan_sha256"])
             result=apply(x.repo,x.recovery_checkout,current,receipt)
             print(json.dumps(result,indent=2,sort_keys=True)); return 0
-        print(json.dumps(current,indent=2,sort_keys=True)); return 0
+        print(json.dumps(public_plan_report(current),indent=2,sort_keys=True)); return 0
     except Exception as e:
         print(json.dumps({"error":str(e)},sort_keys=True),file=sys.stderr); return 2
 if __name__=="__main__": raise SystemExit(main())

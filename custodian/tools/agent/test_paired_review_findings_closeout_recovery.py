@@ -46,9 +46,51 @@ class FindingsCloseoutRecoveryTests(unittest.TestCase):
         plan_sha="a"*64
         message=f"I authorize apply for {recovery.WORKSTREAM} run {recovery.RUN_ID} plan {plan_sha}. Keep outcome findings R0-01."
         receipt={"schema":"custodian.chat_owner_approval.v1","source_url":recovery.CHAT,"approver":"project-owner","user_message":message,"user_message_sha256":hashlib.sha256(message.encode()).hexdigest(),"review_outcome":"findings","finding_ids":["R0-01"]}
-        self.assertTrue(recovery._validate_apply_authorization(receipt,plan_sha))
-        with self.assertRaisesRegex(ValueError,"exact findings apply and plan"):
+        with self.assertRaisesRegex(ValueError,"no independently verifiable"):
+            recovery._validate_apply_authorization(receipt,plan_sha)
+        with self.assertRaisesRegex(ValueError,"no independently verifiable"):
             recovery._validate_apply_authorization(receipt,"b"*64)
+
+    def test_public_plan_projection_never_contains_private_evidence(self):
+        internal={"schema":"plan.v1","workstream":recovery.WORKSTREAM,"run_id":recovery.RUN_ID,
+                  "reviewed_main_baseline":"a"*40,"run_source_sha":"b"*40,"implementation_commit":"c"*40,
+                  "branch_tip":"d"*40,"plan_sha256":"e"*64,"outcome":{"Outcome":"findings"},
+                  "outcome":{"Outcome":"findings","Finding IDs":"R0-01"},
+                  "run_manifest":{"private":"f"*64},"session":{"thread_id":"thread-safe","command_failure_count":6},
+                  "host":{"report_sha256":"1"*64,"private_path":"/private/host/path"},
+                  "archive_sha256":"2"*64,"summary_sha256":"3"*64,"archive_text":"PRIVATE REVIEW TEXT",
+                  "summary_text":"PRIVATE SUMMARY","target_sha256":"4"*64,
+                  "checkout_inventory":{"entries":[["secret","file",0,"5"*64]],"ignored":["secret"]},
+                  "protected_checkout_status":["private/path"],"process_owner_scan":{"owners":[],"private":True},
+                  "integrity_report_sha256":"6"*64}
+        rendered=json.dumps(recovery.public_plan_report(internal))
+        for secret in ("PRIVATE REVIEW TEXT","PRIVATE SUMMARY","/private/host/path","secret","private/path","run_manifest"):
+            self.assertNotIn(secret,rendered)
+        self.assertFalse(recovery.public_plan_report(internal)["write_performed"])
+
+    def test_canonical_findings_validator_rejects_duplicate_outcomes_and_forged_pass(self):
+        canonical=__import__("custodian.tools.agent.review_outcome",fromlist=["render_review_outcome"])
+        from custodian.tools.agent.test_paired_review_findings_closeout import Fixture, REVIEW_HEADER, FINDING, SUMMARY_TEXT
+        with tempfile.TemporaryDirectory() as tmp:
+            fx=Fixture(Path(tmp),sidecar=False)
+            header=REVIEW_HEADER.format(status="complete")+FINDING
+            kwargs={"review_workstream":"review-sample","target_workstream":"sample-impl",
+                    "reviewed_main":fx.reviewed_main,"implementation_commit":fx.implementation,
+                    "provenance":"different-agent","run_id":"20261016T000000Z-0123456789ab","review_cycle":0}
+            finding=canonical.render_review_outcome(outcome="findings",ids=("R0-01",),**kwargs)
+            archive=header+"\n"+finding
+            call=lambda value: recovery.rr.nonpassing_review_reasons(
+                value,SUMMARY_TEXT,fx.baseline,repo=fx.repo,workstream="review-sample",
+                active_packet_path="custodian/docs/ai_context/task_packets/REVIEW_SAMPLE.md",
+                target_workstream="sample-impl",target_packet_path="custodian/docs/ai_context/task_packets/archived/SAMPLE_IMPL.md",
+                target_content=fx.baseline,authoring_chat="https://chatgpt.com/c/example",
+                reviewed_main=fx.reviewed_main,run_id="20261016T000000Z-0123456789ab")
+            self.assertEqual(call(archive),[])
+            duplicate=call(archive+"\n"+finding)
+            self.assertTrue(any("more than one Review Outcome section" in reason for reason in duplicate))
+            forged=canonical.render_review_outcome(outcome="passed",ids=(),**kwargs)
+            forged_reasons=call(header+"\n"+forged)
+            self.assertTrue(any("findings or human_required" in reason for reason in forged_reasons))
 
     def test_inventory_binds_symlink_type_and_target(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -132,7 +174,7 @@ class FindingsCloseoutRecoveryTests(unittest.TestCase):
             integrity_raw=(json.dumps(integrity,indent=2,sort_keys=True)+"\n").encode()
             prepared={"plan_sha256":"a"*64,"current_main":base,"allowed_paths":allowed,"archive_text":"canonical findings archive\n","summary_text":"Authoring chat: "+recovery.CHAT+"\n## Next Handoff\n","archive_sha256":recovery.digest(b"canonical findings archive\n"),"summary_sha256":recovery.digest(("Authoring chat: "+recovery.CHAT+"\n## Next Handoff\n").encode()),"target_sha256":recovery.digest(b"reviewed target bytes\n"),"integrity_report":integrity,"integrity_report_sha256":recovery.digest(integrity_raw),"integrity_report_path":str(common/"custodian-review-runs"/recovery.WORKSTREAM/f"{recovery.RUN_ID}.findings-closeout-integrity.json")}
             with patch.object(recovery,"plan",return_value=prepared), patch.object(recovery.rr,"nonpassing_review_reasons",return_value=[]), patch.object(recovery.rr,"landed_nonpassing_review_state",return_value={"complete":True}), patch.object(recovery.rr,"_stage_bounded",side_effect=lambda repo,paths: _stage(repo,paths)):
-                with self.assertRaisesRegex(ValueError,"missing authenticated owner-authorization"):
+                with self.assertRaisesRegex(ValueError,"no independently verifiable"):
                     recovery.apply(source,checkout,prepared,{})
                 message=f"I authorize apply for {recovery.WORKSTREAM} run {recovery.RUN_ID} plan {prepared['plan_sha256']}. Keep outcome findings R0-01."
                 auth={"schema":"custodian.chat_owner_approval.v1","source_url":recovery.CHAT,"approver":"project-owner","user_message":message,"user_message_sha256":hashlib.sha256(message.encode()).hexdigest(),"review_outcome":"findings","finding_ids":["R0-01"]}
@@ -142,10 +184,11 @@ class FindingsCloseoutRecoveryTests(unittest.TestCase):
                         failed_push[0]=True
                         raise subprocess.CalledProcessError(1,args,stderr=b"synthetic interrupted publication")
                     return original_run(args,*pos,**kw)
-                with patch.object(recovery.subprocess,"run",side_effect=fail_once):
-                    with self.assertRaises(subprocess.CalledProcessError): recovery.apply(source,checkout,prepared,auth)
-                first=recovery.apply(source,checkout,prepared,auth)
-                second=recovery.apply(source,checkout,prepared,auth)
+                with patch.object(recovery,"_validate_apply_authorization",return_value=True):
+                    with patch.object(recovery.subprocess,"run",side_effect=fail_once):
+                        with self.assertRaises(subprocess.CalledProcessError): recovery.apply(source,checkout,prepared,auth)
+                    first=recovery.apply(source,checkout,prepared,auth)
+                    second=recovery.apply(source,checkout,prepared,auth)
             self.assertEqual(first["commit"],second["commit"])
             self.assertEqual(first["status"],"published_findings_closeout_waiting_for_landing")
             self.assertFalse((checkout/active).exists())
