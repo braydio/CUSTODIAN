@@ -1,9 +1,160 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-10T08:16:52.371Z",
-  "source_main_sha": "268d5d1abc9061278c16a3abd31e1d165aaac512",
+  "generated_at": "2026-11-10T09:35:34Z",
+  "source_main_sha": "d37b29291591454b0c8a6d9218b6806adf66263a",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "paired-findings-artifact-recovery-ready-d37b2929",
+      "headline": "New recovery path targets stranded reviewer findings; packet pair becomes dispatch-ready",
+      "summary": "PR #131 completed documentation closeout for the provenance verifier. A subsequent preserved review produced findings but its artifacts remained untracked; PR #132 introduced a narrowly bounded artifact-recovery implementation and independent-review packet pair. Automatic handoff marked both ready/auto. Neither recovery execution nor independent acceptance is established.",
+      "body": "At main d37b29291591454b0c8a6d9218b6806adf66263a, PR #131 has merged the implementation closeout for the owner-exception source verifier, without claiming its paired review passed. PR #132 then landed two new task packets addressing a distinct problem: a preserved paired reviewer authored findings, but its archived packet and summary remain untracked in a protected checkout. The proposed recovery must authenticate the exact original run, claim receipt, session, hashes and target identity; plan without changing the original; and apply only in a separate recovery checkout under a fresh digest. The handoff commit marked the implementation and paired independent-review packets ready/auto. That is dispatch eligibility, not evidence of a claim, running worker, successful recovery, accepted review, or teardown. GitHub partial coverage only; private WIRE pointer dated November 8 is stale.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-paired-review-findings-artifact-recovery-v1",
+      "occurred_at": "2026-11-10T09:20:26Z",
+      "bullets": [
+        "PR #131 merged the prior verifier's documentation closeout.",
+        "PR #132 introduced exact-run findings-artifact recovery and paired review packets.",
+        "Automatic handoff marked the two new packets ready/auto.",
+        "Original review findings remain unaccepted; host recovery and teardown unverified."
+      ],
+      "links": [
+        {
+          "title": "Findings recovery packet merge PR #132",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/132"
+        },
+        {
+          "title": "Automatic packet handoff",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/d37b29291591454b0c8a6d9218b6806adf66263a"
+        },
+        {
+          "title": "Verifier closeout PR #131",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/131"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN has identified a new obstacle in its review recovery: a reviewer produced findings, but the resulting files have not been durably incorporated into the project's review record. A new narrowly scoped recovery assignment and its independent review are now eligible for dispatch, though neither has been executed or accepted.",
+        "sections": [
+          {
+            "heading": "The reviewer spoke, but the record is stranded",
+            "text": "The preserved reviewer authored a findings packet and summary in its protected checkout. The ordinary closeout path could not authenticate the run from a truncated output stream, even though a separate structured claim receipt exists. The proposed bridge would recover the original findings without inventing a passing verdict."
+          },
+          {
+            "heading": "Recovery must preserve the original evidence",
+            "text": "The new assignment requires an exact-run, digest-bound plan and a separate recovery checkout. It must verify the original claim, reviewer session, file hashes and target identity, and keep the protected source and reviewed implementation unchanged. Its paired reviewer must independently challenge those guarantees."
+          }
+        ],
+        "insights": [
+          {
+            "title": "A findings record is not a PASS",
+            "explanation": "The reviewer produced nonpassing findings, so recovering its authentic artifacts advances auditability rather than approving the underlying implementation."
+          },
+          {
+            "title": "Ready is not running",
+            "explanation": "The automatic handoff changed two packet states to ready/auto. Without host evidence, no claim, execution or cleanup can be inferred."
+          }
+        ],
+        "takeaway": "The recovery assignments are ready, but the authentic findings still need safe, independently reviewed closeout.",
+        "next_watch": "Watch for a verified implementation landing and a genuine independent review disposition before any protected-run recovery."
+      },
+      "details": {
+        "overview": "GitHub partial inspection at main d37b29291591454b0c8a6d9218b6806adf66263a. PR #131 merged implementation closeout. PR #132 landed the new findings artifact recovery packet pair, and the subsequent handoff set both ready/auto. No canonical live dispatcher audit or fresh private operational observation inspected.",
+        "ledger": [
+          {
+            "stage": "Prior provenance implementation closeout",
+            "status": "verified merged",
+            "evidence": "PR #131 / 6189e1ec; paired acceptance not established."
+          },
+          {
+            "stage": "Findings artifact recovery authoring",
+            "status": "verified landed",
+            "evidence": "PR #132 / e567d529."
+          },
+          {
+            "stage": "Dispatch eligibility",
+            "status": "verified ready/auto",
+            "evidence": "Handoff d37b29291591454b0c8a6d9218b6806adf66263a changed both packet headers."
+          },
+          {
+            "stage": "Implementation and independent review",
+            "status": "not established",
+            "evidence": "No landed recovery implementation or accepted independent review receipt inspected."
+          },
+          {
+            "stage": "Protected original run and teardown",
+            "status": "unknown",
+            "evidence": "No trusted live host evidence inspected."
+          }
+        ],
+        "notes": [
+          "New packets concern preservation of an authentic nonpassing reviewer finding, not a retroactive PASS."
+        ],
+        "unknowns": [
+          "Canonical queue totals, claims, locks, worktrees, disk and process liveness unknown.",
+          "Private pilot observation stale; no operational counts used.",
+          "Current complete CI health not established."
+        ],
+        "actions": [
+          "Authorized implementation owner: implement the exact-run artifact bridge under packet constraints.",
+          "Independent reviewer: falsify the bridge before any authorized application."
+        ]
+      },
+      "related": [
+        {
+          "title": "Owner-exception provenance verifier lands; independent review is still the gate",
+          "context": "The earlier verifier landing led to the preserved review whose findings now need durable recovery.",
+          "story_id": "owner-provenance-verifier-landed-268d5d1a"
+        }
+      ],
+      "scorecard": {
+        "stage": "Packet pair ready; implementation and review pending",
+        "as_of": "2026-11-10T09:20:26Z",
+        "scope": "Named findings-artifact recovery pair only",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Preserved findings identified",
+            "status": "current",
+            "verification": "reported",
+            "evidence": "Packet #132 records host-private artifacts; bytes not independently read."
+          },
+          {
+            "label": "Recovery packet pair landed",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "PR #132 merged."
+          },
+          {
+            "label": "Automatic handoff",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "d37b2929 sets ready/auto."
+          },
+          {
+            "label": "Bounded implementation",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No implementation merge inspected."
+          },
+          {
+            "label": "Independent acceptance",
+            "status": "blocked",
+            "verification": "unknown",
+            "evidence": "No independent PASS receipt."
+          },
+          {
+            "label": "Authorized recovery and teardown",
+            "status": "blocked",
+            "verification": "unknown",
+            "evidence": "Requires validated bridge, authorization and host proof."
+          }
+        ],
+        "next_gate": "Implementation owner lands a bounded, evidence-preserving recovery bridge for independent review."
+      }
+    },
     {
       "id": "owner-provenance-verifier-landed-268d5d1a",
       "headline": "Owner-exception provenance verifier lands; independent review is still the gate",
@@ -1559,161 +1710,6 @@
           "Owner: reconcile authoring approval and canonical dispatcher eligibility.",
           "Authorized host operator: validate exact manifest and backup before repair.",
           "Independent reviewer: inspect immutable evidence and audit results before PASS."
-        ]
-      },
-      "related": []
-    },
-    {
-      "id": "presentation-libraries-plan-e217115f",
-      "headline": "Four presentation libraries enter CUSTODIAN's task queue, with first implementation packets ready",
-      "summary": "CUSTODIAN added plans and 26 paired implementation/review packets across rope and cloth, sprite normal/height maps, visual hitbox inspection, and weather presentation. A subsequent handoff marked four implementation packets and their paired reviews ready. These are planning and dispatch-state changes, not finished features or accepted reviews.",
-      "body": "The main branch now documents four presentation libraries divided into 13 implementation workstreams with 13 paired independent-review packets. Rope/cloth targets deterministic motion; surface maps target reproducible lighting inputs; the hitbox lab targets visual inspection of combat contact; weather V2 targets layered presentation without altering V1 scheduling by default. A later automatic handoff promoted four initial implementation packets and their four paired reviews from draft/manual to ready/auto. Ready indicates packet eligibility metadata, not a claimed worker, executed implementation, or independent PASS. The review packets remain dependent on their implementation workstreams. No canonical dispatcher audit or host process evidence was available. The separate WIRE private pointer is stale and its exact referenced bytes were not validated, so no operational totals were imported.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "general",
-      "workstream": "",
-      "occurred_at": "2026-11-08T18:00:39Z",
-      "bullets": [
-        "Four library designs and 13 implementation/review pairs landed as plans.",
-        "Four first-stage implementations and their four paired reviews changed to ready/auto.",
-        "No evidence establishes execution, accepted review, or host teardown.",
-        "Next gate: verify first-stage implementation landings and independent review receipts."
-      ],
-      "links": [
-        {
-          "title": "Four library designs and paired packets",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/e217115f5369e8b1e968b16e5e6fef3a7c46cac8"
-        },
-        {
-          "title": "Automatic packet handoff",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/5b74eb565b47b1b9c7f7edcf4fadffc1e65f62db"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN has laid out a new layer of visual tooling: animated rope and cloth, more expressive surface lighting, frame-accurate hitbox inspection, and richer weather. The plans now have paired implementation and review packets, and the first packets have been marked ready for dispatch.",
-        "sections": [
-          {
-            "heading": "Four libraries, different kinds of polish",
-            "text": "Rope and cloth would add deterministic environmental motion. Normal and height maps would improve how approved sprites respond to light. A hitbox lab would expose attack reach and contact timing without changing combat. Weather V2 would expand visual effects while preserving existing weather behavior by default."
-          },
-          {
-            "heading": "The queue has advanced, not the runtime",
-            "text": "The planning commit created 13 implementation packets and 13 matching independent reviews. A follow-up handoff marked four initial implementations and their four paired reviews ready/auto. That is a documented dispatch-state change, not evidence of a worker claim, a completed feature, or a passing review."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Review is designed into each feature",
-            "explanation": "Every implementation has a separate review packet, making acceptance a distinct gate instead of treating landed code as finished."
-          },
-          {
-            "title": "The initial work is deliberately foundational",
-            "explanation": "The four promoted implementations establish core solvers, data contracts or probes before dependent visual integration. Later stages remain gated on predecessor evidence."
-          }
-        ],
-        "takeaway": "The presentation roadmap is materially broader and the first packet states have advanced, but feature delivery and independent acceptance are still unproven.",
-        "next_watch": "Watch for an actual first-stage implementation landing, focused validation, and a separate independent review receipt."
-      },
-      "scorecard": {
-        "stage": "Planned; initial packets ready, execution unverified",
-        "as_of": "2026-11-08T18:44:38Z",
-        "scope": "13 new implementation packets and 13 paired reviews introduced in one planning commit; eight status promotions in the next commit, not full dispatcher inventory",
-        "metrics": [
-          {
-            "id": "planned-pairs",
-            "label": "NEW PAIRED WORKSTREAMS",
-            "value": 13,
-            "verification": "verified",
-            "basis": "13 implementation plus 13 review packet files in e217115f; scoped to this commit only",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/e217115f5369e8b1e968b16e5e6fef3a7c46cac8"
-          },
-          {
-            "id": "ready-promotions",
-            "label": "PACKETS PROMOTED READY",
-            "value": 8,
-            "verification": "verified",
-            "basis": "Four implementation and four review packet status changes in 5b74eb56; review dependency still applies",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/5b74eb565b47b1b9c7f7edcf4fadffc1e65f62db"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Library designs and paired packets authored",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "e217115f creates four design documents and 26 packet files."
-          },
-          {
-            "label": "Initial packet handoff",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "5b74eb56 marks four implementation and four paired review packets ready/auto."
-          },
-          {
-            "label": "Initial implementation and focused tests",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No corresponding implementation landing or focused test result inspected."
-          },
-          {
-            "label": "Independent paired review",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No independent PASS receipts inspected."
-          },
-          {
-            "label": "Dependent visual integration and human review",
-            "status": "blocked",
-            "verification": "reported",
-            "evidence": "Later packets specify predecessor review and visual acceptance dependencies."
-          }
-        ],
-        "next_gate": "Implementation owners: land and validate the initial library foundations before independent reviewers assess them."
-      },
-      "details": {
-        "overview": "Inspected main commits e217115f and 5b74eb56. The former creates 26 task packet files and four architecture/roadmap documents; the latter changes eight packet statuses and updates the managed index. GitHub combined status returned no status contexts for the latter. Private pilot pointer observed_at is 2026-11-08T13:40:47Z, beyond the 600-second freshness window at this check; no pilot counts used.",
-        "ledger": [
-          {
-            "stage": "Plans and packet authoring",
-            "status": "verified landed",
-            "evidence": "e217115f on main"
-          },
-          {
-            "stage": "First packet promotion",
-            "status": "verified metadata change",
-            "evidence": "5b74eb56 on main"
-          },
-          {
-            "stage": "Implementation execution",
-            "status": "unknown",
-            "evidence": "Ready is not a host claim or process observation"
-          },
-          {
-            "stage": "Validation",
-            "status": "unknown",
-            "evidence": "No focused PASS inspected"
-          },
-          {
-            "stage": "Independent acceptance",
-            "status": "unknown",
-            "evidence": "No PASS receipt inspected"
-          },
-          {
-            "stage": "Canonical cleanup",
-            "status": "unknown",
-            "evidence": "No host evidence"
-          }
-        ],
-        "notes": [
-          "Counts are bounded to files and status changes in two commits, not a dispatcher-wide queue."
-        ],
-        "unknowns": [
-          "Full dispatcher counts, active claims, host worktrees and disk usage",
-          "CI workflow conclusions and accepted independent review"
-        ],
-        "actions": [
-          "Verify first implementation landing and focused validation before reporting delivery."
         ]
       },
       "related": []
