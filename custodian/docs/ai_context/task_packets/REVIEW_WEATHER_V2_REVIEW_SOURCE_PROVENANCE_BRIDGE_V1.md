@@ -4,8 +4,8 @@
 - Workstream: `review-weather-v2-review-source-provenance-bridge-v1`
 - Category: `agent-ops`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P1`
 - Depends on: `weather-v2-review-source-provenance-bridge-v1`
