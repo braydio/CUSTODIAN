@@ -7,6 +7,7 @@
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P0`
+- User-owned design decision: `open`
 - Depends on: `none`
 - Locks: `none`
 - Kind: `implementation`
@@ -55,6 +56,10 @@ On the authorized host, locate the run by the pinned workstream and run ID in th
 ## Publication hold
 
 This pair is `draft/manual` for atomic authoring validation and the push-triggered packet-authoring handoff only. Do not claim or execute implementation work until the pair is promoted and a separate orchestration instruction authorizes Phase 2.
+
+## User-owned design hold
+
+The task is blocked from selection while the project owner decides whether to establish an independent approval credential for any future recovery apply. The open decision is specifically about selecting and establishing an owner-controlled signing credential that is inaccessible to the executing agent; it does not authorize signing, key enrollment, recovery apply, or Phase 3 review.
 
 ## Completion Truth
 
