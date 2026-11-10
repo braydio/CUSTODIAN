@@ -1,9 +1,127 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-10T11:49:09Z",
-  "source_main_sha": "6ce61c8f8b101d88e8c05f0312cd1f4931873743",
+  "generated_at": "2026-11-10T17:11:16Z",
+  "source_main_sha": "8262ac57622059256f9f5d136ef0eff28dd59a1d",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "dispatcher-v2-authority-docs-8262ac57",
+      "headline": "Dispatcher guidance corrected: legacy audit locks do not govern V2 claims",
+      "summary": "A new main-branch documentation commit clarifies that V2 claim and claim-next perform their own source and safety checks. Legacy audit lock/dependency classifications remain diagnostic, not acquisition authority. A separate explicit human hold still protects the Weather provenance bridge while Operator Chassis review remains unresolved.",
+      "body": "Main 8262ac57622059256f9f5d136ef0eff28dd59a1d updates AGENTS guidance, lifecycle documentation and Weather source-provenance packets. V2 claim/claim-next authenticate fetched origin/main packet bytes and apply V2 hold, source, checkout, storage, LFS and provenance checks; legacy audit/status classifications do not determine V2 eligibility. Paired-review runner retains separate review gates. The Weather provenance bridge has an explicit orchestration hold external to automatic V2 eligibility until the Operator Chassis review is resolved and the hold is lifted. This is a documentation correction, not evidence that any claim was made, review accepted, or host state changed. Private WIRE pilot pointer remains dated November 8; no new operational counts are promoted. Combined statuses and PR-triggered runs for this commit returned none; CI health is unknown.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "weather-v2-review-source-provenance-bridge-v1",
+      "occurred_at": "2026-11-10T16:28:06Z",
+      "bullets": [
+        "Legacy audit dependency/lock labels are diagnostic, not V2 claim gates.",
+        "V2 acquisition validates current origin/main and its own safety preconditions.",
+        "Weather provenance bridge remains under an explicit human orchestration hold.",
+        "Paired-review acceptance remains a separate controlled lifecycle."
+      ],
+      "links": [
+        {
+          "title": "Dispatcher V2 authority documentation correction",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/8262ac57622059256f9f5d136ef0eff28dd59a1d"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN has corrected an important ambiguity in how its task dispatcher is described. A legacy queue audit can label work blocked by dependencies or locks, but those labels are not what authorizes a V2 task claim. The change clarifies authority without releasing any existing hold.",
+        "sections": [
+          {
+            "heading": "Two views of the queue, only one acquisition path",
+            "text": "The current V2 claim commands authenticate task identity and packet bytes against fetched main, then enforce their own source, hold, checkout and provenance checks. Legacy audit and status reports remain useful diagnostics, but cannot approve or veto a V2 claim."
+          },
+          {
+            "heading": "An explicit hold still protects the Weather bridge",
+            "text": "The Weather source-provenance bridge is under a documented human orchestration hold while the separate Operator Chassis review remains unresolved. The correction does not lift that hold or disturb the preserved claim, run or branch. Paired reviews retain their own acceptance gates."
+          }
+        ],
+        "insights": [
+          {
+            "title": "A blocked audit label is not the final authority",
+            "explanation": "The documentation now distinguishes historical queue classifications from the actual V2 acquisition checks, reducing the risk of false claims about eligibility."
+          },
+          {
+            "title": "Human coordination remains decisive",
+            "explanation": "Even if the V2 command could technically acquire a packet, the explicit Weather bridge hold still prohibits that action until orchestration lifts it."
+          }
+        ],
+        "takeaway": "This is an important correction to operational guidance, not a new execution or accepted review.",
+        "next_watch": "Watch for a verified Operator Chassis review disposition and explicit lifting of the Weather bridge orchestration hold."
+      },
+      "details": {
+        "overview": "Documentation-only change at main 8262ac57622059256f9f5d136ef0eff28dd59a1d. No canonical live dispatcher audit, fresh private observation, or host execution proof inspected.",
+        "ledger": [
+          {
+            "stage": "V2 authority clarification",
+            "status": "verified documented",
+            "evidence": "Commit 8262ac57622059256f9f5d136ef0eff28dd59a1d updates AGENTS, lifecycle guide and Weather packet guidance."
+          },
+          {
+            "stage": "Weather bridge orchestration hold",
+            "status": "documented active",
+            "evidence": "Packet explicitly prohibits acquisition until separate hold is lifted."
+          },
+          {
+            "stage": "Operator Chassis review",
+            "status": "unresolved per documentation",
+            "evidence": "Commit preserves review claim/run/branch; no independent acceptance receipt inspected."
+          },
+          {
+            "stage": "Host execution and teardown",
+            "status": "unknown",
+            "evidence": "No fresh authenticated host observation."
+          }
+        ],
+        "notes": [
+          "No combined statuses or PR-triggered runs returned for this commit."
+        ],
+        "unknowns": [
+          "Current canonical dispatcher counts and host resource state.",
+          "Whether independent review disposition has changed since the documented hold."
+        ],
+        "actions": [
+          "Orchestration owner: preserve hold until Operator Chassis review disposition is independently verified."
+        ]
+      },
+      "related": [],
+      "scorecard": {
+        "stage": "Documentation corrected; explicit orchestration hold remains",
+        "as_of": "2026-11-10T17:11:16Z",
+        "scope": "Weather V2 source-provenance bridge guidance",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "V2 authority documentation corrected",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Main commit 8262ac57622059256f9f5d136ef0eff28dd59a1d"
+          },
+          {
+            "label": "Operator Chassis review disposition",
+            "status": "current",
+            "verification": "reported",
+            "evidence": "Packet documents unresolved review and preserved claim."
+          },
+          {
+            "label": "Explicit orchestration hold lifted",
+            "status": "blocked",
+            "verification": "unknown",
+            "evidence": "No authorization to lift inspected."
+          },
+          {
+            "label": "Weather bridge V2 claim",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Requires explicit hold release and current V2 checks."
+          }
+        ],
+        "next_gate": "Orchestration must verify the separate Operator Chassis review and explicitly lift the Weather bridge hold before acquisition."
+      }
+    },
     {
       "id": "findings-recovery-landed-closeout-6ce61c8f",
       "headline": "Findings recovery bridge merges; implementation closeout lands while independent review remains ahead",
@@ -1627,125 +1745,6 @@
         ],
         "next_gate": "Independent reviewer to assess complete validation and issue an explicit acceptance decision before any operator cutover."
       }
-    },
-    {
-      "id": "turn-scoped-dispatcher-draft-pr123",
-      "headline": "A two-mode dispatcher reaches draft review, aiming to preserve task handoffs across sessions",
-      "summary": "Draft PR #123 proposes an opt-in dispatcher with normal and historical modes, durable branch-backed handoffs, LFS hydration and verified checkpoint/push operations. It is not merged or approved for cutover; the existing dispatcher and claims remain unchanged.",
-      "body": "A newly surfaced draft pull request proposes a turn-scoped dispatcher that can resume work from branch-backed state and retire a checkout without force. Its normal and historical modes aim to reduce fragile handoffs while keeping the existing dispatcher untouched. The PR describes isolated Git tests and a design/cutover document, but explicitly requires review, full tests and an authorized cutover. Its branch is not evidence of a running service or accepted independent review. The separate private WIRE pointer is dated November 8 and too old for fresh operational counts.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "turn-scoped-dispatcher-v2",
-      "occurred_at": "2026-11-09T12:01:29Z",
-      "bullets": [
-        "Draft PR #123 is open and unmerged.",
-        "Proposed modes cover normal and historical task continuity.",
-        "Current dispatcher, claims and refs are explicitly unchanged.",
-        "Next gate: independent review and full tests before any cutover decision."
-      ],
-      "links": [
-        {
-          "title": "Draft dispatcher proposal and review boundary",
-          "url": "https://github.com/braydio/CUSTODIAN/pull/123"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN has opened a draft redesign of how its agents pick up and hand off tasks. The proposed dispatcher would carry work across sessions using branch-backed checkpoints, but it is not yet approved or running.",
-        "sections": [
-          {
-            "heading": "Why task handoffs matter",
-            "text": "The proposal adds normal and historical modes, Git LFS asset hydration, verified checkpoints and pushes, and retirement that avoids forcing a checkout. These features target continuity and safer recovery when work spans several agent turns."
-          },
-          {
-            "heading": "A proposal, not a cutover",
-            "text": "The pull request remains a draft. It explicitly leaves the current dispatcher, worktrees, references and claims alone. Review, full tests and an explicit safe cutover are still required before operational use."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Durable handoffs are the central change",
-            "explanation": "Branch-backed continuity could make interrupted work easier to resume without relying on an agent's transient session state. That benefit is proposed, not yet demonstrated in production."
-          },
-          {
-            "title": "The safety boundary is explicit",
-            "explanation": "Keeping the current dispatcher unchanged lets reviewers examine the candidate without interpreting its presence as an operational migration."
-          }
-        ],
-        "takeaway": "A substantial dispatcher candidate is available for review, but there is no verified adoption or independent acceptance.",
-        "next_watch": "Watch for full test evidence, independent review and an explicitly authorized cutover decision."
-      },
-      "scorecard": {
-        "stage": "Draft implementation under review; no operational cutover",
-        "as_of": "2026-11-09T17:34:00Z",
-        "scope": "PR #123 only, not canonical dispatcher queue",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Candidate PR opened",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "PR #123 open draft"
-          },
-          {
-            "label": "Isolated Git tests described",
-            "status": "current",
-            "verification": "reported",
-            "evidence": "PR author reports tests; no independent rerun inspected"
-          },
-          {
-            "label": "Full test suite and independent review",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No accepted review receipt inspected"
-          },
-          {
-            "label": "Explicit safe cutover",
-            "status": "blocked",
-            "verification": "verified",
-            "evidence": "PR requires review, full tests and explicit authorization"
-          }
-        ],
-        "next_gate": "Dispatcher owner: obtain full test evidence and independent review before requesting any cutover."
-      },
-      "details": {
-        "overview": "PR #123 is a draft branch candidate, not a main landing. Current main remains de9fb72d8f4f2c239c551d87797351c9093e21b8. GitHub's status endpoint returned no legacy commit statuses; this does not establish CI success.",
-        "ledger": [
-          {
-            "stage": "Draft proposal",
-            "status": "verified",
-            "evidence": "PR #123 open and unmerged"
-          },
-          {
-            "stage": "Implementation tests",
-            "status": "reported",
-            "evidence": "Isolated Git tests described in PR"
-          },
-          {
-            "stage": "Independent acceptance",
-            "status": "unknown",
-            "evidence": "No accepted review receipt inspected"
-          },
-          {
-            "stage": "Host runtime and teardown",
-            "status": "unknown",
-            "evidence": "No direct host evidence"
-          }
-        ],
-        "notes": [
-          "Private pilot pointer observed but dated November 8; no fresh private counts imported."
-        ],
-        "unknowns": [
-          "Full test outcome",
-          "Independent acceptance",
-          "Live host status and cleanup"
-        ],
-        "actions": [
-          "Dispatcher owner: collect full test and review evidence; preserve existing dispatcher until authorized cutover."
-        ]
-      },
-      "related": []
     }
   ],
   "snapshot": {
