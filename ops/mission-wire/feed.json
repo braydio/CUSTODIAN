@@ -1,9 +1,157 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-10T09:35:34Z",
+  "generated_at": "2026-11-10T10:42:31Z",
   "source_main_sha": "d37b29291591454b0c8a6d9218b6806adf66263a",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "findings-recovery-implementation-pr133-a4e9dbc8",
+      "headline": "Findings recovery bridge reaches reviewable PR, with original nonpassing findings preserved",
+      "summary": "PR #133 proposes an exact-run, read-only recovery plan and digest-bound apply path for stranded reviewer findings. Its author reports 326 paired-review tests and 14 artifact tests passing. The PR remains open: no recovery apply, independent acceptance, or teardown is verified.",
+      "body": "At inspected main d37b29291591454b0c8a6d9218b6806adf66263a, PR #133 is open and unmerged. Its head a4e9dbc8505bcde3eb20b5f40b32df838a4b550d proposes a narrowly bounded findings-artifact bridge for the preserved owner-exception review. It preserves R0-01 and R0-02 as findings and leaves the reviewed target without a PASS receipt. The PR reports 326 paired-review runner tests, 14 artifact tests, changed-file routed validation, and supporting checks passing. These are author-reported tests, not independent acceptance. No recovery apply was performed; original checkout and run remain unchanged per PR description. Canonical queue totals and host cleanup are unknown; the private WIRE pilot pointer remains dated November 8 and stale.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-paired-review-findings-artifact-recovery-v1",
+      "occurred_at": "2026-11-10T10:36:53Z",
+      "bullets": [
+        "PR #133 is open, not merged into main.",
+        "Author reports 326 paired-review and 14 artifact tests passing.",
+        "Original R0-01/R0-02 remain nonpassing findings; no PASS inferred.",
+        "No recovery apply or host teardown verified."
+      ],
+      "links": [
+        {
+          "title": "Findings recovery implementation PR #133",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/133"
+        },
+        {
+          "title": "Prior recovery packet pair PR #132",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/132"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "A recovery tool for stranded reviewer findings has moved from an assignment into an open pull request. It aims to preserve what the reviewer actually found, without rewriting the original review or pretending the findings were an approval.",
+        "sections": [
+          {
+            "heading": "A safer route to an authentic record",
+            "text": "The proposed bridge separates read-only planning from a digest-bound application step. It is tied to one preserved review run and keeps the original checkout and reviewed implementation unchanged. The original R0-01 and R0-02 findings remain findings, not a passing review."
+          },
+          {
+            "heading": "Tests are promising, but the gate is still ahead",
+            "text": "The author reports 326 paired-review tests and 14 artifact tests passing, including synthetic adversarial and interrupted-retry coverage. PR #133 is still open, so this is reviewable implementation evidence rather than landed code, independently accepted recovery or a completed repair."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Evidence recovery is not verdict repair",
+            "explanation": "Keeping the nonpassing findings intact makes the review auditable without manufacturing acceptance."
+          },
+          {
+            "title": "The bottleneck moves to merge and independent scrutiny",
+            "explanation": "A concrete implementation is now proposed. The next decision depends on inspecting and independently reviewing its guarantees, not merely its test totals."
+          }
+        ],
+        "takeaway": "The findings bridge is ready for code review, but remains unmerged and unapplied.",
+        "next_watch": "Watch PR #133 for merge evidence and a genuine independent review disposition; protected-run recovery still needs its own authorization."
+      },
+      "details": {
+        "overview": "GitHub partial coverage; inspected main d37b29291591454b0c8a6d9218b6806adf66263a, PR #133 head a4e9dbc8505bcde3eb20b5f40b32df838a4b550d. The PR describes a read-only plan, digest-bound apply, and synthetic adversarial/interrupted-retry tests. No live dispatcher audit or fresh private pilot observation was available.",
+        "ledger": [
+          {
+            "stage": "Recovery assignment and handoff",
+            "status": "verified landed/ready",
+            "evidence": "PR #132 and main d37b2929."
+          },
+          {
+            "stage": "Recovery implementation",
+            "status": "verified open PR; unmerged",
+            "evidence": "PR #133 head a4e9dbc8."
+          },
+          {
+            "stage": "Validation",
+            "status": "author-reported passing",
+            "evidence": "PR #133 reports 326 runner and 14 artifact tests plus changed-file checks."
+          },
+          {
+            "stage": "Independent acceptance",
+            "status": "unknown / not established",
+            "evidence": "No independent PASS receipt inspected."
+          },
+          {
+            "stage": "Recovery apply and canonical teardown",
+            "status": "not verified",
+            "evidence": "PR explicitly says apply was not performed; no host evidence."
+          }
+        ],
+        "notes": [
+          "Main unchanged since preceding WIRE story.",
+          "Source SHA is a PR head, not main."
+        ],
+        "unknowns": [
+          "Host claims, locks, worktrees, disk, and execution unknown.",
+          "Full dispatcher counts and CI health unavailable.",
+          "Private pilot observation stale; no operational counts used."
+        ],
+        "actions": [
+          "Implementation owner: complete review and land PR #133 if validated.",
+          "Independent reviewer: verify exact-run binding and preservation before any authorized recovery."
+        ]
+      },
+      "related": [
+        {
+          "title": "New recovery path targets stranded reviewer findings; packet pair becomes dispatch-ready",
+          "context": "The earlier story covered the packet pair becoming eligible; this PR is the proposed implementation.",
+          "story_id": "paired-findings-artifact-recovery-ready-d37b2929"
+        }
+      ],
+      "scorecard": {
+        "stage": "Implementation proposed; awaiting merge and independent review",
+        "as_of": "2026-11-10T10:36:53Z",
+        "scope": "Named findings-artifact recovery workstream only",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Recovery packet pair landed",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "PR #132 merged."
+          },
+          {
+            "label": "Dispatch eligibility",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "d37b2929 ready/auto."
+          },
+          {
+            "label": "Implementation proposed",
+            "status": "current",
+            "verification": "verified",
+            "evidence": "Open PR #133."
+          },
+          {
+            "label": "Implementation merged",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "PR #133 unmerged."
+          },
+          {
+            "label": "Independent review accepted",
+            "status": "blocked",
+            "verification": "unknown",
+            "evidence": "No PASS receipt."
+          },
+          {
+            "label": "Authorized apply and teardown",
+            "status": "blocked",
+            "verification": "unknown",
+            "evidence": "No application authorized or verified."
+          }
+        ],
+        "next_gate": "Review and merge PR #133, then obtain independent acceptance before any separately authorized recovery."
+      }
+    },
     {
       "id": "paired-findings-artifact-recovery-ready-d37b2929",
       "headline": "New recovery path targets stranded reviewer findings; packet pair becomes dispatch-ready",
@@ -1565,151 +1713,6 @@
         ],
         "actions": [
           "Relay owner: collect a sanitized end-to-end supervised run and independent review."
-        ]
-      },
-      "related": []
-    },
-    {
-      "id": "broken-ref-repair-packets-84193173",
-      "headline": "Malformed Git references block dispatcher audits; a narrowly scoped repair enters the queue",
-      "summary": "CUSTODIAN published an implementation/review packet pair to address malformed local remote-tracking references reported to obstruct canonical dispatcher audits. The repair is specified as manifest-driven, backed up, reversible and independently reviewed. No host repair, restored audit, or accepted review is yet verified.",
-      "body": "A new main-branch commit adds a P0 agent-ops implementation packet and its independent review for a reported host-local Git reference obstruction. The packet cites host preflight reports of sixteen zero-byte loose remote-tracking refs, but those observations are not independently refreshed in this watch. The implementation must operate on an exact reviewed manifest, preserve private backups and unrelated Git state, default to dry-run, fail closed on races and mismatches, and prove rollback and dispatcher audit behavior. The paired review must independently validate host evidence and reject any damage to valid refs, worktrees or claims. Both packets carry ready/auto metadata, but their authoring text still says draft and not to auto-dispatch until approvals and claim checks complete. This documentation-versus-metadata discrepancy requires canonical dispatcher resolution, not an inferred claim. No code implementation, host mutation, independent PASS or verified teardown was observed. The separate WIRE pilot pointer remains stale; no private counts were imported.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "broken-remote-tracking-ref-repair-v1",
-      "occurred_at": "2026-11-09T10:20:51Z",
-      "bullets": [
-        "One implementation packet and one paired review packet landed on main.",
-        "Host reports cite 16 malformed refs; this is not a fresh exhaustive audit.",
-        "Ready/auto metadata conflicts with draft authoring warnings; dispatch eligibility is unverified.",
-        "Next gate: reconcile packet authority, then independently validate an exact-scope dry-run before any authorized repair."
-      ],
-      "links": [
-        {
-          "title": "Scoped repair and independent review packet commit",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/841931733cd0103e5dbeb5587063d3b880e50db7"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN has documented a new obstacle in its task-dispatch machinery: malformed local Git references reportedly prevent the canonical audit from completing. A narrowly bounded repair and an independent review are now defined, but no repair has been demonstrated.",
-        "sections": [
-          {
-            "heading": "A small Git defect with a wide operational impact",
-            "text": "The new packet cites host reports of sixteen empty remote-tracking reference files. These are local Git bookkeeping entries, not evidence that remote branches should be deleted. Until the host problem is safely resolved, the dispatcher cannot provide a trustworthy full queue audit."
-          },
-          {
-            "heading": "The repair must preserve more than it changes",
-            "text": "The proposed tool must check a reviewed exact-file manifest, back up original evidence outside Git, reject concurrent changes, and support rollback. Its separate reviewer must test failure cases and prove that unrelated references, worktrees and claims were untouched. Ready/auto packet metadata does not establish execution, especially while the authoring text still calls the packets draft."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The audit itself is the blocked capability",
-            "explanation": "Without a healthy local ref store, a full dispatcher count is not available. GitHub packet inventory cannot replace a canonical live audit."
-          },
-          {
-            "title": "Repair authority needs reconciliation",
-            "explanation": "The packets are labeled ready/auto but retain draft-only authoring warnings. The canonical dispatcher and repository lifecycle must resolve that discrepancy before treating them as claimable."
-          }
-        ],
-        "takeaway": "The repair workstream is now documented on main; the host fault, execution eligibility, successful repair and independent acceptance remain unverified.",
-        "next_watch": "Watch for reconciled packet authority, a reviewed dry-run and backup manifest, a safe host repair, and an independently accepted canonical audit."
-      },
-      "scorecard": {
-        "stage": "Repair specified; execution and review unverified",
-        "as_of": "2026-11-09T11:07:41Z",
-        "scope": "One new agent-ops implementation packet and one paired review packet, not full dispatcher coverage",
-        "metrics": [
-          {
-            "id": "new-packets",
-            "label": "NEW PACKETS",
-            "value": 2,
-            "verification": "verified",
-            "basis": "Exactly two new packet files in commit 84193173",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/841931733cd0103e5dbeb5587063d3b880e50db7"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Repair and paired review packets authored",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "84193173 adds both files."
-          },
-          {
-            "label": "Resolve authoring and dispatcher eligibility",
-            "status": "current",
-            "verification": "unknown",
-            "evidence": "Ready/auto metadata coexists with draft-only authoring warning."
-          },
-          {
-            "label": "Validate exact manifest and dry-run",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No host validation observed."
-          },
-          {
-            "label": "Safely repair and verify canonical audit",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No host repair or full audit observed."
-          },
-          {
-            "label": "Independent review and acceptance",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No independent PASS receipt observed."
-          }
-        ],
-        "next_gate": "Repository/dispatcher owner: reconcile packet authoring authority and claim eligibility before any host action."
-      },
-      "details": {
-        "overview": "Main commit 84193173 adds the repair implementation and review packet, plus packet index entries. The packet cites B-006/B-007 host preflight evidence retained privately; the watch cannot independently confirm host state. Combined GitHub commit status has no status contexts, which is not CI PASS.",
-        "ledger": [
-          {
-            "stage": "Packet publication",
-            "status": "verified landed",
-            "evidence": "84193173 on main"
-          },
-          {
-            "stage": "Host reference defect",
-            "status": "host-reported, not independently verified",
-            "evidence": "Packet cites 16 empty loose refs in B-006/B-007"
-          },
-          {
-            "stage": "Implementation and focused validation",
-            "status": "unknown",
-            "evidence": "No landed repair or test receipt"
-          },
-          {
-            "stage": "Canonical audit",
-            "status": "unknown",
-            "evidence": "No complete host audit available"
-          },
-          {
-            "stage": "Independent review",
-            "status": "unknown",
-            "evidence": "No PASS receipt"
-          },
-          {
-            "stage": "Canonical teardown",
-            "status": "unknown",
-            "evidence": "No host evidence"
-          }
-        ],
-        "notes": [
-          "A canonical audit may fetch/prune, so its side effects must be disclosed rather than called purely read-only."
-        ],
-        "unknowns": [
-          "Actual host ref state, current claims, worktree/disk totals",
-          "Whether draft warning or ready/auto metadata governs dispatch"
-        ],
-        "actions": [
-          "Owner: reconcile authoring approval and canonical dispatcher eligibility.",
-          "Authorized host operator: validate exact manifest and backup before repair.",
-          "Independent reviewer: inspect immutable evidence and audit results before PASS."
         ]
       },
       "related": []
