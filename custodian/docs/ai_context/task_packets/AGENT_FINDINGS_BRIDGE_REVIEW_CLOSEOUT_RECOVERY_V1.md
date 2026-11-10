@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-findings-bridge-review-closeout-recovery-v1`
 - Category: `agent-ops`
-- Status: `complete`
+- Status: `blocked`
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P0`
@@ -70,8 +70,8 @@ This pair is `draft/manual` for atomic authoring validation and the push-trigger
 - Feedback schema: `custodian.task_feedback.v1`
 - Outcome: partial
 - Friction severity: medium
-- What went wrong: A full detached checkout failed during Git file materialization; the first underlying write errno was not retained. The attempted filesystem is a 16 GB `/tmp` tmpfs with 5.4 GB free and 869,835 free inodes; a 17 MB sparse checkout succeeded without LFS hydration.
-- Root cause / contributing factors: The full checkout's asset and file footprint exceeded the useful temporary-checkout budget; exact first failure cause is unconfirmed.
+- What went wrong: A full detached checkout failed during Git file materialization; the first underlying write errno was not retained. The later filesystem measurement found a 16 GB `/tmp` tmpfs with 5.4 GB free and 869,835 free inodes; a 17 MB sparse checkout succeeded without LFS hydration.
+- Root cause / contributing factors: Unconfirmed. Temporary-filesystem pressure from the full checkout footprint is a hypothesis only; the first write failure was not captured.
 - Prevention / pipeline improvement: Use the supported sparse checkout profile for Python-only recovery review and avoid unnecessary game-asset hydration.
 - Tooling / docs drift discovered: none
 - Follow-up: manual-follow-up
