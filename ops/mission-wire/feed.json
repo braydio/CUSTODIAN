@@ -1,9 +1,137 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-10T19:09:40Z",
-  "source_main_sha": "c93d75d8cd57c2b36731cb640fac722faf6ccc2a",
+  "generated_at": "2026-11-10T21:08:08Z",
+  "source_main_sha": "c67530302489e734c92af66c1737f9851dcd4ac6",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "findings-bridge-recovery-ready-c6753030",
+      "headline": "Findings-closeout recovery enters automatic queue as missing-checkout repair is drafted",
+      "summary": "CUSTODIAN has made the findings-bridge closeout recovery packet ready for automatic dispatch, while a separate missing-checkout recovery is newly documented as a manual draft. Both address stranded paired-review evidence; neither commit proves execution, accepted review, or released host claims.",
+      "body": "Main c6753030 changes the findings-bridge implementation and paired review packet from draft/manual to ready/auto. The underlying recovery proposal, introduced in 5006f31c, would preserve an authentic nonpassing findings disposition whose reviewer stderr causes the strict session parser to reject the session. A separate P0 manual draft at b513f9a0 targets a missing historical checkout with preserved incomplete host-validation coverage. These are packet and dispatch eligibility changes, not verified runtime execution. The private WIRE pilot latest pointer was last modified November 8, so it cannot support fresh host counts. Independent review and canonical teardown remain unverified.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-findings-bridge-review-closeout-recovery-v1",
+      "occurred_at": "2026-11-10T20:51:52Z",
+      "bullets": [
+        "Findings-bridge implementation and paired review packets are marked ready/auto in Git.",
+        "Missing-checkout recovery remains a separate P0 manual draft.",
+        "Neither change proves a dispatcher launch or an accepted review.",
+        "Fresh private operational counts are unavailable."
+      ],
+      "links": [
+        {
+          "title": "Ready/auto handoff",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/c67530302489e734c92af66c1737f9851dcd4ac6"
+        },
+        {
+          "title": "Findings bridge packet creation",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/5006f31c2fbc6118e7c549b8408820839d1edebb"
+        },
+        {
+          "title": "Missing-checkout recovery proposal",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/b513f9a0b0299a5b1c4bb562d39b2bf8f73e6bbc"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "A new CUSTODIAN recovery route is now eligible for automatic task handoff. It aims to preserve a legitimate negative review result that strict session parsing could not close out. Another newly drafted repair addresses a different stranded review whose original checkout is missing. These changes advance the recovery plan, not proof that either repair has run.",
+        "sections": [
+          {
+            "heading": "The queue is ready, but execution is not established",
+            "text": "The findings-bridge implementation and its paired review changed from manual drafts to ready/auto packets. That makes them eligible under the documented workflow; it does not establish a live worker, claimed checkout, completed implementation or independent PASS."
+          },
+          {
+            "heading": "Two failures require different recovery paths",
+            "text": "The findings bridge concerns a preserved nonpassing reviewer outcome rejected because its session has nonempty stderr. The missing-checkout proposal concerns a historical validation attempt with incomplete coverage and an absent checkout. Both are designed to retain original evidence and fail closed rather than silently recasting failures as success."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Eligibility is not execution",
+            "explanation": "The latest Git change is a dispatch-policy transition, not a host observation. Reporting it as running would obscure the remaining verification gate."
+          },
+          {
+            "title": "Negative review evidence is worth preserving",
+            "explanation": "A failed or findings-bearing review can be an important durable outcome. The new proposal seeks authenticated closeout without turning that result into an accepted PASS."
+          }
+        ],
+        "takeaway": "The recovery workflow has gained a ready automatic handoff and a distinct drafted repair, while host execution and acceptance remain unknown.",
+        "next_watch": "Look for a landed implementation, a genuine independent review receipt and authenticated host evidence before promoting either recovery to completed status."
+      },
+      "details": {
+        "overview": "GitHub partial coverage only. No fresh canonical dispatcher audit or valid private pilot observation; no operational counts are promoted.",
+        "ledger": [
+          {
+            "stage": "Findings bridge packet handoff",
+            "status": "verified ready/auto in Git",
+            "evidence": "c6753030 changes two packet headers."
+          },
+          {
+            "stage": "Missing-checkout recovery design",
+            "status": "verified draft/manual in Git",
+            "evidence": "b513f9a0 adds P0 packet."
+          },
+          {
+            "stage": "Implementation, independent review and teardown",
+            "status": "unknown",
+            "evidence": "No matching accepted receipts or fresh host proof inspected."
+          }
+        ],
+        "notes": [
+          "Private pilot pointer last modified November 8; content freshness not established."
+        ],
+        "unknowns": [
+          "Current live dispatcher counts and claims.",
+          "Whether ready packets have been picked up.",
+          "Accepted independent review and verified cleanup."
+        ],
+        "actions": [
+          "Workflow owner: obtain bounded execution and review receipts before declaring progress beyond eligibility."
+        ]
+      },
+      "related": [],
+      "scorecard": {
+        "stage": "Ready for automatic handoff; execution unverified",
+        "as_of": "2026-11-10T21:08:08Z",
+        "scope": "Named findings bridge recovery packet and paired review, GitHub only",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Recovery proposal recorded",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "5006f31c"
+          },
+          {
+            "label": "Automatic handoff eligibility",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "c6753030"
+          },
+          {
+            "label": "Implementation landed",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "Not established in inspected evidence"
+          },
+          {
+            "label": "Independent review accepted",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No accepted PASS inspected"
+          },
+          {
+            "label": "Canonical teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No host proof"
+          }
+        ],
+        "next_gate": "Obtain authenticated execution and implementation evidence, followed by an independent review receipt."
+      }
+    },
     {
       "id": "archive-lifecycle-resolver-landed-6ef13efb",
       "headline": "Archive-history resolver lands; Ash-Bell review awaits independent verification",
@@ -1426,13 +1554,7 @@
           "Orchestrator: consider only the read-only original recovery plan after accepted correction and separate authorization."
         ]
       },
-      "related": [
-        {
-          "title": "Owner-exception recovery packets become dispatch-ready",
-          "context": "This landing implements the repair previously queued by the paired packets.",
-          "story_id": "owner-exception-recovery-ready-def6f0c4"
-        }
-      ],
+      "related": [],
       "scorecard": {
         "stage": "Merged; independent correction review pending",
         "as_of": "2026-11-10T04:06:52Z",
@@ -1597,155 +1719,6 @@
           }
         ],
         "next_gate": "Independent reviewer to validate merged Weather V2 contract."
-      }
-    },
-    {
-      "id": "owner-exception-recovery-ready-def6f0c4",
-      "headline": "Owner-exception recovery packets become dispatch-ready after audit and review blockers surface",
-      "summary": "CUSTODIAN identified a missing regex import that breaks dispatcher audit and a historical archive-scope rejection blocking owner-exception review. New scoped implementation and independent review packets were authored and marked ready/auto. That is dispatch eligibility, not evidence of execution or accepted repair.",
-      "body": "Main commits d64f588bcf74ccc10ba7e976729e6215acfbdc71 and def6f0c40f06658c6b4b2d6c7373ca121d0002c6 add and promote paired recovery packets. The implementation packet records dispatch.py calling re.fullmatch without importing re, producing NameError during audit --json, and a preserved independent review run stopped by an archive-only source-scope validation error. The new packet limits repair to a focused import/regression and an exact historical archive exception. Both packets now say ready/auto, but no fresh canonical audit, running worker, accepted independent review or host cleanup was observed.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-owner-review-exception-closeout-recovery-v1",
-      "occurred_at": "2026-11-10T03:14:37Z",
-      "bullets": [
-        "Recovery implementation and review packets now ready/auto.",
-        "Dispatcher audit NameError and exact historical archive rejection are documented blockers.",
-        "No worker execution, repair landing or independent PASS established."
-      ],
-      "links": [
-        {
-          "title": "Recovery packet authoring",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/d64f588bcf74ccc10ba7e976729e6215acfbdc71"
-        },
-        {
-          "title": "Ready/auto promotion",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/def6f0c40f06658c6b4b2d6c7373ca121d0002c6"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "A new recovery path has been queued for the owner-exception review system. Its task packets identify two concrete failures: the dispatcher audit crashes on a missing import, and the independent review cannot start because a historical archive trips source-scope validation. The packets are now eligible for automatic dispatch, but the repairs have not been proven complete.",
-        "sections": [
-          {
-            "heading": "Two narrow faults, one controlled repair",
-            "text": "The implementation packet calls for a missing import and a regression test, plus a tightly pinned historical archive exception. It explicitly forbids weakening ordinary review source checks or treating the unresolved original verdict as accepted."
-          },
-          {
-            "heading": "Ready does not mean running",
-            "text": "Both implementation and paired-review packets were promoted from draft/manual to ready/auto. No current host audit or accepted review receipt confirms they have been claimed, executed or completed."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The blocker is now concrete",
-            "explanation": "A reproducible audit exception and a specific source-scope rejection give the next worker a bounded repair target rather than an open-ended recovery campaign."
-          },
-          {
-            "title": "Eligibility is not execution",
-            "explanation": "The ready/auto state permits dispatch under the normal system, but GitHub cannot prove that a host worker is alive or that cleanup occurred."
-          }
-        ],
-        "takeaway": "The recovery work is defined and dispatch-ready; implementation, independent acceptance and operational recovery remain unverified.",
-        "next_watch": "A landed focused repair, its genuine independent PASS, and a fresh canonical dispatcher audit."
-      },
-      "details": {
-        "overview": "Commit d64f588b authored paired packets; def6f0c4 promoted both to ready/auto. The packet cites preserved review run 20261110T014238Z-25fe84ab666f as stopped before reviewer launch. This is packet evidence, not a current host audit.",
-        "ledger": [
-          {
-            "stage": "Recovery packet authoring",
-            "status": "verified landed",
-            "evidence": "d64f588b adds implementation and paired review packets."
-          },
-          {
-            "stage": "Dispatch readiness",
-            "status": "verified source state",
-            "evidence": "def6f0c4 changes both to ready/auto."
-          },
-          {
-            "stage": "Implementation",
-            "status": "not verified",
-            "evidence": "No repair landing inspected."
-          },
-          {
-            "stage": "Independent review",
-            "status": "not verified",
-            "evidence": "No accepted PASS established."
-          },
-          {
-            "stage": "Host state / teardown",
-            "status": "unknown",
-            "evidence": "No fresh canonical audit or host proof."
-          }
-        ],
-        "notes": [
-          "The original owner exception remains distinct from reviewer PASS."
-        ],
-        "unknowns": [
-          "Whether a worker has claimed either packet.",
-          "Whether dispatcher audit is repaired on host.",
-          "Whether preserved reviewer run can resume safely."
-        ],
-        "actions": [
-          "Dispatcher executor: implement only the scoped audit and archive-validation fixes when legitimately claimed.",
-          "Independent reviewer: falsify exact repair before eligibility changes."
-        ]
-      },
-      "related": [
-        {
-          "title": "Owner-review exception mechanism lands, while the chassis verdict remains unresolved",
-          "context": "The newly ready recovery packets address blockers in reviewing the earlier exception mechanism.",
-          "story_id": "owner-review-exception-lane-aaa2c3e9"
-        }
-      ],
-      "scorecard": {
-        "stage": "Packets ready; implementation and independent review pending",
-        "as_of": "2026-11-10T03:14:37Z",
-        "scope": "Two named recovery packets only, not the full dispatcher queue",
-        "metrics": [
-          {
-            "id": "other-recovery-packets",
-            "label": "READY RECOVERY PACKETS",
-            "value": 2,
-            "verification": "verified",
-            "basis": "Two named packet files changed to ready/auto by def6f0c4; no claim of exhaustive queue coverage",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/def6f0c40f06658c6b4b2d6c7373ca121d0002c6"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Define exact recovery packets",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "d64f588b."
-          },
-          {
-            "label": "Promote packets to ready/auto",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "def6f0c4."
-          },
-          {
-            "label": "Implement bounded repair",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No landed repair inspected."
-          },
-          {
-            "label": "Independent review",
-            "status": "blocked",
-            "verification": "unknown",
-            "evidence": "Requires implementation and authentic PASS."
-          },
-          {
-            "label": "Fresh dispatcher audit",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Host audit unavailable."
-          }
-        ],
-        "next_gate": "Legitimate dispatcher executor claim and bounded implementation, followed by independent review."
       }
     }
   ],
