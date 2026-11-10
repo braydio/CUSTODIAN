@@ -11,6 +11,7 @@ import sys
 import tempfile
 import threading
 import time
+import types
 import unittest
 from pathlib import Path
 from unittest import mock
@@ -116,6 +117,82 @@ class DispatchTests(unittest.TestCase):
             if lines and Path(lines[0].removeprefix("worktree ")).resolve() != self.repo.resolve():
                 git(self.repo, "worktree", "remove", "--force", lines[0].removeprefix("worktree "), check=False)
         self.temp.cleanup()
+
+    def test_owner_exception_loader_and_json_audit_keep_review_unresolved_pending(self):
+        review_id = "review-operator-chassis-authority-seal-v1"
+        implementation_path = f"{dispatch.PACKET_ROOT}/archived/OPERATOR_CHASSIS_AUTHORITY_SEAL_V1.md"
+        review_path = f"{dispatch.PACKET_ROOT}/REVIEW_OPERATOR_CHASSIS_AUTHORITY_SEAL_V1.md"
+        record = {
+            "review_workstream": review_id,
+            "implementation_workstream": "operator-chassis-authority-seal-v1",
+            "main_sha": "a" * 40,
+            "implementation_commit": "b" * 40,
+            "preserved_review_runs": [{"implementation_commit": "b" * 40,
+                                        "metadata_sha256": "c" * 64}],
+            "decision": "waived_unresolved",
+            "disposition": "owner_accepted_with_review_exception",
+            "original_review_outcome": "unresolved",
+            "claim_retirement": "already_absent",
+            "claim_inventory": {},
+            "authorization_source_url": "https://chatgpt.com/example",
+            "authorization_message_sha256": "d" * 64,
+        }
+        record_path = "custodian/docs/ai_context/owner_review_exceptions/" + review_id + ".json"
+        owner_module = types.ModuleType("owner_review_exception")
+        owner_module.verify_record = lambda *args: (True, None)
+        owner_module.activation_review_accepted = lambda *args: False
+
+        def fake_git(repo, *args, check=True):
+            if args[:4] == ("ls-tree", "-r", "--name-only", "origin/main"):
+                return record_path
+            if args[:2] == ("show", f"origin/main:{record_path}"):
+                return json.dumps(record)
+            if args[:2] == ("show", f"origin/main:{implementation_path}"):
+                return "# archived implementation packet"
+            if args[:2] == ("show", f"origin/main:{review_path}"):
+                return "# unresolved paired review packet"
+            if args[:2] == ("show", f"origin/main:{dispatch.PACKET_ROOT}/archived/REVIEW_OWNER_REVIEW_EXCEPTION_LANE_V1.md"):
+                return "# pending activation review"
+            if args[:2] == ("show", f"origin/main:{dispatch.PACKET_ROOT}/archived/OWNER_REVIEW_EXCEPTION_LANE_V1.md"):
+                return "# activation target"
+            if args[0] == "worktree" and args[1] == "list":
+                return ""
+            if args[:2] == ("for-each-ref", "--format=%(refname:short) %(objectname)"):
+                return ""
+            if args[0] == "rev-list":
+                return "0 0"
+            return ""
+
+        def fake_subprocess_run(args, **kwargs):
+            if args[:2] == ["git", "show"]:
+                output = ("implementation source" if implementation_path in args[-1]
+                          else "review source")
+                return subprocess.CompletedProcess(args, 0, output, "")
+            return subprocess.CompletedProcess(args, 0, "", "")
+
+        with mock.patch.dict(sys.modules, {"owner_review_exception": owner_module}), \
+             mock.patch.object(dispatch, "git", side_effect=fake_git), \
+             mock.patch.object(dispatch.subprocess, "run", side_effect=fake_subprocess_run), \
+             mock.patch.object(dispatch, "parse_packet", return_value=types.SimpleNamespace(
+                 workstream=record["implementation_workstream"])), \
+             mock.patch.object(dispatch, "_fetch"), \
+             mock.patch.object(dispatch, "_packets", return_value=[]), \
+             mock.patch.object(dispatch, "_archived_packets", return_value=[]), \
+             mock.patch.object(dispatch, "_claimed", return_value=set()), \
+             mock.patch.object(dispatch, "_execution_lock_holders", return_value=(set(), {})), \
+             mock.patch.object(dispatch, "_remote_claim_state", return_value=(set(), set())), \
+             mock.patch.object(dispatch, "_packet_texts", return_value={}), \
+             mock.patch.object(dispatch, "validate_review_pairing", return_value={}), \
+             mock.patch.object(dispatch, "validate_packet_validation_references", return_value={}), \
+             mock.patch.object(dispatch, "validate_queue_contract", return_value={}), \
+             mock.patch.object(dispatch, "_review_gate", return_value=({}, set())):
+            loaded = dispatch._owner_review_exceptions(self.repo)
+            audit = dispatch.audit(self.repo, as_json=True)
+
+        self.assertEqual(loaded[review_id]["activation_state"], "awaiting_owner_exception_lane_review")
+        exception = audit["owner_review_exceptions"][0]
+        self.assertEqual(exception["activation_state"], "awaiting_owner_exception_lane_review")
+        self.assertEqual(exception["original_review_outcome"], "unresolved")
 
     def add_packet(self, workstream, *, filename=None, text=None, archived=False, publish=True, push=True, **metadata):
         folder = dispatch.PACKET_ROOT + ("/archived" if archived else "")
