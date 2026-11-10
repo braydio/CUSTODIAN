@@ -56,7 +56,8 @@ class FindingsCloseoutRecoveryTests(unittest.TestCase):
                   "reviewed_main_baseline":"a"*40,"run_source_sha":"b"*40,"implementation_commit":"c"*40,
                   "branch_tip":"d"*40,"plan_sha256":"e"*64,"outcome":{"Outcome":"findings"},
                   "outcome":{"Outcome":"findings","Finding IDs":"R0-01"},
-                  "run_manifest":{"private":"f"*64},"session":{"thread_id":"thread-safe","command_failure_count":6},
+                  "run_manifest":{"private":"f"*64},"session":{"thread_id":"SECRET_THREAD_ID","command_failure_count":6,
+                  "jsonl_sha256":"7"*64,"final_sha256":"8"*64,"stderr_sha256":"9"*64,"secret":"SECRET_SESSION_FIELD"},
                   "host":{"report_sha256":"1"*64,"private_path":"/private/host/path"},
                   "archive_sha256":"2"*64,"summary_sha256":"3"*64,"archive_text":"PRIVATE REVIEW TEXT",
                   "summary_text":"PRIVATE SUMMARY","target_sha256":"4"*64,
@@ -64,7 +65,7 @@ class FindingsCloseoutRecoveryTests(unittest.TestCase):
                   "protected_checkout_status":["private/path"],"process_owner_scan":{"owners":[],"private":True},
                   "integrity_report_sha256":"6"*64}
         rendered=json.dumps(recovery.public_plan_report(internal))
-        for secret in ("PRIVATE REVIEW TEXT","PRIVATE SUMMARY","/private/host/path","secret","private/path","run_manifest"):
+        for secret in ("PRIVATE REVIEW TEXT","PRIVATE SUMMARY","/private/host/path","secret","private/path","run_manifest","SECRET_THREAD_ID","SECRET_SESSION_FIELD"):
             self.assertNotIn(secret,rendered)
         self.assertFalse(recovery.public_plan_report(internal)["write_performed"])
 

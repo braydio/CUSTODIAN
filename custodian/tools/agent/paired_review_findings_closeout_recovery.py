@@ -52,7 +52,9 @@ def public_plan_report(prepared: dict) -> dict:
         "outcome": prepared["outcome"].get("Outcome"),
         "finding_ids": list(review_outcome.finding_ids(prepared["outcome"])),
         "run_file_count": len(prepared["run_manifest"]),
-        "session": prepared["session"], "host_validation_sha256": prepared["host"].get("report_sha256"),
+        "session": {key: prepared["session"][key] for key in
+                    ("jsonl_sha256", "final_sha256", "stderr_sha256", "command_failure_count")},
+        "host_validation_sha256": prepared["host"].get("report_sha256"),
         "archive_sha256": prepared["archive_sha256"], "summary_sha256": prepared["summary_sha256"],
         "target_sha256": prepared["target_sha256"],
         "inventory_entry_count": len(prepared["checkout_inventory"]["entries"]),
