@@ -1,9 +1,246 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-10T21:08:08Z",
-  "source_main_sha": "c67530302489e734c92af66c1737f9851dcd4ac6",
+  "generated_at": "2026-11-10T23:40:27Z",
+  "source_main_sha": "926df15195f7c0e98adfca597adcae8c00637219",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "findings-bridge-implementation-landed-81c39888",
+      "headline": "Findings-closeout repair lands, but its protected recovery remains deliberately disabled",
+      "summary": "PR #137 merged a carefully bounded recovery implementation for a stranded negative review. Its read-only evidence plan and tests are reported successful, but recovery apply is disabled because authenticated owner approval cannot be established. Independent review and actual closeout remain outstanding.",
+      "body": "Main 81c39888 merged the exact-run findings-closeout recovery. The implementation preserves findings / R0-01, restricts output to a sanitized projection, and refuses forged PASS. The published completion summary reports 14 focused and 326 regression tests passing and a read-only protected plan, but the apply operation remains disabled for lack of independently verifiable approval. This is landed implementation, not an executed recovery, accepted independent review, or verified cleanup. Private WIRE observation dated November 8 is stale; no current dispatcher counts are asserted.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-findings-bridge-review-closeout-recovery-v1",
+      "occurred_at": "2026-11-10T23:05:49Z",
+      "bullets": [
+        "Implementation merged through PR #137.",
+        "Read-only plan and tests reported passing.",
+        "Apply disabled pending authenticated authorization.",
+        "Independent review and protected closeout remain outstanding."
+      ],
+      "links": [
+        {
+          "title": "Merge PR #137",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/137"
+        },
+        {
+          "title": "Merge commit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/81c39888de2231a424d9e64b9893212882f713c0"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN has merged a recovery tool for a stranded review that legitimately produced findings. The tool can inspect and authenticate the original evidence without recasting the negative outcome as a pass. The actual repair is still locked behind an authorization mechanism that has not been established.",
+        "sections": [
+          {
+            "heading": "A narrow repair reaches main",
+            "text": "The merged code checks exact-run evidence, preserved checkout state and the original findings disposition. The published completion report describes successful focused tests and a protected read-only plan."
+          },
+          {
+            "heading": "Why the final switch stays off",
+            "text": "The implementation refuses to accept a caller-written approval receipt as proof of owner authorization. Its apply operation is deliberately disabled. Independent review must assess that limitation, and the protected review has not been closed."
+          }
+        ],
+        "insights": [
+          {
+            "title": "A landed tool is not a recovered review",
+            "explanation": "The merge improves evidence handling, but does not release claims or change the original nonpassing outcome."
+          },
+          {
+            "title": "Authorization is the remaining hard gate",
+            "explanation": "The safeguard prevents a convincing-looking self-issued approval from becoming permission to alter protected state."
+          }
+        ],
+        "takeaway": "The evidence-inspection portion has landed; recovery apply, independent acceptance and canonical cleanup remain unverified.",
+        "next_watch": "An independent review receipt assessing the disabled apply path and a separately authenticated owner-approval mechanism."
+      },
+      "details": {
+        "overview": "GitHub partial coverage. Source main 926df151; protected host state not independently observed this run.",
+        "ledger": [
+          {
+            "stage": "Implementation landing",
+            "status": "verified",
+            "evidence": "PR #137 merged at 81c39888."
+          },
+          {
+            "stage": "Focused and regression validation",
+            "status": "reported",
+            "evidence": "Completion summary reports 14 focused and 326 regression tests."
+          },
+          {
+            "stage": "Recovery apply",
+            "status": "blocked",
+            "evidence": "No independently verifiable owner authorization; apply disabled."
+          },
+          {
+            "stage": "Independent acceptance and teardown",
+            "status": "unknown",
+            "evidence": "No accepted review or authenticated cleanup proof inspected."
+          }
+        ],
+        "notes": [],
+        "unknowns": [
+          "Host claim and process state",
+          "Canonical dispatcher counts"
+        ],
+        "actions": [
+          "Review owner: independently assess the landed implementation and authorization gap."
+        ]
+      },
+      "related": [],
+      "scorecard": {
+        "stage": "Implementation landed; recovery apply blocked",
+        "as_of": "2026-11-10T23:40:27Z",
+        "scope": "Named findings-closeout recovery workstream only",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Implementation merged",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "81c39888"
+          },
+          {
+            "label": "Read-only validation",
+            "status": "done",
+            "verification": "reported",
+            "evidence": "Published completion summary"
+          },
+          {
+            "label": "Independent review",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No acceptance receipt inspected"
+          },
+          {
+            "label": "Authenticated apply",
+            "status": "blocked",
+            "verification": "verified",
+            "evidence": "Apply intentionally disabled"
+          },
+          {
+            "label": "Canonical teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No host proof"
+          }
+        ],
+        "next_gate": "Independent reviewer assesses the authorization limitation before any separate recovery approval."
+      }
+    },
+    {
+      "id": "isolated-worker-proof-ready-926df151",
+      "headline": "Isolated worker security proof enters automatic queue, without enabling a service",
+      "summary": "CUSTODIAN added and marked ready an isolated systemd worker proof and paired review. The planned test checks credential separation, loopback/Chrome DevTools denial and toolchain access. This is only a task handoff; no sandbox deployment or passing host proof is established.",
+      "body": "Main 895df534 authored a test-only isolated worker proof packet; 926df151 changed its implementation and review packets to ready/auto. The plan requires a distinct unprivileged account, isolated model and read-only Git LFS access, loopback denial, and in-unit runtime evidence. Missing isolated credentials are explicitly blocking. No service activation, runtime proof or independent review is demonstrated by these commits.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "platform-performance",
+      "workstream": "agent-isolated-worker-proof-v1",
+      "occurred_at": "2026-11-10T23:34:32Z",
+      "bullets": [
+        "Implementation and paired review are ready/auto in Git.",
+        "Proof is test-only; recurring service prohibited.",
+        "Distinct credentials and real in-unit evidence are required.",
+        "No host activation or acceptance verified."
+      ],
+      "links": [
+        {
+          "title": "Packet authoring",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/895df534ed010f46aec29fb67458995246175e23"
+        },
+        {
+          "title": "Ready/auto transition",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/926df15195f7c0e98adfca597adcae8c00637219"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "A new security-focused task is now eligible for automatic handoff: prove that a disposable CUSTODIAN worker can operate without inheriting the main user's credentials or access to privileged local services. The repository contains a rigorous test plan, not a running worker.",
+        "sections": [
+          {
+            "heading": "Prove the boundary from inside",
+            "text": "The packet calls for a dedicated unprivileged systemd identity and actual process-level checks. It specifically tests denial of local Chrome DevTools and other loopback listeners while retaining safe access to required development tools."
+          },
+          {
+            "heading": "No shortcut through owner credentials",
+            "text": "A distinct read-only Git LFS identity and isolated model authentication are required where applicable. If those cannot be obtained, the proof must fail or remain incomplete rather than borrowing the owner's access."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Configuration alone cannot prove isolation",
+            "explanation": "The packet demands observed behavior from inside the service, including denied access to privileged sockets and credentials."
+          }
+        ],
+        "takeaway": "The proof has entered the queue, but no sandbox installation, successful test or independent acceptance is established.",
+        "next_watch": "Look for a bounded host proof with actual in-unit results and an independent review."
+      },
+      "details": {
+        "overview": "Main 926df151 marks both named packets ready/auto. No canonical dispatcher audit or fresh host observation available.",
+        "ledger": [
+          {
+            "stage": "Packet authored",
+            "status": "verified",
+            "evidence": "895df534"
+          },
+          {
+            "stage": "Automatic eligibility",
+            "status": "verified",
+            "evidence": "926df151"
+          },
+          {
+            "stage": "Host proof and review",
+            "status": "unknown",
+            "evidence": "No execution or accepted review receipt inspected."
+          }
+        ],
+        "notes": [],
+        "unknowns": [
+          "Isolated credentials and host provisioning",
+          "Actual runtime isolation and cleanup"
+        ],
+        "actions": [
+          "Workflow owner: collect genuine in-unit isolation evidence before claiming proof."
+        ]
+      },
+      "related": [],
+      "scorecard": {
+        "stage": "Ready for handoff, execution unverified",
+        "as_of": "2026-11-10T23:40:27Z",
+        "scope": "Named isolated worker implementation and paired review packets",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Proof packet authored",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "895df534"
+          },
+          {
+            "label": "Ready/auto handoff",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "926df151"
+          },
+          {
+            "label": "Test-only host proof",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No runtime evidence"
+          },
+          {
+            "label": "Independent review",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No accepted receipt"
+          }
+        ],
+        "next_gate": "Obtain separate credentials and perform the bounded host proof, without enabling recurring service."
+      }
+    },
     {
       "id": "findings-bridge-recovery-ready-c6753030",
       "headline": "Findings-closeout recovery enters automatic queue as missing-checkout repair is drafted",
@@ -1460,265 +1697,6 @@
           }
         ],
         "next_gate": "Legitimate dispatcher owner to implement and validate the bounded provenance bridge."
-      }
-    },
-    {
-      "id": "owner-exception-audit-repair-merged-8e23d8b5",
-      "headline": "Dispatcher audit repair reaches main; independent review remains the gate",
-      "summary": "PR #126 merged a missing-import fix for dispatcher JSON audit and a narrowly pinned historical archive source-scope exception. The implementation reports 412 passing tests and a successful audit, but its independent correction review remains ready, not accepted; the original chassis review is still unresolved.",
-      "body": "Main merge 8e23d8b5418d7298dccc438c430652fe66d96333 lands the owner-exception closeout recovery implementation. The code adds the missing re import and narrowly admits exact historical paired-review metadata based on commit, parent, tree, path, file mode, blob and review identity. The implementation handoff reports 412 passing focused tests, changed-file validation and a direct JSON audit returning awaiting_owner_exception_lane_review and unresolved. These are implementation-reported tests, not independent acceptance. The paired correction review packet remains ready/auto, and the original preserved review must not be recovered or launched without the required acceptance and separate authorization. Host execution, claims, cleanup and live liveness remain unknown.",
-      "severity": "milestone",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-owner-review-exception-closeout-recovery-v1",
-      "occurred_at": "2026-11-10T04:06:52Z",
-      "bullets": [
-        "Scoped dispatcher audit and historical source-scope fixes merged.",
-        "Implementation reports 412 passing focused tests and successful audit.",
-        "Independent correction PASS and original preserved review recovery remain outstanding."
-      ],
-      "links": [
-        {
-          "title": "PR #126 merge",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/8e23d8b5418d7298dccc438c430652fe66d96333"
-        },
-        {
-          "title": "Implementation commit",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/74b22e1775f09ae50e3da5cd9f19d5108d97dc1a"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN has merged a focused repair for the dispatcher audit and the historical review archive that was preventing owner-exception recovery. The change removes a concrete crash and opens a tightly bounded validation path, but the independent reviewer still has to establish whether the correction is safe.",
-        "sections": [
-          {
-            "heading": "An audit that can report the unresolved state",
-            "text": "The dispatcher now imports the missing regular-expression module. The implementation reports that JSON audit completes and still labels the chassis review unresolved, with the owner exception awaiting its own review rather than silently activating it."
-          },
-          {
-            "heading": "A historical exception, not a blanket waiver",
-            "text": "The archive correction checks exact Git history, paths, file modes, content blobs and review identity. Its purpose is to admit one historical paired-review metadata transition without relaxing the normal source-scope rules. The independent correction review remains ready, not accepted."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The recovery path is narrower than the original blockage",
-            "explanation": "The code targets a reproducible crash and one specific archive, rather than bypassing ordinary review safeguards. That reduces the intended scope but does not substitute for independent falsification."
-          },
-          {
-            "title": "Landing changes the next gate",
-            "explanation": "The repair is now on main. The next decision depends on a genuine independent review receipt, not another implementation commit or a ready/auto packet label."
-          }
-        ],
-        "takeaway": "The repair landed and implementation validation was reported successful; independent acceptance, original review recovery and host cleanup are not established.",
-        "next_watch": "An accepted independent correction review, followed only then by the separately authorized read-only plan for the preserved original review."
-      },
-      "details": {
-        "overview": "Main merge 8e23d8b5 includes implementation 74b22e17. The source handoff reports 412 focused tests passing and direct audit returning awaiting_owner_exception_lane_review / unresolved. No independent correction PASS or live host audit was inspected.",
-        "ledger": [
-          {
-            "stage": "Implementation and landing",
-            "status": "verified merged",
-            "evidence": "PR #126 merge 8e23d8b5 and implementation commit 74b22e17."
-          },
-          {
-            "stage": "Focused tests and dispatcher audit",
-            "status": "implementation-reported passing",
-            "evidence": "Source handoff reports 412 tests and direct JSON audit."
-          },
-          {
-            "stage": "Independent correction review",
-            "status": "pending",
-            "evidence": "Paired review packet remains ready/auto; no PASS inspected."
-          },
-          {
-            "stage": "Original review recovery",
-            "status": "blocked",
-            "evidence": "Requires accepted correction review and separate authorization."
-          },
-          {
-            "stage": "Host cleanup",
-            "status": "unknown",
-            "evidence": "No verified canonical teardown evidence."
-          }
-        ],
-        "notes": [
-          "The original chassis review remains unresolved."
-        ],
-        "unknowns": [
-          "No independent accepted correction review receipt.",
-          "No verified host execution or teardown."
-        ],
-        "actions": [
-          "Independent reviewer: inspect merged correction and issue a genuine review disposition.",
-          "Orchestrator: consider only the read-only original recovery plan after accepted correction and separate authorization."
-        ]
-      },
-      "related": [],
-      "scorecard": {
-        "stage": "Merged; independent correction review pending",
-        "as_of": "2026-11-10T04:06:52Z",
-        "scope": "Named owner-exception recovery implementation and paired review only",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Recovery packet authored",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "d64f588b."
-          },
-          {
-            "label": "Repair implementation landed",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "8e23d8b5."
-          },
-          {
-            "label": "Focused validation",
-            "status": "current",
-            "verification": "reported",
-            "evidence": "412 passing tests reported by implementation."
-          },
-          {
-            "label": "Independent correction review",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No accepted PASS inspected."
-          },
-          {
-            "label": "Original review recovery",
-            "status": "blocked",
-            "verification": "unknown",
-            "evidence": "Requires accepted correction review and separate authorization."
-          }
-        ],
-        "next_gate": "Independent reviewer to falsify the landed repair and record a genuine disposition."
-      }
-    },
-    {
-      "id": "weather-v2-profile-merged-495ea3a1",
-      "headline": "Weather V2 presentation controls reach main, with visual performance review still ahead",
-      "summary": "PR #124 merged an opt-in weather presentation profile with deterministic visual timing, quality caps and climate overrides. Focused tests and a baseline atmosphere smoke are reported passing; independent review, GPU budgets and subjective visual approval remain outstanding.",
-      "body": "Main merge 495ea3a1ff55f9740692e5d762a385d7aec64440 integrates WeatherPresentationProfile and related world-environment/shader changes. The profile is opt-in and intended to preserve V1 gameplay and weather scheduling when absent. PR #124 reports passing focused contract, baseline and world_environment tests, plus atmosphere smoke after Godot import. The lighting smoke has a pre-existing missing-scene failure on both compared refs. No fresh independent review receipt, GPU timing or production visual approval was established. Main source landing is not host deployment.",
-      "severity": "milestone",
-      "verification": "verified",
-      "category": "general",
-      "workstream": "weather-v2-presentation-contract-v1",
-      "occurred_at": "2026-11-10T03:18:40Z",
-      "bullets": [
-        "Opt-in presentation profile merged on main.",
-        "Focused validation reported passing; lighting smoke has baseline missing-scene failure.",
-        "Independent post-land review and GPU/visual approval remain outstanding."
-      ],
-      "links": [
-        {
-          "title": "Weather V2 merge",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/495ea3a1ff55f9740692e5d762a385d7aec64440"
-        },
-        {
-          "title": "PR #124",
-          "url": "https://github.com/braydio/CUSTODIAN/pull/124"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN has merged a new weather presentation layer that can vary the look of rain, snow and atmospheric effects without changing the underlying weather rules. It is opt-in, giving the project a controlled route toward richer environments while keeping the existing behavior as its baseline.",
-        "sections": [
-          {
-            "heading": "Visual control without rewriting weather rules",
-            "text": "The new profile adds quality limits, climate and zone overrides, seeded visual sampling and a separate visual clock. With no profile, the existing V1 presentation path remains the intended default."
-          },
-          {
-            "heading": "The remaining proof is visual and independent",
-            "text": "Focused tests and atmosphere smoke are reported passing after a fresh Godot import. A lighting smoke still fails on both the baseline and feature branch because expected scenes are missing. Independent review, GPU cost and subjective visual quality remain unverified."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The change separates appearance from gameplay",
-            "explanation": "Presentation-only controls allow art iteration without making visual tuning an implicit change to weather scheduling or gameplay authority."
-          },
-          {
-            "title": "Passing CPU checks is not a visual performance budget",
-            "explanation": "The feature has bounded implementation evidence, but its final usefulness depends on GPU measurements and actual visual review."
-          }
-        ],
-        "takeaway": "Weather V2's first presentation contract is in main, not yet independently accepted or performance-approved.",
-        "next_watch": "Post-land independent review, GPU timing and representative weather scene approval."
-      },
-      "details": {
-        "overview": "PR #124 merged at main SHA 495ea3a1. Validation claims are from the PR and implementation summary, not an independent acceptance receipt.",
-        "ledger": [
-          {
-            "stage": "Source landing",
-            "status": "verified merged",
-            "evidence": "PR #124 and main merge 495ea3a1."
-          },
-          {
-            "stage": "Focused validation",
-            "status": "reported passing",
-            "evidence": "PR #124 reports contract, baseline, environment and atmosphere checks passing."
-          },
-          {
-            "stage": "Lighting smoke",
-            "status": "baseline failure",
-            "evidence": "PR #124 reports missing scenes on both baseline and feature refs."
-          },
-          {
-            "stage": "Independent review",
-            "status": "unknown",
-            "evidence": "Post-land review required; no PASS inspected."
-          },
-          {
-            "stage": "GPU and visual acceptance",
-            "status": "unknown",
-            "evidence": "Unmeasured GPU cost and pending visual approval."
-          }
-        ],
-        "notes": [],
-        "unknowns": [
-          "No accepted post-land independent review.",
-          "No production GPU budget or visual approval.",
-          "No host deployment proof."
-        ],
-        "actions": [
-          "Independent reviewer: inspect merged Weather V2 contract and validation.",
-          "Environment owner: measure GPU cost and obtain visual approval."
-        ]
-      },
-      "related": [],
-      "scorecard": {
-        "stage": "Merged; post-land review and visual acceptance pending",
-        "as_of": "2026-11-10T03:18:40Z",
-        "scope": "Weather V2 presentation contract PR #124",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Implement opt-in presentation profile",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Main merge 495ea3a1."
-          },
-          {
-            "label": "Focused validation",
-            "status": "current",
-            "verification": "reported",
-            "evidence": "PR #124 reports passing focused checks."
-          },
-          {
-            "label": "Independent post-land review",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No accepted receipt inspected."
-          },
-          {
-            "label": "GPU and visual approval",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "GPU timing unmeasured and subjective approval pending."
-          }
-        ],
-        "next_gate": "Independent reviewer to validate merged Weather V2 contract."
       }
     }
   ],
