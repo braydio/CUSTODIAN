@@ -1,9 +1,284 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-10T01:40:47Z",
-  "source_main_sha": "aaa2c3e9f0915ca90d168d9b65aafe2483439d07",
+  "generated_at": "2026-11-10T03:18:40Z",
+  "source_main_sha": "495ea3a1ff55f9740692e5d762a385d7aec64440",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "weather-v2-profile-merged-495ea3a1",
+      "headline": "Weather V2 presentation controls reach main, with visual performance review still ahead",
+      "summary": "PR #124 merged an opt-in weather presentation profile with deterministic visual timing, quality caps and climate overrides. Focused tests and a baseline atmosphere smoke are reported passing; independent review, GPU budgets and subjective visual approval remain outstanding.",
+      "body": "Main merge 495ea3a1ff55f9740692e5d762a385d7aec64440 integrates WeatherPresentationProfile and related world-environment/shader changes. The profile is opt-in and intended to preserve V1 gameplay and weather scheduling when absent. PR #124 reports passing focused contract, baseline and world_environment tests, plus atmosphere smoke after Godot import. The lighting smoke has a pre-existing missing-scene failure on both compared refs. No fresh independent review receipt, GPU timing or production visual approval was established. Main source landing is not host deployment.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "weather-v2-presentation-contract-v1",
+      "occurred_at": "2026-11-10T03:18:40Z",
+      "bullets": [
+        "Opt-in presentation profile merged on main.",
+        "Focused validation reported passing; lighting smoke has baseline missing-scene failure.",
+        "Independent post-land review and GPU/visual approval remain outstanding."
+      ],
+      "links": [
+        {
+          "title": "Weather V2 merge",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/495ea3a1ff55f9740692e5d762a385d7aec64440"
+        },
+        {
+          "title": "PR #124",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/124"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN has merged a new weather presentation layer that can vary the look of rain, snow and atmospheric effects without changing the underlying weather rules. It is opt-in, giving the project a controlled route toward richer environments while keeping the existing behavior as its baseline.",
+        "sections": [
+          {
+            "heading": "Visual control without rewriting weather rules",
+            "text": "The new profile adds quality limits, climate and zone overrides, seeded visual sampling and a separate visual clock. With no profile, the existing V1 presentation path remains the intended default."
+          },
+          {
+            "heading": "The remaining proof is visual and independent",
+            "text": "Focused tests and atmosphere smoke are reported passing after a fresh Godot import. A lighting smoke still fails on both the baseline and feature branch because expected scenes are missing. Independent review, GPU cost and subjective visual quality remain unverified."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The change separates appearance from gameplay",
+            "explanation": "Presentation-only controls allow art iteration without making visual tuning an implicit change to weather scheduling or gameplay authority."
+          },
+          {
+            "title": "Passing CPU checks is not a visual performance budget",
+            "explanation": "The feature has bounded implementation evidence, but its final usefulness depends on GPU measurements and actual visual review."
+          }
+        ],
+        "takeaway": "Weather V2's first presentation contract is in main, not yet independently accepted or performance-approved.",
+        "next_watch": "Post-land independent review, GPU timing and representative weather scene approval."
+      },
+      "details": {
+        "overview": "PR #124 merged at main SHA 495ea3a1. Validation claims are from the PR and implementation summary, not an independent acceptance receipt.",
+        "ledger": [
+          {
+            "stage": "Source landing",
+            "status": "verified merged",
+            "evidence": "PR #124 and main merge 495ea3a1."
+          },
+          {
+            "stage": "Focused validation",
+            "status": "reported passing",
+            "evidence": "PR #124 reports contract, baseline, environment and atmosphere checks passing."
+          },
+          {
+            "stage": "Lighting smoke",
+            "status": "baseline failure",
+            "evidence": "PR #124 reports missing scenes on both baseline and feature refs."
+          },
+          {
+            "stage": "Independent review",
+            "status": "unknown",
+            "evidence": "Post-land review required; no PASS inspected."
+          },
+          {
+            "stage": "GPU and visual acceptance",
+            "status": "unknown",
+            "evidence": "Unmeasured GPU cost and pending visual approval."
+          }
+        ],
+        "notes": [],
+        "unknowns": [
+          "No accepted post-land independent review.",
+          "No production GPU budget or visual approval.",
+          "No host deployment proof."
+        ],
+        "actions": [
+          "Independent reviewer: inspect merged Weather V2 contract and validation.",
+          "Environment owner: measure GPU cost and obtain visual approval."
+        ]
+      },
+      "related": [],
+      "scorecard": {
+        "stage": "Merged; post-land review and visual acceptance pending",
+        "as_of": "2026-11-10T03:18:40Z",
+        "scope": "Weather V2 presentation contract PR #124",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Implement opt-in presentation profile",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Main merge 495ea3a1."
+          },
+          {
+            "label": "Focused validation",
+            "status": "current",
+            "verification": "reported",
+            "evidence": "PR #124 reports passing focused checks."
+          },
+          {
+            "label": "Independent post-land review",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No accepted receipt inspected."
+          },
+          {
+            "label": "GPU and visual approval",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "GPU timing unmeasured and subjective approval pending."
+          }
+        ],
+        "next_gate": "Independent reviewer to validate merged Weather V2 contract."
+      }
+    },
+    {
+      "id": "owner-exception-recovery-ready-def6f0c4",
+      "headline": "Owner-exception recovery packets become dispatch-ready after audit and review blockers surface",
+      "summary": "CUSTODIAN identified a missing regex import that breaks dispatcher audit and a historical archive-scope rejection blocking owner-exception review. New scoped implementation and independent review packets were authored and marked ready/auto. That is dispatch eligibility, not evidence of execution or accepted repair.",
+      "body": "Main commits d64f588bcf74ccc10ba7e976729e6215acfbdc71 and def6f0c40f06658c6b4b2d6c7373ca121d0002c6 add and promote paired recovery packets. The implementation packet records dispatch.py calling re.fullmatch without importing re, producing NameError during audit --json, and a preserved independent review run stopped by an archive-only source-scope validation error. The new packet limits repair to a focused import/regression and an exact historical archive exception. Both packets now say ready/auto, but no fresh canonical audit, running worker, accepted independent review or host cleanup was observed.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-owner-review-exception-closeout-recovery-v1",
+      "occurred_at": "2026-11-10T03:14:37Z",
+      "bullets": [
+        "Recovery implementation and review packets now ready/auto.",
+        "Dispatcher audit NameError and exact historical archive rejection are documented blockers.",
+        "No worker execution, repair landing or independent PASS established."
+      ],
+      "links": [
+        {
+          "title": "Recovery packet authoring",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/d64f588bcf74ccc10ba7e976729e6215acfbdc71"
+        },
+        {
+          "title": "Ready/auto promotion",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/def6f0c40f06658c6b4b2d6c7373ca121d0002c6"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "A new recovery path has been queued for the owner-exception review system. Its task packets identify two concrete failures: the dispatcher audit crashes on a missing import, and the independent review cannot start because a historical archive trips source-scope validation. The packets are now eligible for automatic dispatch, but the repairs have not been proven complete.",
+        "sections": [
+          {
+            "heading": "Two narrow faults, one controlled repair",
+            "text": "The implementation packet calls for a missing import and a regression test, plus a tightly pinned historical archive exception. It explicitly forbids weakening ordinary review source checks or treating the unresolved original verdict as accepted."
+          },
+          {
+            "heading": "Ready does not mean running",
+            "text": "Both implementation and paired-review packets were promoted from draft/manual to ready/auto. No current host audit or accepted review receipt confirms they have been claimed, executed or completed."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The blocker is now concrete",
+            "explanation": "A reproducible audit exception and a specific source-scope rejection give the next worker a bounded repair target rather than an open-ended recovery campaign."
+          },
+          {
+            "title": "Eligibility is not execution",
+            "explanation": "The ready/auto state permits dispatch under the normal system, but GitHub cannot prove that a host worker is alive or that cleanup occurred."
+          }
+        ],
+        "takeaway": "The recovery work is defined and dispatch-ready; implementation, independent acceptance and operational recovery remain unverified.",
+        "next_watch": "A landed focused repair, its genuine independent PASS, and a fresh canonical dispatcher audit."
+      },
+      "details": {
+        "overview": "Commit d64f588b authored paired packets; def6f0c4 promoted both to ready/auto. The packet cites preserved review run 20261110T014238Z-25fe84ab666f as stopped before reviewer launch. This is packet evidence, not a current host audit.",
+        "ledger": [
+          {
+            "stage": "Recovery packet authoring",
+            "status": "verified landed",
+            "evidence": "d64f588b adds implementation and paired review packets."
+          },
+          {
+            "stage": "Dispatch readiness",
+            "status": "verified source state",
+            "evidence": "def6f0c4 changes both to ready/auto."
+          },
+          {
+            "stage": "Implementation",
+            "status": "not verified",
+            "evidence": "No repair landing inspected."
+          },
+          {
+            "stage": "Independent review",
+            "status": "not verified",
+            "evidence": "No accepted PASS established."
+          },
+          {
+            "stage": "Host state / teardown",
+            "status": "unknown",
+            "evidence": "No fresh canonical audit or host proof."
+          }
+        ],
+        "notes": [
+          "The original owner exception remains distinct from reviewer PASS."
+        ],
+        "unknowns": [
+          "Whether a worker has claimed either packet.",
+          "Whether dispatcher audit is repaired on host.",
+          "Whether preserved reviewer run can resume safely."
+        ],
+        "actions": [
+          "Dispatcher executor: implement only the scoped audit and archive-validation fixes when legitimately claimed.",
+          "Independent reviewer: falsify exact repair before eligibility changes."
+        ]
+      },
+      "related": [
+        {
+          "title": "Owner-review exception mechanism lands, while the chassis verdict remains unresolved",
+          "context": "The newly ready recovery packets address blockers in reviewing the earlier exception mechanism.",
+          "story_id": "owner-review-exception-lane-aaa2c3e9"
+        }
+      ],
+      "scorecard": {
+        "stage": "Packets ready; implementation and independent review pending",
+        "as_of": "2026-11-10T03:14:37Z",
+        "scope": "Two named recovery packets only, not the full dispatcher queue",
+        "metrics": [
+          {
+            "id": "other-recovery-packets",
+            "label": "READY RECOVERY PACKETS",
+            "value": 2,
+            "verification": "verified",
+            "basis": "Two named packet files changed to ready/auto by def6f0c4; no claim of exhaustive queue coverage",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/def6f0c40f06658c6b4b2d6c7373ca121d0002c6"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Define exact recovery packets",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "d64f588b."
+          },
+          {
+            "label": "Promote packets to ready/auto",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "def6f0c4."
+          },
+          {
+            "label": "Implement bounded repair",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No landed repair inspected."
+          },
+          {
+            "label": "Independent review",
+            "status": "blocked",
+            "verification": "unknown",
+            "evidence": "Requires implementation and authentic PASS."
+          },
+          {
+            "label": "Fresh dispatcher audit",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Host audit unavailable."
+          }
+        ],
+        "next_gate": "Legitimate dispatcher executor claim and bounded implementation, followed by independent review."
+      }
+    },
     {
       "id": "owner-review-exception-lane-aaa2c3e9",
       "headline": "Owner-review exception mechanism lands, while the chassis verdict remains unresolved",
@@ -1374,243 +1649,6 @@
         ],
         "actions": [
           "Independent reviewer: assess correction before recovery planning."
-        ]
-      },
-      "related": [
-        {
-          "title": "Operator chassis review gets a narrow source-scope repair, but acceptance remains gated",
-          "context": "The preceding correction is the exact archive now awaiting source-history validation.",
-          "story_id": "chassis-source-scope-attestation-7e1458d1"
-        }
-      ]
-    },
-    {
-      "id": "hub-camera-bounds-0d074c73",
-      "headline": "Hub transition now resets camera bounds after Awakening",
-      "summary": "A main-branch gameplay fix resets the reused camera's authored bounds when entering the Hub and adds a regression check for two Hub markers. This addresses a specific handoff bug, not a verified production deployment.",
-      "body": "The world transition manager now applies the destination map's camera bounds before rebinding the reused camera. The smoke test checks both authored and runtime bounds and verifies named Hub markers fall inside the region. No independent runtime acceptance or host deployment was inspected.",
-      "severity": "milestone",
-      "verification": "verified",
-      "category": "general",
-      "workstream": "",
-      "occurred_at": "2026-11-07T17:13:00Z",
-      "bullets": [
-        "Destination camera bounds now reset during the handoff.",
-        "Smoke test asserts bounds and two named Hub markers.",
-        "Runtime validation and production deployment remain unverified."
-      ],
-      "links": [
-        {
-          "title": "Hub camera fix",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/0d074c73343a4695994b01d545f5cbf96e5d54c2"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "The journey from Awakening into the Hub now has a targeted camera fix on main. Previously, the camera could carry the previous area's boundaries into the next map, potentially constraining its view in the wrong place.",
-        "sections": [
-          {
-            "heading": "The destination takes control",
-            "text": "The transition manager now replaces the camera's authored bounds with the Hub map's bounds before completing the camera rebind. This makes the map handoff explicit rather than relying on retained camera state."
-          },
-          {
-            "heading": "A regression check guards the handoff",
-            "text": "The smoke test verifies that both camera bound representations match the Hub and that two named destinations are inside them. The new assertions are visible in source; this watch did not execute the game."
-          }
-        ],
-        "insights": [
-          {
-            "title": "A reused camera needs new map authority",
-            "explanation": "Keeping the same camera object across scenes is efficient, but its old bounds must not survive a world transition. The fix targets that ownership boundary directly."
-          }
-        ],
-        "takeaway": "The handoff fix and its regression assertions are landed, with runtime behavior still awaiting independent observation.",
-        "next_watch": "Watch for passing Hub transition validation or a reproducible in-engine confirmation."
-      },
-      "scorecard": {
-        "stage": "Source fix landed; runtime confirmation unknown",
-        "as_of": "2026-11-07T17:13:00Z",
-        "scope": "Hub camera transition code and smoke-test assertions",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Destination bounds reset implemented",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Main commit 0d074c73."
-          },
-          {
-            "label": "Regression assertions added",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Smoke test source changed."
-          },
-          {
-            "label": "Runtime validation",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No executed test receipt inspected."
-          },
-          {
-            "label": "Production acceptance",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No acceptance evidence."
-          }
-        ],
-        "next_gate": "Gameplay validator: run the Hub transition smoke test and capture a passing result."
-      },
-      "details": {
-        "overview": "Source diff inspected at 0d074c73; no host execution evidence.",
-        "ledger": [
-          {
-            "stage": "Implementation",
-            "status": "verified",
-            "evidence": "Main commit 0d074c73"
-          },
-          {
-            "stage": "Runtime validation",
-            "status": "unknown",
-            "evidence": "No test execution inspected"
-          }
-        ],
-        "notes": [],
-        "unknowns": [
-          "Runtime and gameplay acceptance"
-        ],
-        "actions": [
-          "Run the Hub handoff smoke test in the appropriate validation environment."
-        ]
-      },
-      "related": []
-    },
-    {
-      "id": "chassis-source-scope-attestation-7e1458d1",
-      "headline": "Operator chassis review gets a narrow source-scope repair, but acceptance remains gated",
-      "summary": "A correction for the Operator chassis-seal review has landed on main. It permits exactly one previously omitted test file only after the correction itself receives an authentic independent PASS. Focused and broader tests are reported passing, but the protected original review remains blocked and no recovery or cleanup is verified.",
-      "body": "The new source-scope attestation pins original source and archived packet identities, limiting the correction to one omitted lifecycle test file. The validator is designed to remain fail-closed until an independent accepted review of the correction is recorded. The implementation notes report four focused tests and a 300-test paired-review runner suite among broader passing checks. These are reported validations, not a new acceptance receipt. The protected original chassis review is still blocked; no host recovery, verdict or teardown is established.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-operator-chassis-seal-source-scope-attestation-v1",
-      "occurred_at": "2026-11-07T16:12:04Z",
-      "bullets": [
-        "Narrow correction landed; original review identities remain preserved.",
-        "One omitted lifecycle test path is permitted only after authentic independent correction PASS.",
-        "Author reports four focused tests and a 300-test runner suite passing.",
-        "Next: fresh-context independent review of the correction, then read-only recovery planning for the original review."
-      ],
-      "links": [
-        {
-          "title": "Main correction commit",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/7e1458d13a93619db4631d54b1ef217412b6d34e"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "The blocked Operator chassis review now has a tightly scoped repair on main. Instead of bypassing the review system, the change documents one lifecycle test file that the original source declaration missed, then keeps the exception inactive until a separate reviewer accepts the correction.",
-        "sections": [
-          {
-            "heading": "A repair that does not waive review",
-            "text": "The attestation binds the original source archive, packet and code identities. Its validator rejects extra paths, changed source files and unapproved review states. The original chassis review stays blocked until the correction earns its own independent PASS."
-          },
-          {
-            "heading": "Tests support the guard, not the final verdict",
-            "text": "Implementation notes report four focused tests and broader changed-file validation, including a 300-test review-runner suite. The watch did not rerun those tests, and no accepted correction receipt or original review verdict was inspected."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The missing declaration was the bottleneck",
-            "explanation": "The review was stopped by an omitted lifecycle test in the declared source scope, not by permission to alter the original implementation. The correction targets that mismatch while retaining source identity checks."
-          },
-          {
-            "title": "Approval is deliberately a separate switch",
-            "explanation": "Landing the correction does not activate the exception. Requiring a fresh independent PASS prevents a successful implementation commit from silently becoming review authority."
-          }
-        ],
-        "takeaway": "The correction is published and narrowly bounded, but the original chassis review remains blocked until independently accepted correction evidence exists.",
-        "next_watch": "Watch for an authentic independent PASS on the correction, followed by a fresh read-only recovery plan for the preserved chassis review."
-      },
-      "scorecard": {
-        "stage": "Correction landed; independent acceptance pending",
-        "as_of": "2026-11-07T16:12:04Z",
-        "scope": "One named chassis source-scope correction and its protected original review; no full dispatcher audit",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Pin original source and omitted test",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Main commit contains bounded attestation and validator."
-          },
-          {
-            "label": "Add fail-closed adversarial tests",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Test changes landed; passing execution is author-reported."
-          },
-          {
-            "label": "Independent review of correction",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No accepted independent PASS inspected."
-          },
-          {
-            "label": "Prepare original review recovery plan",
-            "status": "blocked",
-            "verification": "reported",
-            "evidence": "Requires correction's accepted PASS and fresh read-only host validation."
-          },
-          {
-            "label": "Original review acceptance and canonical teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No original verdict or trustworthy host cleanup receipt."
-          }
-        ],
-        "next_gate": "Independent reviewer: inspect the correction in fresh context and issue authentic accepted PASS before any original-review recovery plan."
-      },
-      "details": {
-        "overview": "Main commit adds a post-hoc source-scope attestation and gated host validator for exactly one omitted lifecycle regression test. Its code is published; activation is conditioned on accepted independent review evidence.",
-        "ledger": [
-          {
-            "stage": "Implementation landing",
-            "status": "verified",
-            "evidence": "Main commit 7e1458d13a93619db4631d54b1ef217412b6d34e."
-          },
-          {
-            "stage": "Focused and broader tests",
-            "status": "reported passing",
-            "evidence": "Author notes four focused tests and paired-review runner suite of 300 tests; not independently rerun."
-          },
-          {
-            "stage": "Correction independent acceptance",
-            "status": "unknown",
-            "evidence": "No canonical accepted PASS inspected."
-          },
-          {
-            "stage": "Original review recovery",
-            "status": "blocked",
-            "evidence": "Requires accepted correction before fresh read-only recovery plan."
-          },
-          {
-            "stage": "Host teardown",
-            "status": "unknown",
-            "evidence": "No host evidence inspected."
-          }
-        ],
-        "notes": [
-          "Original implementation and protected review identities were documented as unchanged."
-        ],
-        "unknowns": [
-          "Current full dispatcher counts and host resource state.",
-          "Correction independent acceptance receipt.",
-          "Original review recovery and teardown."
-        ],
-        "actions": [
-          "Independent reviewer: evaluate correction and produce authentic PASS if warranted.",
-          "Coordinator: only after acceptance, prepare read-only original review recovery plan."
         ]
       },
       "related": []
