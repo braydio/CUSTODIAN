@@ -1,9 +1,145 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-09T17:34:00Z",
-  "source_main_sha": "de9fb72d8f4f2c239c551d87797351c9093e21b8",
+  "generated_at": "2026-11-09T23:52:40Z",
+  "source_main_sha": "a283d2a71279e657e1e1ddb485f9e99e48954e63",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "turn-scoped-dispatcher-merged-a283d2a7",
+      "headline": "Turn-scoped dispatcher lands on main, but operational cutover still awaits proof",
+      "summary": "CUSTODIAN merged PR #123, adding a two-mode dispatcher candidate with durable session handoffs and retirement controls. The code is now on main, but the PR's own acceptance conditions still call for full testing, independent review and explicit safe cutover. No running dispatcher or canonical teardown is established.",
+      "body": "Main merged PR #123 at a283d2a71279e657e1e1ddb485f9e99e48954e63. The change adds an opt-in turn-scoped dispatcher with normal and historical modes, branch-backed continuity, LFS hydration, SHA-verified checkpoint/push, handoff and non-forced checkout retirement. Landing means the implementation is in main, not that it is activated or independently accepted. The PR description requires review, full tests and explicit safe cutover; no submitted PR reviews were returned in the inspected review listing. The private WIRE pilot pointer still references a November 8 observation and cannot support fresh host counts. Canonical dispatcher audit, running process, resource recovery and verified teardown remain unknown.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "turn-scoped-dispatcher-v2",
+      "occurred_at": "2026-11-09T23:52:40Z",
+      "bullets": [
+        "Implementation merged into main; deployment not established.",
+        "Complete focused and full validation and obtain independent acceptance.",
+        "Require explicit safe cutover before operational use.",
+        "Retain dated partial snapshot; private observation remains stale."
+      ],
+      "links": [
+        {
+          "title": "Main merge commit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/a283d2a71279e657e1e1ddb485f9e99e48954e63"
+        },
+        {
+          "title": "Dispatcher PR #123",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/123"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN has merged its proposed turn-scoped dispatcher into main. The new code aims to let task execution survive session boundaries without losing track of handoffs, but merging the implementation does not mean the system has switched over to it.",
+        "sections": [
+          {
+            "heading": "A more durable handoff mechanism",
+            "text": "The merged proposal describes two execution modes, Git-backed continuity, verified checkpoints and careful checkout retirement. Together, these are designed to make interrupted task work easier to resume without assuming a session is still alive."
+          },
+          {
+            "heading": "The acceptance boundary remains",
+            "text": "The proposal explicitly requires full testing, review and a separately authorized cutover. No independent acceptance receipt or host activation was established in this check. The private operational observation remains stale, so current queue and resource counts are unknown."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Code landing is a real milestone, not a cutover",
+            "explanation": "The dispatcher is now part of main, removing a source-integration dependency. Operational authority still depends on validation, independent review and an explicit decision to enable it."
+          },
+          {
+            "title": "Fresh host evidence is still missing",
+            "explanation": "The private WIRE pointer still refers to an older observation. Repository progress cannot establish whether tasks are running or old worktrees have been cleaned up."
+          }
+        ],
+        "takeaway": "The dispatcher implementation has landed; acceptance, activation and verified cleanup have not been demonstrated.",
+        "next_watch": "Look for full validation results, an independent acceptance receipt and an explicitly authorized cutover, alongside fresh validated private observations."
+      },
+      "details": {
+        "overview": "Merged main commit a283d2a7 integrates draft PR #123. Review listing returned no submissions. No canonical live audit or host teardown proof was accessible.",
+        "ledger": [
+          {
+            "stage": "Implementation landing",
+            "status": "verified merged",
+            "evidence": "Main merge commit a283d2a7 for PR #123."
+          },
+          {
+            "stage": "Independent review",
+            "status": "unverified",
+            "evidence": "No submitted reviews returned; no independent PASS established."
+          },
+          {
+            "stage": "Operational cutover",
+            "status": "unknown/not established",
+            "evidence": "PR explicitly requires full tests, review and safe cutover."
+          },
+          {
+            "stage": "Canonical teardown",
+            "status": "unknown",
+            "evidence": "No trustworthy host evidence."
+          }
+        ],
+        "notes": [
+          "Recent CI-workflow repair commits preceded the merge; their success was not independently established."
+        ],
+        "unknowns": [
+          "Full test results and acceptance receipt",
+          "Current host dispatcher and resource status",
+          "Fresh validated private pilot observation"
+        ],
+        "actions": [
+          "Reviewer: complete independent assessment after full validation.",
+          "Operator: authorize safe cutover only after acceptance evidence."
+        ]
+      },
+      "related": [
+        {
+          "title": "A two-mode dispatcher reaches draft review",
+          "context": "Earlier WIRE report covered the same proposal before its merge.",
+          "story_id": "turn-scoped-dispatcher-draft-pr123"
+        }
+      ],
+      "scorecard": {
+        "stage": "Implementation merged; independent acceptance and cutover unverified",
+        "as_of": "2026-11-09T23:52:40Z",
+        "scope": "Turn-scoped dispatcher PR #123 only",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Implementation merged into main",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Merge commit a283d2a7."
+          },
+          {
+            "label": "Full validation",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No complete passing validation receipt established."
+          },
+          {
+            "label": "Independent review",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No submitted PR reviews returned."
+          },
+          {
+            "label": "Authorized cutover",
+            "status": "blocked",
+            "verification": "unknown",
+            "evidence": "Requires review, full tests and explicit decision."
+          },
+          {
+            "label": "Host teardown verified",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No host evidence."
+          }
+        ],
+        "next_gate": "Independent reviewer to assess complete validation and issue an explicit acceptance decision before any operator cutover."
+      }
+    },
     {
       "id": "turn-scoped-dispatcher-draft-pr123",
       "headline": "A two-mode dispatcher reaches draft review, aiming to preserve task handoffs across sessions",
@@ -1480,156 +1616,6 @@
         "actions": [
           "Operator workstream owner: finish lifecycle validation and remaining batch/cache slices.",
           "Independent reviewer: evaluate completed work after prerequisites land."
-        ]
-      },
-      "related": []
-    },
-    {
-      "id": "awakening-score-runtime-738be14d",
-      "headline": "Awakening gains its first production score, with transition-safe music handoff",
-      "summary": "The approved 'A Command Still Speaking' cue is now integrated into Awakening's production scene. New ownership logic keeps music through the ten-part sequence and releases it on successful Hub transition, while preserving playback after a failed handoff. The author reports 35/35 changed-file validations and an independent code recheck, but audible listening and canonical teardown remain unverified.",
-      "body": "Main now contains the Awakening score, music director, two-deck ownership handling, a production handoff regression and a preserved validation archive. The author reports 35/35 changed-file tests passing, a graphical Godot boot, and a code reviewer rechecking the corrected real-transition smoke with no remaining findings. This is not a formal paired-review acceptance receipt, nor proof of audible loop quality. The cue's in-game seam and mixing still require human listening; host cleanup remains unknown.",
-      "severity": "milestone",
-      "verification": "verified",
-      "category": "general",
-      "workstream": "awakening-command-still-speaking-runtime",
-      "occurred_at": "2026-11-07T10:55:24Z",
-      "bullets": [
-        "Production scene now references the Awakening cue and dedicated music director.",
-        "Successful Hub handoff releases the cue; failed handoff retains ownership.",
-        "Author-reported 35/35 validations and independent code recheck are not formal acceptance.",
-        "Next: human listening and canonical finish/teardown evidence."
-      ],
-      "links": [
-        {
-          "title": "Main integration commit",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/738be14d9582f44f6f58b444cb89e93afd55951f"
-        },
-        {
-          "title": "Implementation and validation summary",
-          "url": "https://github.com/braydio/CUSTODIAN/blob/738be14d9582f44f6f58b444cb89e93afd55951f/AWAKENING_COMMAND_STILL_SPEAKING_RUNTIME_CLAUDE_SUMMARY.md"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "Awakening now has a production music cue. 'A Command Still Speaking' is wired into the opening sequence with rules that keep the score playing across scene beats and release it cleanly when the player reaches the Hub. The change reaches beyond adding an audio file: it handles failed transitions without abruptly losing the music.",
-        "sections": [
-          {
-            "heading": "Music that follows the scene, not the loading screen",
-            "text": "A dedicated director uses the existing two-deck music manager. It keeps the score through ten Awakening sections and optional Chapel content. On a successful Hub handoff, the cue fades without bringing back the prior playlist; a failed transition keeps the cue under Awakening's ownership."
-          },
-          {
-            "heading": "Tests cover the real transition",
-            "text": "The first focused test did not exercise the production handoff path. After an independent code-review finding, the author added a regression that runs the actual transition and rollback behavior. The implementation summary reports 35 passing changed-file validations and a successful graphical startup, but no audible playback check."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The transition boundary was the real risk",
-            "explanation": "The important fix is not just starting music, but preventing a successful transition from restoring an unwanted playlist and a failed transition from silencing the scene. The new regression targets that behavior."
-          },
-          {
-            "title": "Green audio tests cannot certify the listening experience",
-            "explanation": "Technical validation supports scene integration and ownership behavior. It cannot establish whether the loop seam is audible or the mix feels right during gameplay; that remains a human audition."
-          }
-        ],
-        "takeaway": "The Awakening score is integrated on main with meaningful regression coverage, while listening approval and verified host closeout remain separate gates.",
-        "next_watch": "Look for a human in-game listening check, a formal finish receipt if applicable, and trustworthy canonical cleanup evidence."
-      },
-      "scorecard": {
-        "stage": "Production integration landed; listening and closeout outstanding",
-        "as_of": "2026-11-07T11:51:07Z",
-        "scope": "One named packetless Awakening score workstream, not the full dispatcher queue",
-        "metrics": [
-          {
-            "id": "other-reported-validation-passes",
-            "label": "REPORTED TEST PASSES",
-            "value": 35,
-            "verification": "reported",
-            "basis": "Author summary reports 35/35 changed-file validations; not independently rerun by this watch.",
-            "url": "https://github.com/braydio/CUSTODIAN/blob/738be14d9582f44f6f58b444cb89e93afd55951f/AWAKENING_COMMAND_STILL_SPEAKING_RUNTIME_CLAUDE_SUMMARY.md"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Integrate approved score and director",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Main tree contains score, director and scene binding."
-          },
-          {
-            "label": "Add real handoff regression",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Production handoff smoke is committed."
-          },
-          {
-            "label": "Run technical validation",
-            "status": "current",
-            "verification": "reported",
-            "evidence": "Author reports 35/35 passing; independent rerun not inspected."
-          },
-          {
-            "label": "Independent code recheck",
-            "status": "current",
-            "verification": "reported",
-            "evidence": "Author summary reports no remaining findings; no canonical PASS receipt inspected."
-          },
-          {
-            "label": "Human loop and mix audition",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Audio output was not listened to."
-          },
-          {
-            "label": "Canonical finish and teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No trustworthy host closeout evidence."
-          }
-        ],
-        "next_gate": "Gameplay/audio owner: audition the cue and loop seam in the running Awakening scene; record any fixes and completion evidence."
-      },
-      "details": {
-        "overview": "Source and runtime music integration are present on inspected main. Validation and review outcomes are author-reported, not canonical acceptance. Main SHA anchors repository state only.",
-        "ledger": [
-          {
-            "stage": "Runtime integration",
-            "status": "verified landed",
-            "evidence": "Main SHA 738be14d contains director, OGG and transition changes."
-          },
-          {
-            "stage": "Validation",
-            "status": "reported passing",
-            "evidence": "Author summary 35/35 changed-file tests and graphical boot."
-          },
-          {
-            "stage": "Independent review",
-            "status": "reported code recheck",
-            "evidence": "Summary describes correction of real-transition coverage and reviewer recheck; no canonical PASS receipt."
-          },
-          {
-            "stage": "Listening approval",
-            "status": "unknown",
-            "evidence": "No audible playback observation."
-          },
-          {
-            "stage": "Host teardown",
-            "status": "unknown",
-            "evidence": "No canonical host evidence."
-          }
-        ],
-        "notes": [
-          "The production transition preserves the cue after rollback and fades it after a successful Hub commit."
-        ],
-        "unknowns": [
-          "Human listening approval and loop seam quality",
-          "Canonical workstream closeout and host cleanup",
-          "Full dispatcher state and CI check-run coverage"
-        ],
-        "actions": [
-          "Gameplay/audio owner: audition in game and record findings.",
-          "Workstream owner: complete canonical finish and provide teardown evidence if applicable."
         ]
       },
       "related": []
