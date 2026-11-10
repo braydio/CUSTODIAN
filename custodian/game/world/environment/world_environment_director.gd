@@ -6,6 +6,7 @@ signal weather_changed(weather_id: StringName)
 signal environment_state_changed(state: Dictionary)
 
 enum PrecipitationMode { NONE, RAIN, SNOW, ASH, DUST }
+const PRESENTATION_QUALITY := WeatherPresentationProfile.QualityTier
 const WEATHER_DEFS := {
 	"clear":{"ambient":Color.WHITE,"directional":Color.WHITE,"energy":1.0,"fog":0.0,"cosmic":0.0,"wind":0.85,"gust":0.85,"mode":0,"precip":0.0,"tint":Color.WHITE,"grade":0.0,"next":["overcast","mist","dust_wind"]},
 	"overcast":{"ambient":Color(0.94,0.96,1,1),"directional":Color(0.9,0.94,1,1),"energy":0.62,"fog":0.025,"cosmic":0.0,"wind":1.0,"gust":1.0,"mode":0,"precip":0.0,"tint":Color(0.92,0.96,1,1),"grade":0.05,"next":["clear","light_rain","mist","snow","ashfall"]},
@@ -32,6 +33,8 @@ const DAY_KEYS := [
 @export_range(60.0,7200.0,1.0) var day_length_seconds := 1440.0
 @export var clock_enabled := true
 @export_range(0.1,10.0,0.1) var indoor_transition_seconds := 1.25
+@export var presentation_profile: WeatherPresentationProfile
+@export var presentation_quality_tier: int = PRESENTATION_QUALITY.HIGH
 @onready var lighting_director := get_node_or_null("../WorldLightingDirector") as WorldLightingDirector
 @onready var operator := get_node_or_null("../Operator") as Node2D
 var current_hour := 9.0
@@ -50,6 +53,8 @@ var _weather_exposure := 1.0
 var _observatory_accum := 0.0
 var _last_wind_speed_multiplier := -1.0
 var _last_gust_multiplier := -1.0
+var _presentation_elapsed_seconds := 0.0
+var _presentation_zone_id := ""
 
 func _ready() -> void: add_to_group("world_environment_director")
 
@@ -59,6 +64,7 @@ func _physics_process(delta: float) -> void:
 	if _observatory_accum >= 0.5: _observatory_accum = 0.0; _publish_gauges()
 
 func advance_environment(delta: float) -> void:
+	_presentation_elapsed_seconds += maxf(delta, 0.0)
 	if clock_enabled: current_hour = fposmod(current_hour + delta * 24.0 / maxf(day_length_seconds,1.0),24.0); time_changed.emit(current_hour)
 	_update_weather(delta)
 	var region := _resolve_environment_region()
@@ -72,6 +78,7 @@ func configure_from_contract(contract: Dictionary, map_instance: Node) -> void:
 	_active_map = map_instance as ProcGenTilemap if map_instance is ProcGenTilemap else null
 	var map_block: Dictionary = contract.get("map",{})
 	_environment_seed = int(contract.get("contract_seed",0)) ^ (int(map_block.get("map_seed",0))*1103515245) ^ (int(_world_profile.get("profile_seed",0))*214013)
+	_presentation_elapsed_seconds = 0.0
 	var start_rng := RandomNumberGenerator.new(); start_rng.seed = _environment_seed ^ 0x571D4E91
 	current_hour = start_rng.randf_range(float(_world_profile.get("day_start_hour_min",7.5)),float(_world_profile.get("day_start_hour_max",10.0)))
 	_weather_rng.seed = _environment_seed ^ 0x24681357; _weather_current = _pick_weighted_weather(); _weather_target = _weather_current
@@ -117,6 +124,7 @@ func _pick(candidates: Array[String], weights: Dictionary, fallback: String) -> 
 	return candidates.back()
 
 func _resolve_environment_region() -> Dictionary:
+	_presentation_zone_id = ""
 	if not is_inside_tree() or operator == null or not is_instance_valid(operator):
 		return _exterior_region()
 	for provider in get_tree().get_nodes_in_group("environment_region_provider"):
@@ -124,6 +132,7 @@ func _resolve_environment_region() -> Dictionary:
 			continue
 		var region := provider.call("get_environment_region_at_global", operator.global_position) as Dictionary
 		if bool(region.get("contains", false)):
+			_presentation_zone_id = String(region.get("presentation_zone_id", region.get("zone_id", "")))
 			return region
 	return _exterior_region()
 
@@ -172,7 +181,37 @@ func _apply_environment() -> void:
 
 func get_presentation_state() -> Dictionary:
 	var weather := _sample_weather(); var influence := lighting_director.get_active_weather_influence() if lighting_director != null else 1.0
-	return {"hour":current_hour,"weather_id":StringName(_weather_target if _weather_transitioning else _weather_current),"precipitation_mode":int(weather.get("precipitation_mode",0)),"precipitation_alpha":clampf(float(weather.get("precipitation_intensity",0.0))*_weather_exposure*influence,0.0,1.0),"weather_tint":weather.get("weather_tint",Color.WHITE),"weather_grade_mix":float(weather.get("weather_grade_mix",0.0))*_weather_exposure*influence,"wind_speed_multiplier":weather.get("wind_speed_multiplier",1.0),"gust_multiplier":weather.get("gust_multiplier",1.0),"local_exposure":_environment_exposure,"environment_exposure":_environment_exposure,"weather_exposure":_weather_exposure}
+	var state := {"hour":current_hour,"weather_id":StringName(_weather_target if _weather_transitioning else _weather_current),"precipitation_mode":int(weather.get("precipitation_mode",0)),"precipitation_alpha":clampf(float(weather.get("precipitation_intensity",0.0))*_weather_exposure*influence,0.0,1.0),"weather_tint":weather.get("weather_tint",Color.WHITE),"weather_grade_mix":float(weather.get("weather_grade_mix",0.0))*_weather_exposure*influence,"wind_speed_multiplier":weather.get("wind_speed_multiplier",1.0),"gust_multiplier":weather.get("gust_multiplier",1.0),"local_exposure":_environment_exposure,"environment_exposure":_environment_exposure,"weather_exposure":_weather_exposure}
+	state.merge(_get_presentation_profile_state(state), true)
+	return state
+
+
+func _get_presentation_profile_state(base_state: Dictionary) -> Dictionary:
+	if presentation_profile == null or not presentation_profile.enabled:
+		return {"presentation_v2_enabled": false}
+	var climate_id := String(_world_profile.get("climate_profile_id", _world_profile.get("climate_id", _world_profile.get("planet_key", ""))))
+	var weather_id := String(base_state.get("weather_id", _weather_current))
+	var resolved := presentation_profile.resolve(climate_id, _presentation_zone_id, weather_id, presentation_quality_tier)
+	var wind_scale: Vector2 = resolved.get("wind_scale", Vector2.ONE)
+	var wind := float(base_state.get("wind_speed_multiplier", 1.0))
+	var gust := float(base_state.get("gust_multiplier", 1.0))
+	var presentation_seed := _environment_seed ^ int(resolved.get("visual_seed_offset", 0))
+	return {
+		"presentation_v2_enabled": true,
+		"presentation_profile_id": presentation_profile.profile_id,
+		"presentation_quality": int(resolved.get("quality_tier", PRESENTATION_QUALITY.HIGH)),
+		"presentation_seed": presentation_seed,
+		"visual_time": _presentation_elapsed_seconds * float(resolved.get("visual_time_scale", 1.0)),
+		"presentation_wind": Vector2(wind * wind_scale.x, gust * wind_scale.y),
+		"far_density": float(resolved.get("far_density", 1.0)),
+		"mid_density": float(resolved.get("mid_density", 1.0)),
+		"near_density": float(resolved.get("near_density", 1.0)),
+		"presentation_opacity": float(resolved.get("opacity", 1.0)),
+		"streak_scale": float(resolved.get("streak_scale", 1.0)),
+		"snow_drift": float(resolved.get("snow_drift", 0.0)),
+		"dust_streak": float(resolved.get("dust_streak", 1.0)),
+		"fog_altitude": float(resolved.get("fog_altitude", 0.5)),
+	}
 
 func debug_set_hour(hour: float) -> void: current_hour = fposmod(hour,24.0); _apply_environment()
 func debug_set_time_paused(paused: bool) -> void: clock_enabled = not paused

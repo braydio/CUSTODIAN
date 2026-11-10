@@ -1,5 +1,9 @@
 # CURRENT STATE — CUSTODIAN
 
+## Weather V2 presentation contract (implementation in progress, 2026-11-09)
+
+`weather-v2-presentation-contract-v1` implements an opt-in `WeatherPresentationProfile` resource with quality-tier caps, climate/zone/weather overrides, contract-derived visual seed, fixed-step visual time, and visual-only wind scaling. With no profile, the atmosphere shader retains its V1 `TIME` path and the weather schedule, lighting modifiers, indoor exposure, and gameplay authorities remain unchanged. The profile-state CPU baseline is recorded in `design/02_features/environment/WEATHER_PRESENTATION_V2_ROADMAP.md`; GPU timing remains unmeasured. Contract, profile-baseline, and `world_environment` validation pass. After a full headless editor import, `world_atmosphere_smoke` passes on both the workstream and clean `origin/main@aaa2c3e9f0915ca90d168d9b65aafe2483439d07`; the earlier timeout was stale generated import/class-cache state. `lighting_system_smoke` fails identically on both because its preloaded `lighting_playground.tscn` and `gatehouse_lighting_test.tscn` are absent; this is a pre-existing baseline defect and was not changed. The implementation is not landed or art-approved and still needs its packet's fresh paired review after landing. See the task packet, active roadmap and Weather V2 handoff summary.
+
 ## Dispatcher V2 cutover candidate (2026-11-09)
 
 D2-006 implements the turn-scoped dispatcher as the candidate execution path in
