@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-findings-artifact-recovery-v1`
 - Category: `agent-ops`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P0`
@@ -18,11 +18,12 @@
 - Max automatic review cycles: `2`
 - Review rationale: `The recovery bridges host-private reviewer artifacts into a durable findings closeout; exact claim, raw session, target immutability, and retry behavior require fresh independent falsification.`
 - Reviewed main: `6189e1ec2e2101be8c788efcbdea487bf80603bf`
+- Implementation commit: `a4e9dbc8505bcde3eb20b5f40b32df838a4b550d`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af253c2-3c40-83ea-bd81-7ba163d4602e
 - Visual review: `none`
 - Goal: Durably record the authentic findings from one preserved paired-review run whose reviewer-authored archive and summary exist only as untracked files in its protected worktree.
 - Completion boundary: Add a digest-bound, read-only-plan/apply recovery for the exact run `20261110T082919Z-283d4ae71a0c` of `review-agent-owner-review-exception-direct-pr-provenance-recovery-v1`. Authenticate the original structured V2 claim, acquisition, run metadata, raw fresh reviewer session, host-validation report, archived findings packet, summary, target baseline, branch/worktree identities, and artifact inventory. Apply only through a separate recovery checkout, journaled and idempotent, using the existing nonpassing closeout verifier and integrity report. The original review worktree and run directory remain byte-preserved; the target implementation receives no receipt or other edit.
-- Current measured state: The review runner recorded phase `post_exit_recovery` after the reviewer authored findings and the coordinator treated the unchanged target as a missing PASS receipt. The reviewer-authored archived packet and root summary remain untracked at the exact claimed checkout; their SHA-256 values are `9c7409c4c9173a6a6f1e146e425630a0f634ef7cf34eaf7b0f25df42b979b6f3` and `3c93fdc845466518a5d02424fa45c32f61f73391455a15f03bbfcb16bfceb28c`. The original branch and checkout HEAD remain `6189e1ec2e2101be8c788efcbdea487bf80603bf`. Existing `recover-closeout --plan` cannot authenticate this run because its claim.stdout is truncated before the JSON sentinel completes, while the separate `claim-receipt.json` is complete. `paired_review_runner.py:_host_validation_claim_receipt()` already strictly authenticates the separate receipt and its V2 acquisition and is the required claim verifier.
+- Current measured state: Implementation PR #133 merged normally at `e311c9c6417cf4f403bd2586dcf6449a87743dbd`; its second parent is the exact validated implementation commit `a4e9dbc8505bcde3eb20b5f40b32df838a4b550d`. All latest-head GitHub checks passed. The implementation checkout was V2-checkpointed and retired. The paired review remains unresolved and must now run in a fresh, different-agent context. The original findings recovery has not been applied and still requires independent review acceptance plus separate orchestration authorization.
 - Evidence: `.git/custodian-review-runs/review-agent-owner-review-exception-direct-pr-provenance-recovery-v1/20261110T082919Z-283d4ae71a0c/{metadata.json,claim.stdout,claim-receipt.json,validation.json,coordinator-validation.json,codex.jsonl,last-message.txt,RECOVERY.md}`; the protected claimed review checkout; current `origin/main` and `origin/agent/review-agent-owner-review-exception-direct-pr-provenance-recovery-v1` refs.
 - Task-specific authority: `custodian/docs/ai_context/task_packets/archived/AGENT_PAIRED_REVIEW_FINDINGS_CLOSEOUT_V1.md`; `custodian/tools/agent/paired_review_runner.py` functions `_host_validation_claim_receipt`, `_parse_redacted_final_session`, `recover_closeout`, `coordinator_finish_nonpassing_review`, `nonpassing_review_reasons`, and `landed_nonpassing_review_state`; `custodian/tools/agent/review_outcome.py`; `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`.
 - Work surface: `custodian/tools/agent/paired_review_runner.py`; `custodian/tools/agent/test_paired_review_runner.py`.
@@ -46,6 +47,27 @@
 - Task overrides: `none`
 - Deferred: The generic `coordinator_finish_review()` findings path still treats a missing PASS receipt on an unchanged target as a post-exit recovery error; this exact-run bridge does not repair that broader findings-routing defect. Track that separately. After this bridge lands and receives independent fresh-context acceptance, re-run the exact findings recovery plan and apply only with its printed digest and a separate orchestration authorization. Then author/execute `agent-owner-review-exception-direct-pr-provenance-recovery-v1-review-corrections-1` for R0-01/R0-02; do not mix source corrections into this recovery implementation.
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: Implementation commit `a4e9dbc8505bcde3eb20b5f40b32df838a4b550d` passed the packet's focused tests, changed-file validation, AI-context and packet lifecycle checks, and all latest-head CI checks; PR #133 landed as `e311c9c6417cf4f403bd2586dcf6449a87743dbd`. The paired independent review remains pending, and the original findings recovery remains unapplied pending its acceptance and separate orchestration authorization.
+
 ## Publication hold
 
-This pair is `draft/manual` only for atomic authoring validation and the push-triggered auto handoff. Do not claim until the handoff promotes both packets and the live dispatcher audit reports eligible. The original findings claim remains protected throughout.
+Resolved: the atomic authoring handoff promoted the implementation/review pair to `ready/auto`, and implementation PR #133 landed at `e311c9c6417cf4f403bd2586dcf6449a87743dbd`. This archival closeout is pending publication; the paired review must remain unclaimed until the archive is on `origin/main` and a fresh dispatcher audit confirms eligibility. The original findings claim remains protected throughout.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: The first V2 finish attempt was rejected because the handoff omitted required headings; adding the required fields allowed checkpoint and checkout retirement.
+- Root cause / contributing factors: The V2 finish contract checks exact handoff fields before checkpointing.
+- Prevention / pipeline improvement: Validate the complete handoff field set before invoking finish.
+- Tooling / docs drift discovered: None.
+- Follow-up: `none`
+- What worked: Focused synthetic retry tests and full latest-head downstream validation provided durable evidence while the original findings artifacts remained protected.
