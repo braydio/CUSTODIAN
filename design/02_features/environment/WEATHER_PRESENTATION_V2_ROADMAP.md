@@ -53,6 +53,19 @@ WorldEnvironmentDirector owns 1440-second day, seeded 8-state weather schedule (
 
 **Validation:** custodian/tools/validation/world_environment_smoke.gd; custodian/tools/validation/world_atmosphere_smoke.gd; custodian/tools/validation/lighting_system_smoke.gd; new weather V2 profile/sampling/baseline fixture; changed-file validation.
 
+#### Contract slice CPU baseline (2026-11-09)
+
+`custodian/tools/validation/weather_v2_profile_baseline.gd` measures the existing heavy-rain presentation-state query and the same query with an opt-in HIGH profile. On Godot 4.7.2, Linux headless, AMD Ryzen 7 5700X, using 200 batches of 64 queries, V1 measured p50 3.859 µs / p95 4.516 µs per query; the V2 profile projection measured p50 13.375 µs / p95 15.594 µs. The added profile resolution costs about 9.516 µs p50 / 11.078 µs p95 per query in this isolated CPU fixture. The optional profile remains disabled when absent.
+
+This is a CPU state-query baseline, not a rendered-frame or GPU measurement. Godot's script `Performance` API does not expose GPU frame duration, and a headless run cannot establish GPU cost. No quality budget or GPU threshold is inferred from these numbers; renderer profiling remains required before choosing production quality budgets.
+
+#### Contract-slice smoke baseline parity (2026-11-10)
+
+The contract smoke, CPU baseline fixture and `world_environment` validation pass on the isolated `weather-v2-presentation-contract-v1` workstream. The broader `world_atmosphere_smoke.gd` also passes on both that checkout and a clean `origin/main@aaa2c3e9f0915ca90d168d9b65aafe2483439d07` after each project receives a headless editor import. An initial timeout/assertion occurred before refreshing the workstream's generated Godot import/class cache; it did not reproduce after import and is not attributed to the Weather V2 source changes. The comparison refreshed only generated `.godot` cache data.
+
+`lighting_system_smoke.gd` fails on both clean main and the workstream because preloads `res://tools/validation/lighting_playground.tscn` and `res://tools/validation/gatehouse_lighting_test.tscn` are missing. The Weather V2 diff does not add or remove either scene. Record this as existing mainline validation debt; do not change the unrelated lighting test or system in this slice. The contract implementation is not yet landed or independently reviewed, and visual approval remains conditional. Independent review follows landing per the packet.
+
+
 **Next deferred:** New precipitation layers, surface contact and artistic tuning.
 
 ### 2. Deep weather rendering and wind coherence

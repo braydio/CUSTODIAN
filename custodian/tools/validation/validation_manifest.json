@@ -1252,6 +1252,32 @@
       "needs_import": false
     },
     {
+      "id": "weather_v2_profile_contract",
+      "type": "godot_script",
+      "script": "res://tools/validation/weather_v2_profile_contract_smoke.gd",
+      "tier": "integration",
+      "tags": ["environment", "weather", "determinism"],
+      "owners": [
+        "custodian/game/world/environment/**",
+        "custodian/game/world/lighting/**"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
+      "id": "weather_v2_profile_baseline",
+      "type": "godot_script",
+      "script": "res://tools/validation/weather_v2_profile_baseline.gd",
+      "tier": "integration",
+      "tags": ["environment", "weather", "performance"],
+      "owners": [
+        "custodian/game/world/environment/**",
+        "custodian/game/world/lighting/**"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
       "id": "carrow_operations_house_interior",
       "type": "godot_script",
       "script": "res://tools/validation/carrow_operations_house_interior_smoke.gd",
