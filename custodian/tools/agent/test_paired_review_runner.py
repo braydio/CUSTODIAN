@@ -4895,6 +4895,87 @@ class PairedReviewHostValidationTests(unittest.TestCase):
     def setUpClass(cls):
         _ensure_pinned_historical_diagnostic_refs()
 
+    def test_owner_exception_archive_admits_only_exact_historical_review_metadata(self):
+        verifier = host_validation._owner_exception_lane_review_metadata_path
+        archive = host_validation._OWNER_EXCEPTION_LANE_SOURCE_ARCHIVE
+        parent = host_validation._OWNER_EXCEPTION_LANE_SOURCE_PARENT
+        packet_path = host_validation._OWNER_EXCEPTION_LANE_SOURCE_PACKET
+        target_text = subprocess.run(
+            ["git", "show", f"{archive}:{packet_path}"], cwd=ROOT,
+            capture_output=True, text=True, check=True,
+        ).stdout
+        paths = set(host_validation._OWNER_EXCEPTION_LANE_EXTRA_ARCHIVE_PATHS)
+
+        self.assertEqual(
+            verifier(ROOT, parent, archive, host_validation._OWNER_EXCEPTION_LANE_SOURCE_WORKSTREAM,
+                     packet_path, target_text, paths),
+            host_validation._OWNER_EXCEPTION_LANE_REVIEW_PACKET,
+        )
+
+        invalid_identities = (
+            ("wrong-workstream", parent, archive, "unrelated-workstream", packet_path, paths),
+            ("wrong-target", parent, archive, host_validation._OWNER_EXCEPTION_LANE_SOURCE_WORKSTREAM,
+             "custodian/docs/ai_context/task_packets/archived/OTHER.md", paths),
+            ("wrong-parent", "0" * 40, archive,
+             host_validation._OWNER_EXCEPTION_LANE_SOURCE_WORKSTREAM, packet_path, paths),
+            ("wrong-archive", parent, "0" * 40,
+             host_validation._OWNER_EXCEPTION_LANE_SOURCE_WORKSTREAM, packet_path, paths),
+            ("extra-path", parent, archive,
+             host_validation._OWNER_EXCEPTION_LANE_SOURCE_WORKSTREAM, packet_path,
+             paths | {"custodian/docs/ai_context/unrelated.md"}),
+            ("missing-path", parent, archive,
+             host_validation._OWNER_EXCEPTION_LANE_SOURCE_WORKSTREAM, packet_path,
+             paths - {host_validation._OWNER_EXCEPTION_LANE_REVIEW_PACKET}),
+        )
+        self.assertIsNone(verifier(ROOT, parent, archive, "unrelated-workstream", packet_path,
+                                   target_text, paths))
+        for label, bad_parent, bad_archive, workstream, bad_packet, bad_paths in invalid_identities[1:]:
+            with self.subTest(case=label), self.assertRaises(host_validation.HostValidationError):
+                verifier(ROOT, bad_parent, bad_archive, workstream, bad_packet, target_text, bad_paths)
+        altered_target = target_text.replace(
+            "owner-review-exception-lane-v1", "wrong-owner-exception-lane-v1", 1,
+        )
+        with self.assertRaises(host_validation.HostValidationError):
+            verifier(ROOT, parent, archive, host_validation._OWNER_EXCEPTION_LANE_SOURCE_WORKSTREAM,
+                     packet_path, altered_target, paths)
+        original_git = host_validation._git
+        review_tree_path = f"{archive}:{host_validation._OWNER_EXCEPTION_LANE_REVIEW_PACKET}"
+        def altered_review_identity(repo, *args):
+            value = original_git(repo, *args)
+            if args == ("show", review_tree_path):
+                return value.replace(
+                    "Review target workstream: `owner-review-exception-lane-v1`",
+                    "Review target workstream: `wrong-workstream`",
+                    1,
+                )
+            return value
+        with patch.object(host_validation, "_git", side_effect=altered_review_identity):
+            with self.assertRaises(host_validation.HostValidationError):
+                verifier(ROOT, parent, archive,
+                         host_validation._OWNER_EXCEPTION_LANE_SOURCE_WORKSTREAM,
+                         packet_path, target_text, paths)
+
+        real_entry = host_validation._git_tree_entry
+        active_packet_path = packet_path.replace("/archived/", "/", 1)
+        for path, revisions in (
+            (packet_path, (archive,)),
+            (active_packet_path, (parent,)),
+            *((path, (parent, archive)) for path in sorted(
+                set(host_validation._OWNER_EXCEPTION_LANE_MARKDOWN_BLOBS) - {active_packet_path}
+            )),
+        ):
+            for revision in revisions:
+                with self.subTest(path=path, revision=revision):
+                    def altered_entry(repo, observed_revision, observed_path):
+                        if observed_revision == revision and observed_path == path:
+                            return ("100755", "0" * 40)
+                        return real_entry(repo, observed_revision, observed_path)
+                    with patch.object(host_validation, "_git_tree_entry", side_effect=altered_entry):
+                        with self.assertRaises(host_validation.HostValidationError):
+                            verifier(ROOT, parent, archive,
+                                     host_validation._OWNER_EXCEPTION_LANE_SOURCE_WORKSTREAM,
+                                     packet_path, target_text, paths)
+
     def setUp(self):
         _mock_no_active_review_processes(self)
         self.temp = tempfile.TemporaryDirectory()

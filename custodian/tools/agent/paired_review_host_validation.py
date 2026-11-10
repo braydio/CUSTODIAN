@@ -968,6 +968,45 @@ _CHASSIS_METADATA_EXTRA_ARCHIVE_PATHS = {
     "custodian/tools/agent/test_paired_review_runner.py",
 }
 
+_OWNER_EXCEPTION_LANE_SOURCE_WORKSTREAM = "owner-review-exception-lane-v1"
+_OWNER_EXCEPTION_LANE_SOURCE_ARCHIVE = "aaa2c3e9f0915ca90d168d9b65aafe2483439d07"
+_OWNER_EXCEPTION_LANE_SOURCE_PARENT = "a283d2a71279e657e1e1ddb485f9e99e48954e63"
+_OWNER_EXCEPTION_LANE_SOURCE_TREE = "ae5a6fb55991ba7dedd18fdf8ffec51cda4774b2"
+_OWNER_EXCEPTION_LANE_SOURCE_PACKET = (
+    f"{PACKET_ROOT}/archived/OWNER_REVIEW_EXCEPTION_LANE_V1.md"
+)
+_OWNER_EXCEPTION_LANE_REVIEW_PACKET = f"{PACKET_ROOT}/REVIEW_OWNER_REVIEW_EXCEPTION_LANE_V1.md"
+_OWNER_EXCEPTION_LANE_REVIEW_WORKSTREAM = "review-owner-review-exception-lane-v1"
+_OWNER_EXCEPTION_LANE_REVIEWED_MAIN = "8ef7e4e0b82a865552c47b4f1dc9e48a8e74480d"
+_OWNER_EXCEPTION_LANE_EXTRA_ARCHIVE_PATHS = {
+    "custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md",
+    "custodian/docs/ai_context/owner_review_exceptions/review-operator-chassis-authority-seal-v1.json",
+    "custodian/docs/ai_context/task_packets/OPERATOR_RUNTIME_DECOMPOSITION.md",
+    _OWNER_EXCEPTION_LANE_REVIEW_PACKET,
+    "custodian/tools/agent/dispatch.py",
+    "custodian/tools/agent/owner_review_exception.py",
+    "custodian/tools/agent/test_owner_review_exception.py",
+    "custodian/tools/validation/validation_manifest.json",
+}
+_OWNER_EXCEPTION_LANE_MARKDOWN_BLOBS = {
+    "custodian/docs/ai_context/task_packets/OWNER_REVIEW_EXCEPTION_LANE_V1.md": (
+        "b87bf4b7f4ca29394893e6a7293edd9d0350806d",
+        "c6d333dbc54bf519334a09aabf9f0d84fdedbac4",
+    ),
+    "custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md": (
+        "c1a273b8f7415b9b7f1082899203048ba9a745ba",
+        "6b2da018523694b9713f5fa60947e9b2648ba4f0",
+    ),
+    "custodian/docs/ai_context/task_packets/OPERATOR_RUNTIME_DECOMPOSITION.md": (
+        "48826f98484cb919a2b57e890f2d0afeb849fdb2",
+        "76e356fc64d9b68e7e0a30f17e1e08c53dcc9495",
+    ),
+    _OWNER_EXCEPTION_LANE_REVIEW_PACKET: (
+        "b49182b0575aeab8118c44e973d2a36e811eea88",
+        "952a0343e9c3ba1589e13543c4a4f365212b60a5",
+    ),
+}
+
 
 def _managed_packet_index_additive_reconciliation(first_parent: bytes,
                                                   second_parent: bytes,
@@ -2357,6 +2396,56 @@ def _chassis_attestation_review_metadata_path(
     if (old_entries != new_entries
             or new_line != old_line.replace(b", ", b"; ")):
         raise HostValidationError("chassis metadata changed Publication inputs beyond delimiters")
+    return review_path
+
+
+def _owner_exception_lane_review_metadata_path(
+    repo: Path, archive_parent: str, landing_commit: str, target_workstream: str,
+    target_packet_path: str, target_packet_text: str, changed_paths: set[str],
+) -> str | None:
+    """Admit the exact owner-exception archive's pinned paired-review metadata edit."""
+    if target_workstream != _OWNER_EXCEPTION_LANE_SOURCE_WORKSTREAM:
+        return None
+    if not changed_paths.intersection(_OWNER_EXCEPTION_LANE_MARKDOWN_BLOBS):
+        return None
+    if (landing_commit != _OWNER_EXCEPTION_LANE_SOURCE_ARCHIVE
+            or archive_parent != _OWNER_EXCEPTION_LANE_SOURCE_PARENT
+            or target_packet_path != _OWNER_EXCEPTION_LANE_SOURCE_PACKET
+            or changed_paths != _OWNER_EXCEPTION_LANE_EXTRA_ARCHIVE_PATHS
+            or header_field(target_packet_text, "Workstream")
+            != _OWNER_EXCEPTION_LANE_SOURCE_WORKSTREAM):
+        raise HostValidationError("owner-exception archive identity or exact path set changed")
+
+    parents = _git(repo, "show", "-s", "--format=%P", landing_commit).split()
+    tree = _git(repo, "rev-parse", f"{landing_commit}^{{tree}}")
+    if (parents != [_OWNER_EXCEPTION_LANE_SOURCE_PARENT]
+            or tree != _OWNER_EXCEPTION_LANE_SOURCE_TREE):
+        raise HostValidationError("owner-exception archive parent or tree changed")
+
+    active_packet = target_packet_path.replace("/archived/", "/", 1)
+    for path, expected_blobs in _OWNER_EXCEPTION_LANE_MARKDOWN_BLOBS.items():
+        before_path = active_packet if path == active_packet else path
+        after_path = target_packet_path if path == active_packet else path
+        if (_git_tree_entry(repo, archive_parent, before_path) != ("100644", expected_blobs[0])
+                or _git_tree_entry(repo, landing_commit, after_path) != ("100644", expected_blobs[1])):
+            raise HostValidationError(f"owner-exception archive Markdown blob or mode differs: {path}")
+    archived_packet_entry = _git_tree_entry(repo, landing_commit, target_packet_path)
+    if archived_packet_entry != ("100644", _OWNER_EXCEPTION_LANE_MARKDOWN_BLOBS[
+            "custodian/docs/ai_context/task_packets/OWNER_REVIEW_EXCEPTION_LANE_V1.md"][1]):
+        raise HostValidationError("owner-exception archived target packet blob or mode differs")
+
+    review_path = _OWNER_EXCEPTION_LANE_REVIEW_PACKET
+
+    review_text = _git(repo, "show", f"{landing_commit}:{review_path}")
+    expected_identity = {
+        "Workstream": _OWNER_EXCEPTION_LANE_REVIEW_WORKSTREAM,
+        "Review target workstream": _OWNER_EXCEPTION_LANE_SOURCE_WORKSTREAM,
+        "Review target packet": _OWNER_EXCEPTION_LANE_SOURCE_PACKET,
+        "Reviewed main": _OWNER_EXCEPTION_LANE_REVIEWED_MAIN,
+    }
+    if any(header_field(review_text, field) != value
+           for field, value in expected_identity.items()):
+        raise HostValidationError("owner-exception archive changed a different paired-review packet")
     return review_path
 
 
@@ -4603,6 +4692,10 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
                     target_packet_path, target_packet_text, extra_archive_paths,
                 ),
                 _chassis_attestation_review_metadata_path(
+                    repo, archive_parent, landing_commit, target_workstream,
+                    target_packet_path, target_packet_text, extra_archive_paths,
+                ),
+                _owner_exception_lane_review_metadata_path(
                     repo, archive_parent, landing_commit, target_workstream,
                     target_packet_path, target_packet_text, extra_archive_paths,
                 ),
