@@ -3,8 +3,8 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-missing-archive-receipt-mirror-recovery-v1`
 - Category: `agent-ops`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P0`
 - Depends on: `review-agent-paired-review-archived-receipt-capture-recovery-v1`
