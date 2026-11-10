@@ -1,9 +1,165 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-10T07:02:57Z",
-  "source_main_sha": "d793f198a8abf74450c2eb4d6d4e1073187ffcc3",
+  "generated_at": "2026-11-10T08:16:52.371Z",
+  "source_main_sha": "268d5d1abc9061278c16a3abd31e1d165aaac512",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "owner-provenance-verifier-landed-268d5d1a",
+      "headline": "Owner-exception provenance verifier lands; independent review is still the gate",
+      "summary": "PR #130 merged a narrowly scoped verifier for the historical direct-PR source span, with reported passing targeted tests. This advances the owner-exception recovery from dispatch-ready instructions to landed implementation. The paired independent review is still pending; PR #131 proposes documentation-only implementation closeout and is not merged.",
+      "body": "The owner-exception provenance recovery implementation merged into main in PR #130 at 268d5d1a. Its purpose is to authenticate the precise historical source span needed by a stalled independent review, using pinned acquisition, handoff, Git ancestry, blobs and PR history, while rejecting conflicting diagnostics. The PR reports 313 paired-review runner tests, 98 dispatch tests, 32 task-packet contract tests, and 149 selected changed-file checks passing; these are author-reported validation results, not an independent acceptance receipt. PR #131 is an open documentation-only implementation closeout; it explicitly leaves the paired provenance review pending. This does not establish a running host reviewer, accepted PASS, recovery of the preserved review, or clean teardown. The private WIRE pilot pointer remains dated November 8 and cannot support fresh operational counts. GitHub-only partial coverage.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-owner-review-exception-direct-pr-provenance-recovery-v1",
+      "occurred_at": "2026-11-10T07:50:53Z",
+      "bullets": [
+        "PR #130 merged the bounded source-provenance verifier.",
+        "Targeted tests are reported passing in the PR, not independently accepted.",
+        "PR #131 remains open for documentation-only closeout.",
+        "Paired independent review and preserved-run recovery remain pending."
+      ],
+      "links": [
+        {
+          "title": "Merged implementation PR #130",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/130"
+        },
+        {
+          "title": "Main merge commit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/268d5d1abc9061278c16a3abd31e1d165aaac512"
+        },
+        {
+          "title": "Open closeout PR #131",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/131"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN has moved a stalled review recovery from a written assignment to merged code. A narrowly scoped verifier now provides a way to authenticate the historical direct-PR source that the original reviewer could not reconstruct. That is an implementation milestone, not yet an independent verdict.",
+        "sections": [
+          {
+            "heading": "A missing link in the review trail",
+            "text": "The earlier owner-exception correction had landed, but its preserved review lacked an ordinary lifecycle trace for the exact source span. The new verifier checks the pinned acquisition and handoff against Git ancestry, file blobs and pull-request history, and rejects conflicting diagnostic references."
+          },
+          {
+            "heading": "Tests passed; acceptance has not",
+            "text": "PR #130 reports passing targeted runner, dispatch, contract and changed-file checks. The paired independent provenance review still needs to challenge the implementation before the original held review can proceed. A separate documentation closeout PR is open but not merged."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The bottleneck has shifted",
+            "explanation": "Previously the immediate gap was implementation of a trustworthy source resolver. With that code merged, the next decisive evidence is an independent review receipt, not another implementation plan."
+          },
+          {
+            "title": "A merged verifier is not a recovered review",
+            "explanation": "The new code does not retroactively create lifecycle traces or establish that the preserved reviewer ran, accepted the fix, or cleaned up its host state."
+          }
+        ],
+        "takeaway": "The exact-source verifier is merged into main; independent acceptance and preserved-review recovery are still unproven.",
+        "next_watch": "Watch for independent provenance review PASS and a separately authorized, evidence-backed plan to resume the preserved review."
+      },
+      "details": {
+        "overview": "GitHub-only partial inspection: PR #130 merged at main 268d5d1a on November 10, 07:50:53 UTC. PR #131 open at inspection. Targeted test results come from PR #130 description, not a separate accepted review receipt. Private pilot pointer metadata still dates November 8; no fresh host metrics used.",
+        "ledger": [
+          {
+            "stage": "Packet pair and dispatch eligibility",
+            "status": "verified landed and ready",
+            "evidence": "PRs #128 and #129, handoff d793f198."
+          },
+          {
+            "stage": "Bounded verifier implementation",
+            "status": "verified merged",
+            "evidence": "PR #130 and merge 268d5d1a."
+          },
+          {
+            "stage": "Targeted validation",
+            "status": "reported passed",
+            "evidence": "PR #130 reports 313 runner, 98 dispatch, 32 contract and 149 selected changed-file checks."
+          },
+          {
+            "stage": "Implementation packet closeout",
+            "status": "open, not landed",
+            "evidence": "PR #131 documentation-only closeout."
+          },
+          {
+            "stage": "Independent provenance review",
+            "status": "not accepted",
+            "evidence": "PR #130 and #131 explicitly state paired review pending."
+          },
+          {
+            "stage": "Preserved original review and canonical teardown",
+            "status": "unknown / held",
+            "evidence": "No accepted review, authorized recovery execution or host teardown receipt inspected."
+          }
+        ],
+        "notes": [
+          "No full canonical dispatcher audit inspected; packet/workstream totals unknown."
+        ],
+        "unknowns": [
+          "Host execution, claims, locks, worktrees and disk state not independently available.",
+          "Independent review PASS and canonical cleanup absent from inspected evidence.",
+          "Current CI check-run state not established."
+        ],
+        "actions": [
+          "Independent reviewer: evaluate merged verifier and issue a genuine disposition.",
+          "Authorized owner: only after acceptance, plan preserved-review recovery under separate permission."
+        ]
+      },
+      "related": [
+        {
+          "title": "Owner-exception review gains a narrowly pinned provenance recovery path",
+          "context": "The earlier WIRE article covered the packet pair becoming ready; this update records the implementation landing.",
+          "story_id": "owner-exception-direct-pr-provenance-ready-d793f198"
+        }
+      ],
+      "scorecard": {
+        "stage": "Verifier merged; independent review pending",
+        "as_of": "2026-11-10T07:50:53Z",
+        "scope": "Named owner-exception direct-PR provenance recovery only",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Recovery packets authored and ready",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "PRs #128/#129 and d793f198."
+          },
+          {
+            "label": "Verifier implementation merged",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "PR #130 merged into main."
+          },
+          {
+            "label": "Targeted validation",
+            "status": "current",
+            "verification": "reported",
+            "evidence": "PR #130 reports passing tests; not independent acceptance."
+          },
+          {
+            "label": "Implementation closeout",
+            "status": "current",
+            "verification": "verified",
+            "evidence": "PR #131 open, not merged."
+          },
+          {
+            "label": "Independent provenance review",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No PASS receipt inspected."
+          },
+          {
+            "label": "Preserved review recovery and teardown",
+            "status": "blocked",
+            "verification": "unknown",
+            "evidence": "Needs independent acceptance and separate authorization."
+          }
+        ],
+        "next_gate": "Independent reviewer assesses the merged verifier and records an authentic disposition."
+      }
+    },
     {
       "id": "owner-exception-direct-pr-provenance-ready-d793f198",
       "headline": "Owner-exception review gains a narrowly pinned provenance recovery path",
@@ -1558,135 +1714,6 @@
         ],
         "actions": [
           "Verify first implementation landing and focused validation before reporting delivery."
-        ]
-      },
-      "related": []
-    },
-    {
-      "id": "procgen-tilesetless-ingress-98314aa1",
-      "headline": "Procgen ingress gets a coordinate fix for maps without a TileSet",
-      "summary": "A new main-branch change repairs tile/world coordinate conversions during TileSet-free procedural candidate evaluation and adds a focused regression test. A seed-123456 sandbox startup is reported, but broader validation remains unresolved due to LFS import and authored-level registry failures.",
-      "body": "Procedural generation can evaluate candidate layouts before a visual TileSet is populated. The ingress spawner now delegates tile-to-world mapping to the procgen tilemap's shared conversion contract, while reverse conversion uses the native 32-pixel structural grid when no TileSet is present. A focused regression covers positive, origin and negative tiles in both TileSet-free and TileSet-backed modes. The commit reports a user-confirmed manual seed-123456 sandbox startup, not independently verified full CI. Existing broader LFS import and authored-level registry failures still need follow-up. This landing does not prove independent acceptance, deployment or teardown.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "general",
-      "workstream": "procgen-tilesetless-ingress-coordinates",
-      "occurred_at": "2026-11-08T14:00:08Z",
-      "bullets": [
-        "Coordinate conversion repair landed on main.",
-        "Focused regression added to validation manifest.",
-        "Manual sandbox startup reported; full CI remains unresolved.",
-        "Next gate: run focused validation and resolve or isolate baseline-wide failures."
-      ],
-      "links": [
-        {
-          "title": "Procgen coordinate repair and regression",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/98314aa169095b812817e968fced521c5c9339c2"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN has landed a targeted procedural-generation fix for an awkward moment in level creation: evaluating a map before its visual tiles are ready. The change keeps world entrances aligned with the same 32-pixel grid used by structural generation.",
-        "sections": [
-          {
-            "heading": "Why a missing TileSet matters",
-            "text": "The world ingress spawner previously relied on a tilemap conversion that assumes a populated visual TileSet. Candidate evaluation can run earlier. It now uses the procgen map's shared conversion method, while reverse lookup handles that TileSet-free phase explicitly."
-          },
-          {
-            "heading": "A regression is in place, but validation is not finished",
-            "text": "A new test checks coordinate round-trips with and without a TileSet, including negative tile coordinates. The commit reports a manual sandbox startup for seed 123456. Broader validation still has LFS import and authored-level registry failures, so this is a landed repair, not a clean project-wide acceptance."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The structural grid is now the common reference",
-            "explanation": "Using the same coordinate contract in ingress and procgen reduces disagreement between candidate evaluation and later rendered maps."
-          },
-          {
-            "title": "A focused test does not clear unrelated CI",
-            "explanation": "The new regression is useful evidence of intent and coverage, but the outstanding broader failures still require an independently inspected validation result."
-          }
-        ],
-        "takeaway": "A targeted procgen coordinate repair is on main; independent validation and broader CI disposition remain open.",
-        "next_watch": "Watch for a recorded focused regression PASS and a clear disposition of LFS import and authored-level registry failures."
-      },
-      "scorecard": {
-        "stage": "Repair landed; validation incomplete",
-        "as_of": "2026-11-08T14:00:08Z",
-        "scope": "Single procgen ingress coordinate fix, not whole project",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "TileSet-free coordinate repair landed",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Main commit 98314aa1 changes two runtime scripts."
-          },
-          {
-            "label": "Focused regression authored",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "New smoke test and manifest entry in 98314aa1."
-          },
-          {
-            "label": "Manual seed sandbox startup",
-            "status": "current",
-            "verification": "reported",
-            "evidence": "User confirmation described in commit; no independent receipt inspected."
-          },
-          {
-            "label": "Focused and broader CI validation",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No workflow run returned for inspected SHA; LFS and registry failures reported."
-          },
-          {
-            "label": "Independent acceptance",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No independent PASS inspected."
-          }
-        ],
-        "next_gate": "Validation owner: run the new focused regression and document broader CI failure disposition."
-      },
-      "details": {
-        "overview": "Inspected exact commit 98314aa1 and its four changed files. Combined commit status returned no contexts; PR-triggered workflow query returned no runs. These empty queries are not affirmative green or red CI evidence.",
-        "ledger": [
-          {
-            "stage": "Implementation landing",
-            "status": "verified",
-            "evidence": "98314aa1 on inspected main head"
-          },
-          {
-            "stage": "Manual startup",
-            "status": "reported",
-            "evidence": "Seed 123456 startup described in commit message"
-          },
-          {
-            "stage": "Full CI",
-            "status": "unknown",
-            "evidence": "No applicable run result obtained; broader failures reported"
-          },
-          {
-            "stage": "Independent review",
-            "status": "unknown",
-            "evidence": "No PASS receipt inspected"
-          },
-          {
-            "stage": "Host cleanup",
-            "status": "unknown",
-            "evidence": "No trusted host observation"
-          }
-        ],
-        "notes": [
-          "The private pilot pointer exists but exact observation bytes could not be read and verified in this run; no pilot counts used."
-        ],
-        "unknowns": [
-          "Current dispatcher totals and host worktree/lock state",
-          "Full CI outcome and independent acceptance"
-        ],
-        "actions": [
-          "Validate focused regression, then reconcile broader CI failures."
         ]
       },
       "related": []
