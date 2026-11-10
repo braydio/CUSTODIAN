@@ -1,9 +1,158 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-10T04:06:52Z",
-  "source_main_sha": "8e23d8b5418d7298dccc438c430652fe66d96333",
+  "generated_at": "2026-11-10T05:18:29Z",
+  "source_main_sha": "a3fb2f8b4fe854af9607ee71a8beb3022014de58",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "weather-v2-provenance-bridge-ready-a3fb2f8b",
+      "headline": "Weather V2 review recovery gains an evidence-backed route; implementation is queued",
+      "summary": "PR #127 landed a narrowly scoped source-provenance manifest and paired recovery packets. An automated handoff then promoted both packets from draft/manual to ready/auto. This prepares a way to authenticate Weather V2's historical source for independent review; it does not implement the bridge or accept the held review.",
+      "body": "Main commit 99c47e9a lands Weather V2 source-provenance bridge implementation/review packet definitions and a public manifest pinning historical Git identities and digests of private lifecycle receipts. Commit a3fb2f8b records an automated packet handoff from draft/manual to ready/auto for both packets. The original Weather V2 review remains held; the bridge is not yet implemented, claimed, independently accepted or proven live. The manifest references private evidence but does not expose its bytes, and the GitHub view cannot authenticate host-private records or teardown. The next gate is a bounded implementation by the legitimate dispatcher owner, followed by independent bridge review before the original review can resume.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "weather-v2-review-source-provenance-bridge-v1",
+      "occurred_at": "2026-11-10T05:18:29Z",
+      "bullets": [
+        "Provenance bridge packet pair and manifest landed on main.",
+        "Automated handoff changed both packets to ready/auto.",
+        "No bridge implementation, independent PASS or resumed Weather review verified."
+      ],
+      "links": [
+        {
+          "title": "PR #127",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/127"
+        },
+        {
+          "title": "Provenance manifest landing",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/99c47e9a212c058c2677a36e6f7c5d0d6e93ae48"
+        },
+        {
+          "title": "Automatic handoff",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/a3fb2f8b4fe854af9607ee71a8beb3022014de58"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "Weather V2's stalled independent review now has a defined recovery route. CUSTODIAN merged an evidence manifest and a paired implementation-and-review assignment, then automatically marked both assignments ready. The recovery work itself still has to be done.",
+        "sections": [
+          {
+            "heading": "Why the weather review needs a bridge",
+            "text": "The original Weather V2 review needs to verify that its source really matches the implementation and archive history. The new manifest pins exact Git history and private receipt digests so a future repair can validate that chain without loosening normal source checks."
+          },
+          {
+            "heading": "Ready is not running",
+            "text": "The automatic handoff changed the two task packets from draft/manual to ready/auto. That establishes dispatch eligibility, not an active worker, completed repair or independent approval. The original review remains held."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The bottleneck is evidence identity, not weather visuals",
+            "explanation": "Weather V2 code already landed. This new work targets the ability to authenticate the historical source used by its reviewer, a prerequisite to trusting any eventual visual or performance verdict."
+          },
+          {
+            "title": "A bounded manifest can preserve privacy and auditability",
+            "explanation": "The public manifest records expected identities and cryptographic digests while leaving private host receipts out of the public repository. Their actual bytes still require separate validation."
+          }
+        ],
+        "takeaway": "The recovery path has been authored and made dispatch-ready, but no bridge implementation or accepted review is established.",
+        "next_watch": "A legitimate claim and landed bridge implementation, followed by a separate independent PASS and resumption of the held Weather V2 review."
+      },
+      "details": {
+        "overview": "PR #127 landed at 99c47e9a; the automatic handoff landed at a3fb2f8b. GitHub evidence supports packet authoring and readiness only. No host audit or private receipt validation was performed.",
+        "ledger": [
+          {
+            "stage": "Bridge packet and manifest authoring",
+            "status": "verified landed",
+            "evidence": "PR #127, commit 99c47e9a."
+          },
+          {
+            "stage": "Automatic packet handoff",
+            "status": "verified ready/auto",
+            "evidence": "Commit a3fb2f8b changes implementation and paired review packet statuses."
+          },
+          {
+            "stage": "Bridge implementation",
+            "status": "not verified",
+            "evidence": "No implementation landing inspected."
+          },
+          {
+            "stage": "Independent bridge acceptance",
+            "status": "not verified",
+            "evidence": "No independent PASS inspected."
+          },
+          {
+            "stage": "Original Weather review",
+            "status": "held",
+            "evidence": "PR #127 explicitly says the original reviewer never launched."
+          }
+        ],
+        "notes": [
+          "Manifest references private receipt digests, not independently validated private bytes."
+        ],
+        "unknowns": [
+          "Host worker execution and claims unavailable.",
+          "Canonical teardown and original review acceptance unknown."
+        ],
+        "actions": [
+          "Dispatcher owner: execute bounded bridge implementation only under existing ownership rules.",
+          "Independent reviewer: falsify the bridge after its implementation lands."
+        ]
+      },
+      "related": [
+        {
+          "title": "Weather V2 presentation controls reach main, with visual performance review still ahead",
+          "context": "This bridge addresses provenance required for the already-landed feature's independent review.",
+          "story_id": "weather-v2-profile-merged-495ea3a1"
+        }
+      ],
+      "scorecard": {
+        "stage": "Recovery pair ready; implementation not verified",
+        "as_of": "2026-11-10T05:18:29Z",
+        "scope": "Named Weather V2 provenance bridge packet pair only",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Original Weather V2 implementation landed",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "PR #124 merge."
+          },
+          {
+            "label": "Bridge manifest and packets landed",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "99c47e9a."
+          },
+          {
+            "label": "Packet handoff to ready/auto",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "a3fb2f8b."
+          },
+          {
+            "label": "Bridge implementation",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No implementation receipt."
+          },
+          {
+            "label": "Independent bridge review",
+            "status": "blocked",
+            "verification": "unknown",
+            "evidence": "Requires landed implementation."
+          },
+          {
+            "label": "Resume original Weather review",
+            "status": "blocked",
+            "verification": "unknown",
+            "evidence": "Requires valid provenance and accepted bridge review."
+          }
+        ],
+        "next_gate": "Legitimate dispatcher owner to implement and validate the bounded provenance bridge."
+      }
+    },
     {
       "id": "owner-exception-audit-repair-merged-8e23d8b5",
       "headline": "Dispatcher audit repair reaches main; independent review remains the gate",
@@ -1522,154 +1671,7 @@
           "Implement overlay only after canonical dispatcher eligibility; independently review before read-only recovery planning."
         ]
       },
-      "related": [
-        {
-          "title": "Independent reviewer passes chassis metadata correction; protected recovery remains gated",
-          "context": "The accepted metadata correction is the predecessor gate for this new historical fixture repair.",
-          "story_id": "chassis-metadata-independent-pass-19661bc0"
-        }
-      ]
-    },
-    {
-      "id": "chassis-metadata-independent-pass-19661bc0",
-      "headline": "Independent reviewer passes chassis metadata correction; protected recovery remains gated",
-      "summary": "A fresh-context, different-agent review recorded PASS for the exact historical metadata source-scope correction. Its receipt and archived packet outcome are now on main. This clears the correction's review gate, not the held chassis-attestation review or any host recovery.",
-      "body": "The independent reviewer examined the pinned source span, historical metadata identity, adversarial tests and supplied immutable coordinator validation report. The review recorded no blocking defects or material gaps and the packet is marked complete. The reviewer relied on reported coordinator test execution rather than rerunning it. The next authorized step is a same-claim read-only host-validation recovery plan for the held chassis-attestation review. No recovery apply, new reviewer launch, original review acceptance or verified teardown is established.",
-      "severity": "milestone",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "review-agent-paired-review-chassis-metadata-source-scope-v1",
-      "occurred_at": "2026-11-07T18:20:46Z",
-      "bullets": [
-        "Independent fresh-context different-agent PASS recorded for metadata correction.",
-        "Review receipt and completed packet outcome landed on main.",
-        "Held chassis-attestation review still needs a read-only recovery plan; apply requires separate authorization."
-      ],
-      "links": [
-        {
-          "title": "Independent review and closeout commit",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/19661bc02ad8825451c4d5e3b21886d0744ab5b3"
-        },
-        {
-          "title": "Reviewed correction",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/ab22bda8d66bcd123c23ca5cd4f16d08ae3fd394"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "The narrow metadata correction blocking the Operator chassis review has now passed an independent review. A separate reviewer checked the exact historical source identities and recorded no blocking defects, moving the project past this correction gate while leaving the protected original review untouched.",
-        "sections": [
-          {
-            "heading": "What the reviewer accepted",
-            "text": "The reviewer verified the correction against pinned Git history, source-scope rules and adversarial tests. The accepted exception covers one historical packet-format change, not a general relaxation of source ownership. The published receipt records fresh reviewer context and different-agent provenance."
-          },
-          {
-            "heading": "The next gate is recovery planning, not execution",
-            "text": "The original chassis-attestation review remains held in host-validation recovery. Its next step is a same-claim, read-only recovery plan. Applying recovery or launching a reviewer still requires separate authorization and cannot be inferred from this PASS."
-          }
-        ],
-        "insights": [
-          {
-            "title": "A provenance bottleneck has cleared",
-            "explanation": "The accepted correction addresses historical review metadata, not gameplay logic. It removes one narrow validation obstacle while preserving the checks intended to prevent unrelated changes from slipping into review."
-          },
-          {
-            "title": "Review acceptance does not imply host cleanup",
-            "explanation": "The receipt establishes an independent verdict for the correction only. It supplies no proof that the original held review resumed or that local locks, worktrees and resources were cleaned up."
-          }
-        ],
-        "takeaway": "The metadata correction has an independently recorded PASS on main; protected recovery and original chassis review acceptance remain separate gates.",
-        "next_watch": "Watch for an authenticated read-only recovery plan for the held chassis-attestation review, followed only with separate authorization by any recovery apply."
-      },
-      "scorecard": {
-        "stage": "Independent correction PASS landed; original review held",
-        "as_of": "2026-11-07T18:20:46Z",
-        "scope": "Metadata correction paired review only, not full dispatcher or host",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Correction implemented and landed",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Main commit ab22bda8."
-          },
-          {
-            "label": "Coordinator validation",
-            "status": "done",
-            "verification": "reported",
-            "evidence": "Reviewer inspected supplied validation report; tests were not independently rerun."
-          },
-          {
-            "label": "Independent correction review",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "PASS receipt in 19661bc0; fresh, different-agent, no blocking findings."
-          },
-          {
-            "label": "Held original review recovery plan",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No read-only plan inspected."
-          },
-          {
-            "label": "Recovery apply and original acceptance",
-            "status": "blocked",
-            "verification": "unknown",
-            "evidence": "Separate authorization and genuine original review receipt required."
-          },
-          {
-            "label": "Canonical teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No host cleanup evidence inspected."
-          }
-        ],
-        "next_gate": "Original review owner: prepare same-claim read-only host-validation recovery plan, stop before apply."
-      },
-      "details": {
-        "overview": "Main commit 19661bc0 adds a fresh-context independent PASS review receipt for the exact metadata correction at ab22bda8 and marks the review packet complete. The reviewer inspected an immutable coordinator validation report rather than rerunning tests. No full dispatcher audit or host telemetry was available.",
-        "ledger": [
-          {
-            "stage": "Implementation landing",
-            "status": "verified",
-            "evidence": "ab22bda8 on main"
-          },
-          {
-            "stage": "Independent correction review",
-            "status": "verified receipt",
-            "evidence": "19661bc0, run 20261107T181211Z-4109dd47bbc3, PASS"
-          },
-          {
-            "stage": "Original held review",
-            "status": "not verified",
-            "evidence": "No resumed or accepted original review evidence"
-          },
-          {
-            "stage": "Canonical teardown",
-            "status": "unknown",
-            "evidence": "No host evidence"
-          }
-        ],
-        "notes": [
-          "Receipt reports no blocking defects or material gaps.",
-          "No commit status contexts were returned for the inspected main commit; CI health remains unknown."
-        ],
-        "unknowns": [
-          "Full dispatcher and recovery queue totals",
-          "Host locks, worktrees and disk status",
-          "Original chassis-attestation recovery and verdict"
-        ],
-        "actions": [
-          "Prepare read-only held-review recovery plan; obtain separate authorization before apply."
-        ]
-      },
-      "related": [
-        {
-          "title": "A second source-scope repair lands as chassis review waits for independent approval",
-          "context": "This is the independent verdict on that exact correction.",
-          "story_id": "paired-review-metadata-scope-ab22bda8"
-        }
-      ]
+      "related": []
     }
   ],
   "snapshot": {
