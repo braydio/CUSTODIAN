@@ -1,9 +1,158 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-10T18:16:29Z",
-  "source_main_sha": "7f0f7655f9a3769c089c4ef9df3d3c3429e8200f",
+  "generated_at": "2026-11-10T19:09:40Z",
+  "source_main_sha": "c93d75d8cd57c2b36731cb640fac722faf6ccc2a",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "archive-lifecycle-resolver-landed-6ef13efb",
+      "headline": "Archive-history resolver lands; Ash-Bell review awaits independent verification",
+      "summary": "CUSTODIAN merged the archive-history resolver fix through PR #135, then archived its completed implementation packet through PR #136. The change distinguishes an original archived review target from a later byte-identical restoration using Git lifecycle ancestry. The completion record reports four focused tests and 326 existing runner tests passing, but independent review has not yet been accepted.",
+      "body": "Main commit 6ef13efbbd1486f18d0f799817d6f521ef564c46 merges resolver implementation 781ecf984bec706849a37ad69e9bc7123afe62b1. The new resolver examines matching active packet identity, archive introduction, and later active-path retirement when multiple archive additions exist, rejecting ambiguous histories. Main c93d75d8cd57c2b36731cb640fac722faf6ccc2a merges completion archive PR #136. Its completion summary reports four focused regression tests, 326 existing runner tests, green pre/post merge checks and a retired V2 checkout; these are reported validation and retirement evidence, not an independently verified host teardown. The paired independent review remains pending, so the Ash-Bell asset-intake review is still gated. The private WIRE observation pointer was last modified November 8 and is stale for this run; dispatcher totals and host liveness are unavailable.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-review-archive-lifecycle-disambiguation-v1",
+      "occurred_at": "2026-11-10T18:33:45Z",
+      "bullets": [
+        "Resolver code and focused tests merged through PR #135.",
+        "Implementation completion packet archived through PR #136.",
+        "Completion summary reports four focused and 326 runner tests passing.",
+        "Independent paired review still pending; Ash-Bell review remains gated.",
+        "No fresh authenticated operational counts or teardown proof."
+      ],
+      "links": [
+        {
+          "title": "Resolver implementation merge",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/6ef13efbbd1486f18d0f799817d6f521ef564c46"
+        },
+        {
+          "title": "Implementation commit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/781ecf984bec706849a37ad69e9bc7123afe62b1"
+        },
+        {
+          "title": "Completion archive merge",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/c93d75d8cd57c2b36731cb640fac722faf6ccc2a"
+        },
+        {
+          "title": "Implementation PR #135",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/135"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "A review-history repair that was only a proposal earlier today has now reached CUSTODIAN's main branch. The new resolver uses a packet's Git lifecycle to distinguish its original archived implementation from a later restoration of identical content, removing a specific obstacle to Ash-Bell asset-intake review. Independent acceptance is still ahead.",
+        "sections": [
+          {
+            "heading": "A history problem now has a code fix",
+            "text": "The resolver previously encountered multiple archive-addition events and could not safely identify the original implementation. The landed correction checks for a matching active packet before the archive introduction and evidence that the active packet was subsequently retired. If history cannot establish one authentic candidate, it still refuses to guess."
+          },
+          {
+            "heading": "Completion is not independent acceptance",
+            "text": "The implementation packet is now archived as complete. Its published summary reports focused and broader test passes, along with green checks. But the paired independent review is a separate gate and remains pending; the Ash-Bell intake review should not be treated as cleared."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Git ancestry, not matching bytes, anchors review identity",
+            "explanation": "The repair addresses a provenance failure that could misattribute a review to the wrong historical implementation. It preserves fail-closed behavior when ancestry cannot prove a unique target."
+          },
+          {
+            "title": "The bottleneck moves from coding to independent review",
+            "explanation": "With code landed and implementation paperwork archived, the highest-leverage next step is a fresh paired-review receipt. The art pipeline remains dependent on that acceptance."
+          }
+        ],
+        "takeaway": "The generic resolver correction is landed and its implementation packet archived, but the independent reviewer has not accepted it.",
+        "next_watch": "Watch for a genuine independent PASS on review-agent-review-archive-lifecycle-disambiguation-v1, then a controlled resumption of the preserved Ash-Bell asset-intake review."
+      },
+      "details": {
+        "overview": "Observed main merge commits for implementation and completion archive. Test and V2 retirement figures come from the published completion summary, not a fresh host audit. Operational pilot observation remains stale.",
+        "ledger": [
+          {
+            "stage": "Implementation landed",
+            "status": "verified",
+            "evidence": "PR #135 merge 6ef13efb; code 781ecf98."
+          },
+          {
+            "stage": "Validation",
+            "status": "reported in landed completion summary",
+            "evidence": "Four focused tests, 326 runner tests, and green checks reported in PR #136 summary."
+          },
+          {
+            "stage": "Implementation packet archival",
+            "status": "verified",
+            "evidence": "PR #136 merge c93d75d8; packet moved to archived with implementation commit identity."
+          },
+          {
+            "stage": "Independent paired review",
+            "status": "pending",
+            "evidence": "Completion summary explicitly states no independent PASS."
+          },
+          {
+            "stage": "Canonical host teardown",
+            "status": "unknown",
+            "evidence": "Published summary reports V2 checkout retired, but no fresh authenticated host proof inspected."
+          }
+        ],
+        "notes": [
+          "Documentation identifies a possible V2 finish/landing guidance conflict for a separate bounded correction."
+        ],
+        "unknowns": [
+          "Fresh canonical dispatcher counts and host state.",
+          "Independent review outcome and Ash-Bell resumption."
+        ],
+        "actions": [
+          "Independent reviewer: execute fresh review against landed implementation and produce findings-first receipt.",
+          "Ash-Bell owner: resume preserved intake review only after accepted independent review."
+        ]
+      },
+      "related": [
+        {
+          "title": "New review-history repair proposed to unblock Ash-Bell asset intake",
+          "context": "Earlier coverage documented the repair plan before implementation landed.",
+          "story_id": "archive-lifecycle-resolver-packet-7f28dadf"
+        }
+      ],
+      "scorecard": {
+        "stage": "Implementation landed and archived; independent review pending",
+        "as_of": "2026-11-10T19:09:40Z",
+        "scope": "Named resolver implementation and paired review only; GitHub partial coverage",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Repair packets authored",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "7f28dadf"
+          },
+          {
+            "label": "Resolver implementation and regression tests landed",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "781ecf98 and PR #135"
+          },
+          {
+            "label": "Implementation packet archived",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "PR #136"
+          },
+          {
+            "label": "Independent paired review accepted",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No accepted review receipt inspected"
+          },
+          {
+            "label": "Ash-Bell intake review resumed",
+            "status": "blocked",
+            "verification": "unknown",
+            "evidence": "Requires independent acceptance"
+          }
+        ],
+        "next_gate": "Independent reviewer must issue a genuine accepted receipt for the landed resolver before Ash-Bell intake review resumes."
+      }
+    },
     {
       "id": "archive-lifecycle-resolver-packet-7f28dadf",
       "headline": "New review-history repair proposed to unblock Ash-Bell asset intake",
@@ -1597,146 +1746,6 @@
           }
         ],
         "next_gate": "Legitimate dispatcher executor claim and bounded implementation, followed by independent review."
-      }
-    },
-    {
-      "id": "owner-review-exception-lane-aaa2c3e9",
-      "headline": "Owner-review exception mechanism lands, while the chassis verdict remains unresolved",
-      "summary": "CUSTODIAN added a narrowly scoped owner exception record for an unresolved Operator chassis review. The mechanism preserves the original review judgment and blocks downstream use until its own fresh independent review passes. Targeted tests are reported green; this is not an accepted chassis review or a live dispatch release.",
-      "body": "Main commit aaa2c3e9f0915ca90d168d9b65aafe2483439d07 adds an exact owner-review exception mechanism and records an owner-authorized unresolved chassis disposition. The record preserves the original review as unresolved, checks source and packet digests, and distinguishes an owner waiver from independent PASS. The implementation report records 9 targeted tests, 10 selected changed-file validations and AI-context checks passing, but the new exception lane requires its own fresh paired review before activation. Remote claim and branch absence are reported, not proof of host cleanup. No canonical audit, live host process or verified teardown was inspected. The previously merged turn-scoped dispatcher also remains a separate deployment/acceptance question.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "general",
-      "workstream": "owner-review-exception-lane-v1",
-      "occurred_at": "2026-11-10T01:40:47Z",
-      "bullets": [
-        "Exact owner exception record is committed; original chassis review remains unresolved.",
-        "Reported focused validation is green; independent exception-lane review is still required.",
-        "After genuine PASS, re-audit exact downstream eligibility; do not silently treat waiver as reviewer approval.",
-        "Host cleanup and running dispatcher remain unverified."
-      ],
-      "links": [
-        {
-          "title": "Owner exception implementation commit",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/aaa2c3e9f0915ca90d168d9b65aafe2483439d07"
-        },
-        {
-          "title": "Previously merged dispatcher",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/a283d2a71279e657e1e1ddb485f9e99e48954e63"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN now has a way to record a project owner's deliberate exception when an Operator review cannot reach a normal verdict. The new mechanism does not rewrite that verdict. Instead, it records the exception separately and requires another independent review before the exception can affect task eligibility.",
-        "sections": [
-          {
-            "heading": "A waiver without a fictional PASS",
-            "text": "The chassis review is still unresolved. The committed exception record identifies the precise implementation, review packet and preserved evidence, so a later dispatcher audit can distinguish an owner decision from a reviewer acceptance."
-          },
-          {
-            "heading": "One more gate before Operator advances",
-            "text": "The exception mechanism has landed with reported focused tests passing, but its own fresh paired review remains the next gate. Until that review passes, downstream Operator work should not be treated as unblocked."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Review truth is preserved",
-            "explanation": "Separating an owner waiver from a review PASS avoids turning a governance decision into fabricated technical acceptance."
-          },
-          {
-            "title": "A merged mechanism is not an active permission",
-            "explanation": "The dispatcher is designed to keep the exception inert until the new mechanism is independently reviewed, limiting the risk of bypassing the very review system it changes."
-          }
-        ],
-        "takeaway": "The exception path is implemented, but the chassis review remains unresolved and the waiver is not yet eligible for operational use.",
-        "next_watch": "A genuine independent PASS for review-owner-review-exception-lane-v1, followed by an exact dispatcher eligibility audit."
-      },
-      "details": {
-        "overview": "The committed owner decision is recorded as owner_accepted_with_review_exception / waived_unresolved. Implementation validation and remote-ref absence are reported in the commit; neither establishes independent acceptance, live host state or canonical teardown.",
-        "ledger": [
-          {
-            "stage": "Owner exception implementation",
-            "status": "verified landed",
-            "evidence": "Main commit aaa2c3e9f0915ca90d168d9b65aafe2483439d07 contains implementation and exact decision record."
-          },
-          {
-            "stage": "Focused validation",
-            "status": "reported passing",
-            "evidence": "Commit report: 9 targeted tests and 10 selected changed-file validations passed."
-          },
-          {
-            "stage": "Independent review",
-            "status": "not verified",
-            "evidence": "Fresh paired review review-owner-review-exception-lane-v1 required before activation."
-          },
-          {
-            "stage": "Chassis original review",
-            "status": "unresolved",
-            "evidence": "Decision record explicitly preserves unresolved original verdict."
-          },
-          {
-            "stage": "Host cleanup / runtime",
-            "status": "unknown",
-            "evidence": "No canonical host audit or teardown proof inspected."
-          }
-        ],
-        "notes": [
-          "Separate owner exception and reviewer PASS in downstream status."
-        ],
-        "unknowns": [
-          "No independently accepted PASS for the exception mechanism established.",
-          "No verified running dispatcher or canonical host teardown."
-        ],
-        "actions": [
-          "Independent reviewer: complete fresh review of review-owner-review-exception-lane-v1.",
-          "After PASS, dispatcher owner: re-audit exact downstream eligibility without rewriting chassis review."
-        ]
-      },
-      "related": [
-        {
-          "title": "Turn-scoped dispatcher lands on main",
-          "context": "The new dispatcher is a separate implementation; its operational cutover must not be inferred from this owner exception.",
-          "story_id": "turn-scoped-dispatcher-merged-a283d2a7"
-        }
-      ],
-      "scorecard": {
-        "stage": "Implemented on main; awaiting independent exception-lane review",
-        "as_of": "2026-11-10T01:40:47Z",
-        "scope": "Exact owner-review exception lane and its chassis disposition",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Implement exact owner exception",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Main commit aaa2c3e9f0915ca90d168d9b65aafe2483439d07"
-          },
-          {
-            "label": "Focused implementation validation",
-            "status": "current",
-            "verification": "reported",
-            "evidence": "Commit reports passing targeted checks."
-          },
-          {
-            "label": "Independent paired review",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Fresh review not established."
-          },
-          {
-            "label": "Dispatcher eligibility re-audit",
-            "status": "blocked",
-            "verification": "unknown",
-            "evidence": "Requires authentic exception-lane PASS."
-          },
-          {
-            "label": "Host cleanup and downstream execution",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No live host audit."
-          }
-        ],
-        "next_gate": "Fresh independent review of review-owner-review-exception-lane-v1 before eligibility activation."
       }
     }
   ],
