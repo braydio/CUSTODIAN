@@ -65,7 +65,6 @@ packet and its paired review, not as chat-only downloads.
 - `AGENT_OPERATOR_IDLE_RETARGET_SOURCE_SCOPE_ATTESTATION_V1.md` — Let the preserved independent technical review validate the exact two source files omitted from the original archived Task 015 source declaration, without re...
 - `AGENT_PAIRED_REVIEW_CHASSIS_HISTORICAL_FIXTURE_OVERLAY_V1.md` — Let the preserved chassis-attestation review's canonical host validation run its four historical approval-fixture tests by repairing one obsolete fixture bas...
 - `AGENT_PAIRED_REVIEW_UNACCEPTED_SUPERSESSION_V1.md` — Add a reusable, auditable lifecycle for safely superseding a stranded claimed paired review whose reviewer PASS cannot be accepted, so canonical review eligi...
-- `AGENT_REVIEW_ARCHIVE_LIFECYCLE_DISAMBIGUATION_V1.md` — Resolve an archived review packet to its authentic implementation-introduction commit when later restoration of the same archive blob creates multiple histor...
 - `BROKEN_REMOTE_TRACKING_REF_REPAIR_V1.md` — Restore canonical dispatcher audits blocked by malformed empty local remote-tracking references without losing any legitimate Git object, ref, worktree, or o...
 - `CARROW_MAPPER_TRANSACTIONAL_EDITING_V1.md` — Give Carrow reversible, transactional editing and reliable per-room draft/save bookkeeping.
 - `COORDINATION_ROOT_DIRTY_PREVENTION_RECOVERY_V1.md` — Stop task/agent tooling from leaving the persistent CUSTODIAN coordination checkout dirty, and give the user a safe, observable, low-effort way to recover un...
@@ -640,6 +639,12 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 
 - `archived/OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION.md` — P0 human-authorized R2-01 correction complete; live preview acceptance is bound to the issuing bridge connection/session, including same-document reconnects.
 - `archived/REVIEW_OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION.md` — paired fresh-context review passed actual disconnect and identical-session reconnect controls; `operator-workbench-fx-layer-adoption` is the ready immediate successor.
+
+## Completed Review Receipt Archive Lifecycle Disambiguation
+
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af34a5d-ca7c-83ea-b267-382f1be560df
+
+- `archived/AGENT_REVIEW_ARCHIVE_LIFECYCLE_DISAMBIGUATION_V1.md` — resolver implementation and six acceptance claims completed; implementation commit `781ecf984bec706849a37ad69e9bc7123afe62b1` landed via PR #135. The fresh paired review remains a separate pending acceptance stage.
 
 ## Selection
 
