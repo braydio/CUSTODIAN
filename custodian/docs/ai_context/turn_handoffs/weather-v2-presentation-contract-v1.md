@@ -1,11 +1,11 @@
 <!-- V2 turn metadata -->
 Task identity: weather-v2-presentation-contract-v1
-Task definition: custodian/docs/ai_context/task_packets/WEATHER_V2_PRESENTATION_CONTRACT_V1.md at origin/main aaa2c3e9f0915ca90d168d9b65aafe2483439d07
+Task definition: custodian/docs/ai_context/task_packets/WEATHER_V2_PRESENTATION_CONTRACT_V1.md at origin/main 495ea3a1ff55f9740692e5d762a385d7aec64440
 Remote branch: agent/weather-v2-presentation-contract-v1
 Acquisition mode: normal
 Acquisition source: origin/main (no prior branch; fresh start)
 Acquisition source commit: a283d2a71279e657e1e1ddb485f9e99e48954e63
-Checkpoint base: 627fba1798dcd96a4e76ae77aba061781ad02006
+Checkpoint base: bffb65e9f2e2d0d0c17e4921be66e81187bdc3d2
 <!-- /V2 turn metadata -->
 
 # Turn Handoff — Weather V2 Presentation Contract V1
