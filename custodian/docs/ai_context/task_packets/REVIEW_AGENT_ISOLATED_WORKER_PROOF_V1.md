@@ -4,8 +4,8 @@
 - Workstream: `review-agent-isolated-worker-proof-v1`
 - Category: `platform-performance`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P1`
 - Depends on: `agent-isolated-worker-proof-v1`
