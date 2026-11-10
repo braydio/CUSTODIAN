@@ -4895,6 +4895,207 @@ class PairedReviewHostValidationTests(unittest.TestCase):
     def setUpClass(cls):
         _ensure_pinned_historical_diagnostic_refs()
 
+    def _owner_pr_recovery_sources(self):
+        return (
+            patch.object(host_validation, "_read_owner_pr_recovery_acquisition",
+                         return_value=dict(host_validation._OWNER_PR_RECOVERY_ACQUISITION)),
+            patch.object(host_validation, "_owner_pr_recovery_diagnostic_refs",
+                         return_value=([], [])),
+        )
+
+    def test_owner_direct_pr_recovery_resolves_exact_authenticated_source_span(self):
+        workstream = host_validation._OWNER_PR_RECOVERY_WORKSTREAM
+        packet = host_validation._OWNER_PR_RECOVERY_PACKET
+        archive = host_validation._OWNER_PR_RECOVERY_ARCHIVE
+        with self._owner_pr_recovery_sources()[0], self._owner_pr_recovery_sources()[1]:
+            span = host_validation.resolve_validation_source_span(
+                ROOT, host_validation._OWNER_PR_RECOVERY_REVIEWED_MAIN,
+                archive, workstream, packet,
+            )
+        self.assertEqual(span["base"], host_validation._OWNER_PR_RECOVERY_BASE)
+        self.assertEqual(span["head"], host_validation._OWNER_PR_RECOVERY_SOURCE)
+        self.assertEqual(span["commits"], [host_validation._OWNER_PR_RECOVERY_SOURCE])
+        self.assertEqual(set(span["paths"]), host_validation._OWNER_PR_RECOVERY_SOURCE_PATHS)
+        self.assertEqual(
+            set(host_validation._source_code_paths(span["paths"])),
+            set(host_validation._OWNER_PR_RECOVERY_CODE_BLOBS),
+        )
+        self.assertEqual(span["provenance"]["pull_request"], 126)
+        self.assertEqual(span["provenance"]["acquisition_sha256"],
+                         host_validation._OWNER_PR_RECOVERY_ACQUISITION_SHA256)
+
+    def test_owner_direct_pr_recovery_rejects_wrong_trigger_tuple(self):
+        with self._owner_pr_recovery_sources()[0], self._owner_pr_recovery_sources()[1]:
+            for workstream, packet, landing in (
+                ("other-workstream", host_validation._OWNER_PR_RECOVERY_PACKET,
+                 host_validation._OWNER_PR_RECOVERY_ARCHIVE),
+                (host_validation._OWNER_PR_RECOVERY_WORKSTREAM, "custodian/docs/other.md",
+                 host_validation._OWNER_PR_RECOVERY_ARCHIVE),
+                (host_validation._OWNER_PR_RECOVERY_WORKSTREAM,
+                 host_validation._OWNER_PR_RECOVERY_PACKET, "0" * 40),
+            ):
+                with self.subTest(workstream=workstream, packet=packet, landing=landing), \
+                        self.assertRaises(host_validation.HostValidationError):
+                    host_validation.resolve_validation_source_span(
+                        ROOT, host_validation._OWNER_PR_RECOVERY_REVIEWED_MAIN,
+                        landing, workstream, packet,
+                    )
+
+    def test_owner_direct_pr_recovery_rejects_changed_commit_tree_and_parent_order(self):
+        original_git = host_validation._git
+        for mutated_revision in (
+            host_validation._OWNER_PR_RECOVERY_SOURCE,
+            host_validation._OWNER_PR_RECOVERY_ARCHIVE,
+            host_validation._OWNER_PR_RECOVERY_BRANCH_MERGE,
+            host_validation._OWNER_PR_RECOVERY_PR_MERGE,
+        ):
+            with self.subTest(revision=mutated_revision):
+                def altered_git(repo, *args, _revision=mutated_revision):
+                    result = original_git(repo, *args)
+                    if args[:3] == ("show", "-s", "--format=%P") and args[3] == _revision:
+                        return "0" * 40
+                    if args[:2] == ("rev-parse", f"{_revision}^{{tree}}"):
+                        return "0" * 40
+                    return result
+                with self._owner_pr_recovery_sources()[0], self._owner_pr_recovery_sources()[1], \
+                        patch.object(host_validation, "_git", side_effect=altered_git), \
+                        self.assertRaises(host_validation.HostValidationError):
+                    host_validation.resolve_validation_source_span(
+                        ROOT, host_validation._OWNER_PR_RECOVERY_REVIEWED_MAIN,
+                        host_validation._OWNER_PR_RECOVERY_ARCHIVE,
+                        host_validation._OWNER_PR_RECOVERY_WORKSTREAM,
+                        host_validation._OWNER_PR_RECOVERY_PACKET,
+                    )
+
+    def test_owner_direct_pr_recovery_rejects_packet_source_and_handoff_mutations(self):
+        original_entry = host_validation._git_tree_entry
+        cases = (
+            (host_validation._OWNER_PR_RECOVERY_ARCHIVE,
+             host_validation._OWNER_PR_RECOVERY_PACKET),
+            (host_validation._OWNER_PR_RECOVERY_SOURCE,
+             "custodian/tools/agent/paired_review_host_validation.py"),
+            (host_validation._OWNER_PR_RECOVERY_HANDOFF,
+             host_validation._OWNER_PR_RECOVERY_HANDOFF_PATH),
+        )
+        for revision, path in cases:
+            with self.subTest(revision=revision, path=path):
+                def altered_entry(repo, rev, entry_path):
+                    result = original_entry(repo, rev, entry_path)
+                    return ("100644", "0" * 40) if (rev, entry_path) == (revision, path) else result
+                with self._owner_pr_recovery_sources()[0], self._owner_pr_recovery_sources()[1], \
+                        patch.object(host_validation, "_git_tree_entry", side_effect=altered_entry), \
+                        self.assertRaises(host_validation.HostValidationError):
+                    host_validation.resolve_validation_source_span(
+                        ROOT, host_validation._OWNER_PR_RECOVERY_REVIEWED_MAIN,
+                        host_validation._OWNER_PR_RECOVERY_ARCHIVE,
+                        host_validation._OWNER_PR_RECOVERY_WORKSTREAM,
+                        host_validation._OWNER_PR_RECOVERY_PACKET,
+                    )
+
+    def test_owner_direct_pr_recovery_rejects_missing_or_ambiguous_host_proof(self):
+        for acquisition, refs in (
+            ({}, ([], [])),
+            (dict(host_validation._OWNER_PR_RECOVERY_ACQUISITION), (["local-ref"], [])),
+            (dict(host_validation._OWNER_PR_RECOVERY_ACQUISITION), ([], ["remote-ref"])),
+        ):
+            with self.subTest(acquisition=acquisition, refs=refs), \
+                    patch.object(host_validation, "_read_owner_pr_recovery_acquisition",
+                                 return_value=acquisition), \
+                    patch.object(host_validation, "_owner_pr_recovery_diagnostic_refs",
+                                 return_value=refs), \
+                    self.assertRaises(host_validation.HostValidationError):
+                host_validation.resolve_validation_source_span(
+                    ROOT, host_validation._OWNER_PR_RECOVERY_REVIEWED_MAIN,
+                    host_validation._OWNER_PR_RECOVERY_ARCHIVE,
+                    host_validation._OWNER_PR_RECOVERY_WORKSTREAM,
+                    host_validation._OWNER_PR_RECOVERY_PACKET,
+                )
+
+    def test_owner_direct_pr_recovery_rejects_pr_identity_ancestry_and_source_inventory(self):
+        original_git = host_validation._git
+        original_run = subprocess.run
+        cases = ("subject", "ancestry", "paths")
+        for case in cases:
+            with self.subTest(case=case):
+                def altered_git(repo, *args):
+                    result = original_git(repo, *args)
+                    if case == "subject" and args[:3] == (
+                        "show", "-s", "--format=%s",
+                    ) and args[3] == host_validation._OWNER_PR_RECOVERY_PR_MERGE:
+                        return "Merge pull request #999 from other/branch"
+                    return result
+
+                def altered_run(args, *positional, **kwargs):
+                    result = original_run(args, *positional, **kwargs)
+                    if (case == "ancestry" and args[:2] == [
+                            "git", "merge-base",
+                    ] and args[2] == "--is-ancestor"):
+                        return subprocess.CompletedProcess(args, 1, "", "")
+                    if (case == "paths" and args[:2] == ["git", "diff-tree"]):
+                        return subprocess.CompletedProcess(
+                            args, 0, result.stdout + "unrelated.py\n", result.stderr,
+                        )
+                    return result
+
+                with self._owner_pr_recovery_sources()[0], self._owner_pr_recovery_sources()[1], \
+                        patch.object(host_validation, "_git", side_effect=altered_git), \
+                        patch.object(host_validation.subprocess, "run", side_effect=altered_run), \
+                        self.assertRaises(host_validation.HostValidationError):
+                    host_validation.resolve_validation_source_span(
+                        ROOT, host_validation._OWNER_PR_RECOVERY_REVIEWED_MAIN,
+                        host_validation._OWNER_PR_RECOVERY_ARCHIVE,
+                        host_validation._OWNER_PR_RECOVERY_WORKSTREAM,
+                        host_validation._OWNER_PR_RECOVERY_PACKET,
+                    )
+
+    def test_owner_pr_recovery_acquisition_reader_checks_digest_and_identity(self):
+        with tempfile.TemporaryDirectory(prefix="owner-pr-acquisition-") as temp:
+            repository = Path(temp)
+            subprocess.run(["git", "init", "-q", str(repository)], check=True)
+            common_dir = Path(subprocess.run(
+                ["git", "rev-parse", "--path-format=absolute", "--git-common-dir"],
+                cwd=repository, check=True, text=True, capture_output=True,
+            ).stdout.strip())
+            receipt_path = (common_dir / "custodian-turn-dispatcher-v2" / "acquisitions"
+                            / f"{host_validation._OWNER_PR_RECOVERY_ACQUISITION_ID}.json")
+            receipt_path.parent.mkdir(parents=True)
+            receipt_bytes = json.dumps(
+                host_validation._OWNER_PR_RECOVERY_ACQUISITION, sort_keys=True,
+            ).encode()
+            receipt_path.write_bytes(receipt_bytes)
+            with patch.object(host_validation, "_OWNER_PR_RECOVERY_ACQUISITION_SHA256",
+                              hashlib.sha256(receipt_bytes).hexdigest()):
+                self.assertEqual(
+                    host_validation._read_owner_pr_recovery_acquisition(repository),
+                    host_validation._OWNER_PR_RECOVERY_ACQUISITION,
+                )
+                receipt_path.write_bytes(receipt_bytes + b" ")
+                with self.assertRaises(host_validation.HostValidationError):
+                    host_validation._read_owner_pr_recovery_acquisition(repository)
+
+    def test_owner_direct_pr_recovery_reauthenticates_on_every_resolution(self):
+        valid = dict(host_validation._OWNER_PR_RECOVERY_ACQUISITION)
+        changed = {**valid, "task_definition_sha": "0" * 40}
+        with patch.object(host_validation, "_read_owner_pr_recovery_acquisition",
+                          side_effect=[valid, changed]) as read_receipt, \
+                patch.object(host_validation, "_owner_pr_recovery_diagnostic_refs",
+                             return_value=([], [])):
+            first = host_validation.resolve_validation_source_span(
+                ROOT, host_validation._OWNER_PR_RECOVERY_REVIEWED_MAIN,
+                host_validation._OWNER_PR_RECOVERY_ARCHIVE,
+                host_validation._OWNER_PR_RECOVERY_WORKSTREAM,
+                host_validation._OWNER_PR_RECOVERY_PACKET,
+            )
+            self.assertEqual(first["head"], host_validation._OWNER_PR_RECOVERY_SOURCE)
+            with self.assertRaises(host_validation.HostValidationError):
+                host_validation.resolve_validation_source_span(
+                    ROOT, host_validation._OWNER_PR_RECOVERY_REVIEWED_MAIN,
+                    host_validation._OWNER_PR_RECOVERY_ARCHIVE,
+                    host_validation._OWNER_PR_RECOVERY_WORKSTREAM,
+                    host_validation._OWNER_PR_RECOVERY_PACKET,
+                )
+        self.assertEqual(read_receipt.call_count, 2)
+
     def test_owner_exception_archive_admits_only_exact_historical_review_metadata(self):
         verifier = host_validation._owner_exception_lane_review_metadata_path
         archive = host_validation._OWNER_EXCEPTION_LANE_SOURCE_ARCHIVE
