@@ -1,9 +1,149 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-09T23:52:40Z",
-  "source_main_sha": "a283d2a71279e657e1e1ddb485f9e99e48954e63",
+  "generated_at": "2026-11-10T01:40:47Z",
+  "source_main_sha": "aaa2c3e9f0915ca90d168d9b65aafe2483439d07",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "owner-review-exception-lane-aaa2c3e9",
+      "headline": "Owner-review exception mechanism lands, while the chassis verdict remains unresolved",
+      "summary": "CUSTODIAN added a narrowly scoped owner exception record for an unresolved Operator chassis review. The mechanism preserves the original review judgment and blocks downstream use until its own fresh independent review passes. Targeted tests are reported green; this is not an accepted chassis review or a live dispatch release.",
+      "body": "Main commit aaa2c3e9f0915ca90d168d9b65aafe2483439d07 adds an exact owner-review exception mechanism and records an owner-authorized unresolved chassis disposition. The record preserves the original review as unresolved, checks source and packet digests, and distinguishes an owner waiver from independent PASS. The implementation report records 9 targeted tests, 10 selected changed-file validations and AI-context checks passing, but the new exception lane requires its own fresh paired review before activation. Remote claim and branch absence are reported, not proof of host cleanup. No canonical audit, live host process or verified teardown was inspected. The previously merged turn-scoped dispatcher also remains a separate deployment/acceptance question.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "owner-review-exception-lane-v1",
+      "occurred_at": "2026-11-10T01:40:47Z",
+      "bullets": [
+        "Exact owner exception record is committed; original chassis review remains unresolved.",
+        "Reported focused validation is green; independent exception-lane review is still required.",
+        "After genuine PASS, re-audit exact downstream eligibility; do not silently treat waiver as reviewer approval.",
+        "Host cleanup and running dispatcher remain unverified."
+      ],
+      "links": [
+        {
+          "title": "Owner exception implementation commit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/aaa2c3e9f0915ca90d168d9b65aafe2483439d07"
+        },
+        {
+          "title": "Previously merged dispatcher",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/a283d2a71279e657e1e1ddb485f9e99e48954e63"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN now has a way to record a project owner's deliberate exception when an Operator review cannot reach a normal verdict. The new mechanism does not rewrite that verdict. Instead, it records the exception separately and requires another independent review before the exception can affect task eligibility.",
+        "sections": [
+          {
+            "heading": "A waiver without a fictional PASS",
+            "text": "The chassis review is still unresolved. The committed exception record identifies the precise implementation, review packet and preserved evidence, so a later dispatcher audit can distinguish an owner decision from a reviewer acceptance."
+          },
+          {
+            "heading": "One more gate before Operator advances",
+            "text": "The exception mechanism has landed with reported focused tests passing, but its own fresh paired review remains the next gate. Until that review passes, downstream Operator work should not be treated as unblocked."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Review truth is preserved",
+            "explanation": "Separating an owner waiver from a review PASS avoids turning a governance decision into fabricated technical acceptance."
+          },
+          {
+            "title": "A merged mechanism is not an active permission",
+            "explanation": "The dispatcher is designed to keep the exception inert until the new mechanism is independently reviewed, limiting the risk of bypassing the very review system it changes."
+          }
+        ],
+        "takeaway": "The exception path is implemented, but the chassis review remains unresolved and the waiver is not yet eligible for operational use.",
+        "next_watch": "A genuine independent PASS for review-owner-review-exception-lane-v1, followed by an exact dispatcher eligibility audit."
+      },
+      "details": {
+        "overview": "The committed owner decision is recorded as owner_accepted_with_review_exception / waived_unresolved. Implementation validation and remote-ref absence are reported in the commit; neither establishes independent acceptance, live host state or canonical teardown.",
+        "ledger": [
+          {
+            "stage": "Owner exception implementation",
+            "status": "verified landed",
+            "evidence": "Main commit aaa2c3e9f0915ca90d168d9b65aafe2483439d07 contains implementation and exact decision record."
+          },
+          {
+            "stage": "Focused validation",
+            "status": "reported passing",
+            "evidence": "Commit report: 9 targeted tests and 10 selected changed-file validations passed."
+          },
+          {
+            "stage": "Independent review",
+            "status": "not verified",
+            "evidence": "Fresh paired review review-owner-review-exception-lane-v1 required before activation."
+          },
+          {
+            "stage": "Chassis original review",
+            "status": "unresolved",
+            "evidence": "Decision record explicitly preserves unresolved original verdict."
+          },
+          {
+            "stage": "Host cleanup / runtime",
+            "status": "unknown",
+            "evidence": "No canonical host audit or teardown proof inspected."
+          }
+        ],
+        "notes": [
+          "Separate owner exception and reviewer PASS in downstream status."
+        ],
+        "unknowns": [
+          "No independently accepted PASS for the exception mechanism established.",
+          "No verified running dispatcher or canonical host teardown."
+        ],
+        "actions": [
+          "Independent reviewer: complete fresh review of review-owner-review-exception-lane-v1.",
+          "After PASS, dispatcher owner: re-audit exact downstream eligibility without rewriting chassis review."
+        ]
+      },
+      "related": [
+        {
+          "title": "Turn-scoped dispatcher lands on main",
+          "context": "The new dispatcher is a separate implementation; its operational cutover must not be inferred from this owner exception.",
+          "story_id": "turn-scoped-dispatcher-merged-a283d2a7"
+        }
+      ],
+      "scorecard": {
+        "stage": "Implemented on main; awaiting independent exception-lane review",
+        "as_of": "2026-11-10T01:40:47Z",
+        "scope": "Exact owner-review exception lane and its chassis disposition",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Implement exact owner exception",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Main commit aaa2c3e9f0915ca90d168d9b65aafe2483439d07"
+          },
+          {
+            "label": "Focused implementation validation",
+            "status": "current",
+            "verification": "reported",
+            "evidence": "Commit reports passing targeted checks."
+          },
+          {
+            "label": "Independent paired review",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Fresh review not established."
+          },
+          {
+            "label": "Dispatcher eligibility re-audit",
+            "status": "blocked",
+            "verification": "unknown",
+            "evidence": "Requires authentic exception-lane PASS."
+          },
+          {
+            "label": "Host cleanup and downstream execution",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No live host audit."
+          }
+        ],
+        "next_gate": "Fresh independent review of review-owner-review-exception-lane-v1 before eligibility activation."
+      }
+    },
     {
       "id": "turn-scoped-dispatcher-merged-a283d2a7",
       "headline": "Turn-scoped dispatcher lands on main, but operational cutover still awaits proof",
@@ -1471,151 +1611,6 @@
         "actions": [
           "Independent reviewer: evaluate correction and produce authentic PASS if warranted.",
           "Coordinator: only after acceptance, prepare read-only original review recovery plan."
-        ]
-      },
-      "related": []
-    },
-    {
-      "id": "operator-preview-slice-a-dc48e1e9",
-      "headline": "Operator 3D animation gains an in-engine comparison preview, but production approval remains on hold",
-      "summary": "A focused Operator animation preview is now on main, allowing an unapproved 3D candidate to be compared against the accepted 2.5D source in Godot. The original batch-executor workstream is still incomplete, visual approval is absent, and a non-green lifecycle CI suite remains unresolved.",
-      "body": "Main commit dc48e1e9 adds a candidate-only Operator 3D preview scene and guarded request loader. The comparison pins the accepted 2.5D source and preserves the candidate_unapproved flag, with production approval and timing authority explicitly false. The commit reports baseline-equivalent authored-level CI errors documented in PR #119, but says the lifecycle suite remains non-green. Original executor ownership and remaining slices B–D are outstanding; independent paired acceptance and canonical teardown are not established.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "general",
-      "workstream": "operator-3d-animation-batch-executor-v1",
-      "occurred_at": "2026-11-07T14:59:54Z",
-      "bullets": [
-        "Candidate-only Godot comparison preview landed on main.",
-        "Candidate remains unapproved; runtime timing authority remains false.",
-        "Remaining batch-executor/cache slices and paired review are not complete.",
-        "Lifecycle CI is not green; baseline-equivalent authored errors do not certify the suite."
-      ],
-      "links": [
-        {
-          "title": "Main preview salvage commit",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/dc48e1e9e8511abe160aad266ed44493f11e8666"
-        },
-        {
-          "title": "PR #119 independent review context",
-          "url": "https://github.com/braydio/CUSTODIAN/pull/119"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN can now inspect a proposed 3D Operator animation inside Godot alongside the accepted 2.5D reference. That gives artists and gameplay reviewers a more useful comparison surface, but it is deliberately a preview, not permission to replace the playable character animation.",
-        "sections": [
-          {
-            "heading": "A safer place to judge the animation",
-            "text": "The new scene loads an explicitly unapproved candidate, checks its request digest and preserves a fixed reference to the accepted 2.5D artwork. Reviewers can compare the motion without granting production status or changing gameplay timing."
-          },
-          {
-            "heading": "The larger animation pipeline is still unfinished",
-            "text": "This landing salvages only the first preview slice. Incremental batch execution, cache behavior and receipts remain unfinished. The original workstream is still open, and independent paired acceptance has not been established."
-          },
-          {
-            "heading": "A test caveat still matters",
-            "text": "The commit cites independent review evidence that authored-level CI errors match the main baseline. That narrows one regression concern, but the lifecycle suite is still not green. A baseline comparison is not a passing test result."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Reviewability improved before deployability",
-            "explanation": "An in-engine preview makes a difficult visual decision inspectable without prematurely promoting experimental frames into production."
-          },
-          {
-            "title": "Baseline-equivalent failures are still failures",
-            "explanation": "The review may establish that a particular error was already present, but it does not close the non-green lifecycle validation gate or finish the original executor."
-          }
-        ],
-        "takeaway": "The Operator 3D candidate is easier to evaluate, but remains unapproved and outside production animation authority.",
-        "next_watch": "Watch for human visual comparison, completion of the remaining executor/cache slices, a resolved lifecycle suite and an independent acceptance receipt."
-      },
-      "scorecard": {
-        "stage": "Preview landed; candidate not approved; original executor incomplete",
-        "as_of": "2026-11-07T15:40:52Z",
-        "scope": "One named Operator 3D animation workstream; no full dispatcher audit",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Create guarded in-engine preview",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Main commit dc48e1e9 adds preview scenes and script."
-          },
-          {
-            "label": "Preserve candidate-only boundary",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Loader enforces candidate_unapproved and false production/timing approval."
-          },
-          {
-            "label": "Resolve lifecycle CI failures",
-            "status": "blocked",
-            "verification": "reported",
-            "evidence": "Commit reports baseline-equivalent authored errors, but lifecycle suite remains non-green."
-          },
-          {
-            "label": "Finish executor and cache slices",
-            "status": "next",
-            "verification": "reported",
-            "evidence": "Slices B–D and original packet completion remain outstanding."
-          },
-          {
-            "label": "Human visual approval",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No visual acceptance evidence inspected."
-          },
-          {
-            "label": "Independent paired acceptance and canonical teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No accepted PASS or host teardown receipt inspected."
-          }
-        ],
-        "next_gate": "Operator workstream owner: resolve the outstanding lifecycle validation gate and finish the remaining executor/cache obligations before independent acceptance."
-      },
-      "details": {
-        "overview": "The inspected main commit establishes a guarded comparison preview only. Repository source and author notes do not establish host execution, acceptance or cleanup.",
-        "ledger": [
-          {
-            "stage": "Preview implementation landing",
-            "status": "verified on main",
-            "evidence": "Commit dc48e1e9 contains preview scenes and guarded script."
-          },
-          {
-            "stage": "Candidate production approval",
-            "status": "explicitly not granted",
-            "evidence": "Candidate-only loader rejects production approval and timing authority."
-          },
-          {
-            "stage": "CI lifecycle validation",
-            "status": "reported non-green",
-            "evidence": "Commit cites PR #119 review of baseline-equivalent authored errors; lifecycle suite remains outstanding."
-          },
-          {
-            "stage": "Independent acceptance",
-            "status": "unknown",
-            "evidence": "No canonical PASS receipt inspected."
-          },
-          {
-            "stage": "Host teardown",
-            "status": "unknown",
-            "evidence": "No host evidence inspected."
-          }
-        ],
-        "notes": [
-          "The source describes a 2,104-frame candidate; this is not an independently counted production frame inventory."
-        ],
-        "unknowns": [
-          "Full dispatcher packet counts",
-          "Independent accepted review and host cleanup",
-          "Human visual approval and production timing authority"
-        ],
-        "actions": [
-          "Operator workstream owner: finish lifecycle validation and remaining batch/cache slices.",
-          "Independent reviewer: evaluate completed work after prerequisites land."
         ]
       },
       "related": []
