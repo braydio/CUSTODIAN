@@ -1,9 +1,178 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-10T05:18:29Z",
-  "source_main_sha": "a3fb2f8b4fe854af9607ee71a8beb3022014de58",
+  "generated_at": "2026-11-10T07:02:57Z",
+  "source_main_sha": "d793f198a8abf74450c2eb4d6d4e1073187ffcc3",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "owner-exception-direct-pr-provenance-ready-d793f198",
+      "headline": "Owner-exception review gains a narrowly pinned provenance recovery path",
+      "summary": "PRs #128 and #129 landed an implementation/review packet pair and corrected its review authorization wording. Commit d793f198 promoted both packets to ready/auto. The proposed verifier would authenticate one historical direct-PR source span without inventing lifecycle evidence. No verifier implementation, independent PASS or resumed preserved review is established.",
+      "body": "At main d793f198, PR #128 adds the bounded direct-PR provenance recovery packet pair for the owner-exception closeout correction. PR #129 adjusts the paired review's receipt-only task override. The automatic handoff then marks both packets ready/auto. The underlying correction was merged earlier in PR #126, but its preserved review cannot yet plan host validation because ordinary source-span resolution lacks an exact lifecycle trace. The proposed recovery is deliberately narrow: authenticate Git ancestry, source blobs, owner handoff and private acquisition receipt for that single historical case, rejecting conflicting or altered evidence. This is authoring and dispatch eligibility, not a completed verifier or accepted independent review. Host-private receipt authenticity, execution, claims, teardown and disk state were not inspected. The private WIRE pointer remains dated November 8; no fresh operational counts are asserted.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-owner-review-exception-direct-pr-provenance-recovery-v1",
+      "occurred_at": "2026-11-10T07:02:57Z",
+      "bullets": [
+        "PR #128 landed the bounded recovery and independent review packets.",
+        "PR #129 corrected the review receipt-only override.",
+        "Automatic handoff marked both packets ready/auto; implementation and acceptance remain unverified."
+      ],
+      "links": [
+        {
+          "title": "PR #128",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/128"
+        },
+        {
+          "title": "PR #129",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/129"
+        },
+        {
+          "title": "Automatic handoff",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/d793f198a8abf74450c2eb4d6d4e1073187ffcc3"
+        },
+        {
+          "title": "Underlying correction PR #126",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/126"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "A stalled independent review of CUSTODIAN's dispatcher recovery now has a defined way to establish where its code actually came from. Two pull requests introduced and refined a tightly bounded provenance-repair assignment; an automated handoff made the implementation and its separate review eligible for dispatch. Neither has been completed.",
+        "sections": [
+          {
+            "heading": "Why this recovery is necessary",
+            "text": "The earlier dispatcher correction reached main, but the preserved reviewer cannot reconstruct its exact source span through the normal lifecycle records. The new assignment proposes checking a single historical direct-PR path against Git ancestry, file identities and a private acquisition receipt rather than accepting a plausible but unproven history."
+          },
+          {
+            "heading": "The boundary remains narrow",
+            "text": "The recovery must reject altered or missing evidence and leave ordinary source validation untouched. The paired reviewer must independently challenge that behavior. Marking the packets ready does not mean a worker has claimed them or that the original review can resume."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Review provenance is now the blocking gate",
+            "explanation": "The underlying correction already landed. What remains is proving exactly which source the independent reviewer should assess, without fabricating lifecycle events."
+          },
+          {
+            "title": "Eligibility is not acceptance",
+            "explanation": "The automated transition establishes two ready packets, not running workers, a completed implementation or a trusted PASS."
+          }
+        ],
+        "takeaway": "A specific, review-gated recovery route is now published and dispatch-ready; the preserved correction review remains unresolved.",
+        "next_watch": "Watch for a legitimate implementation landing, independent provenance-recovery PASS and separately authorized read-only planning for the preserved review."
+      },
+      "details": {
+        "overview": "Inspected PR #128 merge 9ed8ac45, PR #129 merge d059db83 and automated handoff d793f198. GitHub-only partial scope. Private WIRE pointer is dated November 8 and was not treated as fresh host evidence.",
+        "ledger": [
+          {
+            "stage": "Underlying owner-exception correction",
+            "status": "verified landed, not independently accepted",
+            "evidence": "PR #126 merged earlier; preserved review remains unresolved."
+          },
+          {
+            "stage": "Provenance recovery packet pair",
+            "status": "verified landed",
+            "evidence": "PR #128."
+          },
+          {
+            "stage": "Review override correction",
+            "status": "verified landed",
+            "evidence": "PR #129."
+          },
+          {
+            "stage": "Automatic dispatch handoff",
+            "status": "verified ready/auto",
+            "evidence": "d793f198 changes both packets from draft/manual."
+          },
+          {
+            "stage": "Recovery implementation",
+            "status": "not verified",
+            "evidence": "No implementation landing inspected."
+          },
+          {
+            "stage": "Independent recovery review",
+            "status": "not verified",
+            "evidence": "No accepted PASS inspected."
+          },
+          {
+            "stage": "Preserved correction review",
+            "status": "held",
+            "evidence": "Recovery plan depends on authenticated source-span resolution."
+          }
+        ],
+        "notes": [
+          "No canonical full dispatcher audit inspected."
+        ],
+        "unknowns": [
+          "Host claim/execution and private acquisition receipt validation unavailable.",
+          "Canonical cleanup, locks, worktrees and disk figures unknown."
+        ],
+        "actions": [
+          "Legitimate dispatcher owner: implement the exact bounded verifier under existing packet authority.",
+          "Independent reviewer: challenge the landed verifier before any preserved-run recovery is authorized."
+        ]
+      },
+      "related": [
+        {
+          "title": "Dispatcher audit repair reaches main; independent review remains the gate",
+          "context": "This new provenance recovery is needed to independently review that previously landed correction.",
+          "story_id": "owner-exception-audit-repair-merged-8e23d8b5"
+        }
+      ],
+      "scorecard": {
+        "stage": "Recovery packet pair ready; implementation not verified",
+        "as_of": "2026-11-10T07:02:57Z",
+        "scope": "Named owner-exception direct-PR provenance recovery packet pair only",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Underlying correction landed",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "PR #126."
+          },
+          {
+            "label": "Provenance recovery pair authored",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "PR #128."
+          },
+          {
+            "label": "Review override corrected",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "PR #129."
+          },
+          {
+            "label": "Both packets ready/auto",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "d793f198."
+          },
+          {
+            "label": "Recovery verifier implemented",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No landing inspected."
+          },
+          {
+            "label": "Independent verifier PASS",
+            "status": "blocked",
+            "verification": "unknown",
+            "evidence": "Requires landed implementation."
+          },
+          {
+            "label": "Preserved review recovery planning",
+            "status": "blocked",
+            "verification": "unknown",
+            "evidence": "Requires accepted verifier and separate authorization for application."
+          }
+        ],
+        "next_gate": "Legitimate dispatcher owner implements the exact bounded verifier, then a separate reviewer evaluates it."
+      }
+    },
     {
       "id": "weather-v2-provenance-bridge-ready-a3fb2f8b",
       "headline": "Weather V2 review recovery gains an evidence-backed route; implementation is queued",
@@ -1518,157 +1687,6 @@
         ],
         "actions": [
           "Validate focused regression, then reconcile broader CI failures."
-        ]
-      },
-      "related": []
-    },
-    {
-      "id": "chassis-historical-fixture-overlay-ee2d0c82",
-      "headline": "Chassis review hits an obsolete test fixture; a narrowly scoped repair is queued",
-      "summary": "A preserved Operator chassis review reports four failing historical fixture tests after its implementation packet was archived. A new ready implementation packet proposes a disposable-checkout-only correction. No implementation, independent approval, or recovery apply is established.",
-      "body": "The preserved chassis-attestation review's continuation is reported at host_validation_failed: three of four validation entries passed, while four tests expected an active packet that had already been archived. New main-branch packets specify an exact-identity test fixture overlay confined to a disposable checkout. Automatic handoff marks the implementation ready, and a later commit narrows its lock declaration. Ready is not claimed or running. The repair must be implemented, validated and independently reviewed before even a read-only recovery plan; recovery apply requires separate authorization. No host teardown evidence is available.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-paired-review-chassis-historical-fixture-overlay-v1",
-      "occurred_at": "2026-11-07T18:58:13Z",
-      "bullets": [
-        "New implementation and review packets landed, with exact historical source constraints.",
-        "Automatic handoff marks both packets ready; the review remains dependency-gated.",
-        "Held chassis review has reported historical fixture failures; no recovery apply authorized.",
-        "Next gate: implement and validate the disposable-only overlay, then independent review."
-      ],
-      "links": [
-        {
-          "title": "Historical fixture repair packets",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/d5f1743b5837d695813a0361c33cb77a0170bf60"
-        },
-        {
-          "title": "Automatic ready handoff",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/e4ddfca68486c65737137a86819e2daef5e3dad6"
-        },
-        {
-          "title": "Narrowed lock scope",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/ee2d0c829b3d5860f5d20a6be46e3d94693fe518"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "The Operator chassis review has cleared one provenance correction only to encounter a different obstacle: historical tests still expect a task packet to be active even though that packet was already archived. CUSTODIAN now has a narrowly scoped repair packet ready, but the held review has not resumed.",
-        "sections": [
-          {
-            "heading": "A historical test, not a new gameplay failure",
-            "text": "The new packet records a failed host-validation continuation: four tests could not reconcile the old fixture with the archived packet. The proposed repair changes only the temporary validation checkout, leaving the original reviewed source and held evidence intact."
-          },
-          {
-            "heading": "A ready handoff with deliberate limits",
-            "text": "Automatic handoff changed the implementation packet to ready. A follow-up commit narrowed its lock name to avoid unnecessary conflict with the held review. Neither commit implements the overlay or proves a live worker claimed it. Independent review and separately authorized recovery remain ahead."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The bottleneck is historical validation fidelity",
-            "explanation": "A previously valid fixture assumes a lifecycle state that no longer exists. Fixing that assumption in an isolated checkout can preserve strict source identity checks instead of weakening them."
-          },
-          {
-            "title": "A narrower lock is not proof of execution",
-            "explanation": "The latest commit changes packet coordination metadata. It may improve eligibility, but without a dispatcher audit it cannot establish a claim, running process, or host cleanup."
-          }
-        ],
-        "takeaway": "A targeted fixture-repair workstream is now ready on main; the original chassis review remains held pending independently accepted repair and separately authorized recovery.",
-        "next_watch": "Watch for a landed disposable-checkout overlay with complete historical validation and a fresh independent PASS."
-      },
-      "scorecard": {
-        "stage": "Ready for implementation; held review unresolved",
-        "as_of": "2026-11-07T20:06:51Z",
-        "scope": "Two named fixture-overlay packets and the preserved chassis review, not full dispatcher coverage",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Metadata source-scope correction independently accepted",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Previous PASS receipt on main 19661bc0."
-          },
-          {
-            "label": "Historical fixture overlay packet prepared",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "d5f1743b and e4ddfca6."
-          },
-          {
-            "label": "Overlay implementation and validation",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No implementation landing inspected."
-          },
-          {
-            "label": "Independent overlay review",
-            "status": "blocked",
-            "verification": "unknown",
-            "evidence": "Depends on implementation."
-          },
-          {
-            "label": "Read-only held-review recovery plan",
-            "status": "blocked",
-            "verification": "unknown",
-            "evidence": "Requires accepted overlay review."
-          },
-          {
-            "label": "Recovery apply and original review acceptance",
-            "status": "blocked",
-            "verification": "unknown",
-            "evidence": "Separate authorization and original receipt required."
-          },
-          {
-            "label": "Canonical teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No host proof."
-          }
-        ],
-        "next_gate": "Implementation owner: claim only when dispatcher permits, implement and validate exact temporary fixture overlay."
-      },
-      "details": {
-        "overview": "New packet records preserved chassis-attestation review continuation host_validation_failed, with 3/4 validation entries passing and four historical fixture tests failing. This is packet-reported host evidence, not independently observed runtime. No canonical audit or trusted teardown available.",
-        "ledger": [
-          {
-            "stage": "Metadata correction independent PASS",
-            "status": "verified",
-            "evidence": "19661bc0"
-          },
-          {
-            "stage": "Fixture overlay packet",
-            "status": "verified ready metadata",
-            "evidence": "d5f1743b; e4ddfca6; ee2d0c82"
-          },
-          {
-            "stage": "Overlay implementation",
-            "status": "not verified",
-            "evidence": "No landing"
-          },
-          {
-            "stage": "Original chassis review",
-            "status": "held, packet-reported",
-            "evidence": "Preserved continuation described in new packet"
-          },
-          {
-            "stage": "Teardown",
-            "status": "unknown",
-            "evidence": "No host evidence"
-          }
-        ],
-        "notes": [
-          "CI commit status contexts were not available; no green-CI claim.",
-          "Ready packet metadata does not establish active execution."
-        ],
-        "unknowns": [
-          "Full dispatcher counts",
-          "Current host claim and lock ownership",
-          "Worktree and disk state"
-        ],
-        "actions": [
-          "Implement overlay only after canonical dispatcher eligibility; independently review before read-only recovery planning."
         ]
       },
       "related": []
