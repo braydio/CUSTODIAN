@@ -1,9 +1,170 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-10T10:42:31Z",
-  "source_main_sha": "d37b29291591454b0c8a6d9218b6806adf66263a",
+  "generated_at": "2026-11-10T11:49:09Z",
+  "source_main_sha": "6ce61c8f8b101d88e8c05f0312cd1f4931873743",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "findings-recovery-landed-closeout-6ce61c8f",
+      "headline": "Findings recovery bridge merges; implementation closeout lands while independent review remains ahead",
+      "summary": "PR #133 merged the exact-run findings recovery bridge into main, and PR #134 landed its implementation closeout. The bridge preserves original nonpassing R0-01/R0-02 findings and requires digest-bound evidence. Passing checks and archived implementation do not establish independent review acceptance, recovery application, or teardown.",
+      "body": "Main 6ce61c8f8b101d88e8c05f0312cd1f4931873743 includes PR #133 merge e311c9c6417cf4f403bd2586dcf6449a87743dbd and PR #134 closeout. The new code provides a read-only exact-run findings recovery plan and digest-bound apply mechanism restricted to a separate recovery checkout. The implementation closeout reports 326 paired-review runner tests, 14 artifact tests, and 13 synthetic bridge cases passing, plus changed-file checks. Those checks do not constitute a fresh independent PASS. The designated independent review review-agent-paired-review-findings-artifact-recovery-v1 remains the next gate; no recovery apply or canonical host teardown was independently verified. Private pilot pointer is dated November 8, so no operational counts are promoted. CI combined-status endpoint returned no statuses; broader CI health is unknown.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-paired-review-findings-artifact-recovery-v1",
+      "occurred_at": "2026-11-10T11:49:09Z",
+      "bullets": [
+        "PR #133 implementation merged at e311c9c.",
+        "PR #134 implementation closeout merged at 6ce61c8.",
+        "326 runner, 14 artifact and 13 synthetic cases reported passing.",
+        "Independent review remains outstanding; no PASS inferred.",
+        "Recovery application and canonical teardown remain unverified."
+      ],
+      "links": [
+        {
+          "title": "Implementation merge PR #133",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/133"
+        },
+        {
+          "title": "Implementation closeout PR #134",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/134"
+        },
+        {
+          "title": "Main closeout merge",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/6ce61c8f8b101d88e8c05f0312cd1f4931873743"
+        },
+        {
+          "title": "Implementation merge commit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/e311c9c6417cf4f403bd2586dcf6449a87743dbd"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "The recovery tool for stranded reviewer findings has crossed the merge line. CUSTODIAN now has a code path designed to preserve the original nonpassing findings without rewriting the review, and its implementation closeout has also landed. Independent acceptance is still a separate, unfinished gate.",
+        "sections": [
+          {
+            "heading": "From proposal to merged recovery mechanism",
+            "text": "PR #133 merged an exact-run read-only plan and digest-bound application path. It checks the preserved review's evidence and confines any eventual application to a separate recovery checkout, keeping the original review and target untouched."
+          },
+          {
+            "heading": "Closeout paperwork is not an approval",
+            "text": "PR #134 archived the implementation assignment and recorded passing test results. That establishes a landed implementation and documented closeout, not a fresh independent PASS. The original R0-01 and R0-02 findings remain nonpassing, and no recovery application is verified."
+          }
+        ],
+        "insights": [
+          {
+            "title": "A truthful recovery path now exists in main",
+            "explanation": "The tool is designed to carry the original review findings forward while retaining their nonpassing disposition, preventing evidence repair from masquerading as approval."
+          },
+          {
+            "title": "The remaining gate is independent scrutiny",
+            "explanation": "Implementation and closeout are merged, so attention shifts to the designated independent review and any later separately authorized exact-run recovery."
+          }
+        ],
+        "takeaway": "The findings bridge is landed and implementation-closeout documentation is merged; acceptance and recovery execution remain unverified.",
+        "next_watch": "Watch for a genuine independent review receipt and dispatcher-backed eligibility before any separately authorized recovery action."
+      },
+      "details": {
+        "overview": "GitHub partial inspection at main 6ce61c8f8b101d88e8c05f0312cd1f4931873743. PR #133 merged at e311c9c; PR #134 closeout at 6ce61c8f8b101d88e8c05f0312cd1f4931873743. Implementation summary reports 326 runner tests, 14 artifact tests and 13 synthetic findings bridge cases passing. No full live dispatcher audit or fresh private pilot observation was available.",
+        "ledger": [
+          {
+            "stage": "Recovery packet pair",
+            "status": "verified landed",
+            "evidence": "PR #132 and earlier main d37b2929."
+          },
+          {
+            "stage": "Implementation",
+            "status": "verified merged",
+            "evidence": "PR #133 merged at e311c9c."
+          },
+          {
+            "stage": "Validation",
+            "status": "reported passing",
+            "evidence": "Closeout summary reports 326 runner, 14 artifact, 13 synthetic bridge cases and CI checks."
+          },
+          {
+            "stage": "Implementation closeout",
+            "status": "verified merged",
+            "evidence": "PR #134 merged at 6ce61c8."
+          },
+          {
+            "stage": "Independent acceptance",
+            "status": "not established",
+            "evidence": "No independent PASS receipt inspected."
+          },
+          {
+            "stage": "Recovery apply and teardown",
+            "status": "unknown",
+            "evidence": "No host evidence or protected recovery authorization inspected."
+          }
+        ],
+        "notes": [
+          "CI combined status returned no checks; do not infer green or red.",
+          "The private pilot pointer is stale as of November 8."
+        ],
+        "unknowns": [
+          "Live dispatcher counts, worker claims, locks, worktrees, disk, and cleanup.",
+          "Independent review acceptance and any recovery execution."
+        ],
+        "actions": [
+          "Designated independent reviewer: review merged implementation and issue an evidence-backed disposition.",
+          "Protected recovery owner: await separate authorization and exact-run evidence gates before any application."
+        ]
+      },
+      "related": [
+        {
+          "title": "Findings recovery bridge reaches reviewable PR",
+          "context": "Earlier coverage described the implementation before its merge.",
+          "story_id": "findings-recovery-implementation-pr133-a4e9dbc8"
+        }
+      ],
+      "scorecard": {
+        "stage": "Implementation landed and archived; awaiting independent review",
+        "as_of": "2026-11-10T11:49:09Z",
+        "scope": "Named findings artifact recovery workstream only",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Recovery packet pair landed",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "PR #132."
+          },
+          {
+            "label": "Recovery implementation merged",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "PR #133."
+          },
+          {
+            "label": "Implementation closeout merged",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "PR #134."
+          },
+          {
+            "label": "Independent review acceptance",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No independent PASS inspected."
+          },
+          {
+            "label": "Separately authorized exact-run recovery",
+            "status": "blocked",
+            "verification": "unknown",
+            "evidence": "Requires separate authorization and verified evidence."
+          },
+          {
+            "label": "Canonical teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No host evidence."
+          }
+        ],
+        "next_gate": "Designated independent reviewer must inspect merged bridge and issue an authentic disposition."
+      }
+    },
     {
       "id": "findings-recovery-implementation-pr133-a4e9dbc8",
       "headline": "Findings recovery bridge reaches reviewable PR, with original nonpassing findings preserved",
@@ -1582,137 +1743,6 @@
         ],
         "actions": [
           "Dispatcher owner: collect full test and review evidence; preserve existing dispatcher until authorized cutover."
-        ]
-      },
-      "related": []
-    },
-    {
-      "id": "firefox-chat-relay-fix-de9fb72d",
-      "headline": "CUSTODIAN's ChatGPT relay moves to Firefox, then fixes message delivery and response polling",
-      "summary": "Two main-branch commits migrate CUSTODIAN's ChatGPT orchestration relay from Chrome to Firefox MCP and repair Send-button discovery, delivery confirmation and in-progress response detection. The follow-up reports 17 passing local tests and a reader smoke check; live unattended operation and independent acceptance remain unverified.",
-      "body": "The Firefox relay now connects Python scripts to an existing authenticated Firefox tab through Mozilla's DevTools MCP, without opening a browser or navigating to another conversation. A follow-up fixes selector drift that previously hid the enabled Send control, supports the current user-message marker to avoid false delivery timeouts, and detects response-starting state so the reader does not prematurely conclude that a reply is complete. The committed completion summary reports 17 unit tests passing, Python compilation, diff checks, a reader smoke test and a sender dry run. Those are reported local validations, not independent review or proof of an always-on host service. The separately published private WIRE pilot pointer was observed with a November 8 timestamp and is stale for current operational counts; none are imported.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "general",
-      "workstream": "",
-      "occurred_at": "2026-11-09T15:35:09Z",
-      "bullets": [
-        "Firefox MCP replaces Chrome CDP in the relay scripts.",
-        "Send selection, delivery detection and response-starting handling were fixed.",
-        "Completion summary reports 17 passing tests; unattended liveness is unknown.",
-        "Next gate: independently demonstrate exact-conversation send/poll operation under supervised service."
-      ],
-      "links": [
-        {
-          "title": "Firefox relay migration",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/52e09813cd0993fe0c8c03065938e21115f782f3"
-        },
-        {
-          "title": "Send and poll regression fix",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/de9fb72d8f4f2c239c551d87797351c9093e21b8"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN has rebuilt its ChatGPT conversation relay around Firefox and followed up with fixes for a fragile part of automated orchestration: knowing whether a message was actually sent and whether the reply has finished.",
-        "sections": [
-          {
-            "heading": "A different browser connection",
-            "text": "The Python sender and reader now connect to an existing Firefox session through Mozilla's DevTools MCP. They select the exact conversation instead of opening or navigating tabs, and keep browser lifetime separate from script lifetime."
-          },
-          {
-            "heading": "The crucial fix is avoiding duplicate sends",
-            "text": "The follow-up targets a Send button missing from broad accessibility snapshots and a newer user-message marker that caused false delivery timeouts. The reader also recognizes a response that is starting but has not yet streamed. Together these changes make retry decisions safer, though they do not establish live reliability."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Delivery confirmation matters more than clicking Send",
-            "explanation": "A false timeout can tempt an orchestrator to resend the same instruction. Checking the actual conversation before retrying reduces that duplicate-work risk."
-          },
-          {
-            "title": "Tests are not service acceptance",
-            "explanation": "The commit records 17 passing local tests and a reader smoke check, but no independent acceptance or continuous-service proof. The next useful evidence is an end-to-end supervised run."
-          }
-        ],
-        "takeaway": "The Firefox relay migration and scoped regression fixes are landed on main; their unattended operational reliability remains unverified.",
-        "next_watch": "Watch for an independently evidenced exact-conversation send/poll cycle, supervised-service behavior, and any review receipt."
-      },
-      "scorecard": {
-        "stage": "Implementation landed; independent operational validation pending",
-        "as_of": "2026-11-09T16:06:32.140Z",
-        "scope": "Two inspected main-branch commits concerning the Firefox ChatGPT relay",
-        "metrics": [
-          {
-            "id": "reported-unit-tests",
-            "label": "REPORTED PASSING TESTS",
-            "value": 17,
-            "verification": "reported",
-            "basis": "Completion summary in de9fb72d; not independently rerun",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/de9fb72d8f4f2c239c551d87797351c9093e21b8"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Firefox MCP relay implementation landed",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "52e09813 on main"
-          },
-          {
-            "label": "Send and response-state regression fix landed",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "de9fb72d on main"
-          },
-          {
-            "label": "Local validation reported",
-            "status": "current",
-            "verification": "reported",
-            "evidence": "17 tests and smoke/dry-run reported in completion summary"
-          },
-          {
-            "label": "Independent end-to-end service acceptance",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No independent receipt inspected"
-          }
-        ],
-        "next_gate": "Relay operator and independent reviewer: demonstrate a supervised exact-conversation send/poll cycle with immutable sanitized evidence."
-      },
-      "details": {
-        "overview": "Commits 52e09813 and de9fb72d alter relay documentation, Python sender/reader and tests. Local tests are reported in a committed completion summary; process status is not observable from GitHub.",
-        "ledger": [
-          {
-            "stage": "Main landing",
-            "status": "verified",
-            "evidence": "Both commits inspected"
-          },
-          {
-            "stage": "Local tests",
-            "status": "reported",
-            "evidence": "17 passing tests reported in completion summary"
-          },
-          {
-            "stage": "Independent review",
-            "status": "unknown",
-            "evidence": "No acceptance receipt inspected"
-          },
-          {
-            "stage": "Live host service",
-            "status": "unknown",
-            "evidence": "No trustworthy host runtime evidence"
-          }
-        ],
-        "notes": [
-          "Private pilot pointer remains dated November 8; no fresh private counts were imported."
-        ],
-        "unknowns": [
-          "Unattended Firefox service liveness",
-          "Independent acceptance and canonical cleanup"
-        ],
-        "actions": [
-          "Relay owner: collect a sanitized end-to-end supervised run and independent review."
         ]
       },
       "related": []
