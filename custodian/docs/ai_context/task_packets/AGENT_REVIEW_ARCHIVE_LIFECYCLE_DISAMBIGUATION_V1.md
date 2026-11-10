@@ -1,0 +1,36 @@
+# Review Receipt Archive Lifecycle Disambiguation
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `agent-review-archive-lifecycle-disambiguation-v1`
+- Category: `agent-ops`
+- Status: `draft`
+- Dispatch: `manual`
+- Authoring handoff: `auto`
+- Priority: `P0`
+- Depends on: `none`
+- Locks: `none`
+- Kind: `implementation`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, workflow`
+- Paired review workstream: `review-agent-review-archive-lifecycle-disambiguation-v1`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Review rationale: `A false historical review target can misattribute independent-review evidence and block or misdirect another workstream; independent post-land verification materially reduces this lifecycle-integrity risk.`
+- Reviewed main: `8262ac57622059256f9f5d136ef0eff28dd59a1d`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af34a5d-ca7c-83ea-b267-382f1be560df`
+- Visual review: `none`
+- Goal: Resolve an archived review packet to its authentic implementation-introduction commit when later restoration of the same archive blob creates multiple historical Add events.
+- Completion boundary: Correct the generic archived-target resolver and focused tests, land through the normal workstream lifecycle, then obtain the paired independent review. The accepted resolver must identify `f3b94d0768bc110755f2b9be1d1e60d22fe1577c` and reject restore commit `38c188421b18e0f5ddcd47ad0ff3dd5399eceac6` as the target.
+- Current measured state: `resolve_target_implementation_commit` rejects histories with two archive Add events as ambiguous. In the supplied history, the authentic introduction has a matching active packet in its parent and is followed by retirement of that active path; the later byte-identical archive restoration has no active-packet predecessor.
+- Evidence: `custodian/tools/agent/review_receipt_delta.py`; its tests and callers; current Git history at `f3b94d0768bc110755f2b9be1d1e60d22fe1577c`, `30f70182b3dcd47cdb15ee776a4878a78bef295b`, `a74ab183be0eb09c4b2e3a1e23d159812bc2eb6e`, and `38c188421b18e0f5ddcd47ad0ff3dd5399eceac6`.
+- Task-specific authority: `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`; `custodian/docs/ai_context/task_packets/README.md`; the current resolver and its tests.
+- Work surface: `custodian/tools/agent/review_receipt_delta.py`; add focused `custodian/tools/agent/test_review_receipt_delta.py`. Preserve adjacent paired-review runner/host-validation files and unrelated queued work.
+- Publication inputs: `none`
+- Change: Keep the single-candidate path unchanged. When multiple archive Add events exist, resolve only if exactly one candidate is proven by immutable Git ancestry to introduce a complete archived packet whose parent contains the matching active packet (same workstream, kind and reviewed-main identity), with no archive already present; and a later matching active-path retirement exists in that candidate's ancestry. Require the packet identity and relevant refs/pins to remain consistent. Otherwise fail closed as ambiguous. Do not select by earliest date, commit subject, or blob equality alone.
+- Preserve: Existing receipt identity checks, one-candidate behavior, ambiguity for unproven histories, filesystem/branch state, unrelated workstreams and existing source review provenance.
+- Non-goals: No Ash-Bell-specific allowlist, direct-tail receipt change, Dropbox mutation, review verdict/claim manipulation, or broad resolver redesign.
+- Acceptance: (1) Exact supplied history resolves to `f3b94d0768bc110755f2b9be1d1e60d22fe1577c`; (2) restore `38c188421b18e0f5ddcd47ad0ff3dd5399eceac6` is never selected; (3) a single valid candidate remains supported; (4) direct add/delete/re-add without matching active lifecycle remains ambiguous; (5) two valid lifecycle introductions, mismatched workstream/kind/reviewed-main, missing or ambiguous retirement, and inconsistent ancestry all fail closed; (6) resolver does not mutate repository state.
+- Validation: `python3 -m unittest custodian.tools.agent.test_review_receipt_delta -v`; relevant existing resolver/paired-review tests; `python3 -m py_compile custodian/tools/agent/review_receipt_delta.py custodian/tools/agent/test_review_receipt_delta.py`; `python3 custodian/tools/validation/run_validation.py --changed --base origin/main --json`; `git diff --check`. Record exact outcomes and any unavailable checks.
+- Task overrides: `none`
+- Deferred: Resume `review-ash-bell-surface-lift-v2-asset-intake` only after this implementation lands and its fresh paired review is accepted; do not create replacement Lift packets.
