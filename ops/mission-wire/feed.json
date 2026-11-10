@@ -1,9 +1,148 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-10T03:18:40Z",
-  "source_main_sha": "495ea3a1ff55f9740692e5d762a385d7aec64440",
+  "generated_at": "2026-11-10T04:06:52Z",
+  "source_main_sha": "8e23d8b5418d7298dccc438c430652fe66d96333",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "owner-exception-audit-repair-merged-8e23d8b5",
+      "headline": "Dispatcher audit repair reaches main; independent review remains the gate",
+      "summary": "PR #126 merged a missing-import fix for dispatcher JSON audit and a narrowly pinned historical archive source-scope exception. The implementation reports 412 passing tests and a successful audit, but its independent correction review remains ready, not accepted; the original chassis review is still unresolved.",
+      "body": "Main merge 8e23d8b5418d7298dccc438c430652fe66d96333 lands the owner-exception closeout recovery implementation. The code adds the missing re import and narrowly admits exact historical paired-review metadata based on commit, parent, tree, path, file mode, blob and review identity. The implementation handoff reports 412 passing focused tests, changed-file validation and a direct JSON audit returning awaiting_owner_exception_lane_review and unresolved. These are implementation-reported tests, not independent acceptance. The paired correction review packet remains ready/auto, and the original preserved review must not be recovered or launched without the required acceptance and separate authorization. Host execution, claims, cleanup and live liveness remain unknown.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-owner-review-exception-closeout-recovery-v1",
+      "occurred_at": "2026-11-10T04:06:52Z",
+      "bullets": [
+        "Scoped dispatcher audit and historical source-scope fixes merged.",
+        "Implementation reports 412 passing focused tests and successful audit.",
+        "Independent correction PASS and original preserved review recovery remain outstanding."
+      ],
+      "links": [
+        {
+          "title": "PR #126 merge",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/8e23d8b5418d7298dccc438c430652fe66d96333"
+        },
+        {
+          "title": "Implementation commit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/74b22e1775f09ae50e3da5cd9f19d5108d97dc1a"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN has merged a focused repair for the dispatcher audit and the historical review archive that was preventing owner-exception recovery. The change removes a concrete crash and opens a tightly bounded validation path, but the independent reviewer still has to establish whether the correction is safe.",
+        "sections": [
+          {
+            "heading": "An audit that can report the unresolved state",
+            "text": "The dispatcher now imports the missing regular-expression module. The implementation reports that JSON audit completes and still labels the chassis review unresolved, with the owner exception awaiting its own review rather than silently activating it."
+          },
+          {
+            "heading": "A historical exception, not a blanket waiver",
+            "text": "The archive correction checks exact Git history, paths, file modes, content blobs and review identity. Its purpose is to admit one historical paired-review metadata transition without relaxing the normal source-scope rules. The independent correction review remains ready, not accepted."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The recovery path is narrower than the original blockage",
+            "explanation": "The code targets a reproducible crash and one specific archive, rather than bypassing ordinary review safeguards. That reduces the intended scope but does not substitute for independent falsification."
+          },
+          {
+            "title": "Landing changes the next gate",
+            "explanation": "The repair is now on main. The next decision depends on a genuine independent review receipt, not another implementation commit or a ready/auto packet label."
+          }
+        ],
+        "takeaway": "The repair landed and implementation validation was reported successful; independent acceptance, original review recovery and host cleanup are not established.",
+        "next_watch": "An accepted independent correction review, followed only then by the separately authorized read-only plan for the preserved original review."
+      },
+      "details": {
+        "overview": "Main merge 8e23d8b5 includes implementation 74b22e17. The source handoff reports 412 focused tests passing and direct audit returning awaiting_owner_exception_lane_review / unresolved. No independent correction PASS or live host audit was inspected.",
+        "ledger": [
+          {
+            "stage": "Implementation and landing",
+            "status": "verified merged",
+            "evidence": "PR #126 merge 8e23d8b5 and implementation commit 74b22e17."
+          },
+          {
+            "stage": "Focused tests and dispatcher audit",
+            "status": "implementation-reported passing",
+            "evidence": "Source handoff reports 412 tests and direct JSON audit."
+          },
+          {
+            "stage": "Independent correction review",
+            "status": "pending",
+            "evidence": "Paired review packet remains ready/auto; no PASS inspected."
+          },
+          {
+            "stage": "Original review recovery",
+            "status": "blocked",
+            "evidence": "Requires accepted correction review and separate authorization."
+          },
+          {
+            "stage": "Host cleanup",
+            "status": "unknown",
+            "evidence": "No verified canonical teardown evidence."
+          }
+        ],
+        "notes": [
+          "The original chassis review remains unresolved."
+        ],
+        "unknowns": [
+          "No independent accepted correction review receipt.",
+          "No verified host execution or teardown."
+        ],
+        "actions": [
+          "Independent reviewer: inspect merged correction and issue a genuine review disposition.",
+          "Orchestrator: consider only the read-only original recovery plan after accepted correction and separate authorization."
+        ]
+      },
+      "related": [
+        {
+          "title": "Owner-exception recovery packets become dispatch-ready",
+          "context": "This landing implements the repair previously queued by the paired packets.",
+          "story_id": "owner-exception-recovery-ready-def6f0c4"
+        }
+      ],
+      "scorecard": {
+        "stage": "Merged; independent correction review pending",
+        "as_of": "2026-11-10T04:06:52Z",
+        "scope": "Named owner-exception recovery implementation and paired review only",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Recovery packet authored",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "d64f588b."
+          },
+          {
+            "label": "Repair implementation landed",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "8e23d8b5."
+          },
+          {
+            "label": "Focused validation",
+            "status": "current",
+            "verification": "reported",
+            "evidence": "412 passing tests reported by implementation."
+          },
+          {
+            "label": "Independent correction review",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No accepted PASS inspected."
+          },
+          {
+            "label": "Original review recovery",
+            "status": "blocked",
+            "verification": "unknown",
+            "evidence": "Requires accepted correction review and separate authorization."
+          }
+        ],
+        "next_gate": "Independent reviewer to falsify the landed repair and record a genuine disposition."
+      }
+    },
     {
       "id": "weather-v2-profile-merged-495ea3a1",
       "headline": "Weather V2 presentation controls reach main, with visual performance review still ahead",
@@ -1531,127 +1670,6 @@
           "story_id": "paired-review-metadata-scope-ab22bda8"
         }
       ]
-    },
-    {
-      "id": "paired-review-metadata-scope-ab22bda8",
-      "headline": "A second source-scope repair lands as chassis review waits for independent approval",
-      "summary": "A tightly bounded metadata exception is now on main, addressing a review preflight rejection caused by a historical packet delimiter edit. Tests are reported passing, but independent acceptance and original review recovery remain outstanding.",
-      "body": "The correction authenticates one historical comma-to-semicolon metadata edit against exact Git identities, excluding it from implementation source ownership without relaxing general source checks. Its packet is marked complete on main; the paired independent review remains the next gate. The author reports 303 runner tests and 3 changed-file checks passing. No accepted PASS or host teardown was inspected.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-paired-review-chassis-metadata-source-scope-v1",
-      "occurred_at": "2026-11-07T18:09:01Z",
-      "bullets": [
-        "Exact-history metadata exception landed on main.",
-        "Author reports 303 runner tests and 3 changed-file checks passing.",
-        "Independent review remains required before read-only held-run recovery planning."
-      ],
-      "links": [
-        {
-          "title": "Metadata exception landing",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/ab22bda8d66bcd123c23ca5cd4f16d08ae3fd394"
-        },
-        {
-          "title": "Automatic review handoff",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/e9162b335519e66bd9eb6f4ec275a2eecfb5484a"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "The Operator chassis review has encountered another narrowly defined source-history obstacle. A new main-branch correction now recognizes one exact historical packet-format edit without granting broader permission to change implementation sources. The fix is published, but its independent approval is still outstanding.",
-        "sections": [
-          {
-            "heading": "Why a punctuation change blocked a review",
-            "text": "The preserved review preflight rejected a historical review-packet Markdown edit as unrelated source. The new validator recognizes only the pinned comma-to-semicolon transition, checking the original Git objects and exact bytes. Other undeclared paths remain rejected."
-          },
-          {
-            "heading": "What remains between landing and recovery",
-            "text": "The implementation packet is complete on main, with author-reported positive and adversarial checks. A different reviewer must still accept the correction. Only then may the held review's same-claim read-only recovery plan be prepared; applying recovery requires separate authorization."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Provenance, not gameplay code, is the current bottleneck",
-            "explanation": "The review cannot reach its independent verdict while exact historical metadata fails source-span validation. Fixing that identity mismatch preserves the stronger rule against unrelated implementation changes."
-          }
-        ],
-        "takeaway": "A narrow validator repair has landed; it does not constitute independent acceptance or permission to restart the preserved review.",
-        "next_watch": "Look for an authenticated independent PASS on the metadata correction, followed by a read-only plan for the held review."
-      },
-      "scorecard": {
-        "stage": "Landed; independent review pending",
-        "as_of": "2026-11-07T18:09:01Z",
-        "scope": "One metadata correction and its held predecessor review, not full dispatcher coverage",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Historical metadata exception implemented",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Main commit ab22bda8."
-          },
-          {
-            "label": "Tests executed",
-            "status": "current",
-            "verification": "reported",
-            "evidence": "Author reports 303 runner and 3 changed-file tests passing."
-          },
-          {
-            "label": "Independent correction review",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No accepted PASS inspected."
-          },
-          {
-            "label": "Held-run recovery plan",
-            "status": "blocked",
-            "verification": "reported",
-            "evidence": "Requires accepted correction review."
-          },
-          {
-            "label": "Original review acceptance and teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No canonical receipts or host evidence."
-          }
-        ],
-        "next_gate": "Independent reviewer: verify exact historical exception and issue an authentic accepted review result."
-      },
-      "details": {
-        "overview": "Historical Git metadata exception is pinned to exact source identities; no dispatcher or host audit was available.",
-        "ledger": [
-          {
-            "stage": "Landing",
-            "status": "verified",
-            "evidence": "ab22bda8 on main"
-          },
-          {
-            "stage": "Validation",
-            "status": "author reported",
-            "evidence": "303 runner tests and 3 changed-file tests"
-          },
-          {
-            "stage": "Independent review",
-            "status": "not verified",
-            "evidence": "No accepted PASS inspected"
-          },
-          {
-            "stage": "Canonical teardown",
-            "status": "unknown",
-            "evidence": "No host receipt"
-          }
-        ],
-        "notes": [],
-        "unknowns": [
-          "Current full dispatcher and host resource counts",
-          "Independent acceptance and held-run recovery"
-        ],
-        "actions": [
-          "Independent reviewer: assess correction before recovery planning."
-        ]
-      },
-      "related": []
     }
   ],
   "snapshot": {
