@@ -1,0 +1,38 @@
+# REVIEW | SURFACE MATERIAL LAB: NORMAL & HEIGHT MAPS | ONE-SCENE GODOT LIGHTING A/B
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `review-surface-normal-height-lighting-proof-v1`
+- Category: `assets-art`
+- Kind: `review`
+- Status: `draft`
+- Dispatch: `manual`
+- Priority: `P2`
+- Depends on: `surface-normal-height-lighting-proof-v1`
+- Locks: `none`
+- Review: `none`
+- Review target workstream: `surface-normal-height-lighting-proof-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/SURFACE_NORMAL_HEIGHT_LIGHTING_PROOF_V1.md`
+- Reviewed main: `ebfe3810eec146d7202a4378324b0f32c9e12fee`
+- Authoring chat: `not-recorded`
+- Visual review: `required`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture, asset-pipeline`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Goal: Independently falsify implementation acceptance for surface-normal-height-lighting-proof-v1 on landed main and documented evidence; no review self-certification.
+- Publication inputs: `design/04_architecture/SPRITE_NORMAL_HEIGHT_MAP_LIBRARY_V1.md`
+- Reviewed implementation acceptance: Normal effect demonstrably reacts to an existing LightRig2D, does not alter silhouette, alpha, layer order or UI, and disabling returns exact diffuse baseline. Record native-scale ROI A/B and positive/negative human preference separately. No shared-material explosion.
+- Review evidence: Archive target custodian/docs/ai_context/task_packets/archived/SURFACE_NORMAL_HEIGHT_LIGHTING_PROOF_V1.md, landed diff, source/probe identities, focused run logs, and corresponding design/04_architecture/SPRITE_NORMAL_HEIGHT_MAP_LIBRARY_V1.md.
+- Correction threshold: Material geometry, deterministic regression, source/authority confusion, incomplete validation, memory/budget failure or non-visual claims contradicted by runtime require findings IDs R0-NN and bounded correction/re-review; subjective presentation goes to human review.
+- Focused validation: custodian/tools/validation/lighting_system_smoke.gd; custodian/tools/validation/world_atmosphere_smoke.gd; new dev A/B scene and material-restore smoke; changed-file validation.
+- Review focus: Verify light owner, CanvasTexture filtering, alpha edge and optical flat fallback; subjective win stays user-owned.
+- Acceptance: Record findings-first PASS/FAIL with source SHA, negative controls, exact tested outputs and remaining human gates. Review cannot edit production implementation; findings require a correction packet preserving the original workstream sequence.
+- Non-goals: No new feature, no art promotion, no source code fixes during review.
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+
+## Handoff
+- Refresh required: predecessor PASS/main audit and any human-owned decisions before this pair can be promoted or dispatched.
+- Next workstream: surface-normal-height-asset-v2-handoff-v1.
+- Next packet state: dependency-gated.
+- Authoring chat: not-recorded.
+- Blockers: User/ChatGPT aesthetic acceptance must be recorded separately from code review PASS.

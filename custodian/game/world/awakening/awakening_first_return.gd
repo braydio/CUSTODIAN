@@ -1007,6 +1007,12 @@ func _on_south_reach_exited(body: Node) -> void:
 	completed = false
 
 
+func complete_hub_handoff() -> void:
+	var music_director := get_node_or_null("AwakeningMusicDirector")
+	if music_director != null and music_director.has_method("complete_hub_handoff"):
+		music_director.call("complete_hub_handoff")
+
+
 func restore_after_handoff_failure() -> void:
 	# Keep completion latched while the failed overlap is still being retired by
 	# physics. A stale Area2D overlap can otherwise immediately submit the same

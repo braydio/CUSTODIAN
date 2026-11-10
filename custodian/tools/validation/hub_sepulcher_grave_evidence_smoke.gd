@@ -47,6 +47,11 @@ func _run() -> void:
 		return
 
 	var positions := event.get_inspection_positions()
+	var slab_texture := event.get("MEMORIAL_SLAB_TEXTURE") as Texture2D
+	_expect(slab_texture != null, "production grave did not bind the Asset V2 memorial slab", failures)
+	if slab_texture != null:
+		_expect(slab_texture.get_size() == Vector2(160.0, 96.0), "memorial slab texture dimensions changed", failures)
+		_expect(slab_texture.resource_path.ends_with("hub_sepulcher_grave_evidence_art__body__environment__memorial_slab__omni__1f__160x96.png"), "memorial slab texture is not the registered Asset V2 runtime resource", failures)
 	_expect(positions.size() == 3, "grave controller did not define three inspection points", failures)
 	for position in positions:
 		_expect(

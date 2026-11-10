@@ -680,6 +680,26 @@
       "needs_import": true
     },
     {
+      "id": "procgen_tilesetless_ingress_coordinates",
+      "type": "godot_script",
+      "script": "res://tools/validation/procgen_tilesetless_ingress_coordinates_smoke.gd",
+      "tier": "actor",
+      "tags": [
+        "procgen",
+        "spatial",
+        "ingress",
+        "tilemap",
+        "regression"
+      ],
+      "owners": [
+        "custodian/game/world/procgen/proc_gen_tilemap.gd",
+        "custodian/game/world/levels/world_ingress_spawner.gd",
+        "custodian/tools/validation/procgen_tilesetless_ingress_coordinates_smoke.gd"
+      ],
+      "timeout_sec": 45,
+      "needs_import": true
+    },
+    {
       "id": "procgen_derived_rebuild_scheduler",
       "type": "godot_script",
       "script": "res://tools/validation/procgen_derived_rebuild_scheduler_smoke.gd",
@@ -2550,7 +2570,8 @@
       "owners": [
         "custodian/tools/validation/run_validation.py",
         "custodian/tools/validation/validation_manifest.json",
-        "custodian/tools/validation/validation_manifest_diff_selection_smoke.py"
+        "custodian/tools/validation/validation_manifest_diff_selection_smoke.py",
+      ".github/workflows/godot-level-pipeline.yml"
       ],
       "timeout_sec": 10,
       "needs_import": false
@@ -5432,6 +5453,29 @@
       "needs_import": true
     },
     {
+      "id": "awakening_music_smoke",
+      "type": "godot_script",
+      "script": "res://tools/validation/awakening_music_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "awakening",
+        "audio",
+        "scene_lifecycle"
+      ],
+      "owners": [
+        "custodian/autoload/music_manager.gd",
+        "custodian/game/world/awakening/awakening_music_director.gd",
+        "custodian/game/world/awakening/awakening_first_return.gd",
+        "custodian/game/systems/world/world_transition_manager.gd",
+        "custodian/scenes/awakening_first_return.tscn",
+        "custodian/content/audio/music/awakening/**",
+        "custodian/tools/validation/awakening_music_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 60,
+      "needs_import": true
+    },
+    {
       "id": "awakening_first_return",
       "type": "godot_script",
       "script": "res://tools/validation/awakening_first_return_smoke.gd",
@@ -5656,6 +5700,9 @@
         "authority"
       ],
       "owners": [
+        "custodian/autoload/music_manager.gd",
+        "custodian/game/world/awakening/awakening_music_director.gd",
+        "custodian/content/audio/music/awakening/**",
         "custodian/project.godot",
         "custodian/game/app/boot/runtime_entrypoint.gd",
         "custodian/game/systems/world/world_transition_*.gd",
@@ -7174,7 +7221,7 @@
         "custodian/tools/agent/task_packet_contract.py",
         ".agents/skills/custodian-next/SKILL.md"
       ],
-      "timeout_sec": 30,
+      "timeout_sec": 180,
       "needs_import": false
     },
     {
@@ -7221,12 +7268,13 @@
     {
       "id": "paired_review_runner_unit",
       "type": "python",
-      "script": "custodian/tools/agent/test_paired_review_runner.py",
+      "script": "custodian/tools/agent/test_paired_review_ci.py",
       "tier": "unit",
       "tags": [
         "agent_workflow",
         "paired_review",
-        "fresh_context"
+        "fresh_context",
+        "fast_ci"
       ],
       "owners": [
         "custodian/tools/godot_project_lock.py",
@@ -7235,7 +7283,8 @@
         "custodian/tools/agent/test_paired_review_runner.py",
         "custodian/docs/ai_context/review_scope_attestations/road_procession_p1_source_scope_v1.json",
         "custodian/tools/agent/task_packet_contract.py",
-        "custodian/tools/agent/workflow_control.py"
+        "custodian/tools/agent/workflow_control.py",
+        "custodian/tools/agent/test_paired_review_ci.py"
       ],
       "timeout_sec": 480,
       "needs_import": false
@@ -7711,6 +7760,87 @@
         "design/04_architecture/HUB_SEPULCHER_AWAKENING_ART_V1_MANIFEST.md",
         "design/04_architecture/SEPULCHER_GARDENS_GEOMETRY_V1.json",
         "design/04_architecture/AI_ART_GENERATION_REVIEW_PROTOCOL_V1.md",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
+      "id": "operator_3d_animation_preview_package",
+      "type": "python",
+      "script": "custodian/tools/validation/test_operator_3d_animation_preview_package.py",
+      "tier": "unit",
+      "tags": [
+        "operator",
+        "animation_preview",
+        "candidate_only"
+      ],
+      "owners": [
+        "custodian/scenes/debug/operator_3d_animation_preview.tscn",
+        "custodian/scenes/debug/operator_3d_animation_preview_awakening.tscn",
+        "custodian/tools/debug/operator_3d_animation_preview.gd",
+        "custodian/tools/debug/operator_3d_animation_preview_awakening.gd",
+        "custodian/tools/operator/animation_compiler/preview_package.py",
+        "custodian/tools/operator/animation_compiler/NEUTRAL_IDLE_AWAKENING_REVIEW.md",
+        "custodian/tools/validation/operator_3d_animation_preview_smoke.gd",
+        "custodian/tools/validation/operator_3d_animation_preview_awakening_smoke.gd",
+        "custodian/tools/validation/operator_3d_animation_comparison_smoke.gd",
+        "custodian/tools/validation/test_operator_3d_animation_preview_package.py",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 60,
+      "needs_import": false
+    },
+    {
+      "id": "chatgpt_relay_chrome_unit",
+      "type": "python",
+      "script": "custodian/tools/orchestration/test_chatgpt_relay_chrome.py",
+      "tier": "unit",
+      "tags": [
+        "orchestration",
+        "chat_relay"
+      ],
+      "owners": [
+        "custodian/tools/orchestration/get_chatgpt_response.py",
+        "custodian/tools/orchestration/send_chatgpt_message.py",
+        "custodian/tools/orchestration/test_chatgpt_relay_chrome.py",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
+      "id": "chatgpt_relay_firefox_unit",
+      "type": "python",
+      "script": "custodian/tools/orchestration/test_chatgpt_relay_firefox.py",
+      "tier": "unit",
+      "tags": [
+        "orchestration",
+        "chat_relay",
+        "firefox"
+      ],
+      "owners": [
+        "custodian/tools/orchestration/get_chatgpt_response_firefox.py",
+        "custodian/tools/orchestration/send_chatgpt_message_firefox.py",
+        "custodian/tools/orchestration/test_chatgpt_relay_firefox.py",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
+      "id": "firefox_mcp_client_unit",
+      "type": "python",
+      "script": "custodian/tools/orchestration/test_firefox_mcp_client.py",
+      "tier": "unit",
+      "tags": [
+        "orchestration",
+        "chat_relay",
+        "firefox"
+      ],
+      "owners": [
+        "custodian/tools/orchestration/firefox_mcp_client.py",
+        "custodian/tools/orchestration/test_firefox_mcp_client.py",
         "custodian/tools/validation/validation_manifest.json"
       ],
       "timeout_sec": 30,

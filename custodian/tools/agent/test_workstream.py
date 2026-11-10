@@ -19,6 +19,7 @@ workstream = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(workstream)
 import persistent_checkout_sync as persistent_sync
 import task_packet_index
+from custodian.tools.agent import turn_dispatcher_v2
 from custodian.tools.validation import run_validation
 
 
@@ -103,17 +104,94 @@ class WorkstreamTests(unittest.TestCase):
         self.assertFalse(changed_report["passed"])
         self.assertTrue(changed_report["source_changed_during_validation"])
 
-    def _source_sync_merge_fixture(self, *, witness=True):
+    def test_v2_source_span_receipt_replaces_legacy_claim_witness(self):
+        workstream_id = "v2-source-span-fixture"
+        packet = f"custodian/docs/ai_context/task_packets/{workstream_id.upper().replace('-', '_')}.md"
+        packet_path = self.repo / packet
+        packet_path.parent.mkdir(parents=True, exist_ok=True)
+        packet_path.write_text(f"# Fixture\n- Workstream: `{workstream_id}`\n")
+        git(self.repo, "add", packet)
+        git(self.repo, "commit", "-m", "publish v2 packet")
+        git(self.repo, "push", "origin", "main")
+        git(self.repo, "fetch", "origin")
+        source = git(self.repo, "rev-parse", "origin/main")
+        branch = workstream.branch_for(workstream_id)
+        git(self.repo, "checkout", "-b", branch, source)
+        (self.repo / "implementation.py").write_text("implemented\n")
+        git(self.repo, "add", "implementation.py")
+        git(self.repo, "commit", "-m", "v2 implementation")
+        head = git(self.repo, "rev-parse", "HEAD")
+        git(self.repo, "push", "origin", branch)
+        trace = workstream.RunTrace.start(self.repo, workstream_id, packet=packet)
+        receipt_dir = workstream.common_dir(self.repo) / "custodian-turn-dispatcher-v2" / "acquisitions"
+        receipt_dir.mkdir(parents=True)
+        receipt = receipt_dir / ("1" * 32 + ".json")
+        receipt.write_text(json.dumps({
+            "schema": "custodian.turn_dispatcher_v2.acquisition.v1",
+            "workstream": workstream_id, "checkout": str(self.repo), "branch": branch,
+            "source_sha": source, "packet": packet, "definition_kind": "published-packet",
+        }))
+        trace.record("v2_turn_acquired", receipt=str(receipt), checkout=str(self.repo), remote_branch=branch)
+        trace.record("v2_turn_checkpointed", branch=branch, remote_branch=branch, head=head)
+        self.assertIsNone(workstream._source_span_sync_merge_witness_error(
+            workstream_id, self.repo, head, trace))
+        payload = json.loads(receipt.read_text())
+        payload["branch"] = "agent/unrelated"
+        receipt.write_text(json.dumps(payload))
+        error = workstream._source_span_sync_merge_witness_error(workstream_id, self.repo, head, trace)
+        self.assertIn("V2 acquisition or checkpoint receipt", error)
+
+    def test_v2_finish_checkpoints_retires_and_rehydrates_without_legacy_session(self):
+        workstream_id = "v2-finish-turn-fixture"
+        packet = self.repo / "custodian/docs/ai_context/task_packets/V2_FINISH_TURN_FIXTURE.md"
+        packet.parent.mkdir(parents=True, exist_ok=True)
+        packet.write_text(
+            f"- Workstream: `{workstream_id}`\n- Kind: `implementation`\n- Status: `ready`\n"
+            "- Dispatch: `auto`\n- Depends on: `none`\n- Locks: `none`\n",
+            encoding="utf-8",
+        )
+        git(self.repo, "add", str(packet.relative_to(self.repo)))
+        git(self.repo, "commit", "-m", "publish v2 finish fixture")
+        git(self.repo, "push", "origin", "main")
+        pool = self.base / "turns"
+        acquisition = turn_dispatcher_v2.begin(self.repo, workstream_id, "normal", pool)
+        checkout = Path(acquisition["checkout"])
+        (checkout / "implementation.py").write_text("durable progress\n", encoding="utf-8")
+        handoff = checkout / "custodian/docs/ai_context/turn_handoffs" / f"{workstream_id}.md"
+        handoff.parent.mkdir(parents=True, exist_ok=True)
+        handoff.write_text(
+            "Original goal: prove V2 finish is a turn checkpoint.\n"
+            "Implemented: checkpoint adapter.\nRemaining: task work remains open.\n"
+            "Validation: focused lifecycle test.\nSources/evidence: temporary Git fixture.\n"
+            "Resume: start a fresh turn from the remote branch.\n",
+            encoding="utf-8",
+        )
+        stdout = io.StringIO()
+        with mock.patch.object(workstream.RunTrace, "resume", side_effect=AssertionError("legacy RunTrace used")), \
+             mock.patch.object(workstream, "workstream_mutex", side_effect=AssertionError("legacy mutex used")), \
+             mock.patch("sys.stdout", stdout):
+            workstream.finish(workstream_id, repo=self.repo, pool=pool)
+        self.assertFalse(checkout.exists())
+        self.assertIn("task completion is not asserted", stdout.getvalue())
+        branch_head = turn_dispatcher_v2.remote_branch(self.repo, f"agent/{workstream_id}")
+        self.assertTrue(branch_head)
+        fresh = turn_dispatcher_v2.begin(self.repo, workstream_id, "normal", pool)
+        fresh_checkout = Path(fresh["checkout"])
+        self.assertEqual((fresh_checkout / "implementation.py").read_text(), "durable progress\n")
+        self.assertEqual(fresh["source_sha"], branch_head)
+
+    def _source_sync_merge_fixture(self, *, witness=True, packetless=False):
         workstream_id = "agent-source-sync-witness-fixture"
         branch = workstream.branch_for(workstream_id)
         active_packet = f"custodian/docs/ai_context/task_packets/{workstream_id.upper().replace('-', '_')}.md"
-        active_path = self.repo / active_packet
-        active_path.parent.mkdir(parents=True, exist_ok=True)
-        active_path.write_text(
-            f"# Fixture\n- Workstream: `{workstream_id}`\n- Status: `in_progress`\n"
-        )
-        git(self.repo, "add", active_packet)
-        git(self.repo, "commit", "-m", "publish fixture packet")
+        if not packetless:
+            active_path = self.repo / active_packet
+            active_path.parent.mkdir(parents=True, exist_ok=True)
+            active_path.write_text(
+                f"# Fixture\n- Workstream: `{workstream_id}`\n- Status: `in_progress`\n"
+            )
+            git(self.repo, "add", active_packet)
+            git(self.repo, "commit", "-m", "publish fixture packet")
         source_base = git(self.repo, "rev-parse", "HEAD")
         git(self.repo, "checkout", "-b", branch)
         (self.repo / "source.py").write_text("owned source\n")
@@ -137,7 +215,8 @@ class WorkstreamTests(unittest.TestCase):
             "-m", f"workstream claim {workstream_id} codex:{os.getpid()}:{run_id}",
         )
         trace = workstream.RunTrace.start(
-            self.repo, workstream_id, packet=active_packet, agent="codex", run_id=run_id,
+            self.repo, workstream_id, packet=None if packetless else active_packet,
+            agent="codex", run_id=run_id,
         )
         trace.record("remote_claim_acquired", remote_ref=f"refs/heads/dispatch-claims/{workstream_id}",
                      local_ref=f"refs/custodian/claims/{workstream_id}/{run_id}",
@@ -266,6 +345,67 @@ class WorkstreamTests(unittest.TestCase):
             workstream_id, self.repo, merge_commit, trace,
         )
         self.assertIsNone(error)
+
+    def test_source_span_sync_merge_accepts_published_source_first_parent(self):
+        workstream_id, _, merge_commit, _, trace = self._source_sync_merge_fixture(packetless=True)
+        fields = git(self.repo, "rev-list", "--parents", "-n", "1", merge_commit).split()
+        first_parent, second_parent = fields[1:]
+        self.assertFalse(subprocess.run(
+            ["git", "merge-base", "--is-ancestor", first_parent, "origin/main"],
+            cwd=self.repo, capture_output=True,
+        ).returncode == 0)
+        self.assertTrue(subprocess.run(
+            ["git", "merge-base", "--is-ancestor", second_parent, "origin/main"],
+            cwd=self.repo, capture_output=True,
+        ).returncode == 0)
+        self.assertIsNone(workstream._source_span_sync_merge_witness_error(
+            workstream_id, self.repo, merge_commit, trace,
+        ))
+
+    def test_source_merge_resolution_rejects_unrelated_tree_changes(self):
+        base = self.repo / "merge-base.txt"
+        base.write_text("base\n")
+        git(self.repo, "add", "merge-base.txt")
+        git(self.repo, "commit", "-m", "add merge base fixture")
+        merge_base = git(self.repo, "rev-parse", "HEAD")
+        first_parent = git(self.repo, "rev-parse", "HEAD")
+        second_parent = git(self.repo, "rev-parse", "HEAD")
+        actual_tree = git(self.repo, "rev-parse", "HEAD^{tree}")
+        self.assertFalse(workstream._authenticated_source_merge_resolution(
+            self.repo, merge_base, first_parent, second_parent, first_parent,
+            actual_tree, actual_tree,
+        ))
+
+    def test_finish_source_span_accepts_packetless_checkpoint_resume_merge_and_rejects_packet_drift(self):
+        workstream_id, _, merge_commit, _, trace = self._source_sync_merge_fixture(packetless=True)
+        self.assertIsNone(trace.packet)
+        self.assertIsNone(workstream._source_span_sync_merge_witness_error(
+            workstream_id, self.repo, merge_commit, trace,
+        ))
+
+        original = trace.path.read_text()
+        events = [json.loads(line) for line in original.splitlines()]
+        events[0]["packet"] = f"{workstream.TASK_PACKET_ROOT}/OTHER.md"
+        trace.path.write_text("".join(json.dumps(event) + "\n" for event in events))
+        self.assertIn("packetless lifecycle trace contains packet metadata",
+                      workstream._source_span_sync_merge_witness_error(
+                          workstream_id, self.repo, merge_commit, trace,
+                      ))
+        trace.path.write_text(original)
+
+        associated_packet = (self.repo / workstream.TASK_PACKET_ROOT
+                             / f"{workstream_id.upper().replace('-', '_')}.md")
+        associated_packet.parent.mkdir(parents=True, exist_ok=True)
+        associated_packet.write_text(
+            f"# Fixture\n- Workstream: `{workstream_id}`\n- Status: `in_progress`\n"
+        )
+        try:
+            self.assertIn("conflicts with an associated task packet",
+                          workstream._source_span_sync_merge_witness_error(
+                              workstream_id, self.repo, merge_commit, trace,
+                          ))
+        finally:
+            associated_packet.unlink()
 
     def test_finish_source_span_rejects_changed_main_sync_without_checkpoint(self):
         workstream_id, _, merge_commit, main_sha, trace = self._source_sync_merge_fixture(witness=False)
@@ -2272,17 +2412,21 @@ class WorkstreamTests(unittest.TestCase):
         self.assertEqual(spy.call_args.args[2], "unspecified")
         self.assertNotEqual(spy.call_args.args[2], "codex")
 
-    def test_cli_start_preserves_explicit_agent_flag(self):
+    def test_cli_start_uses_v2_owner_authorized_turn_checkout(self):
         original_cwd = Path.cwd()
         os.chdir(self.repo)
         try:
-            with mock.patch.object(workstream, "acquire_remote_claim", wraps=workstream.acquire_remote_claim) as spy, \
-                 mock.patch.object(sys, "argv", ["workstream.py", "start", "agent-cli-work", "--agent", "codex"]):
+            with mock.patch.object(sys, "argv", ["workstream.py", "start", "agent-cli-work",
+                 "--mode", "owner-authorized", "--authorization-url", "https://chatgpt.com/g/g-test/c/owner-auth",
+                 "--authorization-sha256", "a" * 64, "--repo", str(self.repo),
+                 "--pool", str(self.base / "turns")]):
                 result = workstream.main()
         finally:
             os.chdir(original_cwd)
         self.assertEqual(result, 0)
-        self.assertEqual(spy.call_args.args[2], "codex")
+        self.assertTrue((self.base / "turns").is_dir())
+        self.assertIn(str(self.base / "turns" / "turn-agent-cli-work"),
+                      git(self.repo, "worktree", "list", "--porcelain"))
 
     def test_checkpoint_pushes_and_retains_recovery_branch(self):
         path = workstream.start("checkpoint-me", self.repo)

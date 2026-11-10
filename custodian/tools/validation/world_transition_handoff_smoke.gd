@@ -2,6 +2,7 @@ extends SceneTree
 
 const AWAKENING_SCENE := preload("res://scenes/awakening_first_return.tscn")
 const HUB_MAP_SCRIPT := preload("res://game/world/hub/first_set/hub_first_set_map.gd")
+const AWAKENING_MUSIC_CUE := "res://content/audio/music/awakening/awakening_01_command_still_speaking.ogg"
 
 var _finished_results: Array[Dictionary] = []
 
@@ -12,8 +13,12 @@ func _initialize() -> void:
 
 func _run() -> void:
 	var manager := root.get_node_or_null("WorldTransitionManager")
+	var music_manager := root.get_node_or_null("MusicManager")
 	if manager == null:
 		_fail("WorldTransitionManager autoload is missing")
+		return
+	if music_manager == null:
+		_fail("MusicManager autoload is missing")
 		return
 	manager.transition_finished.connect(_on_transition_finished)
 	manager.call("arm_for_startup_awakening")
@@ -24,6 +29,10 @@ func _run() -> void:
 	var operator := awakening.get_node("World/Operator") as CharacterBody2D
 	if operator == null or manager.get("active_context_root") != awakening:
 		_fail("Production Awakening was not registered with a real Operator")
+		return
+	var awakening_music_owner: StringName = music_manager.call("get_scoped_owner")
+	if awakening_music_owner.is_empty() or music_manager.call("get_current_path") != AWAKENING_MUSIC_CUE:
+		_fail("Production Awakening did not acquire and start its scoped exploration cue")
 		return
 
 	var invalid_snapshot := {"completed": false}
@@ -74,6 +83,9 @@ func _run() -> void:
 	if current_scene != awakening:
 		_fail("Rollback did not restore Awakening as the playable current scene")
 		return
+	if music_manager.call("get_scoped_owner") != awakening_music_owner or music_manager.call("get_current_path") != AWAKENING_MUSIC_CUE:
+		_fail("Failed Hub handoff did not preserve Awakening music ownership")
+		return
 	if operator.get_parent() != awakening.get_node("World") or operator.collision_layer == 0 or operator.collision_mask == 0:
 		_fail("Rollback did not restore Operator parent and collision")
 		return
@@ -116,6 +128,13 @@ func _run() -> void:
 	if not bool(success.get("succeeded", false)) or StringName(success.get("final_context", &"")) != &"hub":
 		_fail("Qualified Awakening completion did not enter Hub (result=%s)" % [success])
 		return
+	await create_timer(0.9).timeout
+	if not StringName(music_manager.call("get_scoped_owner")).is_empty():
+		_fail("Successful Hub handoff left the Awakening music lease active")
+		return
+	if music_manager.call("get_current_path") != "":
+		_fail("Successful Hub handoff restored a prior playlist instead of leaving silence")
+		return
 	var hub_root := current_scene
 	var hub_world := hub_root.get_node_or_null("World")
 	var map := hub_root.get_node_or_null("World/Level")
@@ -133,6 +152,15 @@ func _run() -> void:
 	if camera.call("get_runtime_map") != map:
 		_fail("Hub runtime camera map was not bound")
 		return
+	var hub_bounds: Rect2 = map.call("get_camera_bounds")
+	if camera.get("authored_map_bounds") != hub_bounds or camera.get("map_bounds") != hub_bounds:
+		_fail("Hub camera retained Awakening bounds after transition")
+		return
+	for marker_name: StringName in [&"WestGardenThreshold", &"SepulcherInteriorSample"]:
+		var marker_position: Vector2 = map.call("get_spawn_position", marker_name)
+		if not hub_bounds.has_point(marker_position):
+			_fail("Hub camera bounds exclude %s" % marker_name)
+			return
 	var order: Array = success.get("binding_order", [])
 	if order.find(&"navigation_bound") < 0 or order.find(&"camera_bound") <= order.find(&"navigation_bound") or order.find(&"authority_committed") <= order.find(&"camera_bound") or order.find(&"input_unlocked") <= order.find(&"authority_committed"):
 		_fail("Hub bindings and input unlock did not occur in the required order")
@@ -152,7 +180,7 @@ func _run() -> void:
 		_fail("Awakening-to-Hub transition unexpectedly generated a Contract")
 		return
 
-	print("PASS: world transition handoff failure rollback, duplicate suppression, reviewed Hub spawn, bindings, authority exclusivity, and no Contract generation")
+	print("PASS: Awakening music rollback and successful no-restore release, duplicate suppression, reviewed Hub spawn, bindings, authority exclusivity, and no Contract generation")
 	quit(0)
 
 

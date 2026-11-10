@@ -1,0 +1,38 @@
+# REVIEW | VISUAL HITBOX LAB | CONSTRAINED EDITOR & TRANSACTION
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `review-visual-hitbox-lab-profile-editing-v1`
+- Category: `tools-ux`
+- Kind: `review`
+- Status: `draft`
+- Dispatch: `manual`
+- Priority: `P2`
+- Depends on: `visual-hitbox-lab-profile-editing-v1`
+- Locks: `none`
+- Review: `none`
+- Review target workstream: `visual-hitbox-lab-profile-editing-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/VISUAL_HITBOX_LAB_PROFILE_EDITING_V1.md`
+- Reviewed main: `ebfe3810eec146d7202a4378324b0f32c9e12fee`
+- Authoring chat: `not-recorded`
+- Visual review: `conditional`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture, runtime`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Goal: Independently falsify implementation acceptance for visual-hitbox-lab-profile-editing-v1 on landed main and documented evidence; no review self-certification.
+- Publication inputs: `design/04_architecture/VISUAL_HITBOX_AUTHORING_LIBRARY_V1.md`
+- Reviewed implementation acceptance: A 3-frame hit-window edit round-trips in one profile with nothing else changed; undo/redo returns exact prior values; stale source/ref, out-of-bounds frame, invalid arc or conflicting workstream all refuse writes; gameplay behavior unchanged except explicitly edited test profile.
+- Review evidence: Archive target custodian/docs/ai_context/task_packets/archived/VISUAL_HITBOX_LAB_PROFILE_EDITING_V1.md, landed diff, source/probe identities, focused run logs, and corresponding design/04_architecture/VISUAL_HITBOX_AUTHORING_LIBRARY_V1.md.
+- Correction threshold: Material geometry, deterministic regression, source/authority confusion, incomplete validation, memory/budget failure or non-visual claims contradicted by runtime require findings IDs R0-NN and bounded correction/re-review; subjective presentation goes to human review.
+- Focused validation: custodian/tools/validation/operator_unarmed_fast_chain_smoke.gd; custodian/tools/validation/operator_sword_cleaver_smoke.gd; new editor transaction regression and conflict fixtures; changed-file validation.
+- Review focus: Prove source confinement, exact .tres diff, frame numbering and F2 authority boundaries; verify no auto-edit of animations or socket artifacts.
+- Acceptance: Record findings-first PASS/FAIL with source SHA, negative controls, exact tested outputs and remaining human gates. Review cannot edit production implementation; findings require a correction packet preserving the original workstream sequence.
+- Non-goals: No new feature, no art promotion, no source code fixes during review.
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+
+## Handoff
+- Refresh required: predecessor PASS/main audit and any human-owned decisions before this pair can be promoted or dispatched.
+- Next workstream: visual-hitbox-lab-validation-v1.
+- Next packet state: dependency-gated.
+- Authoring chat: not-recorded.
+- Blockers: No additional human aesthetics required for technical acceptance; respect conditional review triggers.

@@ -25,6 +25,7 @@ var _scoped_owner: StringName = &""
 var _scoped_snapshot: Dictionary = {}
 var _scoped_mode: StringName = &""
 var _scoped_path := ""
+var _release_pending_owner: StringName = &""
 var _scoped_base_volume_db := 0.0
 var _scoped_ducks: Dictionary = {}
 var _duck_gain_db := 0.0
@@ -104,6 +105,7 @@ func play_playlist(paths: Array, restart: bool = false) -> void:
 	_scoped_snapshot.clear()
 	_scoped_mode = &""
 	_scoped_path = ""
+	_release_pending_owner = &""
 	_scoped_ducks.clear()
 	_duck_gain_db = 0.0
 	_playlist_paths = normalized_paths
@@ -165,6 +167,7 @@ func stop_track() -> void:
 	_scoped_snapshot.clear()
 	_scoped_mode = &""
 	_scoped_path = ""
+	_release_pending_owner = &""
 	_scoped_ducks.clear()
 	_duck_gain_db = 0.0
 	_stop_all_decks()
@@ -220,6 +223,7 @@ func begin_scoped_music(owner_id: StringName) -> bool:
 		"fade_seconds": 0.35,
 	}
 	_scoped_owner = owner_id
+	_release_pending_owner = &""
 	_scoped_mode = &"claimed"
 	_scoped_path = ""
 	_scoped_base_volume_db = _global_volume_db
@@ -249,6 +253,7 @@ func play_scoped_track(
 	if stream == null:
 		push_warning("[MusicManager] Could not load scoped cue: %s" % path)
 		return
+	_release_pending_owner = &""
 	var ticket := _begin_cue_transition()
 	var outgoing_index := _active_deck if _active_player() != null and _active_player().playing else -1
 	var incoming_index := (1 - _active_deck) if outgoing_index >= 0 else _active_deck
@@ -306,6 +311,7 @@ func stop_scoped_music(owner_id: StringName, fade_seconds: float = 0.35) -> void
 		return
 	_scoped_mode = &"silent"
 	_scoped_path = ""
+	_release_pending_owner = &""
 	_scoped_ducks.clear()
 	_cancel_duck_transition()
 	_duck_gain_db = 0.0
@@ -313,16 +319,22 @@ func stop_scoped_music(owner_id: StringName, fade_seconds: float = 0.35) -> void
 	_fade_scoped_to_silence(owner_id, fade_seconds)
 
 
-func release_scoped_music(owner_id: StringName, fade_seconds: float = 0.35) -> void:
-	if owner_id.is_empty() or owner_id != _scoped_owner:
+func release_scoped_music(
+	owner_id: StringName,
+	fade_seconds: float = 0.35,
+	restore_playlist: bool = true
+) -> void:
+	if owner_id.is_empty() or owner_id != _scoped_owner or _release_pending_owner == owner_id:
 		return
-	var snapshot := _scoped_snapshot.duplicate(true)
-	snapshot["fade_seconds"] = fade_seconds
+	_release_pending_owner = owner_id
+	var snapshot := _scoped_snapshot.duplicate(true) if restore_playlist else {}
+	if restore_playlist:
+		snapshot["fade_seconds"] = fade_seconds
 	_scoped_ducks.clear()
 	_cancel_duck_transition()
 	_duck_gain_db = 0.0
 	_refresh_player_volumes()
-	_fade_scoped_to_silence(owner_id, fade_seconds, snapshot)
+	_fade_scoped_to_silence(owner_id, fade_seconds, snapshot, not restore_playlist)
 
 
 func get_scoped_owner() -> StringName:
@@ -348,11 +360,12 @@ func _load_music_stream(path: String, loop: bool) -> AudioStreamOggVorbis:
 func _fade_scoped_to_silence(
 	owner_id: StringName,
 	seconds: float,
-	restore_snapshot: Dictionary = {}
+	restore_snapshot: Dictionary = {},
+	release_owner: bool = false
 ) -> void:
 	var ticket := _begin_cue_transition()
 	if seconds <= 0.0 or not _any_deck_playing():
-		_on_silence_transition_finished(ticket, owner_id, restore_snapshot)
+		_on_silence_transition_finished(ticket, owner_id, restore_snapshot, release_owner)
 		return
 	var start_envelopes: Array[float] = _deck_envelopes.duplicate()
 	_cue_transition_tween = create_tween()
@@ -362,7 +375,7 @@ func _fade_scoped_to_silence(
 		_set_silence_progress.bind(ticket, start_envelopes), 0.0, 1.0, seconds
 	)
 	_cue_transition_tween.finished.connect(
-		_on_silence_transition_finished.bind(ticket, owner_id, restore_snapshot),
+		_on_silence_transition_finished.bind(ticket, owner_id, restore_snapshot, release_owner),
 		CONNECT_ONE_SHOT
 	)
 
@@ -405,22 +418,33 @@ func _set_silence_progress(progress: float, ticket: int, starts: Array[float]) -
 func _on_silence_transition_finished(
 	ticket: int,
 	owner_id: StringName,
-	restore_snapshot: Dictionary
+	restore_snapshot: Dictionary,
+	release_owner: bool
 ) -> void:
 	if ticket != _cue_transition_generation or owner_id != _scoped_owner:
 		return
+	_release_pending_owner = &""
 	_stop_all_decks()
 	_current_path = ""
 	_cue_transition_tween = null
 	scoped_music_silenced.emit(owner_id)
 	if not restore_snapshot.is_empty():
 		_restore_playlist_snapshot(owner_id, restore_snapshot)
+	elif release_owner:
+		_scoped_owner = &""
+		_scoped_mode = &""
+		_scoped_path = ""
+		_scoped_snapshot.clear()
+		_scoped_ducks.clear()
+		_duck_gain_db = 0.0
+		_refresh_player_volumes()
 
 
 func _restore_playlist_snapshot(owner_id: StringName, snapshot: Dictionary) -> void:
 	if owner_id != _scoped_owner:
 		return
 	_scoped_owner = &""
+	_release_pending_owner = &""
 	_scoped_mode = &""
 	_scoped_path = ""
 	_scoped_snapshot.clear()

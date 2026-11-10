@@ -867,6 +867,37 @@ def parse_claim_receipt(stdout: str, workstream: str, repo: Path, *, allow_missi
             raise RunnerError("dispatcher worktree/branch identity could not be verified")
         if common_dir(worktree) != common_dir(repo):
             raise RunnerError("dispatcher returned a worktree from another repository")
+    if receipt.get("schema") == "custodian.dispatch.claim.v2":
+        if (not _RUN_ID_RE.fullmatch(str(receipt.get("run_id", "")))
+                or not re.fullmatch(r"[0-9a-f]{32}", str(receipt.get("turn_id", "")))
+                or receipt["run_id"].split("-", 1)[1] != receipt["turn_id"][:12]):
+            raise RunnerError("V2 dispatcher receipt omitted its exact turn/run identity")
+        acquisition_path = Path(str(receipt.get("acquisition_receipt", "")))
+        expected_root = common_dir(repo).resolve() / "custodian-turn-dispatcher-v2" / "acquisitions"
+        try:
+            if (acquisition_path.is_symlink()
+                    or not acquisition_path.resolve().is_relative_to(expected_root)
+                    or not acquisition_path.is_file()):
+                raise RunnerError("V2 acquisition receipt is outside the private repository receipt directory")
+            acquisition = json.loads(acquisition_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError, RuntimeError, ValueError) as exc:
+            raise RunnerError("V2 acquisition receipt is missing or malformed") from exc
+        if (acquisition.get("schema") != "custodian.turn_dispatcher_v2.acquisition.v1"
+                or acquisition.get("workstream") != workstream
+                or acquisition.get("turn_id") != receipt["turn_id"]
+                or acquisition.get("run_id") != receipt["run_id"]
+                or acquisition.get("checkout") != str(worktree)
+                or acquisition.get("local_branch") != receipt.get("branch")
+                or acquisition.get("branch") != receipt.get("remote_branch")
+                or acquisition.get("packet") != receipt.get("packet")):
+            raise RunnerError("V2 claim receipt does not match its authenticated acquisition record")
+        if not allow_missing_worktree:
+            source_sha = acquisition.get("source_sha")
+            if (not isinstance(source_sha, str)
+                    or not re.fullmatch(r"[0-9a-f]{40,64}", source_sha)
+                    or subprocess.run(["git", "merge-base", "--is-ancestor", source_sha, "HEAD"],
+                                      cwd=worktree, capture_output=True).returncode):
+                raise RunnerError("V2 checkout does not descend from its recorded acquisition source")
     expected_packet = f"{PACKET_ROOT}/{Path(receipt.get('packet', '')).name}"
     if receipt.get("packet") != expected_packet:
         raise RunnerError("dispatcher returned an unexpected packet path")

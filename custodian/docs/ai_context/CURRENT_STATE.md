@@ -1,8 +1,56 @@
 # CURRENT STATE — CUSTODIAN
 
+## Dispatcher V2 cutover candidate (2026-11-09)
+
+D2-006 implements the turn-scoped dispatcher as the candidate execution path in
+`agent/turn-scoped-dispatcher-v2`. The V2 CLI authenticates task identity and
+packet bytes from fetched `origin/main`, ignores legacy status/dependency/claim/
+session-lock scheduling, and retains explicit user-owned design holds. Normal,
+historical, and owner-authorized provenance modes share one V2 acquisition and
+checkpoint implementation. `claim-next` rotates candidates through an optional
+advisory cursor and uses durable packet plus landed-branch evidence to skip only
+completed tasks; cursor absence never blocks a resume. Checkout profiles retain
+exact path/LFS validation. A V2 `workstream.py finish` is a checkpoint and
+checkout retirement boundary, not task completion: it consumes the durable V2
+receipt and does not depend on the prior process, `RunTrace`, workstream mutex,
+or branch renaming. Standard GitHub CI and branch protection govern landing;
+independent review is optional unless explicitly requested or warranted for a
+consequential change. Ordinary V2 acquisition uses no administrative lock.
+
+This is a cutover candidate, not a landed or activated `origin/main` change.
+Focused implementation, lifecycle, helper, and relay tests pass; the
+orchestrator cutover decision remains outstanding. The
+private historical archive is optional and unverified; it is
+not modified or required for ordinary Git-backed V2 acquisition. See
+`../../../design/04_architecture/TURN_SCOPED_DISPATCHER_V2.md` and the durable handoff at
+`turn_handoffs/turn-scoped-dispatcher-v2.md`.
+
+## CUSTODIAN WIRE private pilot handoff (2026-11-08)
+
+The one-shot WIRE exporter published a private sanitized observation, and the connected Dropbox reader retrieved its pointer and observation. The recorded as-of inventory includes 482 active packet records and 421 distinct workstreams, with `raw_dispatch_inventory=complete` but detailed inventory `partial`; these **historical counts are not live dispatcher telemetry**. The source timestamp is `2026-11-08T13:40:47Z`; pointer/content metadata matched, but a separate raw-byte SHA-256 rehash was not established by the text reader. **Automated hourly consumer ingestion, sustained refresh, independent review PASS, host process liveness, and canonical teardown remain unverified.** This is the fourth distinct engineering handoff track, not an acceptance or continuation of the general recovery campaign. Preserve existing claims, locks and schedules. See [Section 9: CUSTODIAN WIRE Private Observation Pilot](reports/CUSTODIAN_CONVERSATION_RETIREMENT_HANDOFF_WIRE_ADDENDUM_20261108.md) for evidence identities, bounded counts, and outstanding gates.
+
+
 ## Crèche: source-only completion; 1464×1074 runtime cutover ready (2026-11-06)
 
 At main `0e6b081b18a8b2d9deed0a19157a7a4b376adbb5`, clean-room source workstream `awakening-interactible-clean-room-plates-v1` is archived complete. Approved Crèche canonical source_work floor `9ce70dff57e7678234ff423643d255840ca66cf855067948763f73b2b426d77a` and wall `515b287f877cf4cd940c11aeab6bfa05370ff651f06927ba46e13c212a252bfc` are 1464×1074 RGBA, with rollback receipt `custodian/docs/ai_context/asset_audits/AWAKENING_CRECHE_CANONICAL_SOURCE_STAGING_20261106.md`. The existing 128×128 idle console art (LFS `01716bcdf4a3d7169e52149f495f91830106df93f94736e3c2aee8d910a30acb`) is user-approved. **Godot is NOT yet cut over:** environment family and scene remain 960×704, Crèche inbox is absent, Zone01 has old 704×512 walkable geometry. The existing downstream packet `awakening-creche-console-sprite-reauthor-v1` is refreshed to `ready/auto` and owns exact inbox/family/scene/geometry/console integration and direct user/ChatGPT in-game review; Crèche paired Codex review is waived without affecting other workstreams.
+
+
+## Awakening First Return soundtrack integration (2026-11-05)
+
+The production Awakening scene now starts the user-approved “A Command Still
+Speaking” cue through `AwakeningMusicDirector` and the existing two-deck
+`MusicManager` scoped lease. It loops across sections 01–10, uses an initial
+-2.5 dB runtime gain, and releases with a 0.8-second fade and no previous
+playlist restoration after successful Hub handoff. Failed handoff preserves
+the lease; ordinary release keeps MusicManager's prior playlist restoration
+default. The source WAV is 120 seconds, stereo 48 kHz 24-bit PCM, measured at
+-17.3 LUFS and -6.8 dBTP; it was encoded to Ogg Vorbis quality 8 without
+normalization or other mix processing. Provenance: `custodian/content/audio/music/awakening/audio_handoff_manifest.json`. The user approved the composition;
+technical runtime validation is recorded separately, and in-game listening and
+loop-seam audition remain pending. See
+`design/02_features/audio/AWAKENING_FIRST_RETURN_SCORE_INTEGRATION.md`.
+
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae9bc56-9e1c-83ea-8ff9-285be4092acb
 
 
 ## Operator chassis authority seal (implementation in progress, 2026-10-31)
@@ -403,6 +451,26 @@ scene name has no live runtime consumer and was removed. Existing hover art is
 explicit compatibility presentation until the Asset V2 vehicle-family slice.
 The `vehicle_field_scout_class` smoke covers the semantic class, both spawn paths,
 restoration/repair integration, and restored entry.
+
+**Playtest availability and presentation:** The production startup mode is
+Awakening and does not include the Field Scout. The authored vehicle exists in
+`res://scenes/game.tscn` only, which is reached through the explicit
+`--custodian-start=contract-sandbox` argument. The generated Contract loader
+repositions it toward parking/road/compound tile candidates; if none is
+eligible it can retain the old scene-authored position, so reliable on-map
+discoverability is **not yet proven** by current class/restoration smokes.
+The live Scout begins as a disabled wreck and retains hover compatibility
+frames rather than its approved 156px wheeled body family. Its current
+`field_scout_recovery_light` profile charges raw resources, while the approved
+R1 SERVICE flow requires three fabricated assemblies. That discrepancy is
+already owned by the existing Scout recovery correction/review pair. The
+canonical vehicle body family and runtime importer are owned by the separate
+`vehicle-field-scout-buggy-asset-v2` packet; do not treat local handoff art as
+shipped runtime presentation. Repro and Remote tree investigation are documented
+in `custodian/game/app/README.md`. Vehicle placement service extraction remains
+owned by `contract-world-vehicle-placement-extraction`; a guaranteed nearby
+encounter, explicit placement receipt, and fixed-seed reachability regression
+are additional implementation/proof requirements, not silently finished work.
 
 ## Operator Dependency Injection F0 (2026-10-05)
 
@@ -3104,3 +3172,17 @@ A draft west exterior Gate side-stair retaining terrace and rock-cut sealed reco
 ## Compound archetypes and assault/recovery planning (2026-10-15)
 
 Two user-authorized initial compound archetypes, walled_yard and connected_bunker, and a dependent assault, integrity damage, repair and new infrastructure loop are queued by design only. No runtime completion is claimed. See design/02_features/procgen/COMPOUND_ARCHETYPES_AND_SECURITY_V1.md, COMPOUND_ARCHETYPES_REQUIRED_ASSETS_V1.md and their review-gated task packet series. Carrow has three working named interiors and remains a donor only; its route migration and size calibration are separate.
+
+
+## Operator 3D candidate preview salvage (2026-11-07)
+
+The candidate-to-Godot preview from `operator-3d-animation-batch-executor-v1`
+has been selected for salvage as Slice A only. Its existing 2,104-frame
+candidate remains `candidate_unapproved`; production approval and runtime timing
+authority remain false. The accepted 2.5D comparison source is pinned to SHA-256
+`d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3`. This is
+technical preview evidence, not human visual approval. The incremental batch
+executor, cache invalidation/receipts (Slices B–D), original packet completion,
+and paired review remain outstanding.
+
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6aef1f35-9d0c-83ea-9916-59c5660da5fd

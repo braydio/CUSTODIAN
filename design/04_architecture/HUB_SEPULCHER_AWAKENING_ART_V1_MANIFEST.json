@@ -1528,7 +1528,7 @@
       "inbox_path": "custodian/asset_drop/inbox/hub_sepulcher_grave_evidence_art/memorial_slab.png",
       "family_contract_path": "custodian/content/metadata/assets/families/hub_sepulcher_grave_evidence_art.asset.json",
       "consumer": "res://game/world/hub/events/sepulcher_grave/sepulcher_grave_evidence.gd",
-      "registration_status": "proposed_not_registered",
+      "registration_status": "already_registered",
       "normalized_canvas": {
         "width": 160,
         "height": 96
@@ -1549,14 +1549,14 @@
       "placement_rule": "replace procedural rendering only; three readings, persistence, choice IDs and later-return growth gate remain unchanged",
       "image_generation_prompt": "Create one professional CUSTODIAN top-down 2D game art image, overhead orthographic, world north at image top, 32px construction rhythm, near-black civic basalt, pale weathered limestone, charcoal, aged brass, ash and restrained cold environmental light. Match existing Road of Witnesses, Hub and Awakening production-camera scale. Architecture must be physically plausible with consistent light and material logic. No people, loot, monsters, UI, legible lettering, watermarks, new entrances, fake navigation, baked global lighting, rectangular background matte, checkerboard or AI-mirrored pseudo-architecture. Target 160×96 pixels as a one-frame image. Singular low memorial slab with aged charcoal base, pale inset fractured limestone and bronze registration/date cutlines too abstract to read. The fixed CYCLE 184 date and contradictory records remain in interaction text, not visible etched identities. No living flowers or growth. isolated object PNG true RGBA, no floor or matte.",
       "prompt_authority": "new Hub V1 proposal under owner-approved art program",
-      "source_sha256": null,
-      "normalized_sha256": null,
-      "dropbox_path": null,
-      "dropbox_file_id": null,
-      "dropbox_revision": null,
-      "asset_v2_job": null,
-      "live_status": "not_checked_at_publication",
-      "human_image_approval": "pending",
+      "source_sha256": "349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028",
+      "normalized_sha256": "374235ea43ebad385df86b30cb1f7dfd27d330a10d50476955a1fce8b2248312",
+      "dropbox_path": "/CUSTODIAN/implementation_inputs/custodian_sepulcher_memorial_slab_refined_v2_source_20261102.png",
+      "dropbox_file_id": "id:8NXqdXuW6GUAAAAAAAAGsw",
+      "dropbox_revision": "65f4aa8f42035915cdd61",
+      "asset_v2_job": "job_20261107T070300Z_3d825703",
+      "live_status": "runtime_verified",
+      "human_image_approval": "approved",
       "handoff_review_status": null
     },
     {
