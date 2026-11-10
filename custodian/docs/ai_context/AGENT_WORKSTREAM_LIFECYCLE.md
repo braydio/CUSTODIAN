@@ -211,6 +211,27 @@ Do not use this pilot to park another claim or to infer cross-host process
 absence. Full supervised process identity, generalized leases, automatic
 cleanup, and orphan recovery remain outside its authority.
 
+### Exact owner review exception
+
+`owner_review_exception.py plan` is read-only and pins the exact archived
+implementation packet/commit, active review packet bytes, preserved recovery
+run hashes, remote claim/branch refs, paired-review lock state, and dependent
+workstreams. It refuses stale `origin/main`. `apply` requires that plan's exact
+digest plus a structured approval receipt captured from the project owner's
+authenticated ChatGPT conversation; the record is written under
+`custodian/docs/ai_context/owner_review_exceptions/` and must land through the
+authorized workstream lifecycle. Do not invent or edit an approval receipt.
+
+The dispatcher consumes only a record whose review ID, implementation ID and
+commit, active/archived packet bytes, source URL, record digest, and main
+ancestry match. It reports `owner_accepted_with_review_exception` separately
+from reviewer truth. The record does not create a PASS, archive the review,
+release a live review lock, or clear unrelated claims. A remote branch or
+claim ref remains a separate blocker until the exact owner-authorized claim
+retirement is verified; local recovery worktrees and private run evidence are
+preserved. The decision remains pending until the owner-exception mechanism's
+own fresh paired review passes, then the audit reports it as active.
+
 ### Bounded legacy execution reset quarantine
 
 `legacy_claim_quarantine.py` records the separate administrative disposition

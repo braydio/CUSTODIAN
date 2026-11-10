@@ -2571,7 +2571,7 @@
         "custodian/tools/validation/run_validation.py",
         "custodian/tools/validation/validation_manifest.json",
         "custodian/tools/validation/validation_manifest_diff_selection_smoke.py",
-      ".github/workflows/godot-level-pipeline.yml"
+        ".github/workflows/godot-level-pipeline.yml"
       ],
       "timeout_sec": 10,
       "needs_import": false
@@ -7202,6 +7202,29 @@
         "custodian/tools/validation/validation_manifest.json"
       ],
       "timeout_sec": 20,
+      "needs_import": false
+    },
+    {
+      "id": "owner_review_exception_unit",
+      "type": "python",
+      "script": "custodian/tools/agent/test_owner_review_exception.py",
+      "tier": "unit",
+      "tags": [
+        "agent_workflow",
+        "owner_exception",
+        "review_provenance",
+        "dispatch"
+      ],
+      "owners": [
+        "custodian/tools/agent/owner_review_exception.py",
+        "custodian/tools/agent/test_owner_review_exception.py",
+        "custodian/tools/agent/dispatch.py",
+        "custodian/tools/agent/review_outcome.py",
+        "custodian/tools/agent/task_packet_contract.py",
+        "custodian/docs/ai_context/owner_review_exceptions/**",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 30,
       "needs_import": false
     },
     {
