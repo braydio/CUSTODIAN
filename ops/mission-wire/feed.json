@@ -1,9 +1,145 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-11T16:48:07Z",
+  "generated_at": "2026-11-11T19:11:32.859Z",
   "source_main_sha": "82e1a81125c803fa5c9a0fcb1ffc4ef9574d4526",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "feature-spotlight-operator-flashlight-20261111",
+      "desk": "front_page",
+      "format": "feature_spotlight",
+      "spotlight_as_of": "2026-11-11",
+      "headline": "Feature spotlight: the Operator's shadow-casting flashlight",
+      "summary": "A retrospective look at CUSTODIAN's existing Operator flashlight: a directional warm beam casts shadows while a softer local glow helps nearby visibility. The Godot implementation and smoke-test source exist; this is not a new launch or an independently verified runtime demo.",
+      "body": "This is a retrospective spotlight on an existing Godot component, inspected November 11, 2026. The Operator carries an aim-directed flashlight that starts off and toggles using the configured input. A warm, shadow-casting PointLight2D beam and an unshadowed nearby glow serve separate visual roles. The design documents the Undergate Mechanism Hall as the first flashlight-dominant environment. Source and smoke-test scripts are present; this report has not run Godot or captured in-game proof.",
+      "severity": "brief",
+      "verification": "verified",
+      "category": "operator",
+      "workstream": "",
+      "occurred_at": "2026-11-11T19:11:32.859Z",
+      "bullets": [
+        "Existing scene/script are present on main; this is historical coverage, not a new release.",
+        "Directional shadows and near-field glow have separate visual purposes.",
+        "The published test script checks aim, toggle, and component composition; a fresh run is not claimed.",
+        "A fresh Godot smoke result and an in-game capture would show runtime behavior."
+      ],
+      "links": [
+        {
+          "title": "Operator flashlight design",
+          "url": "https://github.com/braydio/CUSTODIAN/blob/main/design/02_features/lighting/OPERATOR_FLASHLIGHT.md"
+        },
+        {
+          "title": "Flashlight Godot scene",
+          "url": "https://github.com/braydio/CUSTODIAN/blob/main/custodian/game/actors/operator/components/operator_flashlight.tscn"
+        },
+        {
+          "title": "Flashlight implementation",
+          "url": "https://github.com/braydio/CUSTODIAN/blob/main/custodian/game/actors/operator/components/operator_flashlight.gd"
+        },
+        {
+          "title": "Godot smoke-test source",
+          "url": "https://github.com/braydio/CUSTODIAN/blob/main/custodian/tools/validation/operator_flashlight_smoke.gd"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "An archive spotlight, not breaking news: CUSTODIAN already has a flashlight component for its Operator. The warm, aim-directed beam casts shadows, while a second, softer glow helps reveal nearby space. The actual Godot scene, script, and test source were inspected on November 11, 2026; this feature's original release date is not established here.",
+        "sections": [
+          {
+            "heading": "Two jobs for one flashlight",
+            "text": "The scene combines a focused shadow-casting beam with a broad, unshadowed glow. This preserves meaningful darkness and geometry while keeping the Operator's immediate surroundings legible."
+          },
+          {
+            "heading": "Equipment without busywork",
+            "text": "The flashlight is permanent equipment. It starts off, toggles on demand, and follows the Operator's existing aim vector. When the aim briefly becomes zero, the beam holds its last valid facing. The current design intentionally avoids battery, durability, loot, and upgrade systems."
+          },
+          {
+            "heading": "Built for authored darkness",
+            "text": "Design notes name the Undergate Mechanism Hall as a flashlight-dominant environment with machinery occluders and selective light pools. That's an authored vision supported by source files, not proof of a newly played or captured build."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Exploration becomes a lighting problem",
+            "explanation": "A beam that actually casts shadows invites authored machinery, occlusion, and local light to participate in how a space is explored."
+          },
+          {
+            "title": "A single aim source keeps controls coherent",
+            "explanation": "The flashlight follows the Operator's own aim direction rather than maintaining a competing input system, and keeps its orientation through brief zero-input moments."
+          }
+        ],
+        "takeaway": "The flashlight is implemented in source with distinct shadow and glow behavior. No fresh runtime validation or visual demonstration is claimed.",
+        "next_watch": "A recorded Godot smoke run and a public, verified in-game image of the Undergate Mechanism Hall would establish the next level of evidence."
+      },
+      "details": {
+        "overview": "Historical feature overview, inspected 2026-11-11. Verification here means public source files exist and were inspected, not that the feature was independently run in-game.",
+        "ledger": [
+          {
+            "stage": "Scene present",
+            "status": "Source verified",
+            "evidence": "operator_flashlight.tscn declares BeamLight (shadows enabled) and LocalGlow (shadows disabled), both initially off."
+          },
+          {
+            "stage": "Behavior present",
+            "status": "Source verified",
+            "evidence": "operator_flashlight.gd toggles both lights, reads owner aim_direction, and retains the last valid direction."
+          },
+          {
+            "stage": "Test source present",
+            "status": "Source verified, not executed",
+            "evidence": "operator_flashlight_smoke.gd checks production scene attachment, inputs, beam orientation, and lighting settings."
+          },
+          {
+            "stage": "Observed gameplay",
+            "status": "Unverified",
+            "evidence": "No new Godot run, screenshot, or independent visual receipt was produced."
+          }
+        ],
+        "notes": [
+          "The source design identifies Undergate Mechanism Hall as the first authored flashlight-dominant environment."
+        ],
+        "unknowns": [
+          "Original completion date and current in-game visual outcome remain unverified in this spotlight."
+        ],
+        "actions": [
+          "Run the documented Godot smoke test and capture gameplay only if runtime confirmation is needed."
+        ]
+      },
+      "scorecard": {
+        "stage": "Existing source implementation; runtime not rechecked",
+        "as_of": "2026-11-11T19:11:32.859Z",
+        "scope": "Operator flashlight component only",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Component source inspected",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Godot .tscn and .gd available."
+          },
+          {
+            "label": "Smoke-test script inspected",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Smoke checks exist; execution not claimed."
+          },
+          {
+            "label": "Execute documented Godot validation",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Fresh run unavailable."
+          },
+          {
+            "label": "Verify in-game lighting",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No screenshot included."
+          }
+        ],
+        "next_gate": "Run a fresh Godot smoke test, then inspect the lighting in the intended authored environment."
+      },
+      "related": []
+    },
     {
       "id": "worker-isolation-proof-merged-82e1a811",
       "headline": "Worker isolation proof merges into main, with security acceptance still incomplete",
@@ -1497,151 +1633,6 @@
           }
         ],
         "next_gate": "Review and merge PR #133, then obtain independent acceptance before any separately authorized recovery."
-      }
-    },
-    {
-      "id": "paired-findings-artifact-recovery-ready-d37b2929",
-      "headline": "New recovery path targets stranded reviewer findings; packet pair becomes dispatch-ready",
-      "summary": "PR #131 completed documentation closeout for the provenance verifier. A subsequent preserved review produced findings but its artifacts remained untracked; PR #132 introduced a narrowly bounded artifact-recovery implementation and independent-review packet pair. Automatic handoff marked both ready/auto. Neither recovery execution nor independent acceptance is established.",
-      "body": "At main d37b29291591454b0c8a6d9218b6806adf66263a, PR #131 has merged the implementation closeout for the owner-exception source verifier, without claiming its paired review passed. PR #132 then landed two new task packets addressing a distinct problem: a preserved paired reviewer authored findings, but its archived packet and summary remain untracked in a protected checkout. The proposed recovery must authenticate the exact original run, claim receipt, session, hashes and target identity; plan without changing the original; and apply only in a separate recovery checkout under a fresh digest. The handoff commit marked the implementation and paired independent-review packets ready/auto. That is dispatch eligibility, not evidence of a claim, running worker, successful recovery, accepted review, or teardown. GitHub partial coverage only; private WIRE pointer dated November 8 is stale.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-paired-review-findings-artifact-recovery-v1",
-      "occurred_at": "2026-11-10T09:20:26Z",
-      "bullets": [
-        "PR #131 merged the prior verifier's documentation closeout.",
-        "PR #132 introduced exact-run findings-artifact recovery and paired review packets.",
-        "Automatic handoff marked the two new packets ready/auto.",
-        "Original review findings remain unaccepted; host recovery and teardown unverified."
-      ],
-      "links": [
-        {
-          "title": "Findings recovery packet merge PR #132",
-          "url": "https://github.com/braydio/CUSTODIAN/pull/132"
-        },
-        {
-          "title": "Automatic packet handoff",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/d37b29291591454b0c8a6d9218b6806adf66263a"
-        },
-        {
-          "title": "Verifier closeout PR #131",
-          "url": "https://github.com/braydio/CUSTODIAN/pull/131"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN has identified a new obstacle in its review recovery: a reviewer produced findings, but the resulting files have not been durably incorporated into the project's review record. A new narrowly scoped recovery assignment and its independent review are now eligible for dispatch, though neither has been executed or accepted.",
-        "sections": [
-          {
-            "heading": "The reviewer spoke, but the record is stranded",
-            "text": "The preserved reviewer authored a findings packet and summary in its protected checkout. The ordinary closeout path could not authenticate the run from a truncated output stream, even though a separate structured claim receipt exists. The proposed bridge would recover the original findings without inventing a passing verdict."
-          },
-          {
-            "heading": "Recovery must preserve the original evidence",
-            "text": "The new assignment requires an exact-run, digest-bound plan and a separate recovery checkout. It must verify the original claim, reviewer session, file hashes and target identity, and keep the protected source and reviewed implementation unchanged. Its paired reviewer must independently challenge those guarantees."
-          }
-        ],
-        "insights": [
-          {
-            "title": "A findings record is not a PASS",
-            "explanation": "The reviewer produced nonpassing findings, so recovering its authentic artifacts advances auditability rather than approving the underlying implementation."
-          },
-          {
-            "title": "Ready is not running",
-            "explanation": "The automatic handoff changed two packet states to ready/auto. Without host evidence, no claim, execution or cleanup can be inferred."
-          }
-        ],
-        "takeaway": "The recovery assignments are ready, but the authentic findings still need safe, independently reviewed closeout.",
-        "next_watch": "Watch for a verified implementation landing and a genuine independent review disposition before any protected-run recovery."
-      },
-      "details": {
-        "overview": "GitHub partial inspection at main d37b29291591454b0c8a6d9218b6806adf66263a. PR #131 merged implementation closeout. PR #132 landed the new findings artifact recovery packet pair, and the subsequent handoff set both ready/auto. No canonical live dispatcher audit or fresh private operational observation inspected.",
-        "ledger": [
-          {
-            "stage": "Prior provenance implementation closeout",
-            "status": "verified merged",
-            "evidence": "PR #131 / 6189e1ec; paired acceptance not established."
-          },
-          {
-            "stage": "Findings artifact recovery authoring",
-            "status": "verified landed",
-            "evidence": "PR #132 / e567d529."
-          },
-          {
-            "stage": "Dispatch eligibility",
-            "status": "verified ready/auto",
-            "evidence": "Handoff d37b29291591454b0c8a6d9218b6806adf66263a changed both packet headers."
-          },
-          {
-            "stage": "Implementation and independent review",
-            "status": "not established",
-            "evidence": "No landed recovery implementation or accepted independent review receipt inspected."
-          },
-          {
-            "stage": "Protected original run and teardown",
-            "status": "unknown",
-            "evidence": "No trusted live host evidence inspected."
-          }
-        ],
-        "notes": [
-          "New packets concern preservation of an authentic nonpassing reviewer finding, not a retroactive PASS."
-        ],
-        "unknowns": [
-          "Canonical queue totals, claims, locks, worktrees, disk and process liveness unknown.",
-          "Private pilot observation stale; no operational counts used.",
-          "Current complete CI health not established."
-        ],
-        "actions": [
-          "Authorized implementation owner: implement the exact-run artifact bridge under packet constraints.",
-          "Independent reviewer: falsify the bridge before any authorized application."
-        ]
-      },
-      "related": [],
-      "scorecard": {
-        "stage": "Packet pair ready; implementation and review pending",
-        "as_of": "2026-11-10T09:20:26Z",
-        "scope": "Named findings-artifact recovery pair only",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Preserved findings identified",
-            "status": "current",
-            "verification": "reported",
-            "evidence": "Packet #132 records host-private artifacts; bytes not independently read."
-          },
-          {
-            "label": "Recovery packet pair landed",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "PR #132 merged."
-          },
-          {
-            "label": "Automatic handoff",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "d37b2929 sets ready/auto."
-          },
-          {
-            "label": "Bounded implementation",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No implementation merge inspected."
-          },
-          {
-            "label": "Independent acceptance",
-            "status": "blocked",
-            "verification": "unknown",
-            "evidence": "No independent PASS receipt."
-          },
-          {
-            "label": "Authorized recovery and teardown",
-            "status": "blocked",
-            "verification": "unknown",
-            "evidence": "Requires validated bridge, authorization and host proof."
-          }
-        ],
-        "next_gate": "Implementation owner lands a bounded, evidence-preserving recovery bridge for independent review."
       }
     }
   ],
