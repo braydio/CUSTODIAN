@@ -42,6 +42,19 @@ If a conflict appears, prefer this authority order:
 - Deterministic fixed-step simulation remains a hard constraint
 - Rendering/UI logic should not silently absorb simulation authority
 
+## Shared-root protection and summary home
+
+The shared coordination checkout must remain on `main`. Do not use it for
+implementation branch switches, commits or rebases. Run work in the temporary
+V2 checkout returned by the canonical dispatcher; use its stable
+`--repo` coordination checkout only as coordinator.
+
+Closeout summaries live at
+`custodian/docs/ai_context/agent_summaries/<workstream-id>/AGENT_SUMMARY.md`,
+with the actual agent identified inside the file. Historical root-named
+summaries are archived byte-identically in `agent_summaries/`.
+See root `AGENTS.md` and `agent_summaries/README.md`.
+
 ## V2 task acquisition and turn lifecycle
 
 Use `custodian/tools/agent/dispatch.py claim` or `claim-next` as the canonical
@@ -128,9 +141,9 @@ For active work under `custodian/`, a user-supplied task name, slice name, packe
 
 ## Summary Backlink
 
-When a CUSTODIAN task packet or review packet contains an `Authoring chat:` or `Refresh planning chat:` URL, every durable implementation summary, review summary, correction summary, recovery summary, closeout summary/handoff, and final user-facing handoff authored for that packet must include that exact URL as an explicit `Authoring chat` line. Do not omit, shorten, redirect, or replace it with a generic project link. The finish-time artifact gate programmatically checks the committed root closing summary.
+When a CUSTODIAN task packet or review packet contains an `Authoring chat:` or `Refresh planning chat:` URL, every durable implementation summary, review summary, correction summary, recovery summary, closeout summary/handoff, and final user-facing handoff authored for that packet must include that exact URL as an explicit `Authoring chat` line. Do not omit, shorten, redirect, or replace it with a generic project link. The finish-time artifact gate programmatically checks the committed durable closing summary.
 
-This applies whether the summary is written at repository root, beside archived packet evidence, or generated during workstream finish. The backlink is part of the durable handoff so the user can return to the exact planning/review conversation before a required refresh or human decision.
+This applies whether the summary is written in the agent summary home, beside archived packet evidence, or generated during workstream finish. The backlink is part of the durable handoff so the user can return to the exact planning/review conversation before a required refresh or human decision.
 
 ## Tooling And Scripts
 

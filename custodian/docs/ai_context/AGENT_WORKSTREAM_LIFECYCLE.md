@@ -1,5 +1,23 @@
 # Agent Workstream Lifecycle
 
+## Current coordination-root and summary ownership
+
+The persistent coordination checkout is permanently `main` and must not be
+switched to task branches, rebased, or used for task commits by any agent. V2
+claims create isolated temporary worktrees, and two safely eligible old
+worktrees must be retired before a new checkout is created under the
+project-wide 2:1 constraint. Never retire foreign or unique unfinished work.
+
+New summaries are committed at
+`custodian/docs/ai_context/agent_summaries/<workstream-id>/AGENT_SUMMARY.md`.
+Include `Agent: <actual agent>`, `Workstream:` and exact `Authoring chat:`
+provenance. The flat files within `agent_summaries/` are byte-identical
+historical `*_CLAUDE_SUMMARY.md` / `*_CODEX_SUMMARY.md` archives. Existing
+historical Git source-span tests that pin old root paths must stay pinned to
+the original revisions, not rewritten.
+
+
+
 ## Turn-Scoped Dispatcher V2 execution model
 
 The canonical execution entrypoint is the V2 turn lifecycle implemented by
@@ -685,7 +703,7 @@ both refs exist, the workstream branch is canonical and the temporary claim is
 cleanup residue.
 
 Run implementation, validation, asset ingest, generated-file review, packet and
-documentation edits, and the required `<TASK>_CLAUDE_SUMMARY.md` inside that
+documentation edits, and the required `custodian/docs/ai_context/agent_summaries/<workstream-id>/AGENT_SUMMARY.md` inside that
 worktree. Commit only scoped task files. The task branch is pushed before
 landing, providing a remote recovery ref.
 
@@ -762,7 +780,7 @@ Asset Pipeline V2 sources must retain their own authenticated durability.
 A worktree is disposable; its unresolved artifacts are not. If a task packet is
 used, give it the stable `Workstream` ID. Before finish, the associated packet
 must be `complete`, moved to `task_packets/archived/`, and absent from the
-packet README's active/recently-complete sections. The root closing summary is
+packet README's active/recently-complete sections. The closing summary in the persistent home is
 durable and committed. Its `## Process Feedback` receipt records execution
 friction/prevention for every normal implementation. For V2 task packets, mirror
 the same receipt into `## Execution Feedback` before marking the packet complete
@@ -826,7 +844,7 @@ authority. Record structured per-workstream receipts in the existing RunTrace.
 
 For each selected task:
 
-1. Commit the root `<TASK>_CLAUDE_SUMMARY.md` with the packet's substantive
+1. Commit `custodian/docs/ai_context/agent_summaries/<workstream-id>/AGENT_SUMMARY.md` with the packet's substantive
    completion and `Next Handoff` before finish.
 2. Resolve only the exact immediate successor named in `Next Handoff`. For a
    named dependency chain, claim only dispatcher-confirmed eligible predecessors.
@@ -860,14 +878,14 @@ compact human unblock card below for planning refreshes.
 ### Human unblock card
 
 When the stop condition is a ChatGPT/user planning refresh, the full execution
-summary already lives in the committed `<TASK>_CLAUDE_SUMMARY.md`. Do not make
+summary already lives in the committed `agent_summaries/<workstream-id>/AGENT_SUMMARY.md`. Do not make
 the user shuttle that whole recap between tools. End with a compact card:
 
 ```text
 PLANNING REFRESH REQUIRED
 Authoring Chat: <exact recorded URL>
 Workstream: <workstream-id>
-Persistent Summary: <repo-relative *_CLAUDE_SUMMARY.md path>
+Persistent Summary: <repo-relative agent_summaries path>
 ```
 
 The intended user action is only: open **Authoring Chat**, paste the exact

@@ -10,6 +10,28 @@
             "timeout": 60
           }
         ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 custodian/tools/agent/coordination_root_guard.py --check-root",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 custodian/tools/agent/coordination_root_guard.py --hook",
+            "timeout": 10
+          }
+        ]
       }
     ]
   },

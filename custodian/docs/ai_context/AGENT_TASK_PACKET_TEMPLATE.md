@@ -495,7 +495,7 @@ reply:
 PLANNING REFRESH REQUIRED
 Authoring Chat: <exact recorded URL>
 Workstream: <workstream-id>
-Persistent Summary: <repo-relative *_CLAUDE_SUMMARY.md path>
+Persistent Summary: <repo-relative agent_summaries path>
 ```
 
 The user should only need to open that URL and paste the workstream ID. The

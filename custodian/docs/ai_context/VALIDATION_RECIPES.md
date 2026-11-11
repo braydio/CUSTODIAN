@@ -36,7 +36,7 @@ The triage tool never reruns checks, edits reports, waives a failure, or changes
 
 ## Process Feedback Ledger
 
-The read-only process-feedback inventory scans root closing summaries and active/archived packet receipts. It never changes packet state. Run focused anti-vacuity tests, then compare repeated real-corpus output byte-for-byte:
+The read-only process-feedback inventory scans committed summaries in `custodian/docs/ai_context/agent_summaries/` (including old filenames) and active/archived packet receipts. It never changes packet state. Run focused anti-vacuity tests, then compare repeated real-corpus output byte-for-byte:
 
 ```bash
 python3 custodian/tools/agent/test_process_feedback.py
