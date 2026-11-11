@@ -21,6 +21,7 @@ GROUP = "custodian-worker"
 STATE = Path("/var/lib/custodian-worker")
 MODEL_CREDENTIAL_DIRECTORY = Path("/etc/credstore.encrypted")
 MODEL_CREDENTIAL_SOURCE = MODEL_CREDENTIAL_DIRECTORY / "custodian-worker-openai-api-key"
+MODEL_CREDENTIAL_DIRECTORY_DEFAULT_MODE = 0o700
 RESOLVERS = "# Dedicated public resolvers for the loopback-denied proof worker.\nnameserver 1.1.1.1\nnameserver 2606:4700:4700::1111\n"
 FILES = (
     (Path("deploy/systemd/custodian-worker@.service"), Path("/etc/systemd/system/custodian-worker@.service"), 0o644),
@@ -62,6 +63,21 @@ def safe_directory(path: Path, mode: int, root_mode: bool, owner: tuple[int, int
     expected_owner = owner if owner is not None else ((0, 0) if root_mode else None)
     if expected_owner is not None:
         os.chown(path, *expected_owner)
+
+
+def check_credential_directory(path: Path, root_mode: bool) -> None:
+    """Accept a private or read-only shared systemd credential store without changing it."""
+    if path.is_symlink():
+        raise ProvisionError(f"refusing symlink credential-store directory: {path}")
+    if not path.exists():
+        return
+    if not path.is_dir():
+        raise ProvisionError(f"refusing non-directory credential store: {path}")
+    info = path.stat()
+    mode = stat.S_IMODE(info.st_mode)
+    expected_owner = (0, 0) if root_mode else (os.getuid(), os.getgid())
+    if mode & 0o022 or (info.st_uid, info.st_gid) != expected_owner:
+        raise ProvisionError(f"credential-store directory must be correctly owned and not group/world writable: {path}")
 
 
 def check_credential_source(path: Path, root_mode: bool) -> None:
@@ -214,7 +230,7 @@ def install(repo: Path, root: Path) -> None:
         check_directory(mapped(root, dest.parent), 0o755, root_mode)
     credential_directory = mapped(root, MODEL_CREDENTIAL_DIRECTORY)
     credential_source = mapped(root, MODEL_CREDENTIAL_SOURCE)
-    check_directory(credential_directory, 0o755, root_mode)
+    check_credential_directory(credential_directory, root_mode)
     check_credential_source(credential_source, root_mode)
     state = mapped(root, STATE)
     check_directory(state, 0o755, root_mode)
@@ -246,7 +262,8 @@ def install(repo: Path, root: Path) -> None:
     for name in ("home", "codex-home", "tmp", "workspaces"):
         safe_directory(state / name, 0o700, root_mode, (uid, gid) if root_mode else None)
     safe_directory(resolver_path.parent, 0o755, root_mode)
-    safe_directory(credential_directory, 0o755, root_mode)
+    if not credential_directory.exists():
+        safe_directory(credential_directory, MODEL_CREDENTIAL_DIRECTORY_DEFAULT_MODE, root_mode)
     exact_resolver(resolver_path, root_mode)
     for source_rel, dest_abs, mode in FILES:
         exact_file(repo / source_rel, mapped(root, dest_abs), mode, root_mode)
@@ -336,12 +353,13 @@ def upgrade(repo: Path, root: Path, from_ref: str,
 
     credential_directory = mapped(root, MODEL_CREDENTIAL_DIRECTORY)
     credential_source = mapped(root, MODEL_CREDENTIAL_SOURCE)
-    check_directory(credential_directory, 0o755, root_mode)
+    check_credential_directory(credential_directory, root_mode)
     check_credential_source(credential_source, root_mode)
 
     changed: list[tuple[Path, bytes, bytes, int, tuple[int, int] | None]] = []
     try:
-        safe_directory(credential_directory, 0o755, root_mode)
+        if not credential_directory.exists():
+            safe_directory(credential_directory, MODEL_CREDENTIAL_DIRECTORY_DEFAULT_MODE, root_mode)
         for item in staged:
             path, old, new, mode, owner = item
             atomic_file(path, new, mode, owner)
