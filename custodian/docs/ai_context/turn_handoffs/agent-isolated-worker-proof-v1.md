@@ -1,11 +1,11 @@
 <!-- V2 turn metadata -->
 Task identity: agent-isolated-worker-proof-v1
-Task definition: custodian/docs/ai_context/task_packets/AGENT_ISOLATED_WORKER_PROOF_V1.md at origin/main cbca212e7c321c69d4f3ee6317e9eeb4a0c45cca
+Task definition: custodian/docs/ai_context/task_packets/AGENT_ISOLATED_WORKER_PROOF_V1.md at origin/main 29ac4c5742c3acaa18c7cec51ab0fd97e4581e81
 Remote branch: agent/agent-isolated-worker-proof-v1
 Acquisition mode: normal
 Acquisition source: origin/main (no prior branch; fresh start)
 Acquisition source commit: 926df15195f7c0e98adfca597adcae8c00637219
-Checkpoint base: cbca212e7c321c69d4f3ee6317e9eeb4a0c45cca
+Checkpoint base: 29ac4c5742c3acaa18c7cec51ab0fd97e4581e81
 <!-- /V2 turn metadata -->
 
 # Isolated Worker Proof V1 — implementation handoff
@@ -94,3 +94,10 @@ The LFS diagnostic now sends an unauthenticated batch request directly, keeps th
 Focused validation now has 19 passing worker-isolation unit tests, Python compilation, systemd unit verification, shell syntax, changed-file validation, and `git diff --check`. Full acceptance remains incomplete: the historical loopback anomaly is unexplained and isolated Codex/model execution is still unavailable. No full proof PASS is claimed.
 
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af34a5d-ca7c-83ea-b267-382f1be560df
+
+
+## 2026-11-11 continuation — host credential-free preflight
+
+PR #144 landed at `29ac4c5742c3acaa18c7cec51ab0fd97e4581e81` after all required CI passed. The retained checkout fast-forwarded safely to that exact main SHA, preserving six ignored Python cache directories. The guarded host upgrade used `--from-ref c78823ece3dc273a138acc42c087a4731dc4dd68` plus one exact validator hash override (`e9bec1de965c9513320c87f48a7eaa80756c6fb43c36c39b2796a34c5d65ad5e`), because the installed validator independently matched prior source `f93adb045a3de8ccf1dbc37f98c1841e7d4192de`; all other managed files matched the specified baseline. Upgrade succeeded with the service inactive/disabled. The root-owned `/etc/credstore.encrypted` remained mode `0700`; the named credential was confirmed absent by metadata only.
+
+Actual credential-free preflight run `2665577433a2ba36` exited 0 and reported `diagnostic_pass=true`, `full_proof_pass=false`. Host positive controls succeeded for Chrome CDP and all four test listeners. The in-service process ran as UID 942 (`custodian-worker`) in the expected service cgroup, recorded `pass=true`, and blocked all five destinations (CDP IPv4 loopback, alternate IPv4 loopback, IPv6 loopback, and two RFC1918 LAN interfaces); each listener saw zero worker connections. The unit returned inactive and remains disabled, with no worker timer. Durable report: `custodian/docs/operations/evidence/worker-isolation-preflight-correction-20261111.json`, SHA-256 `b6b49c1ce428cfc01ffc62516c03a049d282a4ac03e0f544662b0b6319199493`. The report includes the systemd credential property only as `[unprintable]`; no credential contents were read, created, or modified. Full worker acceptance remains incomplete pending model credential/model-only proof and resolution of the historical loopback anomaly.
