@@ -211,6 +211,24 @@
       "needs_import": false
     },
     {
+      "id": "awakening_creche_runtime_asset_contract",
+      "type": "python",
+      "script": "custodian/tools/validation/verify_awakening_creche_asset_v2_runtime.py",
+      "tier": "unit",
+      "tags": ["awakening", "asset_v2", "runtime_verification"],
+      "owners": [
+        "custodian/asset_drop/source_work/awakening/awakening_creche_environment/**",
+        "custodian/content/metadata/assets/families/awakening_creche_environment.asset.json",
+        "custodian/content/metadata/assets/generated/asset_catalog.generated.json",
+        "custodian/content/levels/awakening/01_creche/awakening_creche_*_1464x1074.png",
+        "custodian/scenes/awakening_first_return.tscn",
+        "custodian/tools/validation/verify_awakening_creche_asset_v2_runtime.py",
+        "custodian/docs/ai_context/asset_audits/AWAKENING_CRECHE_RUNTIME_VERIFICATION_20261110.json"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
       "id": "python_sim_remap2",
       "type": "godot_script",
       "script": "res://tools/validation/python_sim_remap2_smoke.gd",

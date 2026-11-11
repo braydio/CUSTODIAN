@@ -1,0 +1,159 @@
+{
+  "schema": "custodian.awakening_creche_asset_v2_runtime_verification.v1",
+  "verified_at_utc": "2026-11-10T02:20:24+00:00",
+  "family": "awakening_creche_environment",
+  "family_schema": "custodian.asset_family.v2",
+  "family_contract_sha256": "c799ddaaaba3bdba7f83afe3bee0a7cf8141cb4d4e16c5f7ad87325f1125039d",
+  "catalog_sha256_before_record": "26667313d352c39bff297362f511b55be2be39e13f0855b41762bb524cedb085",
+  "consumer_scene": {
+    "path": "custodian/scenes/awakening_first_return.tscn",
+    "sha256": "41bc6e8f76ddb82a2cbba09a64b2833c4cb750f5dade44a3ddb5c5498a28180e"
+  },
+  "asset_v2_ingest": {
+    "job_id": "job_20261110T003455Z_2cfe3ce7",
+    "receipt_path": "custodian/asset_drop/logs/job_20261110T003455Z_2cfe3ce7.json",
+    "receipt_sha256": "af09c5b91d0e537d4d16c96b7c5ee569ea1d5a111dbd90162519ee10ac8fc3ad",
+    "godot_import_ok": true
+  },
+  "gameplay_presentation": {
+    "scene_registration": {
+      "underlay": [
+        0,
+        -96
+      ],
+      "foreground": [
+        0,
+        -96
+      ]
+    },
+    "console_body_path": "content/sprites/environment/props/awakening/awakening_creche_console/runtime/body/awakening_creche_console__body__interaction__idle__omni__1f__128.png",
+    "console_body_sha256": "01716bcdf4a3d7169e52149f495f91830106df93f94736e3c2aee8d910a30acb",
+    "console_activation_fx_path": "content/sprites/effects/awakening/runtime/awakening_creche_console_activation_fx/awakening_creche_console_activation_fx__fx__effect__activate__omni__8f__128.png",
+    "console_activation_fx_sha256": "5ce24cd54338cdf4f757c4be0b83514295239cbb578617cceb8234f44eb579b5",
+    "console_activation_frames_observed": [
+      0,
+      3,
+      7
+    ],
+    "console_activation_fps": 8,
+    "source_validation": "awakening_first_return.gd frame count and speed checked",
+    "gameplay_screenshots": [
+      {
+        "path": "reports/awakening_creche_gameplay_review/10_actual_operator_wake.png",
+        "sha256": "ab48f7e8b50287b6e520b118e77ead15546634beec7a35906a4b440c6a50f6b3",
+        "retained_after_review": false
+      },
+      {
+        "path": "reports/awakening_creche_gameplay_review/11_actual_console_fx_frame_0.png",
+        "sha256": "c8b19613112f4f23ece1aba4fb45f318603de783a52de02a5ca6e328a6601291",
+        "retained_after_review": false
+      },
+      {
+        "path": "reports/awakening_creche_gameplay_review/12_actual_console_fx_frame_3.png",
+        "sha256": "2d6845ece73c7c6ec24ad0a9d4221e83182a44014720fec04905536c9420c5f8",
+        "retained_after_review": false
+      },
+      {
+        "path": "reports/awakening_creche_gameplay_review/13_actual_console_fx_frame_7.png",
+        "sha256": "800f6c9337be354087a320fd727d2f60d526315d8516a5558dd54cf5a2b75375",
+        "retained_after_review": false
+      },
+      {
+        "path": "reports/awakening_creche_gameplay_review/14_north_destination.png",
+        "sha256": "b8f71844f5f0fbdcf5f84c2bd439ffdeaeeabc2f3438cdffb91d80de6ca8f710",
+        "retained_after_review": false
+      },
+      {
+        "path": "reports/awakening_creche_gameplay_review/15_return_destination.png",
+        "sha256": "7b2f3e8c77571ce2ccfab24ea363fdedb4299329fb3d778e890d17c2d05d8156",
+        "retained_after_review": false
+      },
+      {
+        "path": "reports/awakening_creche_gameplay_review/16_actual_operator_returned.png",
+        "sha256": "7786ccea1fb9b4e2d00d736a1ef2593f20fb72df080a23b30a78842ded67686f",
+        "retained_after_review": false
+      }
+    ]
+  },
+  "states": [
+    {
+      "state_id": "underlay",
+      "source_path": "asset_drop/source_work/awakening/awakening_creche_environment/underlay_source.png",
+      "source_sha256": "9ce70dff57e7678234ff423643d255840ca66cf855067948763f73b2b426d77a",
+      "source_size_bytes": 2322966,
+      "runtime_path": "content/levels/awakening/01_creche/awakening_creche_underlay_1464x1074.png",
+      "runtime_sha256": "9ce70dff57e7678234ff423643d255840ca66cf855067948763f73b2b426d77a",
+      "runtime_size_bytes": 2322966,
+      "dimensions": [
+        1464,
+        1074
+      ],
+      "mode": "RGBA",
+      "frames": 1,
+      "imported": true,
+      "bound_to": "res://scenes/awakening_first_return.tscn",
+      "traversal_result_sha256": "c807c7b40d9746b5b3a6aea4f108740208ca2fcdf6adb05b4bac4e97bcdc36fb"
+    },
+    {
+      "state_id": "foreground",
+      "source_path": "asset_drop/source_work/awakening/awakening_creche_environment/foreground_source.png",
+      "source_sha256": "515b287f877cf4cd940c11aeab6bfa05370ff651f06927ba46e13c212a252bfc",
+      "source_size_bytes": 1745414,
+      "runtime_path": "content/levels/awakening/01_creche/awakening_creche_foreground_1464x1074.png",
+      "runtime_sha256": "515b287f877cf4cd940c11aeab6bfa05370ff651f06927ba46e13c212a252bfc",
+      "runtime_size_bytes": 1745414,
+      "dimensions": [
+        1464,
+        1074
+      ],
+      "mode": "RGBA",
+      "frames": 1,
+      "imported": true,
+      "bound_to": "res://scenes/awakening_first_return.tscn",
+      "traversal_result_sha256": "c807c7b40d9746b5b3a6aea4f108740208ca2fcdf6adb05b4bac4e97bcdc36fb"
+    }
+  ],
+  "live_traversal": {
+    "path": "reports/awakening_creche_gameplay_review/live_traversal_result.json",
+    "sha256": "c807c7b40d9746b5b3a6aea4f108740208ca2fcdf6adb05b4bac4e97bcdc36fb",
+    "passed": true,
+    "failures": [],
+    "transitions": [
+      {
+        "phase": "14_north_crossing",
+        "position": [
+          0.0,
+          -472.416687011719
+        ],
+        "tick": 257,
+        "zone": "zone02_ambulatory"
+      },
+      {
+        "phase": "15_return_crossing",
+        "position": [
+          0.0,
+          -461.833374023438
+        ],
+        "tick": 75,
+        "zone": "zone01_creche"
+      }
+    ],
+    "north_position": [
+      0.0,
+      -641.166687011719
+    ],
+    "return_position": [
+      0.0,
+      162.499984741211
+    ],
+    "return_zone_index": 1
+  },
+  "gameplay_visual_review": {
+    "decision": "approved for gameplay presentation",
+    "reviewed_by": "chatgpt-user",
+    "conversation_url": "https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af12561-89a4-83ea-bc7f-c896ec89bed0",
+    "limitation": "The newest connector/destination frame was not independently inspected at full resolution; gameplay presentation was approved using the accessible captures and the verified traversal/FX evidence.",
+    "evidence_cleanup": "delete-after-review cleanup completed",
+    "review_run_id": "creche-runtime-final-review-20261110"
+  }
+}

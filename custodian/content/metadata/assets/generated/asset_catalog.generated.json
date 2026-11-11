@@ -4066,7 +4066,13 @@
           ],
           "sha256": "9ce70dff57e7678234ff423643d255840ca66cf855067948763f73b2b426d77a",
           "provenance": "authored",
-          "source_asset": null
+          "source_asset": null,
+          "validation_evidence": [
+            {
+              "path": "custodian/docs/ai_context/asset_audits/AWAKENING_CRECHE_RUNTIME_VERIFICATION_20261110.json",
+              "sha256": "d0f7499dc58ad6fac933e9ef19c292dc314eabf6e3bdb280083df02410331013"
+            }
+          ]
         },
         "foreground::omni": {
           "state_id": "foreground",
@@ -4087,7 +4093,13 @@
           ],
           "sha256": "515b287f877cf4cd940c11aeab6bfa05370ff651f06927ba46e13c212a252bfc",
           "provenance": "authored",
-          "source_asset": null
+          "source_asset": null,
+          "validation_evidence": [
+            {
+              "path": "custodian/docs/ai_context/asset_audits/AWAKENING_CRECHE_RUNTIME_VERIFICATION_20261110.json",
+              "sha256": "d0f7499dc58ad6fac933e9ef19c292dc314eabf6e3bdb280083df02410331013"
+            }
+          ]
         }
       }
     },

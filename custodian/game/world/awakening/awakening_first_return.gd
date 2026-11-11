@@ -45,6 +45,7 @@ const PORT_READOUT := "PORT AUTHORITY: SUSPENDED\nROUTE INDEX: UNAVAILABLE\nPOST
 const CAMERA_ZOOM_SCALE := 2.25
 const BACKDROP_MARGIN := 1024.0
 const ZONE_ART_FADE_DISTANCE := 128.0
+const CRECHE_ZONE_TRIGGER_INSET := 32.0
 const LOWER_UPPER_PASSAGE_ID := "lower_upper_spine_05_06"
 
 signal zone_entered(zone_id: StringName, index: int)
@@ -452,6 +453,12 @@ func _build_zone_region(zone_node: Node2D, zone_id: StringName, zone: Dictionary
 	region.collision_mask = 0
 	if region.get_node_or_null("Shape") == null:
 		var envelope: Rect2 = zone["envelope"]
+		# Zone01 and Zone02 envelopes meet across a 32px doorway overlap. Their
+		# Areas must report a transition only once the Operator center is inside
+		# the destination envelope; otherwise its 11px body radius triggers entry
+		# early, _resolve_occupied_zone discards it, and no later entry is emitted.
+		if zone_id in [&"zone01_creche", &"zone02_ambulatory"]:
+			envelope = envelope.grow(-CRECHE_ZONE_TRIGGER_INSET)
 		var shape := CollisionShape2D.new()
 		shape.name = "Shape"
 		var rectangle := RectangleShape2D.new()
