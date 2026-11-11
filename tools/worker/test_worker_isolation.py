@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import hashlib
 import subprocess
 import sys
 import tempfile
@@ -15,6 +16,7 @@ WORKER_TOOLS = ROOT / "tools" / "worker"
 sys.path.insert(0, str(WORKER_TOOLS))
 import worker_launcher  # noqa: E402
 import validate_worker_isolation  # noqa: E402
+import provision_worker_isolation  # noqa: E402
 
 PROVISIONER = WORKER_TOOLS / "provision_worker_isolation.py"
 
@@ -142,6 +144,68 @@ class EvidenceValidationTests(unittest.TestCase):
         self.assertEqual(validate_worker_isolation.parse_lfs_pointer(pointer), (oid, 4912))
         self.assertIsNone(validate_worker_isolation.parse_lfs_pointer("not an LFS pointer\n"))
 
+    def test_lfs_batch_and_download_keep_action_secrets_out_of_report(self) -> None:
+        payload = b"verified public LFS payload"
+        oid = hashlib.sha256(payload).hexdigest()
+        signed_url = "https://github-cloud.githubusercontent.com/object/path?X-Amz-Signature=private-signature"
+        action_header = "private-action-header"
+        batch = json.dumps({"objects": [{"oid": oid, "size": len(payload), "actions": {
+            "download": {"href": signed_url, "header": {"Authorization": action_header}}
+        }}]}).encode()
+        calls = []
+
+        def request(host, target, method, headers, body=None, *, max_response_bytes=1_000_000):
+            calls.append((host, target, method, dict(headers), body))
+            phases = {name: {"pass": True, "duration_seconds": 0.01} for name in ("dns", "tcp", "tls", "http")}
+            phases["http"].update({"status": 200, "response_bytes": len(batch if method == "POST" else payload),
+                                   "response_too_large": False})
+            result = {"pass": True, "phase": "complete", "phases": phases, "total_duration_seconds": 0.04}
+            return result, batch if method == "POST" else payload
+
+        with patch.object(validate_worker_isolation, "LFS_OBJECT_OID", oid), \
+             patch.object(validate_worker_isolation, "LFS_OBJECT_SIZE", len(payload)), \
+             patch.object(validate_worker_isolation, "_pinned_https_request", side_effect=request):
+            result = validate_worker_isolation.fetch_one_public_lfs_object()
+
+        self.assertEqual(result["exit_code"], 0)
+        self.assertEqual(result["sha256"], oid)
+        self.assertEqual(result["size"], len(payload))
+        self.assertEqual(len(calls), 2)
+        self.assertEqual(calls[0][0], "github.com")
+        self.assertEqual(calls[0][2], "POST")
+        self.assertNotIn("Authorization", calls[0][3])
+        self.assertEqual(calls[1][0], "github-cloud.githubusercontent.com")
+        self.assertEqual(calls[1][2], "GET")
+        report = json.dumps(result)
+        self.assertNotIn(signed_url, report)
+        self.assertNotIn("X-Amz-Signature", report)
+        self.assertNotIn(action_header, report)
+
+    def test_lfs_batch_rejects_unapproved_action_host_without_leaking_href(self) -> None:
+        signed_url = "https://unexpected.example/object?token=private-token"
+        batch = json.dumps({"objects": [{"oid": validate_worker_isolation.LFS_OBJECT_OID,
+                                          "size": validate_worker_isolation.LFS_OBJECT_SIZE,
+                                          "actions": {"download": {"href": signed_url}}}]}).encode()
+        phases = {name: {"pass": True, "duration_seconds": 0.01} for name in ("dns", "tcp", "tls", "http")}
+        phases["http"].update({"status": 200, "response_bytes": len(batch), "response_too_large": False})
+        with patch.object(validate_worker_isolation, "_pinned_https_request", return_value=(
+                {"pass": True, "phase": "complete", "phases": phases, "total_duration_seconds": 0.04}, batch)) as request:
+            result = validate_worker_isolation.fetch_one_public_lfs_object()
+        self.assertEqual(result["phase"], "download_action_host")
+        self.assertEqual(request.call_count, 1)
+        self.assertNotIn(signed_url, json.dumps(result))
+        self.assertNotIn("private-token", json.dumps(result))
+
+    def test_lfs_download_action_cannot_override_host_or_connection_headers(self) -> None:
+        for name in ("Host", "Connection", "Content-Length", "Transfer-Encoding"):
+            with self.subTest(name=name):
+                result, body = validate_worker_isolation._pinned_https_request(
+                    "github-cloud.githubusercontent.com", "/object", "GET", {name: "attacker-value"})
+                self.assertFalse(result["pass"])
+                self.assertEqual(result["phase"], "request_validation")
+                self.assertEqual(result["phases"], {})
+                self.assertEqual(body, b"")
+
 
 class ProvisionerTests(unittest.TestCase):
     def run_provisioner(self, root: Path, action: str, *extra: str) -> subprocess.CompletedProcess[str]:
@@ -190,6 +254,61 @@ class ProvisionerTests(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0)
             self.assertEqual(unit.read_bytes(), contents)
             self.assertEqual((state / "unexpected").read_text(), "preserve\n")
+
+    def make_upgrade_fixture(self, root: Path) -> tuple[Path, Path, Path]:
+        repo = root / "repo"
+        installed = root / "installed"
+        source = repo / "tools/worker/validator.py"
+        destination = installed / "usr/local/libexec/custodian-worker/validator.py"
+        source.parent.mkdir(parents=True)
+        destination.parent.mkdir(parents=True)
+        resolver = installed / "etc/custodian-worker/resolv.conf"
+        resolver.parent.mkdir(parents=True)
+        source.write_text("old validator\n")
+        destination.write_text("old validator\n")
+        destination.chmod(0o644)
+        resolver.write_text(provision_worker_isolation.RESOLVERS)
+        resolver.chmod(0o644)
+        subprocess.run(["git", "init", "-q", str(repo)], check=True)
+        subprocess.run(["git", "-C", str(repo), "config", "user.name", "Worker Test"], check=True)
+        subprocess.run(["git", "-C", str(repo), "config", "user.email", "worker-test@example.invalid"], check=True)
+        subprocess.run(["git", "-C", str(repo), "add", "tools/worker/validator.py"], check=True)
+        subprocess.run(["git", "-C", str(repo), "commit", "-qm", "baseline"], check=True)
+        source.write_text("new validator\n")
+        return repo, installed, destination
+
+    def test_upgrade_replaces_only_files_matching_explicit_baseline(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            repo, root, destination = self.make_upgrade_fixture(Path(tmp))
+            with patch.object(provision_worker_isolation, "FILES", ((
+                    Path("tools/worker/validator.py"),
+                    Path("/usr/local/libexec/custodian-worker/validator.py"), 0o644),)):
+                provision_worker_isolation.upgrade(repo, root, "HEAD")
+            self.assertEqual(destination.read_text(), "new validator\n")
+
+    def test_upgrade_refuses_modified_installed_file_without_overwriting_it(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            repo, root, destination = self.make_upgrade_fixture(Path(tmp))
+            destination.write_text("unknown local version\n")
+            with patch.object(provision_worker_isolation, "FILES", ((
+                    Path("tools/worker/validator.py"),
+                    Path("/usr/local/libexec/custodian-worker/validator.py"), 0o644),)):
+                with self.assertRaises(provision_worker_isolation.ProvisionError):
+                    provision_worker_isolation.upgrade(repo, root, "HEAD")
+            self.assertEqual(destination.read_text(), "unknown local version\n")
+
+    def test_upgrade_accepts_only_exact_explicit_installed_hash_override(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            repo, root, destination = self.make_upgrade_fixture(Path(tmp))
+            relative = "tools/worker/validator.py"
+            expected = hashlib.sha256(b"old validator\n").hexdigest()
+            with patch.object(provision_worker_isolation, "FILES", ((
+                    Path(relative), Path("/usr/local/libexec/custodian-worker/validator.py"), 0o644),)):
+                provision_worker_isolation.upgrade(repo, root, "HEAD", {relative: expected})
+                destination.write_text("unexpected replacement\n")
+                with self.assertRaises(provision_worker_isolation.ProvisionError):
+                    provision_worker_isolation.upgrade(repo, root, "HEAD", {relative: expected})
+            self.assertEqual(destination.read_text(), "unexpected replacement\n")
 
 
 if __name__ == "__main__":
