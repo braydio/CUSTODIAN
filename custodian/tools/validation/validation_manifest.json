@@ -37,6 +37,28 @@
   ],
   "tests": [
     {
+      "id": "worker_isolation_contract",
+      "type": "python",
+      "script": "tools/worker/test_worker_isolation.py",
+      "tier": "unit",
+      "tags": [
+        "worker_isolation",
+        "systemd",
+        "network"
+      ],
+      "owners": [
+        "deploy/systemd/custodian-worker@.service",
+        "tools/worker/custodian-worker-launch",
+        "tools/worker/provision_worker_isolation.py",
+        "tools/worker/provision_worker_isolation.sh",
+        "tools/worker/test_worker_isolation.py",
+        "tools/worker/validate_worker_isolation.py",
+        "tools/worker/worker_launcher.py"
+      ],
+      "timeout_sec": 90,
+      "needs_import": false
+    },
+    {
       "id": "abandoned_station_placement",
       "type": "godot_script",
       "script": "res://tools/validation/abandoned_station_placement_smoke.gd",

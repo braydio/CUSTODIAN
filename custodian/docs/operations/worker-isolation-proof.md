@@ -1,0 +1,68 @@
+# Disposable CUSTODIAN Worker Isolation Proof V1
+
+This is a test-only local host integration. It does not migrate Dispatcher V2, start a recurring worker, or install a publisher/broker. The systemd template is manually started for one bounded proof invocation and remains disabled afterward.
+
+The exact acceptance contract and paired-review route are in `custodian/docs/ai_context/task_packets/AGENT_ISOLATED_WORKER_PROOF_V1.md`. The owning authoring conversation is:
+
+`https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af34a5d-ca7c-83ea-b267-382f1be560df`
+
+## Files and host boundary
+
+- `deploy/systemd/custodian-worker@.service` runs as the dedicated `custodian-worker` identity, with no capabilities or supplementary groups, a private `/tmp` and device view, protected system/home paths, and IPv4/IPv6 loopback, link-local, RFC1918, CGNAT and IPv6 ULA denial.
+- `tools/worker/custodian-worker-launch` accepts only the fixed `proof` instance, requires the effective systemd identity and address-deny policy, then probes every configured loopback and host-LAN test listener from its own service cgroup before it can execute any validator, Git, Codex or other network workload. Any successful connection stops launch with exit code `79`. The launcher records destination, timestamp, timeout, elapsed time, PID, UID, cgroup, effective unit properties and host positive controls. On a passing preflight it replaces the service environment with a small constant set.
+- `tools/worker/provision_worker_isolation.sh install` installs only the exact unit and helper files, creates the non-login account and worker-owned directories, configures public DNS for this service, and leaves the unit disabled and inactive. It refuses conflicting files, directories, account attributes, or an enabled/active unit.
+- `tools/worker/validate_worker_isolation.py --host-run --preflight-only` starts host-side listeners on a second IPv4 loopback, IPv6 loopback, and available RFC1918 host interfaces. It verifies the Chrome CDP endpoint and every test listener from the host before starting the unit, then checks the exact in-service preflight record. The listener ports, effective systemd properties and run identifier are supplied through a root-owned temporary file; the service can read but not modify it.
+- `tools/worker/validate_worker_isolation.py --host-run --lfs-only` runs only the bounded anonymous LFS diagnostic after the same startup gate. It does not launch the toolchain or Codex model call. DNS (5 seconds), TCP (5 seconds), TLS (5 seconds), HTTP (8 seconds), clone (12 seconds), local pointer read (3 seconds) and Git LFS transfer (20 seconds) have separate results, for a 58-second maximum phase budget.
+- `tools/worker/provision_worker_isolation.sh remove --remove-state` is deliberately explicit. It refuses active/enabled instances, unexpected managed-file contents, or unrecognized worker state. It removes only the dedicated service files, resolver config, worker account/group, and worker-owned proof state.
+
+The service receives public DNS servers `1.1.1.1` and `2606:4700:4700::1111` through its own read-only resolver file. It does not use the host's Tailscale resolver or inherit DNS configuration from the operator environment. Network egress remains available to public development endpoints; private/LAN destinations are denied. The proof does not claim general egress filtering or production readiness.
+
+The worker's `HOME` and `CODEX_HOME` are under `/var/lib/custodian-worker`; the host `/home`, `/root`, `/run/user`, Docker, D-Bus, systemd-control, and Tailscale sockets are hidden or inaccessible. Git uses no system/global Git config, no interactive prompt, no inherited SSH agent, and skips LFS smudge on clone. The single LFS probe explicitly fetches one small public object with no credentials configured. If anonymous LFS access is denied, do not add an owner credential or broaden GitHub permissions to make the proof pass.
+
+Codex is invoked with `--ignore-user-config` and a fresh worker-owned `CODEX_HOME`. No operator auth database, MCP config, browser session, or GitHub connector is mounted. A missing worker-owned model identity is reported as a failed model proof; the CLI version alone is not a model execution proof. Any later publisher socket must authenticate `SO_PEERCRED` and authorize an explicit workstream, action, ref, and current generation before publishing.
+
+## Install and run
+
+From a clean claimed implementation checkout:
+
+```bash
+systemd-analyze verify deploy/systemd/custodian-worker@.service
+python3 -m unittest tools.worker.test_worker_isolation -v
+python3 -m py_compile tools/worker/worker_launcher.py tools/worker/provision_worker_isolation.py tools/worker/validate_worker_isolation.py
+bash -n tools/worker/provision_worker_isolation.sh
+sudo tools/worker/provision_worker_isolation.sh install
+systemd-analyze security custodian-worker@proof.service --no-pager
+sudo python3 tools/worker/validate_worker_isolation.py --host-run
+```
+
+The full host-run command emits one JSON record. Exit code `0` means every full-proof gate passed. Exit code `2` means evidence was collected but at least one required gate is incomplete. Exit code `1` means the host runner itself could not safely set up or collect the proof. Diagnostic-only modes deliberately set `full_proof_pass` to false. Their exit code `0` means the requested focused diagnostic completed, not that full acceptance passed. Reports omit environment values and command stderr. Redact host-interface addresses before retaining evidence in Git.
+
+The systemd service must remain disabled and no timer may be installed. The proof unit exits after one run and does not restart. Do not run `systemctl enable` or create a timer.
+
+To remove the installation after preserving required evidence:
+
+```bash
+sudo tools/worker/provision_worker_isolation.sh remove --remove-state
+```
+
+If cleanup refuses, preserve the remaining state and inspect the exact reported path before taking any separate cleanup action.
+
+## Proof record
+
+Implementation source: `agent/agent-isolated-worker-proof-v1` (claimed from packet SHA `a16fb3ece74f90358dac36d1b981348efeaba412`).
+
+Host provisioned: yes; exact dedicated account, disabled unit and worker-owned state only.
+
+Original full host run: [worker-isolation-run-0b9d19b84e5789e0.json](evidence/worker-isolation-run-0b9d19b84e5789e0.json), immutable. The validator returned exit code 2. Identity, environment, protected paths/sockets, DNS, public HTTPS, tool versions and Git read passed. All three loopback attempts unexpectedly connected; anonymous LFS fetch timed out after 300 seconds; Codex model execution was unavailable because no separate worker credential exists. Service was disabled and inactive after collection.
+
+The exact cause of the first run's loopback pass-through has not been established. The installed template and launcher matched the claimed sources, had no drop-ins, showed the expected `IPAddressDeny` and empty `IPAddressAllow`, and ran the validator in the service cgroup. Later diagnostics passed but did not explain the original result. The correction therefore adds an actual launcher-boundary fail-closed preflight; it does not claim that the historical discrepancy is explained.
+
+Three repeated actual-unit, preflight-only runs passed after correction: five destinations each (CDP, second IPv4 loopback, IPv6 loopback, and two RFC1918 host interfaces). Host positive controls connected to all listeners first; no worker connection was accepted. Each run returned successfully, then the unit was inactive and disabled with no timer. See [worker-isolation-loopback-preflight-final-20261111.json](evidence/worker-isolation-loopback-preflight-final-20261111.json) (SHA-256 `bc278d38ed335b77f9205d4a41c93cd1c82258e7346a5dfe4c749c92522cd04b`). RFC1918 host addresses are redacted in durable evidence.
+
+The bounded LFS-only run passed the isolation preflight and public DNS/TCP/TLS/HTTPS checks (GitHub returned HTTP 200 with TLS 1.3), then the Git LFS fetch timed out after 20.0205 seconds (bounded 58-second maximum total path). Authentication and the Git LFS endpoint HTTP response were not observed before timeout; this remains `network_timeout`, not an inferred authentication failure. See [worker-isolation-lfs-diagnostic-20261111.json](evidence/worker-isolation-lfs-diagnostic-20261111.json) (SHA-256 `4a0870dfd32e94d99da3aaf2ee540a5c2fa541b49a744c944fb80d3dfa1f0482`). The incomplete clone created for that one run was removed after preserving evidence.
+
+Codex model execution remains unavailable until an independently authorized worker identity is provisioned. No owner credential was copied. Full proof remains incomplete and must not be certified.
+
+Focused implementation validation passed: 13 worker-isolation unit tests, Python compilation, shell syntax, systemd unit verification, and `git diff --check`. The final preflight and LFS-only evidence were captured using the final installed launcher/validator source. No complete toolchain/model proof was repeated.
+
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af34a5d-ca7c-83ea-b267-382f1be560df
