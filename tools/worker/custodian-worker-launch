@@ -1,0 +1,4 @@
+#!/usr/bin/python3
+from worker_launcher import main
+
+raise SystemExit(main())
