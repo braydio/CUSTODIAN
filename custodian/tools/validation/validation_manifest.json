@@ -7920,7 +7920,22 @@
         "custodian/tools/operator/ui/state.py",
         "custodian/tools/operator/ui/app.py",
         "custodian/tools/operator/animation_preview.py",
-        "custodian/tools/validation/test_operator_3d_candidate_intake.py"
+        "custodian/tools/validation/test_operator_3d_candidate_intake.py",
+        "custodian/tools/validation/test_operator_3d_candidate_ui.py"
+      ],
+      "timeout_sec": 180,
+      "needs_import": false
+    },
+    {
+      "id": "operator_3d_candidate_ui",
+      "type": "python",
+      "script": "custodian/tools/validation/test_operator_3d_candidate_ui.py",
+      "tier": "unit",
+      "tags": ["operator", "workbench", "candidate", "textual"],
+      "owners": [
+        "custodian/tools/operator/ui/app.py",
+        "custodian/tools/operator/ui/service.py",
+        "custodian/tools/validation/test_operator_3d_candidate_ui.py"
       ],
       "timeout_sec": 180,
       "needs_import": false

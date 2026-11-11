@@ -16,6 +16,8 @@ untouched. All requested actions and their source frames are validated before an
 import argparse
 import hashlib
 import json
+import os
+import shutil
 from pathlib import Path
 
 import numpy as np
@@ -120,6 +122,30 @@ def main(argv=None):
     rep = json.loads((PROBE / "reports/REVIEW_VIEWPORT_REPORT.json").read_text())["actions"]
     inputs = json.loads((BATCH / "reports/INPUT_MANIFEST.json").read_text())["inputs"]
     by_key = validate_sources(PROBE, man, rep, inputs, actions, args.skip_50ppm)
+    WORK = STAGE.parent / f".{STAGE.name}.staging"
+    shutil.rmtree(WORK, ignore_errors=True)
+    WORK.mkdir(parents=True)
+    try:
+        frame_count, meta_out, outputs = produce(WORK, PROBE, rep, by_key, inputs, actions, args.skip_50ppm)
+    except BaseException:
+        shutil.rmtree(WORK, ignore_errors=True)
+        raise
+    promoted = []
+    for action in actions:
+        promoted += [f"frames80/{action}", f"meta/{action}.json"]
+        if not args.skip_50ppm and action in PPM50_ACTIONS:
+            promoted += [f"frames50/{action}", f"meta/{action}_50ppm.json"]
+    try:
+        promote(WORK, STAGE, promoted)
+    finally:
+        shutil.rmtree(WORK, ignore_errors=True)
+    manifest = write_manifest(STAGE, PROBE)
+    outputs["MANIFEST.json"] = sha(STAGE / "MANIFEST.json")
+    write_receipt(STAGE, PROBE, BATCH, actions, args.skip_50ppm, frame_count, inputs, outputs, manifest)
+
+
+def produce(WORK, PROBE, rep, by_key, inputs, actions, skip_50):
+    """Render every selected action into WORK. Raises on the first invalid frame; nothing live is touched."""
     frame_count = 0
     meta_out = {}
     outputs = {}
@@ -133,7 +159,7 @@ def main(argv=None):
         dx, dy = tx - spx, ty - spy
         cell_hashes = {}
         for d in DIRS:
-            out_dir = STAGE / "frames80" / action / d
+            out_dir = WORK / "frames80" / action / d
             out_dir.mkdir(parents=True, exist_ok=True)
             for k in range(n):
                 rec = by_key[(action, d, k)]
@@ -159,19 +185,19 @@ def main(argv=None):
             "source_canvas": canvas, "flags": v["flags"], "approval_state": "candidate_unapproved",
             "frames_dir": f"frames80/{action}", "cell_sha256": cell_hashes,
         }
-        (STAGE / "meta").mkdir(parents=True, exist_ok=True)
-        meta_path = STAGE / "meta" / f"{action}.json"
+        (WORK / "meta").mkdir(parents=True, exist_ok=True)
+        meta_path = WORK / "meta" / f"{action}.json"
         meta_path.write_text(json.dumps(meta_out[action], indent=1) + "\n")
         outputs[f"meta/{action}.json"] = sha(meta_path)
         print(f"staged {action:20} {vw}x{vh} pivot ({tx},{ty}) loop={meta_out[action]['loop']} frames {n*8}")
 
     # 50 px/m comparison set: Running and Walking at native 128x128, pivot (64,106), no placement shift.
-    if not args.skip_50ppm:
+    if not skip_50:
         for action in (a for a in actions if a in PPM50_ACTIONS):
             n = COUNTS[action]
             cell_hashes = {}
             for d in DIRS:
-                out_dir = STAGE / "frames50" / action / d
+                out_dir = WORK / "frames50" / action / d
                 out_dir.mkdir(parents=True, exist_ok=True)
                 for k in range(n):
                     src_path = ppm50_source(PROBE, action, d, k)
@@ -187,18 +213,49 @@ def main(argv=None):
                  "frame_count": n, "fps_authored_sampling": FPS, "loop": loop_of(PROBE, action),
                  "source_sha256": inputs[action]["sha256"], "flags": [], "approval_state": "candidate_unapproved",
                  "frames_dir": f"frames50/{action}", "cell_sha256": cell_hashes}
-            meta_path = STAGE / "meta" / f"{action}_50ppm.json"
+            meta_path = WORK / "meta" / f"{action}_50ppm.json"
             meta_path.write_text(json.dumps(m, indent=1) + "\n")
             outputs[f"meta/{action}_50ppm.json"] = sha(meta_path)
             print(f"staged {action} 50 px/m 128x128 frames {n*8}")
+    return frame_count, meta_out, outputs
 
-    manifest = write_manifest(STAGE, PROBE)
-    outputs["MANIFEST.json"] = sha(STAGE / "MANIFEST.json")
+
+def promote(work: Path, stage: Path, relpaths: list[str]) -> None:
+    """Move each produced path into the live stage. Any failure restores the previous state of every path."""
+    trash = work.with_name(work.name + ".replaced")
+    shutil.rmtree(trash, ignore_errors=True)
+    trash.mkdir(parents=True)
+    moved: list[tuple[Path, Path | None]] = []
+    try:
+        for rel in relpaths:
+            source, dest = work / rel, stage / rel
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            backup = None
+            if dest.exists():
+                backup = trash / rel
+                backup.parent.mkdir(parents=True, exist_ok=True)
+                os.replace(dest, backup)
+            moved.append((dest, backup))
+            os.replace(source, dest)
+    except BaseException:
+        for dest, backup in reversed(moved):
+            if dest.is_dir():
+                shutil.rmtree(dest)
+            elif dest.exists():
+                dest.unlink()
+            if backup is not None:
+                os.replace(backup, dest)
+        raise
+    finally:
+        shutil.rmtree(trash, ignore_errors=True)
+
+
+def write_receipt(STAGE, PROBE, BATCH, actions, skip_50, frame_count, inputs, outputs, manifest) -> None:
     expected = sum(COUNTS[a] * 8 for a in actions)
-    if not args.skip_50ppm:
+    if not skip_50:
         expected += sum(COUNTS[a] * 8 for a in actions if a in PPM50_ACTIONS)
     receipt = {
-        "schema": RECEIPT_SCHEMA, "actions": list(actions), "skip_50ppm": args.skip_50ppm,
+        "schema": RECEIPT_SCHEMA, "actions": list(actions), "skip_50ppm": skip_50,
         "expected_frames": expected, "staged_frames": frame_count,
         "sources": {
             "PREVIEW_FRAME_MANIFEST.json": sha(PROBE / "reports/PREVIEW_FRAME_MANIFEST.json"),

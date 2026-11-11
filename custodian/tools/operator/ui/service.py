@@ -213,13 +213,13 @@ class WorkbenchService:
                 if found["registered"]:
                     records.append(AnimationRecord(
                         selection, found["frames"], (candidate_intake.LAYER,), "CANDIDATE",
-                        "3D source · candidate_unapproved", status, coverage_status="CANDIDATE_READY",
+                        "3D source · candidate_unapproved", status, coverage_status=found["coverage"],
                         workflow_status="IMPORTED_UNAPPROVED", canonical_complete=False,
                     ))
                 else:
                     records.append(AnimationRecord(
-                        selection, 0, (candidate_intake.LAYER,), "MISSING", found["reason"], status,
-                        coverage_status="MISSING", workflow_status="NONE", canonical_complete=False,
+                        selection, 0, (candidate_intake.LAYER,), found["coverage"], found["reason"], status,
+                        coverage_status=found["coverage"], workflow_status="NONE", canonical_complete=False,
                     ))
         return tuple(records)
 
@@ -388,11 +388,13 @@ class WorkbenchService:
     def transition_candidates(
         self, selection: AnimationSelection,
     ) -> tuple[AnimationSelection, ...]:
+        if selection.art_generation == candidate_intake.GENERATION:
+            return ()
         candidates = []
         for record in self.browser_records():
             candidate = record.selection
-            if candidate.art_generation == candidate_intake.GENERATION:
-                continue  # candidate-only 3D frames have no transition support yet
+            if candidate.art_generation == candidate_intake.GENERATION or selection.art_generation == candidate_intake.GENERATION:
+                continue  # candidate-only 3D frames have no transition support, as source or target
             if candidate.profile != selection.profile or candidate.direction != selection.direction:
                 continue
             if candidate.group == selection.group and candidate.action == selection.action:
@@ -408,6 +410,7 @@ class WorkbenchService:
         return tuple(candidates)
 
     def transition_preview(self, selection: AnimationSelection, primary_source: str):
+        self._reject_candidate(selection, "Transition preview")
         sources = ("workbench", "canonical", "runtime") if primary_source in ("live", "workbench") else (("canonical", "runtime") if primary_source == "canonical" else ("runtime", "canonical"))
         errors = []
         workbench_error = getattr(self.model, "WorkbenchError", model.WorkbenchError)
@@ -1083,7 +1086,7 @@ class WorkbenchService:
             action=selection.action, direction=selection.direction,
         )
         if not found["registered"]:
-            raise ValueError(f"no registered 3D candidate for {selection.authoring_identity}: {found['reason']}")
+            raise ValueError(f"no usable 3D candidate for {selection.authoring_identity}: {found['reason']}")
         frame = found["data"]["frames"]
         count, width, height = int(frame["count"]), int(frame["width"]), int(frame["height"])
         ws = self.workspace(selection)
@@ -1098,7 +1101,7 @@ class WorkbenchService:
             layers=(layer,), completeness="CANDIDATE",
             completeness_detail="3D source · candidate_unapproved · not publishable",
             workspace_display=workspace_display, document_canvas=(width, height),
-            coverage_status="CANDIDATE_READY", workflow_status="IMPORTED_UNAPPROVED",
+            coverage_status=found["coverage"], workflow_status="IMPORTED_UNAPPROVED",
         )
 
     @staticmethod

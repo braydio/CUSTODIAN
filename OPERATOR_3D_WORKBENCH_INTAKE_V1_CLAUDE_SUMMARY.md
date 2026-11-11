@@ -1,52 +1,32 @@
 # Operator 3D Workbench Intake V1 — Claude summary
 
 Workstream: `operator-3d-workbench-intake-v1` · Branch: `agent/operator-3d-workbench-intake-v1`
-Base: `origin/main@a16fb3ece74f` (the brief's reviewed base)
+Base: `origin/main@a16fb3ece74f`. Implementation commit `2efb97a82`; this round's corrections are a new commit on top of it. Not landed.
 
-## Result
+## Status
 
-- Walking (`unarmed/locomotion/walk_01`, 25f, pivot 50,107) and Running (`unarmed/locomotion/run_01`, 15f, pivot 62,108) are registered as read-only `operator_3d_80` candidate sessions: 2 imported animations, 16 directional sessions, 320 validated RGBA 160×160 frames.
-- The Workbench browser shows all 16 directional rows (`CANDIDATE_READY`). Preview loads the staged pixels for each direction and plays them. Validation is read-only. Edit, migration, FX, polish, copy, timeline, motion, comparison, transition and publish are disabled in the UI and refused in the service layer.
-- Runtime assets, canonical art, and Godot gameplay files are unchanged. Staged frames and candidate sessions live only in gitignored paths.
+Candidate-only Walking (`unarmed/locomotion/walk_01`, 25f, pivot 50,107) and Running (`unarmed/locomotion/run_01`, 15f, pivot 62,108) are registered as 16 read-only `operator_3d_80` directional sessions (320 frames, 160×160 RGBA). Not landed. Independent review pending.
 
-## Changed files
+## Review corrections (this round)
 
-- `custodian/tools/character3d/` — imported from `agent/character3d-pipeline-reproducibility-v1` (commits `973bd353e`, `3623c9fb3` only). Stager gained `--actions`, `--skip-50ppm`, and a per-run receipt.
-- `custodian/tools/operator/operator_3d_candidate_intake.py` — new. Plan, apply (transactional, idempotent), verify.
-- `custodian/tools/operator/ui/service.py`, `ui/app.py`, `ui/state.py`, `animation_preview.py`, `animation_workbench.py` — 3D projection, session, preview, guards.
-- `custodian/tools/operator/operator_art_worktree.py` — `custodian/tools/character3d` added to the sparse profile.
-- `custodian/tools/validation/test_operator_3d_candidate_intake.py` — new, 45 tests.
-- `custodian/tools/validation/test_character3d_tools.py` and `validation_manifest.json` — character3d unit tests registered.
-- `custodian/tools/validation/operator_workbench_ui_smoke.py` — 3D placeholder rows excluded from legacy filter counts, and asserted separately.
-- Docs: `design/02_features/animation/OPERATOR_ANIMATION_WORKBENCH.md`, `custodian/tools/operator/README.md`, `custodian/docs/ai_context/FILE_INDEX.md`.
+1. **Additive registration.** A session's validity now depends on a `binding` (its own action's spec hash, motion hash, meta hash, identity, and frame hashes). Whole-contract and whole-manifest hashes move to an audit-only `provenance` block. Verify and apply compare bindings. Tests: an unrelated new contract action, an unrelated new manifest action, a changed motion hash, and a changed pivot. Only the last two fail closed.
+2. **Examiner and transition controls.** Split, diff and transition keys are refused for 3D candidates, and stale split state is reset on session load. Transition candidates and transition previews reject 3D on either side. Pilot tests drive the real keys (`D`, `t`, `T`, `S`, `s`). A mutation check, with the guard removed, fails the pilot.
+3. **Readiness labels and malformed manifests.** Browser coverage is now `CANDIDATE_VERIFIED` (a verification receipt records each session's binding hash and per-frame size and mtime; any change downgrades it), `CANDIDATE_REGISTERED`, `INVALID` (malformed or broken sources; never crashes discovery), or `MISSING`. Full per-frame hashing still runs on preview load and on `--verify`/`--apply`.
+4. **Staging atomicity.** The stager renders into a sibling staging directory. Only after every selected action succeeds are outputs promoted, and any promotion failure restores the previous paths. Tests: a mid-run invalid frame leaves the live stage byte-identical, a promotion failure restores everything, and a bounded run replaces only its own actions.
 
-## Verification
+## Evidence
 
-- `test_operator_3d_candidate_intake.py`: 45 tests OK.
-- `test_character3d_tools.py`: OK (1 skipped, pre-existing).
-- Regression smokes all pass: `operator_workbench_ui_smoke` (including its Textual pilot), `operator_animation_targets_smoke`, `operator_animation_workbench_smoke`, `operator_workbench_mirror_publish_smoke`, `operator_animation_plan_smoke`, `operator_workbench_production_queue_smoke`, `operator_animation_preview_timeline_smoke`, `operator_animation_transition_smoke`, `asset_workbench_ui_smoke`, `operator_animation_contract_report_smoke`, `operator_animation_timing_smoke`, `operator_art_worktree_smoke`.
-- Live acceptance against the real staged frames in `~/Projects/CUSTODIAN-operator-art`: the headless Textual pilot opens the 3D walk session in preview, plays it (frame 0 → 15), refuses edit and publish, and locks the source. A contact sheet of all eight directions for walk and run was checked visually.
-- Intake commands from the brief were run as written: plan, apply (16 written), re-apply (0 written, all UNCHANGED), verify (ok, 16 VERIFIED).
+Package folder (scratchpad): `/tmp/claude-1000/-home-braydenchaffee-Projects-CUSTODIAN/f5b5ce06-685d-44b1-8e95-846e306c5dcb/scratchpad/review/`
+- `1_plan.json`, `2_apply.json`, `3_reapply.json`, `4_verify.json`: intake receipts.
+- `hashes.json`: contract, master, motion, stage manifest, meta and receipt hashes, and 16 candidate hashes.
+- `contact_sheet.png`, `preview_3d_walk_s.svg`, `pilot_run.log`, `stage_run.log`, `regression_results.txt`.
 
-## Decisions and deviations
+Restaged output hashes match the pre-correction stage for all 200 walk and 120 run frames.
 
-- Branch base: the implementation commit sits directly on `origin/main@a16fb3e` (rebased from local `main`). Local `main` has four unpushed commits and had diverged, so they are not on this branch.
-- Character3d tooling was copied from the stale branch, not merged. Only its two tooling commits came over. Landing it on `main` still needs its normal review and publication path.
-- Sparse profile: `custodian/tools/character3d` was added in this branch, not after landing as the brief specified. The art checkout needs it to run the stager from the checkout.
-- Browser: unregistered 3D directions appear as `MISSING` placeholders (16 rows, always). This is what the brief requires. It means legacy filter counts that match `locomotion` or `run_01` now include them, so the smoke asserts legacy rows separately.
-- Transitions exclude `operator_3d_80` candidates.
-- Discovery checks each candidate's registration, its stage metadata hash, and frame file presence. Per-frame SHA-256 is verified on preview load and by `--verify`, not on every browser refresh.
-- `dependency_status` is GREEN only when the registration and stage metadata checks pass.
+## Scope limits
 
-## Not done
-
-- OPUI launch from the art checkout (`operator ui`): the art checkout is on `workbench/operator-art` and does not yet contain this UI code. It needs landing and an art-checkout sync first. The acceptance demo was run headlessly from this branch against the art checkout's staged data.
-- Root marker overlay on the preview: optional in the brief, not implemented.
-- Idle (`unarmed/posture/idle_relaxed_01`) authoring and the Blender source: not started. This is the next phase.
-- Landing to `main`, review, and any runtime or Godot integration.
-- Clarification: the `Dropbox` review publish and handoff steps were not needed for this slice.
-
-## Open decisions
-
-- Whether `[skip render]` is the right tag for this commit (no render or Godot output changes).
-- Whether the candidate registration check should also verify frame hashes on each refresh. The current choice trades completeness against browser-refresh cost.
+- Not landed. Fresh-context review not yet performed.
+- `operator ui` from the art checkout not run; it requires landing and an art-checkout sync first.
+- Idle (`unarmed/posture/idle_relaxed_01`) not started.
+- The SVG screenshot was not visually inspected in this session; the contact sheet was.
+- Session stats are used to downgrade verification. A change that keeps size and mtime would not downgrade discovery until re-verified.

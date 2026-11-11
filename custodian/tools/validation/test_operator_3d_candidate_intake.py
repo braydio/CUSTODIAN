@@ -104,6 +104,10 @@ def tearDownModule():
         shutil.rmtree(TEMPLATE, ignore_errors=True)
 
 
+def snapshot(root: Path) -> dict:
+    return {path.relative_to(root).as_posix(): path.read_bytes() for path in sorted(root.rglob("*")) if path.is_file()}
+
+
 class Fixture(unittest.TestCase):
     """A fresh copy of the synthetic repository per test."""
 
@@ -117,8 +121,28 @@ class Fixture(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.root, ignore_errors=True)
 
-    def run_intake(self, operation, actions=ACTIONS):
-        return getattr(intake, operation)(CONTRACT, self.stage, self.workbench, list(actions))
+    class FakeModel:
+        class WorkbenchError(RuntimeError):
+            pass
+
+        @staticmethod
+        def source_index(*_args, **_kwargs):
+            return {}
+
+    def service(self):
+        return WorkbenchService(
+            repo_root=self.repo, source_root=self.repo / "missing", weapon_root=self.repo / "missing",
+            catalog_path=self.repo / "missing.json", workspace_root=self.workbench,
+            model_api=self.FakeModel, workbench_api=animation_workbench,
+        )
+
+    def run_intake(self, operation, actions=ACTIONS, contract=CONTRACT):
+        return getattr(intake, operation)(contract, self.stage, self.workbench, list(actions))
+
+    def write_contract(self, contract):
+        path = self.root / "contract.json"
+        path.write_text(json.dumps(contract, indent=1) + "\n")
+        return path
 
     def candidate_path(self, action, direction):
         profile, group, name = EXPECTED_SESSION[action]
@@ -198,7 +222,7 @@ class CandidateIntakeTests(Fixture):
                                             "direction": "n", "layer": "full_body"})
         self.assertEqual(data["source"]["master_sha256"], intake.EXPECTED_MASTER_SHA256)
         self.assertEqual(data["source"]["motion_sha256"], contract["source"]["motions"]["running"]["sha256"])
-        self.assertEqual(data["source"]["contract_sha256"], _sha(CONTRACT))
+        self.assertEqual(data["provenance"]["contract_sha256"], _sha(CONTRACT))
         self.assertIs(data["timing_authority"], False)
         self.assertIs(data["runtime_published"], False)
         self.assertEqual(data["approval_state"], "candidate_unapproved")
@@ -308,6 +332,43 @@ class CandidateIntakeTests(Fixture):
         with self.assertRaisesRegex(intake.IntakeError, "duplicate"):
             self.run_intake("plan", ["walking", "walking"])
 
+    def test_additive_unrelated_contract_action_does_not_invalidate_walk_and_run(self):
+        self.run_intake("apply")
+        contract = json.loads(CONTRACT.read_text())
+        contract["actions"]["idle_test"] = copy.deepcopy(contract["actions"]["running"])
+        contract["source"]["motions"]["idle_test"] = copy.deepcopy(contract["source"]["motions"]["running"])
+        contract["source"]["motions"]["idle_test"]["sha256"] = "1" * 64
+        extended = self.write_contract(contract)
+        self.assertNotEqual(_sha(extended), _sha(CONTRACT))
+        report = self.run_intake("verify", contract=extended)
+        self.assertTrue(report["ok"])
+        self.assertEqual({row["status"] for row in report["sessions"]}, {"VERIFIED"})
+        applied = self.run_intake("apply", contract=extended)
+        self.assertEqual(applied["written"], 0)
+        self.assertEqual({row["status"] for row in applied["sessions"]}, {"UNCHANGED"})
+
+    def test_additive_manifest_action_does_not_invalidate_walk_and_run(self):
+        self.run_intake("apply")
+        manifest_path = self.stage / "MANIFEST.json"
+        manifest = json.loads(manifest_path.read_text())
+        manifest["actions"] = sorted(manifest["actions"] + ["idle_test"])
+        manifest_path.write_text(json.dumps(manifest, indent=1) + "\n")
+        self.assertTrue(self.run_intake("verify")["ok"])
+
+    def test_changed_existing_action_motion_still_fails_closed_after_expansion(self):
+        self.run_intake("apply")
+        contract = json.loads(CONTRACT.read_text())
+        contract["source"]["motions"]["running"]["sha256"] = "2" * 64
+        with self.assertRaisesRegex(intake.IntakeError, "source motion SHA-256"):
+            self.run_intake("verify", contract=self.write_contract(contract))
+
+    def test_changed_existing_action_pivot_fails_closed(self):
+        self.run_intake("apply")
+        contract = json.loads(CONTRACT.read_text())
+        contract["actions"]["walking"]["root_px"] = [51, 107]
+        with self.assertRaisesRegex(intake.IntakeError, "pivot"):
+            self.run_intake("verify", contract=self.write_contract(contract))
+
     def test_failed_import_leaves_existing_sessions_unchanged(self):
         self.run_intake("apply", ["walking"])
         before = {path: path.read_bytes() for path in self.workbench.rglob("candidate.json")}
@@ -346,6 +407,39 @@ class CandidateIntakeTests(Fixture):
         with self.assertRaisesRegex(intake.IntakeError, "refusing replacement"):
             self.run_intake("apply", ["walking"])
         self.assertEqual(path.read_text(), '{"schema": "other"}\n')
+
+    def test_verification_receipt_is_written_by_apply_and_read_by_discovery(self):
+        self.run_intake("apply")
+        receipt = json.loads((self.workbench / "operator_3d_80" / "verification.json").read_text())
+        self.assertEqual(len(receipt["sessions"]), 16)
+        records = [r for r in self.service().discover_browser_records() if r.selection.art_generation == "operator_3d_80"]
+        self.assertEqual({r.coverage_status for r in records}, {"CANDIDATE_VERIFIED"})
+
+    def test_touched_staged_frame_downgrades_discovery_to_registered_until_reverified(self):
+        self.run_intake("apply")
+        frame = self.stage / "frames80/walking/W/0002.png"
+        os.utime(frame, ns=(1_700_000_000_000_000_000, 1_700_000_000_000_000_000))
+        records = [r for r in self.service().discover_browser_records() if r.selection.art_generation == "operator_3d_80"]
+        walk_w = next(r for r in records if r.selection.action == "walk_01" and r.selection.direction == "w")
+        walk_s = next(r for r in records if r.selection.action == "walk_01" and r.selection.direction == "s")
+        self.assertEqual(walk_w.coverage_status, "CANDIDATE_REGISTERED")
+        self.assertEqual(walk_s.coverage_status, "CANDIDATE_VERIFIED")
+        self.assertIn("not hash-verified", walk_w.summary)
+        self.assertTrue(self.run_intake("apply")["written"] == 0)
+        records = [r for r in self.service().discover_browser_records() if r.selection.art_generation == "operator_3d_80"]
+        self.assertEqual({r.coverage_status for r in records}, {"CANDIDATE_VERIFIED"})
+
+    def test_malformed_candidate_manifests_are_invalid_not_discovery_crashes(self):
+        self.run_intake("apply")
+        self.candidate_path("walking", "N").write_text("{not json")
+        self.candidate_path("walking", "NE").write_text("[]")
+        self.candidate_path("walking", "NW").write_text(json.dumps({"schema": intake.CANDIDATE_SCHEMA,
+                                                                  "generation": "operator_3d_80"}))
+        records = [r for r in self.service().discover_browser_records() if r.selection.art_generation == "operator_3d_80"]
+        self.assertEqual(len(records), 16)
+        invalid = {r.selection.direction for r in records if r.coverage_status == "INVALID"}
+        self.assertEqual(invalid, {"n", "ne", "nw"})
+        self.assertIn("INVALID", next(r for r in records if r.selection.direction == "n").summary)
 
     def test_plan_is_read_only(self):
         self.run_intake("plan")
@@ -453,23 +547,44 @@ class BoundedStagerTests(unittest.TestCase):
         self.assertEqual(staged.getbbox(), (120 - 78, 120 - 21, 141 - 78, 141 - 21))
 
 
+    def test_mid_run_invalid_frame_leaves_live_stage_byte_identical(self):
+        self.stage("--actions", "walking", "--skip-50ppm")
+        before = snapshot(self.stage_root())
+        Image.new("RGBA", (128, 128), (0, 0, 0, 0)).save(self.probe / "clean/walking/SE/1.png")
+        with self.assertRaises(SystemExit):
+            self.stage("--actions", "walking", "--skip-50ppm")
+        self.assertEqual(snapshot(self.stage_root()), before)
+        self.assertFalse((self.stage_root().parent / ".operator_3d_animation_preview.staging").exists())
+
+    def test_promotion_failure_restores_every_previously_live_path(self):
+        self.stage("--actions", "walking", "--skip-50ppm")
+        before = snapshot(self.stage_root())
+        real_replace = os.replace
+        calls = {"count": 0}
+
+        def flaky(source, target):
+            calls["count"] += 1
+            if calls["count"] == 4:
+                raise OSError("simulated promotion failure")
+            return real_replace(source, target)
+
+        with mock.patch.object(operator_stage.os, "replace", side_effect=flaky):
+            with self.assertRaises(OSError):
+                self.stage("--actions", "walking", "running", "--skip-50ppm")
+        self.assertEqual(snapshot(self.stage_root()), before)
+        self.assertFalse((self.stage_root().parent / ".operator_3d_animation_preview.staging").exists())
+
+    def test_successful_bounded_run_replaces_only_its_own_actions(self):
+        self.stage("--actions", "walking", "--skip-50ppm")
+        before = snapshot(self.stage_root())
+        self.stage("--actions", "running", "--skip-50ppm")
+        after = snapshot(self.stage_root())
+        walking_keys = [k for k in before if k.startswith(("frames80/walking", "meta/walking"))]
+        self.assertEqual({k: before[k] for k in walking_keys}, {k: after[k] for k in walking_keys})
+
+
 class WorkbenchProjectionTests(Fixture):
     """Service-level projection, preview, and publication guards for operator_3d_80."""
-
-    class FakeModel:
-        class WorkbenchError(RuntimeError):
-            pass
-
-        @staticmethod
-        def source_index(*_args, **_kwargs):
-            return {}
-
-    def service(self):
-        return WorkbenchService(
-            repo_root=self.repo, source_root=self.repo / "missing", weapon_root=self.repo / "missing",
-            catalog_path=self.repo / "missing.json", workspace_root=self.workbench,
-            model_api=self.FakeModel, workbench_api=animation_workbench,
-        )
 
     def selection(self, action="walking", direction="s"):
         profile, group, name = EXPECTED_SESSION[action]
@@ -479,7 +594,7 @@ class WorkbenchProjectionTests(Fixture):
         self.run_intake("apply")
         records = [r for r in self.service().discover_browser_records() if r.selection.art_generation == "operator_3d_80"]
         self.assertEqual(len(records), 16)
-        self.assertEqual({r.coverage_status for r in records}, {"CANDIDATE_READY"})
+        self.assertEqual({r.coverage_status for r in records}, {"CANDIDATE_VERIFIED"})
         self.assertEqual({r.workflow_status for r in records}, {"IMPORTED_UNAPPROVED"})
         self.assertFalse(any(r.canonical_complete for r in records))
         self.assertIn("unapproved · not published", records[0].summary)

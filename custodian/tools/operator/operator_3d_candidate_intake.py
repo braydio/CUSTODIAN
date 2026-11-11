@@ -247,11 +247,16 @@ def build_candidates(contract_path: Path, stage_root: Path, workbench_root: Path
                     "source_action": action,
                     "render_direction": direction,
                     "stage_root": stage_ref,
-                    "contract_sha256": contract_sha,
                     "master_sha256": EXPECTED_MASTER_SHA256,
                     "motion_sha256": result["motion_sha256"],
-                    "stage_manifest_sha256": stage_manifest_sha,
+                    "action_spec_sha256": _sha_bytes(_canonical(contract["actions"][action]).encode("utf-8")),
                     "action_meta_sha256": result["meta_sha256"],
+                },
+                # Snapshot of the whole-contract state at registration. Recorded for audit only; an additive,
+                # unrelated contract or manifest change must not invalidate this session.
+                "provenance": {
+                    "contract_sha256": contract_sha,
+                    "stage_manifest_sha256": stage_manifest_sha,
                 },
                 "frames": {
                     "count": result["count"],
@@ -270,8 +275,36 @@ def build_candidates(contract_path: Path, stage_root: Path, workbench_root: Path
             path = workbench_root / GENERATION / identity["profile"] / identity["group"] / identity["action"] / wb_direction / CANDIDATE_FILE
             payload = (json.dumps(manifest, indent=1, sort_keys=True) + "\n").encode("utf-8")
             candidates.append({"action": action, "direction": direction, "path": path, "payload": payload,
+                               "binding": binding_of(manifest), "stage_root": stage_root,
                                "frame_count": result["count"], "identity": identity | {"direction": wb_direction}})
     return candidates
+
+
+PROVENANCE_KEYS = ("provenance",)
+BINDING_FIELDS = ("schema", "generation", "identity", "loop", "provisional_preview_fps",
+                  "timing_authority", "approval_state", "runtime_published")
+VERIFICATION_FILE = "verification.json"
+VERIFICATION_SCHEMA = "custodian.operator_3d_workbench_verification.v1"
+
+
+def _canonical(value: Any) -> str:
+    return json.dumps(value, sort_keys=True, separators=(",", ":"))
+
+
+def binding_of(manifest: dict[str, Any]) -> dict[str, Any]:
+    """The part of a session that defines its validity: its own action's source identity and frames.
+
+    Excludes the provenance snapshot, so an unrelated contract or manifest addition is not drift.
+    """
+    source = {key: value for key, value in manifest["source"].items()}
+    return {**{key: manifest[key] for key in BINDING_FIELDS}, "source": source, "frames": manifest["frames"]}
+
+
+def _load_binding(path: Path) -> dict[str, Any] | None:
+    try:
+        return binding_of(json.loads(path.read_text(encoding="utf-8")))
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
 
 
 def classify(candidates: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -280,13 +313,61 @@ def classify(candidates: list[dict[str, Any]]) -> list[dict[str, Any]]:
         path = candidate["path"]
         if not path.exists():
             status = "NEW"
-        elif path.is_file() and path.read_bytes() == candidate["payload"]:
+        elif _load_binding(path) == candidate["binding"]:
             status = "UNCHANGED"
         else:
             status = "CONFLICT"
         rows.append({"status": status, "path": str(path), "action": candidate["action"],
                      "direction": candidate["direction"], "frames": candidate["frame_count"]})
     return rows
+
+
+def _frame_stats(stage_root: Path, frames: list[dict[str, Any]]) -> list[list[int]]:
+    stats = []
+    for item in frames:
+        info = (stage_root / item["path"]).stat()
+        stats.append([info.st_size, info.st_mtime_ns])
+    return stats
+
+
+def _receipt_path(workbench_root: Path) -> Path:
+    return Path(workbench_root) / GENERATION / VERIFICATION_FILE
+
+
+def _write_verification_receipt(workbench_root: Path, candidates: list[dict[str, Any]]) -> None:
+    """Record which registered bindings were fully hash-verified, and the staged frame stats at that time.
+
+    Discovery trusts this receipt only while every recorded frame stat still matches. Any staged frame
+    that changes is downgraded to REGISTERED until the next --apply or --verify re-hashes it.
+    """
+    path = _receipt_path(workbench_root)
+    try:
+        receipt = json.loads(path.read_text(encoding="utf-8")) if path.is_file() else {}
+    except (OSError, ValueError):
+        receipt = {}
+    sessions = receipt.get("sessions", {}) if isinstance(receipt, dict) else {}
+    for candidate in candidates:
+        key = candidate["path"].relative_to(Path(workbench_root)).as_posix()
+        sessions[key] = {
+            "binding_sha256": _sha_bytes(_canonical(candidate["binding"]).encode("utf-8")),
+            "frame_stats": _frame_stats(candidate["stage_root"], candidate["binding"]["frames"]["items"]),
+        }
+    payload = json.dumps({"schema": VERIFICATION_SCHEMA, "sessions": sessions}, indent=1, sort_keys=True) + "\n"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temp = path.with_name(path.name + ".tmp")
+    temp.write_text(payload, encoding="utf-8")
+    os.replace(temp, path)
+
+
+def _receipt_verified(workbench_root: Path, path: Path, data: dict[str, Any], stage_root: Path) -> bool:
+    try:
+        receipt = json.loads(_receipt_path(workbench_root).read_text(encoding="utf-8"))
+        entry = receipt["sessions"][path.relative_to(Path(workbench_root)).as_posix()]
+        if entry["binding_sha256"] != _sha_bytes(_canonical(binding_of(data)).encode("utf-8")):
+            return False
+        return entry["frame_stats"] == _frame_stats(stage_root, data["frames"]["items"])
+    except (OSError, ValueError, KeyError, TypeError):
+        return False
 
 
 def plan(contract_path, stage_root, workbench_root, actions) -> dict[str, Any]:
@@ -299,12 +380,13 @@ def apply(contract_path, stage_root, workbench_root, actions) -> dict[str, Any]:
     rows = classify(candidates)
     conflicts = [row["path"] for row in rows if row["status"] == "CONFLICT"]
     if conflicts:
-        raise IntakeError("existing candidate sessions have different provenance or content; refusing replacement:\n"
+        raise IntakeError("existing candidate sessions have a different source binding; refusing replacement:\n"
                           + "\n".join(conflicts))
     pending = [candidate for candidate, row in zip(candidates, rows) if row["status"] == "NEW"]
-    if not pending:
-        return _report("apply", actions, candidates, rows, written=0)
     workbench_root = Path(workbench_root)
+    if not pending:
+        _write_verification_receipt(workbench_root, candidates)
+        return _report("apply", actions, candidates, rows, written=0)
     workbench_root.mkdir(parents=True, exist_ok=True)
     staging = Path(tempfile.mkdtemp(prefix=".operator_3d_candidate_tmp-", dir=workbench_root))
     created_files: list[Path] = []
@@ -341,6 +423,7 @@ def apply(contract_path, stage_root, workbench_root, actions) -> dict[str, Any]:
         raise IntakeError(f"registration failed and was rolled back: {error}") from error
     finally:
         shutil.rmtree(staging, ignore_errors=True)
+    _write_verification_receipt(workbench_root, candidates)
     return _report("apply", actions, candidates, rows, written=len(created_files))
 
 
@@ -351,7 +434,7 @@ def verify(contract_path, stage_root, workbench_root, actions) -> dict[str, Any]
         path = candidate["path"]
         if not path.is_file():
             status = "MISSING"
-        elif path.read_bytes() == candidate["payload"]:
+        elif _load_binding(path) == candidate["binding"]:
             status = "VERIFIED"
         else:
             status = "MISMATCH"
@@ -376,26 +459,40 @@ def _report(operation: str, actions, candidates, rows, written: int = 0) -> dict
 
 def candidate_status(workbench_root: Path, repo_root: Path, *, profile: str, group: str,
                      action: str, direction: str) -> dict[str, Any]:
-    """Cheap registration check for Workbench discovery. Frame hashes are verified on preview load."""
+    """Discovery status for one session. Never raises on a malformed manifest.
+
+    coverage is one of:
+      CANDIDATE_VERIFIED   registered, and every staged frame is unchanged since the last full hash check
+      CANDIDATE_REGISTERED registered and structurally sound, but no current full verification receipt
+      INVALID              a session file exists but is malformed or its staged sources are broken
+      MISSING              no session is registered for this direction
+    Discovery never hashes every frame; it compares the receipt's recorded frame stats instead.
+    """
     path = Path(workbench_root) / GENERATION / profile / group / action / direction / CANDIDATE_FILE
     if not path.is_file():
-        return {"registered": False, "reason": "no candidate session registered"}
+        return {"registered": False, "coverage": "MISSING", "reason": "no candidate session registered"}
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, ValueError) as error:
-        return {"registered": False, "reason": f"candidate session unreadable: {error}"}
-    if (data.get("schema") != CANDIDATE_SCHEMA or data.get("generation") != GENERATION
-            or data.get("approval_state") != APPROVAL_STATE or data.get("runtime_published") is not False):
-        return {"registered": False, "reason": "candidate session has the wrong schema or approval flags"}
-    stage_root = resolve_stage_ref(data["source"]["stage_root"], repo_root)
-    frames = data["frames"]["items"]
-    missing = [item["path"] for item in frames if not (stage_root / item["path"]).is_file()]
-    if missing:
-        return {"registered": False, "reason": f"{len(missing)} staged frames are missing"}
-    meta = stage_root / "meta" / f"{data['source']['source_action']}.json"
-    if not meta.is_file() or _sha_file(meta) != data["source"]["action_meta_sha256"]:
-        return {"registered": False, "reason": "staged action metadata changed since registration"}
-    return {"registered": True, "frames": int(data["frames"]["count"]), "path": path, "data": data}
+        if (data.get("schema") != CANDIDATE_SCHEMA or data.get("generation") != GENERATION
+                or data.get("approval_state") != APPROVAL_STATE or data.get("runtime_published") is not False):
+            return {"registered": False, "coverage": "INVALID", "reason": "wrong schema or approval flags"}
+        stage_root = resolve_stage_ref(data["source"]["stage_root"], repo_root)
+        frames = data["frames"]["items"]
+        count = int(data["frames"]["count"])
+        if len(frames) != count:
+            return {"registered": False, "coverage": "INVALID", "reason": "frame list does not match its count"}
+        missing = [item["path"] for item in frames if not (stage_root / item["path"]).is_file()]
+        if missing:
+            return {"registered": False, "coverage": "INVALID", "reason": f"{len(missing)} staged frames are missing"}
+        meta = stage_root / "meta" / f"{data['source']['source_action']}.json"
+        if not meta.is_file() or _sha_file(meta) != data["source"]["action_meta_sha256"]:
+            return {"registered": False, "coverage": "INVALID", "reason": "staged action metadata changed since registration"}
+        verified = _receipt_verified(workbench_root, path, data, stage_root)
+    except (OSError, ValueError, KeyError, TypeError, AttributeError) as error:
+        return {"registered": False, "coverage": "INVALID", "reason": f"malformed candidate session: {error}"}
+    return {"registered": True, "verified": verified,
+            "coverage": "CANDIDATE_VERIFIED" if verified else "CANDIDATE_REGISTERED",
+            "frames": count, "path": path, "data": data}
 
 
 def load_candidate_frames(manifest_path: Path, *, repo_root: Path) -> dict[str, Any]:

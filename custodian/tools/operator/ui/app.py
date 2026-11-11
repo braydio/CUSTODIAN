@@ -767,6 +767,10 @@ class OperatorWorkbenchApp(App):
         generation = self.state.session_generation
         changed = self.state.selection is None or self.state.selection != selection
         self.state.preview_source = self._preview_source_for(selection)
+        if selection.art_generation == "operator_3d_80" and self.state.preview_examiner_mode != "single":
+            self.state.preview_examiner_mode = "single"
+            self.preview_compare_view = None; self.preview_comparisons = ()
+            self.transition_target_view = None; self.transition_analysis = None
         preview_generation = self.state.preview_generation
         if changed and invalidate_preview:
             preview_generation = self._next_preview_generation()
@@ -1719,6 +1723,10 @@ class OperatorWorkbenchApp(App):
 
     def action_preview_examiner_mode(self) -> None:
         if self.state.mode != "preview": return
+        if self._is_3d_candidate():
+            # Comparison and transition need same-generation sources; candidates have only one source.
+            self._activity("Split, diff and transition are unavailable for 3D candidates; single preview only", "WARN")
+            return
         modes = ("single", "split", "diff", "transition")
         self.state.preview_examiner_mode = modes[(modes.index(self.state.preview_examiner_mode) + 1) % len(modes)]
         generation = self._next_preview_generation()
