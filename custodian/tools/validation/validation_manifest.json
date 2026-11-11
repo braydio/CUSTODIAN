@@ -5684,6 +5684,27 @@
       "needs_import": true
     },
     {
+      "id": "awakening_creche_live_traversal",
+      "type": "godot_script",
+      "script": "res://tools/validation/awakening_creche_live_traversal_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "awakening",
+        "traversal",
+        "presentation",
+        "creche"
+      ],
+      "owners": [
+        "custodian/game/world/awakening/awakening_first_return.gd",
+        "custodian/game/world/awakening/awakening_layout.gd",
+        "custodian/scenes/awakening_first_return.tscn",
+        "custodian/tools/validation/awakening_creche_live_traversal_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 180,
+      "needs_import": true
+    },
+    {
       "id": "awakening_interactible_affordance_contract",
       "type": "godot_script",
       "script": "res://tools/validation/awakening_interactible_affordance_contract_smoke.gd",

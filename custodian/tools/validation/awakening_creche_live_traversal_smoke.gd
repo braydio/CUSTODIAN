@@ -5,7 +5,8 @@ extends SceneTree
 
 const Scene := preload("res://scenes/awakening_first_return.tscn")
 const Layout := preload("res://game/world/awakening/awakening_layout.gd")
-const OUTPUT := "res://../reports/awakening_creche_gameplay_review"
+const GRAPHICAL_OUTPUT := "res://../reports/awakening_creche_gameplay_review"
+const HEADLESS_OUTPUT := "user://awakening_creche_gameplay_review"
 const NORTH_TARGET := Vector2(0, -640)
 const RETURN_TARGET := Vector2(0, 160)
 const MAX_TICKS_PER_LEG := 420
@@ -16,6 +17,8 @@ var _scene: Node2D
 var _operator: CharacterBody2D
 var _camera: Camera2D
 var _transition_log: Array[Dictionary] = []
+var _captured_screenshots: Array[String] = []
+var _headless := false
 
 
 func _init() -> void:
@@ -33,7 +36,9 @@ func _run() -> void:
 	_camera = _scene.get_node("World/Camera2D") as Camera2D
 	_camera.operator_ref = _operator
 	_camera.follow_target = _operator
-	var output := ProjectSettings.globalize_path(OUTPUT)
+	_headless = DisplayServer.get_name() == "headless"
+	var output_uri := HEADLESS_OUTPUT if _headless else GRAPHICAL_OUTPUT
+	var output := ProjectSettings.globalize_path(output_uri)
 	DirAccess.make_dir_recursive_absolute(output)
 	await _settle(20)
 	await _capture(output, "10_actual_operator_wake")
@@ -119,6 +124,8 @@ func _wait_for_fx_frame(fx: AnimatedSprite2D, target: int, max_frames: int) -> b
 
 
 func _capture(output: String, name: String) -> void:
+	if _headless:
+		return
 	for _frame in 2:
 		RenderingServer.force_draw(false)
 		await process_frame
@@ -129,6 +136,8 @@ func _capture(output: String, name: String) -> void:
 	var path := output.path_join(name + ".png")
 	if image.save_png(path) != OK:
 		_fail("could not save runtime capture: " + path)
+		return
+	_captured_screenshots.append(name + ".png")
 
 
 func _settle(frames: int) -> void:
@@ -151,7 +160,9 @@ func _write_report(output: String, start: Vector2, north_end: Vector2) -> void:
 		"return_zone_index": _scene.current_zone_index,
 		"transitions": _transition_log,
 		"console_fx_frames": [0, 3, 7],
-		"screenshots": ["10_actual_operator_wake.png", "11_actual_console_fx_frame_0.png", "12_actual_console_fx_frame_3.png", "13_actual_console_fx_frame_7.png", "14_north_destination.png", "15_return_destination.png", "16_actual_operator_returned.png"],
+		"renderer": DisplayServer.get_name(),
+		"visual_capture_available": not _headless,
+		"screenshots": _captured_screenshots,
 	}
 	var file := FileAccess.open(output.path_join("live_traversal_result.json"), FileAccess.WRITE)
 	if file != null:
