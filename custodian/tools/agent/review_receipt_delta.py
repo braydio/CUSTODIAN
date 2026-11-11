@@ -107,10 +107,100 @@ def resolve_target_implementation_commit(
         candidates = _archive_candidates(follow=True)
         if candidates is None:
             return None, "cannot inspect pinned target archive history"
-    if len(candidates) != 1:
-        return None, "pinned target has no unique complete archive-introduction commit"
-    archive_commit = candidates[0]
     reviewed_main = reviewed_main_match[0]
+    if len(candidates) != 1:
+        if not candidates:
+            return None, "pinned target has no unique complete archive-introduction commit"
+
+        # A later restoration of the same archived blob is not a second
+        # implementation landing. In the legacy lifecycle, the real archive
+        # introduction had the matching active packet in its parent, then a
+        # later commit retired that active path. Require that complete chain
+        # from Git ancestry; do not infer identity from time, subjects, or blob
+        # equality alone.
+        active_path = target_packet_path.replace("/archived/", "/")
+        expected_kind = kind_match[0]
+
+        def _identity(text: str, *, status: str) -> bool:
+            return (
+                re.findall(r"(?im)^- Workstream:\s*`?([^`\r\n]+)`?\s*$", text) == [target_workstream]
+                and re.findall(r"(?im)^- Kind:\s*`?(implementation|correction)`?\s*$", text)
+                == [expected_kind]
+                and re.findall(r"(?im)^- Status:\s*`?([^`\r\n]+)`?\s*$", text) == [status]
+                and re.findall(r"(?im)^- Reviewed main:\s*`?([0-9a-f]{40,64})`?\s*$", text)
+                == [reviewed_main]
+            )
+
+        def _parents(commit: str) -> list[str] | None:
+            result = subprocess.run(
+                ["git", "rev-list", "--parents", "-n", "1", commit],
+                cwd=repo, capture_output=True, check=False,
+            )
+            if result.returncode:
+                return None
+            fields = result.stdout.decode("ascii", errors="ignore").split()
+            return fields[1:] if fields and fields[0] == commit else None
+
+        def _ancestor(older: str, newer: str) -> bool:
+            return subprocess.run(
+                ["git", "merge-base", "--is-ancestor", older, newer],
+                cwd=repo, capture_output=True, check=False,
+            ).returncode == 0
+
+        def _has_path(commit: str, path: str) -> bool:
+            return subprocess.run(
+                ["git", "cat-file", "-e", f"{commit}:{path}"],
+                cwd=repo, capture_output=True, check=False,
+            ).returncode == 0
+
+        authentic: list[str] = []
+        for candidate in candidates:
+            candidate_parents = _parents(candidate)
+            if not candidate_parents or len(candidate_parents) != 1:
+                continue
+            parent = candidate_parents[0]
+            if _has_path(parent, target_packet_path) or not _has_path(parent, active_path):
+                continue
+            try:
+                active_text = read_git_text(repo, parent, active_path)
+                archived_text = read_git_text(repo, candidate, target_packet_path)
+            except (OSError, ValueError):
+                continue
+            if (not _identity(active_text, status="ready")
+                    or not _identity(archived_text, status="complete")):
+                continue
+
+            # Require an actual later deletion of the matching active packet,
+            # reachable from this archive introduction and pinned main.
+            deletion_log = subprocess.run(
+                ["git", "log", "--diff-filter=D", "--format=%H",
+                 f"{candidate}..{pinned_main}", "--", active_path],
+                cwd=repo, capture_output=True, check=False,
+            )
+            if deletion_log.returncode:
+                continue
+            retired = False
+            for raw_sha in deletion_log.stdout.decode("ascii", errors="ignore").splitlines():
+                if not _SHA_RE.fullmatch(raw_sha) or not _ancestor(candidate, raw_sha):
+                    continue
+                deletion_parents = _parents(raw_sha)
+                if not deletion_parents or len(deletion_parents) != 1:
+                    continue
+                try:
+                    retired_text = read_git_text(repo, deletion_parents[0], active_path)
+                except (OSError, ValueError):
+                    continue
+                if _identity(retired_text, status="ready"):
+                    retired = True
+                    break
+            if retired:
+                authentic.append(candidate)
+
+        if len(authentic) != 1:
+            return None, "pinned target has no unique complete archive-introduction commit"
+        archive_commit = authentic[0]
+    else:
+        archive_commit = candidates[0]
     if subprocess.run(["git", "merge-base", "--is-ancestor", reviewed_main, archive_commit], cwd=repo,
                       capture_output=True).returncode:
         return None, "target archive commit does not descend from its recorded Reviewed main"

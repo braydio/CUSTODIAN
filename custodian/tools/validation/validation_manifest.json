@@ -37,6 +37,29 @@
   ],
   "tests": [
     {
+      "id": "worker_isolation_contract",
+      "type": "python",
+      "script": "tools/worker/test_worker_isolation.py",
+      "tier": "unit",
+      "tags": [
+        "worker_isolation",
+        "systemd",
+        "network"
+      ],
+      "owners": [
+        "deploy/systemd/custodian-worker@.service",
+        "tools/worker/custodian-worker-launch",
+        "tools/worker/provision_worker_isolation.py",
+        "tools/worker/provision_worker_isolation.sh",
+        "tools/worker/public_worker_evidence.py",
+        "tools/worker/test_worker_isolation.py",
+        "tools/worker/validate_worker_isolation.py",
+        "tools/worker/worker_launcher.py"
+      ],
+      "timeout_sec": 90,
+      "needs_import": false
+    },
+    {
       "id": "abandoned_station_placement",
       "type": "godot_script",
       "script": "res://tools/validation/abandoned_station_placement_smoke.gd",
@@ -1248,6 +1271,32 @@
         "custodian/game/world/lighting/**",
         "custodian/game/systems/core/systems/contract_world_loader.gd",
         "custodian/scenes/game.tscn"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
+      "id": "weather_v2_profile_contract",
+      "type": "godot_script",
+      "script": "res://tools/validation/weather_v2_profile_contract_smoke.gd",
+      "tier": "integration",
+      "tags": ["environment", "weather", "determinism"],
+      "owners": [
+        "custodian/game/world/environment/**",
+        "custodian/game/world/lighting/**"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
+      "id": "weather_v2_profile_baseline",
+      "type": "godot_script",
+      "script": "res://tools/validation/weather_v2_profile_baseline.gd",
+      "tier": "integration",
+      "tags": ["environment", "weather", "performance"],
+      "owners": [
+        "custodian/game/world/environment/**",
+        "custodian/game/world/lighting/**"
       ],
       "timeout_sec": 30,
       "needs_import": false
@@ -2571,7 +2620,8 @@
       "owners": [
         "custodian/tools/validation/run_validation.py",
         "custodian/tools/validation/validation_manifest.json",
-        "custodian/tools/validation/validation_manifest_diff_selection_smoke.py"
+        "custodian/tools/validation/validation_manifest_diff_selection_smoke.py",
+        ".github/workflows/godot-level-pipeline.yml"
       ],
       "timeout_sec": 10,
       "needs_import": false
@@ -7147,6 +7197,26 @@
       "needs_import": true
     },
     {
+      "id": "coordination_root_guard_unit",
+      "type": "python",
+      "script": "custodian/tools/agent/test_coordination_root_guard.py",
+      "tier": "unit",
+      "tags": [
+        "agent_workflow",
+        "coordination",
+        "safety"
+      ],
+      "owners": [
+        "custodian/tools/agent/coordination_root_guard.py",
+        "custodian/tools/agent/test_coordination_root_guard.py",
+        ".claude/settings.json",
+        "AGENTS.md",
+        "custodian/AGENTS.md"
+      ],
+      "timeout_sec": 20,
+      "needs_import": false
+    },
+    {
       "id": "process_feedback_ledger_unit",
       "type": "python",
       "script": "custodian/tools/agent/test_process_feedback.py",
@@ -7225,6 +7295,29 @@
       "needs_import": false
     },
     {
+      "id": "owner_review_exception_unit",
+      "type": "python",
+      "script": "custodian/tools/agent/test_owner_review_exception.py",
+      "tier": "unit",
+      "tags": [
+        "agent_workflow",
+        "owner_exception",
+        "review_provenance",
+        "dispatch"
+      ],
+      "owners": [
+        "custodian/tools/agent/owner_review_exception.py",
+        "custodian/tools/agent/test_owner_review_exception.py",
+        "custodian/tools/agent/dispatch.py",
+        "custodian/tools/agent/review_outcome.py",
+        "custodian/tools/agent/task_packet_contract.py",
+        "custodian/docs/ai_context/owner_review_exceptions/**",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
       "id": "dispatch_claim_contract_unit",
       "type": "python",
       "script": "custodian/tools/agent/test_dispatch.py",
@@ -7240,7 +7333,7 @@
         "custodian/tools/agent/task_packet_contract.py",
         ".agents/skills/custodian-next/SKILL.md"
       ],
-      "timeout_sec": 30,
+      "timeout_sec": 180,
       "needs_import": false
     },
     {
@@ -7287,12 +7380,13 @@
     {
       "id": "paired_review_runner_unit",
       "type": "python",
-      "script": "custodian/tools/agent/test_paired_review_runner.py",
+      "script": "custodian/tools/agent/test_paired_review_ci.py",
       "tier": "unit",
       "tags": [
         "agent_workflow",
         "paired_review",
-        "fresh_context"
+        "fresh_context",
+        "fast_ci"
       ],
       "owners": [
         "custodian/tools/godot_project_lock.py",
@@ -7301,7 +7395,8 @@
         "custodian/tools/agent/test_paired_review_runner.py",
         "custodian/docs/ai_context/review_scope_attestations/road_procession_p1_source_scope_v1.json",
         "custodian/tools/agent/task_packet_contract.py",
-        "custodian/tools/agent/workflow_control.py"
+        "custodian/tools/agent/workflow_control.py",
+        "custodian/tools/agent/test_paired_review_ci.py"
       ],
       "timeout_sec": 480,
       "needs_import": false
@@ -7806,6 +7901,61 @@
         "custodian/tools/validation/validation_manifest.json"
       ],
       "timeout_sec": 60,
+      "needs_import": false
+    },
+    {
+      "id": "chatgpt_relay_chrome_unit",
+      "type": "python",
+      "script": "custodian/tools/orchestration/test_chatgpt_relay_chrome.py",
+      "tier": "unit",
+      "tags": [
+        "orchestration",
+        "chat_relay"
+      ],
+      "owners": [
+        "custodian/tools/orchestration/get_chatgpt_response.py",
+        "custodian/tools/orchestration/send_chatgpt_message.py",
+        "custodian/tools/orchestration/test_chatgpt_relay_chrome.py",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
+      "id": "chatgpt_relay_firefox_unit",
+      "type": "python",
+      "script": "custodian/tools/orchestration/test_chatgpt_relay_firefox.py",
+      "tier": "unit",
+      "tags": [
+        "orchestration",
+        "chat_relay",
+        "firefox"
+      ],
+      "owners": [
+        "custodian/tools/orchestration/get_chatgpt_response_firefox.py",
+        "custodian/tools/orchestration/send_chatgpt_message_firefox.py",
+        "custodian/tools/orchestration/test_chatgpt_relay_firefox.py",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
+      "id": "firefox_mcp_client_unit",
+      "type": "python",
+      "script": "custodian/tools/orchestration/test_firefox_mcp_client.py",
+      "tier": "unit",
+      "tags": [
+        "orchestration",
+        "chat_relay",
+        "firefox"
+      ],
+      "owners": [
+        "custodian/tools/orchestration/firefox_mcp_client.py",
+        "custodian/tools/orchestration/test_firefox_mcp_client.py",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 30,
       "needs_import": false
     }
   ]

@@ -14,7 +14,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
-from contextlib import contextmanager, nullcontext, redirect_stdout
+from contextlib import ExitStack, contextmanager, nullcontext, redirect_stdout
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
@@ -1222,11 +1222,18 @@ class PairedReviewRunnerTests(unittest.TestCase):
         # checking the current manifest's other fields precisely.
         actual_pair = pair_record(actual)
         published_pair = pair_record(published_target)
+        # The current ordinary CI entrypoint intentionally excludes historical
+        # Git archaeology; the historical two-commit timeout comparison above
+        # remains exact and does not depend on today's CI entrypoint.
+        self.assertEqual(actual_pair["script"],
+                         "custodian/tools/agent/test_paired_review_ci.py")
+        self.assertEqual(actual_pair["tags"],
+                         [*published_pair["tags"], "fast_ci"])
         self.assertEqual(
             {key: value for key, value in actual_pair.items()
-             if key not in {"owners", "timeout_sec"}},
+             if key not in {"owners", "timeout_sec", "script", "tags"}},
             {key: value for key, value in published_pair.items()
-             if key not in {"owners", "timeout_sec"}},
+             if key not in {"owners", "timeout_sec", "script", "tags"}},
         )
         self.assertEqual(actual_pair["timeout_sec"], 480)
         self.assertTrue(set(published_pair["owners"]).issubset(actual_pair["owners"]))
@@ -4371,6 +4378,41 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
             with self.assertRaisesRegex(runner.RunnerError, "does not verify"):
                 runner.parse_claim_receipt(runner.CLAIM_SENTINEL + json.dumps(receipt), "review-sample", repo)
 
+    def test_v2_receipt_requires_matching_private_acquisition_record(self):
+        with tempfile.TemporaryDirectory() as temp:
+            repo = Path(temp) / "repo"
+            repo.mkdir()
+            subprocess.run(["git", "init", "-q", str(repo)], check=True)
+            subprocess.run(["git", "-C", str(repo), "checkout", "-qb", "agent/review-sample"], check=True)
+            subprocess.run(["git", "-C", str(repo), "-c", "user.name=Test", "-c",
+                            "user.email=test@example.invalid", "commit", "--allow-empty", "-qm", "source"], check=True)
+            source_sha = runner.git(repo, "rev-parse", "HEAD")
+            turn_id = "a" * 32
+            run_id = "20261109T112300Z-" + turn_id[:12]
+            packet = "custodian/docs/ai_context/task_packets/REVIEW_SAMPLE.md"
+            acquisition = {
+                "schema": "custodian.turn_dispatcher_v2.acquisition.v1",
+                "workstream": "review-sample", "turn_id": turn_id, "run_id": run_id,
+                "checkout": str(repo.resolve()), "local_branch": "agent/review-sample",
+                "branch": "agent/review-sample", "packet": packet, "source_sha": source_sha,
+            }
+            acquisition_path = runner.common_dir(repo) / "custodian-turn-dispatcher-v2" / "acquisitions" / f"{turn_id}.json"
+            acquisition_path.parent.mkdir(parents=True)
+            acquisition_path.write_text(json.dumps(acquisition))
+            receipt = {"schema": "custodian.dispatch.claim.v2", "result": "claimed",
+                       "workstream": "review-sample", "verified": True,
+                       "worktree": str(repo.resolve()), "branch": "agent/review-sample",
+                       "remote_branch": "agent/review-sample", "packet": packet,
+                       "run_id": run_id, "turn_id": turn_id,
+                       "acquisition_receipt": str(acquisition_path)}
+            parsed = runner.parse_claim_receipt(runner.CLAIM_SENTINEL + json.dumps(receipt),
+                                                "review-sample", repo)
+            self.assertEqual(parsed["turn_id"], turn_id)
+            receipt["packet"] = "custodian/docs/ai_context/task_packets/OTHER.md"
+            with self.assertRaisesRegex(runner.RunnerError, "does not match"):
+                runner.parse_claim_receipt(runner.CLAIM_SENTINEL + json.dumps(receipt),
+                                           "review-sample", repo)
+
     def test_prompt_is_durable_evidence_only_and_safe_logs_redact_secrets(self):
         prompt = runner.prompt_for("review-sample", "review.md", "archived/impl.md",
                                    implementation_summary_path="SAMPLE_IMPL_CLAUDE_SUMMARY.md",
@@ -4852,6 +4894,288 @@ class PairedReviewHostValidationTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         _ensure_pinned_historical_diagnostic_refs()
+
+    def _owner_pr_recovery_sources(self):
+        return (
+            patch.object(host_validation, "_read_owner_pr_recovery_acquisition",
+                         return_value=dict(host_validation._OWNER_PR_RECOVERY_ACQUISITION)),
+            patch.object(host_validation, "_owner_pr_recovery_diagnostic_refs",
+                         return_value=([], [])),
+        )
+
+    def test_owner_direct_pr_recovery_resolves_exact_authenticated_source_span(self):
+        workstream = host_validation._OWNER_PR_RECOVERY_WORKSTREAM
+        packet = host_validation._OWNER_PR_RECOVERY_PACKET
+        archive = host_validation._OWNER_PR_RECOVERY_ARCHIVE
+        with self._owner_pr_recovery_sources()[0], self._owner_pr_recovery_sources()[1]:
+            span = host_validation.resolve_validation_source_span(
+                ROOT, host_validation._OWNER_PR_RECOVERY_REVIEWED_MAIN,
+                archive, workstream, packet,
+            )
+        self.assertEqual(span["base"], host_validation._OWNER_PR_RECOVERY_BASE)
+        self.assertEqual(span["head"], host_validation._OWNER_PR_RECOVERY_SOURCE)
+        self.assertEqual(span["commits"], [host_validation._OWNER_PR_RECOVERY_SOURCE])
+        self.assertEqual(set(span["paths"]), host_validation._OWNER_PR_RECOVERY_SOURCE_PATHS)
+        self.assertEqual(
+            set(host_validation._source_code_paths(span["paths"])),
+            set(host_validation._OWNER_PR_RECOVERY_CODE_BLOBS),
+        )
+        self.assertEqual(span["provenance"]["pull_request"], 126)
+        self.assertEqual(span["provenance"]["acquisition_sha256"],
+                         host_validation._OWNER_PR_RECOVERY_ACQUISITION_SHA256)
+
+    def test_owner_direct_pr_recovery_rejects_wrong_trigger_tuple(self):
+        with self._owner_pr_recovery_sources()[0], self._owner_pr_recovery_sources()[1]:
+            for workstream, packet, landing in (
+                ("other-workstream", host_validation._OWNER_PR_RECOVERY_PACKET,
+                 host_validation._OWNER_PR_RECOVERY_ARCHIVE),
+                (host_validation._OWNER_PR_RECOVERY_WORKSTREAM, "custodian/docs/other.md",
+                 host_validation._OWNER_PR_RECOVERY_ARCHIVE),
+                (host_validation._OWNER_PR_RECOVERY_WORKSTREAM,
+                 host_validation._OWNER_PR_RECOVERY_PACKET, "0" * 40),
+            ):
+                with self.subTest(workstream=workstream, packet=packet, landing=landing), \
+                        self.assertRaises(host_validation.HostValidationError):
+                    host_validation.resolve_validation_source_span(
+                        ROOT, host_validation._OWNER_PR_RECOVERY_REVIEWED_MAIN,
+                        landing, workstream, packet,
+                    )
+
+    def test_owner_direct_pr_recovery_rejects_changed_commit_tree_and_parent_order(self):
+        original_git = host_validation._git
+        for mutated_revision in (
+            host_validation._OWNER_PR_RECOVERY_SOURCE,
+            host_validation._OWNER_PR_RECOVERY_ARCHIVE,
+            host_validation._OWNER_PR_RECOVERY_BRANCH_MERGE,
+            host_validation._OWNER_PR_RECOVERY_PR_MERGE,
+        ):
+            with self.subTest(revision=mutated_revision):
+                def altered_git(repo, *args, _revision=mutated_revision):
+                    result = original_git(repo, *args)
+                    if args[:3] == ("show", "-s", "--format=%P") and args[3] == _revision:
+                        return "0" * 40
+                    if args[:2] == ("rev-parse", f"{_revision}^{{tree}}"):
+                        return "0" * 40
+                    return result
+                with self._owner_pr_recovery_sources()[0], self._owner_pr_recovery_sources()[1], \
+                        patch.object(host_validation, "_git", side_effect=altered_git), \
+                        self.assertRaises(host_validation.HostValidationError):
+                    host_validation.resolve_validation_source_span(
+                        ROOT, host_validation._OWNER_PR_RECOVERY_REVIEWED_MAIN,
+                        host_validation._OWNER_PR_RECOVERY_ARCHIVE,
+                        host_validation._OWNER_PR_RECOVERY_WORKSTREAM,
+                        host_validation._OWNER_PR_RECOVERY_PACKET,
+                    )
+
+    def test_owner_direct_pr_recovery_rejects_packet_source_and_handoff_mutations(self):
+        original_entry = host_validation._git_tree_entry
+        cases = (
+            (host_validation._OWNER_PR_RECOVERY_ARCHIVE,
+             host_validation._OWNER_PR_RECOVERY_PACKET),
+            (host_validation._OWNER_PR_RECOVERY_SOURCE,
+             "custodian/tools/agent/paired_review_host_validation.py"),
+            (host_validation._OWNER_PR_RECOVERY_HANDOFF,
+             host_validation._OWNER_PR_RECOVERY_HANDOFF_PATH),
+        )
+        for revision, path in cases:
+            with self.subTest(revision=revision, path=path):
+                def altered_entry(repo, rev, entry_path):
+                    result = original_entry(repo, rev, entry_path)
+                    return ("100644", "0" * 40) if (rev, entry_path) == (revision, path) else result
+                with self._owner_pr_recovery_sources()[0], self._owner_pr_recovery_sources()[1], \
+                        patch.object(host_validation, "_git_tree_entry", side_effect=altered_entry), \
+                        self.assertRaises(host_validation.HostValidationError):
+                    host_validation.resolve_validation_source_span(
+                        ROOT, host_validation._OWNER_PR_RECOVERY_REVIEWED_MAIN,
+                        host_validation._OWNER_PR_RECOVERY_ARCHIVE,
+                        host_validation._OWNER_PR_RECOVERY_WORKSTREAM,
+                        host_validation._OWNER_PR_RECOVERY_PACKET,
+                    )
+
+    def test_owner_direct_pr_recovery_rejects_missing_or_ambiguous_host_proof(self):
+        for acquisition, refs in (
+            ({}, ([], [])),
+            (dict(host_validation._OWNER_PR_RECOVERY_ACQUISITION), (["local-ref"], [])),
+            (dict(host_validation._OWNER_PR_RECOVERY_ACQUISITION), ([], ["remote-ref"])),
+        ):
+            with self.subTest(acquisition=acquisition, refs=refs), \
+                    patch.object(host_validation, "_read_owner_pr_recovery_acquisition",
+                                 return_value=acquisition), \
+                    patch.object(host_validation, "_owner_pr_recovery_diagnostic_refs",
+                                 return_value=refs), \
+                    self.assertRaises(host_validation.HostValidationError):
+                host_validation.resolve_validation_source_span(
+                    ROOT, host_validation._OWNER_PR_RECOVERY_REVIEWED_MAIN,
+                    host_validation._OWNER_PR_RECOVERY_ARCHIVE,
+                    host_validation._OWNER_PR_RECOVERY_WORKSTREAM,
+                    host_validation._OWNER_PR_RECOVERY_PACKET,
+                )
+
+    def test_owner_direct_pr_recovery_rejects_pr_identity_ancestry_and_source_inventory(self):
+        original_git = host_validation._git
+        original_run = subprocess.run
+        cases = ("subject", "ancestry", "paths")
+        for case in cases:
+            with self.subTest(case=case):
+                def altered_git(repo, *args):
+                    result = original_git(repo, *args)
+                    if case == "subject" and args[:3] == (
+                        "show", "-s", "--format=%s",
+                    ) and args[3] == host_validation._OWNER_PR_RECOVERY_PR_MERGE:
+                        return "Merge pull request #999 from other/branch"
+                    return result
+
+                def altered_run(args, *positional, **kwargs):
+                    result = original_run(args, *positional, **kwargs)
+                    if (case == "ancestry" and args[:2] == [
+                            "git", "merge-base",
+                    ] and args[2] == "--is-ancestor"):
+                        return subprocess.CompletedProcess(args, 1, "", "")
+                    if (case == "paths" and args[:2] == ["git", "diff-tree"]):
+                        return subprocess.CompletedProcess(
+                            args, 0, result.stdout + "unrelated.py\n", result.stderr,
+                        )
+                    return result
+
+                with self._owner_pr_recovery_sources()[0], self._owner_pr_recovery_sources()[1], \
+                        patch.object(host_validation, "_git", side_effect=altered_git), \
+                        patch.object(host_validation.subprocess, "run", side_effect=altered_run), \
+                        self.assertRaises(host_validation.HostValidationError):
+                    host_validation.resolve_validation_source_span(
+                        ROOT, host_validation._OWNER_PR_RECOVERY_REVIEWED_MAIN,
+                        host_validation._OWNER_PR_RECOVERY_ARCHIVE,
+                        host_validation._OWNER_PR_RECOVERY_WORKSTREAM,
+                        host_validation._OWNER_PR_RECOVERY_PACKET,
+                    )
+
+    def test_owner_pr_recovery_acquisition_reader_checks_digest_and_identity(self):
+        with tempfile.TemporaryDirectory(prefix="owner-pr-acquisition-") as temp:
+            repository = Path(temp)
+            subprocess.run(["git", "init", "-q", str(repository)], check=True)
+            common_dir = Path(subprocess.run(
+                ["git", "rev-parse", "--path-format=absolute", "--git-common-dir"],
+                cwd=repository, check=True, text=True, capture_output=True,
+            ).stdout.strip())
+            receipt_path = (common_dir / "custodian-turn-dispatcher-v2" / "acquisitions"
+                            / f"{host_validation._OWNER_PR_RECOVERY_ACQUISITION_ID}.json")
+            receipt_path.parent.mkdir(parents=True)
+            receipt_bytes = json.dumps(
+                host_validation._OWNER_PR_RECOVERY_ACQUISITION, sort_keys=True,
+            ).encode()
+            receipt_path.write_bytes(receipt_bytes)
+            with patch.object(host_validation, "_OWNER_PR_RECOVERY_ACQUISITION_SHA256",
+                              hashlib.sha256(receipt_bytes).hexdigest()):
+                self.assertEqual(
+                    host_validation._read_owner_pr_recovery_acquisition(repository),
+                    host_validation._OWNER_PR_RECOVERY_ACQUISITION,
+                )
+                receipt_path.write_bytes(receipt_bytes + b" ")
+                with self.assertRaises(host_validation.HostValidationError):
+                    host_validation._read_owner_pr_recovery_acquisition(repository)
+
+    def test_owner_direct_pr_recovery_reauthenticates_on_every_resolution(self):
+        valid = dict(host_validation._OWNER_PR_RECOVERY_ACQUISITION)
+        changed = {**valid, "task_definition_sha": "0" * 40}
+        with patch.object(host_validation, "_read_owner_pr_recovery_acquisition",
+                          side_effect=[valid, changed]) as read_receipt, \
+                patch.object(host_validation, "_owner_pr_recovery_diagnostic_refs",
+                             return_value=([], [])):
+            first = host_validation.resolve_validation_source_span(
+                ROOT, host_validation._OWNER_PR_RECOVERY_REVIEWED_MAIN,
+                host_validation._OWNER_PR_RECOVERY_ARCHIVE,
+                host_validation._OWNER_PR_RECOVERY_WORKSTREAM,
+                host_validation._OWNER_PR_RECOVERY_PACKET,
+            )
+            self.assertEqual(first["head"], host_validation._OWNER_PR_RECOVERY_SOURCE)
+            with self.assertRaises(host_validation.HostValidationError):
+                host_validation.resolve_validation_source_span(
+                    ROOT, host_validation._OWNER_PR_RECOVERY_REVIEWED_MAIN,
+                    host_validation._OWNER_PR_RECOVERY_ARCHIVE,
+                    host_validation._OWNER_PR_RECOVERY_WORKSTREAM,
+                    host_validation._OWNER_PR_RECOVERY_PACKET,
+                )
+        self.assertEqual(read_receipt.call_count, 2)
+
+    def test_owner_exception_archive_admits_only_exact_historical_review_metadata(self):
+        verifier = host_validation._owner_exception_lane_review_metadata_path
+        archive = host_validation._OWNER_EXCEPTION_LANE_SOURCE_ARCHIVE
+        parent = host_validation._OWNER_EXCEPTION_LANE_SOURCE_PARENT
+        packet_path = host_validation._OWNER_EXCEPTION_LANE_SOURCE_PACKET
+        target_text = subprocess.run(
+            ["git", "show", f"{archive}:{packet_path}"], cwd=ROOT,
+            capture_output=True, text=True, check=True,
+        ).stdout
+        paths = set(host_validation._OWNER_EXCEPTION_LANE_EXTRA_ARCHIVE_PATHS)
+
+        self.assertEqual(
+            verifier(ROOT, parent, archive, host_validation._OWNER_EXCEPTION_LANE_SOURCE_WORKSTREAM,
+                     packet_path, target_text, paths),
+            host_validation._OWNER_EXCEPTION_LANE_REVIEW_PACKET,
+        )
+
+        invalid_identities = (
+            ("wrong-workstream", parent, archive, "unrelated-workstream", packet_path, paths),
+            ("wrong-target", parent, archive, host_validation._OWNER_EXCEPTION_LANE_SOURCE_WORKSTREAM,
+             "custodian/docs/ai_context/task_packets/archived/OTHER.md", paths),
+            ("wrong-parent", "0" * 40, archive,
+             host_validation._OWNER_EXCEPTION_LANE_SOURCE_WORKSTREAM, packet_path, paths),
+            ("wrong-archive", parent, "0" * 40,
+             host_validation._OWNER_EXCEPTION_LANE_SOURCE_WORKSTREAM, packet_path, paths),
+            ("extra-path", parent, archive,
+             host_validation._OWNER_EXCEPTION_LANE_SOURCE_WORKSTREAM, packet_path,
+             paths | {"custodian/docs/ai_context/unrelated.md"}),
+            ("missing-path", parent, archive,
+             host_validation._OWNER_EXCEPTION_LANE_SOURCE_WORKSTREAM, packet_path,
+             paths - {host_validation._OWNER_EXCEPTION_LANE_REVIEW_PACKET}),
+        )
+        self.assertIsNone(verifier(ROOT, parent, archive, "unrelated-workstream", packet_path,
+                                   target_text, paths))
+        for label, bad_parent, bad_archive, workstream, bad_packet, bad_paths in invalid_identities[1:]:
+            with self.subTest(case=label), self.assertRaises(host_validation.HostValidationError):
+                verifier(ROOT, bad_parent, bad_archive, workstream, bad_packet, target_text, bad_paths)
+        altered_target = target_text.replace(
+            "owner-review-exception-lane-v1", "wrong-owner-exception-lane-v1", 1,
+        )
+        with self.assertRaises(host_validation.HostValidationError):
+            verifier(ROOT, parent, archive, host_validation._OWNER_EXCEPTION_LANE_SOURCE_WORKSTREAM,
+                     packet_path, altered_target, paths)
+        original_git = host_validation._git
+        review_tree_path = f"{archive}:{host_validation._OWNER_EXCEPTION_LANE_REVIEW_PACKET}"
+        def altered_review_identity(repo, *args):
+            value = original_git(repo, *args)
+            if args == ("show", review_tree_path):
+                return value.replace(
+                    "Review target workstream: `owner-review-exception-lane-v1`",
+                    "Review target workstream: `wrong-workstream`",
+                    1,
+                )
+            return value
+        with patch.object(host_validation, "_git", side_effect=altered_review_identity):
+            with self.assertRaises(host_validation.HostValidationError):
+                verifier(ROOT, parent, archive,
+                         host_validation._OWNER_EXCEPTION_LANE_SOURCE_WORKSTREAM,
+                         packet_path, target_text, paths)
+
+        real_entry = host_validation._git_tree_entry
+        active_packet_path = packet_path.replace("/archived/", "/", 1)
+        for path, revisions in (
+            (packet_path, (archive,)),
+            (active_packet_path, (parent,)),
+            *((path, (parent, archive)) for path in sorted(
+                set(host_validation._OWNER_EXCEPTION_LANE_MARKDOWN_BLOBS) - {active_packet_path}
+            )),
+        ):
+            for revision in revisions:
+                with self.subTest(path=path, revision=revision):
+                    def altered_entry(repo, observed_revision, observed_path):
+                        if observed_revision == revision and observed_path == path:
+                            return ("100755", "0" * 40)
+                        return real_entry(repo, observed_revision, observed_path)
+                    with patch.object(host_validation, "_git_tree_entry", side_effect=altered_entry):
+                        with self.assertRaises(host_validation.HostValidationError):
+                            verifier(ROOT, parent, archive,
+                                     host_validation._OWNER_EXCEPTION_LANE_SOURCE_WORKSTREAM,
+                                     packet_path, target_text, paths)
 
     def setUp(self):
         _mock_no_active_review_processes(self)
@@ -12655,6 +12979,426 @@ Authoring chat: {chat}
         with self.assertRaisesRegex(runner.RunnerError, "pinned capture source"):
             runner._verify_redacted_final_capture("Verdict: passed", "Verdict: passed", source,
                                                   altered_control)
+
+
+class FindingsArtifactRecoveryTests(unittest.TestCase):
+    @contextmanager
+    def plan_fixture(self, root: Path):
+        def git(cwd, *args):
+            result = subprocess.run(["git", "-C", str(cwd), *args], text=True, capture_output=True)
+            if result.returncode:
+                raise AssertionError(result.stderr or result.stdout)
+            return result.stdout.strip()
+
+        repo, remote = root / "repo", root / "origin.git"
+        original, checkout = root / "original-review", root / "recovery-checkout"
+        subprocess.run(["git", "init", "--bare", "-q", str(remote)], check=True)
+        subprocess.run(["git", "init", "-q", "-b", "main", str(repo)], check=True)
+        git(repo, "config", "user.name", "fixture")
+        git(repo, "config", "user.email", "fixture@example.invalid")
+        implementation_file = repo / "implementation.txt"
+        implementation_file.write_text("preserved implementation\n")
+        (repo / ".gitignore").write_text("__pycache__/\n*.py[cod]\n")
+        git(repo, "add", "implementation.txt")
+        git(repo, "add", ".gitignore")
+        git(repo, "commit", "-qm", "implementation baseline")
+        implementation = git(repo, "rev-parse", "HEAD")
+        main = implementation
+        # The implementation packet content is intentionally small; target identity is
+        # authenticated by the existing resolver in production and pinned in this fixture.
+        target = runner.FINDINGS_ARTIFACT_RECOVERY_OWNER_PACKET
+        target_path = repo / target
+        target_path.parent.mkdir(parents=True, exist_ok=True)
+        target_path.write_text(f"# Target\n\nWorkstream: `{runner.FINDINGS_ARTIFACT_RECOVERY_OWNER_WORKSTREAM}`\n")
+        active = runner.FINDINGS_ARTIFACT_RECOVERY_ACTIVE
+        active_text = f"""# Review Fixture
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `{runner.FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM}`
+- Kind: `review`
+- Status: `ready`
+- Dispatch: `auto`
+- Priority: `P0`
+- Depends on: `none`
+- Locks: `agent-workflow`
+- Review target workstream: `{runner.FINDINGS_ARTIFACT_RECOVERY_OWNER_WORKSTREAM}`
+- Review target packet: `{target}`
+- Reviewed main: `{main}`
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af253c2-3c40-83ea-bd81-7ba163d4602e
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review cycle: `0`
+
+## Goal
+Review exact provenance.
+"""
+        active_path = repo / active
+        active_path.parent.mkdir(parents=True, exist_ok=True)
+        active_path.write_text(active_text)
+        (repo / f"{runner.PACKET_ROOT}/README.md").write_text(
+            "# Packets\n\n### Ready / Auto Dispatch\n\n"
+            f"{__import__('task_packet_index').MANAGED_BLOCK_START}\n_None._\n"
+            f"{__import__('task_packet_index').MANAGED_BLOCK_END}\n")
+        for rel in ("custodian/tools/agent/paired_review_runner.py",
+                    "custodian/tools/agent/workflow_control.py",
+                    "custodian/tools/agent/task_packet_index.py",
+                    "custodian/tools/agent/task_packet_contract.py",
+                    "custodian/tools/agent/land_main.py"):
+            path = repo / rel
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text((ROOT / rel).read_text())
+        git(repo, "add", "-A")
+        git(repo, "commit", "-qm", "review baseline")
+        main = git(repo, "rev-parse", "HEAD")
+        chat = "https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af253c2-3c40-83ea-bd81-7ba163d4602e"
+        outcome = runner.review_outcome.render_review_outcome(
+            outcome="findings", review_workstream=runner.FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM,
+            target_workstream=runner.FINDINGS_ARTIFACT_RECOVERY_OWNER_WORKSTREAM,
+            reviewed_main=main, implementation_commit=implementation, provenance="different-agent",
+            run_id=runner.FINDINGS_ARTIFACT_RECOVERY_RUN_ID, review_cycle=0, ids=("R0-01", "R0-02"))
+        archive = active_text.replace(f"Reviewed main: `{implementation}`", f"Reviewed main: `{main}`")
+        archive = archive.replace("- Status: `ready`", "- Status: `ready`", 1)
+        archive += "\n" + outcome + "\n## Findings\n\n"
+        archive += "R0-01: source blobs are missing; owner PR recovery source blob changed.\n\n"
+        archive += "R0-02: diagnostic-ref absence could not be checked by git ls-remote.\n"
+        metadata_report = b'{"report":"fixture"}\n'
+        coordinator_report = b'{"coordinator":"fixture"}\n'
+        report_sha = hashlib.sha256(metadata_report).hexdigest()
+        metadata_sha = hashlib.sha256(coordinator_report).hexdigest()
+        summary = (f"# Summary\n\nR0-01 and R0-02 remain findings. Report SHA: "
+                   f"{report_sha}\n\nAuthoring chat: {chat}\n")
+        run_id = runner.FINDINGS_ARTIFACT_RECOVERY_RUN_ID
+        workstream = runner.FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM
+        branch = f"agent/{workstream}"
+        git(repo, "remote", "add", "origin", str(remote))
+        git(repo, "push", "-qu", "origin", "HEAD:refs/heads/main")
+        git(repo, "worktree", "add", "-qb", branch, str(original), main)
+        git(repo, "push", "-qu", "origin", f"HEAD:refs/heads/{branch}")
+        git(repo, "fetch", "-q", "origin", "+refs/heads/*:refs/remotes/origin/*")
+        archive_rel, summary_rel = runner.FINDINGS_ARTIFACT_RECOVERY_ARCHIVE, runner.FINDINGS_ARTIFACT_RECOVERY_SUMMARY
+        (original / archive_rel).parent.mkdir(parents=True, exist_ok=True)
+        (original / archive_rel).write_text(archive)
+        (original / summary_rel).write_text(summary)
+        common = runner.common_dir(repo).resolve()
+        run_dir = common / "custodian-review-runs" / workstream / run_id
+        run_dir.mkdir(parents=True)
+        (common / "custodian-review-runs/locks").mkdir(parents=True, exist_ok=True)
+        (common / "custodian-review-runs/locks" / f"{workstream}.lock").touch()
+        acq = common / "custodian-turn-dispatcher-v2/acquisitions/fixture.json"
+        acq.parent.mkdir(parents=True, exist_ok=True)
+        acq.write_text('{"schema":"fixture"}\n')
+        claim = {"schema": "custodian.dispatch.claim.v2", "result": "claimed", "verified": True,
+                 "workstream": workstream, "branch": branch, "worktree": str(original), "packet": active,
+                 "run_id": run_id, "turn_id": "e6bcda30de4d4dc181c38a3378a0dabe",
+                 "acquisition_receipt": str(acq)}
+        run_files = {
+            "metadata.json": json.dumps({"schema": runner.SCHEMA, "workstream": workstream, "run_id": run_id,
+                "phase": "post_exit_recovery", "fresh": True, "exit_code": 0, "branch": branch,
+                "worktree": str(original), "packet": active, "reviewed_main": main,
+                "post_exit_error": "reviewer session metadata does not authenticate the pinned PASS"}),
+            "claim.stdout": runner.CLAIM_SENTINEL + '{"truncated":',
+            "claim-receipt.json": json.dumps(claim), "claim.stderr": "", "codex.jsonl": "fixture session\n",
+            "codex.stderr": "", "last-message.txt": "fixture final\n",
+            "validation.json": metadata_report.decode(), "coordinator-validation.json": coordinator_report.decode(),
+            "RECOVERY.md": "Preserve this exact findings review.\n",
+        }
+        for name, value in run_files.items():
+            (run_dir / name).write_text(value)
+        raw_final = ("Outcome: findings R0-01 source blobs owner PR recovery source blob changed; "
+                     "R0-02 diagnostic-ref absence git ls-remote SSH configuration permissions")
+        session = {"thread_id": "fixture", "codex_jsonl_sha256": "a" * 64,
+                   "last_message_sha256": "b" * 64}
+        patches = [
+            patch.object(runner, "FINDINGS_ARTIFACT_RECOVERY_MAIN", main),
+            patch.object(runner, "FINDINGS_ARTIFACT_RECOVERY_IMPLEMENTATION", implementation),
+            patch.object(runner, "FINDINGS_ARTIFACT_RECOVERY_REPORT_SHA256", report_sha),
+            patch.object(runner, "FINDINGS_ARTIFACT_RECOVERY_ARCHIVE_SHA256", hashlib.sha256(archive.encode()).hexdigest()),
+            patch.object(runner, "FINDINGS_ARTIFACT_RECOVERY_SUMMARY_SHA256", hashlib.sha256(summary.encode()).hexdigest()),
+            patch.object(runner, "FINDINGS_ARTIFACT_RECOVERY_ORIGINAL_CHECKOUT", str(original)),
+            patch.object(runner, "_host_validation_claim_receipt", return_value=(claim, "claim-receipt.json")),
+            patch.object(runner, "_parse_redacted_final_session", return_value=(raw_final, session)),
+            patch.object(runner, "_host_evidence_for_continuation", return_value={
+                "report_sha256": report_sha, "metadata_sha256": metadata_sha}),
+            patch.object(runner, "resolve_target_implementation_commit", return_value=(implementation, None)),
+            patch.object(runner, "_process_owns_worktree", return_value=[]),
+        ]
+        with ExitStack() as stack:
+            for item in patches:
+                stack.enter_context(item)
+            yield {"repo": repo, "remote": remote, "original": original, "checkout": checkout,
+                   "run_dir": run_dir, "main": main, "implementation": implementation,
+                   "archive": original / archive_rel, "summary": original / summary_rel,
+                   "report_sha": report_sha, "metadata_sha": metadata_sha, "raw_final": raw_final}
+
+    def _source_artifacts(self):
+        w = runner.FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM
+        target = runner.FINDINGS_ARTIFACT_RECOVERY_OWNER_WORKSTREAM
+        outcome = runner.review_outcome.render_review_outcome(
+            outcome="findings", review_workstream=w, target_workstream=target,
+            reviewed_main=runner.FINDINGS_ARTIFACT_RECOVERY_MAIN,
+            implementation_commit=runner.FINDINGS_ARTIFACT_RECOVERY_IMPLEMENTATION,
+            provenance="different-agent", run_id=runner.FINDINGS_ARTIFACT_RECOVERY_RUN_ID,
+            review_cycle=0, ids=("R0-01", "R0-02"),
+        )
+        archive = (
+            "# Review Fixture\n\n- Status: `ready`\n"
+            + outcome + "\n## Findings\n\n"
+            "R0-01: source blobs are missing from the pinned main.\n\n"
+            "R0-02: `git ls-remote` could not verify diagnostic-ref absence.\n"
+        )
+        summary = ("# Review Summary\n\nR0-01 and R0-02 remain findings.\n\n"
+                   f"Authoring chat: {runner.parse_packet(runner.FINDINGS_ARTIFACT_RECOVERY_ACTIVE,
+                       (ROOT / runner.FINDINGS_ARTIFACT_RECOVERY_ACTIVE).read_text()).authoring_chat}\n")
+        return archive, summary
+
+    def test_closeout_normalizes_authored_findings_without_changing_outcome(self):
+        archive, summary = self._source_artifacts()
+        closed, closed_summary = runner._construct_findings_artifact_closeout(archive, summary)
+        parsed, error = runner.review_outcome.parse_review_outcome(closed)
+        self.assertIsNone(error)
+        self.assertEqual(parsed["Outcome"], "findings")
+        self.assertEqual(runner.review_outcome.finding_ids(parsed), ("R0-01", "R0-02"))
+        self.assertLess(closed.index("## Findings"), closed.index("## Review Outcome"))
+        self.assertIn("- Status: `complete`", closed)
+        self.assertIn("R0-01: source blobs are missing from the pinned main.", closed)
+        self.assertIn("R0-02: `git ls-remote` could not verify diagnostic-ref absence.", closed)
+        self.assertIn("## Next Handoff", closed_summary)
+        self.assertNotIn("passed", closed_summary.lower())
+
+    def test_closeout_rejects_pass_substitution_and_unsubstantiated_ids(self):
+        archive, summary = self._source_artifacts()
+        passing = archive.replace("- Outcome: `findings`", "- Outcome: `passed`", 1).replace(
+            "- Finding IDs: `R0-01, R0-02`", "- Finding IDs: `none`", 1)
+        with self.assertRaisesRegex(runner.RunnerError, "no canonical findings disposition"):
+            runner._construct_findings_artifact_closeout(passing, summary)
+        with self.assertRaisesRegex(runner.RunnerError, "does not support exactly one R0-02"):
+            runner._construct_findings_artifact_closeout(archive, summary.replace("R0-02", "R0-03"))
+
+    def test_raw_reviewer_final_must_support_both_exact_findings(self):
+        final = ("Outcome: findings R0-01 source blobs owner PR recovery source blob changed; "
+                 "R0-02 diagnostic-ref absence git ls-remote SSH configuration permissions")
+        self.assertTrue(runner._findings_supported_by_raw_final(final))
+        self.assertFalse(runner._findings_supported_by_raw_final(final.replace("git ls-remote", "network lookup")))
+
+    def test_read_only_plan_authenticates_exact_synthetic_review_run(self):
+        with tempfile.TemporaryDirectory() as temp, self.plan_fixture(Path(temp)) as fixture:
+            plan = runner.plan_findings_artifact_recovery(
+                fixture["repo"], runner.FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM,
+                runner.FINDINGS_ARTIFACT_RECOVERY_RUN_ID, fixture["checkout"])
+            self.assertEqual(plan["finding_ids"], ["R0-01", "R0-02"])
+            self.assertEqual(plan["review_tip"], fixture["main"])
+            self.assertEqual(plan["current_main"], fixture["main"])
+            self.assertEqual(plan["recovery_checkout_state"], "absent")
+            self.assertEqual(set(plan["original_worktree_inventory"]), {
+                runner.FINDINGS_ARTIFACT_RECOVERY_ARCHIVE, runner.FINDINGS_ARTIFACT_RECOVERY_SUMMARY})
+            self.assertFalse(fixture["checkout"].exists())
+            self.assertFalse(Path(plan["journal"]).exists())
+
+    def test_plan_rejects_mutated_original_artifact_and_out_of_scope_file(self):
+        for mutation, expected in (("artifact", "artifact digest"), ("extra", "dirty or out-of-scope")):
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as temp, \
+                 self.plan_fixture(Path(temp)) as fixture:
+                if mutation == "artifact":
+                    fixture["archive"].write_text(fixture["archive"].read_text() + "changed\n")
+                else:
+                    (fixture["original"] / "unexpected.txt").write_text("extra\n")
+                with self.assertRaisesRegex(runner.RunnerError, expected):
+                    runner.plan_findings_artifact_recovery(
+                        fixture["repo"], runner.FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM,
+                        runner.FINDINGS_ARTIFACT_RECOVERY_RUN_ID, fixture["checkout"])
+
+    def test_plan_rejects_duplicate_or_conflicting_outcome(self):
+        with tempfile.TemporaryDirectory() as temp, self.plan_fixture(Path(temp)) as fixture:
+            fixture["archive"].write_text(fixture["archive"].read_text() + "\n## Review Outcome\n\n")
+            with patch.object(runner, "FINDINGS_ARTIFACT_RECOVERY_ARCHIVE_SHA256",
+                              hashlib.sha256(fixture["archive"].read_bytes()).hexdigest()):
+                with self.assertRaisesRegex(runner.RunnerError, "canonical findings disposition"):
+                    runner.plan_findings_artifact_recovery(
+                        fixture["repo"], runner.FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM,
+                        runner.FINDINGS_ARTIFACT_RECOVERY_RUN_ID, fixture["checkout"])
+
+        with tempfile.TemporaryDirectory() as temp, self.plan_fixture(Path(temp)) as fixture:
+            changed = fixture["archive"].read_text().replace("- Outcome: `findings`", "- Outcome: `passed`", 1)
+            changed = changed.replace("- Finding IDs: `R0-01, R0-02`", "- Finding IDs: `none`", 1)
+            fixture["archive"].write_text(changed)
+            with patch.object(runner, "FINDINGS_ARTIFACT_RECOVERY_ARCHIVE_SHA256",
+                              hashlib.sha256(changed.encode()).hexdigest()):
+                with self.assertRaisesRegex(runner.RunnerError, "canonical findings disposition"):
+                    runner.plan_findings_artifact_recovery(
+                        fixture["repo"], runner.FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM,
+                        runner.FINDINGS_ARTIFACT_RECOVERY_RUN_ID, fixture["checkout"])
+
+    def test_plan_rejects_malformed_acquisition_and_contradictory_raw_session(self):
+        with tempfile.TemporaryDirectory() as temp, self.plan_fixture(Path(temp)) as fixture:
+            with patch.object(runner, "_host_validation_claim_receipt",
+                              side_effect=runner.RunnerError("acquisition identity malformed")):
+                with self.assertRaisesRegex(runner.RunnerError, "acquisition identity malformed"):
+                    runner.plan_findings_artifact_recovery(
+                        fixture["repo"], runner.FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM,
+                        runner.FINDINGS_ARTIFACT_RECOVERY_RUN_ID, fixture["checkout"])
+
+        with tempfile.TemporaryDirectory() as temp, self.plan_fixture(Path(temp)) as fixture:
+            with patch.object(runner, "_parse_redacted_final_session",
+                              return_value=("Outcome: findings R0-01 only", {})):
+                with self.assertRaisesRegex(runner.RunnerError, "does not corroborate"):
+                    runner.plan_findings_artifact_recovery(
+                        fixture["repo"], runner.FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM,
+                        runner.FINDINGS_ARTIFACT_RECOVERY_RUN_ID, fixture["checkout"])
+
+    def test_plan_rejects_remote_review_branch_drift(self):
+        with tempfile.TemporaryDirectory() as temp, self.plan_fixture(Path(temp)) as fixture:
+            changed = fixture["original"] / "reviewer-drift.txt"
+            changed.write_text("unexpected reviewer branch advance\n")
+            subprocess.run(["git", "add", changed.name], cwd=fixture["original"], check=True)
+            subprocess.run(["git", "commit", "-qm", "synthetic branch drift"], cwd=fixture["original"], check=True)
+            subprocess.run(["git", "push", "-q", "origin", f"HEAD:refs/heads/agent/{runner.FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM}"],
+                           cwd=fixture["original"], check=True)
+            subprocess.run(["git", "fetch", "-q", "origin", f"refs/heads/agent/{runner.FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM}:refs/remotes/origin/agent/{runner.FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM}"],
+                           cwd=fixture["repo"], check=True)
+            with self.assertRaisesRegex(runner.RunnerError, "not the exact published branch tip"):
+                runner.plan_findings_artifact_recovery(
+                    fixture["repo"], runner.FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM,
+                    runner.FINDINGS_ARTIFACT_RECOVERY_RUN_ID, fixture["checkout"])
+
+    def test_plan_rejects_host_report_mismatch_and_current_main_target_drift(self):
+        with tempfile.TemporaryDirectory() as temp, self.plan_fixture(Path(temp)) as fixture:
+            with patch.object(runner, "_host_evidence_for_continuation", return_value={
+                    "report_sha256": "0" * 64, "metadata_sha256": fixture["metadata_sha"]}):
+                with self.assertRaisesRegex(runner.RunnerError, "report differs from its pinned digest"):
+                    runner.plan_findings_artifact_recovery(
+                        fixture["repo"], runner.FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM,
+                        runner.FINDINGS_ARTIFACT_RECOVERY_RUN_ID, fixture["checkout"])
+
+        with tempfile.TemporaryDirectory() as temp, self.plan_fixture(Path(temp)) as fixture:
+            target = fixture["repo"] / runner.FINDINGS_ARTIFACT_RECOVERY_OWNER_PACKET
+            target.write_text(target.read_text() + "\ncurrent main mutation\n")
+            subprocess.run(["git", "add", target.relative_to(fixture["repo"]).as_posix()],
+                           cwd=fixture["repo"], check=True)
+            subprocess.run(["git", "commit", "-qm", "synthetic target drift"], cwd=fixture["repo"], check=True)
+            subprocess.run(["git", "push", "-q", "origin", "HEAD:refs/heads/main"],
+                           cwd=fixture["repo"], check=True)
+            subprocess.run(["git", "fetch", "-q", "origin", "main"], cwd=fixture["repo"], check=True)
+            with self.assertRaisesRegex(runner.RunnerError, "changed the reviewed target"):
+                runner.plan_findings_artifact_recovery(
+                    fixture["repo"], runner.FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM,
+                    runner.FINDINGS_ARTIFACT_RECOVERY_RUN_ID, fixture["checkout"])
+
+    def test_plan_rejects_target_identity_process_owner_and_unexpected_recovery_checkout(self):
+        with tempfile.TemporaryDirectory() as temp, self.plan_fixture(Path(temp)) as fixture:
+            with patch.object(runner, "resolve_target_implementation_commit", return_value=("f" * 40, None)):
+                with self.assertRaisesRegex(runner.RunnerError, "target implementation identity changed"):
+                    runner.plan_findings_artifact_recovery(
+                        fixture["repo"], runner.FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM,
+                        runner.FINDINGS_ARTIFACT_RECOVERY_RUN_ID, fixture["checkout"])
+
+        with tempfile.TemporaryDirectory() as temp, self.plan_fixture(Path(temp)) as fixture:
+            with patch.object(runner, "_process_owns_worktree", return_value=[{"pid": "999"}]):
+                with self.assertRaisesRegex(runner.RunnerError, "live process"):
+                    runner.plan_findings_artifact_recovery(
+                        fixture["repo"], runner.FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM,
+                        runner.FINDINGS_ARTIFACT_RECOVERY_RUN_ID, fixture["checkout"])
+
+        with tempfile.TemporaryDirectory() as temp, self.plan_fixture(Path(temp)) as fixture:
+            fixture["checkout"].mkdir()
+            (fixture["checkout"] / "unexpected.txt").write_text("not an owned recovery checkout")
+            with self.assertRaisesRegex(runner.RunnerError, "different identity"):
+                runner.plan_findings_artifact_recovery(
+                    fixture["repo"], runner.FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM,
+                    runner.FINDINGS_ARTIFACT_RECOVERY_RUN_ID, fixture["checkout"])
+
+    def test_interrupted_apply_retries_idempotently_without_touching_original_evidence(self):
+        interruption_points = ("journal", "artifact", "commit", "publish", "landing")
+        for point in interruption_points:
+            with self.subTest(point=point), tempfile.TemporaryDirectory() as temp, \
+                 self.plan_fixture(Path(temp)) as fixture:
+                repo, checkout = fixture["repo"], fixture["checkout"]
+                plan = runner.plan_findings_artifact_recovery(
+                    repo, runner.FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM,
+                    runner.FINDINGS_ARTIFACT_RECOVERY_RUN_ID, checkout)
+                original_inventory = runner._worktree_inventory(fixture["original"])
+                original_archive = fixture["archive"].read_bytes()
+                original_summary = fixture["summary"].read_bytes()
+                run_inventory = runner._file_manifest(fixture["run_dir"])
+                real_write_atomic = runner._write_atomic
+                real_run = subprocess.run
+                failed = False
+
+                def injected_write(path, value):
+                    nonlocal failed
+                    path = Path(path)
+                    trigger = ((point == "journal" and path == Path(plan["journal"])
+                                and '"stage": "prepared"' in value)
+                               or (point == "artifact" and path == checkout / runner.FINDINGS_ARTIFACT_RECOVERY_SUMMARY))
+                    if trigger and not failed:
+                        failed = True
+                        raise OSError(f"synthetic {point} interruption")
+                    return real_write_atomic(path, value)
+
+                def injected_run(args, *pargs, **kwargs):
+                    nonlocal failed
+                    argv = [str(item) for item in args]
+                    is_lander = len(argv) > 1 and Path(argv[1]).name == "land_main.py"
+                    trigger = ((point == "commit" and argv[:2] == ["git", "commit"])
+                               or (point == "publish" and argv[:2] == ["git", "push"]
+                                   and "recovery/" in " ".join(argv))
+                               or (point == "landing" and is_lander))
+                    if trigger and not failed:
+                        failed = True
+                        return subprocess.CompletedProcess(args, 1, "", f"synthetic {point} interruption")
+                    if is_lander:
+                        result = real_run(["git", "push", "origin", "HEAD:refs/heads/main"],
+                                          cwd=kwargs.get("cwd"), text=True, capture_output=True)
+                        return subprocess.CompletedProcess(args, result.returncode, result.stdout, result.stderr)
+                    return real_run(args, *pargs, **kwargs)
+
+                with patch.object(runner, "_write_atomic", side_effect=injected_write), \
+                     patch.object(runner.subprocess, "run", side_effect=injected_run):
+                    with self.assertRaises((OSError, runner.RunnerError)):
+                        runner.apply_findings_artifact_recovery(
+                            repo, runner.FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM,
+                            runner.FINDINGS_ARTIFACT_RECOVERY_RUN_ID, checkout, plan["plan_sha256"])
+                    result = runner.apply_findings_artifact_recovery(
+                        repo, runner.FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM,
+                        runner.FINDINGS_ARTIFACT_RECOVERY_RUN_ID, checkout, plan["plan_sha256"])
+                    replay = runner.apply_findings_artifact_recovery(
+                        repo, runner.FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM,
+                        runner.FINDINGS_ARTIFACT_RECOVERY_RUN_ID, checkout, plan["plan_sha256"])
+
+                self.assertTrue(failed)
+                self.assertEqual(result["stage"], "complete")
+                self.assertTrue(result["target_unchanged"])
+                self.assertFalse(result["pass_receipt_written"])
+                self.assertEqual(replay["landed_sha"], result["landed_sha"])
+                self.assertEqual(runner._worktree_inventory(fixture["original"]), original_inventory)
+                self.assertEqual(fixture["archive"].read_bytes(), original_archive)
+                self.assertEqual(fixture["summary"].read_bytes(), original_summary)
+                self.assertEqual(runner._file_manifest(fixture["run_dir"]), run_inventory)
+                target = runner._show_at(repo, "origin/main", runner.FINDINGS_ARTIFACT_RECOVERY_OWNER_PACKET)
+                self.assertNotIn("## Independent Review", target)
+                count = subprocess.run(["git", "rev-list", "--count", f"{fixture['main']}..origin/main"],
+                                       cwd=repo, capture_output=True, text=True, check=True).stdout.strip()
+                self.assertEqual(count, "1")
+
+    def test_planner_is_pinned_to_exact_workstream_and_run_before_repository_access(self):
+        with self.assertRaisesRegex(runner.RunnerError, "only its packet-pinned review run"):
+            runner.plan_findings_artifact_recovery(
+                Path("/missing"), "review-other", runner.FINDINGS_ARTIFACT_RECOVERY_RUN_ID,
+                Path("/tmp/not-created"))
+        with self.assertRaisesRegex(runner.RunnerError, "only its packet-pinned review run"):
+            runner.plan_findings_artifact_recovery(
+                Path("/missing"), runner.FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM,
+                "20261110T000000Z-000000000000", Path("/tmp/not-created"))
+        with self.assertRaisesRegex(runner.RunnerError, "only its packet-pinned review run"):
+            runner.apply_findings_artifact_recovery(
+                Path("/missing"), "review-other", runner.FINDINGS_ARTIFACT_RECOVERY_RUN_ID,
+                Path("/tmp/not-created"), "a" * 64)
+
+    def test_apply_refuses_stale_digest_before_any_mutation(self):
+        plan = {"plan_sha256": "a" * 64}
+        with patch.object(runner, "_plan_findings_artifact_recovery_unlocked", return_value=plan):
+            with self.assertRaisesRegex(runner.RunnerError, "digest is stale or altered"):
+                runner.apply_findings_artifact_recovery(
+                    ROOT, runner.FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM,
+                    runner.FINDINGS_ARTIFACT_RECOVERY_RUN_ID, Path("/tmp/not-created"), "b" * 64)
 
 
 if __name__ == "__main__":

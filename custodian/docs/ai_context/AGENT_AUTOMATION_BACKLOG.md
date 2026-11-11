@@ -194,7 +194,7 @@ The scope is deliberately smaller than full README generation. Automatic lifecyc
 
 ## Process Feedback Ledger — Implemented
 
-`custodian/tools/agent/process_feedback.py` provides a read-only, deterministic inventory of root closing summaries and active/archived packet feedback. `scan --json` emits source-linked observations and logical receipts; `report --markdown` renders the same corpus. It deduplicates only a unique explicit workstream packet/summary pair, preserves source provenance, and leaves ambiguous identities and unknown follow-up owners unclassified. `fixed-in-scope` remains author-reported; `manual-follow-up` remains unowned. Focused anti-vacuity tests are in `test_process_feedback.py` and the suite is registered in `validation_manifest.json`.
+`custodian/tools/agent/process_feedback.py` provides a read-only, deterministic inventory of persistent `agent_summaries/` closing summaries and active/archived packet feedback. `scan --json` emits source-linked observations and logical receipts; `report --markdown` renders the same corpus. It deduplicates only a unique explicit workstream packet/summary pair, preserves source provenance, and leaves ambiguous identities and unknown follow-up owners unclassified. `fixed-in-scope` remains author-reported; `manual-follow-up` remains unowned. Focused anti-vacuity tests are in `test_process_feedback.py` and the suite is registered in `validation_manifest.json`.
 
 ## Priority 2 — Task Packet Linter
 

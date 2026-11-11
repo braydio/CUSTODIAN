@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `owner-review-exception-lane-v1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P1`
@@ -17,7 +17,7 @@
 - Max automatic review cycles: `2`
 - Review rationale: `Protected governance: changes live dependency/review eligibility and therefore needs independent falsification even while ordinary work defaults Review:none`
 - Reviewed main: `8ef7e4e0b82a865552c47b4f1dc9e48a8e74480d`
-- Authoring chat: `not-recorded`
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af253c2-3c40-83ea-bd81-7ba163d4602e
 - Visual review: `none`
 - Goal: Let the project owner knowingly accept one mechanically verified workstream despite a blocked, defective or nonpassing independent review, and continue safe landing/dependency execution without falsifying reviewer judgment.
 - Completion boundary: Add one exact-workstream, exact-commit owner-exception decision path with a read-only plan, authenticated explicit per-case owner approval, audit-visible disposition and fail-closed dispatcher dependency consumption. Existing review outcomes remain byte-identical and are never rewritten to PASS. Preserve ordinary implementation validation and all claim/worktree safety.
@@ -25,7 +25,7 @@
 - Evidence: `custodian/tools/agent/dispatch.py` (`_review_gate`, `_decision`, `audit`), `custodian/tools/agent/review_outcome.py` (`review_acceptance`), `custodian/tools/agent/paired_review_runner.py`, `custodian/tools/agent/workstream.py`, `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`.
 - Task-specific authority: Current root/custodian AGENTS and workstream lifecycle; `task_packet_contract.py`, `dispatch.py`, `review_outcome.py`, authoritative validation reports and owner approval provenance. No new gameplay, art or independent review judge.
 - Work surface: Focused new `custodian/tools/agent/owner_review_exception.py` or existing narrower owner-decision authority; `custodian/tools/agent/dispatch.py`; exact new/adjacent tests, `custodian/tools/validation/validation_manifest.json`; minimum lifecycle/authoring docs necessary. Touch `workstream.py` or `task_packet_contract.py` only if a proved acceptance invariant requires it.
-- Publication inputs: `custodian/tools/agent/dispatch.py`, `custodian/tools/agent/review_outcome.py`, `custodian/tools/agent/paired_review_runner.py`, `custodian/tools/agent/workstream.py`, `custodian/tools/agent/task_packet_contract.py`, `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`, `custodian/tools/validation/validation_manifest.json`.
+- Publication inputs: `custodian/tools/agent/dispatch.py`; `custodian/tools/agent/review_outcome.py`; `custodian/tools/agent/paired_review_runner.py`; `custodian/tools/agent/workstream.py`; `custodian/tools/agent/task_packet_contract.py`; `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`; `custodian/tools/validation/validation_manifest.json`.
 - Change: 
   1. Implement read-only `plan` showing exact target implementation/review workstream, pinned implementation/main SHA, currently blocking review run/outcome, applicable tests and baseline evidence, dependent workstreams, held claims/locks, and specific consequences. No writes on plan.
   2. Implement one structured, durable `owner_exception` decision with `owner_accepted_with_review_exception` or an equivalent clearly non-PASS administrative disposition; exact workstream/SHA, reason, review/report references and hashes, mechanical validation evidence, explicit acknowledged findings or uncertainty, approving identity, and time. Authentic owner authorization must derive from a trusted owner-only approval surface or existing verified authority, not a caller-supplied `--yes`, agent-edited Markdown, author spoofing or a generic flag. If no authentic source exists, fail closed and report one bounded prerequisite.
@@ -36,9 +36,30 @@
 - Preserve: Valid reviewer PASS/findings/human_required receipts; all prelaunch host-validation reports, claim/run identity and recovered-worktree evidence; truthful Complete/Review lifecycle; focus/change coverage, dispatch locks and protected core work; existing publication and Asset Pipeline V2 contracts. Do not alter the in-flight `workflow-governance-simplification-v1` claim or files.
 - Non-goals: No blanket `--force` review acceptance, self-approval, automatic override based on model confidence, mass migration of historical review statuses, general claim parking/reset, CI suppression, bypass of missing source assets/approval, or changes to gameplay.
 - Acceptance: A1: Exact owner-approved fixture unblocks only named review dependency without marking its reviewer passed. A2: Wrong owner, missing/forged signature or approval, stale SHA, copied receipt, mismatched target, insufficient mechanical tests and altered evidence all reject. A3: Findings remain queryable and auditable; wrong unrelated successor stays blocked. A4: Active review claim/lock remains held, with no branch/evidence mutations. A5: A real passing paired review continues to work normally. A6: `plan` is byte-for-byte read-only; `apply` uses digest-bound revalidation under the existing coordination mutex and writes only bounded authorized records. A7: Focused tests, dispatcher/review-pairing regressions, changed-file validation, packet checks and `git diff --check` pass.
-- Validation: New focused disposable-Git positive and negative fixtures for owner approval and dependency consumption; `python3 -m unittest custodian.tools.agent.test_dispatch custodian.tools.agent.test_task_packet_contract -v`; existing review acceptance/regression tests; `python3 custodian/tools/validation/run_validation.py --changed --base origin/main --json`; `python3 custodian/tools/agent/check_ai_context.py --json`; `python3 custodian/tools/agent/task_packet_index.py`; `python3 custodian/tools/agent/validate_review_pairing.py` (verify current CLI); `git diff --check`.
+- Validation: `python3 -m unittest custodian.tools.agent.test_owner_review_exception -v` (9 passed); `python3 custodian/tools/validation/run_validation.py --changed --base origin/main --json` (10 selected, 10 passed); `python3 custodian/tools/agent/check_ai_context.py --json` (0 findings); `python3 custodian/tools/agent/task_packet_index.py` (PASS); `python3 custodian/tools/agent/validate_review_pairing.py` (158 pairs PASS); targeted packet authoring preflight (PASS); `git diff --check` (PASS).
 - Task overrides: `none`
 - Deferred: Automated retirement of already-claimed failed review processes/branches, broad legacy waiver conversion, review-economy Pass B/C, unverified current Procession case override, and changes to outstanding human visual/canon approvals.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: The exact chassis review remains `unresolved`; the owner exception is recorded as `waived_unresolved` and the dispatcher keeps it inert until this lane's fresh paired review accepts. Exact owner message digest and conversation URL are preserved in the record. The retired remote chassis claim and branch were already absent; the historical local branch and review run evidence remain preserved. No chassis implementation or review verdict was modified. The live Operator decomposition queue remains subject to the post-land acceptance review before the exception activates.
+- Landed implementation: pending `workstream.py finish`.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `The targeted packet preflight found malformed Publication inputs separators in the paired packets; the focused owner-exception unit tests then exposed a missing inventory field in their synthetic plan fixture.`
+- Root cause / contributing factors: `Existing packet examples used comma separators while the shared parser requires semicolon-separated exact paths; the new plan inventory extended the fixture contract.`
+- Prevention / pipeline improvement: `Run the targeted authoring preflight and focused unit tests before the broader changed-file validation.`
+- Tooling / docs drift discovered: `The shared task-packet parser's exact Publication inputs grammar was stricter than the existing packet text. No repository tooling defect was needed to resolve it.`
+- Follow-up: `Fresh-context paired review of this workstream; until it passes, the owner exception remains non-active.`
 
 ## Execution order
 
@@ -47,10 +68,10 @@ Complete `workflow-governance-simplification-v1` first, then claim this separate
 ## Handoff
 
 - Next workstream: `review-owner-review-exception-lane-v1`
-- Next packet state: `draft/manual; auto authoring handoff after publication checks`
+- Next packet state: `ready/auto`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `not-recorded`
-- Next action: Prove the narrow owner-decision exception end-to-end, land normal implementation, then independent review.
-- Blockers or open questions: Authentic owner approval source must be verified before implementation; do not fake authority with an agent-entered flag.
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af253c2-3c40-83ea-bd81-7ba163d4602e
+- Next action: Run the fresh-context paired review. On its PASS, re-audit dispatch so the exact unresolved chassis review waiver becomes active, then report the eligibility of F2, F5, F6 and G.
+- Blockers or open questions: The chassis review remains unresolved by owner decision; this lane's independent acceptance is still required for activation.
 - Current blocker / Recovery handoff: [Godot cache-access review forensic handoff](../RECOVERY_HANDOFF_GODOT_CACHE_ACCESS_REVIEW_20261031.md). This preserves unresolved review truth; it does not satisfy the dependency, release the lock, or authorize an owner exception.

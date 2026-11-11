@@ -10,6 +10,7 @@ import inspect
 import io
 import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -107,6 +108,57 @@ def _review_gate(
     return rejected, correction_ok
 
 
+def _owner_review_exceptions(repo: Path, tree: str = "origin/main") -> dict[str, dict]:
+    """Load exact, commit-pinned owner exceptions without changing review truth."""
+    try:
+        import owner_review_exception
+    except Exception:
+        return {}
+    def is_ancestor(ancestor: str, descendant: str) -> bool:
+        result = subprocess.run(["git", "merge-base", "--is-ancestor", ancestor, descendant],
+                                cwd=repo, capture_output=True)
+        return result.returncode == 0
+    def show_exact(path: str) -> str:
+        result = subprocess.run(["git", "show", f"{tree}:{path}"], cwd=repo,
+                                text=True, capture_output=True)
+        return result.stdout if result.returncode == 0 else ""
+    prefix = "custodian/docs/ai_context/owner_review_exceptions"
+    records: dict[str, dict] = {}
+    for path in git(repo, "ls-tree", "-r", "--name-only", tree, "--", prefix).splitlines():
+        if not path.endswith(".json"):
+            continue
+        try:
+            record = json.loads(git(repo, "show", f"{tree}:{path}"))
+        except (ValueError, DispatchError):
+            continue
+        review_id = record.get("review_workstream") if isinstance(record, dict) else None
+        if not isinstance(review_id, str) or path != f"{prefix}/{review_id}.json":
+            continue
+        review_path = f"{PACKET_ROOT}/REVIEW_OPERATOR_CHASSIS_AUTHORITY_SEAL_V1.md"
+        implementation_path = f"{PACKET_ROOT}/archived/OPERATOR_CHASSIS_AUTHORITY_SEAL_V1.md"
+        review_text = show_exact(review_path)
+        implementation_text = show_exact(implementation_path)
+        valid, _ = owner_review_exception.verify_record(record, review_id, implementation_text, review_text)
+        if not valid:
+            continue
+        parsed_impl = parse_packet(implementation_path, implementation_text)
+        if (parsed_impl.workstream != record.get("implementation_workstream")
+                or not re.fullmatch(r"[0-9a-f]{40}", record.get("main_sha", ""))
+                or not any(run.get("implementation_commit") == record.get("implementation_commit")
+                           and re.fullmatch(r"[0-9a-f]{64}", run.get("metadata_sha256", ""))
+                           for run in record.get("preserved_review_runs", []) if isinstance(run, dict))
+                or not is_ancestor(record["implementation_commit"], tree)
+                or not is_ancestor(record["main_sha"], tree)):
+            continue
+        activation_review_text = show_exact(f"{PACKET_ROOT}/archived/REVIEW_OWNER_REVIEW_EXCEPTION_LANE_V1.md")
+        activation_target_text = show_exact(f"{PACKET_ROOT}/archived/OWNER_REVIEW_EXCEPTION_LANE_V1.md")
+        state = ("accepted" if owner_review_exception.activation_review_accepted(
+            activation_review_text, activation_target_text,
+        ) else "awaiting_owner_exception_lane_review")
+        records[review_id] = {"record": record, "activation_state": state}
+    return records
+
+
 def _claimed(repo: Path) -> set[str]:
     # Remote refs are claim authority. A successful dispatcher claim always has
     # either a temporary dispatch-claim ref during acquisition or a published
@@ -193,6 +245,7 @@ def _decision(
     review_rejections: dict[str, tuple[str | None, str]] | None = None,
     correction_ok: set[tuple[str, str]] | None = None,
     lock_holders: set[str] | None = None,
+    owner_exceptions: dict[str, dict] | None = None,
 ) -> tuple[bool, str | None]:
     if packet.error:
         return False, f"invalid packet metadata: {packet.error}"
@@ -215,9 +268,11 @@ def _decision(
         return False, f"duplicate Workstream identity: {packet.workstream}"
     complete = {p.workstream for p in archived if not p.error and p.status == "complete"}
     for dependency in packet.dependencies:
-        if dependency not in complete:
+        exception = (owner_exceptions or {}).get(dependency, {})
+        exception_active = exception.get("activation_state") == "accepted"
+        if dependency not in complete and not exception_active:
             return False, f"dependency: {dependency}"
-        if review_rejections and dependency in review_rejections:
+        if review_rejections and dependency in review_rejections and not exception_active:
             if (packet.workstream, dependency) in (correction_ok or set()):
                 continue
             return False, f"dependency: review not accepted: {dependency} ({review_rejections[dependency][1]})"
@@ -350,6 +405,7 @@ def _render_status(repo: Path, packets: list[Packet], archived: list[Packet], cl
     packet_texts = _packet_texts(repo, packets)
     queue_errors = validate_queue_contract(packets, archived, packet_texts)
     review_rejections, correction_ok = _review_gate(repo, packets, archived)
+    owner_exceptions = _owner_review_exceptions(repo)
     for work_id in sorted(claims - branches):
         if work_id in quarantined_ids:
             groups["LEGACY QUARANTINED"].append(
@@ -468,6 +524,7 @@ def audit(repo: Path, *, as_json: bool = False) -> dict:
     validation_errors = validate_packet_validation_references(repo, packets, exclude_workstreams=claimed)
     queue_errors = validate_queue_contract(packets, archived, texts)
     review_rejections, correction_ok = _review_gate(repo, packets, archived)
+    owner_exceptions = _owner_review_exceptions(repo)
     active_counts: dict[str, int] = {}
     for packet in packets:
         if packet.workstream:
@@ -482,6 +539,7 @@ def audit(repo: Path, *, as_json: bool = False) -> dict:
             queue_errors=queue_errors, interrupted_claims=interrupted_claims,
                 review_rejections=review_rejections, correction_ok=correction_ok,
             lock_holders=lock_holders,
+            owner_exceptions=owner_exceptions,
         )
         auto_ok, _ = _decision(
             packet, packets, archived, claimed, auto_only=True,
@@ -489,6 +547,7 @@ def audit(repo: Path, *, as_json: bool = False) -> dict:
             queue_errors=queue_errors, interrupted_claims=interrupted_claims,
                 review_rejections=review_rejections, correction_ok=correction_ok,
             lock_holders=lock_holders,
+            owner_exceptions=owner_exceptions,
         )
         reasons = []
         for error_map, label in (
@@ -505,9 +564,12 @@ def audit(repo: Path, *, as_json: bool = False) -> dict:
             reasons.append(f"duplicate active identity: {packet.workstream}")
         for dependency in packet.dependencies:
             complete_ids = {p.workstream for p in archived if not p.error and p.status == "complete"}
-            if dependency not in complete_ids:
+            exception_active = owner_exceptions.get(dependency, {}).get("activation_state") == "accepted"
+            if dependency not in complete_ids and not exception_active:
                 reasons.append(f"dependency not archived complete: {dependency}")
-            elif dependency in review_rejections and (packet.workstream, dependency) not in correction_ok:
+            if dependency in owner_exceptions and not exception_active:
+                reasons.append(f"owner exception pending independent acceptance review: {dependency}")
+            if dependency in review_rejections and not exception_active and (packet.workstream, dependency) not in correction_ok:
                 reasons.append(f"dependency review not accepted: {dependency} ({review_rejections[dependency][1]})")
         quarantine = parking_states.get(packet.workstream, {}).get("quarantine", {})
         if quarantine.get("state") == "legacy_quarantined":
@@ -562,6 +624,13 @@ def audit(repo: Path, *, as_json: bool = False) -> dict:
             "dependencies": list(packet.dependencies),
             "paired_review_workstream": packet.paired_review_workstream,
             "review_target_workstream": packet.review_target_workstream,
+            "owner_exception_dependencies": [d for d in packet.dependencies if owner_exceptions.get(d, {}).get("activation_state") == "accepted"],
+            "review_dependency_truth": {
+                d: {"outcome": (review_rejections.get(d, (None, ""))[0] or "unresolved"),
+                    "accepted": False,
+                    "owner_exception": owner_exceptions[d]["record"]["disposition"]}
+                for d in packet.dependencies if owner_exceptions.get(d, {}).get("activation_state") == "accepted"
+            },
             "claimed": packet.workstream in claimed,
             "execution_lock_held": packet.workstream in lock_holders,
             "parking_state": parking_states.get(packet.workstream, {}).get("state"),
@@ -639,6 +708,17 @@ def audit(repo: Path, *, as_json: bool = False) -> dict:
         "interrupted_dispatch_claim_count": len(interrupted_claim_rows),
         "claim_only_orphan_dispatch_claim_count": len(claim_only_orphans),
         "claim_only_orphan_dispatch_claims": claim_only_orphans,
+        "owner_review_exceptions": [
+            {"review_workstream": key, "disposition": value["record"]["disposition"],
+             "decision": value["record"]["decision"], "activation_state": value["activation_state"],
+             "original_review_outcome": value["record"]["original_review_outcome"],
+             "claim_retirement": value["record"]["claim_retirement"],
+             "claim_inventory": value["record"]["claim_inventory"],
+             "implementation_commit": value["record"]["implementation_commit"],
+             "authorization_source_url": value["record"]["authorization_source_url"],
+             "authorization_message_sha256": value["record"]["authorization_message_sha256"]}
+            for key, value in sorted(owner_exceptions.items())
+        ],
         "packets": rows,
     }
 
@@ -660,7 +740,7 @@ def audit_command(repo: Path, *, as_json: bool = False) -> int:
     return 0
 
 
-def claim(
+def _legacy_claim_diagnostics(
     repo: Path,
     workstream_id: str | None,
     agent: str,
@@ -930,8 +1010,8 @@ def main(argv: list[str] | None = None) -> int:
     subs.add_parser("status")
     p = subs.add_parser("audit"); p.add_argument("--json", action="store_true", dest="as_json")
     p = subs.add_parser("repair"); repair_mode = p.add_mutually_exclusive_group(required=True); repair_mode.add_argument("--plan", action="store_true"); repair_mode.add_argument("--apply", action="store_true"); p.add_argument("--archive-completed", action="store_true", help="also preview/apply legacy complete records with explicit non-empty Completed evidence"); p.add_argument("--json", action="store_true", dest="as_json")
-    p = subs.add_parser("claim-next"); p.add_argument("--agent", default=None); p.add_argument("--lock-wait-seconds", type=float, default=0.0, help="bounded wait for the local assignment mutex (default: fail fast)")
-    p = subs.add_parser("claim"); p.add_argument("workstream_id"); p.add_argument("--agent", default=None); p.add_argument("--lock-wait-seconds", type=float, default=0.0, help="bounded wait for the local assignment mutex (default: fail fast)"); p.add_argument("--checkout-profile", default=None, help="tracked path-exact deferred-LFS checkout profile")
+    p = subs.add_parser("claim-next"); p.add_argument("--agent", default=None); p.add_argument("--mode", choices=("normal", "historical"), default="normal"); p.add_argument("--pool", type=Path, default=Path.home() / "Projects/.custodian-turns")
+    p = subs.add_parser("claim"); p.add_argument("workstream_id"); p.add_argument("--agent", default=None); p.add_argument("--mode", choices=("normal", "historical", "owner-authorized"), default="normal"); p.add_argument("--authorization-url", default=None); p.add_argument("--authorization-sha256", default=None); p.add_argument("--pool", type=Path, default=Path.home() / "Projects/.custodian-turns"); p.add_argument("--checkout-profile", default=None)
     p = subs.add_parser("last-claim"); p.add_argument("--json", action="store_true", dest="as_json")
     args = parser.parse_args(argv)
     try:
@@ -961,12 +1041,82 @@ def main(argv: list[str] | None = None) -> int:
                     print(f"{label} {item['workstream']} [{item['path']}]: {item['change']}")
                 print(f"task_packet_repair: {'applied' if args.apply else 'plan only'}; {sum(item['changed'] == 'true' for item in actions)} file(s) changed")
             return 0
-        agent = resolve_agent_id(args.agent)
-        return claim(
-            repo, getattr(args, "workstream_id", None), agent, args.command == "claim-next",
-            lock_wait_seconds=args.lock_wait_seconds,
-            checkout_profile=getattr(args, "checkout_profile", None),
-        )
+        # The CLI is the canonical V2 execution entrypoint. The legacy claim()
+        # function remains available to historical tests/diagnostics, but it is
+        # not consulted for status, dependency, lock, claim, or session gating.
+        import turn_dispatcher_v2 as turn_v2
+        workstream = getattr(args, "workstream_id", None)
+        mode = args.mode
+        selection_main_sha = None
+        selection_progress = None
+        if args.command == "claim-next":
+            main_sha, _ = turn_v2.latest_main(repo)
+            selection_main_sha = main_sha
+            packet_paths = turn_v2.git(repo, "ls-tree", "-r", "--name-only", main_sha, "--", turn_v2.PACKETS).splitlines()
+            candidates = []
+            for packet_path in packet_paths:
+                if not packet_path.endswith(".md") or "/archived/" in packet_path:
+                    continue
+                content = turn_v2.git(repo, "show", f"{main_sha}:{packet_path}")
+                fields = turn_v2.parse_fields(content)
+                # Paired reviews are launched by paired_review_runner after
+                # implementation completion; claim-next must not acquire one
+                # as ordinary feature work.
+                if fields.get("kind", "implementation").strip().lower().strip("`") == "review":
+                    continue
+                candidate = fields.get("workstream", "")
+                if turn_v2.ID.fullmatch(candidate):
+                    candidates.append((packet_path, candidate))
+            identities = turn_v2.rotate_candidates(repo, [candidate for _, candidate in candidates])
+            blocked = []
+            completed = []
+            for candidate in identities:
+                try:
+                    turn_v2.inspect(repo, candidate, mode)
+                except turn_v2.DispatchError as exc:
+                    if "user-owned design decision holds" in str(exc):
+                        blocked.append((candidate, str(exc)))
+                        continue
+                    raise
+                packet_path = next(path for path, identity in candidates if identity == candidate)
+                packet_text = turn_v2.git(repo, "show", f"{main_sha}:{packet_path}")
+                selection_progress = turn_v2.task_progress_state(
+                    repo, main_sha, candidate, packet_path, turn_v2.parse_fields(packet_text),
+                )
+                if selection_progress == "completed":
+                    completed.append(candidate)
+                    continue
+                workstream = candidate
+                break
+            if workstream is None:
+                print("NO V2 TASK AVAILABLE")
+                for candidate in completed:
+                    print(f"- {candidate}: completed (task branch is reachable from origin/main)")
+                for candidate, reason in blocked:
+                    print(f"- {candidate}: {reason}")
+                return 2
+        result = turn_v2.begin(repo, workstream, mode, args.pool,
+                               getattr(args, "authorization_url", None),
+                               getattr(args, "authorization_sha256", None),
+                               getattr(args, "checkout_profile", None))
+        selection_cursor = None
+        if selection_main_sha and args.command == "claim-next":
+            selection_cursor = turn_v2.record_selection(
+                repo, workstream, turn_id=result["turn_id"], main_sha=selection_main_sha,
+            )
+        packet = result.get("packet") or f"owner-authorized:{result['owner_authorization']['reference']}"
+        receipt = {"schema": "custodian.dispatch.claim.v2", "result": "claimed",
+                   "workstream": workstream, "branch": result["local_branch"],
+                   "worktree": result["checkout"], "packet": packet,
+                   "checkout": "created", "checkout_profile": result.get("checkout_profile"),
+                   "verified": True, "mode": mode, "run_id": result["run_id"],
+                   "turn_id": result["turn_id"], "acquisition_receipt": result["acquisition_receipt"],
+                   "remote_branch": result["branch"], "source": result["source"],
+                   "source_sha": result["source_sha"], "task_definition_sha": result["task_definition_sha"],
+                   "selection_progress": selection_progress, "selection_cursor": selection_cursor,
+                   "acquisition_receipt": result["acquisition_receipt"], "agent": resolve_agent_id(args.agent)}
+        print("CUSTODIAN_DISPATCH_RESULT_JSON:" + json.dumps(receipt, sort_keys=True))
+        return 0
     except (DispatchError, WorkflowControlError) as error:
         print(f"dispatch: BLOCKED: {error}", file=sys.stderr)
         return 2

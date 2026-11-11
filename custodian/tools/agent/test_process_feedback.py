@@ -61,6 +61,22 @@ class ProcessFeedbackTests(unittest.TestCase):
         self.assertEqual(ledger.classify_followup(fields["Follow-up"]), "unowned")
         self.assertNotIn("Friction severity", fields)
 
+    def test_canonical_agent_summary_home_is_discovered(self):
+        with tempfile.TemporaryDirectory() as temp:
+            repo = Path(temp)
+            home = repo / "custodian/docs/ai_context/agent_summaries/example-task"
+            home.mkdir(parents=True)
+            (home / "AGENT_SUMMARY.md").write_text(
+                "# Summary\nWorkstream: example-task\n" + RECEIPT
+            )
+            report = ledger.build_report(repo)
+            summaries = [row for row in report["sources"] if row["source_type"] == "summary"]
+            self.assertEqual(len(summaries), 1)
+            self.assertEqual(
+                summaries[0]["source"],
+                "custodian/docs/ai_context/agent_summaries/example-task/AGENT_SUMMARY.md",
+            )
+
     def test_next_handoff_workstream_is_not_misread_as_summary_identity(self):
         self.assertIsNone(ledger.summary_workstream("# Summary\n\n## Next Handoff\n- Next workstream: `other-task`\n- Workstream: `other-task`\n"))
 

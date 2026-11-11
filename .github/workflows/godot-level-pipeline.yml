@@ -19,12 +19,13 @@ on:
       - "custodian/content/routes/**"
       - "custodian/content/backgrounds/sundered_keep/**"
       - "custodian/tools/level_authoring/**"
-      - "custodian/tools/validation/**"
+      - "custodian/tools/validation/*level*.gd"
+      - "custodian/tools/validation/*route*.gd"
+      - "custodian/tools/validation/run_route_pipeline_suite.sh"
       - "design/04_architecture/ROUTE_TRAVERSAL_SYSTEM.md"
       - "design/05_levels/SUNDERED_KEEP_VISTA_APPROACH.md"
       - "design/05_levels/SUNDERED_KEEP_ROUTE_STAGES.md"
       - "custodian/docs/SCENE_HIERARCHY.md"
-      - ".github/workflows/godot-level-pipeline.yml"
   push:
     branches: [main]
     paths:
@@ -39,12 +40,13 @@ on:
       - "custodian/content/routes/**"
       - "custodian/content/backgrounds/sundered_keep/**"
       - "custodian/tools/level_authoring/**"
-      - "custodian/tools/validation/**"
+      - "custodian/tools/validation/*level*.gd"
+      - "custodian/tools/validation/*route*.gd"
+      - "custodian/tools/validation/run_route_pipeline_suite.sh"
       - "design/04_architecture/ROUTE_TRAVERSAL_SYSTEM.md"
       - "design/05_levels/SUNDERED_KEEP_VISTA_APPROACH.md"
       - "design/05_levels/SUNDERED_KEEP_ROUTE_STAGES.md"
       - "custodian/docs/SCENE_HIERARCHY.md"
-      - ".github/workflows/godot-level-pipeline.yml"
   workflow_dispatch:
 
 permissions:
@@ -58,6 +60,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          lfs: true
 
       - name: Install Godot 4.7
         uses: chickensoft-games/setup-godot@v2

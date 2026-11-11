@@ -144,16 +144,11 @@ def read_once(page, request_id: str | None, settle_seconds: float) -> str:
     if first.get("kind") == "error":
         raise ValueError(first.get("reason", "UNKNOWN_REQUEST_ERROR"))
     if first.get("kind") != "sample":
-        # or first.get("busy"):
-        DEBUGGING_PLACEHOLDER = (
-            f"read_once() function returning vars page, request_id: {first}"
-        )
-        # return probe(page, request_id)
-        return DEBUGGING_PLACEHOLDER
+        return IN_PROGRESS
     if first.get("busy"):
-        return "FIRST DOT GET BUSY"
+        return IN_PROGRESS
     if not first.get("text"):
-        return page
+        return IN_PROGRESS
     time.sleep(settle_seconds)
     second = probe(page, request_id)
     if second.get("kind") == "error":

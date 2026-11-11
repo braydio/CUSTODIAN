@@ -113,6 +113,36 @@ ROOT_SYNC_DEFERRAL_WORKSTREAMS = frozenset({
     "review-agent-paired-review-invalid-disposition-recovery-v1",
 })
 
+# One exact, owner-authorized recovery of the protected findings run recorded
+# in AGENT_PAIRED_REVIEW_FINDINGS_ARTIFACT_RECOVERY_V1. These pins are
+# intentionally local to this recovery protocol; they do not change generic
+# claim or review handling.
+FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM = "review-agent-owner-review-exception-direct-pr-provenance-recovery-v1"
+FINDINGS_ARTIFACT_RECOVERY_RUN_ID = "20261110T082919Z-283d4ae71a0c"
+FINDINGS_ARTIFACT_RECOVERY_IMPLEMENTATION = "f6ced9e60ceb6b6b57ee04b5bbd5dc0392140d7b"
+FINDINGS_ARTIFACT_RECOVERY_MAIN = "6189e1ec2e2101be8c788efcbdea487bf80603bf"
+FINDINGS_ARTIFACT_RECOVERY_REPORT_SHA256 = "7041404f41fc59c23661cde4b2936109f4e41412adc373794fcba8865a250b74"
+FINDINGS_ARTIFACT_RECOVERY_ARCHIVE_SHA256 = "9c7409c4c9173a6a6f1e146e425630a0f634ef7cf34eaf7b0f25df42b979b6f3"
+FINDINGS_ARTIFACT_RECOVERY_SUMMARY_SHA256 = "3c93fdc845466518a5d02424fa45c32f61f73391455a15f03bbfcb16bfceb28c"
+FINDINGS_ARTIFACT_RECOVERY_ARCHIVE = (
+    f"{PACKET_ROOT}/archived/REVIEW_AGENT_OWNER_REVIEW_EXCEPTION_DIRECT_PR_PROVENANCE_RECOVERY_V1.md"
+)
+FINDINGS_ARTIFACT_RECOVERY_ACTIVE = (
+    f"{PACKET_ROOT}/REVIEW_AGENT_OWNER_REVIEW_EXCEPTION_DIRECT_PR_PROVENANCE_RECOVERY_V1.md"
+)
+FINDINGS_ARTIFACT_RECOVERY_SUMMARY = (
+    "REVIEW_AGENT_OWNER_REVIEW_EXCEPTION_DIRECT_PR_PROVENANCE_RECOVERY_V1_CLAUDE_SUMMARY.md"
+)
+FINDINGS_ARTIFACT_RECOVERY_OWNER_WORKSTREAM = "agent-owner-review-exception-direct-pr-provenance-recovery-v1"
+FINDINGS_ARTIFACT_RECOVERY_OWNER_PACKET = (
+    f"{PACKET_ROOT}/archived/AGENT_OWNER_REVIEW_EXCEPTION_DIRECT_PR_PROVENANCE_RECOVERY_V1.md"
+)
+FINDINGS_ARTIFACT_RECOVERY_ORIGINAL_CHECKOUT = (
+    "/home/braydenchaffee/Projects/.custodian-turns/"
+    "turn-review-agent-owner-review-exception-direct-pr-provenance-recovery-v1-e6bcda30de4d"
+)
+FINDINGS_ARTIFACT_RECOVERY_JOURNAL_SCHEMA = "custodian.paired_review_findings_artifact_recovery.v1"
+
 # This second continuation is authorized only for the exact run whose first
 # fresh continuation exited 0 but omitted its canonical archived disposition.
 MISSING_ARCHIVED_DISPOSITION_WORKSTREAM = (
@@ -867,6 +897,37 @@ def parse_claim_receipt(stdout: str, workstream: str, repo: Path, *, allow_missi
             raise RunnerError("dispatcher worktree/branch identity could not be verified")
         if common_dir(worktree) != common_dir(repo):
             raise RunnerError("dispatcher returned a worktree from another repository")
+    if receipt.get("schema") == "custodian.dispatch.claim.v2":
+        if (not _RUN_ID_RE.fullmatch(str(receipt.get("run_id", "")))
+                or not re.fullmatch(r"[0-9a-f]{32}", str(receipt.get("turn_id", "")))
+                or receipt["run_id"].split("-", 1)[1] != receipt["turn_id"][:12]):
+            raise RunnerError("V2 dispatcher receipt omitted its exact turn/run identity")
+        acquisition_path = Path(str(receipt.get("acquisition_receipt", "")))
+        expected_root = common_dir(repo).resolve() / "custodian-turn-dispatcher-v2" / "acquisitions"
+        try:
+            if (acquisition_path.is_symlink()
+                    or not acquisition_path.resolve().is_relative_to(expected_root)
+                    or not acquisition_path.is_file()):
+                raise RunnerError("V2 acquisition receipt is outside the private repository receipt directory")
+            acquisition = json.loads(acquisition_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError, RuntimeError, ValueError) as exc:
+            raise RunnerError("V2 acquisition receipt is missing or malformed") from exc
+        if (acquisition.get("schema") != "custodian.turn_dispatcher_v2.acquisition.v1"
+                or acquisition.get("workstream") != workstream
+                or acquisition.get("turn_id") != receipt["turn_id"]
+                or acquisition.get("run_id") != receipt["run_id"]
+                or acquisition.get("checkout") != str(worktree)
+                or acquisition.get("local_branch") != receipt.get("branch")
+                or acquisition.get("branch") != receipt.get("remote_branch")
+                or acquisition.get("packet") != receipt.get("packet")):
+            raise RunnerError("V2 claim receipt does not match its authenticated acquisition record")
+        if not allow_missing_worktree:
+            source_sha = acquisition.get("source_sha")
+            if (not isinstance(source_sha, str)
+                    or not re.fullmatch(r"[0-9a-f]{40,64}", source_sha)
+                    or subprocess.run(["git", "merge-base", "--is-ancestor", source_sha, "HEAD"],
+                                      cwd=worktree, capture_output=True).returncode):
+                raise RunnerError("V2 checkout does not descend from its recorded acquisition source")
     expected_packet = f"{PACKET_ROOT}/{Path(receipt.get('packet', '')).name}"
     if receipt.get("packet") != expected_packet:
         raise RunnerError("dispatcher returned an unexpected packet path")
@@ -4807,6 +4868,24 @@ def _worktree_inventory(worktree: Path) -> dict[str, str]:
     return inventory
 
 
+def _ignored_worktree_inventory(worktree: Path) -> list[tuple[str, str]]:
+    rows = _changed_paths(worktree, "status", "--porcelain=v1", "--ignored=matching", "--untracked-files=all")
+    ignored: list[tuple[str, str]] = []
+    for row in rows:
+        if not row.startswith("!! "):
+            continue
+        relative = row[3:].rstrip("/")
+        path = worktree / relative
+        if path.is_file() and not path.is_symlink():
+            ignored.append((relative, _sha256_bytes(path.read_bytes())))
+        elif path.is_dir() and not path.is_symlink():
+            ignored.extend((child.relative_to(worktree).as_posix(), _sha256_bytes(child.read_bytes()))
+                           for child in sorted(path.rglob("*")) if child.is_file() and not child.is_symlink())
+        else:
+            raise RunnerError("ignored checkout state is unsafe or unreadable")
+    return sorted(ignored)
+
+
 def _closeout_intent(workstream: str, run_id: str, outcome: str, ids: tuple[str, ...], provenance: str,
                      tip: str, reviewed_main: str, implementation_commit: str) -> dict:
     return {"workstream": workstream, "run_id": run_id, "outcome": outcome, "finding_ids": list(ids),
@@ -4824,6 +4903,533 @@ def _default_lander(worktree: Path) -> None:
                             env={**os.environ, "CUSTODIAN_WORKSTREAM_FINISH": "1"}, text=True, capture_output=True)
     if landed.returncode:
         raise RunnerError("land_main blocked; recovery state preserved: " + redact(landed.stderr or landed.stdout))
+
+
+def plan_findings_artifact_recovery(repo: Path, workstream: str, run_id: str,
+                                    isolated_checkout: Path) -> dict:
+    """Read-only, exact-run plan for importing reviewer-authored findings evidence."""
+    if (workstream != FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM
+            or run_id != FINDINGS_ARTIFACT_RECOVERY_RUN_ID):
+        raise RunnerError("findings-artifact recovery accepts only its packet-pinned review run")
+    repo = Path(git(repo, "rev-parse", "--show-toplevel")).resolve()
+    lock_path = common_dir(repo).resolve() / "custodian-review-runs" / "locks" / f"{workstream}.lock"
+    if lock_path.is_symlink() or not lock_path.is_file():
+        raise RunnerError("original paired-review supervisor lock is missing or unsafe")
+    previous = os.environ.get("GIT_OPTIONAL_LOCKS")
+    os.environ["GIT_OPTIONAL_LOCKS"] = "0"
+    try:
+        with lock_path.open("rb") as lock:
+            try:
+                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except BlockingIOError as exc:
+                raise RunnerError("another supervisor owns the exact findings review") from exc
+            return _plan_findings_artifact_recovery_unlocked(repo, run_id, isolated_checkout)
+    finally:
+        if previous is None:
+            os.environ.pop("GIT_OPTIONAL_LOCKS", None)
+        else:
+            os.environ["GIT_OPTIONAL_LOCKS"] = previous
+
+
+def _construct_findings_artifact_closeout(archive_text: str, summary_text: str) -> tuple[str, str]:
+    """Add only closeout metadata and findings text corroborated by the reviewer artifacts."""
+    outcome, error = review_outcome.parse_review_outcome(archive_text)
+    if error or outcome is None or outcome.get("Outcome") != "findings":
+        raise RunnerError("reviewer archive has no canonical findings disposition")
+    for finding_id in ("R0-01", "R0-02"):
+        if review_outcome.finding_ids(outcome).count(finding_id) != 1 or finding_id not in summary_text:
+            raise RunnerError(f"reviewer summary does not support exactly one {finding_id}")
+    findings_match = re.search(r"(?m)^## Findings\s*$", archive_text)
+    if not findings_match:
+        raise RunnerError("reviewer archive omitted its authored Findings section")
+    section_end = re.search(r"(?m)^## [^\r\n]*$", archive_text[findings_match.end():])
+    findings_end = (findings_match.end() + section_end.start()
+                    if section_end else len(archive_text))
+    findings_section = archive_text[findings_match.start():findings_end].strip() + "\n\n"
+    if (set(re.findall(r"\bR0-\d{2}\b", findings_section)) != {"R0-01", "R0-02"}
+            or any(len(re.findall(rf"(?<![A-Za-z0-9-]){finding_id}(?![A-Za-z0-9-])", findings_section)) != 1
+                   for finding_id in ("R0-01", "R0-02"))):
+        raise RunnerError("reviewer Findings section does not contain exactly its pinned finding IDs")
+    status = archive_text[:findings_match.start()] + archive_text[findings_end:]
+    marker = "## Review Outcome\n"
+    if status.count(marker) != 1:
+        raise RunnerError("reviewer archive must contain one canonical outcome insertion point")
+    status = status.replace(marker, findings_section + marker, 1)
+    statuses = re.findall(r"(?m)^- Status: `[^`\r\n]+`$", status)
+    if statuses != ["- Status: `ready`"]:
+        raise RunnerError("reviewer archive must contain exactly one ready status for findings closeout")
+    status = re.sub(r"(?m)^- Status: `ready`$", "- Status: `complete`", status, count=1)
+    if re.search(r"(?m)^## Next Handoff\s*$", summary_text):
+        raise RunnerError("reviewer summary already has a Next Handoff section requiring reconciliation")
+    summary = summary_text.rstrip() + (
+        "\n\n## Next Handoff\n\n"
+        "Retain R0-01 and R0-02 as findings. Wait for the separately authorized exact-run recovery "
+        "apply after this implementation receives fresh independent acceptance; do not add a PASS "
+        "receipt to the reviewed target.\n"
+    )
+    return status, summary
+
+
+def _findings_supported_by_raw_final(final: str) -> bool:
+    """Require the raw reviewer final to independently support both pinned findings."""
+    required = {
+        "R0-01": ("source blobs", "owner PR recovery source blob changed"),
+        "R0-02": ("diagnostic-ref absence", "git ls-remote", "SSH configuration permissions"),
+    }
+    return all(finding_id in final and all(phrase.casefold() in final.casefold() for phrase in phrases)
+               for finding_id, phrases in required.items())
+
+
+def _task_packet_readme_shell(text: str) -> tuple[str, str] | None:
+    start_marker = "<!-- task_packet_index:managed:start -->"
+    end_marker = "<!-- task_packet_index:managed:end -->"
+    if text.count(start_marker) != 1 or text.count(end_marker) != 1:
+        return None
+    start = text.index(start_marker)
+    end = text.index(end_marker, start + len(start_marker))
+    if end < start:
+        return None
+    return text[:start], text[end + len(end_marker):]
+
+
+def _plan_findings_artifact_recovery_unlocked(repo: Path, run_id: str,
+                                               isolated_checkout: Path) -> dict:
+    main = FINDINGS_ARTIFACT_RECOVERY_MAIN
+    observed_main = _cached_remote_ref_for_readonly_plan(repo, "main")
+    if subprocess.run(["git", "merge-base", "--is-ancestor", main, observed_main],
+                      cwd=repo, capture_output=True).returncode:
+        raise RunnerError("current origin/main does not descend from the packet-pinned review baseline")
+    common = common_dir(repo).resolve()
+    journal_path = (common / "custodian-review-runs" / FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM
+                    / f"{FINDINGS_ARTIFACT_RECOVERY_RUN_ID}.findings-artifact-recovery.json")
+    if journal_path.is_symlink():
+        raise RunnerError("recovery journal path is unsafe")
+    journal_parent = common
+    for part in ("custodian-review-runs", FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM):
+        journal_parent = journal_parent / part
+        if journal_parent.is_symlink() or (journal_parent.exists() and not journal_parent.is_dir()):
+            raise RunnerError("recovery journal parent is unsafe")
+    current_main = observed_main
+    if journal_path.is_file():
+        try:
+            prior_journal = json.loads(journal_path.read_text(encoding="utf-8"))
+            current_main = prior_journal["plan"]["current_main"]
+        except (OSError, json.JSONDecodeError, KeyError, TypeError) as exc:
+            raise RunnerError("recovery journal cannot pin the original main baseline") from exc
+        if (not re.fullmatch(r"[0-9a-f]{40,64}", str(current_main))
+                or subprocess.run(["git", "merge-base", "--is-ancestor", current_main, observed_main],
+                                  cwd=repo, capture_output=True).returncode):
+            raise RunnerError("origin/main no longer descends from the journaled recovery base")
+    run_dir = common / "custodian-review-runs" / FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM / run_id
+    original = Path(FINDINGS_ARTIFACT_RECOVERY_ORIGINAL_CHECKOUT)
+    required = {"metadata.json", "claim.stdout", "claim-receipt.json", "claim.stderr", "codex.jsonl",
+                "codex.stderr", "last-message.txt", "validation.json", "coordinator-validation.json", "RECOVERY.md"}
+    manifest = _file_manifest(run_dir)
+    if run_dir.is_symlink() or set(manifest) != required:
+        raise RunnerError("exact original run evidence inventory changed")
+    for name in required:
+        if (run_dir / name).is_symlink():
+            raise RunnerError("original review evidence contains an unsafe symbolic link")
+    metadata_bytes = (run_dir / "metadata.json").read_bytes()
+    metadata = json.loads(metadata_bytes)
+    branch = f"agent/{FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM}"
+    if (metadata.get("schema") != SCHEMA or metadata.get("run_id") != run_id
+            or metadata.get("workstream") != FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM
+            or metadata.get("phase") != "post_exit_recovery"
+            or metadata.get("fresh") is not True or metadata.get("exit_code") != 0
+            or metadata.get("reviewed_main") != main or metadata.get("branch") != branch
+            or metadata.get("worktree") != str(original)
+            or metadata.get("post_exit_error") != "reviewer session metadata does not authenticate the pinned PASS"):
+        raise RunnerError("run metadata does not identify the exact exited findings review")
+    if not original.is_dir() or original.is_symlink() or common_dir(original).resolve() != common:
+        raise RunnerError("protected original review checkout is missing or belongs to another repository")
+    if git(original, "branch", "--show-current") != branch:
+        raise RunnerError("protected review checkout is on a different branch")
+    tip = _cached_remote_ref_for_readonly_plan(repo, branch)
+    if git(original, "rev-parse", "HEAD") != tip or tip != main:
+        raise RunnerError("protected review checkout is not the exact published branch tip")
+    owners = _process_owns_worktree(original)
+    if owners:
+        raise RunnerError("a live process still owns the protected original review checkout")
+    active = FINDINGS_ARTIFACT_RECOVERY_ACTIVE
+    archive = FINDINGS_ARTIFACT_RECOVERY_ARCHIVE
+    packet = parse_packet(active, _show_at(repo, main, active))
+    if (packet.error or packet.kind != "review"
+            or packet.workstream != FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM
+            or packet.review_target_workstream != FINDINGS_ARTIFACT_RECOVERY_OWNER_WORKSTREAM
+            or packet.review_target_packet != FINDINGS_ARTIFACT_RECOVERY_OWNER_PACKET):
+        raise RunnerError("pinned active review packet identity changed")
+    claim, source = _host_validation_claim_receipt(
+        run_dir, FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM, repo,
+        {**metadata, "recovery_worktree": str(original)}, active)
+    if (source != "claim-receipt.json" or claim.get("worktree") != str(original)
+            or claim.get("branch") != branch or claim.get("packet") != active
+            or claim.get("turn_id") != "e6bcda30de4d4dc181c38a3378a0dabe"):
+        raise RunnerError("structured claim and V2 acquisition do not authenticate this exact review")
+    archive_path, summary_path = original / archive, original / FINDINGS_ARTIFACT_RECOVERY_SUMMARY
+    if any(p.is_symlink() or not p.is_file() for p in (archive_path, summary_path)):
+        raise RunnerError("a packet-pinned reviewer artifact is missing or unsafe")
+    source_status = _changed_paths(original, "status", "--porcelain=v1", "--untracked-files=all")
+    expected_untracked = {f"?? {archive}", f"?? {FINDINGS_ARTIFACT_RECOVERY_SUMMARY}"}
+    if set(source_status) != expected_untracked:
+        raise RunnerError("protected review checkout contains dirty or out-of-scope source state")
+    archive_bytes, summary_bytes = archive_path.read_bytes(), summary_path.read_bytes()
+    if (_sha256_bytes(archive_bytes) != FINDINGS_ARTIFACT_RECOVERY_ARCHIVE_SHA256
+            or _sha256_bytes(summary_bytes) != FINDINGS_ARTIFACT_RECOVERY_SUMMARY_SHA256):
+        raise RunnerError("reviewer-authored artifact digest differs from the task packet")
+    source_archive_text, source_summary_text = archive_bytes.decode(), summary_bytes.decode()
+    archive_text, summary_text = _construct_findings_artifact_closeout(
+        source_archive_text, source_summary_text)
+    outcome, error = review_outcome.parse_review_outcome(archive_text)
+    if error or outcome is None or outcome.get("Outcome") != "findings":
+        raise RunnerError("archived reviewer artifact lacks one canonical findings outcome")
+    target_path = FINDINGS_ARTIFACT_RECOVERY_OWNER_PACKET
+    target = _show_at(repo, main, target_path)
+    if _show_at(repo, observed_main, target_path) != target:
+        raise RunnerError("current main changed the reviewed target packet after its pinned baseline")
+    implementation, identity_error = resolve_target_implementation_commit(
+        repo, main, target_path, FINDINGS_ARTIFACT_RECOVERY_OWNER_WORKSTREAM, target)
+    if identity_error or implementation != FINDINGS_ARTIFACT_RECOVERY_IMPLEMENTATION:
+        raise RunnerError("pinned findings target implementation identity changed")
+    binding = review_outcome.outcome_identity_error(
+        outcome, review_workstream=FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM,
+        target_workstream=FINDINGS_ARTIFACT_RECOVERY_OWNER_WORKSTREAM,
+        reviewed_main=main, implementation_commit=implementation, run_id=run_id, review_cycle=0)
+    if (binding or review_outcome.finding_ids(outcome) != ("R0-01", "R0-02")
+            or outcome.get("Reviewer context") != "fresh"
+            or outcome.get("Reviewer provenance") != "different-agent"):
+        raise RunnerError("canonical findings identity, provenance or finding IDs changed")
+    final, session = _parse_redacted_final_session(
+        run_dir, metadata, _show_at(repo, main, "custodian/tools/agent/paired_review_runner.py"),
+        _show_at(repo, main, "custodian/tools/agent/workflow_control.py"))
+    if ("Outcome: findings" not in final or not _findings_supported_by_raw_final(final)
+            or set(re.findall(r"\bR0-\d{2}\b", final)) != {"R0-01", "R0-02"}
+            or "R0-01" not in summary_text or "R0-02" not in summary_text
+            or FINDINGS_ARTIFACT_RECOVERY_REPORT_SHA256 not in summary_text):
+        raise RunnerError("reviewer final or summary does not corroborate the canonical findings")
+    host = _host_evidence_for_continuation(
+        repo, original, run_dir, metadata, main, implementation,
+        FINDINGS_ARTIFACT_RECOVERY_OWNER_WORKSTREAM, target_path)
+    if host.get("report_sha256") != FINDINGS_ARTIFACT_RECOVERY_REPORT_SHA256:
+        raise RunnerError("host-validation report differs from its pinned digest")
+    authoring_chat = parse_packet(archive, archive_text).authoring_chat
+    reasons = nonpassing_review_reasons(
+        archive_text, summary_text, target, repo=repo,
+        workstream=FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM,
+        active_packet_path=active, target_workstream=FINDINGS_ARTIFACT_RECOVERY_OWNER_WORKSTREAM,
+        target_packet_path=target_path, target_content=target, authoring_chat=authoring_chat,
+        reviewed_main=main, run_id=run_id)
+    if reasons:
+        raise RunnerError("preserved findings artifacts fail canonical closeout validation: " + "; ".join(reasons))
+    inventory = _worktree_inventory(original)
+    ignored = _ignored_worktree_inventory(original)
+    checkout = Path(isolated_checkout).expanduser().resolve()
+    if checkout in {original, repo} or not checkout.is_relative_to(repo.parent.resolve()):
+        raise RunnerError("recovery checkout must be a separate sibling checkout")
+    recovery_branch = f"recovery/{FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM}-{run_id.rsplit('-', 1)[1]}"
+    remote_recovery = subprocess.run(["git", "ls-remote", "--heads", "origin", f"refs/heads/{recovery_branch}"],
+                                     cwd=repo, text=True, capture_output=True)
+    if remote_recovery.returncode:
+        raise RunnerError("cannot authenticate exact recovery-branch state")
+    remote_rows = [row.split() for row in remote_recovery.stdout.splitlines() if row.split()]
+    if len(remote_rows) > 1 or (remote_rows and (len(remote_rows[0]) != 2
+            or remote_rows[0][1] != f"refs/heads/{recovery_branch}"
+            or not re.fullmatch(r"[0-9a-f]{40,64}", remote_rows[0][0]))):
+        raise RunnerError("recovery branch ref is malformed or ambiguous")
+    remote_sha = remote_rows[0][0] if remote_rows else None
+    checkout_state = "absent"
+    if checkout.is_symlink():
+        raise RunnerError("recovery checkout cannot be a symbolic link")
+    if checkout.exists():
+        try:
+            identity_ok = (common_dir(checkout).resolve() == common
+                           and git(checkout, "branch", "--show-current") == recovery_branch)
+        except Exception:
+            identity_ok = False
+        if not identity_ok:
+            raise RunnerError("existing recovery checkout has a different identity")
+        checkout_state = "existing"
+    journal = None
+    if journal_path.exists():
+        try:
+            journal = json.loads(journal_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            raise RunnerError("recovery journal is malformed") from exc
+        if (not isinstance(journal, dict) or journal.get("schema") != FINDINGS_ARTIFACT_RECOVERY_JOURNAL_SCHEMA
+                or journal.get("recovery_branch") != recovery_branch
+                or journal.get("recovery_checkout") != str(checkout)
+                or journal.get("stage") not in {"prepared", "checkout_creation_started", "checkout_created",
+                                                "artifact_write_started", "artifacts_written", "commit_started",
+                                                "committed", "integrity_report_write_started", "integrity_report_written",
+                                                "publish_started", "published", "landing_started", "landed", "complete"}):
+            raise RunnerError("recovery journal identity or stage is invalid")
+    if remote_sha and journal is None:
+        raise RunnerError("recovery branch exists without its authenticated recovery journal")
+    if checkout_state == "existing" and journal is None:
+        raise RunnerError("recovery checkout exists without its authenticated recovery journal")
+    if checkout_state == "existing":
+        checkout_changes = _changed_paths(checkout, "status", "--porcelain=v1", "--untracked-files=all")
+        unexpected = {line[3:] for line in checkout_changes} - {
+            FINDINGS_ARTIFACT_RECOVERY_ACTIVE, FINDINGS_ARTIFACT_RECOVERY_ARCHIVE,
+            FINDINGS_ARTIFACT_RECOVERY_SUMMARY, f"{PACKET_ROOT}/README.md",
+        }
+        if unexpected:
+            raise RunnerError("recovery checkout contains unexpected files: " + ", ".join(sorted(unexpected)))
+    plan = {
+        "schema": "custodian.paired_review_findings_artifact_recovery_plan.v1",
+        "workstream": FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM, "run_id": run_id, "reviewed_main": main, "current_main": current_main,
+        "implementation_commit": implementation, "review_branch": branch, "review_tip": tip,
+        "review_checkout": str(original), "claim": claim, "claim_source": source,
+        "claim_receipt_sha256": _sha256_bytes((run_dir / "claim-receipt.json").read_bytes()),
+        "acquisition_sha256": _sha256_bytes(Path(claim["acquisition_receipt"]).read_bytes()),
+        "run_manifest": manifest, "metadata_sha256": _sha256_bytes(metadata_bytes),
+        "reviewer_session": session, "validation_report_sha256": host["report_sha256"],
+        "validation_metadata_sha256": host["metadata_sha256"],
+        "source_archive_sha256": _sha256_bytes(archive_bytes),
+        "source_summary_sha256": _sha256_bytes(summary_bytes),
+        "archive_sha256": _sha256_bytes(archive_text.encode()),
+        "summary_sha256": _sha256_bytes(summary_text.encode()),
+        "archive_text": archive_text, "summary_text": summary_text,
+        "original_worktree_inventory": inventory, "original_ignored_inventory": sorted(ignored),
+        "outcome": outcome, "finding_ids": list(review_outcome.finding_ids(outcome)),
+        "target_sha256": _sha256_bytes(target.encode()), "recovery_branch": recovery_branch,
+        "recovery_checkout": str(checkout), "journal": str(journal_path),
+        "bounded_changes": sorted([active, archive, FINDINGS_ARTIFACT_RECOVERY_SUMMARY,
+                                   f"{PACKET_ROOT}/README.md"]),
+        "action": "authenticated-findings-closeout-without-target-receipt-or-pass",
+    }
+    plan["plan_sha256"] = _sha256_bytes(json.dumps(plan, sort_keys=True, separators=(",", ":")).encode())
+    if journal and (journal.get("plan_sha256") != plan["plan_sha256"]
+                    or journal.get("plan") != {k: v for k, v in plan.items() if k != "plan_sha256"}):
+        raise RunnerError("recovery journal does not authenticate this exact findings plan")
+    if journal and remote_sha and journal.get("published_sha") not in (None, remote_sha):
+        raise RunnerError("remote recovery branch differs from the journaled publication")
+    plan["recovery_checkout_state"] = checkout_state
+    plan["remote_recovery_sha"] = remote_sha
+    plan["journal_stage"] = journal.get("stage") if journal else None
+    return plan
+
+
+def apply_findings_artifact_recovery(repo: Path, workstream: str, run_id: str,
+                                     isolated_checkout: Path, plan_sha256: str) -> dict:
+    """Apply only a freshly authenticated exact-run findings closeout plan."""
+    if (workstream != FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM
+            or run_id != FINDINGS_ARTIFACT_RECOVERY_RUN_ID):
+        raise RunnerError("findings-artifact recovery accepts only its packet-pinned review run")
+    if not re.fullmatch(r"[0-9a-f]{64}", plan_sha256):
+        raise RunnerError("findings-artifact recovery requires the exact 64-character plan digest")
+    repo = Path(git(repo, "rev-parse", "--show-toplevel")).resolve()
+    lock_path = common_dir(repo).resolve() / "custodian-review-runs" / "locks" / f"{workstream}.lock"
+    if lock_path.is_symlink() or not lock_path.is_file():
+        raise RunnerError("original paired-review supervisor lock is missing or unsafe")
+    with lock_path.open("rb") as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as exc:
+            raise RunnerError("another supervisor owns the exact findings review") from exc
+        return _apply_findings_artifact_recovery_locked(
+            repo, workstream, run_id, isolated_checkout, plan_sha256)
+
+
+def _apply_findings_artifact_recovery_locked(repo: Path, workstream: str, run_id: str,
+                                             isolated_checkout: Path, plan_sha256: str) -> dict:
+    plan = _plan_findings_artifact_recovery_unlocked(repo, run_id, isolated_checkout)
+    if plan.get("plan_sha256") != plan_sha256:
+        raise RunnerError("findings-artifact recovery plan digest is stale or altered")
+    common = common_dir(repo).resolve()
+    run_dir = common / "custodian-review-runs" / workstream / run_id
+    journal_path = Path(plan["journal"])
+    journal = None
+    if journal_path.exists():
+        journal = json.loads(journal_path.read_text(encoding="utf-8"))
+        if (journal.get("schema") != FINDINGS_ARTIFACT_RECOVERY_JOURNAL_SCHEMA
+                or journal.get("plan_sha256") != plan_sha256
+                or journal.get("plan") != {k: v for k, v in plan.items()
+                                             if k not in {"plan_sha256", "recovery_checkout_state", "remote_recovery_sha", "journal_stage"}}):
+            raise RunnerError("recovery journal does not bind the exact apply plan")
+
+    def record(stage: str, **extra) -> None:
+        nonlocal journal
+        base = journal or {"schema": FINDINGS_ARTIFACT_RECOVERY_JOURNAL_SCHEMA,
+                           "plan_sha256": plan_sha256,
+                           "plan": {k: v for k, v in plan.items()
+                                    if k not in {"plan_sha256", "recovery_checkout_state", "remote_recovery_sha", "journal_stage"}},
+                           "recovery_branch": plan["recovery_branch"],
+                           "recovery_checkout": plan["recovery_checkout"]}
+        journal = {**base, "stage": stage, **extra}
+        _write_atomic(journal_path, json.dumps(journal, indent=2, sort_keys=True) + "\n")
+
+    def revalidate() -> None:
+        fresh = _plan_findings_artifact_recovery_unlocked(repo, run_id, isolated_checkout)
+        if fresh.get("plan_sha256") != plan_sha256:
+            raise RunnerError("exact findings evidence or refs changed after the plan; apply stopped")
+
+    if journal is None:
+        record("prepared")
+    checkout = Path(plan["recovery_checkout"])
+    branch = plan["recovery_branch"]
+    if not checkout.exists():
+        revalidate()
+        record("checkout_creation_started")
+        git(repo, "worktree", "add", "-b", branch, str(checkout), plan["current_main"])
+    if common_dir(checkout).resolve() != common or git(checkout, "branch", "--show-current") != branch:
+        raise RunnerError("recovery checkout identity changed during apply")
+    if journal.get("stage") in {"prepared", "checkout_creation_started"}:
+        record("checkout_created", checkout_head=git(checkout, "rev-parse", "HEAD"))
+    allowed = set(plan["bounded_changes"])
+    dirty = {line[3:] for line in _changed_paths(checkout, "status", "--porcelain=v1", "--untracked-files=all")}
+    if dirty - allowed:
+        raise RunnerError("recovery checkout has out-of-scope changes: " + ", ".join(sorted(dirty - allowed)))
+    if git(checkout, "rev-parse", "HEAD") != plan["current_main"] and not journal.get("commit_sha"):
+        head = git(checkout, "rev-parse", "HEAD")
+        if (journal.get("stage") != "commit_started"
+                or subprocess.run(["git", "merge-base", "--is-ancestor", plan["current_main"], head],
+                                  cwd=checkout, capture_output=True).returncode
+                or git(checkout, "rev-list", "--count", f"{plan['current_main']}..{head}") != "1"
+                or _branch_scope_error(checkout, head, set(plan["bounded_changes"]))):
+            raise RunnerError("recovery checkout does not match its digest-pinned main or interrupted commit")
+    active, archive = FINDINGS_ARTIFACT_RECOVERY_ACTIVE, FINDINGS_ARTIFACT_RECOVERY_ARCHIVE
+    summary = FINDINGS_ARTIFACT_RECOVERY_SUMMARY
+    artifact_paths = (archive, summary)
+    completed_artifacts = {"artifacts_written", "commit_started", "committed", "integrity_report_write_started",
+                           "integrity_report_written", "publish_started", "published", "landing_started",
+                           "landed", "complete"}
+    if journal.get("stage") not in completed_artifacts:
+        revalidate()
+        record("artifact_write_started")
+        for rel, key in zip(artifact_paths, ("archive_text", "summary_text")):
+            target = checkout / rel
+            target.parent.mkdir(parents=True, exist_ok=True)
+            text = plan[key]
+            if target.exists() and target.read_text(encoding="utf-8") != text:
+                raise RunnerError("recovery artifact path already contains different content")
+            _write_atomic(target, text)
+        active_path = checkout / active
+        active_path.unlink(missing_ok=True)
+        index = subprocess.run([sys.executable, str(checkout / "custodian/tools/agent/task_packet_index.py"), "--write"],
+                               cwd=checkout, text=True, capture_output=True)
+        if index.returncode:
+            raise RunnerError("managed packet index update failed: " + redact(index.stderr or index.stdout))
+        record("artifacts_written", artifact_hashes={rel: _sha256_bytes((checkout / rel).read_bytes())
+                                                       for rel in (archive, summary, f"{PACKET_ROOT}/README.md")})
+    else:
+        for rel, key in zip(artifact_paths, ("archive_text", "summary_text")):
+            if not (checkout / rel).is_file() or _sha256_bytes((checkout / rel).read_bytes()) != plan["archive_sha256" if key == "archive_text" else "summary_sha256"]:
+                raise RunnerError("journaled recovery artifact was changed")
+        if (checkout / active).exists():
+            raise RunnerError("journaled recovery still contains the active review packet")
+    base_readme = _show_at(checkout, plan["current_main"], f"{PACKET_ROOT}/README.md")
+    updated_readme = (checkout / f"{PACKET_ROOT}/README.md").read_text(encoding="utf-8")
+    base_shell, updated_shell = _task_packet_readme_shell(base_readme), _task_packet_readme_shell(updated_readme)
+    if base_shell is None or updated_shell is None or base_shell != updated_shell:
+        raise RunnerError("recovery changed task-packet README content outside its managed index")
+    index_check = subprocess.run([sys.executable, str(checkout / "custodian/tools/agent/task_packet_index.py")],
+                                 cwd=checkout, text=True, capture_output=True)
+    if index_check.returncode:
+        raise RunnerError("managed task-packet index is inconsistent: "
+                          + redact(index_check.stderr or index_check.stdout))
+    target_before = _show_at(checkout, plan["current_main"], FINDINGS_ARTIFACT_RECOVERY_OWNER_PACKET)
+    if _show_at(checkout, "HEAD", FINDINGS_ARTIFACT_RECOVERY_OWNER_PACKET) != target_before:
+        raise RunnerError("reviewed target changed in the isolated recovery checkout")
+    archive_text = (checkout / archive).read_text(encoding="utf-8")
+    summary_text = (checkout / summary).read_text(encoding="utf-8")
+    reasons = nonpassing_review_reasons(
+        archive_text, summary_text, target_before, repo=checkout,
+        workstream=workstream, active_packet_path=active,
+        target_workstream=FINDINGS_ARTIFACT_RECOVERY_OWNER_WORKSTREAM,
+        target_packet_path=FINDINGS_ARTIFACT_RECOVERY_OWNER_PACKET, target_content=target_before,
+        authoring_chat=parse_packet(archive, archive_text).authoring_chat,
+        reviewed_main=plan["reviewed_main"], run_id=run_id)
+    if reasons:
+        raise RunnerError("recovered findings closeout failed verifier: " + "; ".join(reasons))
+    completed_commit = {"committed", "integrity_report_write_started", "integrity_report_written",
+                        "publish_started", "published", "landing_started", "landed", "complete"}
+    if journal.get("stage") not in completed_commit:
+        revalidate()
+        record("commit_started")
+        _stage_bounded(checkout, allowed)
+        staged = set(_changed_paths(checkout, "diff", "--cached", "--name-only"))
+        if staged - allowed:
+            raise RunnerError("recovery staged paths outside the bounded closeout")
+        if staged:
+            commit = subprocess.run(["git", "commit", "-m", "paired review findings artifact recovery [skip render]"],
+                                    cwd=checkout, text=True, capture_output=True)
+            if commit.returncode:
+                raise RunnerError(redact(commit.stderr or commit.stdout))
+        commit_sha = git(checkout, "rev-parse", "HEAD")
+        record("committed", commit_sha=commit_sha)
+    state = landed_nonpassing_review_state(
+        checkout, "HEAD", workstream, active,
+        FINDINGS_ARTIFACT_RECOVERY_OWNER_WORKSTREAM, FINDINGS_ARTIFACT_RECOVERY_OWNER_PACKET,
+        target_before, parse_packet(archive, archive_text).authoring_chat,
+        plan["reviewed_main"], run_id)
+    if not state["complete"]:
+        raise RunnerError("committed closeout failed landed verification: " + "; ".join(state["reasons"]))
+    scope_error = _branch_scope_error(checkout, git(checkout, "rev-parse", "HEAD"), allowed)
+    if scope_error:
+        raise RunnerError("committed recovery failed bounded-scope verification: " + scope_error)
+    integrity = nonpassing_integrity_report("findings")
+    report = {**integrity, "integrity_only": True, "plan_sha256": plan_sha256,
+              "outcome": "findings", "finding_ids": plan["finding_ids"],
+              "target_sha256": plan["target_sha256"], "original_review_worktree_untouched": True}
+    integrity_path = run_dir.parent / f"{run_id}.findings-closeout-integrity.json"
+    if journal.get("stage") not in {"integrity_report_written", "publish_started", "published", "landing_started", "landed", "complete"}:
+        record("integrity_report_write_started")
+        _write_atomic(integrity_path, json.dumps(report, indent=2, sort_keys=True) + "\n")
+        record("integrity_report_written", integrity_report_sha256=_sha256_bytes(integrity_path.read_bytes()))
+    if journal.get("stage") not in {"published", "landing_started", "landed", "complete"}:
+        revalidate()
+        record("publish_started")
+        push = subprocess.run(["git", "push", "-u", "origin", f"HEAD:refs/heads/{branch}"],
+                              cwd=checkout, text=True, capture_output=True)
+        if push.returncode:
+            raise RunnerError("recovery publication failed; journal and checkout preserved: "
+                              + redact(push.stderr or push.stdout))
+        published = git(repo, "ls-remote", "--heads", "origin", f"refs/heads/{branch}").split()[0]
+        if published != git(checkout, "rev-parse", "HEAD"):
+            raise RunnerError("published recovery SHA does not match the journaled local commit")
+        record("published", published_sha=published)
+    if journal.get("stage") not in {"landed", "complete"}:
+        record("landing_started")
+        revalidate()
+        git(checkout, "fetch", "origin", "main")
+        head = git(checkout, "rev-parse", "HEAD")
+        if subprocess.run(["git", "merge-base", "--is-ancestor", head, "origin/main"],
+                          cwd=checkout, capture_output=True).returncode:
+            land = subprocess.run([sys.executable, str(checkout / "custodian/tools/agent/land_main.py"),
+                                   "--allow-published-ref", f"refs/remotes/origin/{branch}"],
+                                  cwd=checkout, env={**os.environ, "CUSTODIAN_WORKSTREAM_FINISH": "1"},
+                                  text=True, capture_output=True)
+            if land.returncode:
+                raise RunnerError("recovery landing failed; published recovery branch preserved: "
+                                  + redact(land.stderr or land.stdout))
+            git(checkout, "fetch", "origin", "main")
+            head = git(checkout, "rev-parse", "HEAD")
+            if subprocess.run(["git", "merge-base", "--is-ancestor", head, "origin/main"],
+                              cwd=checkout, capture_output=True).returncode:
+                raise RunnerError("recovery commit did not land on origin/main")
+        record("landed", landed_sha=head)
+    landed_state = landed_nonpassing_review_state(
+        checkout, "origin/main", workstream, active,
+        FINDINGS_ARTIFACT_RECOVERY_OWNER_WORKSTREAM, FINDINGS_ARTIFACT_RECOVERY_OWNER_PACKET,
+        target_before, parse_packet(archive, archive_text).authoring_chat,
+        plan["reviewed_main"], run_id)
+    if not landed_state["complete"]:
+        raise RunnerError("origin/main closeout integrity verification failed: "
+                          + "; ".join(landed_state["reasons"]))
+    if (_worktree_inventory(Path(plan["review_checkout"])) != plan["original_worktree_inventory"]
+            or _ignored_worktree_inventory(Path(plan["review_checkout"])) != plan["original_ignored_inventory"]
+            or git(Path(plan["review_checkout"]), "rev-parse", "HEAD") != plan["review_tip"]
+            or _file_manifest(run_dir) != plan["run_manifest"]):
+        raise RunnerError("protected original checkout or run evidence changed during recovery")
+    result = {"schema": FINDINGS_ARTIFACT_RECOVERY_JOURNAL_SCHEMA, "stage": "complete",
+              "workstream": workstream, "run_id": run_id, "plan_sha256": plan_sha256,
+              "outcome": "findings", "finding_ids": plan["finding_ids"],
+              "landed_sha": git(checkout, "rev-parse", "origin/main"), "target_unchanged": True,
+              "original_review_worktree_untouched": True, "run_evidence_untouched": True,
+              "pass_receipt_written": False}
+    record("complete", result=result)
+    return result
 
 
 def recover_closeout(repo: Path, workstream: str, run_id: str, *, isolated_checkout: Path, outcome: str,
@@ -5056,6 +5662,34 @@ def _recover_locked(repo, common, workstream, run_id, run_dir, metadata, journal
               "original_worktree_untouched": True}
     advance("complete", result=result)
     return result
+
+
+def _findings_artifact_recovery_main(argv: list[str]) -> int:
+    parser = argparse.ArgumentParser(prog="paired_review_runner.py recover-findings-artifacts")
+    parser.add_argument("review_workstream", choices=(FINDINGS_ARTIFACT_RECOVERY_WORKSTREAM,))
+    parser.add_argument("run_id", choices=(FINDINGS_ARTIFACT_RECOVERY_RUN_ID,))
+    parser.add_argument("--isolated-checkout", type=Path, required=True)
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--plan", action="store_true", help="authenticate and print the exact read-only plan")
+    mode.add_argument("--apply", action="store_true", help="apply only the exact separately authorized plan")
+    parser.add_argument("--plan-sha256", help="exact digest from a fresh --plan; required with --apply")
+    args = parser.parse_args(argv)
+    try:
+        if args.plan:
+            if args.plan_sha256:
+                raise RunnerError("read-only findings plan cannot include an apply digest")
+            result = plan_findings_artifact_recovery(
+                Path.cwd(), args.review_workstream, args.run_id, args.isolated_checkout)
+        else:
+            if not args.plan_sha256:
+                raise RunnerError("findings recovery apply requires the exact --plan-sha256")
+            result = apply_findings_artifact_recovery(
+                Path.cwd(), args.review_workstream, args.run_id, args.isolated_checkout, args.plan_sha256)
+    except (RunnerError, HostValidationError, OSError, ValueError, subprocess.SubprocessError) as exc:
+        print(f"paired_review_runner: BLOCKED: {redact(str(exc))}", file=sys.stderr)
+        return 2
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return 0
 
 
 def _recover_main(argv: list[str]) -> int:
@@ -8036,6 +8670,8 @@ def main(argv: list[str] | None = None) -> int:
         return _procession_pass_closeout_recovery_main(argv[1:])
     if argv and argv[0] == "recover-closeout":
         return _recover_main(argv[1:])
+    if argv and argv[0] == "recover-findings-artifacts":
+        return _findings_artifact_recovery_main(argv[1:])
     if argv and argv[0] == "recover-redacted-final-outcome":
         return _redacted_final_recovery_main(argv[1:])
     if argv and argv[0] == "recover-archived-receipt-capture":

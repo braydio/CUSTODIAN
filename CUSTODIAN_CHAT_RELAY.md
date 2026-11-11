@@ -4,7 +4,7 @@ This note documents the authenticated ChatGPT browser connection used by the CUS
 
 ## Browser and MCP connection
 
-The CUSTODIAN chat relay uses Chrome's local Chrome DevTools Protocol endpoint at `http://127.0.0.1:9223`. Start Chrome with remote debugging enabled before calling either relay. The configured MCP tools connect to that endpoint; they do not start Chrome.
+The default CUSTODIAN chat relay uses Chrome's local Chrome DevTools Protocol endpoint at `http://127.0.0.1:9223`. Start Chrome with remote debugging enabled before calling either relay. The configured Chrome relay MCP tools connect to that endpoint; they do not start Chrome.
 
 The `mcp__custodian_chat_relay__` MCP namespace provides page listing, snapshots, navigation, and visible-page interaction. A `mcp__chrome_devtools__` namespace may also be available for browser inspection. Use the CUSTODIAN relay namespace for its configured relay session. Verify the exact conversation URL and current composer from a fresh page list/snapshot before sending anything.
 
@@ -56,7 +56,7 @@ The repository tools are:
 - `custodian/tools/orchestration/send_chatgpt_message.py`
 - `custodian/tools/orchestration/get_chatgpt_response.py`
 
-Both use Playwright's synchronous Chromium CDP connection to `http://127.0.0.1:9223`. Install Playwright in the Python environment used to run them if it is not already available:
+Both default to Playwright's synchronous Chromium CDP connection to `http://127.0.0.1:9223`. Install Playwright in the Python environment used to run them if it is not already available:
 
 ```bash
 python3 -m pip install playwright
@@ -94,8 +94,44 @@ The reader requires exactly one matching conversation tab. Omit `--request-id` o
 
 ## Current authenticated conversation
 
-The conversation supplied for the current orchestration work is:
+The current Phase B orchestration conversation is:
 
-`https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae9a2f9-cf10-83e8-bffe-5f16e079abac`
+`https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af12561-89a4-83ea-bc7f-c896ec89bed0`
 
-Before sending or reading a turn, verify that this exact URL is open and authenticated in the port-9223 browser.
+Before sending or reading a turn, verify that the task's exact URL is open and authenticated in the port-9223 Chrome browser. Firefox users should use the explicit Firefox entrypoints below and the exact same conversation URL.
+
+## Optional Firefox support
+
+Firefox is an additional relay transport. It does not replace the Chrome service, Chrome MCP, or the default Python scripts above. Firefox has separate entrypoints:
+
+- `custodian/tools/orchestration/send_chatgpt_message_firefox.py`
+- `custodian/tools/orchestration/get_chatgpt_response_firefox.py`
+- `custodian/tools/orchestration/firefox_mcp_client.py`
+
+These launch a short-lived Mozilla Firefox DevTools MCP client over stdio, which attaches to an already running Firefox through Marionette on `127.0.0.1:2828`. Firefox also needs its WebDriver BiDi Remote Agent on `127.0.0.1:9224`; these scripts do not use Chrome CDP port 9223. They require Node.js 20.19+, `npx`, and Firefox. The Python relay scripts do not launch or stop the browser.
+
+Start Firefox with a dedicated profile after signing into ChatGPT in that profile:
+
+```bash
+firefox --no-remote --new-instance \
+  --profile "$HOME/.local/share/custodian-chat-firefox/profile" \
+  --marionette --remote-debugging-port 9224 \
+  --remote-allow-hosts localhost \
+  "https://chatgpt.com/<exact-conversation-url>"
+```
+
+Use the explicit Firefox scripts to send or poll, with the same safety behavior and flags as the Chrome scripts:
+
+```bash
+python3 custodian/tools/orchestration/send_chatgpt_message_firefox.py \
+  --url "https://chatgpt.com/g/<conversation-path>/c/<conversation-id>" \
+  --text-file /path/to/message.txt --submit
+
+python3 custodian/tools/orchestration/get_chatgpt_response_firefox.py \
+  --url "https://chatgpt.com/g/<conversation-path>/c/<conversation-id>" \
+  --wait --interval 120 --max-wait 600
+```
+
+Keep Firefox's profile private and separate from Chrome's profile. Do not launch another Firefox process with the same profile or Marionette port, and do not use Chrome's `custodian-chat-chrome.service` to manage Firefox. Firefox can expose automation signals that some identity providers reject; sign in through the normal browser UI and do not attempt to hide those signals. If Firefox is managed by a user service, that service should be independently named and configured; no Firefox user service is required for the existing Chrome relay.
+
+The Firefox MCP client accepts `CUSTODIAN_FIREFOX_MCP_COMMAND` as a JSON argv-array override. It is not shell-evaluated. See `custodian/tools/orchestration/test_firefox_mcp_client.py` and `test_chatgpt_relay_firefox.py` for transport and visible-UI coverage.

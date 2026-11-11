@@ -1,7 +1,7 @@
 # Task Packet — Operator Runtime Decomposition
 
-**Status:** Slices A, B, B-final, C1, **D** (through D.3), and **C2b.2**
-complete (2026-09-29). C2b.3 compatibility-resource residue is queued. C2a/R4 landed some time ago --
+**Status:** Slices A, B, B-final, C1, **D** (through D.3), and **C2b**
+complete. C2b.3 compatibility-resource cleanup is complete. C2a/R4 landed some time ago --
 `animated_sprite` is canonical and the modular body is canonical -- so the older
 "C2a blocked / R4 next" prose below is history, not present reality.
 Architecture debt is **75**, down from **347** at the start of the migration.
@@ -16,7 +16,7 @@ resources are deleted, and `actor_local_spriteframes` reached 0.
 `operator_runtime_spine_immutable` is the executable form of that invariant.
 At that C2b.1 checkpoint, `animation_resolver` (16) and
 `directional_animation_fallback` (4) remained for non-armed callers. C2b.2
-removed both Operator-owned selection dependencies; C2b.3 handles the remaining
+removed both Operator-owned selection dependencies; C2b.3 removed the remaining
 compatibility resources. The figure previously given
 here as the migration's starting point, 201, was an intermediate state, not the
 opening balance.

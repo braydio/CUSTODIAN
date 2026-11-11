@@ -10,6 +10,30 @@ Active Godot feature specifications live under `design/02_features/`. Do not add
 
 For authenticated ChatGPT browser relay setup, see [`CUSTODIAN_CHAT_RELAY.md`](CUSTODIAN_CHAT_RELAY.md).
 
+## Concurrent Agent Checkout Isolation (current policy)
+
+The checkout at `~/Projects/CUSTODIAN` is the shared **coordination root**, not a
+task working directory. It must stay attached to `main`. Claude, Codex and all
+other agents must never create/switch implementation branches, rebase, reset,
+stage or commit implementation files there. An agent must enter the isolated
+temporary checkout returned by V2 `dispatch.py claim` or `workstream.py start`
+before making a task change. A clean fast-forward sync of root `main` through
+the guarded persistent-checkout tool remains permitted. A dirty, diverged or
+non-main coordination root is a **stop and report**, not permission to force a
+checkout change.
+
+Claude Bash commands are additionally protected by the repository
+`.claude/settings.json` PreToolUse guard at
+`custodian/tools/agent/coordination_root_guard.py`. Other agents must obey this
+same rule via their startup instructions and V2 task acquisition. The hook is
+a preventive command guard, not a guarantee against other tools writing files.
+
+The project-wide worktree budget is **two safe retirements before each new
+worktree**. A retirement requires the canonical ownership, remote commit,
+untracked/ignored evidence and active-claim checks. Never delete an unsafe
+worktree just to satisfy the ratio; report the blocker and reuse an eligible
+existing checkout or sequence the tasks.
+
 ## Historical Archive Boundary
 
 `python-sim/` is a historical pre-Godot archive. It is not an active runtime,
@@ -253,9 +277,11 @@ sessions; no claim of instant process-wide delivery is permitted. See
 
 ## Commit Policy
 
-Normal implementation work follows `implement → validate → commit → land on
-origin/main`. Completed validated work lands automatically without per-task
-approval and without a PR or routine human-review gate. Ad hoc review-only work
+Normal V2 implementation work follows `implement → validate → commit/push →
+checkpoint`. V2 `finish` is a turn checkpoint and retirement, not task completion
+or a landing operation. Standard GitHub CI and branch protection govern landing;
+independent review is optional unless requested or warranted for consequential
+work. Legacy workstreams retain their existing closeout contracts. Ad hoc review-only work
 must carry the explicit task override `TASK OVERRIDE: review only; do not stage,
 commit, or push.` Paired post-land review packets may authorize commits only for their durable review receipt, required closing summary, review-packet lifecycle metadata, and bounded correction/re-review packets. They must never edit the reviewed implementation or unrelated work; the packet must state this bounded override explicitly. A paired review must also start from a fresh reviewer context rather than continuing the implementation session. The same model/agent family may review its own prior work only from a newly started context/workstream that reconstructs the target from durable repository evidence and records `same-agent-fresh-context`; otherwise use `different-agent`.
 
@@ -298,7 +324,7 @@ commit, or push.` Paired post-land review packets may authorize commits only for
 A Codex session/turn is disposable. A Git checkout is a temporary execution
 surface, **not** the durable record of a workstream. Keep the stable workstream
 ID, committed Git history on a SHA-verified remote branch (or landed
-`origin/main`), registered source assets, root closing summary, and
+`origin/main`), registered source assets, durable closing summary, and
 independently preserved run/review evidence as the durable record. A push
 preserves **only tracked, committed content**: ignored files, untracked files,
 local LFS objects not available remotely, private Blender/Godot proof, and
@@ -368,10 +394,7 @@ This is opt-in: no marker means no automatic promotion. Do **not** opt in
 planning/human-decision holds, blocked reviews, or unreconciled refreshes.
 Failures stop without publication, force pushing, claiming or overriding
 locks. An hourly retry checks only remaining explicit opt-ins, so a main-branch
-race does not require another user/Codex preflight. The GitHub action runs authoring, **not local Codex execution**;
-`dispatch.py` remains the sole execution/dependency/lock authority.
-A normal Codex dispatcher worker can claim later if the live audit says
-eligible. CI write permission and allowed non-force main push are required.
+race does not require another user/Codex preflight. The GitHub action runs authoring, **not local Codex execution**. `dispatch.py claim` and `claim-next` are the canonical V2 acquisition path: they authenticate task identity and packet bytes from fetched `origin/main`, then apply V2-specific hold, source, checkout, storage, LFS, and provenance checks. `dispatch.py audit/status` report legacy queue metadata; their dependency and lock classifications do not decide V2 eligibility. Use them for legacy diagnostics and branch/worktree reconciliation, not as claim authorization. The paired-review runner enforces its separate ordering, identity, evidence, and acceptance gates. CI write permission and allowed non-force main push are required.
 
 ## Name the Brief
 
@@ -416,7 +439,7 @@ without skipping required checks to optimize tokens.
 
 When a CUSTODIAN task packet or review packet contains an `Authoring chat:` or `Refresh planning chat:` URL, every durable implementation summary, review summary, correction summary, recovery summary, and closeout handoff authored for that packet must include that exact URL as an explicit `Authoring chat` line. Do not omit, shorten, redirect, or replace it with a generic project link.
 
-This applies whether the summary is written at repository root, beside archived packet evidence, or generated during workstream finish. `workstream.py finish` fails closed when a packet with a recorded authoring/refresh URL has a committed root closing summary that omits the exact `Authoring chat: <url>` line. The backlink is part of the durable handoff so the user can return to the exact planning/review conversation before a required refresh or human decision.
+This applies whether the summary is written in the agent summary home, beside archived packet evidence, or generated during workstream finish. `workstream.py finish` fails closed when a packet with a recorded authoring/refresh URL has a committed durable closing summary that omits the exact `Authoring chat: <url>` line. The backlink is part of the durable handoff so the user can return to the exact planning/review conversation before a required refresh or human decision.
 
 ## Task-Packet Promotion Before Dispatch (mandatory for newly authored or unparked packets)
 
@@ -451,9 +474,10 @@ refreshed), the agent assigned to promote it should complete this lifecycle
    overwrite another worker's changes or bypass claim/lock authority.
 5. `git fetch origin`; verify both packet headers **on `origin/main`**
    and the managed index entry, then run
-   `python3 custodian/tools/agent/dispatch.py claim <implementation-workstream-id> --agent <agent-id>`
-   **only if eligible**. The paired post-land review waits for the implementation
-   to land and archive complete.
+   `python3 custodian/tools/agent/dispatch.py claim <implementation-workstream-id> --mode normal --agent <agent-id>`.
+   V2 does not consult legacy status, dependency, lock, or claim eligibility;
+   it still blocks an explicit user-owned design hold. The paired-review runner
+   separately enforces review ordering and its acceptance contract.
 
 If the requested packet does not exist on `origin/main`, stop trying to claim
 it and finish this publication sequence first. `validate_task_packet_authoring.py`
@@ -465,12 +489,12 @@ without actual user authorization.
 
 ## CUSTODIAN Task Dispatch
 
-Executable packet dispatch is automatic by default. Use `Status: ready` + `Dispatch: auto` even when declared dependencies are incomplete; the dispatcher keeps the packet blocked until those dependencies archive `complete`, then makes it claimable without a manual status flip. `Dispatch: manual` is reserved only for an explicit user instruction to hold an otherwise ready packet until the user chooses claim timing. Missing inputs, predecessor API drift, review ordering, and ordinary dependency waits are not manual-dispatch reasons; represent them with status/dependencies and fail-closed execution checks instead.
+V2 is the canonical execution path. `dispatch.py claim` and `claim-next` authenticate task identity and packet bytes from fetched `origin/main`, then acquire a turn checkout without consulting legacy `Status`, `Dispatch`, dependency chains, administrative claims, or session locks. An explicit user-owned design hold remains a hard selection boundary. `claim-next` rotates across new and resumable work with an optional advisory cursor; it skips a task as complete only when durable packet completion and the task branch's reachability from `origin/main` agree. Missing cursor or prior-session state never blocks resume. Keep packet status/index metadata accurate for authoring and reporting; those fields do not schedule V2 work. V2 `workstream.py finish` checkpoints and retires a turn using its durable V2 record, without requiring the prior `RunTrace`, workstream mutex, or branch renaming; it does not assert task completion. Standard GitHub CI and branch protection govern landing. Independent review is optional unless requested or warranted for consequential work. Ordinary V2 acquisition uses no administrative lock; if a future operation protects a truly exclusive non-Git resource, its lease must expire within two hours and validate a fencing token on every protected operation.
 
-For a full live queue and branch/worktree reconciliation, use
+For legacy queue diagnostics and branch/worktree reconciliation, use
 `python3 custodian/tools/agent/dispatch.py audit` (or `--json` for stable
-machine-readable output). It shares the dispatcher's exact eligibility gate;
-the README Ready/Auto block is only a generated view. Use
+machine-readable output). Its old eligibility fields are reports only and do
+not govern V2. Use
 `dispatch.py repair --plan` to inspect the bounded metadata repair and add
 `--archive-completed` to preview only legacy records with explicit completion
 evidence. Repair apply never cleans branches or worktrees; preserve ambiguous
@@ -481,6 +505,11 @@ For “Take the next CUSTODIAN task,” run
 (for example `--agent claude` or `--agent codex`).
 For “Take CUSTODIAN workstream `<id>`,” run
 `python3 custodian/tools/agent/dispatch.py claim <id> --agent <agent-id>`.
+Add `--mode historical` to reuse verified historical work; owner-authorized
+acquisition also requires `--authorization-url` and `--authorization-sha256`.
+Every command creates a temporary turn checkout. Checkpoint with the exact
+stable coordination checkout in `--repo`; never use the retiring turn checkout
+as the coordinator.
 Omitting `--agent` falls back to the `CUSTODIAN_AGENT_ID` environment variable,
 then a neutral `unspecified` — never a silently assumed brand.
 Enter the returned worktree, read `AGENTS.md`, `custodian/AGENTS.md`, and the
@@ -503,14 +532,15 @@ Codex custom prompts are deprecated in favor of skills.
 
 Semantics:
 
-1. An unqualified invocation is `single-pair`: complete or resume at most one
-   implementation packet and its required fresh-context paired review, including
-   bounded correction/re-review cycles, then stop. An active claimed workstream
-   counts as that pair; do not claim another while it is unresolved.
+1. An unqualified invocation is `single-task`: complete or resume at most one
+   implementation through a durable checkpoint and standard CI/branch
+   protection, then stop. Independent review is optional unless requested or
+   warranted for consequential work. An active claimed workstream is resumed;
+   do not replace unfinished work with an unrelated packet.
 2. Use `continuous-chain` only when the user explicitly requests multiple
-   packets. Require a positive finite `max_pairs` and honor any explicit scope.
+   packets. Require a positive finite `max_tasks` and honor any explicit scope.
    Continue only through the durable `Next Handoff` DAG and dispatcher-confirmed
-   eligible predecessors; a pair is one implementation plus its paired review.
+   eligible successors.
 3. Reconcile active branch, worktree, dispatch receipt, and remote state. A stale
    `last-claim` is not ownership proof. Ambiguous/stale claims require audit and
    must never cause a duplicate claim.
@@ -579,11 +609,17 @@ it in `Execution Feedback` → `Tooling / docs drift discovered`.
 
 ## Closing Summary Files
 
-Every agent writes the summary that normally closes a message to
-`<TASK_NAME>_CLAUDE_SUMMARY.md` at the repo root, and pushes it with the work.
+Every agent writes one committed durable closeout summary at
+`custodian/docs/ai_context/agent_summaries/<workstream-id>/AGENT_SUMMARY.md`
+and pushes it with the work. This filename is **agent-neutral**: Claude,
+Codex and other agents use the same path, with an explicit `Agent: Claude`,
+`Agent: Codex` or other real agent identity in the document. Preserve the
+exact `Workstream:` and `Authoring chat:` lines.
 
-- **Name it after the work slice, not the message.** `C2A_R4_CLAUDE_SUMMARY.md`,
-  `UNARMED_FAST_CHAIN_PART_C_CLAUDE_SUMMARY.md`, `OPERATOR_SLICE_D_CLAUDE_SUMMARY.md`.
+- **Name its directory after the stable workstream, not the message.** Never
+  write new `*_CLAUDE_SUMMARY.md` files at repository root. Historical
+  `*_CLAUDE_SUMMARY.md` and `*_CODEX_SUMMARY.md` artifacts are retained
+  byte-identically in the flat `agent_summaries/` archive for provenance.
 - **One file per task.** Overwrite the previous version as the task advances;
   never append, never create a second file for the same slice.
 - **Stage it in the same commit as the work it describes.** If the work has
@@ -650,7 +686,7 @@ terminal/chat handoff should normally collapse to:
 PLANNING REFRESH REQUIRED
 Authoring Chat: <exact recorded URL>
 Workstream: <workstream-id>
-Persistent Summary: <repo-relative *_CLAUDE_SUMMARY.md path>
+Persistent Summary: <repo-relative agent_summaries path>
 ```
 
 The user should only need to open the linked conversation and paste the
@@ -679,8 +715,8 @@ removed from active/recently-complete packet-index sections. Untracked files are
 classified and block finish until the agent deliberately commits durable
 artifacts or removes disposable scratch output. Asset V2 source/inbox material
 is never treated as disposable run debris. Validation JSON may remain ephemeral
-unless the task requires durable evidence; the required `<TASK>_CLAUDE_SUMMARY.md`
-remains committed at repository root. The finish path never silently deletes an
+unless the task requires durable evidence; the required `agent_summaries/<workstream-id>/AGENT_SUMMARY.md`
+remains committed in the persistent summary home. The finish path never silently deletes an
 ambiguous artifact.
 
 <!-- code-review-graph MCP tools -->

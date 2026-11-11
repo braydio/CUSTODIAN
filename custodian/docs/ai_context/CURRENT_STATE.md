@@ -1,5 +1,39 @@
 # CURRENT STATE — CUSTODIAN
 
+## Weather V2 presentation contract (implementation in progress, 2026-11-09)
+
+`weather-v2-presentation-contract-v1` implements an opt-in `WeatherPresentationProfile` resource with quality-tier caps, climate/zone/weather overrides, contract-derived visual seed, fixed-step visual time, and visual-only wind scaling. With no profile, the atmosphere shader retains its V1 `TIME` path and the weather schedule, lighting modifiers, indoor exposure, and gameplay authorities remain unchanged. The profile-state CPU baseline is recorded in `design/02_features/environment/WEATHER_PRESENTATION_V2_ROADMAP.md`; GPU timing remains unmeasured. Contract, profile-baseline, and `world_environment` validation pass. After a full headless editor import, `world_atmosphere_smoke` passes on both the workstream and clean `origin/main@aaa2c3e9f0915ca90d168d9b65aafe2483439d07`; the earlier timeout was stale generated import/class-cache state. `lighting_system_smoke` fails identically on both because its preloaded `lighting_playground.tscn` and `gatehouse_lighting_test.tscn` are absent; this is a pre-existing baseline defect and was not changed. The implementation is not landed or art-approved and still needs its packet's fresh paired review after landing. See the task packet, active roadmap and Weather V2 handoff summary.
+
+## Dispatcher V2 cutover candidate (2026-11-09)
+
+D2-006 implements the turn-scoped dispatcher as the candidate execution path in
+`agent/turn-scoped-dispatcher-v2`. The V2 CLI authenticates task identity and
+packet bytes from fetched `origin/main`, ignores legacy status/dependency/claim/
+session-lock scheduling, and retains explicit user-owned design holds. Normal,
+historical, and owner-authorized provenance modes share one V2 acquisition and
+checkpoint implementation. `claim-next` rotates candidates through an optional
+advisory cursor and uses durable packet plus landed-branch evidence to skip only
+completed tasks; cursor absence never blocks a resume. Checkout profiles retain
+exact path/LFS validation. A V2 `workstream.py finish` is a checkpoint and
+checkout retirement boundary, not task completion: it consumes the durable V2
+receipt and does not depend on the prior process, `RunTrace`, workstream mutex,
+or branch renaming. Standard GitHub CI and branch protection govern landing;
+independent review is optional unless explicitly requested or warranted for a
+consequential change. Ordinary V2 acquisition uses no administrative lock.
+
+This is a cutover candidate, not a landed or activated `origin/main` change.
+Focused implementation, lifecycle, helper, and relay tests pass; the
+orchestrator cutover decision remains outstanding. The
+private historical archive is optional and unverified; it is
+not modified or required for ordinary Git-backed V2 acquisition. See
+`../../../design/04_architecture/TURN_SCOPED_DISPATCHER_V2.md` and the durable handoff at
+`turn_handoffs/turn-scoped-dispatcher-v2.md`.
+
+## CUSTODIAN WIRE private pilot handoff (2026-11-08)
+
+The one-shot WIRE exporter published a private sanitized observation, and the connected Dropbox reader retrieved its pointer and observation. The recorded as-of inventory includes 482 active packet records and 421 distinct workstreams, with `raw_dispatch_inventory=complete` but detailed inventory `partial`; these **historical counts are not live dispatcher telemetry**. The source timestamp is `2026-11-08T13:40:47Z`; pointer/content metadata matched, but a separate raw-byte SHA-256 rehash was not established by the text reader. **Automated hourly consumer ingestion, sustained refresh, independent review PASS, host process liveness, and canonical teardown remain unverified.** This is the fourth distinct engineering handoff track, not an acceptance or continuation of the general recovery campaign. Preserve existing claims, locks and schedules. See [Section 9: CUSTODIAN WIRE Private Observation Pilot](reports/CUSTODIAN_CONVERSATION_RETIREMENT_HANDOFF_WIRE_ADDENDUM_20261108.md) for evidence identities, bounded counts, and outstanding gates.
+
+
 ## Crèche: source-only completion; 1464×1074 runtime cutover ready (2026-11-06)
 
 At main `0e6b081b18a8b2d9deed0a19157a7a4b376adbb5`, clean-room source workstream `awakening-interactible-clean-room-plates-v1` is archived complete. Approved Crèche canonical source_work floor `9ce70dff57e7678234ff423643d255840ca66cf855067948763f73b2b426d77a` and wall `515b287f877cf4cd940c11aeab6bfa05370ff651f06927ba46e13c212a252bfc` are 1464×1074 RGBA, with rollback receipt `custodian/docs/ai_context/asset_audits/AWAKENING_CRECHE_CANONICAL_SOURCE_STAGING_20261106.md`. The existing 128×128 idle console art (LFS `01716bcdf4a3d7169e52149f495f91830106df93f94736e3c2aee8d910a30acb`) is user-approved. **Godot is NOT yet cut over:** environment family and scene remain 960×704, Crèche inbox is absent, Zone01 has old 704×512 walkable geometry. The existing downstream packet `awakening-creche-console-sprite-reauthor-v1` is refreshed to `ready/auto` and owns exact inbox/family/scene/geometry/console integration and direct user/ChatGPT in-game review; Crèche paired Codex review is waived without affecting other workstreams.
