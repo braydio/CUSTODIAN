@@ -1,9 +1,149 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-10T23:40:27Z",
-  "source_main_sha": "926df15195f7c0e98adfca597adcae8c00637219",
+  "generated_at": "2026-11-11T00:14:52Z",
+  "source_main_sha": "a16fb3ece74f90358dac36d1b981348efeaba412",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "findings-recovery-owner-hold-a16fb3ec",
+      "headline": "Findings recovery is placed on an owner-decision hold; automatic handoff switched off",
+      "summary": "After landing a read-only findings recovery, CUSTODIAN blocked the implementation packet pending an owner-controlled approval design. PR #139 also changed both implementation and paired-review authoring handoffs to manual. No recovery apply, accepted review or host cleanup is established.",
+      "body": "Main a16fb3ec merges PR #139, changing authoring handoff from auto to manual for the findings-closeout implementation and paired review. Earlier PR #138 marked the implementation blocked with an open user-owned decision: whether to establish a signing credential unavailable to the executing agent. The paired review remains labeled ready/auto for dispatch, but its dependency is blocked and its authoring handoff is manual. The landed recovery implementation retains a read-only plan and deliberately disabled apply. No independent acceptance, execution, or canonical teardown is established. GitHub-only partial coverage; no fresh private observation counts.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-findings-bridge-review-closeout-recovery-v1",
+      "occurred_at": "2026-11-11T00:13:45Z",
+      "bullets": [
+        "Implementation packet explicitly blocked pending owner decision.",
+        "Both paired packets now use manual authoring handoff.",
+        "Review packet remains ready in Git but depends on blocked implementation.",
+        "No authenticated apply, accepted review or teardown proved."
+      ],
+      "links": [
+        {
+          "title": "Owner decision hold, PR #138",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/138"
+        },
+        {
+          "title": "Manual handoff guard, PR #139",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/139"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN has tightened the brakes on its findings-closeout repair. The recovery code has landed, but the task is now explicitly blocked on a decision only the project owner can make. A subsequent merge also disables automatic authoring handoff for the implementation and its paired review.",
+        "sections": [
+          {
+            "heading": "A safeguard becomes an explicit project gate",
+            "text": "The implementation packet now records an open decision about whether to establish a signing credential controlled by the owner and inaccessible to the executing agent. That decision does not itself authorize recovery or key enrollment."
+          },
+          {
+            "heading": "Automatic authoring no longer advances the pair",
+            "text": "PR #139 switches both packets' authoring handoff to manual. The review packet still carries ready/auto dispatch labels, but its implementation dependency is blocked. Those labels are not proof of a running review."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The bottleneck is trust, not code landing",
+            "explanation": "The read-only recovery implementation is merged. The unresolved issue is how to establish approval that an executing agent cannot manufacture itself."
+          },
+          {
+            "title": "A ready review is not an accepted review",
+            "explanation": "The paired review remains listed as ready, but no independent passing receipt or actual protected recovery was established."
+          }
+        ],
+        "takeaway": "Recovery is deliberately held pending an owner-controlled authorization design; the protected findings outcome remains unchanged.",
+        "next_watch": "An explicit owner design decision and an independently reviewed authorization boundary, before any separately approved recovery apply."
+      },
+      "details": {
+        "overview": "GitHub partial coverage; inspected main a16fb3ece74f90358dac36d1b981348efeaba412. No fresh canonical dispatcher or host audit.",
+        "ledger": [
+          {
+            "stage": "Recovery implementation landing",
+            "status": "verified",
+            "evidence": "PR #137 merged at 81c39888."
+          },
+          {
+            "stage": "Owner-decision hold",
+            "status": "verified",
+            "evidence": "PR #138 sets implementation blocked and decision open."
+          },
+          {
+            "stage": "Manual handoff guard",
+            "status": "verified",
+            "evidence": "PR #139 changes both authoring handoffs to manual."
+          },
+          {
+            "stage": "Independent review, apply and teardown",
+            "status": "unknown/blocked",
+            "evidence": "No accepted receipt or host execution proof; apply deliberately disabled."
+          }
+        ],
+        "notes": [
+          "Review ready/auto dispatch metadata remains despite blocked dependency."
+        ],
+        "unknowns": [
+          "Canonical dispatcher state and host processes",
+          "Current worktree, lock and disk state"
+        ],
+        "actions": [
+          "Project owner: decide whether and how to establish independently controlled signing authorization."
+        ]
+      },
+      "related": [
+        {
+          "title": "Findings-closeout repair lands, but its protected recovery remains deliberately disabled",
+          "context": "The earlier implementation landing explains why the subsequent owner hold is necessary.",
+          "story_id": "findings-bridge-implementation-landed-81c39888"
+        }
+      ],
+      "scorecard": {
+        "stage": "Implementation landed; owner authorization design blocked",
+        "as_of": "2026-11-11T00:14:52Z",
+        "scope": "Named findings-closeout implementation and paired review packets only",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Implementation merged",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "PR #137"
+          },
+          {
+            "label": "Owner decision hold documented",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "PR #138"
+          },
+          {
+            "label": "Manual authoring handoff",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "PR #139"
+          },
+          {
+            "label": "Independent review",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No accepted receipt inspected"
+          },
+          {
+            "label": "Authorized recovery apply",
+            "status": "blocked",
+            "verification": "verified",
+            "evidence": "No independent owner credential"
+          },
+          {
+            "label": "Canonical cleanup",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No host proof"
+          }
+        ],
+        "next_gate": "Project owner selects a genuinely independent approval mechanism before any recovery authorization."
+      }
+    },
     {
       "id": "findings-bridge-implementation-landed-81c39888",
       "headline": "Findings-closeout repair lands, but its protected recovery remains deliberately disabled",
@@ -1491,13 +1631,7 @@
           "Independent reviewer: challenge the landed verifier before any preserved-run recovery is authorized."
         ]
       },
-      "related": [
-        {
-          "title": "Dispatcher audit repair reaches main; independent review remains the gate",
-          "context": "This new provenance recovery is needed to independently review that previously landed correction.",
-          "story_id": "owner-exception-audit-repair-merged-8e23d8b5"
-        }
-      ],
+      "related": [],
       "scorecard": {
         "stage": "Recovery packet pair ready; implementation not verified",
         "as_of": "2026-11-10T07:02:57Z",
@@ -1548,155 +1682,6 @@
           }
         ],
         "next_gate": "Legitimate dispatcher owner implements the exact bounded verifier, then a separate reviewer evaluates it."
-      }
-    },
-    {
-      "id": "weather-v2-provenance-bridge-ready-a3fb2f8b",
-      "headline": "Weather V2 review recovery gains an evidence-backed route; implementation is queued",
-      "summary": "PR #127 landed a narrowly scoped source-provenance manifest and paired recovery packets. An automated handoff then promoted both packets from draft/manual to ready/auto. This prepares a way to authenticate Weather V2's historical source for independent review; it does not implement the bridge or accept the held review.",
-      "body": "Main commit 99c47e9a lands Weather V2 source-provenance bridge implementation/review packet definitions and a public manifest pinning historical Git identities and digests of private lifecycle receipts. Commit a3fb2f8b records an automated packet handoff from draft/manual to ready/auto for both packets. The original Weather V2 review remains held; the bridge is not yet implemented, claimed, independently accepted or proven live. The manifest references private evidence but does not expose its bytes, and the GitHub view cannot authenticate host-private records or teardown. The next gate is a bounded implementation by the legitimate dispatcher owner, followed by independent bridge review before the original review can resume.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "weather-v2-review-source-provenance-bridge-v1",
-      "occurred_at": "2026-11-10T05:18:29Z",
-      "bullets": [
-        "Provenance bridge packet pair and manifest landed on main.",
-        "Automated handoff changed both packets to ready/auto.",
-        "No bridge implementation, independent PASS or resumed Weather review verified."
-      ],
-      "links": [
-        {
-          "title": "PR #127",
-          "url": "https://github.com/braydio/CUSTODIAN/pull/127"
-        },
-        {
-          "title": "Provenance manifest landing",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/99c47e9a212c058c2677a36e6f7c5d0d6e93ae48"
-        },
-        {
-          "title": "Automatic handoff",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/a3fb2f8b4fe854af9607ee71a8beb3022014de58"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "Weather V2's stalled independent review now has a defined recovery route. CUSTODIAN merged an evidence manifest and a paired implementation-and-review assignment, then automatically marked both assignments ready. The recovery work itself still has to be done.",
-        "sections": [
-          {
-            "heading": "Why the weather review needs a bridge",
-            "text": "The original Weather V2 review needs to verify that its source really matches the implementation and archive history. The new manifest pins exact Git history and private receipt digests so a future repair can validate that chain without loosening normal source checks."
-          },
-          {
-            "heading": "Ready is not running",
-            "text": "The automatic handoff changed the two task packets from draft/manual to ready/auto. That establishes dispatch eligibility, not an active worker, completed repair or independent approval. The original review remains held."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The bottleneck is evidence identity, not weather visuals",
-            "explanation": "Weather V2 code already landed. This new work targets the ability to authenticate the historical source used by its reviewer, a prerequisite to trusting any eventual visual or performance verdict."
-          },
-          {
-            "title": "A bounded manifest can preserve privacy and auditability",
-            "explanation": "The public manifest records expected identities and cryptographic digests while leaving private host receipts out of the public repository. Their actual bytes still require separate validation."
-          }
-        ],
-        "takeaway": "The recovery path has been authored and made dispatch-ready, but no bridge implementation or accepted review is established.",
-        "next_watch": "A legitimate claim and landed bridge implementation, followed by a separate independent PASS and resumption of the held Weather V2 review."
-      },
-      "details": {
-        "overview": "PR #127 landed at 99c47e9a; the automatic handoff landed at a3fb2f8b. GitHub evidence supports packet authoring and readiness only. No host audit or private receipt validation was performed.",
-        "ledger": [
-          {
-            "stage": "Bridge packet and manifest authoring",
-            "status": "verified landed",
-            "evidence": "PR #127, commit 99c47e9a."
-          },
-          {
-            "stage": "Automatic packet handoff",
-            "status": "verified ready/auto",
-            "evidence": "Commit a3fb2f8b changes implementation and paired review packet statuses."
-          },
-          {
-            "stage": "Bridge implementation",
-            "status": "not verified",
-            "evidence": "No implementation landing inspected."
-          },
-          {
-            "stage": "Independent bridge acceptance",
-            "status": "not verified",
-            "evidence": "No independent PASS inspected."
-          },
-          {
-            "stage": "Original Weather review",
-            "status": "held",
-            "evidence": "PR #127 explicitly says the original reviewer never launched."
-          }
-        ],
-        "notes": [
-          "Manifest references private receipt digests, not independently validated private bytes."
-        ],
-        "unknowns": [
-          "Host worker execution and claims unavailable.",
-          "Canonical teardown and original review acceptance unknown."
-        ],
-        "actions": [
-          "Dispatcher owner: execute bounded bridge implementation only under existing ownership rules.",
-          "Independent reviewer: falsify the bridge after its implementation lands."
-        ]
-      },
-      "related": [
-        {
-          "title": "Weather V2 presentation controls reach main, with visual performance review still ahead",
-          "context": "This bridge addresses provenance required for the already-landed feature's independent review.",
-          "story_id": "weather-v2-profile-merged-495ea3a1"
-        }
-      ],
-      "scorecard": {
-        "stage": "Recovery pair ready; implementation not verified",
-        "as_of": "2026-11-10T05:18:29Z",
-        "scope": "Named Weather V2 provenance bridge packet pair only",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Original Weather V2 implementation landed",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "PR #124 merge."
-          },
-          {
-            "label": "Bridge manifest and packets landed",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "99c47e9a."
-          },
-          {
-            "label": "Packet handoff to ready/auto",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "a3fb2f8b."
-          },
-          {
-            "label": "Bridge implementation",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No implementation receipt."
-          },
-          {
-            "label": "Independent bridge review",
-            "status": "blocked",
-            "verification": "unknown",
-            "evidence": "Requires landed implementation."
-          },
-          {
-            "label": "Resume original Weather review",
-            "status": "blocked",
-            "verification": "unknown",
-            "evidence": "Requires valid provenance and accepted bridge review."
-          }
-        ],
-        "next_gate": "Legitimate dispatcher owner to implement and validate the bounded provenance bridge."
       }
     }
   ],
