@@ -13,7 +13,20 @@ import subprocess
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[3]
+def find_coordination_root() -> Path:
+    """Resolve the shared Git common-dir owner, not the calling worktree."""
+    checkout = Path(__file__).resolve().parents[3]
+    p = subprocess.run(
+        ["git", "-C", str(checkout), "rev-parse",
+         "--path-format=absolute", "--git-common-dir"],
+        text=True, capture_output=True, check=False,
+    )
+    if p.returncode or not p.stdout.strip():
+        return checkout  # Non-Git/unit-test copy: preserve read-only fallback.
+    return Path(p.stdout.strip()).resolve().parent
+
+
+ROOT = find_coordination_root()
 # Branch changes and direct source mutations are prohibited in the shared root.
 ROOT_MUTATION = re.compile(
     r"(?<![\w./-])(?:rtk\s+)?git\s+"
