@@ -10,6 +10,30 @@ Active Godot feature specifications live under `design/02_features/`. Do not add
 
 For authenticated ChatGPT browser relay setup, see [`CUSTODIAN_CHAT_RELAY.md`](CUSTODIAN_CHAT_RELAY.md).
 
+## Concurrent Agent Checkout Isolation (current policy)
+
+The checkout at `~/Projects/CUSTODIAN` is the shared **coordination root**, not a
+task working directory. It must stay attached to `main`. Claude, Codex and all
+other agents must never create/switch implementation branches, rebase, reset,
+stage or commit implementation files there. An agent must enter the isolated
+temporary checkout returned by V2 `dispatch.py claim` or `workstream.py start`
+before making a task change. A clean fast-forward sync of root `main` through
+the guarded persistent-checkout tool remains permitted. A dirty, diverged or
+non-main coordination root is a **stop and report**, not permission to force a
+checkout change.
+
+Claude Bash commands are additionally protected by the repository
+`.claude/settings.json` PreToolUse guard at
+`custodian/tools/agent/coordination_root_guard.py`. Other agents must obey this
+same rule via their startup instructions and V2 task acquisition. The hook is
+a preventive command guard, not a guarantee against other tools writing files.
+
+The project-wide worktree budget is **two safe retirements before each new
+worktree**. A retirement requires the canonical ownership, remote commit,
+untracked/ignored evidence and active-claim checks. Never delete an unsafe
+worktree just to satisfy the ratio; report the blocker and reuse an eligible
+existing checkout or sequence the tasks.
+
 ## Historical Archive Boundary
 
 `python-sim/` is a historical pre-Godot archive. It is not an active runtime,
@@ -300,7 +324,7 @@ commit, or push.` Paired post-land review packets may authorize commits only for
 A Codex session/turn is disposable. A Git checkout is a temporary execution
 surface, **not** the durable record of a workstream. Keep the stable workstream
 ID, committed Git history on a SHA-verified remote branch (or landed
-`origin/main`), registered source assets, root closing summary, and
+`origin/main`), registered source assets, durable closing summary, and
 independently preserved run/review evidence as the durable record. A push
 preserves **only tracked, committed content**: ignored files, untracked files,
 local LFS objects not available remotely, private Blender/Godot proof, and
@@ -415,7 +439,7 @@ without skipping required checks to optimize tokens.
 
 When a CUSTODIAN task packet or review packet contains an `Authoring chat:` or `Refresh planning chat:` URL, every durable implementation summary, review summary, correction summary, recovery summary, and closeout handoff authored for that packet must include that exact URL as an explicit `Authoring chat` line. Do not omit, shorten, redirect, or replace it with a generic project link.
 
-This applies whether the summary is written at repository root, beside archived packet evidence, or generated during workstream finish. `workstream.py finish` fails closed when a packet with a recorded authoring/refresh URL has a committed root closing summary that omits the exact `Authoring chat: <url>` line. The backlink is part of the durable handoff so the user can return to the exact planning/review conversation before a required refresh or human decision.
+This applies whether the summary is written in the agent summary home, beside archived packet evidence, or generated during workstream finish. `workstream.py finish` fails closed when a packet with a recorded authoring/refresh URL has a committed durable closing summary that omits the exact `Authoring chat: <url>` line. The backlink is part of the durable handoff so the user can return to the exact planning/review conversation before a required refresh or human decision.
 
 ## Task-Packet Promotion Before Dispatch (mandatory for newly authored or unparked packets)
 
@@ -585,11 +609,17 @@ it in `Execution Feedback` → `Tooling / docs drift discovered`.
 
 ## Closing Summary Files
 
-Every agent writes the summary that normally closes a message to
-`<TASK_NAME>_CLAUDE_SUMMARY.md` at the repo root, and pushes it with the work.
+Every agent writes one committed durable closeout summary at
+`custodian/docs/ai_context/agent_summaries/<workstream-id>/AGENT_SUMMARY.md`
+and pushes it with the work. This filename is **agent-neutral**: Claude,
+Codex and other agents use the same path, with an explicit `Agent: Claude`,
+`Agent: Codex` or other real agent identity in the document. Preserve the
+exact `Workstream:` and `Authoring chat:` lines.
 
-- **Name it after the work slice, not the message.** `C2A_R4_CLAUDE_SUMMARY.md`,
-  `UNARMED_FAST_CHAIN_PART_C_CLAUDE_SUMMARY.md`, `OPERATOR_SLICE_D_CLAUDE_SUMMARY.md`.
+- **Name its directory after the stable workstream, not the message.** Never
+  write new `*_CLAUDE_SUMMARY.md` files at repository root. Historical
+  `*_CLAUDE_SUMMARY.md` and `*_CODEX_SUMMARY.md` artifacts are retained
+  byte-identically in the flat `agent_summaries/` archive for provenance.
 - **One file per task.** Overwrite the previous version as the task advances;
   never append, never create a second file for the same slice.
 - **Stage it in the same commit as the work it describes.** If the work has
@@ -656,7 +686,7 @@ terminal/chat handoff should normally collapse to:
 PLANNING REFRESH REQUIRED
 Authoring Chat: <exact recorded URL>
 Workstream: <workstream-id>
-Persistent Summary: <repo-relative *_CLAUDE_SUMMARY.md path>
+Persistent Summary: <repo-relative agent_summaries path>
 ```
 
 The user should only need to open the linked conversation and paste the
@@ -685,8 +715,8 @@ removed from active/recently-complete packet-index sections. Untracked files are
 classified and block finish until the agent deliberately commits durable
 artifacts or removes disposable scratch output. Asset V2 source/inbox material
 is never treated as disposable run debris. Validation JSON may remain ephemeral
-unless the task requires durable evidence; the required `<TASK>_CLAUDE_SUMMARY.md`
-remains committed at repository root. The finish path never silently deletes an
+unless the task requires durable evidence; the required `agent_summaries/<workstream-id>/AGENT_SUMMARY.md`
+remains committed in the persistent summary home. The finish path never silently deletes an
 ambiguous artifact.
 
 <!-- code-review-graph MCP tools -->

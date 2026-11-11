@@ -38,6 +38,7 @@ class WorkstreamError(RuntimeError):
 ID_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 TASK_PACKET_ROOT = Path("custodian/docs/ai_context/task_packets")
 TASK_PACKET_ARCHIVE = TASK_PACKET_ROOT / "archived"
+AGENT_SUMMARY_HOME = Path("custodian/docs/ai_context/agent_summaries")
 ROOT_SYNC_DEFERRAL_SUPPORT = frozenset({
     "agent-paired-review-invalid-disposition-recovery-v1",
     "review-agent-paired-review-invalid-disposition-recovery-v1",
@@ -406,7 +407,7 @@ def _nonpassing_review_artifact_error(workstream_id: str, path: Path, review_pac
         f"custodian/docs/ai_context/task_packets/{review_packet.name}",
         f"custodian/docs/ai_context/task_packets/archived/{review_packet.name}",
         "custodian/docs/ai_context/task_packets/README.md",
-        _expected_summary_filename(workstream_id),
+        *_summary_candidates(root_repo(path), workstream_id),
     }
     outside = sorted(item for item in changed_paths if item.replace("\\", "/") not in allowed)
     if outside:
@@ -447,7 +448,8 @@ def _artifact_class(path: str) -> str:
     name = Path(normalized).name
     if normalized.startswith("custodian/docs/ai_context/task_packets/"):
         return "task-packet"
-    if name.endswith("_CLAUDE_SUMMARY.md"):
+    if (name.endswith(("_CLAUDE_SUMMARY.md", "_CODEX_SUMMARY.md", "_AGENT_SUMMARY.md"))
+            or (name == "AGENT_SUMMARY.md" and normalized.startswith(f"{AGENT_SUMMARY_HOME}/"))):
         return "closing-summary"
     if normalized.startswith("custodian/asset_drop/source_work/") or normalized.startswith("custodian/asset_drop/inbox/"):
         return "asset-v2-source"
@@ -2487,7 +2489,9 @@ def _failed_import_recovery_trace_is_authentic(
 
 def _summary_backlink_preflight(workstream_id: str, path: Path, packets: list[Path]) -> None:
     """Require the durable closing summary to preserve packet authoring-chat provenance."""
-    summary = path / _expected_summary_filename(workstream_id)
+    summary = next((path / name for name in _summary_candidates(root_repo(path), workstream_id)
+                    if (path / name).is_file()),
+                   path / _canonical_summary_filename(workstream_id))
     expected_urls: list[str] = []
     for packet in packets:
         header = parse_packet(str(packet), packet.read_text())
@@ -2733,7 +2737,9 @@ def closeout_preflight(
         if item["location"] == "archived" and _active_packet_index_mentions(repo, Path(item["path"]).name)
     ]
 
-    summary_name = _expected_summary_filename(workstream_id)
+    summary_name = next((name for name in _summary_candidates(repo, workstream_id)
+                         if (path / name).is_file()),
+                        _canonical_summary_filename(workstream_id))
     summary_path = path / summary_name
     summary_exists = summary_path.is_file()
     summary_committed = subprocess.run(
@@ -2925,7 +2931,7 @@ def paired_review_artifact_scope_error(
         f"custodian/docs/ai_context/task_packets/{packet.name}",
         f"custodian/docs/ai_context/task_packets/archived/{packet.name}",
         "custodian/docs/ai_context/task_packets/README.md",
-        summary,
+        *_summary_candidates(root_repo(path), workstream_id),
     }
     if target_workstream.count("-review-corrections-") > 1:
         return f"paired review artifact gate rejects nested target lineage for {workstream_id}"
@@ -3757,6 +3763,30 @@ def _expected_summary_filename(workstream_id: str) -> str:
     return f"{workstream_id.upper().replace('-', '_')}_CLAUDE_SUMMARY.md"
 
 
+def _canonical_summary_filename(workstream_id: str) -> str:
+    """New agent-neutral durable summary location, independent of CLI identity."""
+    return f"{AGENT_SUMMARY_HOME}/{workstream_id}/AGENT_SUMMARY.md"
+
+
+def _summary_candidates(repo: Path, workstream_id: str) -> list[str]:
+    """Prefer the canonical home, but authenticate old closeouts during migration."""
+    legacy = _expected_summary_filename(workstream_id)
+    stem = workstream_id.upper().replace("-", "_")
+    candidates = [
+        _canonical_summary_filename(workstream_id),
+        f"{AGENT_SUMMARY_HOME}/{legacy}",
+        f"{AGENT_SUMMARY_HOME}/{stem}_CODEX_SUMMARY.md",
+        f"{AGENT_SUMMARY_HOME}/{stem}_AGENT_SUMMARY.md",
+        legacy,
+        f"{stem}_CODEX_SUMMARY.md",
+    ]
+    for name in _alternate_summary_filenames(repo, workstream_id):
+        for candidate in (f"{AGENT_SUMMARY_HOME}/{name}", name):
+            if candidate not in candidates:
+                candidates.append(candidate)
+    return candidates
+
+
 def _alternate_summary_filenames(repo: Path, workstream_id: str) -> list[str]:
     """Explicitly documented alternate summary names from the associated packet body.
 
@@ -3765,7 +3795,7 @@ def _alternate_summary_filenames(repo: Path, workstream_id: str) -> list[str]:
     """
     names: list[str] = []
     for packet in _associated_task_packets(repo, workstream_id):
-        for match in re.finditer(r"\b([A-Z0-9]+(?:_[A-Z0-9]+)*_CLAUDE_SUMMARY\.md)\b", packet.read_text()):
+        for match in re.finditer(r"\b([A-Z0-9]+(?:_[A-Z0-9]+)*_(?:CLAUDE|CODEX|AGENT)_SUMMARY\.md)\b", packet.read_text()):
             if match.group(1) not in names:
                 names.append(match.group(1))
     return names
@@ -3780,8 +3810,7 @@ def closing_summary_committed_for_workstream(workstream_id: str, path: Path) -> 
     summary look missing. Returns the proven filename, or raises.
     """
     repo = root_repo(path)
-    candidates = [_expected_summary_filename(workstream_id)]
-    candidates += [name for name in _alternate_summary_filenames(repo, workstream_id) if name not in candidates]
+    candidates = _summary_candidates(repo, workstream_id)
     for name in candidates:
         if subprocess.run(["git", "cat-file", "-e", f"HEAD:{name}"], cwd=path).returncode == 0:
             return name
@@ -3939,7 +3968,7 @@ def _finish_without_attached_worktree(workstream_id: str, branch: str, repo: Pat
             f"no attached worktree found for {branch}, but its remote branch still exists; "
             "recovery required rather than recreating the worktree"
         )
-    summary_names = [_expected_summary_filename(workstream_id)] + _alternate_summary_filenames(repo, workstream_id)
+    summary_names = _summary_candidates(repo, workstream_id)
     summary_landed = any(
         subprocess.run(["git", "cat-file", "-e", f"origin/main:{name}"], cwd=repo).returncode == 0
         for name in summary_names
