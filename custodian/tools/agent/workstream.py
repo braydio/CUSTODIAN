@@ -2931,7 +2931,7 @@ def paired_review_artifact_scope_error(
         f"custodian/docs/ai_context/task_packets/{packet.name}",
         f"custodian/docs/ai_context/task_packets/archived/{packet.name}",
         "custodian/docs/ai_context/task_packets/README.md",
-        *_summary_candidates(root_repo(path), workstream_id),
+        *_summary_candidates(root_repo(packet.parent), workstream_id),
     }
     if target_workstream.count("-review-corrections-") > 1:
         return f"paired review artifact gate rejects nested target lineage for {workstream_id}"
