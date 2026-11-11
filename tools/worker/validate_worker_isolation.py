@@ -39,8 +39,8 @@ LFS_OBJECT_SIZE = 4852
 DENIED_ERRNOS = {errno.EACCES, errno.EPERM, errno.EHOSTUNREACH, errno.ENETUNREACH}
 FORBIDDEN_ENV = re.compile(r"^(?:GITHUB_|GH_|OPENAI_|HL_|SSH_AUTH_SOCK$|CODEX_SESSION|CODEX_API_KEY$)")
 HTTP_HEADER_NAME = re.compile(r"^[!#$%&'*+.^_`|~0-9A-Za-z-]+$")
-CREDENTIAL_NAME = "openai-api-key"
-CREDENTIAL_SOURCE = Path("/etc/custodian-worker/credentials/openai-api-key")
+CREDENTIAL_NAME = "custodian-worker-openai-api-key"
+CREDENTIAL_SOURCE = Path("/etc/credstore.encrypted/custodian-worker-openai-api-key")
 API_KEY_FORMAT = re.compile(r"sk-[A-Za-z0-9_-]{20,}")
 MODEL_OK_MARKER = "WORKER_MODEL_OK"
 MODEL_PROBE_TIMEOUT_SECONDS = 60
@@ -393,7 +393,7 @@ def codex_model_probe() -> dict[str, Any]:
             "network_preflight_required": True,
             "timeout_seconds": MODEL_PROBE_TIMEOUT_SECONDS,
         }
-    credential_status, api_key = _read_runtime_model_credential()
+    credential_status, model_credential = _read_runtime_model_credential()
     result: dict[str, Any] = {
         "attempted": False,
         "exit_code": None,
@@ -413,12 +413,12 @@ def codex_model_probe() -> dict[str, Any]:
         "network_preflight_required": True,
         "timeout_seconds": MODEL_PROBE_TIMEOUT_SECONDS,
     }
-    if credential_status != "valid" or api_key is None:
+    if credential_status != "valid" or model_credential is None:
         return result
     codex_path = shutil.which("codex")
     if not codex_path:
         result["disposition"] = "codex_cli_unavailable"
-        api_key = None
+        model_credential = None
         return result
     version = safe_command([codex_path, "--version"], timeout=10)
     result["codex_cli"] = version
@@ -438,7 +438,7 @@ def codex_model_probe() -> dict[str, Any]:
                 if key in os.environ
             }
             child_env["CODEX_HOME"] = home
-            child_env["OPENAI_API_KEY"] = api_key
+            child_env["OPENAI_API_KEY"] = model_credential
             argv = [
                 codex_path, "exec", "--ephemeral", "--ignore-user-config", "--sandbox", "read-only",
                 "--cd", str(WORKSPACES), "--color", "never", "--json",
@@ -471,7 +471,7 @@ def codex_model_probe() -> dict[str, Any]:
             result["response_marker"] = MODEL_OK_MARKER if result["response_verified"] else None
             result["disposition"] = "passed" if result["response_verified"] else "model_response_unverified"
     finally:
-        api_key = None
+        model_credential = None
     return result
 
 

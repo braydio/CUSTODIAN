@@ -103,7 +103,8 @@ def isolation_preflight() -> tuple[bool, dict[str, object]]:
               "timestamp_utc": datetime.now(timezone.utc).isoformat(), "pass": passed,
               "process": base, "probes": records, "positive_controls": config.get("positive_controls", []),
               "preflight_only": config.get("preflight_only") is True,
-              "lfs_only": config.get("lfs_only") is True}
+              "lfs_only": config.get("lfs_only") is True,
+              "model_only": config.get("model_only") is True}
     result_path = Path(WORKER_ENV["TMPDIR"]) / f"isolation-preflight-{config['run_id']}.json"
     fd = os.open(result_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0), 0o600)
     with os.fdopen(fd, "w") as stream:
@@ -143,14 +144,15 @@ def main(argv: list[str] | None = None) -> int:
     if preflight.get("preflight_only") is True:
         print(json.dumps(preflight, sort_keys=True), flush=True)
         return 0
-    try:
-        credentials_directory = systemd_credentials_directory()
-    except (OSError, RuntimeError) as exc:
-        print(f"custodian-worker-launch: {exc}", file=sys.stderr)
-        return 78
     if preflight.get("model_only") is True:
+        try:
+            credentials_directory = systemd_credentials_directory()
+        except (OSError, RuntimeError) as exc:
+            print(f"custodian-worker-launch: {exc}", file=sys.stderr)
+            return 78
         validator_mode = "--inside-model"
     else:
+        credentials_directory = None
         validator_mode = "--inside-lfs" if preflight.get("lfs_only") is True else "--inside-worker"
     os.execve(VALIDATOR, [VALIDATOR, validator_mode], worker_environment(credentials_directory))
     return 127

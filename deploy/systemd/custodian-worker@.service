@@ -29,7 +29,7 @@ Environment=GIT_TERMINAL_PROMPT=0
 Environment=GIT_ASKPASS=/usr/bin/false
 Environment=GIT_LFS_SKIP_SMUDGE=1
 BindReadOnlyPaths=/etc/custodian-worker/resolv.conf:/etc/resolv.conf
-LoadCredentialEncrypted=openai-api-key:/etc/custodian-worker/credentials/openai-api-key
+LoadCredentialEncrypted=custodian-worker-openai-api-key
 
 NoNewPrivileges=yes
 CapabilityBoundingSet=

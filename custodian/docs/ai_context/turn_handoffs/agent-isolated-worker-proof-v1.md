@@ -1,11 +1,11 @@
 <!-- V2 turn metadata -->
 Task identity: agent-isolated-worker-proof-v1
-Task definition: custodian/docs/ai_context/task_packets/AGENT_ISOLATED_WORKER_PROOF_V1.md at origin/main cd3c297c4a5b104785751c855387dceecdd912dd
+Task definition: custodian/docs/ai_context/task_packets/AGENT_ISOLATED_WORKER_PROOF_V1.md at origin/main 471f4051429af7b725b813cb5424f49487922d14
 Remote branch: agent/agent-isolated-worker-proof-v1
 Acquisition mode: normal
 Acquisition source: origin/main (no prior branch; fresh start)
 Acquisition source commit: 926df15195f7c0e98adfca597adcae8c00637219
-Checkpoint base: 0118cceaab13d005cb63ec07db55f12bf655bb80
+Checkpoint base: 973584c8898775ba23274dd9a25c4d145731b198
 <!-- /V2 turn metadata -->
 
 # Isolated Worker Proof V1 — implementation handoff
@@ -20,7 +20,7 @@ Original goal: Prove a disposable local CUSTODIAN worker can run in a dedicated 
 
 Implemented: Preserved the existing active V2 acquisition and checkout, restored coordinator Git fetch by removing only 16 verified empty malformed remote-tracking files, added the bounded anonymous Git LFS batch/action GET probe with redacted evidence, and prepared encrypted systemd credential delivery plus an explicit credential-gated model-only probe. The preparation uses no live credential and makes no API request.
 
-Remaining: The historical loopback anomaly remains unexplained. A dedicated OpenAI Platform project service account and its bounded key must be provisioned by an administrator, encrypted to `/etc/custodian-worker/credentials/openai-api-key`, then installed and exercised through the model-only service mode. No live credential or model response is available. The original packet remains incomplete and must not be archived or marked PASS.
+Remaining: The historical loopback anomaly remains unexplained. A dedicated OpenAI Platform project service account and its bounded key must be provisioned by an administrator, encrypted to `/etc/credstore.encrypted/custodian-worker-openai-api-key`, then installed and exercised through the model-only service mode. No live credential or model response is available. The original packet remains incomplete and must not be archived or marked PASS.
 
 Validation: Credential-free preparation has 28 passing worker-isolation unit tests, Python compilation, `systemd-analyze verify`, shell syntax, `systemd-analyze security --offline` (exposure 2.2), `git diff --check`, and canonical changed-file validation against `origin/main` with complete coverage. The earlier actual LFS-only service run `a58315580085c773` passed launcher preflight, anonymous batch, exact object GET, size and SHA-256 verification; the service is inactive and disabled afterward. No updated unit was installed or started during this continuation.
 
@@ -30,13 +30,19 @@ Sources/evidence: `custodian/docs/operations/worker-isolation-proof.md`; `custod
 
 ## 2026-11-11 continuation — credential-free model preparation
 
-Added a systemd encrypted-credential entry named `openai-api-key`, sourced from `/etc/custodian-worker/credentials/openai-api-key`, to the test-only unit. The provisioner creates/verifies the source parent as root-owned `0700`, validates any encrypted file as regular, singly linked, root-owned `0600` using metadata only, and deliberately preserves the encrypted credential on removal. The launcher forwards only the systemd-supplied `CREDENTIALS_DIRECTORY` path. The validator rejects missing, empty, malformed, symlinked, wrong-owner, and wrong-mode runtime delivery; it checks inherited credential variable names and refuses them. The explicit host `--model-only` mode runs only after the actual launcher network preflight, with a temporary `CODEX_HOME`, ignored user config, no MCP servers, apps, remote plugins, shell, or subagents, and child-environment inheritance set to none. The key value is included only in the Codex child environment; output, stderr, args, journals, and reports do not include it. The prompt is a one-line harmless marker request with a 60-second timeout. General full-proof and LFS modes never attempt a model call.
+Added an ID-only systemd encrypted-credential entry named `custodian-worker-openai-api-key`, sourced from `/etc/credstore.encrypted/custodian-worker-openai-api-key`, to the test-only unit. This systemd lookup is optional when the encrypted credential is absent, allowing non-model service modes to start. The provisioner creates/verifies the shared source directory as root-owned `0755` (not group/world writable), validates any encrypted file as regular, singly linked, root-owned `0600` using metadata only, and preserves the credential store and file on removal. The launcher forwards `CREDENTIALS_DIRECTORY` only in model-only mode; ordinary full and LFS modes do not require it. The validator rejects missing, empty, malformed, symlinked, wrong-owner, and wrong-mode runtime delivery; it checks inherited credential variable names and refuses them. The explicit host `--model-only` mode runs only after the actual launcher network preflight, with a temporary `CODEX_HOME`, ignored user config, no MCP servers, apps, remote plugins, shell, or subagents, and child-environment inheritance set to none. The key value is included only in the Codex child environment; output, stderr, args, journals, and reports do not include it. The prompt is a one-line harmless marker request with a 60-second timeout. General full-proof and LFS modes never attempt a model call.
 
-No live credential existed and none was read, created, or copied. The service was not upgraded or run; no model request occurred. A Platform administrator must create a dedicated project service account with minimum Responses inference permission, seven-day key expiry, a small monitored project budget, and independent revocation, then use `systemd-creds` to encrypt the key into `/etc/custodian-worker/credentials/openai-api-key`. The encrypted source path is non-secret; never paste the key into chat or repository files. Platform service-account guidance: https://developers.openai.com/api/docs/guides/api-keys
+No live credential existed and none was read, created, or copied. The service was not upgraded or run; no model request occurred. A Platform administrator must create a dedicated project service account with minimum Responses inference permission, seven-day key expiry, a small monitored project budget, and independent revocation, then use `systemd-creds` to encrypt the key into `/etc/credstore.encrypted/custodian-worker-openai-api-key`. The encrypted source path is non-secret; never paste the key into chat or repository files. Platform service-account guidance: https://developers.openai.com/api/docs/guides/api-keys
 
 The original loopback finding remains unresolved and full acceptance remains false. The implementation packet stays active/incomplete. Canonical changed-file validation passed for this prep. This turn is published through the supported V2 checkpoint; normal branch CI remains a separate check.
 
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af34a5d-ca7c-83ea-b267-382f1be560df
+
+## 2026-11-11 continuation — optional credential delivery correction
+
+The orchestrator's PR #143 review identified that an absolute `LoadCredentialEncrypted=ID:PATH` source fails unit startup when the key file is absent, and the launcher also rejected non-model runs without `CREDENTIALS_DIRECTORY`. Corrected the unit to use the systemd-supported ID-only optional lookup in `/etc/credstore.encrypted`, and restricted launcher credential-directory validation/forwarding to model-only. Added regression coverage for missing credentials in ordinary and LFS modes while retaining model-only fail-closed behavior. No credential was provisioned, no service was installed or started, and no model request occurred.
+
+Current orchestration chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af4a80a-6f54-83e9-82a0-8222279dfc86
 
 ## Source commit
 
