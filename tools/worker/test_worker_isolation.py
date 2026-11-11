@@ -39,12 +39,19 @@ class LauncherTests(unittest.TestCase):
         self.assertEqual(env["GIT_CONFIG_GLOBAL"], "/dev/null")
         self.assertEqual(env["GIT_TERMINAL_PROMPT"], "0")
 
+    def test_credential_directory_pointer_is_the_only_forwarded_secret_context(self) -> None:
+        with tempfile.TemporaryDirectory() as credentials_directory:
+            env = worker_launcher.worker_environment(credentials_directory)
+        self.assertEqual(env["CREDENTIALS_DIRECTORY"], credentials_directory)
+        self.assertNotIn("OPENAI_API_KEY", env)
+
     def test_invalid_instance_fails_before_identity_or_exec(self) -> None:
         self.assertEqual(worker_launcher.main(["other"]), 64)
 
     def test_valid_launch_execs_only_the_validator_with_sanitized_environment(self) -> None:
         exec_calls = []
-        with patch.object(worker_launcher.os, "geteuid", return_value=987), \
+        with patch.dict(os.environ, {}, clear=True), \
+             patch.object(worker_launcher.os, "geteuid", return_value=987), \
              patch.object(worker_launcher.pwd, "getpwuid", return_value=SimpleNamespace(pw_name="custodian-worker")), \
              patch.object(worker_launcher.Path, "is_file", return_value=True), \
              patch.object(worker_launcher, "isolation_preflight", return_value=(True, {"pass": True})), \
@@ -56,6 +63,43 @@ class LauncherTests(unittest.TestCase):
         self.assertEqual(path, worker_launcher.VALIDATOR)
         self.assertEqual(argv, [worker_launcher.VALIDATOR, "--inside-worker"])
         self.assertEqual(env, worker_launcher.WORKER_ENV)
+
+    def test_missing_systemd_credential_directory_fails_model_mode_before_validator(self) -> None:
+        with patch.dict(os.environ, {}, clear=True), \
+             patch.object(worker_launcher.os, "geteuid", return_value=987), \
+             patch.object(worker_launcher.pwd, "getpwuid", return_value=SimpleNamespace(pw_name="custodian-worker")), \
+             patch.object(worker_launcher.Path, "is_file", return_value=True), \
+             patch.object(worker_launcher, "isolation_preflight", return_value=(True, {"pass": True, "model_only": True})), \
+             patch.object(worker_launcher.os, "execve") as execve:
+            self.assertEqual(worker_launcher.main(["proof"]), 78)
+        execve.assert_not_called()
+
+    def test_non_model_modes_run_without_systemd_credentials(self) -> None:
+        for preflight in ({"pass": True}, {"pass": True, "lfs_only": True}):
+            with self.subTest(preflight=preflight):
+                exec_calls = []
+                with patch.dict(os.environ, {}, clear=True), \
+                     patch.object(worker_launcher.os, "geteuid", return_value=987), \
+                     patch.object(worker_launcher.pwd, "getpwuid", return_value=SimpleNamespace(pw_name="custodian-worker")), \
+                     patch.object(worker_launcher.Path, "is_file", return_value=True), \
+                     patch.object(worker_launcher, "isolation_preflight", return_value=(True, preflight)), \
+                     patch.object(worker_launcher.os, "execve", side_effect=lambda *args: exec_calls.append(args)):
+                    self.assertEqual(worker_launcher.main(["proof"]), 127)
+                self.assertEqual(exec_calls[0][2], worker_launcher.WORKER_ENV)
+                expected = "--inside-lfs" if preflight.get("lfs_only") else "--inside-worker"
+                self.assertEqual(exec_calls[0][1], [worker_launcher.VALIDATOR, expected])
+
+    def test_explicit_model_mode_selects_only_the_model_probe(self) -> None:
+        exec_calls = []
+        with tempfile.TemporaryDirectory() as credentials_directory, \
+             patch.dict(os.environ, {"CREDENTIALS_DIRECTORY": credentials_directory}, clear=True), \
+             patch.object(worker_launcher.os, "geteuid", return_value=987), \
+             patch.object(worker_launcher.pwd, "getpwuid", return_value=SimpleNamespace(pw_name="custodian-worker")), \
+             patch.object(worker_launcher.Path, "is_file", return_value=True), \
+             patch.object(worker_launcher, "isolation_preflight", return_value=(True, {"pass": True, "model_only": True})), \
+             patch.object(worker_launcher.os, "execve", side_effect=lambda *args: exec_calls.append(args)):
+            self.assertEqual(worker_launcher.main(["proof"]), 127)
+        self.assertEqual(exec_calls[0][1], [worker_launcher.VALIDATOR, "--inside-model"])
 
     def test_failed_preflight_refuses_to_launch_validator(self) -> None:
         with patch.object(worker_launcher.os, "geteuid", return_value=987), \
@@ -123,6 +167,10 @@ class EvidenceValidationTests(unittest.TestCase):
             ],
         }
         self.assertTrue(validate_worker_isolation.valid_probe_config(valid))
+        model_only = {**valid, "model_only": True}
+        self.assertTrue(validate_worker_isolation.valid_probe_config(model_only))
+        self.assertFalse(validate_worker_isolation.valid_probe_config({**model_only, "lfs_only": True}))
+        self.assertFalse(validate_worker_isolation.valid_probe_config({**valid, "model_only": "true"}))
         hostile = {**valid, "targets": [
             *valid["targets"][:2],
             {"name": "ipv6_loopback", "host": "169.254.169.254", "port": 43211},
@@ -196,6 +244,75 @@ class EvidenceValidationTests(unittest.TestCase):
         self.assertNotIn(signed_url, json.dumps(result))
         self.assertNotIn("private-token", json.dumps(result))
 
+
+class ModelCredentialTests(unittest.TestCase):
+    SYNTHETIC_KEY = "synthetic-not-a-real-api-key"
+
+    def make_credential(self, directory: Path, value: bytes, mode: int = 0o400) -> Path:
+        directory.mkdir(parents=True, exist_ok=True)
+        credential = directory / validate_worker_isolation.CREDENTIAL_NAME
+        credential.write_bytes(value)
+        credential.chmod(mode)
+        return credential
+
+    def test_runtime_credential_rejects_missing_empty_malformed_and_wrong_modes(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            with patch.dict(os.environ, {"CREDENTIALS_DIRECTORY": str(root)}, clear=True):
+                self.assertEqual(validate_worker_isolation._read_runtime_model_credential(), ("missing", None))
+                credential = self.make_credential(root, b"")
+                self.assertEqual(validate_worker_isolation._read_runtime_model_credential(), ("invalid", None))
+                credential.chmod(0o600)
+                credential.write_bytes(b"not-a-key")
+                credential.chmod(0o400)
+                self.assertEqual(validate_worker_isolation._read_runtime_model_credential(), ("invalid", None))
+                credential.chmod(0o600)
+                credential.write_text(self.SYNTHETIC_KEY)
+                self.assertEqual(validate_worker_isolation._read_runtime_model_credential(), ("invalid", None))
+                credential.write_text("sk-svcacct-" + "x" * 32)
+                credential.chmod(0o400)
+                with patch.object(validate_worker_isolation.os, "geteuid", return_value=os.geteuid() + 1):
+                    self.assertEqual(validate_worker_isolation._read_runtime_model_credential(), ("invalid", None))
+                credential.unlink()
+                credential.symlink_to(root / "missing-target")
+                self.assertEqual(validate_worker_isolation._read_runtime_model_credential(), ("invalid", None))
+
+    def test_model_probe_does_not_launch_without_credential(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp, \
+             patch.dict(os.environ, {"CREDENTIALS_DIRECTORY": tmp}, clear=True), \
+             patch.object(validate_worker_isolation.subprocess, "run") as run_codex:
+            result = validate_worker_isolation.codex_model_probe()
+        self.assertEqual(result["disposition"], "credential_missing")
+        self.assertFalse(result["attempted"])
+        run_codex.assert_not_called()
+
+    def test_response_verification_accepts_only_the_completed_agent_message(self) -> None:
+        event = json.dumps({"type": "item.completed", "item": {
+            "type": "agent_message", "text": validate_worker_isolation.MODEL_OK_MARKER}})
+        self.assertTrue(validate_worker_isolation._model_response_has_marker(event))
+        self.assertFalse(validate_worker_isolation._model_response_has_marker(
+            json.dumps({"type": "turn.started", "prompt": validate_worker_isolation.MODEL_OK_MARKER})))
+
+    def test_codex_key_wiring_is_limited_to_child_environment(self) -> None:
+        import inspect
+        source = inspect.getsource(validate_worker_isolation.codex_model_probe)
+        self.assertIn('child_env["OPENAI_API_KEY"] = model_credential', source)
+        self.assertIn("env=child_env", source)
+        self.assertIn('"--config", \'shell_environment_policy.inherit="none"\'', source)
+        self.assertNotIn("print(api_key)", source)
+
+    def test_model_probe_refuses_inherited_owner_credential(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            self.make_credential(Path(tmp), self.SYNTHETIC_KEY.encode("ascii"))
+            with patch.dict(os.environ, {
+                    "CREDENTIALS_DIRECTORY": tmp, "OPENAI_API_KEY": self.SYNTHETIC_KEY}, clear=True), \
+                 patch.object(validate_worker_isolation.subprocess, "run") as run_codex:
+                result = validate_worker_isolation.codex_model_probe()
+        self.assertEqual(result["disposition"], "inherited_credentials_present")
+        self.assertFalse(result["inherited_owner_credentials_absent"])
+        self.assertNotIn(self.SYNTHETIC_KEY, json.dumps(result))
+        run_codex.assert_not_called()
+
     def test_lfs_download_action_cannot_override_host_or_connection_headers(self) -> None:
         for name in ("Host", "Connection", "Content-Length", "Transfer-Encoding"):
             with self.subTest(name=name):
@@ -220,17 +337,39 @@ class ProvisionerTests(unittest.TestCase):
             unit = root / "etc/systemd/system/custodian-worker@.service"
             launcher = root / "usr/local/libexec/custodian-worker/custodian-worker-launch"
             resolver = root / "etc/custodian-worker/resolv.conf"
+            credential_directory = root / "etc/credstore.encrypted"
+            credential = credential_directory / "custodian-worker-openai-api-key"
             self.assertTrue(unit.is_file())
             self.assertTrue(launcher.is_file())
             self.assertTrue(resolver.is_file())
+            self.assertTrue(credential_directory.is_dir())
+            self.assertEqual(credential_directory.stat().st_mode & 0o777, 0o755)
+            self.assertFalse(credential.exists())
+            unit_text = unit.read_text()
+            self.assertIn("LoadCredentialEncrypted=custodian-worker-openai-api-key", unit_text)
+            self.assertIn("InaccessiblePaths=-/home -/root -/etc/codex", unit_text)
             second = self.run_provisioner(root, "install")
             self.assertEqual(second.returncode, 0, second.stderr)
+            credential.write_text("encrypted-test-fixture")
+            credential.chmod(0o600)
             removed = self.run_provisioner(root, "remove", "--remove-state")
             self.assertEqual(removed.returncode, 0, removed.stderr)
             self.assertFalse(unit.exists())
             self.assertFalse(launcher.exists())
             self.assertFalse(resolver.exists())
             self.assertFalse((root / "var/lib/custodian-worker").exists())
+            self.assertEqual(credential.read_text(), "encrypted-test-fixture")
+
+    def test_install_refuses_an_incorrectly_permissioned_admin_credential(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.assertEqual(self.run_provisioner(root, "install").returncode, 0)
+            credential = root / "etc/credstore.encrypted/custodian-worker-openai-api-key"
+            credential.write_text("encrypted-test-fixture")
+            credential.chmod(0o644)
+            result = self.run_provisioner(root, "install")
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("owner-only 0600", result.stderr)
 
     def test_install_refuses_to_overwrite_conflicting_unit(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -285,6 +424,9 @@ class ProvisionerTests(unittest.TestCase):
                     Path("/usr/local/libexec/custodian-worker/validator.py"), 0o644),)):
                 provision_worker_isolation.upgrade(repo, root, "HEAD")
             self.assertEqual(destination.read_text(), "new validator\n")
+            credentials = root / "etc/credstore.encrypted"
+            self.assertTrue(credentials.is_dir())
+            self.assertEqual(credentials.stat().st_mode & 0o777, 0o755)
 
     def test_upgrade_refuses_modified_installed_file_without_overwriting_it(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

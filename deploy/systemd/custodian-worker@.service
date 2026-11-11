@@ -29,6 +29,7 @@ Environment=GIT_TERMINAL_PROMPT=0
 Environment=GIT_ASKPASS=/usr/bin/false
 Environment=GIT_LFS_SKIP_SMUDGE=1
 BindReadOnlyPaths=/etc/custodian-worker/resolv.conf:/etc/resolv.conf
+LoadCredentialEncrypted=custodian-worker-openai-api-key
 
 NoNewPrivileges=yes
 CapabilityBoundingSet=
@@ -53,7 +54,7 @@ SystemCallFilter=~@debug @mount @raw-io @reboot @swap @privileged
 SystemCallErrorNumber=EPERM
 RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
 IPAddressDeny=127.0.0.0/8 10.0.0.0/8 100.64.0.0/10 169.254.0.0/16 172.16.0.0/12 192.168.0.0/16 ::1/128 fe80::/10 fc00::/7
-InaccessiblePaths=-/home -/root -/run/user -/run/docker.sock -/var/run/docker.sock -/run/dbus -/run/systemd -/run/tailscale
+InaccessiblePaths=-/home -/root -/etc/codex -/run/user -/run/docker.sock -/var/run/docker.sock -/run/dbus -/run/systemd -/run/tailscale
 ReadWritePaths=/var/lib/custodian-worker/home /var/lib/custodian-worker/codex-home /var/lib/custodian-worker/tmp /var/lib/custodian-worker/workspaces
 
 TasksMax=256
