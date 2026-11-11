@@ -5,8 +5,9 @@
 - Category: `agent-ops`
 - Status: `ready`
 - Dispatch: `auto`
-- Authoring handoff: `auto`
+- Authoring handoff: `manual`
 - Priority: `P0`
+- User-owned design decision: `open`
 - Depends on: `agent-findings-bridge-review-closeout-recovery-v1`
 - Locks: `none`
 - Kind: `review`

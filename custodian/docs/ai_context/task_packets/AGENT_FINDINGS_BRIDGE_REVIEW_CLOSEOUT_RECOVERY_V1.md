@@ -5,7 +5,7 @@
 - Category: `agent-ops`
 - Status: `blocked`
 - Dispatch: `auto`
-- Authoring handoff: `auto`
+- Authoring handoff: `manual`
 - Priority: `P0`
 - User-owned design decision: `open`
 - Depends on: `none`
