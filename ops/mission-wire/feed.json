@@ -1,9 +1,148 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-11T09:51:16Z",
-  "source_main_sha": "a16fb3ece74f90358dac36d1b981348efeaba412",
+  "generated_at": "2026-11-11T16:48:07Z",
+  "source_main_sha": "82e1a81125c803fa5c9a0fcb1ffc4ef9574d4526",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "worker-isolation-proof-merged-82e1a811",
+      "headline": "Worker isolation proof merges into main, with security acceptance still incomplete",
+      "summary": "PR #140 merged a disabled, manually invoked isolated-worker proof and bounded host diagnostics into main. This is a code landing, not independent security acceptance or worker activation; unresolved loopback and dependency/model proof gaps remain.",
+      "body": "Main 82e1a811 merges PR #140, adding a systemd worker template, launcher, provisioning and validation tools, tests, and bounded diagnostic evidence. Earlier PR evidence reported 13 focused tests passing, but also documented incomplete security acceptance, including a loopback anomaly, LFS retrieval timeout and unavailable isolated model execution. No fresh independent PASS, running worker, canonical dispatcher audit, or verified teardown was established. The private pilot pointer remains dated November 8 and is stale; no operational counts were used.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-isolated-worker-proof-v1",
+      "occurred_at": "2026-11-11T15:49:29Z",
+      "bullets": [
+        "PR #140 merged into main at 82e1a811.",
+        "Worker service template and validation tooling landed.",
+        "Full security acceptance remains unproven.",
+        "No worker activation or canonical teardown established."
+      ],
+      "links": [
+        {
+          "title": "Merge commit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/82e1a81125c803fa5c9a0fcb1ffc4ef9574d4526"
+        },
+        {
+          "title": "Worker isolation PR #140",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/140"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN's isolated-worker proof has moved from an open proposal into main. The merge adds a deliberately controlled execution boundary and its validation tools, but does not certify that boundary or turn on a worker.",
+        "sections": [
+          {
+            "heading": "A safer execution path is now in the codebase",
+            "text": "The merge introduces a systemd service template, worker launcher, provisioning checks, validation code and bounded diagnostic records. These components provide a concrete basis for review rather than an active unattended executor."
+          },
+          {
+            "heading": "The security gate is still open",
+            "text": "Earlier evidence reported focused tests passing, alongside unresolved loopback behavior and incomplete dependency/model checks. Landing the implementation does not convert those gaps into an independent acceptance receipt."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Landing makes review possible, not optional",
+            "explanation": "The project can now review an exact main revision of the worker boundary, but it still needs convincing evidence that isolation holds under the intended execution conditions."
+          },
+          {
+            "title": "No automatic execution follows from this merge",
+            "explanation": "The worker design is deliberately disabled and manually invoked. No verified activation, host process or cleanup evidence accompanies this GitHub landing."
+          }
+        ],
+        "takeaway": "The isolated-worker proof is merged but remains unaccepted for production execution.",
+        "next_watch": "Resolve the loopback and dependency/model proof gaps, then obtain an independent review receipt before any activation decision."
+      },
+      "details": {
+        "overview": "GitHub compare a16fb3ec..82e1a811 confirms 13 changed files, including systemd template, worker tools, tests and bounded evidence. The November 8 Dropbox pointer is stale; no host counts were used.",
+        "ledger": [
+          {
+            "stage": "Implementation landing",
+            "status": "verified merged",
+            "evidence": "PR #140 merge 82e1a811"
+          },
+          {
+            "stage": "Focused validation",
+            "status": "reported passing",
+            "evidence": "Prior PR description reported 13 focused tests"
+          },
+          {
+            "stage": "Full security proof",
+            "status": "incomplete",
+            "evidence": "Loopback anomaly and dependency/model test limitations"
+          },
+          {
+            "stage": "Independent acceptance",
+            "status": "unknown",
+            "evidence": "No independent passing receipt inspected"
+          },
+          {
+            "stage": "Activation and teardown",
+            "status": "unknown",
+            "evidence": "No current host audit or teardown receipt"
+          }
+        ],
+        "notes": [
+          "Current main is 82e1a81125c803fa5c9a0fcb1ffc4ef9574d4526."
+        ],
+        "unknowns": [
+          "Current worker process and host isolation state",
+          "Canonical dispatcher totals and cleanup"
+        ],
+        "actions": [
+          "Worker proof owner: close evidence gaps and request independent security review before any activation."
+        ]
+      },
+      "related": [
+        {
+          "title": "Isolated worker proof reaches review while scheduled authoring handoff fails",
+          "context": "Earlier coverage of the open PR and its incomplete proof.",
+          "story_id": "worker-isolation-proof-pr140-handoff-failure-42976298927"
+        }
+      ],
+      "scorecard": {
+        "stage": "Merged implementation; independent security acceptance outstanding",
+        "as_of": "2026-11-11T15:49:29Z",
+        "scope": "PR #140 and exact main merge only",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Implementation merged",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "82e1a811"
+          },
+          {
+            "label": "Focused tests",
+            "status": "done",
+            "verification": "reported",
+            "evidence": "13 tests reported passing"
+          },
+          {
+            "label": "Full isolation proof",
+            "status": "blocked",
+            "verification": "reported",
+            "evidence": "Outstanding anomalies"
+          },
+          {
+            "label": "Independent review",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No accepted PASS"
+          },
+          {
+            "label": "Activation / teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No host proof"
+          }
+        ],
+        "next_gate": "Worker proof owner resolves outstanding evidence and obtains independent acceptance."
+      }
+    },
     {
       "id": "worker-isolation-proof-pr140-handoff-failure-42976298927",
       "headline": "Isolated worker proof reaches review while scheduled authoring handoff fails",
@@ -1458,13 +1597,7 @@
           "Independent reviewer: falsify the bridge before any authorized application."
         ]
       },
-      "related": [
-        {
-          "title": "Owner-exception provenance verifier lands; independent review is still the gate",
-          "context": "The earlier verifier landing led to the preserved review whose findings now need durable recovery.",
-          "story_id": "owner-provenance-verifier-landed-268d5d1a"
-        }
-      ],
+      "related": [],
       "scorecard": {
         "stage": "Packet pair ready; implementation and review pending",
         "as_of": "2026-11-10T09:20:26Z",
@@ -1509,156 +1642,6 @@
           }
         ],
         "next_gate": "Implementation owner lands a bounded, evidence-preserving recovery bridge for independent review."
-      }
-    },
-    {
-      "id": "owner-provenance-verifier-landed-268d5d1a",
-      "headline": "Owner-exception provenance verifier lands; independent review is still the gate",
-      "summary": "PR #130 merged a narrowly scoped verifier for the historical direct-PR source span, with reported passing targeted tests. This advances the owner-exception recovery from dispatch-ready instructions to landed implementation. The paired independent review is still pending; PR #131 proposes documentation-only implementation closeout and is not merged.",
-      "body": "The owner-exception provenance recovery implementation merged into main in PR #130 at 268d5d1a. Its purpose is to authenticate the precise historical source span needed by a stalled independent review, using pinned acquisition, handoff, Git ancestry, blobs and PR history, while rejecting conflicting diagnostics. The PR reports 313 paired-review runner tests, 98 dispatch tests, 32 task-packet contract tests, and 149 selected changed-file checks passing; these are author-reported validation results, not an independent acceptance receipt. PR #131 is an open documentation-only implementation closeout; it explicitly leaves the paired provenance review pending. This does not establish a running host reviewer, accepted PASS, recovery of the preserved review, or clean teardown. The private WIRE pilot pointer remains dated November 8 and cannot support fresh operational counts. GitHub-only partial coverage.",
-      "severity": "milestone",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-owner-review-exception-direct-pr-provenance-recovery-v1",
-      "occurred_at": "2026-11-10T07:50:53Z",
-      "bullets": [
-        "PR #130 merged the bounded source-provenance verifier.",
-        "Targeted tests are reported passing in the PR, not independently accepted.",
-        "PR #131 remains open for documentation-only closeout.",
-        "Paired independent review and preserved-run recovery remain pending."
-      ],
-      "links": [
-        {
-          "title": "Merged implementation PR #130",
-          "url": "https://github.com/braydio/CUSTODIAN/pull/130"
-        },
-        {
-          "title": "Main merge commit",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/268d5d1abc9061278c16a3abd31e1d165aaac512"
-        },
-        {
-          "title": "Open closeout PR #131",
-          "url": "https://github.com/braydio/CUSTODIAN/pull/131"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN has moved a stalled review recovery from a written assignment to merged code. A narrowly scoped verifier now provides a way to authenticate the historical direct-PR source that the original reviewer could not reconstruct. That is an implementation milestone, not yet an independent verdict.",
-        "sections": [
-          {
-            "heading": "A missing link in the review trail",
-            "text": "The earlier owner-exception correction had landed, but its preserved review lacked an ordinary lifecycle trace for the exact source span. The new verifier checks the pinned acquisition and handoff against Git ancestry, file blobs and pull-request history, and rejects conflicting diagnostic references."
-          },
-          {
-            "heading": "Tests passed; acceptance has not",
-            "text": "PR #130 reports passing targeted runner, dispatch, contract and changed-file checks. The paired independent provenance review still needs to challenge the implementation before the original held review can proceed. A separate documentation closeout PR is open but not merged."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The bottleneck has shifted",
-            "explanation": "Previously the immediate gap was implementation of a trustworthy source resolver. With that code merged, the next decisive evidence is an independent review receipt, not another implementation plan."
-          },
-          {
-            "title": "A merged verifier is not a recovered review",
-            "explanation": "The new code does not retroactively create lifecycle traces or establish that the preserved reviewer ran, accepted the fix, or cleaned up its host state."
-          }
-        ],
-        "takeaway": "The exact-source verifier is merged into main; independent acceptance and preserved-review recovery are still unproven.",
-        "next_watch": "Watch for independent provenance review PASS and a separately authorized, evidence-backed plan to resume the preserved review."
-      },
-      "details": {
-        "overview": "GitHub-only partial inspection: PR #130 merged at main 268d5d1a on November 10, 07:50:53 UTC. PR #131 open at inspection. Targeted test results come from PR #130 description, not a separate accepted review receipt. Private pilot pointer metadata still dates November 8; no fresh host metrics used.",
-        "ledger": [
-          {
-            "stage": "Packet pair and dispatch eligibility",
-            "status": "verified landed and ready",
-            "evidence": "PRs #128 and #129, handoff d793f198."
-          },
-          {
-            "stage": "Bounded verifier implementation",
-            "status": "verified merged",
-            "evidence": "PR #130 and merge 268d5d1a."
-          },
-          {
-            "stage": "Targeted validation",
-            "status": "reported passed",
-            "evidence": "PR #130 reports 313 runner, 98 dispatch, 32 contract and 149 selected changed-file checks."
-          },
-          {
-            "stage": "Implementation packet closeout",
-            "status": "open, not landed",
-            "evidence": "PR #131 documentation-only closeout."
-          },
-          {
-            "stage": "Independent provenance review",
-            "status": "not accepted",
-            "evidence": "PR #130 and #131 explicitly state paired review pending."
-          },
-          {
-            "stage": "Preserved original review and canonical teardown",
-            "status": "unknown / held",
-            "evidence": "No accepted review, authorized recovery execution or host teardown receipt inspected."
-          }
-        ],
-        "notes": [
-          "No full canonical dispatcher audit inspected; packet/workstream totals unknown."
-        ],
-        "unknowns": [
-          "Host execution, claims, locks, worktrees and disk state not independently available.",
-          "Independent review PASS and canonical cleanup absent from inspected evidence.",
-          "Current CI check-run state not established."
-        ],
-        "actions": [
-          "Independent reviewer: evaluate merged verifier and issue a genuine disposition.",
-          "Authorized owner: only after acceptance, plan preserved-review recovery under separate permission."
-        ]
-      },
-      "related": [],
-      "scorecard": {
-        "stage": "Verifier merged; independent review pending",
-        "as_of": "2026-11-10T07:50:53Z",
-        "scope": "Named owner-exception direct-PR provenance recovery only",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Recovery packets authored and ready",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "PRs #128/#129 and d793f198."
-          },
-          {
-            "label": "Verifier implementation merged",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "PR #130 merged into main."
-          },
-          {
-            "label": "Targeted validation",
-            "status": "current",
-            "verification": "reported",
-            "evidence": "PR #130 reports passing tests; not independent acceptance."
-          },
-          {
-            "label": "Implementation closeout",
-            "status": "current",
-            "verification": "verified",
-            "evidence": "PR #131 open, not merged."
-          },
-          {
-            "label": "Independent provenance review",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No PASS receipt inspected."
-          },
-          {
-            "label": "Preserved review recovery and teardown",
-            "status": "blocked",
-            "verification": "unknown",
-            "evidence": "Needs independent acceptance and separate authorization."
-          }
-        ],
-        "next_gate": "Independent reviewer assesses the merged verifier and records an authentic disposition."
       }
     }
   ],
