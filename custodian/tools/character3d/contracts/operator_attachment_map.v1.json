@@ -1,0 +1,23 @@
+{
+  "schema": "custodian.character3d_attachment_map.v1",
+  "character_id": "operator",
+  "rig_source": "24-joint Operator master (skin joints 24); node names verified in running.glb and character_master.glb",
+  "sockets": {
+    "root": {"status": "resolved", "bone": "Hips", "point": "head", "note": "sampled as world origin (feet root), the render pivot; Hips is not used"},
+    "ground_contact": {"status": "not_mapped", "reason": "derived per foot from foot world height, not a separate bone"},
+    "foot_l": {"status": "resolved", "bone": "LeftFoot", "point": "head"},
+    "foot_r": {"status": "resolved", "bone": "RightFoot", "point": "head"},
+    "hand_l": {"status": "resolved", "bone": "LeftHand", "point": "head"},
+    "hand_r": {"status": "resolved", "bone": "RightHand", "point": "head"},
+    "head": {"status": "resolved", "bone": "Head", "point": "head"},
+    "chest": {"status": "resolved", "bone": "Spine01", "point": "head"},
+    "weapon_grip": {"status": "unavailable", "reason": "no weapon attachment node in the Operator rig; authoring requirement"},
+    "weapon_tip": {"status": "unavailable", "reason": "no weapon attachment node in the Operator rig; authoring requirement"},
+    "muzzle": {"status": "unavailable", "reason": "no muzzle node in the Operator rig; authoring requirement"},
+    "ejection": {"status": "unavailable", "reason": "no ejection node in the Operator rig; authoring requirement"}
+  },
+  "actions": {
+    "walking": {"glb": "walking.glb"},
+    "running": {"glb": "running.glb"}
+  }
+}

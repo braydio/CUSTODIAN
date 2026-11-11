@@ -1,0 +1,12 @@
+{
+  "schema": "custodian.character3d_presentation_effect_registry.v1",
+  "version": 1,
+  "effects": {
+    "footstep_dust": {
+      "status": "development_marker",
+      "family": "footstep_dust",
+      "production_art": false,
+      "note": "Visual marker for the Running contact proof. Production dust art goes through Asset Pipeline V2 and is not approved by this registry."
+    }
+  }
+}

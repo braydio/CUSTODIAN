@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "custodian.character3d_presentation_track.v1",
+  "title": "Character 3D presentation track (one action, one direction)",
+  "description": "Source-derived attachment samples and cosmetic cue records for one rendered direction. Coordinates are canvas pixels with origin top-left, x to the right, y down. Cue records never create gameplay events.",
+  "type": "object",
+  "required": ["schema", "character_id", "action", "direction", "render", "source", "frames", "sockets", "cues", "loop", "approval_status", "gameplay_timing_approved"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"type": "string", "const": "custodian.character3d_presentation_track.v1"},
+    "character_id": {"type": "string", "pattern": "^[a-z0-9_]+$", "minLength": 1},
+    "action": {"type": "string", "pattern": "^[a-z0-9_]+$", "minLength": 1},
+    "semantic": {"type": "string", "minLength": 1},
+    "direction": {"type": "string", "enum": ["S", "SE", "E", "NE", "N", "NW", "W", "SW"]},
+    "render": {
+      "type": "object",
+      "required": ["generation", "canvas", "px_per_m", "source_canvas", "source_pivot", "target_pivot", "staging_offset", "projection", "elevation_deg", "azimuth_deg", "registration_policy"],
+      "additionalProperties": false,
+      "properties": {
+        "generation": {"type": "string", "pattern": "^[a-z0-9_]+$", "minLength": 1},
+        "canvas": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "integer", "minimum": 1}},
+        "px_per_m": {"type": "number", "exclusiveMinimum": 0},
+        "source_canvas": {"type": "integer", "minimum": 1},
+        "source_pivot": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}},
+        "target_pivot": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}},
+        "staging_offset": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}},
+        "projection": {"type": "string", "enum": ["orthographic"]},
+        "elevation_deg": {"type": "number"},
+        "azimuth_deg": {"type": "number"},
+        "registration_policy": {"type": "string", "enum": ["per_action_pivot"]}
+      }
+    },
+    "source": {
+      "type": "object",
+      "required": ["motion_sha256", "master_sha256", "glb_sha256", "mapping_sha256", "meta_sha256", "stage_manifest_sha256"],
+      "additionalProperties": false,
+      "properties": {
+        "motion_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "master_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "glb_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "mapping_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "meta_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "stage_manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "frames": {
+      "type": "object",
+      "required": ["count", "indices", "sample_times_s", "sampling_fps", "frame_sha256"],
+      "additionalProperties": false,
+      "properties": {
+        "count": {"type": "integer", "minimum": 1},
+        "indices": {"type": "array", "minItems": 1, "items": {"type": "integer", "minimum": 0}},
+        "sample_times_s": {"type": "array", "minItems": 1, "items": {"type": "number"}},
+        "sampling_fps": {"type": "number", "exclusiveMinimum": 0},
+        "frame_sha256": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+      }
+    },
+    "sockets": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["status"],
+        "additionalProperties": false,
+        "properties": {
+          "status": {"type": "string", "enum": ["resolved", "unavailable"]},
+          "reason": {"type": "string", "minLength": 1},
+          "bone": {"type": "string", "minLength": 1},
+          "samples": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["index", "canvas", "staged", "root_relative", "valid", "depth_m", "relative_depth_m", "order"],
+              "additionalProperties": false,
+              "properties": {
+                "index": {"type": "integer", "minimum": 0},
+                "canvas": {"type": "object", "required": ["x", "y"], "additionalProperties": false, "properties": {"x": {"type": "number"}, "y": {"type": "number"}}},
+                "staged": {"type": "object", "required": ["x", "y"], "additionalProperties": false, "properties": {"x": {"type": "number"}, "y": {"type": "number"}}},
+                "root_relative": {"type": "object", "required": ["x", "y"], "additionalProperties": false, "properties": {"x": {"type": "number"}, "y": {"type": "number"}}},
+                "valid": {"type": "boolean"},
+                "depth_m": {"type": "number"},
+                "relative_depth_m": {"type": "number"},
+                "order": {"type": "string", "enum": ["front", "behind"]}
+              }
+            }
+          }
+        }
+      }
+    },
+    "cues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "class", "trigger", "socket", "effect_ref", "presentation_duration_samples", "ordering", "interruption", "repetition", "provenance"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9_.]+$", "minLength": 1},
+          "class": {"type": "string", "enum": ["presentation", "gameplay_confirmed"]},
+          "trigger": {
+            "type": "object",
+            "required": ["type", "sample"],
+            "additionalProperties": false,
+            "properties": {
+              "type": {"type": "string", "enum": ["contact_onset"]},
+              "sample": {"type": "integer", "minimum": 0}
+            }
+          },
+          "socket": {"type": "string", "minLength": 1},
+          "effect_ref": {"type": "string", "pattern": "^[a-z0-9_]+$", "minLength": 1},
+          "presentation_duration_samples": {"type": "integer", "minimum": 0},
+          "ordering": {"type": "string", "enum": ["by_depth", "front", "behind"]},
+          "interruption": {"type": "string", "enum": ["cancel_pending_on_interrupt", "finish_on_interrupt"]},
+          "repetition": {"type": "string", "enum": ["per_loop_cycle", "once_per_instance"]},
+          "provenance": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "loop": {"type": "boolean"},
+    "approval_status": {"type": "string", "enum": ["candidate_unapproved", "approved"]},
+    "gameplay_timing_approved": {"type": "boolean", "const": false}
+  }
+}
