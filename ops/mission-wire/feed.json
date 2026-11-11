@@ -1,9 +1,155 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-11T00:14:52Z",
+  "generated_at": "2026-11-11T09:51:16Z",
   "source_main_sha": "a16fb3ece74f90358dac36d1b981348efeaba412",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "worker-isolation-proof-pr140-handoff-failure-42976298927",
+      "headline": "Isolated worker proof reaches review while scheduled authoring handoff fails",
+      "summary": "PR #140 proposes a disabled, manually invoked isolated worker with bounded host evidence and passing focused tests, but full security acceptance is incomplete. Separately, the latest scheduled Automatic Packet Authoring Handoff failed at its validation/publication step. Neither event proves an active worker or successful automatic dispatch.",
+      "body": "At main a16fb3ece74f90358dac36d1b981348efeaba412, worker-isolation PR #140 remains open, not merged. Its description reports 13 focused tests passed and systemd/security checks passed, but an unexplained loopback anomaly, timed-out anonymous LFS retrieval, and unavailable isolated model execution prevent full proof acceptance. The proposed systemd worker is explicitly disabled/inactive with no timer. Scheduled Automatic Packet Authoring Handoff run 42976298927 (November 11, 07:00 UTC) failed in 'Validate and publish explicitly authorized pairs'; the specific underlying error is not established by the inspected job step summary. A preceding scheduled run at 00:13 UTC passed. No host dispatcher audit or fresh private WIRE observation was available. The November 8 pointer is stale. These are bounded GitHub observations, not live process or workstream totals.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-isolated-worker-proof-v1",
+      "occurred_at": "2026-11-11T07:00:44Z",
+      "bullets": [
+        "Worker-isolation PR #140 is open and unmerged.",
+        "13 focused tests passed as reported in PR; full security proof incomplete.",
+        "Worker service is reported disabled/inactive; no timer installed.",
+        "Scheduled authoring handoff failed at validation/publication step.",
+        "No host dispatcher counts or verified cleanup available."
+      ],
+      "links": [
+        {
+          "title": "Worker isolation proof PR #140",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/140"
+        },
+        {
+          "title": "Failed authoring handoff run",
+          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/42976298927"
+        },
+        {
+          "title": "Prior successful handoff run",
+          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/42929685956"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "A proposed isolated worker has reached pull-request review, but CUSTODIAN has not yet demonstrated the full security boundary it needs. Meanwhile, the latest scheduled packet-authoring handoff failed during validation and publication, leaving automatic handoff health uncertain.",
+        "sections": [
+          {
+            "heading": "The worker is built to stay off until proven safe",
+            "text": "PR #140 adds a manually invoked systemd proof worker, launcher-level network checks and redacted host evidence. Its focused tests passed, but an unexplained loopback result and incomplete dependency/model tests mean the security proof is not accepted. The service remains disabled, with no timer."
+          },
+          {
+            "heading": "The scheduled handoff needs diagnosis",
+            "text": "The November 11 scheduled handoff failed in the step that validates and publishes authorized packet pairs. An earlier run succeeded. The job summary identifies the failing stage but not the root cause, so this is a CI failure rather than proof that any packet was dispatched or altered."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Isolation code is not isolation acceptance",
+            "explanation": "The tests support parts of the design, but the unresolved host anomalies prevent treating the proposed worker as a trusted execution boundary."
+          },
+          {
+            "title": "Automatic handoff remains a separate operational gate",
+            "explanation": "The failed scheduled job is relevant even though the findings recovery pair was intentionally switched to manual handoff. A failed workflow does not establish whether other eligible pairs were affected."
+          }
+        ],
+        "takeaway": "Worker isolation is an unmerged, incompletely accepted proof; scheduled packet-authoring handoff has a new failed run requiring diagnosis.",
+        "next_watch": "Inspect the failed handoff step's bounded logs, then resolve the worker proof anomalies before independent review and any activation."
+      },
+      "details": {
+        "overview": "GitHub-only partial coverage at main a16fb3ece74f90358dac36d1b981348efeaba412. The latest privately readable pilot pointer is dated November 8 and fails freshness, so no operational counts are used.",
+        "ledger": [
+          {
+            "stage": "Worker implementation",
+            "status": "reported in open PR",
+            "evidence": "PR #140 proposes service and launcher; not merged."
+          },
+          {
+            "stage": "Focused validation",
+            "status": "reported passing",
+            "evidence": "PR #140 reports 13 focused tests and validation checks."
+          },
+          {
+            "stage": "Full isolation proof",
+            "status": "incomplete",
+            "evidence": "Loopback anomaly, LFS timeout, unavailable isolated model execution."
+          },
+          {
+            "stage": "Scheduled authoring handoff",
+            "status": "verified failure",
+            "evidence": "Run 42976298927 failed at Validate and publish explicitly authorized pairs."
+          },
+          {
+            "stage": "Independent review / live worker / teardown",
+            "status": "unknown or not accepted",
+            "evidence": "No acceptance receipt or live host proof."
+          }
+        ],
+        "notes": [
+          "Earlier handoff run 42929685956 succeeded."
+        ],
+        "unknowns": [
+          "Exact root cause of failed handoff step",
+          "Canonical dispatcher counts and host state",
+          "Independent worker proof acceptance"
+        ],
+        "actions": [
+          "Workflow maintainer: inspect failed handoff step logs and determine whether this is an expected fail-closed outcome.",
+          "Worker proof owner: resolve the unexplained loopback anomaly and incomplete dependency/model proof before acceptance."
+        ]
+      },
+      "related": [
+        {
+          "title": "Isolated worker security proof enters automatic queue, without enabling a service",
+          "context": "Earlier coverage of the worker proof's planned authorization boundary.",
+          "story_id": "isolated-worker-proof-ready-926df151"
+        }
+      ],
+      "scorecard": {
+        "stage": "Open PR; focused tests reported passing; full isolation proof incomplete",
+        "as_of": "2026-11-11T09:51:16Z",
+        "scope": "Worker isolation PR #140 and scheduled handoff run 42976298927 only",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Worker implementation proposed",
+            "status": "current",
+            "verification": "verified",
+            "evidence": "Open PR #140"
+          },
+          {
+            "label": "Focused tests",
+            "status": "done",
+            "verification": "reported",
+            "evidence": "13 tests reported passing in PR"
+          },
+          {
+            "label": "Full security proof",
+            "status": "blocked",
+            "verification": "verified",
+            "evidence": "Unresolved anomalies in PR description"
+          },
+          {
+            "label": "Independent acceptance",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No accepted review"
+          },
+          {
+            "label": "Activation and teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No verified host evidence"
+          }
+        ],
+        "next_gate": "Worker proof owner resolves the bounded security anomalies before independent acceptance."
+      }
+    },
     {
       "id": "findings-recovery-owner-hold-a16fb3ec",
       "headline": "Findings recovery is placed on an owner-decision hold; automatic handoff switched off",
@@ -1468,13 +1614,7 @@
           "Authorized owner: only after acceptance, plan preserved-review recovery under separate permission."
         ]
       },
-      "related": [
-        {
-          "title": "Owner-exception review gains a narrowly pinned provenance recovery path",
-          "context": "The earlier WIRE article covered the packet pair becoming ready; this update records the implementation landing.",
-          "story_id": "owner-exception-direct-pr-provenance-ready-d793f198"
-        }
-      ],
+      "related": [],
       "scorecard": {
         "stage": "Verifier merged; independent review pending",
         "as_of": "2026-11-10T07:50:53Z",
@@ -1519,169 +1659,6 @@
           }
         ],
         "next_gate": "Independent reviewer assesses the merged verifier and records an authentic disposition."
-      }
-    },
-    {
-      "id": "owner-exception-direct-pr-provenance-ready-d793f198",
-      "headline": "Owner-exception review gains a narrowly pinned provenance recovery path",
-      "summary": "PRs #128 and #129 landed an implementation/review packet pair and corrected its review authorization wording. Commit d793f198 promoted both packets to ready/auto. The proposed verifier would authenticate one historical direct-PR source span without inventing lifecycle evidence. No verifier implementation, independent PASS or resumed preserved review is established.",
-      "body": "At main d793f198, PR #128 adds the bounded direct-PR provenance recovery packet pair for the owner-exception closeout correction. PR #129 adjusts the paired review's receipt-only task override. The automatic handoff then marks both packets ready/auto. The underlying correction was merged earlier in PR #126, but its preserved review cannot yet plan host validation because ordinary source-span resolution lacks an exact lifecycle trace. The proposed recovery is deliberately narrow: authenticate Git ancestry, source blobs, owner handoff and private acquisition receipt for that single historical case, rejecting conflicting or altered evidence. This is authoring and dispatch eligibility, not a completed verifier or accepted independent review. Host-private receipt authenticity, execution, claims, teardown and disk state were not inspected. The private WIRE pointer remains dated November 8; no fresh operational counts are asserted.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-owner-review-exception-direct-pr-provenance-recovery-v1",
-      "occurred_at": "2026-11-10T07:02:57Z",
-      "bullets": [
-        "PR #128 landed the bounded recovery and independent review packets.",
-        "PR #129 corrected the review receipt-only override.",
-        "Automatic handoff marked both packets ready/auto; implementation and acceptance remain unverified."
-      ],
-      "links": [
-        {
-          "title": "PR #128",
-          "url": "https://github.com/braydio/CUSTODIAN/pull/128"
-        },
-        {
-          "title": "PR #129",
-          "url": "https://github.com/braydio/CUSTODIAN/pull/129"
-        },
-        {
-          "title": "Automatic handoff",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/d793f198a8abf74450c2eb4d6d4e1073187ffcc3"
-        },
-        {
-          "title": "Underlying correction PR #126",
-          "url": "https://github.com/braydio/CUSTODIAN/pull/126"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "A stalled independent review of CUSTODIAN's dispatcher recovery now has a defined way to establish where its code actually came from. Two pull requests introduced and refined a tightly bounded provenance-repair assignment; an automated handoff made the implementation and its separate review eligible for dispatch. Neither has been completed.",
-        "sections": [
-          {
-            "heading": "Why this recovery is necessary",
-            "text": "The earlier dispatcher correction reached main, but the preserved reviewer cannot reconstruct its exact source span through the normal lifecycle records. The new assignment proposes checking a single historical direct-PR path against Git ancestry, file identities and a private acquisition receipt rather than accepting a plausible but unproven history."
-          },
-          {
-            "heading": "The boundary remains narrow",
-            "text": "The recovery must reject altered or missing evidence and leave ordinary source validation untouched. The paired reviewer must independently challenge that behavior. Marking the packets ready does not mean a worker has claimed them or that the original review can resume."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Review provenance is now the blocking gate",
-            "explanation": "The underlying correction already landed. What remains is proving exactly which source the independent reviewer should assess, without fabricating lifecycle events."
-          },
-          {
-            "title": "Eligibility is not acceptance",
-            "explanation": "The automated transition establishes two ready packets, not running workers, a completed implementation or a trusted PASS."
-          }
-        ],
-        "takeaway": "A specific, review-gated recovery route is now published and dispatch-ready; the preserved correction review remains unresolved.",
-        "next_watch": "Watch for a legitimate implementation landing, independent provenance-recovery PASS and separately authorized read-only planning for the preserved review."
-      },
-      "details": {
-        "overview": "Inspected PR #128 merge 9ed8ac45, PR #129 merge d059db83 and automated handoff d793f198. GitHub-only partial scope. Private WIRE pointer is dated November 8 and was not treated as fresh host evidence.",
-        "ledger": [
-          {
-            "stage": "Underlying owner-exception correction",
-            "status": "verified landed, not independently accepted",
-            "evidence": "PR #126 merged earlier; preserved review remains unresolved."
-          },
-          {
-            "stage": "Provenance recovery packet pair",
-            "status": "verified landed",
-            "evidence": "PR #128."
-          },
-          {
-            "stage": "Review override correction",
-            "status": "verified landed",
-            "evidence": "PR #129."
-          },
-          {
-            "stage": "Automatic dispatch handoff",
-            "status": "verified ready/auto",
-            "evidence": "d793f198 changes both packets from draft/manual."
-          },
-          {
-            "stage": "Recovery implementation",
-            "status": "not verified",
-            "evidence": "No implementation landing inspected."
-          },
-          {
-            "stage": "Independent recovery review",
-            "status": "not verified",
-            "evidence": "No accepted PASS inspected."
-          },
-          {
-            "stage": "Preserved correction review",
-            "status": "held",
-            "evidence": "Recovery plan depends on authenticated source-span resolution."
-          }
-        ],
-        "notes": [
-          "No canonical full dispatcher audit inspected."
-        ],
-        "unknowns": [
-          "Host claim/execution and private acquisition receipt validation unavailable.",
-          "Canonical cleanup, locks, worktrees and disk figures unknown."
-        ],
-        "actions": [
-          "Legitimate dispatcher owner: implement the exact bounded verifier under existing packet authority.",
-          "Independent reviewer: challenge the landed verifier before any preserved-run recovery is authorized."
-        ]
-      },
-      "related": [],
-      "scorecard": {
-        "stage": "Recovery packet pair ready; implementation not verified",
-        "as_of": "2026-11-10T07:02:57Z",
-        "scope": "Named owner-exception direct-PR provenance recovery packet pair only",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Underlying correction landed",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "PR #126."
-          },
-          {
-            "label": "Provenance recovery pair authored",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "PR #128."
-          },
-          {
-            "label": "Review override corrected",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "PR #129."
-          },
-          {
-            "label": "Both packets ready/auto",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "d793f198."
-          },
-          {
-            "label": "Recovery verifier implemented",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No landing inspected."
-          },
-          {
-            "label": "Independent verifier PASS",
-            "status": "blocked",
-            "verification": "unknown",
-            "evidence": "Requires landed implementation."
-          },
-          {
-            "label": "Preserved review recovery planning",
-            "status": "blocked",
-            "verification": "unknown",
-            "evidence": "Requires accepted verifier and separate authorization for application."
-          }
-        ],
-        "next_gate": "Legitimate dispatcher owner implements the exact bounded verifier, then a separate reviewer evaluates it."
       }
     }
   ],
