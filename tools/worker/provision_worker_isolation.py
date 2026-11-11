@@ -19,6 +19,8 @@ from pathlib import Path
 WORKER = "custodian-worker"
 GROUP = "custodian-worker"
 STATE = Path("/var/lib/custodian-worker")
+MODEL_CREDENTIAL_DIRECTORY = Path("/etc/custodian-worker/credentials")
+MODEL_CREDENTIAL_SOURCE = MODEL_CREDENTIAL_DIRECTORY / "openai-api-key"
 RESOLVERS = "# Dedicated public resolvers for the loopback-denied proof worker.\nnameserver 1.1.1.1\nnameserver 2606:4700:4700::1111\n"
 FILES = (
     (Path("deploy/systemd/custodian-worker@.service"), Path("/etc/systemd/system/custodian-worker@.service"), 0o644),
@@ -60,6 +62,19 @@ def safe_directory(path: Path, mode: int, root_mode: bool, owner: tuple[int, int
     expected_owner = owner if owner is not None else ((0, 0) if root_mode else None)
     if expected_owner is not None:
         os.chown(path, *expected_owner)
+
+
+def check_credential_source(path: Path, root_mode: bool) -> None:
+    """Check metadata only; never read the administrator-managed credential."""
+    if path.is_symlink():
+        raise ProvisionError(f"refusing symlink model credential: {path}")
+    if not path.exists():
+        return
+    info = path.stat(follow_symlinks=False)
+    expected_owner = (0, 0) if root_mode else (os.getuid(), os.getgid())
+    if (not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or
+            stat.S_IMODE(info.st_mode) != 0o600 or (info.st_uid, info.st_gid) != expected_owner):
+        raise ProvisionError(f"model credential must be a regular, singly linked, owner-only 0600 file: {path}")
 
 
 def exact_file(source: Path, destination: Path, mode: int, root_mode: bool) -> None:
@@ -197,6 +212,10 @@ def install(repo: Path, root: Path) -> None:
         raise ProvisionError(f"unexpected resolver-config owner: {resolver_path}")
     for _, dest, _ in FILES:
         check_directory(mapped(root, dest.parent), 0o755, root_mode)
+    credential_directory = mapped(root, MODEL_CREDENTIAL_DIRECTORY)
+    credential_source = mapped(root, MODEL_CREDENTIAL_SOURCE)
+    check_directory(credential_directory, 0o700, root_mode)
+    check_credential_source(credential_source, root_mode)
     state = mapped(root, STATE)
     check_directory(state, 0o755, root_mode)
     expected_owner = None
@@ -227,13 +246,14 @@ def install(repo: Path, root: Path) -> None:
     for name in ("home", "codex-home", "tmp", "workspaces"):
         safe_directory(state / name, 0o700, root_mode, (uid, gid) if root_mode else None)
     safe_directory(resolver_path.parent, 0o755, root_mode)
+    safe_directory(credential_directory, 0o700, root_mode)
     exact_resolver(resolver_path, root_mode)
     for source_rel, dest_abs, mode in FILES:
         exact_file(repo / source_rel, mapped(root, dest_abs), mode, root_mode)
     if root_mode:
         command(["/usr/bin/systemctl", "daemon-reload"])
         systemd_state("custodian-worker@proof.service")
-    print("worker isolation files installed; service remains disabled and inactive")
+    print("worker isolation files installed; service remains disabled and inactive; model credential is administrator-managed")
 
 
 def git_file(repo: Path, ref: str, relative: Path) -> bytes:
@@ -312,9 +332,16 @@ def upgrade(repo: Path, root: Path, from_ref: str,
         raise ProvisionError("unexpected resolver-config mode")
     if root_mode and (resolver_path.stat().st_uid != 0 or resolver_path.stat().st_gid != 0):
         raise ProvisionError("unexpected resolver-config owner")
+    check_directory(resolver_path.parent, 0o755, root_mode)
+
+    credential_directory = mapped(root, MODEL_CREDENTIAL_DIRECTORY)
+    credential_source = mapped(root, MODEL_CREDENTIAL_SOURCE)
+    check_directory(credential_directory, 0o700, root_mode)
+    check_credential_source(credential_source, root_mode)
 
     changed: list[tuple[Path, bytes, bytes, int, tuple[int, int] | None]] = []
     try:
+        safe_directory(credential_directory, 0o700, root_mode)
         for item in staged:
             path, old, new, mode, owner = item
             atomic_file(path, new, mode, owner)

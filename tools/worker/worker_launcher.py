@@ -36,9 +36,21 @@ def valid_instance(value: str) -> bool:
     return value == "proof"
 
 
-def worker_environment() -> dict[str, str]:
-    """Return a fixed environment; never forward even allowlisted host values."""
-    return dict(WORKER_ENV)
+def worker_environment(credentials_directory: str | None = None) -> dict[str, str]:
+    """Return a fixed environment; forward only systemd's credential directory pointer."""
+    environment = dict(WORKER_ENV)
+    if credentials_directory is not None:
+        environment["CREDENTIALS_DIRECTORY"] = credentials_directory
+    return environment
+
+
+def systemd_credentials_directory() -> str:
+    value = os.environ.get("CREDENTIALS_DIRECTORY", "")
+    path = Path(value)
+    if (not value or not path.is_absolute() or ".." in path.parts or str(path) != value or
+            path.is_symlink() or not path.is_dir() or path.stat().st_mode & 0o022):
+        raise RuntimeError("systemd credential directory is missing or unsafe")
+    return value
 
 
 def isolation_preflight() -> tuple[bool, dict[str, object]]:
@@ -131,8 +143,16 @@ def main(argv: list[str] | None = None) -> int:
     if preflight.get("preflight_only") is True:
         print(json.dumps(preflight, sort_keys=True), flush=True)
         return 0
-    validator_mode = "--inside-lfs" if preflight.get("lfs_only") is True else "--inside-worker"
-    os.execve(VALIDATOR, [VALIDATOR, validator_mode], worker_environment())
+    try:
+        credentials_directory = systemd_credentials_directory()
+    except (OSError, RuntimeError) as exc:
+        print(f"custodian-worker-launch: {exc}", file=sys.stderr)
+        return 78
+    if preflight.get("model_only") is True:
+        validator_mode = "--inside-model"
+    else:
+        validator_mode = "--inside-lfs" if preflight.get("lfs_only") is True else "--inside-worker"
+    os.execve(VALIDATOR, [VALIDATOR, validator_mode], worker_environment(credentials_directory))
     return 127
 
 

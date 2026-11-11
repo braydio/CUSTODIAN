@@ -16,8 +16,10 @@ import re
 import shutil
 import socket
 import ssl
+import stat
 import subprocess
 import sys
+import tempfile
 import threading
 import time
 import urllib.parse
@@ -37,6 +39,11 @@ LFS_OBJECT_SIZE = 4852
 DENIED_ERRNOS = {errno.EACCES, errno.EPERM, errno.EHOSTUNREACH, errno.ENETUNREACH}
 FORBIDDEN_ENV = re.compile(r"^(?:GITHUB_|GH_|OPENAI_|HL_|SSH_AUTH_SOCK$|CODEX_SESSION|CODEX_API_KEY$)")
 HTTP_HEADER_NAME = re.compile(r"^[!#$%&'*+.^_`|~0-9A-Za-z-]+$")
+CREDENTIAL_NAME = "openai-api-key"
+CREDENTIAL_SOURCE = Path("/etc/custodian-worker/credentials/openai-api-key")
+API_KEY_FORMAT = re.compile(r"sk-[A-Za-z0-9_-]{20,}")
+MODEL_OK_MARKER = "WORKER_MODEL_OK"
+MODEL_PROBE_TIMEOUT_SECONDS = 60
 
 
 def run(argv: list[str], *, timeout: int = 30) -> tuple[int, str, str]:
@@ -77,6 +84,11 @@ def valid_probe_config(data: dict[str, Any]) -> bool:
             return False
     lan_targets = [item for item in targets if item.get("name", "").startswith("lan_ipv4_")]
     if not lan_targets:
+        return False
+    if any(name in data and not isinstance(data[name], bool)
+           for name in ("preflight_only", "lfs_only", "model_only")):
+        return False
+    if sum(data.get(name) is True for name in ("preflight_only", "lfs_only", "model_only")) > 1:
         return False
     for item in lan_targets:
         try:
@@ -285,21 +297,10 @@ def inside_proof() -> dict[str, Any]:
 
     lfs = fetch_one_public_lfs_object() if git_path else {"exit_code": 127}
 
-    # Attempt a real non-interactive Codex model call with only worker-owned state.
-    # The result is summarized; stderr/stdout (which can contain request details) are never logged.
-    codex = {"attempted": False, "exit_code": None, "response_verified": False, "disposition": "cli_unavailable"}
-    worker_auth = Path(os.environ.get("CODEX_HOME", "/nonexistent")) / "auth.json"
-    if codex_path and not worker_auth.exists():
-        codex["attempted"] = True
-        rc, out, _ = run([
-            codex_path, "exec", "--ephemeral", "--ignore-user-config", "--sandbox", "read-only",
-            "--cd", str(WORKSPACES), "Respond exactly with WORKER_MODEL_OK.",
-        ], timeout=90)
-        codex["exit_code"] = rc
-        codex["response_verified"] = rc == 0 and "WORKER_MODEL_OK" in out
-        codex["disposition"] = "passed" if codex["response_verified"] else "worker_auth_or_model_unavailable"
-    elif worker_auth.exists():
-        codex["disposition"] = "worker_auth_present_provenance_unverified"
+    # The model probe is opt-in through the separate --model-only host mode.
+    # A general proof run never consumes a model credential or makes a model call.
+    codex = {"attempted": False, "exit_code": None, "response_verified": False,
+             "disposition": "explicit_model_only_mode_required"}
 
     return {
         "schema": "custodian.worker_isolation_proof.v1",
@@ -320,6 +321,199 @@ def inside_proof() -> dict[str, Any]:
         "git_read": git_read,
         "lfs_read": lfs,
         "model_call": codex,
+    }
+
+
+def _read_runtime_model_credential() -> tuple[str, str | None]:
+    """Read one systemd-delivered API key without exposing bytes in errors or reports."""
+    directory_value = os.environ.get("CREDENTIALS_DIRECTORY", "")
+    directory = Path(directory_value)
+    if (not directory_value or not directory.is_absolute() or ".." in directory.parts or
+            str(directory) != directory_value or directory.is_symlink() or not directory.is_dir()):
+        return "missing", None
+    path = directory / CREDENTIAL_NAME
+    try:
+        fd = os.open(path, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0))
+    except FileNotFoundError:
+        return "missing", None
+    except OSError:
+        return "invalid", None
+    try:
+        info = os.fstat(fd)
+        if (not stat.S_ISREG(info.st_mode) or info.st_uid != os.geteuid() or
+                stat.S_IMODE(info.st_mode) != 0o400 or info.st_nlink != 1 or
+                info.st_size < 1 or info.st_size > 4096):
+            return "invalid", None
+        raw = os.read(fd, 4097)
+        if len(raw) != info.st_size or len(raw) > 4096:
+            return "invalid", None
+    except OSError:
+        return "invalid", None
+    finally:
+        os.close(fd)
+    try:
+        key = raw.decode("ascii")
+    except UnicodeDecodeError:
+        return "invalid", None
+    if not API_KEY_FORMAT.fullmatch(key):
+        return "invalid", None
+    return "valid", key
+
+
+def _model_response_has_marker(stdout: str) -> bool:
+    for line in stdout.splitlines():
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(event, dict) or event.get("type") != "item.completed":
+            continue
+        item = event.get("item")
+        if not isinstance(item, dict) or item.get("type") != "agent_message":
+            continue
+        if item.get("text", "").strip() == MODEL_OK_MARKER:
+            return True
+    return False
+
+
+def codex_model_probe() -> dict[str, Any]:
+    """Run one harmless Codex response with an API key supplied only to Codex."""
+    forbidden_environment_present = any(FORBIDDEN_ENV.search(key) for key in os.environ)
+    if forbidden_environment_present:
+        return {
+            "attempted": False,
+            "exit_code": None,
+            "response_verified": False,
+            "response_marker": None,
+            "disposition": "inherited_credentials_present",
+            "credential_status": "not_checked",
+            "authentication_mode": "systemd_LoadCredential_openai_api_key",
+            "inherited_owner_credentials_absent": False,
+            "mcp_browser_tools_disabled": False,
+            "network_preflight_required": True,
+            "timeout_seconds": MODEL_PROBE_TIMEOUT_SECONDS,
+        }
+    credential_status, api_key = _read_runtime_model_credential()
+    result: dict[str, Any] = {
+        "attempted": False,
+        "exit_code": None,
+        "response_verified": False,
+        "response_marker": None,
+        "disposition": "credential_missing" if credential_status == "missing" else "credential_invalid",
+        "credential_status": credential_status,
+        "authentication_mode": "systemd_LoadCredential_openai_api_key",
+        "inherited_owner_credentials_absent": not forbidden_environment_present,
+        "mcp_browser_tools_disabled": True,
+        "mcp_configuration": "empty",
+        "github_mcp_browser_cdp_tools_absent": True,
+        "authentication_store": "temporary_worker_owned_codex_home",
+        "credential_value_logged": False,
+        "credential_in_command_arguments": False,
+        "credential_passed_to_non_codex_processes": False,
+        "network_preflight_required": True,
+        "timeout_seconds": MODEL_PROBE_TIMEOUT_SECONDS,
+    }
+    if credential_status != "valid" or api_key is None:
+        return result
+    codex_path = shutil.which("codex")
+    if not codex_path:
+        result["disposition"] = "codex_cli_unavailable"
+        api_key = None
+        return result
+    version = safe_command([codex_path, "--version"], timeout=10)
+    result["codex_cli"] = version
+
+    # Construct a fresh home so no persisted auth or MCP configuration is consulted.
+    temp_root = Path(os.environ.get("TMPDIR", "/tmp"))
+    try:
+        with tempfile.TemporaryDirectory(prefix="codex-model-probe-", dir=temp_root) as home:
+            os.chmod(home, 0o700)
+            child_env = {
+                key: os.environ[key]
+                for key in (
+                    "PATH", "LANG", "HOME", "TMPDIR", "CREDENTIALS_DIRECTORY",
+                    "GIT_CONFIG_NOSYSTEM", "GIT_CONFIG_GLOBAL", "GIT_TERMINAL_PROMPT",
+                    "GIT_ASKPASS", "GIT_LFS_SKIP_SMUDGE",
+                )
+                if key in os.environ
+            }
+            child_env["CODEX_HOME"] = home
+            child_env["OPENAI_API_KEY"] = api_key
+            argv = [
+                codex_path, "exec", "--ephemeral", "--ignore-user-config", "--sandbox", "read-only",
+                "--cd", str(WORKSPACES), "--color", "never", "--json",
+                "--config", 'shell_environment_policy.inherit="none"',
+                "--config", "shell_environment_policy.ignore_default_excludes=false",
+                "--config", 'model_reasoning_effort="low"',
+                "--config", "features.apps=false",
+                "--config", "features.remote_plugin=false",
+                "--config", "features.multi_agent=false",
+                "--config", "features.shell_tool=false",
+                "--config", "mcp_servers={}",
+                f"Reply with exactly {MODEL_OK_MARKER} and do not use tools.",
+            ]
+            result["attempted"] = True
+            try:
+                completed = subprocess.run(
+                    argv, text=True, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
+                    timeout=MODEL_PROBE_TIMEOUT_SECONDS, check=False, env=child_env, close_fds=True,
+                )
+            except subprocess.TimeoutExpired:
+                result["exit_code"] = 124
+                result["disposition"] = "model_probe_timeout"
+                return result
+            except OSError:
+                result["exit_code"] = 127
+                result["disposition"] = "model_probe_launch_failed"
+                return result
+            result["exit_code"] = completed.returncode
+            result["response_verified"] = completed.returncode == 0 and _model_response_has_marker(completed.stdout)
+            result["response_marker"] = MODEL_OK_MARKER if result["response_verified"] else None
+            result["disposition"] = "passed" if result["response_verified"] else "model_response_unverified"
+    finally:
+        api_key = None
+    return result
+
+
+def inside_model_probe() -> dict[str, Any]:
+    config = read_probe_config()
+    if config.get("model_only") is not True:
+        raise RuntimeError("model probe requires an explicit root-owned model-only request")
+    preflight_path = Path(os.environ.get("TMPDIR", "/tmp")) / f"isolation-preflight-{config['run_id']}.json"
+    preflight = json.loads(preflight_path.read_text())
+    network_preflight_pass = preflight.get("pass") is True and all(
+        item.get("blocked") is True for item in preflight.get("probes", []))
+    account = pwd.getpwuid(os.geteuid())
+    cgroup = Path("/proc/self/cgroup").read_text().strip()
+    identity_pass = (account.pw_name == "custodian-worker" and os.geteuid() != 0 and
+                     "custodian-worker@proof.service" in cgroup)
+    system_codex_config = path_denial("/etc/codex")
+    config_boundary_pass = system_codex_config.get("denied") is True
+    model = codex_model_probe() if network_preflight_pass and identity_pass and config_boundary_pass else {
+        "attempted": False, "exit_code": None, "response_verified": False,
+        "disposition": "isolation_preflight_or_config_boundary_failed", "credential_status": "not_checked",
+        "inherited_owner_credentials_absent": False, "mcp_browser_tools_disabled": False,
+        "network_preflight_required": True,
+    }
+    model["mcp_browser_tools_disabled"] = model.get("mcp_browser_tools_disabled") is True and config_boundary_pass
+    return {
+        "schema": "custodian.worker_model_probe.v1",
+        "run_id": config["run_id"],
+        "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+        "identity": {"user": account.pw_name, "uid": os.geteuid(), "gid": os.getegid(),
+                     "cgroup": cgroup, "pass": identity_pass},
+        "network_preflight_pass": network_preflight_pass,
+        "codex_configuration_boundary": {
+            "system_config_unavailable": config_boundary_pass,
+            "system_config_access": system_codex_config,
+            "user_config_ignored": True,
+            "temporary_codex_home": True,
+            "mcp_servers_empty": True,
+            "apps_remote_plugins_shell_and_subagents_disabled": True,
+            "child_environment_inheritance": "none",
+        },
+        "model_call": model,
+        "full_proof_pass": False,
     }
 
 
@@ -561,9 +755,10 @@ def close_listener(sock: socket.socket, stop: threading.Event, thread: threading
     thread.join(timeout=1)
 
 
-def host_proof(preflight_only: bool = False, lfs_only: bool = False) -> dict[str, Any]:
-    if preflight_only and lfs_only:
-        raise RuntimeError("preflight-only and LFS-only modes are mutually exclusive")
+def host_proof(preflight_only: bool = False, lfs_only: bool = False,
+               model_only: bool = False) -> dict[str, Any]:
+    if sum((preflight_only, lfs_only, model_only)) > 1:
+        raise RuntimeError("preflight-only, LFS-only, and model-only modes are mutually exclusive")
     if os.geteuid() != 0:
         raise RuntimeError("host proof collection requires root; run through sudo")
     if CONFIG.is_symlink():
@@ -627,7 +822,7 @@ def host_proof(preflight_only: bool = False, lfs_only: bool = False) -> dict[str
     props = systemd_properties()
     data = {"schema": "custodian.worker_probe_config.v1", "run_id": run_id, "targets": targets,
             "unit_properties": props, "positive_controls": positive_controls, "preflight_only": preflight_only,
-            "lfs_only": lfs_only}
+            "lfs_only": lfs_only, "model_only": model_only}
     fd = os.open(CONFIG, os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0), 0o644)
     try:
         with os.fdopen(fd, "w", closefd=False) as stream:
@@ -688,6 +883,19 @@ def host_proof(preflight_only: bool = False, lfs_only: bool = False) -> dict[str
                           report.get("pass") is True and all(item.get("blocked") for item in report.get("probes", [])))
     lfs_diagnostic_pass = bool(report and report.get("schema") == "custodian.worker_lfs_diagnostic.v1" and
                                report.get("isolation_preflight_pass"))
+    model_probe_pass = bool(
+        report and report.get("schema") == "custodian.worker_model_probe.v1" and
+        report.get("identity", {}).get("pass") and report.get("network_preflight_pass") and
+        report.get("model_call", {}).get("attempted") and report.get("model_call", {}).get("exit_code") == 0 and
+        report.get("model_call", {}).get("response_verified") and
+        report.get("model_call", {}).get("credential_status") == "valid" and
+        report.get("model_call", {}).get("inherited_owner_credentials_absent") and
+        report.get("model_call", {}).get("mcp_browser_tools_disabled") and
+        started[0] == 0 and enabled == "disabled" and active_after == "inactive" and not timers and
+        len(accepted4) == accepted_baseline["other_ipv4_loopback"] and
+        len(accepted6) == accepted_baseline["ipv6_loopback"] and
+        all(len(item[3]) == accepted_baseline[f"lan_ipv4_{i}"] for i, item in enumerate(lan_listeners))
+    )
     complete_pass = bool(report and started[0] == 0 and
                 report.get("identity", {}).get("pass") and report.get("environment", {}).get("forbidden_keys_absent") and
                 report.get("loopback", {}).get("pass") and report.get("protected_interfaces", {}).get("pass") and
@@ -701,8 +909,10 @@ def host_proof(preflight_only: bool = False, lfs_only: bool = False) -> dict[str
     result = {"schema": "custodian.worker_host_proof.v1", "run_id": run_id,
             "host_checks": host_checks, "inside_worker": report,
              "preflight_only": preflight_only,
-             "diagnostic_pass": preflight_pass if preflight_only else lfs_diagnostic_pass if report and report.get("schema") == "custodian.worker_lfs_diagnostic.v1" else complete_pass,
-             "full_proof_pass": False if preflight_only or (report and report.get("schema") == "custodian.worker_lfs_diagnostic.v1") else complete_pass}
+             "lfs_only": lfs_only, "model_only": model_only,
+             "diagnostic_pass": preflight_pass if preflight_only else
+             lfs_diagnostic_pass if lfs_only else model_probe_pass if model_only else complete_pass,
+             "full_proof_pass": False if preflight_only or lfs_only or model_only else complete_pass}
     return result
 
 
@@ -718,6 +928,7 @@ def systemd_properties() -> dict[str, str]:
              "NoNewPrivileges", "ProtectSystem", "ProtectHome", "PrivateTmp", "PrivateDevices",
              "ProtectProc", "IPAddressDeny", "RestrictAddressFamilies", "ReadWritePaths", "Restart",
              "UnitFileState", "ExecStart", "Slice", "FragmentPath", "DropInPaths", "IPAddressAllow")
+    names = (*names, "LoadCredentialEncrypted")
     rc, out, _ = run(["/usr/bin/systemctl", "show", UNIT, "--no-pager", *(f"--property={n}" for n in names)], timeout=30)
     if rc:
         return {"systemctl_show_error": str(rc)}
@@ -729,21 +940,28 @@ def main(argv: list[str] | None = None) -> int:
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--inside-worker", action="store_true")
     mode.add_argument("--inside-lfs", action="store_true")
+    mode.add_argument("--inside-model", action="store_true")
     mode.add_argument("--host-run", action="store_true")
     parser.add_argument("--preflight-only", action="store_true", help="run only the in-service network gate")
     parser.add_argument("--lfs-only", action="store_true", help="run only the in-service bounded LFS diagnostic after the gate")
+    parser.add_argument("--model-only", action="store_true", help="run only one credential-gated Codex response after the isolation gate")
     args = parser.parse_args(argv)
     try:
         if args.preflight_only and not args.host_run:
             raise RuntimeError("--preflight-only is valid only with --host-run")
         if args.lfs_only and not args.host_run:
             raise RuntimeError("--lfs-only is valid only with --host-run")
-        result = inside_lfs_diagnostic() if args.inside_lfs else inside_proof() if args.inside_worker else host_proof(args.preflight_only, args.lfs_only)
+        if args.model_only and not args.host_run:
+            raise RuntimeError("--model-only is valid only with --host-run")
+        result = (inside_lfs_diagnostic() if args.inside_lfs else inside_model_probe() if args.inside_model else
+                  inside_proof() if args.inside_worker else host_proof(args.preflight_only, args.lfs_only, args.model_only))
     except Exception as exc:
         print(json.dumps({"schema": "custodian.worker_proof_error.v1", "error_type": type(exc).__name__,
                           "message": str(exc)[:300]}, sort_keys=True))
         return 1
     print(json.dumps(result, sort_keys=True))
+    if args.inside_model:
+        return 0 if result.get("model_call", {}).get("response_verified") is True else 2
     return 0 if args.inside_worker or args.inside_lfs else (0 if result.get("diagnostic_pass", result.get("full_proof_pass")) else 2)
 
 
