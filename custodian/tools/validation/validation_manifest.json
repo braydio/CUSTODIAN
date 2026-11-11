@@ -51,6 +51,7 @@
         "tools/worker/custodian-worker-launch",
         "tools/worker/provision_worker_isolation.py",
         "tools/worker/provision_worker_isolation.sh",
+        "tools/worker/public_worker_evidence.py",
         "tools/worker/test_worker_isolation.py",
         "tools/worker/validate_worker_isolation.py",
         "tools/worker/worker_launcher.py"

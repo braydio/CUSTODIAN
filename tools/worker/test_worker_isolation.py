@@ -17,8 +17,32 @@ sys.path.insert(0, str(WORKER_TOOLS))
 import worker_launcher  # noqa: E402
 import validate_worker_isolation  # noqa: E402
 import provision_worker_isolation  # noqa: E402
+import public_worker_evidence  # noqa: E402
 
 PROVISIONER = WORKER_TOOLS / "provision_worker_isolation.py"
+
+
+class PublicWorkerEvidenceTests(unittest.TestCase):
+    def sample(self, first: str = "<PRIVATE_LAN_IPV4_0>:12345") -> dict:
+        return {"run_id": "0123456789abcdef", "pass": True, "probes": [
+            {"name": "lan_ipv4_0", "destination": first, "blocked": True, "uid": 942},
+        ]}
+
+    def test_public_report_accepts_symbolic_private_destinations(self) -> None:
+        public_worker_evidence.validate_public_evidence(self.sample())
+
+    def test_public_report_rejects_actual_private_lan_destination(self) -> None:
+        with self.assertRaises(public_worker_evidence.EvidenceError):
+            public_worker_evidence.validate_public_evidence(self.sample("192.168.1.237:12345"))
+
+    def test_sanitizer_preserves_result_and_replaces_only_private_destination(self) -> None:
+        source = self.sample("192.168.1.237:12345")
+        sanitized = public_worker_evidence.sanitize_public_evidence(source)
+        self.assertEqual(sanitized["run_id"], source["run_id"])
+        self.assertEqual(sanitized["pass"], source["pass"])
+        self.assertEqual(sanitized["probes"][0]["blocked"], True)
+        self.assertEqual(sanitized["probes"][0]["uid"], 942)
+        self.assertEqual(sanitized["probes"][0]["destination"], "<PRIVATE_LAN_IPV4_0>:12345")
 
 
 class LauncherTests(unittest.TestCase):
