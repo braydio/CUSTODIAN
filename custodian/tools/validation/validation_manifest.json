@@ -7175,6 +7175,26 @@
       "needs_import": true
     },
     {
+      "id": "coordination_root_guard_unit",
+      "type": "python",
+      "script": "custodian/tools/agent/test_coordination_root_guard.py",
+      "tier": "unit",
+      "tags": [
+        "agent_workflow",
+        "coordination",
+        "safety"
+      ],
+      "owners": [
+        "custodian/tools/agent/coordination_root_guard.py",
+        "custodian/tools/agent/test_coordination_root_guard.py",
+        ".claude/settings.json",
+        "AGENTS.md",
+        "custodian/AGENTS.md"
+      ],
+      "timeout_sec": 20,
+      "needs_import": false
+    },
+    {
       "id": "process_feedback_ledger_unit",
       "type": "python",
       "script": "custodian/tools/agent/test_process_feedback.py",
