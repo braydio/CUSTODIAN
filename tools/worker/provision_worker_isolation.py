@@ -5,12 +5,15 @@ from __future__ import annotations
 
 import argparse
 import grp
+import hashlib
 import os
 import pwd
+import re
 import shutil
 import stat
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 WORKER = "custodian-worker"
@@ -233,6 +236,109 @@ def install(repo: Path, root: Path) -> None:
     print("worker isolation files installed; service remains disabled and inactive")
 
 
+def git_file(repo: Path, ref: str, relative: Path) -> bytes:
+    result = subprocess.run(["git", "-C", str(repo), "show", f"{ref}:{relative.as_posix()}"],
+                            stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
+    if result.returncode:
+        raise ProvisionError(f"cannot read approved prior worker source at {ref}:{relative.as_posix()}")
+    return result.stdout
+
+
+def atomic_file(path: Path, data: bytes, mode: int, owner: tuple[int, int] | None) -> None:
+    fd, temporary = tempfile.mkstemp(prefix=f".{path.name}.upgrade-", dir=path.parent)
+    temp_path = Path(temporary)
+    try:
+        with os.fdopen(fd, "wb") as stream:
+            stream.write(data)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.chmod(temp_path, mode)
+        if owner is not None:
+            os.chown(temp_path, *owner)
+        os.replace(temp_path, path)
+        directory_fd = os.open(path.parent, os.O_RDONLY | getattr(os, "O_DIRECTORY", 0))
+        try:
+            os.fsync(directory_fd)
+        finally:
+            os.close(directory_fd)
+    finally:
+        temp_path.unlink(missing_ok=True)
+
+
+def upgrade(repo: Path, root: Path, from_ref: str,
+            installed_hash_overrides: dict[str, str] | None = None) -> None:
+    """Replace only installed files proven byte-identical to an explicit Git baseline."""
+    root_mode = root == Path("/")
+    if root_mode and os.geteuid() != 0:
+        raise ProvisionError("upgrade requires root; use sudo")
+    resolved = subprocess.run(["git", "-C", str(repo), "rev-parse", "--verify", "--end-of-options",
+                               f"{from_ref}^{{commit}}"], text=True, stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE, check=False)
+    if resolved.returncode:
+        raise ProvisionError("upgrade baseline must resolve to a commit")
+    if root_mode:
+        systemd_state("custodian-worker@proof.service")
+
+    installed_hash_overrides = installed_hash_overrides or {}
+    allowed_paths = {source_rel.as_posix() for source_rel, _, _ in FILES}
+    if set(installed_hash_overrides) - allowed_paths or any(
+            not re.fullmatch(r"[0-9a-f]{64}", digest) for digest in installed_hash_overrides.values()):
+        raise ProvisionError("installed-file SHA override must name a managed path and a lowercase SHA-256")
+    staged: list[tuple[Path, bytes, bytes, int, tuple[int, int] | None]] = []
+    for source_rel, dest_abs, mode in FILES:
+        source, destination = repo / source_rel, mapped(root, dest_abs)
+        if not source.is_file() or destination.is_symlink() or not destination.is_file():
+            raise ProvisionError(f"upgrade requires regular source and installed files: {source_rel}")
+        old = git_file(repo, from_ref, source_rel)
+        current = destination.read_bytes()
+        info = destination.stat()
+        expected_hash = installed_hash_overrides.get(source_rel.as_posix())
+        matches_baseline = (hashlib.sha256(current).hexdigest() == expected_hash) if expected_hash else (current == old)
+        if not matches_baseline:
+            raise ProvisionError(f"installed file does not match approved baseline: {destination}")
+        if stat.S_IMODE(info.st_mode) != mode:
+            raise ProvisionError(f"unexpected mode on managed file {destination}")
+        owner = (0, 0) if root_mode else None
+        if root_mode and (info.st_uid, info.st_gid) != owner:
+            raise ProvisionError(f"unexpected owner on managed file: {destination}")
+        new = source.read_bytes()
+        if new != current:
+            staged.append((destination, current, new, mode, owner))
+
+    resolver_path = mapped(root, Path("/etc/custodian-worker/resolv.conf"))
+    if resolver_path.is_symlink() or not resolver_path.is_file() or resolver_path.read_text() != RESOLVERS:
+        raise ProvisionError("installed worker resolver differs from the managed configuration")
+    if stat.S_IMODE(resolver_path.stat().st_mode) != 0o644:
+        raise ProvisionError("unexpected resolver-config mode")
+    if root_mode and (resolver_path.stat().st_uid != 0 or resolver_path.stat().st_gid != 0):
+        raise ProvisionError("unexpected resolver-config owner")
+
+    changed: list[tuple[Path, bytes, bytes, int, tuple[int, int] | None]] = []
+    try:
+        for item in staged:
+            path, old, new, mode, owner = item
+            atomic_file(path, new, mode, owner)
+            changed.append(item)
+    except OSError as exc:
+        rollback_errors = []
+        for path, old, _, mode, owner in reversed(changed):
+            try:
+                atomic_file(path, old, mode, owner)
+            except OSError:
+                rollback_errors.append(path.name)
+        if rollback_errors:
+            raise ProvisionError("upgrade failed and rollback was incomplete: " + ", ".join(rollback_errors)) from exc
+        raise ProvisionError("upgrade failed; previously replaced files were restored") from exc
+
+    if root_mode:
+        command(["/usr/bin/systemctl", "daemon-reload"])
+        systemd_state("custodian-worker@proof.service")
+    if root_mode:
+        print(f"worker isolation files upgraded from {resolved.stdout.strip()}; service remains disabled and inactive")
+    else:
+        print(f"worker isolation files upgraded from {resolved.stdout.strip()}; host service state was not touched")
+
+
 def verify_disposable_tree(path: Path, owner: tuple[int, int]) -> None:
     if path.is_mount():
         raise ProvisionError(f"refusing worker state mounted at a separate mount point: {path}")
@@ -339,18 +445,37 @@ def remove(root: Path, remove_state: bool) -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=("install", "remove"))
+    parser.add_argument("action", choices=("install", "upgrade", "remove"))
     parser.add_argument("--root-dir", type=Path, help="stage safely under a temporary root for tests")
     parser.add_argument("--remove-state", action="store_true", help="remove only the dedicated worker state and account")
+    parser.add_argument("--from-ref", help="required Git baseline for a managed-file upgrade")
+    parser.add_argument("--installed-sha256", action="append", default=[], metavar="SOURCE=SHA256",
+                        help="exact installed-file hash override, repeatable for an approved dirty baseline")
     args = parser.parse_args(argv)
     repo = Path(__file__).resolve().parents[2]
     root = args.root_dir.resolve() if args.root_dir else Path("/")
     try:
+        repo = Path(__file__).resolve().parents[2]
+        root = args.root_dir.resolve() if args.root_dir else Path("/")
         if args.action == "install":
+            if args.remove_state or args.from_ref or args.installed_sha256:
+                raise ProvisionError("upgrade/remove options are invalid with install")
+            install(repo, root)
+        elif args.action == "upgrade":
             if args.remove_state:
                 raise ProvisionError("--remove-state is valid only with remove")
-            install(repo, root)
+            if not args.from_ref:
+                raise ProvisionError("upgrade requires --from-ref with the exact installed Git baseline")
+            overrides = {}
+            for value in args.installed_sha256:
+                source, separator, digest = value.partition("=")
+                if not separator or source in overrides:
+                    raise ProvisionError("--installed-sha256 must be a unique SOURCE=SHA256 value")
+                overrides[source] = digest
+            upgrade(repo, root, args.from_ref, overrides)
         else:
+            if args.from_ref or args.installed_sha256:
+                raise ProvisionError("upgrade options are invalid with remove")
             remove(root, args.remove_state)
     except (OSError, ProvisionError, subprocess.SubprocessError) as exc:
         print(f"worker provisioning refused: {exc}", file=sys.stderr)

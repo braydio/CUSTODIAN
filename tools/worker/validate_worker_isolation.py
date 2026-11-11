@@ -7,6 +7,7 @@ import argparse
 import errno
 import grp
 import hashlib
+import http.client
 import ipaddress
 import json
 import os
@@ -19,6 +20,7 @@ import subprocess
 import sys
 import threading
 import time
+import urllib.parse
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -29,8 +31,12 @@ WORKSPACES = STATE / "workspaces"
 UNIT = "custodian-worker@proof.service"
 REPO_URL = "https://github.com/braydio/CUSTODIAN.git"
 LFS_PATH = "archive/Hubworld/Ashen_Forum/Cliff_Section_01_32x64.png"
+LFS_BATCH_URL = "https://github.com/braydio/CUSTODIAN.git/info/lfs/objects/batch"
+LFS_OBJECT_OID = "f14d37604bbce8b31671550e7c0a3cd5168d5e4273e8c67b95e301c392761c51"
+LFS_OBJECT_SIZE = 4852
 DENIED_ERRNOS = {errno.EACCES, errno.EPERM, errno.EHOSTUNREACH, errno.ENETUNREACH}
 FORBIDDEN_ENV = re.compile(r"^(?:GITHUB_|GH_|OPENAI_|HL_|SSH_AUTH_SOCK$|CODEX_SESSION|CODEX_API_KEY$)")
+HTTP_HEADER_NAME = re.compile(r"^[!#$%&'*+.^_`|~0-9A-Za-z-]+$")
 
 
 def run(argv: list[str], *, timeout: int = 30) -> tuple[int, str, str]:
@@ -277,7 +283,7 @@ def inside_proof() -> dict[str, Any]:
         rc, out, _ = run([git_path, "-c", "credential.helper=", "ls-remote", REPO_URL, "HEAD"], timeout=60)
         git_read = {"exit_code": rc, "head": out.split()[0] if rc == 0 and out.split() else None}
 
-    lfs = fetch_one_public_lfs_object(git_path, config["run_id"]) if git_path else {"exit_code": 127}
+    lfs = fetch_one_public_lfs_object() if git_path else {"exit_code": 127}
 
     # Attempt a real non-interactive Codex model call with only worker-owned state.
     # The result is summarized; stderr/stdout (which can contain request details) are never logged.
@@ -324,68 +330,204 @@ def inside_lfs_diagnostic() -> dict[str, Any]:
     if preflight.get("pass") is not True:
         raise RuntimeError("LFS diagnostic refused because isolation preflight did not pass")
     git_path = shutil.which("git")
-    lfs = fetch_one_public_lfs_object(git_path, config["run_id"]) if git_path else {
+    lfs = fetch_one_public_lfs_object() if git_path else {
         "exit_code": 127, "disposition": "transport_failure", "phase": "tool_unavailable"}
     return {"schema": "custodian.worker_lfs_diagnostic.v1", "run_id": config["run_id"],
             "pid": os.getpid(), "cgroup": Path("/proc/self/cgroup").read_text().strip(),
             "isolation_preflight_pass": preflight.get("pass") is True, "lfs_read": lfs,
             "timestamp_utc": datetime.now(timezone.utc).isoformat()}
 
-def fetch_one_public_lfs_object(git: str, run_id: str) -> dict[str, Any]:
-    destination = WORKSPACES / f"lfs-proof-{run_id}"
-    if destination.exists() or destination.is_symlink():
-        return {"exit_code": 73, "disposition": "destination_already_exists"}
-    public_network = public_https_probe("github.com")
-    transport = public_network["phases"]
-    if not public_network["pass"]:
-        disposition = public_network["disposition"]
-        return {"exit_code": 124 if disposition == "network_timeout" else 69,
-                "disposition": disposition, "transport": transport,
-                "total_duration_seconds": public_network["total_duration_seconds"],
-                "total_timeout_seconds": public_network["total_timeout_seconds"]}
-    clone_started = time.monotonic()
-    rc, _, clone_stderr = run([
-        git, "-c", "credential.helper=", "clone", "--filter=blob:none", "--depth=1",
-        "--no-checkout", "--single-branch", "--branch", "main", REPO_URL, str(destination),
-    ], timeout=12)
-    if rc:
-        disposition = classify_lfs_failure(rc, clone_stderr or ("timeout" if rc == 124 else "clone transport error"))
-        return {"exit_code": rc, "disposition": disposition, "transport": transport, "phase": "public_clone",
-                "clone_duration_seconds": round(time.monotonic() - clone_started, 4),
-                "authentication_result": disposition if disposition in ("authentication_required", "authorization_denied") else "not_observed",
-                "lfs_http_response": {"received": False, "status": None}, "total_timeout_seconds": 58}
-    rc, pointer, _ = run([git, "-C", str(destination), "show", f"origin/main:{LFS_PATH}"], timeout=3)
-    if rc:
-        return {"exit_code": rc, "disposition": "lfs_pointer_not_available"}
-    parsed = parse_lfs_pointer(pointer)
-    if parsed is None:
-        return {"exit_code": 65, "disposition": "not_a_valid_lfs_pointer"}
-    oid, expected_size = parsed
-    transfer_started = time.monotonic()
-    rc, _, stderr = run([
-        git, "-C", str(destination), "lfs", "fetch", f"--include={LFS_PATH}", "--exclude=", "origin", "main",
-    ], timeout=20)
-    if rc:
-        kind = classify_lfs_failure(rc, stderr)
-        status_match = re.search(r"\bHTTP(?:/\d(?:\.\d)?)?\s+(\d{3})\b", stderr, re.I)
-        http_status = int(status_match.group(1)) if status_match else None
-        return {"exit_code": rc, "disposition": kind, "object_oid": oid, "expected_size": expected_size,
-                "transport": transport, "phase": "git_lfs_fetch",
-                "transfer_duration_seconds": round(time.monotonic() - transfer_started, 4),
-                "authentication_result": kind if kind in ("authentication_required", "authorization_denied") else "not_observed",
-                "lfs_http_response": {"received": http_status is not None, "status": http_status},
-                "total_timeout_seconds": 58}
-    object_path = destination / ".git" / "lfs" / "objects" / oid[:2] / oid[2:4] / oid
-    if not object_path.is_file():
-        return {"exit_code": 66, "disposition": "fetched_object_missing", "object_oid": oid}
-    digest = hashlib.sha256(object_path.read_bytes()).hexdigest()
-    actual_size = object_path.stat().st_size
-    ok = digest == oid and actual_size == expected_size
-    return {"exit_code": 0 if ok else 67, "disposition": "anonymous_access_succeeded" if ok else "lfs_protocol_or_object_failure",
-            "object_oid": oid, "size": actual_size, "sha256_matches_pointer": digest == oid,
-            "size_matches_pointer": actual_size == expected_size, "path": LFS_PATH, "transport": transport,
-            "authentication_result": "anonymous_no_auth_used", "lfs_http_response": {"received": True, "status": "not_exposed_by_git_lfs"},
-            "transfer_duration_seconds": round(time.monotonic() - transfer_started, 4), "total_timeout_seconds": 58}
+def _timing_record(started: float, *, passed: bool, **details: Any) -> dict[str, Any]:
+    return {"pass": passed, "duration_seconds": round(time.monotonic() - started, 4), **details}
+
+
+def _pinned_https_request(host: str, target: str, method: str, headers: dict[str, str],
+                          payload: bytes | None = None, *, max_response_bytes: int = 1_000_000
+                          ) -> tuple[dict[str, Any], bytes]:
+    """Make one bounded HTTPS request without logging the target or supplied headers."""
+    started = time.monotonic()
+    phases: dict[str, Any] = {}
+    forbidden_action_headers = {"host", "connection", "content-length", "transfer-encoding"}
+    if (method not in {"GET", "POST"} or "\r" in target or "\n" in target or
+            (method == "GET" and any(name.lower() in forbidden_action_headers for name in headers))):
+        return {"pass": False, "phase": "request_validation", "phases": phases,
+                "total_duration_seconds": round(time.monotonic() - started, 4)}, b""
+    phase_started = time.monotonic()
+    dns_rc, dns_output, _ = run(["/usr/bin/getent", "ahosts", host], timeout=5)
+    if dns_rc:
+        phases["dns"] = _timing_record(phase_started, passed=False,
+                                       error="TimeoutError" if dns_rc == 124 else "ResolverError", answer_count=0)
+        return {"pass": False, "phase": "dns", "phases": phases,
+                "total_duration_seconds": round(time.monotonic() - started, 4)}, b""
+
+    addresses: list[tuple[int, str]] = []
+    for line in dns_output.splitlines():
+        candidate = line.split()[0] if line.split() else ""
+        try:
+            parsed = ipaddress.ip_address(candidate)
+        except ValueError:
+            continue
+        family = socket.AF_INET6 if parsed.version == 6 else socket.AF_INET
+        if parsed.is_global and (family, str(parsed)) not in addresses:
+            addresses.append((family, str(parsed)))
+    phases["dns"] = _timing_record(phase_started, passed=bool(addresses), answer_count=len(addresses))
+    if not addresses:
+        return {"pass": False, "phase": "dns", "phases": phases,
+                "total_duration_seconds": round(time.monotonic() - started, 4)}, b""
+
+    raw = None
+    last_error = None
+    phase_started = time.monotonic()
+    tcp_deadline = phase_started + 5
+    for family, address in addresses[:4]:
+        remaining = tcp_deadline - time.monotonic()
+        if remaining <= 0:
+            break
+        try:
+            raw = socket.create_connection((address, 443), timeout=remaining)
+            break
+        except OSError as exc:
+            last_error = exc
+    phases["tcp"] = _timing_record(phase_started, passed=raw is not None,
+                                   **({} if raw is not None else {"error": type(last_error).__name__ if last_error else "ConnectionError"}))
+    if raw is None:
+        return {"pass": False, "phase": "tcp", "phases": phases,
+                "total_duration_seconds": round(time.monotonic() - started, 4)}, b""
+
+    secure = None
+    response = None
+    try:
+        phase_started = time.monotonic()
+        raw.settimeout(5)
+        try:
+            secure = ssl.create_default_context().wrap_socket(raw, server_hostname=host)
+        except (OSError, ssl.SSLError) as exc:
+            phases["tls"] = _timing_record(phase_started, passed=False, error=type(exc).__name__)
+            return {"pass": False, "phase": "tls", "phases": phases,
+                    "total_duration_seconds": round(time.monotonic() - started, 4)}, b""
+        phases["tls"] = _timing_record(phase_started, passed=True, version=secure.version())
+
+        request_headers = {"Host": host, "Connection": "close", "User-Agent": "custodian-worker-proof/1"}
+        request_headers.update(headers)
+        request_line = f"{method} {target} HTTP/1.1\r\n".encode("ascii")
+        header_bytes = b"".join(f"{name}: {value}\r\n".encode("latin-1") for name, value in request_headers.items())
+        phase_started = time.monotonic()
+        secure.settimeout(10)
+        secure.sendall(request_line + header_bytes + b"\r\n" + (payload or b""))
+        response = http.client.HTTPResponse(secure)
+        response.begin()
+        status = response.status
+        response_body = response.read(max_response_bytes + 1)
+        too_large = len(response_body) > max_response_bytes
+        if too_large:
+            response_body = b""
+        phases["http"] = _timing_record(phase_started, passed=200 <= status < 300 and not too_large,
+                                        status=status, response_bytes=0 if too_large else len(response_body),
+                                        response_too_large=too_large)
+        ok = phases["http"]["pass"]
+        return {"pass": ok, "phase": "complete" if ok else "http", "phases": phases,
+                "total_duration_seconds": round(time.monotonic() - started, 4)}, response_body
+    except (OSError, ssl.SSLError, http.client.HTTPException, UnicodeError, ValueError) as exc:
+        phases.setdefault("http", _timing_record(time.monotonic(), passed=False, error=type(exc).__name__))
+        failed_phase = "http" if "tls" in phases else "tls"
+        return {"pass": False, "phase": failed_phase, "phases": phases,
+                "total_duration_seconds": round(time.monotonic() - started, 4)}, b""
+    finally:
+        if response is not None:
+            response.close()
+        if secure is not None:
+            secure.close()
+        elif raw is not None:
+            raw.close()
+
+
+def fetch_one_public_lfs_object() -> dict[str, Any]:
+    """Fetch one known public LFS object using an anonymous batch and in-memory action."""
+    batch_parts = urllib.parse.urlsplit(LFS_BATCH_URL)
+    batch_body = json.dumps({"operation": "download", "transfers": ["basic"],
+                             "ref": {"name": "refs/heads/main"},
+                             "objects": [{"oid": LFS_OBJECT_OID, "size": LFS_OBJECT_SIZE}]},
+                            separators=(",", ":")).encode("utf-8")
+    batch_headers = {"Accept": "application/vnd.git-lfs+json",
+                     "Content-Type": "application/vnd.git-lfs+json",
+                     "Content-Length": str(len(batch_body))}
+    batch_result, batch_response = _pinned_https_request(
+        batch_parts.hostname or "", batch_parts.path, "POST", batch_headers, batch_body,
+    )
+    if not batch_result["pass"]:
+        status = batch_result["phases"].get("http", {}).get("status")
+        timed_out = any(v.get("error") == "TimeoutError" for v in batch_result["phases"].values())
+        disposition = "authentication_required" if status == 401 else "authorization_denied" if status == 403 else \
+            "network_timeout" if timed_out else "transport_failure" if batch_result["phase"] != "http" else "lfs_protocol_or_object_failure"
+        return {"exit_code": 124 if timed_out else 69,
+                "disposition": disposition,
+                "phase": f"batch_{batch_result['phase']}", "batch": batch_result["phases"],
+                "authentication_result": "anonymous_request_no_authorization_header",
+                "total_timeout_seconds": 50}
+    try:
+        envelope = json.loads(batch_response)
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        return {"exit_code": 65, "disposition": "lfs_protocol_or_object_failure", "phase": "batch_json",
+                "batch": batch_result["phases"], "authentication_result": "anonymous_request_no_authorization_header"}
+    objects = envelope.get("objects") if isinstance(envelope, dict) else None
+    item = objects[0] if isinstance(objects, list) and len(objects) == 1 else None
+    if (not isinstance(item, dict) or item.get("oid") != LFS_OBJECT_OID or
+            item.get("size") != LFS_OBJECT_SIZE or envelope.get("transfer", "basic") != "basic"):
+        return {"exit_code": 65, "disposition": "lfs_protocol_or_object_failure", "phase": "batch_object",
+                "batch": batch_result["phases"], "authentication_result": "anonymous_request_no_authorization_header"}
+    actions = item.get("actions")
+    action = actions.get("download") if isinstance(actions, dict) else None
+    href = action.get("href") if isinstance(action, dict) else None
+    action_headers = action.get("header", {}) if isinstance(action, dict) else {}
+    if (not isinstance(href, str) or not isinstance(action_headers, dict) or len(action_headers) > 32 or
+            sum(len(k) + len(v) for k, v in action_headers.items() if isinstance(k, str) and isinstance(v, str)) > 8192 or
+            not all(isinstance(k, str) and isinstance(v, str) and HTTP_HEADER_NAME.fullmatch(k) and
+                    "\r" not in k + v and "\n" not in k + v for k, v in action_headers.items())):
+        return {"exit_code": 65, "disposition": "lfs_protocol_or_object_failure", "phase": "download_action",
+                "batch": batch_result["phases"], "authentication_result": "anonymous_request_no_authorization_header"}
+    try:
+        download_url = urllib.parse.urlsplit(href)
+        valid_action = (download_url.scheme == "https" and download_url.hostname == "github-cloud.githubusercontent.com"
+                        and download_url.port in (None, 443) and not download_url.username
+                        and not download_url.password and not download_url.fragment and bool(download_url.path))
+    except ValueError:
+        valid_action = False
+        download_url = None
+    if not valid_action or download_url is None:
+        return {"exit_code": 65, "disposition": "lfs_protocol_or_object_failure", "phase": "download_action_host",
+                "batch": batch_result["phases"], "authentication_result": "anonymous_request_no_authorization_header"}
+
+    download_target = download_url.path + ("?" + download_url.query if download_url.query else "")
+    download_result, payload = _pinned_https_request(
+        "github-cloud.githubusercontent.com", download_target, "GET", action_headers,
+        max_response_bytes=LFS_OBJECT_SIZE,
+    )
+    safe_download = {"host": "github-cloud.githubusercontent.com", "connection_tested": all(
+        download_result["phases"].get(key, {}).get("pass") is True for key in ("dns", "tcp", "tls")),
+        "phases": download_result["phases"]}
+    if not download_result["pass"]:
+        timed_out = any(v.get("error") == "TimeoutError" for v in download_result["phases"].values())
+        status = download_result["phases"].get("http", {}).get("status")
+        disposition = "authentication_required" if status == 401 else "authorization_denied" if status == 403 else \
+            "network_timeout" if timed_out else "transport_failure" if download_result["phase"] != "http" else "lfs_protocol_or_object_failure"
+        return {"exit_code": 124 if timed_out else 69,
+                "disposition": disposition,
+                "phase": f"download_{download_result['phase']}", "object_oid": LFS_OBJECT_OID,
+                "expected_size": LFS_OBJECT_SIZE, "batch": batch_result["phases"],
+                "download": safe_download,
+                "authentication_result": "anonymous_batch_action_no_repository_authorization_header",
+                "total_timeout_seconds": 50}
+    digest = hashlib.sha256(payload).hexdigest()
+    ok = len(payload) == LFS_OBJECT_SIZE and digest == LFS_OBJECT_OID
+    return {"exit_code": 0 if ok else 67,
+            "disposition": "anonymous_access_succeeded" if ok else "lfs_protocol_or_object_failure",
+            "phase": "complete" if ok else "object_verify", "object_oid": LFS_OBJECT_OID,
+            "expected_size": LFS_OBJECT_SIZE, "size": len(payload), "sha256": digest,
+            "sha256_matches_pointer": digest == LFS_OBJECT_OID,
+            "size_matches_pointer": len(payload) == LFS_OBJECT_SIZE,
+            "batch": batch_result["phases"], "download": safe_download,
+            "authentication_result": "anonymous_no_repository_credentials_used",
+                "total_timeout_seconds": 50}
 
 
 def listener(family: int, host: str) -> tuple[socket.socket, int, list[int], threading.Event, threading.Thread]:

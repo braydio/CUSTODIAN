@@ -35,6 +35,8 @@ systemd-analyze security custodian-worker@proof.service --no-pager
 sudo python3 tools/worker/validate_worker_isolation.py --host-run
 ```
 
+To upgrade an existing installation, use `sudo python3 tools/worker/provision_worker_isolation.py upgrade --from-ref <exact-installed-baseline>`. It refuses unless every installed managed file matches that Git baseline, the resolver config matches, and the service is inactive and disabled. For a previously installed, explicitly verified dirty file, `--installed-sha256 SOURCE=SHA256` can replace that one baseline comparison; use only a SHA-256 recorded from the exact installed file. The upgrade stages files beside their destinations and atomically replaces them after all baseline checks pass. It never changes worker state or account settings.
+
 The full host-run command emits one JSON record. Exit code `0` means every full-proof gate passed. Exit code `2` means evidence was collected but at least one required gate is incomplete. Exit code `1` means the host runner itself could not safely set up or collect the proof. Diagnostic-only modes deliberately set `full_proof_pass` to false. Their exit code `0` means the requested focused diagnostic completed, not that full acceptance passed. Reports omit environment values and command stderr. Redact host-interface addresses before retaining evidence in Git.
 
 The systemd service must remain disabled and no timer may be installed. The proof unit exits after one run and does not restart. Do not run `systemctl enable` or create a timer.
@@ -61,8 +63,12 @@ Three repeated actual-unit, preflight-only runs passed after correction: five de
 
 The bounded LFS-only run passed the isolation preflight and public DNS/TCP/TLS/HTTPS checks (GitHub returned HTTP 200 with TLS 1.3), then the Git LFS fetch timed out after 20.0205 seconds (bounded 58-second maximum total path). Authentication and the Git LFS endpoint HTTP response were not observed before timeout; this remains `network_timeout`, not an inferred authentication failure. See [worker-isolation-lfs-diagnostic-20261111.json](evidence/worker-isolation-lfs-diagnostic-20261111.json) (SHA-256 `4a0870dfd32e94d99da3aaf2ee540a5c2fa541b49a744c944fb80d3dfa1f0482`). The incomplete clone created for that one run was removed after preserving evidence.
 
+Final bounded LFS-only run `a58315580085c773` used installed validator SHA-256 `e9bec1de965c9513320c87f48a7eaa80756c6fb43c36c39b2796a34c5d65ad5e`. The actual `custodian-worker@proof.service` launcher preflight passed; the anonymous Git LFS batch POST to `github.com` returned HTTP 200 after DNS, TCP, and TLS 1.3 passed. The in-memory download action was limited to `github-cloud.githubusercontent.com`; that host also passed DNS, TCP, and TLS 1.3, and the exact object GET returned HTTP 200. The 4,852-byte payload matched SHA-256 `f14d37604bbce8b31671550e7c0a3cd5168d5e4273e8c67b95e301c392761c51`. The report contains stage timings and statuses only; it omits the action URL, query, and action headers. The unit returned inactive and remained disabled. This proves the bounded anonymous LFS object path, but does not resolve the historical loopback discrepancy or satisfy isolated model execution. See [worker-isolation-lfs-batch-diagnostic-20261111.json](evidence/worker-isolation-lfs-batch-diagnostic-20261111.json) (SHA-256 `e386625de039f8128b29a7934510c2a5f95291b37402309020da18362e327173`).
+
 Codex model execution remains unavailable until an independently authorized worker identity is provisioned. No owner credential was copied. Full proof remains incomplete and must not be certified.
 
 Focused implementation validation passed: 13 worker-isolation unit tests, Python compilation, shell syntax, systemd unit verification, and `git diff --check`. The final preflight and LFS-only evidence were captured using the final installed launcher/validator source. No complete toolchain/model proof was repeated.
+
+The direct-batch continuation passed 19 worker-isolation unit tests, Python compilation, shell syntax, `systemd-analyze verify`, `git diff --check`, and canonical changed-file validation. It did not repeat the full toolchain or model proof.
 
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af34a5d-ca7c-83ea-b267-382f1be560df
