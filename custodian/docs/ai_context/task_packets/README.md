@@ -138,7 +138,6 @@ packet and its paired review, not as chat-only downloads.
 - `AGENT_BLOCKER_INBOX_PUBLISHER_V1.md` — Publish strict, redacted, persistent blocker events into dedicated ops/blocker-inbox branch without affecting dispatcher or reviewer outcomes.
 - `AGENT_BLOCKER_RECOVERY_RECONCILIATION_V1.md` — Support ChatGPT on-demand blocker triage, root-cause grouping and evidence-verified incident closure without autonomous claim or reviewer authority.
 - `AGENT_BOUNDED_TASK_CONTEXT_V1.md` — Stop Codex from repeatedly flooding its context with full repository-wide queue search and massive authority-document dumps while preserving accurate task/AG...
-- `AGENT_ISOLATED_WORKER_PROOF_V1.md` — Prove that a disposable local CUSTODIAN worker can run in a dedicated unprivileged systemd sandbox without inheriting the host operator's credentials, Chrome...
 - `AGENT_LONGFORM_REVIEW_AND_GATE_HARDENING_V1.md` — Review and human gate truth through the existing CUSTODIAN workflow authorities.
 - `AGENT_LONGFORM_SESSION_CORE_V1.md` — Real CLI and durable accounting through the existing CUSTODIAN workflow authorities.
 - `AGENT_LONGFORM_TELEMETRY_AND_STANDARD_ADOPTION_V1.md` — Truthful usage and standard execution reuse through the existing CUSTODIAN workflow authorities.
@@ -216,7 +215,6 @@ packet and its paired review, not as chat-only downloads.
 - `REVIEW_AGENT_BLOCKER_INBOX_PUBLISHER_V1.md` — Independently verify the exact landed `agent-blocker-inbox-publisher-v1` implementation against authoritative workstream behavior.
 - `REVIEW_AGENT_BLOCKER_RECOVERY_RECONCILIATION_V1.md` — Independently verify the exact landed `agent-blocker-recovery-reconciliation-v1` implementation against authoritative workstream behavior.
 - `REVIEW_AGENT_BOUNDED_TASK_CONTEXT_V1.md` — Independently falsify Agent Bounded Task Context V1 against the landed code and all numbered implementation acceptance items.
-- `REVIEW_AGENT_ISOLATED_WORKER_PROOF_V1.md` — Independently establish that the landed test-only worker proof meets every implementation acceptance claim and does not overstate unavailable host or credent...
 - `REVIEW_AGENT_LONGFORM_REVIEW_AND_GATE_HARDENING_V1.md` — Independently falsify Review and human gate truth from landed code and immutable evidence, not an implementation summary.
 - `REVIEW_AGENT_LONGFORM_SESSION_CORE_V1.md` — Independently falsify Real CLI and durable accounting from landed code and immutable evidence, not an implementation summary.
 - `REVIEW_AGENT_LONGFORM_TELEMETRY_AND_STANDARD_ADOPTION_V1.md` — Independently falsify Truthful usage and standard execution reuse from landed code and immutable evidence, not an implementation summary.
