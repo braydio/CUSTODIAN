@@ -766,6 +766,7 @@ class OperatorWorkbenchApp(App):
         self.state.session_generation += 1
         generation = self.state.session_generation
         changed = self.state.selection is None or self.state.selection != selection
+        self.state.preview_source = self._preview_source_for(selection)
         preview_generation = self.state.preview_generation
         if changed and invalidate_preview:
             preview_generation = self._next_preview_generation()
@@ -838,6 +839,15 @@ class OperatorWorkbenchApp(App):
                          or self._browser_generation_current(browser_generation))):
                 if not self._browser_refresh_in_progress:
                     self._preview_replacing = False
+
+    def _preview_source_for(self, selection: AnimationSelection) -> str:
+        """3D candidates have exactly one source; leaving them restores the legacy default."""
+        if selection.art_generation == "operator_3d_80":
+            return "candidate"
+        return "runtime" if self.state.preview_source == "candidate" else self.state.preview_source
+
+    def _is_3d_candidate(self) -> bool:
+        return bool(self.state.selection) and self.state.selection.art_generation == "operator_3d_80"
 
     def _accept_context_mismatch(
         self, result: str | None, requested: AnimationSelection,
@@ -998,6 +1008,9 @@ class OperatorWorkbenchApp(App):
         self.run_worker(self._reload_browser(), group="browser", exclusive=True)
 
     def _set_mode(self, mode: str) -> None:
+        if mode in ("timeline", "motion", "polish") and self._is_3d_candidate():
+            self._activity(f"{mode.title()} is unavailable for 3D candidates until a generation-aware provider is wired", "WARN")
+            return
         preview_generation = self.state.preview_generation
         if mode == "preview" or (mode != self.state.mode and self.state.mode == "preview"):
             preview_generation = self._next_preview_generation()
@@ -1462,6 +1475,8 @@ class OperatorWorkbenchApp(App):
         return self._compare_source_for(primary)
 
     async def _load_preview_comparison(self, *, force: bool = False) -> None:
+        if self._is_3d_candidate():
+            self.preview_compare_view = None; self.preview_comparisons = (); return
         if self.state.mode != "preview" or self.state.preview_examiner_mode == "single" or self.preview_view is None:
             self.preview_compare_view = None; self.preview_comparisons = (); return
         selection = self.state.selection
@@ -1714,6 +1729,9 @@ class OperatorWorkbenchApp(App):
 
     def action_preview_compare_source(self) -> None:
         if self.state.mode != "preview" or self.state.preview_examiner_mode in ("single", "transition"): return
+        if self._is_3d_candidate():
+            self._activity("Comparison is disabled for 3D candidates; canonical and runtime art are not same-generation sources", "WARN")
+            return
         sources = ("workbench", "canonical", "runtime")
         current = sources.index(self.state.preview_compare_source) if self.state.preview_compare_source in sources else -1
         primary = self.preview_view.source if self.preview_view else ""
@@ -1856,6 +1874,9 @@ class OperatorWorkbenchApp(App):
         self.state.preview_loop = not self.state.preview_loop; self._render_preview()
     def action_preview_source(self):
         if self.state.mode not in ("preview", "timeline", "motion"): return
+        if self._is_3d_candidate():
+            self._activity("3D candidates have a single source: 3D CANDIDATE", "INFO")
+            return
         if self.state.mode == "timeline" and self.timeline_frames:
             clip, source_frame, _frame = self.timeline_frames[self.state.preview_frame]
             self._timeline_pending_focus = (clip, source_frame)
@@ -2233,6 +2254,12 @@ class OperatorWorkbenchApp(App):
 
     def _guard_authoring_generation(self, operation: str) -> bool:
         selection = self.state.selection
+        if self._is_3d_candidate():
+            # Validation is the read-only frame-integrity check; every mutation is refused here and in the service.
+            if operation == "Validation":
+                return True
+            self._activity(f"{operation} is unavailable for operator_3d_80 candidates (read-only intake)", "WARN")
+            return False
         if selection and selection.art_generation == "operator_2_5d_128" and operation in {"Publish", "Validation"}:
             self._activity(
                 f"{operation} is unavailable for 2.5D targets until the runtime-promotion workstream",

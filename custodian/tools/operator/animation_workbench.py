@@ -598,7 +598,10 @@ def _operator_scene_consistency():
 
 ## Counterpart promotion is opt-in and is also presented explicitly in UI review.
 def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_validate=False,requested=None,mirror_counterpart=False):
-    ws=manifest.parent; data=load(manifest)
+    ws=manifest.parent
+    if (ws/"candidate.json").is_file():
+        raise m.WorkbenchError("3D candidate generation operator_3d_80 is candidate-only; runtime publication is disabled")
+    data=load(manifest)
     if data.get("creation", {}).get("art_generation", "legacy_96") == "operator_2_5d_128":
         raise m.WorkbenchError("2.5D runtime publication is disabled in guided ingress")
     data=reconcile_saved_document_contract(data,manifest,aseprite); st=state(data,ws/"workbench.aseprite")

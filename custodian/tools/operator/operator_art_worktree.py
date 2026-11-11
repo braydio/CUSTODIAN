@@ -32,6 +32,7 @@ SPARSE_PROFILE_PATHS = (
     "custodian/addons/godot_ai/utils",
     "custodian/addons/dev-console",
     "custodian/tools/operator",
+    "custodian/tools/character3d",
     "custodian/tools/aseprite",
     "custodian/tools/art",
     "custodian/tools/assets",

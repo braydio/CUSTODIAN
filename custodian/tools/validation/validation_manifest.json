@@ -7893,6 +7893,37 @@
       ],
       "timeout_sec": 30,
       "needs_import": false
+    },
+    {
+      "id": "character3d_tools_unit",
+      "type": "python",
+      "script": "custodian/tools/validation/test_character3d_tools.py",
+      "tier": "unit",
+      "tags": ["character3d", "operator", "contract"],
+      "owners": [
+        "custodian/tools/character3d/**",
+        "custodian/tools/validation/test_character3d_tools.py"
+      ],
+      "timeout_sec": 120,
+      "needs_import": false
+    },
+    {
+      "id": "operator_3d_candidate_intake_unit",
+      "type": "python",
+      "script": "custodian/tools/validation/test_operator_3d_candidate_intake.py",
+      "tier": "unit",
+      "tags": ["operator", "character3d", "workbench", "candidate"],
+      "owners": [
+        "custodian/tools/character3d/stage/operator_stage.py",
+        "custodian/tools/operator/operator_3d_candidate_intake.py",
+        "custodian/tools/operator/ui/service.py",
+        "custodian/tools/operator/ui/state.py",
+        "custodian/tools/operator/ui/app.py",
+        "custodian/tools/operator/animation_preview.py",
+        "custodian/tools/validation/test_operator_3d_candidate_intake.py"
+      ],
+      "timeout_sec": 180,
+      "needs_import": false
     }
   ]
 }

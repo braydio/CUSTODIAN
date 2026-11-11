@@ -1,0 +1,432 @@
+{
+  "schema": "custodian.character3d_contract.v1",
+  "character_id": "pursuit_frame",
+  "display_name": "Pursuit Frame",
+  "status": "experimental_debug_preview",
+  "source": {
+    "master": {
+      "path_hint": "inputs/character_master.glb (P-F-Character_output-1.glb)",
+      "sha256": "89b0d4de1019355500345865154d42fd5ab23a386a8f87e607a7a9002169d1c7",
+      "skin_joints": 24
+    },
+    "motions": {
+      "running": {
+        "included": true,
+        "path_hint": "inputs/animations/running.glb (source: ~/Downloads/PursuitFrame3D)",
+        "sha256": "74914bc92305023b2a9104f98c27384053e38384a0378bf0a20007c467454bae",
+        "exclusion_reason": null
+      },
+      "walking": {
+        "included": true,
+        "path_hint": "inputs/animations/walking.glb (source: ~/Downloads/PursuitFrame3D)",
+        "sha256": "94d1ad33cd1c032acbcb3ea65f0470bc315aa39933c4e25e2de1025285604ff8",
+        "exclusion_reason": null
+      },
+      "alert": {
+        "included": true,
+        "path_hint": "inputs/animations/alert.glb (source: ~/Downloads/PursuitFrame3D)",
+        "sha256": "236ee0cb62fc68e6f483a6635c200385a1e292f14e851dc4b720fda33339246e",
+        "exclusion_reason": null
+      },
+      "agree_gesture": {
+        "included": true,
+        "path_hint": "inputs/animations/agree_gesture.glb (source: ~/Downloads/PursuitFrame3D)",
+        "sha256": "2fdf444903eac1cecc9689f990539bf2a4cdf968651a8e3459fd46f6b27b7307",
+        "exclusion_reason": null
+      },
+      "casual_walk": {
+        "included": true,
+        "path_hint": "inputs/animations/casual_walk.glb (source: ~/Downloads/PursuitFrame3D)",
+        "sha256": "3f1ab79476cd816ffe02031eda7d289fa10785e801764ec3b3416863f5aebcd7",
+        "exclusion_reason": null
+      },
+      "arise": {
+        "included": true,
+        "path_hint": "inputs/animations/arise.glb (source: ~/Downloads/PursuitFrame3D)",
+        "sha256": "0cf87f9d4e98f12fbf58836f8b26dbc93ee2f50d346c20e46f03f2fef0c3efc5",
+        "exclusion_reason": null
+      },
+      "attack": {
+        "included": true,
+        "path_hint": "inputs/animations/attack.glb (source: ~/Downloads/PursuitFrame3D)",
+        "sha256": "7452dca3946ebde16955118f55fa475ef7e3acf6ccfb518afc00ad75e5f9e3c1",
+        "exclusion_reason": null
+      },
+      "behit_flyup": {
+        "included": true,
+        "path_hint": "inputs/animations/behit_flyup.glb (source: ~/Downloads/PursuitFrame3D)",
+        "sha256": "ed8f87a533a64b97909d3a5bc755649b851b178d80135c3cc92991a9deaebb6d",
+        "exclusion_reason": null
+      },
+      "skill_01": {
+        "included": true,
+        "path_hint": "inputs/animations/skill_01.glb (source: ~/Downloads/PursuitFrame3D)",
+        "sha256": "edfda89ef9a9eb8c8406094b11ec04110f0bd62af16d4f90a263b1c7b815ca72",
+        "exclusion_reason": null
+      },
+      "skill_03": {
+        "included": true,
+        "path_hint": "inputs/animations/skill_03.glb (source: ~/Downloads/PursuitFrame3D)",
+        "sha256": "76fe364d0f87ee24573ae19490c8dd189970afc15acd7e308a2210d65e6483b9",
+        "exclusion_reason": null
+      },
+      "triple_combo_attack": {
+        "included": true,
+        "path_hint": "inputs/animations/triple_combo_attack.glb (source: ~/Downloads/PursuitFrame3D)",
+        "sha256": "702076f2c33112077b501f70aed86215a0e9a31efe22f82dd1ce7c9c3562c229",
+        "exclusion_reason": null
+      },
+      "minstrel_static_mesh": {
+        "included": false,
+        "path_hint": "PF_MAYBE_minstrel.3qd87sruqknyz.glb",
+        "sha256": null,
+        "exclusion_reason": "single static mesh, no rig; unrelated to the rig"
+      },
+      "casual_walk_duplicate": {
+        "included": false,
+        "path_hint": "PF_CasualWalk.glb",
+        "sha256": null,
+        "exclusion_reason": "byte-identical duplicate of PF_Casual_Walk.glb"
+      }
+    }
+  },
+  "directions": {
+    "order": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N",
+      "NW",
+      "W",
+      "SW"
+    ],
+    "azimuth_deg": [
+      0,
+      45,
+      90,
+      135,
+      180,
+      225,
+      270,
+      315
+    ],
+    "mirroring": false,
+    "screen_convention": "S faces the camera; E is screen-right; W is screen-left"
+  },
+  "render": {
+    "projection": "orthographic",
+    "elevation_deg": 45,
+    "px_per_m": 80,
+    "root_bone": "Hips",
+    "root_mode": "object",
+    "engine": "BLENDER_EEVEE"
+  },
+  "game": {
+    "px_per_m": 50,
+    "display_scale": 0.625,
+    "display_scale_rule": "display_scale = game_px_per_m / render_px_per_m = 50 / 80; matches the Operator 50 px/m contract"
+  },
+  "registration": {
+    "policy": "fixed_per_class",
+    "rule": "one root pixel per canvas class, shared by every action, direction and frame; never recentred"
+  },
+  "canvas_classes": [
+    {
+      "id": "standard_256x256",
+      "width": 256,
+      "height": 256,
+      "root_px": [
+        128,
+        180
+      ],
+      "clearance_px": 4
+    },
+    {
+      "id": "extended_256x320",
+      "width": 256,
+      "height": 320,
+      "root_px": [
+        128,
+        216
+      ],
+      "clearance_px": 4
+    }
+  ],
+  "actions": {
+    "running": {
+      "status": "mapped_debug",
+      "semantic": "locomotion.run / locomotion.relaxed_run (chase)",
+      "viewport": "standard_256x256",
+      "viewport_px": [
+        256,
+        256
+      ],
+      "source_canvas": 256,
+      "frame_count": 15,
+      "sample_count": 15,
+      "sampling_target_fps": 24,
+      "authored_frame_range": [
+        0.8000000715255737,
+        16.0
+      ],
+      "loop": true,
+      "clip_fit": "fits_class",
+      "root_px": [
+        128,
+        180
+      ],
+      "flags": []
+    },
+    "walking": {
+      "status": "mapped_debug",
+      "semantic": "locomotion.walk / locomotion.relaxed_walk (idle fallback: frame 0)",
+      "viewport": "standard_256x256",
+      "viewport_px": [
+        256,
+        256
+      ],
+      "source_canvas": 256,
+      "frame_count": 25,
+      "sample_count": 25,
+      "sampling_target_fps": 24,
+      "authored_frame_range": [
+        0.8000000715255737,
+        25.599998474121094
+      ],
+      "loop": true,
+      "clip_fit": "fits_class",
+      "root_px": [
+        128,
+        180
+      ],
+      "flags": []
+    },
+    "alert": {
+      "status": "mapped_debug",
+      "semantic": "posture.alert (plays once)",
+      "viewport": "standard_256x256",
+      "viewport_px": [
+        256,
+        256
+      ],
+      "source_canvas": 256,
+      "frame_count": 96,
+      "sample_count": 96,
+      "sampling_target_fps": 24,
+      "authored_frame_range": [
+        0.0,
+        96.0
+      ],
+      "loop": true,
+      "clip_fit": "fits_class",
+      "root_px": [
+        128,
+        180
+      ],
+      "flags": []
+    },
+    "agree_gesture": {
+      "status": "inspect_only",
+      "semantic": "inspect only until its combat or reaction timing is validated",
+      "viewport": "standard_256x256",
+      "viewport_px": [
+        256,
+        256
+      ],
+      "source_canvas": 256,
+      "frame_count": 312,
+      "sample_count": 312,
+      "sampling_target_fps": 24,
+      "authored_frame_range": [
+        0.0,
+        312.0
+      ],
+      "loop": false,
+      "clip_fit": "fits_class",
+      "root_px": [
+        128,
+        180
+      ],
+      "flags": []
+    },
+    "casual_walk": {
+      "status": "inspect_only",
+      "semantic": "inspect only until its combat or reaction timing is validated",
+      "viewport": "standard_256x256",
+      "viewport_px": [
+        256,
+        256
+      ],
+      "source_canvas": 256,
+      "frame_count": 100,
+      "sample_count": 100,
+      "sampling_target_fps": 24,
+      "authored_frame_range": [
+        0.0,
+        100.0
+      ],
+      "loop": false,
+      "clip_fit": "fits_class",
+      "root_px": [
+        128,
+        180
+      ],
+      "flags": []
+    },
+    "arise": {
+      "status": "inspect_only",
+      "semantic": "inspect only until its combat or reaction timing is validated",
+      "viewport": "standard_256x256",
+      "viewport_px": [
+        256,
+        256
+      ],
+      "source_canvas": 512,
+      "frame_count": 44,
+      "sample_count": 44,
+      "sampling_target_fps": 24,
+      "authored_frame_range": [
+        0.0,
+        44.0
+      ],
+      "loop": false,
+      "clip_fit": "fits_class",
+      "root_px": [
+        128,
+        180
+      ],
+      "flags": []
+    },
+    "attack": {
+      "status": "inspect_only",
+      "semantic": "inspect only until its combat or reaction timing is validated",
+      "viewport": "standard_256x256",
+      "viewport_px": [
+        256,
+        256
+      ],
+      "source_canvas": 512,
+      "frame_count": 67,
+      "sample_count": 67,
+      "sampling_target_fps": 24,
+      "authored_frame_range": [
+        0.0,
+        67.19999694824219
+      ],
+      "loop": false,
+      "clip_fit": "fits_class",
+      "root_px": [
+        128,
+        180
+      ],
+      "flags": []
+    },
+    "behit_flyup": {
+      "status": "inspect_only",
+      "semantic": "inspect only until its combat or reaction timing is validated",
+      "viewport": "extended_256x320",
+      "viewport_px": [
+        256,
+        320
+      ],
+      "source_canvas": 512,
+      "frame_count": 36,
+      "sample_count": 36,
+      "sampling_target_fps": 24,
+      "authored_frame_range": [
+        0.0,
+        36.0
+      ],
+      "loop": false,
+      "clip_fit": "fits_class",
+      "root_px": [
+        128,
+        216
+      ],
+      "flags": []
+    },
+    "skill_01": {
+      "status": "inspect_only",
+      "semantic": "inspect only until its combat or reaction timing is validated",
+      "viewport": "standard_256x256",
+      "viewport_px": [
+        256,
+        256
+      ],
+      "source_canvas": 512,
+      "frame_count": 26,
+      "sample_count": 26,
+      "sampling_target_fps": 24,
+      "authored_frame_range": [
+        0.0,
+        25.60000228881836
+      ],
+      "loop": false,
+      "clip_fit": "fits_class",
+      "root_px": [
+        128,
+        180
+      ],
+      "flags": []
+    },
+    "skill_03": {
+      "status": "inspect_only",
+      "semantic": "inspect only until its combat or reaction timing is validated",
+      "viewport": "standard_256x256",
+      "viewport_px": [
+        256,
+        256
+      ],
+      "source_canvas": 512,
+      "frame_count": 39,
+      "sample_count": 39,
+      "sampling_target_fps": 24,
+      "authored_frame_range": [
+        0.0,
+        39.20000076293945
+      ],
+      "loop": false,
+      "clip_fit": "fits_class",
+      "root_px": [
+        128,
+        180
+      ],
+      "flags": []
+    },
+    "triple_combo_attack": {
+      "status": "inspect_only",
+      "semantic": "inspect only until its combat or reaction timing is validated",
+      "viewport": "standard_256x256",
+      "viewport_px": [
+        256,
+        256
+      ],
+      "source_canvas": 512,
+      "frame_count": 104,
+      "sample_count": 104,
+      "sampling_target_fps": 24,
+      "authored_frame_range": [
+        0.0,
+        104.0
+      ],
+      "loop": false,
+      "clip_fit": "fits_class",
+      "root_px": [
+        128,
+        180
+      ],
+      "flags": []
+    }
+  },
+  "staging": {
+    "output_root": "custodian/.ai/pursuit_frame_3d_preview",
+    "gitignored": true,
+    "manifest_name": "manifest.json"
+  },
+  "dependencies_external": [
+    "~/Downloads/PursuitFrame3D (source GLBs; hashes in reports/INPUT_MANIFEST.json)",
+    "Blender 5.2.3 LTS headless for derive, verify and render",
+    "pursuit_frame_3d_v1 proof workspace: derived clips, measure reports, cleaned frames (output/clean)"
+  ]
+}

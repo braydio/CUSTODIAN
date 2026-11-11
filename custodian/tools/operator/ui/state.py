@@ -46,6 +46,12 @@ class AnimationRecord:
         marker = {"COMPLETE": "●", "PARTIAL": "◐", "REFERENCE/LEGACY": "◇", "NEW": "✚"}.get(self.completeness, "⚠")
         detail = self.completeness_detail or names
         runtime = " · DORMANT/unwired" if self.reachability_status == "DORMANT" else ""
+        if self.selection.art_generation == "operator_3d_80":
+            # Candidate intake is never published or canonical; say so on every row.
+            if self.coverage_status == "CANDIDATE_READY":
+                return (f"{self.selection.direction}   {frames_label(self.frames)}   ◆ 3D CANDIDATE · "
+                        f"{self.workflow_status} · unapproved · not published")
+            return f"{self.selection.direction}   ·f   ✗ {self.coverage_status} · {self.completeness_detail or 'no candidate registered'}"
         if self.selection.art_generation == "operator_2_5d_128":
             coverage_marker = {
                 "CANONICAL_2_5D": "✓", "PARTIAL": "◐", "LEGACY_FALLBACK": "◇",

@@ -249,3 +249,26 @@ recoverable quarantined source. Aseprite edits remain manual; the controller
 never moves, crops, rescales, or redraws pixels. After save/close it validates
 the sheet contract, invokes the production modular builder, and rechecks the
 affected combinations. Resume with `--resume`.
+
+## 3D candidate intake (operator_3d_80)
+
+Staged 3D-derived Operator animations can be registered as read-only Workbench
+candidates. Walking and Running are the first two actions. Each registers eight
+directional sessions under `.ai/operator_animation_workbench/operator_3d_80/`
+that point at the immutable staged frames by path and SHA-256. Nothing is copied
+or published. See `design/02_features/animation/OPERATOR_ANIMATION_WORKBENCH.md`
+for the full contract.
+
+```sh
+python3 custodian/tools/operator/operator_3d_candidate_intake.py --verify \
+  --contract custodian/tools/character3d/contracts/operator.v1.json \
+  --stage-root "$ART_CHECKOUT/custodian/.ai/operator_3d_animation_preview" \
+  --workbench-root "$ART_CHECKOUT/.ai/operator_animation_workbench" --actions walking running
+```
+
+Use `--plan` for a read-only dry run and `--apply` to register. `--apply` is
+transactional and idempotent. Mappings are explicit in `ACTION_MAP`; an unmapped
+action is rejected. The module is `operator_3d_candidate_intake.py`, its tests are
+`custodian/tools/validation/test_operator_3d_candidate_intake.py`, and the
+bounded stager is `custodian/tools/character3d/stage/operator_stage.py`.
+
