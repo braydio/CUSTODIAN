@@ -343,7 +343,7 @@ class ProvisionerTests(unittest.TestCase):
             self.assertTrue(launcher.is_file())
             self.assertTrue(resolver.is_file())
             self.assertTrue(credential_directory.is_dir())
-            self.assertEqual(credential_directory.stat().st_mode & 0o777, 0o755)
+            self.assertEqual(credential_directory.stat().st_mode & 0o777, 0o700)
             self.assertFalse(credential.exists())
             unit_text = unit.read_text()
             self.assertIn("LoadCredentialEncrypted=custodian-worker-openai-api-key", unit_text)
@@ -370,6 +370,37 @@ class ProvisionerTests(unittest.TestCase):
             result = self.run_provisioner(root, "install")
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("owner-only 0600", result.stderr)
+
+    def test_install_preserves_secure_credential_store_modes(self) -> None:
+        for mode in (0o700, 0o755):
+            with self.subTest(mode=oct(mode)), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                store = root / "etc/credstore.encrypted"
+                store.mkdir(parents=True)
+                store.chmod(mode)
+                result = self.run_provisioner(root, "install")
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertEqual(store.stat().st_mode & 0o777, mode)
+
+    def test_install_refuses_insecure_or_symlink_credential_store(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            store = root / "etc/credstore.encrypted"
+            store.mkdir(parents=True)
+            store.chmod(0o775)
+            result = self.run_provisioner(root, "install")
+            self.assertNotEqual(result.returncode, 0)
+            self.assertTrue(store.is_dir())
+            self.assertEqual(store.stat().st_mode & 0o777, 0o775)
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            target = root / "secure-store"
+            target.mkdir()
+            (root / "etc").mkdir()
+            (root / "etc/credstore.encrypted").symlink_to(target, target_is_directory=True)
+            result = self.run_provisioner(root, "install")
+            self.assertNotEqual(result.returncode, 0)
+            self.assertTrue((root / "etc/credstore.encrypted").is_symlink())
 
     def test_install_refuses_to_overwrite_conflicting_unit(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -426,7 +457,7 @@ class ProvisionerTests(unittest.TestCase):
             self.assertEqual(destination.read_text(), "new validator\n")
             credentials = root / "etc/credstore.encrypted"
             self.assertTrue(credentials.is_dir())
-            self.assertEqual(credentials.stat().st_mode & 0o777, 0o755)
+            self.assertEqual(credentials.stat().st_mode & 0o777, 0o700)
 
     def test_upgrade_refuses_modified_installed_file_without_overwriting_it(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

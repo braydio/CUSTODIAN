@@ -1,11 +1,11 @@
 <!-- V2 turn metadata -->
 Task identity: agent-isolated-worker-proof-v1
-Task definition: custodian/docs/ai_context/task_packets/AGENT_ISOLATED_WORKER_PROOF_V1.md at origin/main 471f4051429af7b725b813cb5424f49487922d14
+Task definition: custodian/docs/ai_context/task_packets/AGENT_ISOLATED_WORKER_PROOF_V1.md at origin/main cbca212e7c321c69d4f3ee6317e9eeb4a0c45cca
 Remote branch: agent/agent-isolated-worker-proof-v1
 Acquisition mode: normal
 Acquisition source: origin/main (no prior branch; fresh start)
 Acquisition source commit: 926df15195f7c0e98adfca597adcae8c00637219
-Checkpoint base: 973584c8898775ba23274dd9a25c4d145731b198
+Checkpoint base: cbca212e7c321c69d4f3ee6317e9eeb4a0c45cca
 <!-- /V2 turn metadata -->
 
 # Isolated Worker Proof V1 — implementation handoff
@@ -30,7 +30,7 @@ Sources/evidence: `custodian/docs/operations/worker-isolation-proof.md`; `custod
 
 ## 2026-11-11 continuation — credential-free model preparation
 
-Added an ID-only systemd encrypted-credential entry named `custodian-worker-openai-api-key`, sourced from `/etc/credstore.encrypted/custodian-worker-openai-api-key`, to the test-only unit. This systemd lookup is optional when the encrypted credential is absent, allowing non-model service modes to start. The provisioner creates/verifies the shared source directory as root-owned `0755` (not group/world writable), validates any encrypted file as regular, singly linked, root-owned `0600` using metadata only, and preserves the credential store and file on removal. The launcher forwards `CREDENTIALS_DIRECTORY` only in model-only mode; ordinary full and LFS modes do not require it. The validator rejects missing, empty, malformed, symlinked, wrong-owner, and wrong-mode runtime delivery; it checks inherited credential variable names and refuses them. The explicit host `--model-only` mode runs only after the actual launcher network preflight, with a temporary `CODEX_HOME`, ignored user config, no MCP servers, apps, remote plugins, shell, or subagents, and child-environment inheritance set to none. The key value is included only in the Codex child environment; output, stderr, args, journals, and reports do not include it. The prompt is a one-line harmless marker request with a 60-second timeout. General full-proof and LFS modes never attempt a model call.
+Added an ID-only systemd encrypted-credential entry named `custodian-worker-openai-api-key`, sourced from `/etc/credstore.encrypted/custodian-worker-openai-api-key`, to the test-only unit. This systemd lookup is optional when the encrypted credential is absent, allowing non-model service modes to start. The provisioner accepts a root-owned credential-store directory that is not group/world writable, preserves existing secure modes such as `0700` or `0755`, and creates a missing store as `0700`. It validates any encrypted file as regular, singly linked, root-owned `0600` using metadata only, and preserves the credential store and file on removal. The launcher forwards `CREDENTIALS_DIRECTORY` only in model-only mode; ordinary full and LFS modes do not require it. The validator rejects missing, empty, malformed, symlinked, wrong-owner, and wrong-mode runtime delivery; it checks inherited credential variable names and refuses them. The explicit host `--model-only` mode runs only after the actual launcher network preflight, with a temporary `CODEX_HOME`, ignored user config, no MCP servers, apps, remote plugins, shell, or subagents, and child-environment inheritance set to none. The key value is included only in the Codex child environment; output, stderr, args, journals, and reports do not include it. The prompt is a one-line harmless marker request with a 60-second timeout. General full-proof and LFS modes never attempt a model call.
 
 No live credential existed and none was read, created, or copied. The service was not upgraded or run; no model request occurred. A Platform administrator must create a dedicated project service account with minimum Responses inference permission, seven-day key expiry, a small monitored project budget, and independent revocation, then use `systemd-creds` to encrypt the key into `/etc/credstore.encrypted/custodian-worker-openai-api-key`. The encrypted source path is non-secret; never paste the key into chat or repository files. Platform service-account guidance: https://developers.openai.com/api/docs/guides/api-keys
 
@@ -43,6 +43,10 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 The orchestrator's PR #143 review identified that an absolute `LoadCredentialEncrypted=ID:PATH` source fails unit startup when the key file is absent, and the launcher also rejected non-model runs without `CREDENTIALS_DIRECTORY`. Corrected the unit to use the systemd-supported ID-only optional lookup in `/etc/credstore.encrypted`, and restricted launcher credential-directory validation/forwarding to model-only. Added regression coverage for missing credentials in ordinary and LFS modes while retaining model-only fail-closed behavior. No credential was provisioned, no service was installed or started, and no model request occurred.
 
 Current orchestration chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af4a80a-6f54-83e9-82a0-8222279dfc86
+
+## 2026-11-11 continuation — preserve secure credential store modes
+
+Host preparation found `/etc/credstore.encrypted` root-owned mode `0700`, with the named encrypted file absent. The service was inactive and disabled, with no drop-ins or worker timer. The landed provisioner required exactly `0755`, which would reject this more restrictive shared-store mode. The correction accepts correctly owned real directories when group/world write bits are clear, preserves existing modes, and creates a missing store as `0700`. Tests cover accepted `0700`/`0755`, rejection of group/world-writable directories and symlinks, and preservation. No credential content was accessed or modified, and no host upgrade has yet run.
 
 ## Source commit
 
