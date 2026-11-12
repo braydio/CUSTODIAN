@@ -1,9 +1,106 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-12T16:12:53Z",
-  "source_main_sha": "002504a4da95eb0c89f2649952cdec328718b1ea",
+  "generated_at": "2026-11-12T22:16:11Z",
+  "source_main_sha": "b4873c1ce44c3543000fcb8af645b05891466910",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "paired-review-retirement-owner-decision-b4873c1c",
+      "desk": "engineering",
+      "format": "engineering_update",
+      "headline": "CUSTODIAN retires mandatory paired reviews, removing a long-standing development gate",
+      "summary": "An owner-approved workflow change removes mandatory post-landing paired reviews. Implementation packets now advance on focused validation and owner review, while historical review records remain archived. This clears a procedural bottleneck, not a gameplay milestone.",
+      "body": "The owner retired mandatory paired post-land reviews on November 12. The merged policy and dispatcher changes make pairing advisory for implementation work, allow single-packet authoring, and redirect dependencies away from retired reviews. The migration record reports 161 implementation/correction packets switched to Review: none, 127 dependency rewrites, and 265 review packets archived intact. These are migration-record counts, not live dispatcher totals. Focused validation and owner inspection remain required. The source landing is verified; fresh full dispatcher audit, runtime claimability and resulting product progress are not verified here.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "",
+      "occurred_at": "2026-11-12T22:16:11Z",
+      "bullets": [
+        "Mandatory paired review retired by owner decision.",
+        "Focused validation and owner review remain acceptance requirements.",
+        "Historical reviews archived, not erased.",
+        "Watch for actual Operator and art work landing under the simpler gate."
+      ],
+      "links": [
+        {
+          "title": "Merged retirement decision and implementation",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/b4873c1ce44c3543000fcb8af645b05891466910"
+        },
+        {
+          "title": "Retirement scope and verification plan",
+          "url": "https://github.com/braydio/CUSTODIAN/blob/b4873c1ce44c3543000fcb8af645b05891466910/custodian/docs/ai_context/PAIRED_REVIEW_RETIREMENT_20261112.md"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN has removed a review requirement that had delayed development. New implementation work no longer needs a matching post-landing reviewer packet, although focused tests and owner inspection still matter. This is a change to the development path, not evidence that new gameplay is already available.",
+        "sections": [
+          {
+            "heading": "A simpler path from implementation to integration",
+            "text": "The dispatcher now treats implementation pairing mismatches as advisory rather than blocking. Authoring can promote a single implementation or correction packet instead of manufacturing a paired review. Existing review records remain preserved for historical accountability."
+          },
+          {
+            "heading": "What the migration actually changes",
+            "text": "The retirement record reports 161 implementation/correction packets changed to no paired review, 127 dependencies redirected to implementation work, and 265 review packets archived. These are recorded migration operations, not a live measurement of runnable work."
+          },
+          {
+            "heading": "Why this matters for the game",
+            "text": "Operator, art, environment and procgen work can now move through a shorter procedural route. That reduces friction but does not itself create a playable feature, validate a host process or establish that a blocked workstream has resumed."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The bottleneck was policy, not necessarily implementation",
+            "explanation": "Retiring the paired-review dependency removes a mandatory procedural step. The next meaningful proof is whether substantive product work lands with focused validation."
+          },
+          {
+            "title": "Historical evidence survives the reset",
+            "explanation": "The review archive was retained rather than deleted, so the change does not require rewriting prior outcomes."
+          }
+        ],
+        "takeaway": "The project has deliberately simplified its acceptance workflow; user-visible progress remains the measure of success.",
+        "next_watch": "A verified Operator, animation, environment or gameplay landing under the revised workflow, plus a fresh dispatcher audit showing actual eligibility."
+      },
+      "details": {
+        "overview": "Owner decision dated 2026-11-12, merged through PR #149. The source changes span dispatcher pairing, packet authoring, templates and archive migration. Source inspection confirms the policy and migration record, but no canonical live audit or host execution was inspected in this run.",
+        "ledger": [
+          {
+            "stage": "Owner policy change",
+            "status": "verified landed source",
+            "evidence": "Retirement record and merged commit b4873c1c."
+          },
+          {
+            "stage": "Packet migration",
+            "status": "reported in merged migration record",
+            "evidence": "161 review flags, 127 dependency rewrites and 265 archived review packets; not independently recounted."
+          },
+          {
+            "stage": "Focused validation",
+            "status": "required; current run unknown",
+            "evidence": "Policy retains focused validation; no fresh full test execution observed."
+          },
+          {
+            "stage": "Live dispatcher eligibility",
+            "status": "unknown",
+            "evidence": "No canonical host audit was accessible."
+          }
+        ],
+        "notes": [
+          "Retired review tools remain dormant, not deleted.",
+          "A narrowly bounded safety check remains for explicitly invoked historical review packets."
+        ],
+        "unknowns": [
+          "Fresh CI/check-run conclusion unavailable from combined-status endpoint.",
+          "Host execution, clean teardown and downstream product effects not verified."
+        ],
+        "actions": [
+          "Project owner: inspect the next substantive implementation landing and its focused validation.",
+          "Operator: obtain a canonical dispatcher audit before claiming live readiness."
+        ]
+      },
+      "related": []
+    },
     {
       "id": "creche-editable-blockout-source-kit-002504a4",
       "desk": "front_page",
@@ -1448,124 +1545,6 @@
           }
         ],
         "next_gate": "Implementation owner must land generic resolver and focused adversarial tests before independent review."
-      }
-    },
-    {
-      "id": "dispatcher-v2-authority-docs-8262ac57",
-      "headline": "Dispatcher guidance corrected: legacy audit locks do not govern V2 claims",
-      "summary": "A new main-branch documentation commit clarifies that V2 claim and claim-next perform their own source and safety checks. Legacy audit lock/dependency classifications remain diagnostic, not acquisition authority. A separate explicit human hold still protects the Weather provenance bridge while Operator Chassis review remains unresolved.",
-      "body": "Main 8262ac57622059256f9f5d136ef0eff28dd59a1d updates AGENTS guidance, lifecycle documentation and Weather source-provenance packets. V2 claim/claim-next authenticate fetched origin/main packet bytes and apply V2 hold, source, checkout, storage, LFS and provenance checks; legacy audit/status classifications do not determine V2 eligibility. Paired-review runner retains separate review gates. The Weather provenance bridge has an explicit orchestration hold external to automatic V2 eligibility until the Operator Chassis review is resolved and the hold is lifted. This is a documentation correction, not evidence that any claim was made, review accepted, or host state changed. Private WIRE pilot pointer remains dated November 8; no new operational counts are promoted. Combined statuses and PR-triggered runs for this commit returned none; CI health is unknown.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "weather-v2-review-source-provenance-bridge-v1",
-      "occurred_at": "2026-11-10T16:28:06Z",
-      "bullets": [
-        "Legacy audit dependency/lock labels are diagnostic, not V2 claim gates.",
-        "V2 acquisition validates current origin/main and its own safety preconditions.",
-        "Weather provenance bridge remains under an explicit human orchestration hold.",
-        "Paired-review acceptance remains a separate controlled lifecycle."
-      ],
-      "links": [
-        {
-          "title": "Dispatcher V2 authority documentation correction",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/8262ac57622059256f9f5d136ef0eff28dd59a1d"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN has corrected an important ambiguity in how its task dispatcher is described. A legacy queue audit can label work blocked by dependencies or locks, but those labels are not what authorizes a V2 task claim. The change clarifies authority without releasing any existing hold.",
-        "sections": [
-          {
-            "heading": "Two views of the queue, only one acquisition path",
-            "text": "The current V2 claim commands authenticate task identity and packet bytes against fetched main, then enforce their own source, hold, checkout and provenance checks. Legacy audit and status reports remain useful diagnostics, but cannot approve or veto a V2 claim."
-          },
-          {
-            "heading": "An explicit hold still protects the Weather bridge",
-            "text": "The Weather source-provenance bridge is under a documented human orchestration hold while the separate Operator Chassis review remains unresolved. The correction does not lift that hold or disturb the preserved claim, run or branch. Paired reviews retain their own acceptance gates."
-          }
-        ],
-        "insights": [
-          {
-            "title": "A blocked audit label is not the final authority",
-            "explanation": "The documentation now distinguishes historical queue classifications from the actual V2 acquisition checks, reducing the risk of false claims about eligibility."
-          },
-          {
-            "title": "Human coordination remains decisive",
-            "explanation": "Even if the V2 command could technically acquire a packet, the explicit Weather bridge hold still prohibits that action until orchestration lifts it."
-          }
-        ],
-        "takeaway": "This is an important correction to operational guidance, not a new execution or accepted review.",
-        "next_watch": "Watch for a verified Operator Chassis review disposition and explicit lifting of the Weather bridge orchestration hold."
-      },
-      "details": {
-        "overview": "Documentation-only change at main 8262ac57622059256f9f5d136ef0eff28dd59a1d. No canonical live dispatcher audit, fresh private observation, or host execution proof inspected.",
-        "ledger": [
-          {
-            "stage": "V2 authority clarification",
-            "status": "verified documented",
-            "evidence": "Commit 8262ac57622059256f9f5d136ef0eff28dd59a1d updates AGENTS, lifecycle guide and Weather packet guidance."
-          },
-          {
-            "stage": "Weather bridge orchestration hold",
-            "status": "documented active",
-            "evidence": "Packet explicitly prohibits acquisition until separate hold is lifted."
-          },
-          {
-            "stage": "Operator Chassis review",
-            "status": "unresolved per documentation",
-            "evidence": "Commit preserves review claim/run/branch; no independent acceptance receipt inspected."
-          },
-          {
-            "stage": "Host execution and teardown",
-            "status": "unknown",
-            "evidence": "No fresh authenticated host observation."
-          }
-        ],
-        "notes": [
-          "No combined statuses or PR-triggered runs returned for this commit."
-        ],
-        "unknowns": [
-          "Current canonical dispatcher counts and host resource state.",
-          "Whether independent review disposition has changed since the documented hold."
-        ],
-        "actions": [
-          "Orchestration owner: preserve hold until Operator Chassis review disposition is independently verified."
-        ]
-      },
-      "related": [],
-      "scorecard": {
-        "stage": "Documentation corrected; explicit orchestration hold remains",
-        "as_of": "2026-11-10T17:11:16Z",
-        "scope": "Weather V2 source-provenance bridge guidance",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "V2 authority documentation corrected",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Main commit 8262ac57622059256f9f5d136ef0eff28dd59a1d"
-          },
-          {
-            "label": "Operator Chassis review disposition",
-            "status": "current",
-            "verification": "reported",
-            "evidence": "Packet documents unresolved review and preserved claim."
-          },
-          {
-            "label": "Explicit orchestration hold lifted",
-            "status": "blocked",
-            "verification": "unknown",
-            "evidence": "No authorization to lift inspected."
-          },
-          {
-            "label": "Weather bridge V2 claim",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Requires explicit hold release and current V2 checks."
-          }
-        ],
-        "next_gate": "Orchestration must verify the separate Operator Chassis review and explicitly lift the Weather bridge hold before acquisition."
       }
     }
   ],
