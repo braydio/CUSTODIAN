@@ -1,9 +1,153 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-11T19:11:32.859Z",
-  "source_main_sha": "82e1a81125c803fa5c9a0fcb1ffc4ef9574d4526",
+  "generated_at": "2026-11-12T07:05:15.346Z",
+  "source_main_sha": "897887294342a4a26316db995410d4e0cb548ffb",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "awakening-creche-runtime-cutover-pr146-20261112",
+      "desk": "front_page",
+      "format": "development",
+      "headline": "Awakening Crèche artwork reaches a playable room candidate, but is not yet in main",
+      "summary": "The Awakening Crèche draft integrates approved room artwork, a single animated console, and traversable zone transitions. Recorded local traversal and focused checks support the candidate, but its draft PR remains unmerged and CI acceptance is incomplete.",
+      "body": "The Crèche implementation is available as draft PR #146, not landed in main. Its source and attached implementation summary describe a 1464×1074 underlay/foreground, a single 128×128 console with eight-frame screen animation, and two-way zone traversal. Historical local checks reportedly passed, while PR CI encountered source-integrity and baseline level-pipeline failures. The remaining work is safe reconciliation of the retained checkout, source-integrity diagnosis and authorized integration, not recreation of the artwork.",
+      "severity": "important",
+      "verification": "reported",
+      "category": "general",
+      "workstream": "awakening-creche-console-sprite-reauthor-v1",
+      "occurred_at": "2026-11-12T07:05:15.346Z",
+      "bullets": [
+        "Draft PR #146 contains the authored environment and scene bindings.",
+        "Recorded local traversal crossed both room directions.",
+        "Console screen effect remains eight frames at eight FPS.",
+        "PR is unmerged; CI source-integrity failure remains unresolved.",
+        "Do not discard the retained checkout or bypass preservation gates."
+      ],
+      "links": [
+        {
+          "title": "Awakening Crèche draft implementation",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/146"
+        },
+        {
+          "title": "Gameplay delivery blocker register on main",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/897887294342a4a26316db995410d4e0cb548ffb"
+        },
+        {
+          "title": "Crèche validation run",
+          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/43123330604"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "The Awakening Crèche is much closer to an authored, traversable game room: its draft implementation combines the approved environment artwork, an animated console and connected walking zones. This is a promising tested candidate, not a release or a merge into main.",
+        "sections": [
+          {
+            "heading": "The room has its artwork and console",
+            "text": "The draft carries the approved 1464×1074 background and foreground layers, with the console body appearing once and a separate eight-frame screen effect. These are concrete game-scene assets, rather than another design-only proposal."
+          },
+          {
+            "heading": "Traversal has been exercised locally",
+            "text": "The implementation record describes successful walks from the first zone into the second and back, alongside focused Godot checks. These are historical local results, not a fresh independent gameplay demonstration."
+          },
+          {
+            "heading": "Integration remains the real obstacle",
+            "text": "The draft PR remains unmerged. Its CI validation reported a source-integrity failure despite passing focused assertions, while other level-pipeline failures also appeared on main. The retained checkout has preservation constraints, so discarding it or rebuilding the room would risk existing work."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The art-to-game bridge already exists",
+            "explanation": "The candidate binds authored art, console animation and movement in the same level. The next decision should focus on verifying and landing that implementation, not commissioning another room."
+          },
+          {
+            "title": "A failing overall check is not the same as broken traversal",
+            "explanation": "The focused assertions and broader CI report different things. The source-integrity failure still needs diagnosis before acceptance, but it does not erase the recorded local traversal evidence."
+          }
+        ],
+        "takeaway": "Awakening Crèche has a substantive gameplay candidate ready for careful integration, but it is not yet merged or independently accepted.",
+        "next_watch": "A source-preserving resolution of PR CI and the retained checkout, followed by an explicitly authorized merge and fresh in-game verification."
+      },
+      "details": {
+        "overview": "Inspected draft PR #146 and main's November 12 gameplay blocker register. Main at inspection: 897887294342a4a26316db995410d4e0cb548ffb. Draft PR is open and unmerged. Local results are historical and reported; no new host execution was performed.",
+        "ledger": [
+          {
+            "stage": "Authored artwork and scene bindings",
+            "status": "present in draft PR",
+            "evidence": "PR #146 diff and implementation summary"
+          },
+          {
+            "stage": "Local traversal",
+            "status": "historically reported passing",
+            "evidence": "PR summary describes Zone01↔Zone02 traversal"
+          },
+          {
+            "stage": "PR CI",
+            "status": "not accepted",
+            "evidence": "Run 43123330604: focused assertions passed, overall source-integrity check failed"
+          },
+          {
+            "stage": "Main landing",
+            "status": "not done",
+            "evidence": "PR #146 remains open and unmerged"
+          },
+          {
+            "stage": "Host teardown",
+            "status": "unverified",
+            "evidence": "Retained checkout and preservation constraints documented; no fresh host audit"
+          }
+        ],
+        "notes": [
+          "Separate Crèche blockout source kit PR #147 is open; it is not a verified Blender runtime output or integrated level."
+        ],
+        "unknowns": [
+          "Exact file responsible for CI source mutation remains undetermined.",
+          "Fresh independent gameplay and final acceptance remain outstanding."
+        ],
+        "actions": [
+          "Authorized owner: reconcile the retained checkout non-destructively and investigate CI source integrity before deciding on integration."
+        ]
+      },
+      "scorecard": {
+        "stage": "Playable candidate in draft; integration blocked",
+        "as_of": "2026-11-12T07:05:15.346Z",
+        "scope": "Awakening Crèche draft PR #146 and inspected historical validation",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Art and console implementation",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Present in PR diff"
+          },
+          {
+            "label": "Local traversal",
+            "status": "done",
+            "verification": "reported",
+            "evidence": "Historical local validation summary"
+          },
+          {
+            "label": "PR source-integrity validation",
+            "status": "blocked",
+            "verification": "verified",
+            "evidence": "Overall PR CI failure"
+          },
+          {
+            "label": "Authorized merge",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Draft PR remains open"
+          },
+          {
+            "label": "Fresh gameplay acceptance",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No fresh independent receipt"
+          }
+        ],
+        "next_gate": "Resolve source-integrity and checkout ownership without discarding preserved assets, then obtain merge authorization."
+      },
+      "related": []
+    },
     {
       "id": "feature-spotlight-operator-flashlight-20261111",
       "desk": "front_page",
@@ -1485,154 +1629,6 @@
           }
         ],
         "next_gate": "Designated independent reviewer must inspect merged bridge and issue an authentic disposition."
-      }
-    },
-    {
-      "id": "findings-recovery-implementation-pr133-a4e9dbc8",
-      "headline": "Findings recovery bridge reaches reviewable PR, with original nonpassing findings preserved",
-      "summary": "PR #133 proposes an exact-run, read-only recovery plan and digest-bound apply path for stranded reviewer findings. Its author reports 326 paired-review tests and 14 artifact tests passing. The PR remains open: no recovery apply, independent acceptance, or teardown is verified.",
-      "body": "At inspected main d37b29291591454b0c8a6d9218b6806adf66263a, PR #133 is open and unmerged. Its head a4e9dbc8505bcde3eb20b5f40b32df838a4b550d proposes a narrowly bounded findings-artifact bridge for the preserved owner-exception review. It preserves R0-01 and R0-02 as findings and leaves the reviewed target without a PASS receipt. The PR reports 326 paired-review runner tests, 14 artifact tests, changed-file routed validation, and supporting checks passing. These are author-reported tests, not independent acceptance. No recovery apply was performed; original checkout and run remain unchanged per PR description. Canonical queue totals and host cleanup are unknown; the private WIRE pilot pointer remains dated November 8 and stale.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-paired-review-findings-artifact-recovery-v1",
-      "occurred_at": "2026-11-10T10:36:53Z",
-      "bullets": [
-        "PR #133 is open, not merged into main.",
-        "Author reports 326 paired-review and 14 artifact tests passing.",
-        "Original R0-01/R0-02 remain nonpassing findings; no PASS inferred.",
-        "No recovery apply or host teardown verified."
-      ],
-      "links": [
-        {
-          "title": "Findings recovery implementation PR #133",
-          "url": "https://github.com/braydio/CUSTODIAN/pull/133"
-        },
-        {
-          "title": "Prior recovery packet pair PR #132",
-          "url": "https://github.com/braydio/CUSTODIAN/pull/132"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "A recovery tool for stranded reviewer findings has moved from an assignment into an open pull request. It aims to preserve what the reviewer actually found, without rewriting the original review or pretending the findings were an approval.",
-        "sections": [
-          {
-            "heading": "A safer route to an authentic record",
-            "text": "The proposed bridge separates read-only planning from a digest-bound application step. It is tied to one preserved review run and keeps the original checkout and reviewed implementation unchanged. The original R0-01 and R0-02 findings remain findings, not a passing review."
-          },
-          {
-            "heading": "Tests are promising, but the gate is still ahead",
-            "text": "The author reports 326 paired-review tests and 14 artifact tests passing, including synthetic adversarial and interrupted-retry coverage. PR #133 is still open, so this is reviewable implementation evidence rather than landed code, independently accepted recovery or a completed repair."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Evidence recovery is not verdict repair",
-            "explanation": "Keeping the nonpassing findings intact makes the review auditable without manufacturing acceptance."
-          },
-          {
-            "title": "The bottleneck moves to merge and independent scrutiny",
-            "explanation": "A concrete implementation is now proposed. The next decision depends on inspecting and independently reviewing its guarantees, not merely its test totals."
-          }
-        ],
-        "takeaway": "The findings bridge is ready for code review, but remains unmerged and unapplied.",
-        "next_watch": "Watch PR #133 for merge evidence and a genuine independent review disposition; protected-run recovery still needs its own authorization."
-      },
-      "details": {
-        "overview": "GitHub partial coverage; inspected main d37b29291591454b0c8a6d9218b6806adf66263a, PR #133 head a4e9dbc8505bcde3eb20b5f40b32df838a4b550d. The PR describes a read-only plan, digest-bound apply, and synthetic adversarial/interrupted-retry tests. No live dispatcher audit or fresh private pilot observation was available.",
-        "ledger": [
-          {
-            "stage": "Recovery assignment and handoff",
-            "status": "verified landed/ready",
-            "evidence": "PR #132 and main d37b2929."
-          },
-          {
-            "stage": "Recovery implementation",
-            "status": "verified open PR; unmerged",
-            "evidence": "PR #133 head a4e9dbc8."
-          },
-          {
-            "stage": "Validation",
-            "status": "author-reported passing",
-            "evidence": "PR #133 reports 326 runner and 14 artifact tests plus changed-file checks."
-          },
-          {
-            "stage": "Independent acceptance",
-            "status": "unknown / not established",
-            "evidence": "No independent PASS receipt inspected."
-          },
-          {
-            "stage": "Recovery apply and canonical teardown",
-            "status": "not verified",
-            "evidence": "PR explicitly says apply was not performed; no host evidence."
-          }
-        ],
-        "notes": [
-          "Main unchanged since preceding WIRE story.",
-          "Source SHA is a PR head, not main."
-        ],
-        "unknowns": [
-          "Host claims, locks, worktrees, disk, and execution unknown.",
-          "Full dispatcher counts and CI health unavailable.",
-          "Private pilot observation stale; no operational counts used."
-        ],
-        "actions": [
-          "Implementation owner: complete review and land PR #133 if validated.",
-          "Independent reviewer: verify exact-run binding and preservation before any authorized recovery."
-        ]
-      },
-      "related": [
-        {
-          "title": "New recovery path targets stranded reviewer findings; packet pair becomes dispatch-ready",
-          "context": "The earlier story covered the packet pair becoming eligible; this PR is the proposed implementation.",
-          "story_id": "paired-findings-artifact-recovery-ready-d37b2929"
-        }
-      ],
-      "scorecard": {
-        "stage": "Implementation proposed; awaiting merge and independent review",
-        "as_of": "2026-11-10T10:36:53Z",
-        "scope": "Named findings-artifact recovery workstream only",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Recovery packet pair landed",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "PR #132 merged."
-          },
-          {
-            "label": "Dispatch eligibility",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "d37b2929 ready/auto."
-          },
-          {
-            "label": "Implementation proposed",
-            "status": "current",
-            "verification": "verified",
-            "evidence": "Open PR #133."
-          },
-          {
-            "label": "Implementation merged",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "PR #133 unmerged."
-          },
-          {
-            "label": "Independent review accepted",
-            "status": "blocked",
-            "verification": "unknown",
-            "evidence": "No PASS receipt."
-          },
-          {
-            "label": "Authorized apply and teardown",
-            "status": "blocked",
-            "verification": "unknown",
-            "evidence": "No application authorized or verified."
-          }
-        ],
-        "next_gate": "Review and merge PR #133, then obtain independent acceptance before any separately authorized recovery."
       }
     }
   ],
