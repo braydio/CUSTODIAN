@@ -37,6 +37,29 @@
   ],
   "tests": [
     {
+      "id": "worker_isolation_contract",
+      "type": "python",
+      "script": "tools/worker/test_worker_isolation.py",
+      "tier": "unit",
+      "tags": [
+        "worker_isolation",
+        "systemd",
+        "network"
+      ],
+      "owners": [
+        "deploy/systemd/custodian-worker@.service",
+        "tools/worker/custodian-worker-launch",
+        "tools/worker/provision_worker_isolation.py",
+        "tools/worker/provision_worker_isolation.sh",
+        "tools/worker/public_worker_evidence.py",
+        "tools/worker/test_worker_isolation.py",
+        "tools/worker/validate_worker_isolation.py",
+        "tools/worker/worker_launcher.py"
+      ],
+      "timeout_sec": 90,
+      "needs_import": false
+    },
+    {
       "id": "abandoned_station_placement",
       "type": "godot_script",
       "script": "res://tools/validation/abandoned_station_placement_smoke.gd",
@@ -314,6 +337,7 @@
         "custodian/docs/ai_context/FILE_INDEX.md",
         "custodian/docs/ai_context/AGENT_AUTOMATION_BACKLOG.md",
         ".github/workflows/validate-repository.yml",
+        ".github/workflows/godot-level-pipeline.yml",
         ".github/workflows/packet-authoring-handoff.yml",
         ".claude/settings.json",
         ".agents/skills/custodian-next/agents/openai.yaml"
@@ -4684,6 +4708,26 @@
       "needs_import": true
     },
     {
+      "id": "world_origin_branch_contract",
+      "type": "godot_script",
+      "script": "res://tools/validation/world_origin_branch_contract_smoke.gd",
+      "tier": "unit",
+      "tags": [
+        "world_origin",
+        "route",
+        "scene_contract"
+      ],
+      "owners": [
+        "custodian/scenes/game.tscn",
+        "custodian/game/world/levels/level_loader.gd",
+        "custodian/game/systems/core/systems/contract_world_loader.gd",
+        "custodian/tools/validation/world_origin_branch_contract_smoke.gd",
+        ".github/workflows/godot-level-pipeline.yml"
+      ],
+      "timeout_sec": 60,
+      "needs_import": true
+    },
+    {
       "id": "procgen_showcase_gallery_shell",
       "type": "godot_script",
       "script": "res://tools/validation/levels/procgen_showcase_gallery_shell_smoke.gd",
@@ -7151,6 +7195,26 @@
       ],
       "timeout_sec": 30,
       "needs_import": true
+    },
+    {
+      "id": "coordination_root_guard_unit",
+      "type": "python",
+      "script": "custodian/tools/agent/test_coordination_root_guard.py",
+      "tier": "unit",
+      "tags": [
+        "agent_workflow",
+        "coordination",
+        "safety"
+      ],
+      "owners": [
+        "custodian/tools/agent/coordination_root_guard.py",
+        "custodian/tools/agent/test_coordination_root_guard.py",
+        ".claude/settings.json",
+        "AGENTS.md",
+        "custodian/AGENTS.md"
+      ],
+      "timeout_sec": 20,
+      "needs_import": false
     },
     {
       "id": "process_feedback_ledger_unit",

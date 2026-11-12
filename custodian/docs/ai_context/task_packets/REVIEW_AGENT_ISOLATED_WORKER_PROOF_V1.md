@@ -4,9 +4,11 @@
 - Workstream: `review-agent-isolated-worker-proof-v1`
 - Category: `platform-performance`
 - Kind: `review`
-- Status: `ready`
-- Dispatch: `auto`
-- Authoring handoff: `auto`
+- Status: `blocked`
+- Dispatch: `manual`
+- User design hold: `open`
+- Owner deferral: `owner-deferred-2026-11-11`
+- Authoring handoff: `manual`
 - Priority: `P1`
 - Depends on: `agent-isolated-worker-proof-v1`
 - Locks: `none`

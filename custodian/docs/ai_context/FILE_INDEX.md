@@ -1,3 +1,8 @@
+## Current agent summary and checkout ownership
+
+- `custodian/docs/ai_context/agent_summaries/` — durable per-workstream summaries.
+- `custodian/tools/agent/coordination_root_guard.py` — Claude main-only root guard.
+
 # FILE INDEX — CUSTODIAN
 - `design/05_levels/ALPINE_CLIFF_BUNKER_ENTERABLE_V1.md` — 2026-11-03 locked planning design: real reversible Alpine cliff-bunker ingress, physical antechamber, later service/control rooms; separate from existing Alpine Station and connected-bunker work.
 - `design/05_levels/ALPINE_CLIFF_BUNKER_PRODUCTION_PLAN_V1.md` — G0–G6 no-art-first implementation, independent-source/Asset V2 approval and real-Operator acceptance process.

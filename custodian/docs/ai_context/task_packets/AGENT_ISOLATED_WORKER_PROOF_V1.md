@@ -3,9 +3,11 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-isolated-worker-proof-v1`
 - Category: `platform-performance`
-- Status: `ready`
-- Dispatch: `auto`
-- Authoring handoff: `auto`
+- Status: `blocked`
+- Dispatch: `manual`
+- User design hold: `open`
+- Owner deferral: `owner-deferred-2026-11-11`
+- Authoring handoff: `manual`
 - Priority: `P1`
 - Depends on: `none`
 - Locks: `none`

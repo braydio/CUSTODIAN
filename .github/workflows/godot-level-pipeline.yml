@@ -98,10 +98,19 @@ jobs:
             sundered_keep_vista_polish_smoke.gd
           )
 
+          # Each smoke runs in its own Godot process. Collect every failing
+          # contract in one CI pass while preserving a nonzero aggregate exit.
+          failures=()
           for test in "${tests[@]}"; do
-            godot --headless --path . \
-              --script "res://tools/validation/${test}"
+            if ! godot --headless --path . \
+              --script "res://tools/validation/${test}"; then
+              failures+=("${test}")
+            fi
           done
+          if (( ${#failures[@]} )); then
+            printf 'Failed authored-level smokes: %s\n' "${failures[*]}" >&2
+            exit 1
+          fi
 
       - name: Run route traversal suite
         working-directory: custodian
