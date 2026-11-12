@@ -17,7 +17,7 @@
 - Max automatic review cycles: `0`
 - Review rationale: Reversible, bounded **visual presentation only**, not an authority cutover. Legacy `ui.gd` remains sole source for gameplay/terminal/inventory operations; the new passive view can be removed without data migration. Focused state, single-HUD and responsive tests plus current prompt/controller/terminal/inventory regression smokes directly falsify the expected risks. There is no new external approval, migration or paired-review dependency.
 - Reviewed main: `0268a56c8f578779199cbdc39c98c9a12574b19b`
-- Authoring chat: `not-recorded`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae9a2f9-cf10-83e8-bffe-5f16e079abac`
 - Visual review: `none`
 - Goal: Ship the owner-approved Ash & Relic **Field HUD v1** as the one ordinary gameplay display in the actual CUSTODIAN main game, with truthful status and responsive rendering, in one completable Codex sitting.
 - Completion boundary: A Godot-native Ash & Relic presenter and narrow adapter are wired into `custodian/scenes/game.tscn`; duplicate old normal-field widgets are suppressed; integrity, stamina, weapon, prompt and location values reflect actual game; no terminal, pause, inventory or controller regression; focused smoke and 3 viewport sizes pass; real gameplay comparison captures are supplied or exact capture limitations reported; workstream is committed/landed and completed through normal V2 lifecycle. Later inventory, terminal, map and global UI replacements are **not part of this packet**.
@@ -50,7 +50,7 @@
 - Next packet state: `none`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
-- Summary backlink: `n/a`
+- Summary backlink: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae9a2f9-cf10-83e8-bffe-5f16e079abac`
 - Refresh reason: `none`
 - Next action: Return exact gameplay evidence and user-facing result. Future UI slices only if user requests a refreshed packet.
 - Blockers or open questions: `none`

@@ -78,4 +78,4 @@ These do not yet exist. Confirm pipeline schema and obtain individual human sour
 
 Older Black Reliquary UI documents describe current production implementation, not this new design. Update them only after corresponding code surfaces are actually migrated. The existing F03 HUD/terminal architecture audit correctly notes remaining command-routing authority in `ui.gd`; this visual redesign does not resolve that debt.
 
-**Authoring chat:** not-recorded until the originating conversation URL is supplied.
+**Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae9a2f9-cf10-83e8-bffe-5f16e079abac
