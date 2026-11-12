@@ -1,9 +1,109 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-12T22:16:11Z",
-  "source_main_sha": "b4873c1ce44c3543000fcb8af645b05891466910",
+  "generated_at": "2026-11-12T23:55:20.209Z",
+  "source_main_sha": "e2df427c1f80807830a27e3ea230a463787b4691",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "awakening-creche-main-runtime-cutover-e2df427c",
+      "desk": "front_page",
+      "format": "development",
+      "headline": "Awakening Crèche's expanded room art and traversal now land in the game source",
+      "summary": "The 1464×1074 Crèche underlay and foreground, walkable room geometry, console and animated screen effect are now merged into main. Earlier focused traversal tests passed, but source-integrity CI failed and full-resolution visual review remains incomplete; this is a source landing, not a verified playable release.",
+      "body": "The Awakening Crèche's higher-resolution environment and traversal implementation have now merged into main, advancing the room from a candidate branch to shared game source. The change binds approved 1464×1074 art, preserves the console's eight-frame screen effect, and adjusts transition boundaries so zone changes follow the Operator's position. Focused source-side traversal evidence reported successful bidirectional zone movement. The owner expressly accepted a recorded source-integrity CI failure, existing unrelated Sundered Keep baseline failures, and incomplete full-resolution visual inspection. No deployed build or independent end-to-end gameplay acceptance is established.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "awakening-creche-console-sprite-reauthor-v1",
+      "occurred_at": "2026-11-12T23:55:20.209Z",
+      "bullets": [
+        "Higher-resolution Crèche artwork and scene bindings are in main.",
+        "Zone traversal and console presentation have focused test evidence.",
+        "Source-integrity CI and full-resolution visual acceptance remain unresolved."
+      ],
+      "links": [
+        {
+          "title": "Main landing commit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/e2df427c1f80807830a27e3ea230a463787b4691"
+        },
+        {
+          "title": "Crèche integration PR",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/146"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "The Awakening Crèche has crossed a significant boundary: its expanded environment, console presentation and room traversal are now part of CUSTODIAN's main game source. That is a real integration milestone, although the merge was explicitly accepted with outstanding validation caveats.",
+        "sections": [
+          {
+            "heading": "A larger, authored room",
+            "text": "Approved 1464×1074 foreground and underlay plates replace the earlier room presentation. The scene retains the existing console body and its separately animated eight-frame screen effect."
+          },
+          {
+            "heading": "Movement has a defined path",
+            "text": "Authored walkability and transition envelopes now govern travel between the Crèche zones. Earlier focused traversal evidence recorded successful outward and return movement, rather than only static asset import."
+          },
+          {
+            "heading": "What the landing does not prove",
+            "text": "The owner accepted a recorded source-integrity CI failure, existing unrelated baseline failures and incomplete full-resolution visual review. Merged source does not establish a clean CI run, final visual approval or a deployed playable build."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Artwork and navigation are integrated together",
+            "explanation": "The new environment is not merely an image drop: room geometry, zone boundaries and console behavior accompany the art. This makes the Crèche a more concrete gameplay integration target."
+          },
+          {
+            "title": "Validation debt remains visible",
+            "explanation": "The merge advances shared source while retaining known failures and visual-review gaps. The next meaningful signal is a clean, representative gameplay and visual verification, not another merge announcement."
+          }
+        ],
+        "takeaway": "The Crèche's expanded scene is now in main with focused runtime evidence, but final quality and build health remain unproven.",
+        "next_watch": "Look for full-resolution scene inspection, resolution of source-integrity CI, and a clean gameplay smoke against the merged main revision."
+      },
+      "details": {
+        "overview": "Main commit e2df427c1f80807830a27e3ea230a463787b4691 merges PR #146. Owner explicitly accepted known CI and visual-review exceptions. Prior workstream receipt reports Asset V2 import, catalog bindings, 2/2 states and focused traversal tests; these are not proof of current deployed gameplay.",
+        "ledger": [
+          {
+            "stage": "Source integration",
+            "status": "verified landed",
+            "evidence": "Main merge e2df427c1f80807830a27e3ea230a463787b4691; PR #146 merged 2026-11-12T23:23:22Z."
+          },
+          {
+            "stage": "Focused traversal and asset validation",
+            "status": "reported passing in retained source evidence",
+            "evidence": "Implementation summary and asset runtime receipt in merged commit; no independent post-merge live run verified."
+          },
+          {
+            "stage": "CI and visual acceptance",
+            "status": "known limitations",
+            "evidence": "Merge explicitly records source-integrity CI failure, Sundered Keep baseline failures and incomplete full-resolution visual inspection."
+          },
+          {
+            "stage": "Host cleanup / deployment",
+            "status": "unknown",
+            "evidence": "No authenticated host teardown or deployed build evidence inspected."
+          }
+        ],
+        "notes": [
+          "The merge preserves original branch, checkout and private evidence."
+        ],
+        "unknowns": [
+          "Post-merge CI success and full-resolution visual acceptance",
+          "Production/gameplay deployment and host teardown"
+        ],
+        "actions": [
+          "Owner or authorized game developer: inspect merged scene visually and run focused gameplay smoke before calling this release-ready."
+        ]
+      },
+      "related": [
+        {
+          "title": "Awakening Crèche artwork reaches a playable room candidate, but is not yet in main",
+          "context": "Earlier candidate-stage coverage; this story records the subsequent main landing.",
+          "story_id": "awakening-creche-runtime-cutover-pr146-20261112"
+        }
+      ]
+    },
     {
       "id": "paired-review-retirement-owner-decision-b4873c1c",
       "desk": "engineering",
@@ -1416,135 +1516,6 @@
           }
         ],
         "next_gate": "Independent reviewer must issue a genuine accepted receipt for the landed resolver before Ash-Bell intake review resumes."
-      }
-    },
-    {
-      "id": "archive-lifecycle-resolver-packet-7f28dadf",
-      "headline": "New review-history repair proposed to unblock Ash-Bell asset intake",
-      "summary": "CUSTODIAN added a P0 manual draft implementation packet and paired-review packet to correct how archived review targets are identified after a file is restored. The current resolver treats multiple archive additions as ambiguous; the proposed fix would use Git lifecycle ancestry to identify the authentic introduction. This is planned work, not a landed fix or accepted review.",
-      "body": "Main commits 7f28dadfb6cc103df794210a2bcd3cc39a275e09 and 7f0f7655f9a3769c089c4ef9df3d3c3429e8200f add and refine draft manual task packets for agent-review-archive-lifecycle-disambiguation-v1 and its independent review. The issue is a restored archived review packet that creates a second historical Add event. The planned resolver must identify the original lifecycle introduction rather than the later restore, retain ambiguity when ancestry is insufficient, and pass focused adversarial tests. The Ash-Bell Surface Lift asset-intake review remains dependency-gated until implementation lands and fresh paired review is accepted. No implementation, tests, host activity or accepted review were verified. Private operational pilot evidence remains stale, so no dispatcher counts are promoted.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-review-archive-lifecycle-disambiguation-v1",
-      "occurred_at": "2026-11-10T18:12:51Z",
-      "bullets": [
-        "P0 manual draft implementation and paired-review packets added.",
-        "Proposed ancestry-based resolver must reject restored archive as original implementation.",
-        "Ash-Bell Lift review remains gated on landed implementation and independent acceptance.",
-        "No host execution or canonical dispatcher counts verified."
-      ],
-      "links": [
-        {
-          "title": "Archive lifecycle repair packets",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/7f28dadfb6cc103df794210a2bcd3cc39a275e09"
-        },
-        {
-          "title": "Focused validation instruction correction",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/7f0f7655f9a3769c089c4ef9df3d3c3429e8200f"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "A newly documented repair targets a subtle review-history problem that can stall CUSTODIAN's art pipeline. When an archived review packet is restored later, its identical contents can appear to have two creation points. A proposed resolver change would use the actual Git lifecycle to distinguish the original from the restoration.",
-        "sections": [
-          {
-            "heading": "Why this matters for asset intake",
-            "text": "The Ash-Bell Surface Lift asset-intake review depends on a trustworthy historical target. Picking a later restored copy could attach independent-review evidence to the wrong implementation; refusing every duplicate history can leave valid work stranded."
-          },
-          {
-            "heading": "A narrow repair, not a shortcut",
-            "text": "The new P0 manual draft packet specifies ancestry checks: the authentic archive introduction must follow a matching active packet and have a demonstrable retirement. Histories that do not prove a unique candidate must still fail closed. A separate fresh reviewer must test the landed code before the Lift review resumes."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Identical bytes do not establish historical identity",
-            "explanation": "The proposed change distinguishes content equality from the actual lifecycle of a review packet, reducing both false attribution and unnecessary ambiguity."
-          },
-          {
-            "title": "The art pipeline is waiting on review integrity",
-            "explanation": "Ash-Bell intake remains held not because new art is necessarily defective, but because its review target must be established reliably before acceptance."
-          }
-        ],
-        "takeaway": "Two draft packets establish a specific repair and independent-review plan; they do not establish that the resolver is fixed.",
-        "next_watch": "Look for a landed resolver implementation with adversarial tests, followed by a genuine independent passing receipt before the preserved Ash-Bell review resumes."
-      },
-      "details": {
-        "overview": "Main contains two new manual draft packets and a follow-up validation-instruction edit. GitHub evidence is partial; no live canonical dispatcher audit or fresh private observation was available.",
-        "ledger": [
-          {
-            "stage": "Implementation packet",
-            "status": "verified draft",
-            "evidence": "7f28dadf adds P0 manual draft; no implementation landing shown."
-          },
-          {
-            "stage": "Focused validation plan",
-            "status": "verified documented",
-            "evidence": "7f0f7655 revises future test-module reference."
-          },
-          {
-            "stage": "Independent review",
-            "status": "planned, not accepted",
-            "evidence": "Paired review packet is draft and depends on implementation."
-          },
-          {
-            "stage": "Host and teardown",
-            "status": "unknown",
-            "evidence": "No fresh authenticated host observation."
-          }
-        ],
-        "notes": [
-          "Packet scope is generic, not Ash-Bell-specific."
-        ],
-        "unknowns": [
-          "Current live claim and host state; full dispatcher counts.",
-          "Whether implementation has started outside inspected main."
-        ],
-        "actions": [
-          "Implementation owner: land generic resolver with adversarial tests through normal lifecycle.",
-          "Independent reviewer: issue a fresh findings-first receipt after landing."
-        ]
-      },
-      "related": [],
-      "scorecard": {
-        "stage": "Draft repair specified; implementation and independent review ahead",
-        "as_of": "2026-11-10T18:16:29Z",
-        "scope": "Two named draft packets inspected on main; not a full dispatcher audit",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Repair and paired-review packets documented",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "7f28dadf"
-          },
-          {
-            "label": "Focused validation instructions corrected",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "7f0f7655"
-          },
-          {
-            "label": "Resolver implementation and tests",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No implementation commit inspected"
-          },
-          {
-            "label": "Independent paired review accepted",
-            "status": "blocked",
-            "verification": "unknown",
-            "evidence": "Requires landed implementation and fresh review receipt"
-          },
-          {
-            "label": "Preserved Ash-Bell review resumed",
-            "status": "blocked",
-            "verification": "unknown",
-            "evidence": "Depends on accepted resolver review"
-          }
-        ],
-        "next_gate": "Implementation owner must land generic resolver and focused adversarial tests before independent review."
       }
     }
   ],
