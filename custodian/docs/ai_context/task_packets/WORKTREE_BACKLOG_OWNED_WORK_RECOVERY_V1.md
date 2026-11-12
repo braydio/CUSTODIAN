@@ -6,16 +6,16 @@
 - Dispatch: `auto`
 - Authoring handoff: auto
 - Priority: P1
-- Depends on: review-worktree-backlog-dirty-and-unique-preservation-v1
+- Depends on: `worktree-backlog-dirty-and-unique-preservation-v1`
 - Locks: worktree-backlog-owned-recovery
 - Kind: implementation
-- Review: auto
+- Review: `none`
 - Review stage: post-land
-- Review modes: code, architecture, workflow
-- Paired review workstream: review-worktree-backlog-owned-work-recovery-v1
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: 0
 - Max automatic review cycles: 2
-- Review rationale: multi-worktree safety, preserved unique history and original-claim ownership require an independent review
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: c02747856055d38cb8ea6871b49257cfcee82dad
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc5e5e-018c-83ea-8617-ec4c15de7d62
 - Visual review: none

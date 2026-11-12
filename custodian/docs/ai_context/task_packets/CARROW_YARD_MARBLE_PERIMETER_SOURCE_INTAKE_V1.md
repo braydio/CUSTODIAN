@@ -9,13 +9,13 @@
 - Depends on: `none`
 - Locks: `carrow-yard-art, asset-pipeline`
 - Kind: `implementation`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `asset-pipeline, visual, runtime`
-- Paired review workstream: `review-carrow-yard-marble-perimeter-source-intake-v1`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `new immutable source imagery plus exact crop, provenance and scene preview checks`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `29b0dc57bf54`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad5eb5a-598c-83ea-b982-531d4ff5418f`
 - Visual review: `required`

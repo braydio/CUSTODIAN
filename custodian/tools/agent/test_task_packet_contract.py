@@ -113,11 +113,13 @@ class ParsePacketTests(unittest.TestCase):
         self.assertEqual(packet.dependencies, ("a-b", "c-d"))
         self.assertEqual(packet.locks, ("lock-one", "lock-two"))
 
-    def test_review_auto_requires_paired_review_workstream(self):
+    def test_review_auto_no_longer_requires_paired_review_workstream(self):
+        # Paired review retired 2026-11-12: an unpaired Review: auto packet
+        # is not a parse error, and pairing is advisory only.
         text = legacy_packet("needs-pair") + "- Review: `auto`\n"
         packet = tpc.parse_packet("p.md", text)
-        self.assertIsNotNone(packet.error)
-        self.assertIn("Paired review workstream", packet.error)
+        self.assertIsNone(packet.error)
+        self.assertEqual(tpc.validate_review_pairing([packet]), {})
 
 
 class QueueContractTests(unittest.TestCase):

@@ -7,15 +7,15 @@
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P1`
-- Depends on: `review-operator-motion-foundry-core-v1`
+- Depends on: `operator-motion-foundry-core-v1`
 - Locks: `operator-motion-foundry, operator-assets`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, architecture, asset-pipeline, workflow`
-- Paired review workstream: `review-operator-motion-foundry-source-bridge-v1`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `explicit candidate source-work export and existing Operator Source Session ingress need independent safety review`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `9bbe905a1ffcca2afca273ccc48a7ed2f794d0c8`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad08a2d-2ae4-83ea-be79-dd8534ffa488`
 - Visual review: `none`

@@ -10,13 +10,13 @@
 - Depends on: none
 - Locks: paired-review-source-provenance, paired-review-host-validation
 - Kind: implementation
-- Review: auto
+- Review: `none`
 - Review stage: post-land
-- Review modes: code, architecture, workflow
-- Paired review workstream: review-agent-wire-export-review-source-attestation-v1
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: 0
 - Max automatic review cycles: 2
-- Review rationale: This changes the paired-review host trust boundary and adds an exact post-hoc source attestation. A fresh independent review must falsify source identity, accepted-review, and fail-closed controls before the exception can activate.
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: 8bc0fe40184dec741ccc5a92997052f96e0deb43
 - Authoring chat: not-recorded
 - Visual review: none

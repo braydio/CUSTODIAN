@@ -8,13 +8,13 @@
 - Depends on: `none`
 - Locks: `operator-traversal, elevation-runtime`
 - Kind: `implementation`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, runtime, architecture`
-- Paired review workstream: `review-operator-elevation-traversal-enforcement-v1`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `changes final Operator displacement gating against live terrain traversal semantics`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `350ee94e4b3b80010c0970903f3418966df3b851`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391`
 - Visual review: `none`

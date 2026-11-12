@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
 """Plan and record one owner-authorized, commit-pinned review exception.
 
+RETIRED 2026-11-12: paired review was retired by owner decision, so no new
+exceptions are created through this lane. The owner decision is now simply
+`Review: none` on the implementation packet. This module is kept only so
+the one historical exception record
+(`review-operator-chassis-authority-seal-v1`) still verifies; do not extend
+it to new workstreams.
+
 An exception is a distinct administrative disposition. It never edits a review
 packet or makes ``review_outcome.review_acceptance`` return PASS.
 """

@@ -5,7 +5,7 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `review-procgen-generation-grid-migration-series-authoring`
+- Depends on: `procgen-generation-grid-migration-series-authoring`
 - Locks: `procgen-runtime`
 - Kind: `implementation`
 - Review: `none`

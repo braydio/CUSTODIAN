@@ -6,16 +6,16 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: P1
-- Depends on: review-compound-recovery-damage-coupling
+- Depends on: `compound-recovery-damage-coupling`
 - Locks: compound-assault
 - Kind: implementation
-- Review: auto
+- Review: `none`
 - Review stage: post-land
-- Review modes: code, architecture, runtime, visual
-- Paired review workstream: review-compound-recovery-assault-objectives
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: 0
 - Max automatic review cycles: 2
-- Review rationale: independently landable cross-system change requiring fresh-context review
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: 9b8ae05581e3194876d8b4763946d1f74d77fa50
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad08a2d-2ae4-83ea-be79-dd8534ffa488
 - Visual review: conditional

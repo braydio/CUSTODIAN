@@ -9,13 +9,13 @@
 - Depends on: none
 - Locks: operator-3d-running-contact-followup
 - Kind: implementation
-- Review: auto
+- Review: `none`
 - Review stage: post-land
-- Review modes: code, asset-pipeline, workflow
-- Paired review workstream: review-operator-3d-running-contact-followup-v1
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: 0
 - Max automatic review cycles: 2
-- Review rationale: An experimental contact correction must preserve pinned source, weights and motion while independently validating evaluated sole clearance between frames.
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: 3dbbdc450d62c052c954ec8e999e8988a9e266ff
 - Authoring chat: not-recorded
 - Visual review: required

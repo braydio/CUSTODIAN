@@ -5,16 +5,16 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `review-vehicle-field-scout-buggy-class-v1-recovery-1-review-corrections-1`
+- Depends on: `vehicle-field-scout-buggy-class-v1-recovery-1-review-corrections-1`
 - Locks: `asset-pipeline-vehicle, vehicle-presentation`
 - Kind: `implementation`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, architecture, asset-pipeline, runtime`
-- Paired review workstream: `review-vehicle-field-scout-buggy-asset-v2`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `production Asset V2 contract and vehicle post-process authority migration`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `ad846c21ef7f3d41cb437a9042555e907c3a2a63`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b`
 - Visual review: `none`

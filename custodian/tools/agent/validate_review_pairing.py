@@ -1,18 +1,12 @@
 #!/usr/bin/env python3
-"""Fail-fast consistency guard for the paired post-land review contract.
+"""Advisory diagnostic for the retired paired post-land review contract.
 
-Every active task packet declaring `Review: auto` must have a matching active
-review packet (`Kind: review`, `Review: none`, a dependency back on the
-implementation workstream, and a matching target). Auto review packets also
-need the exact bounded artifact override; ready packets' explicit validation
-script paths must exist in the checked-out candidate tree.
-Historical packets that omit review metadata are never required to pair; the
-check only fires for packets that actively opt into `Review: auto`.
-
-This is the one reusable validation authority for the pairing contract: it
-wraps `dispatch.validate_review_pairing`, the same function `dispatch.py`
-itself calls before making a packet eligible, so tooling and the live
-dispatcher can never disagree about what a valid pairing looks like.
+Paired review was retired 2026-11-12 by owner decision. This script still
+reports, for any packet that still declares `Review: auto` with a paired
+review, whether that pair matches — but a pairing mismatch is advisory only
+and never fails the check, CI, or a claim. Only missing explicit validation
+script paths (a real broken reference) still fail. New packets should use
+`Review: none`; do not author new paired reviews.
 """
 from __future__ import annotations
 
@@ -45,15 +39,15 @@ def main() -> int:
     validation_errors = dispatch.validate_packet_validation_references(
         repo, packets, tree="HEAD", exclude_workstreams=claimed,
     )
-    for workstream, message in validation_errors.items():
-        pairing_errors[workstream] = "; ".join(filter(None, (pairing_errors.get(workstream), message)))
-
-    if not pairing_errors:
+    if pairing_errors:
+        for workstream, message in sorted(pairing_errors.items()):
+            print(f"ADVISORY (retired paired review, non-blocking): {workstream}: {message}")
+    if not validation_errors:
         reviewed = sum(1 for p in packets if p.review == "auto")
-        print(f"validate_review_pairing: PASS ({reviewed} Review: auto packet(s) correctly paired)")
+        print(f"validate_review_pairing: PASS ({reviewed} Review: auto packet(s) declared; pairing is advisory only)")
         return 0
 
-    for workstream, message in sorted(pairing_errors.items()):
+    for workstream, message in sorted(validation_errors.items()):
         print(f"FAIL: {workstream}: {message}")
     return 1
 

@@ -8,13 +8,13 @@
 - Priority: `P1`
 - Depends on: `none`
 - Locks: `none`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `architecture, workflow`
-- Paired review workstream: `review-worktree-seedbox-temp-storage-feasibility-v1`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `External storage, Git worktree identity, host trust and restoration safety require independent falsification of the proposed recovery procedure.`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `8fa7c190936ce98ca5a9bb93f28fcb4862c9acb8`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad41ae1-c654-83ea-ba9f-2b4dc4dde401`
 - Visual review: `none`

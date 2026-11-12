@@ -12,13 +12,13 @@
 - Depends on: `none`
 - Locks: `none`
 - Kind: `implementation`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, architecture, runtime, workflow`
-- Paired review workstream: `review-agent-isolated-worker-proof-v1`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `Host sandbox enforcement and credential boundaries need independent review against actual runtime evidence; configuration inspection alone cannot establish that loopback, owner credentials, privileged interfaces, or unintended write authority are inaccessible.`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `81c39888de2231a424d9e64b9893212882f713c0`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af34a5d-ca7c-83ea-b267-382f1be560df
 - Visual review: `none`

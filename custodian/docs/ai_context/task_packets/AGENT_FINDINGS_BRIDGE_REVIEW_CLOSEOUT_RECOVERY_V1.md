@@ -11,13 +11,13 @@
 - Depends on: `none`
 - Locks: `none`
 - Kind: `implementation`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, architecture, workflow`
-- Paired review workstream: `review-agent-findings-bridge-review-closeout-recovery-v1`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `This exact-run recovery must distinguish an authentic nonpassing findings disposition from a failed or forged reviewer session while preserving the protected claim, checkout and source evidence.`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `4d3b1978c09d51753cd63b2b8f416201284b4170`
 - Implementation commit: `d0fd3f0fb37328ed31fe1419571c131115ca0154`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af0b3b3-e168-83ea-a136-5047fc969fbe

@@ -5,16 +5,16 @@
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P1`
-- Depends on: `review-agent-blocker-inbox-publisher-v1`
+- Depends on: `agent-blocker-inbox-publisher-v1`
 - Locks: `agent-workflow`
 - Kind: `implementation`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, architecture, workflow`
-- Paired review workstream: `review-agent-blocker-capture-hooks-v1`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `Critical workflow state, provenance and preservation require independent review`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `07d1180f42540ba815dfc6605bb6a5c44a6d4ff7`
 - Authoring chat: https://chatgpt.com/share/6ad6ab3d-1030-83ea-8b46-400ac48316b3?ogimg=plain
 - Visual review: `none`
