@@ -1,0 +1,24 @@
+# CRECHE BLOCKOUT V1
+
+- Packet schema: custodian.task_packet.v2
+- Workstream: creche-blockout-v1
+- Status: ready
+- Dispatch: manual
+- Priority: P2
+- Kind: implementation
+- Review: none
+- Reviewed main: 0268a56c8f578779199cbdc39c98c9a12574b19b
+- Visual review: required
+- Publication inputs: `assets/levels/creche/scripts/build_creche_blockout.py`; `assets/levels/creche/scripts/verify_creche_scene.py`; `assets/levels/creche/scripts/check_reference_dimensions.py`; `assets/levels/creche/docs/CLAUDE_BUILD_SPEC.md`; `assets/levels/creche/docs/creche_blockout_plan.png`; `assets/levels/creche/references/creche_complete_1464x1074.png`; `assets/levels/creche/references/creche_floor_960x704.png`; `assets/levels/creche/references/creche_walls_960x704.png`; `assets/levels/creche/references/modular_14_contact_sheet.png`; `assets/levels/creche/README.md`
+- Goal: Publish the Nameless_Creche room blockout kit and its Blender build, verification and manifest tooling, then produce a verified editable blockout (Blender master, GLB, top-down preview and JSON socket manifest) under `assets/levels/creche/build/`.
+- Completion boundary: The build script runs under Blender 5.2.3 and produces the four build artifacts and log; the manifest assertions and verify script pass; the top-down preview is visually approved by the user. Engine integration into the Godot project is not part of this packet.
+- Current measured state: The kit builds and verifies in an isolated worktree (30 sockets, 9 zones, 75 Blender objects). Build outputs are gitignored and exist only in Dropbox review package `creche-blockout-v1/20261112T025612Z`. The existing Creche level at `custodian/content/levels/awakening/01_creche` is not touched.
+- Evidence: `assets/levels/creche/build/creche_build.log`; `assets/levels/creche/build/creche_verify.log`; Dropbox review package above; `assets/levels/creche/docs/CLAUDE_BUILD_SPEC.md`.
+- Task-specific authority: `assets/levels/creche/docs/CLAUDE_BUILD_SPEC.md` (dimensions, sockets, zones and acceptance criteria); `assets/levels/creche/README.md`.
+- Work surface: `assets/levels/creche/` at repo root, a new directory outside the Godot project.
+- Change: Commit the kit sources as delivered. Re-run the build and verification from a clean checkout, and record the artifact paths, sizes and hashes in the closing summary.
+- Preserve: Source PNG references, the build script's dimensions and openings, and the socket names in the manifest. Do not overwrite `custodian/content/levels/`.
+- Non-goals: Engine or scene integration, socket GLB placement, game-camera screenshots, collision tuning, gameplay changes, deployment, and any change to existing levels.
+- Acceptance: `build/creche_blockout.blend`, `build/creche_blockout.glb`, `build/creche_blockout_topdown.png` and `build/creche_manifest.json` are present and non-empty; the manifest assertions in the spec pass; `verify_creche_scene.py` reports CRECHE_GEOMETRY_VERIFIED; the user approves the top-down alignment.
+- Validation: `python3 assets/levels/creche/scripts/check_reference_dimensions.py`; `python3 -m py_compile assets/levels/creche/scripts/build_creche_blockout.py`; `blender --background --factory-startup --python assets/levels/creche/scripts/build_creche_blockout.py`; `blender --background build/creche_blockout.blend --python assets/levels/creche/scripts/verify_creche_scene.py`.
+- Deferred: Engine integration, socket GLB population, game-camera screenshots, and an import report, pending inspection of the Godot project's level conventions.
