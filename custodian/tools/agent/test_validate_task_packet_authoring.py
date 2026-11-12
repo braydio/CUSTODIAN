@@ -140,7 +140,7 @@ class AuthoringPreflightTests(unittest.TestCase):
         self.assertIn("task_packet_index.py --write", rendered)
         self.assertIn("origin/main, NOT your local checkout", rendered)
         self.assertIn("dispatch.py claim sample-work --agent <agent-id>", rendered)
-        self.assertIn("paired-review runner enforces", rendered)
+        self.assertIn("V2 reads authenticated task identity", rendered)
         self.assertNotIn("PROMOTION REQUIRED", rendered)
 
     def test_preflight_handoff_draft_requires_design_authorization(self):
@@ -188,10 +188,10 @@ class AuthoringPreflightTests(unittest.TestCase):
         )
         self.assertEqual(self.validate(self.impl, self.rev), [])
 
-    def test_implementation_only_still_checks_its_existing_pair(self):
+    def test_implementation_only_does_not_gate_on_a_retired_pair(self):
+        # Paired review is retired and advisory: a broken archived-era reviewer must not block authoring.
         self.rev.write_text(review(include_target=False))
-        findings = self.validate(self.impl)
-        self.assertTrue(any("Review target workstream" in finding for finding in findings))
+        self.assertEqual(self.validate(self.impl), [])
 
 
 if __name__ == "__main__":
