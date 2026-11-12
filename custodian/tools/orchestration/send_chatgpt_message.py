@@ -95,7 +95,7 @@ def staged_attachment_names(composer_form) -> list[str]:
 
 
 def stage_message(page, message: str, attachments: list[Path]) -> None:
-    composer = page.locator('[contenteditable="true"][aria-label*="Ask ChatGPT"]')
+    composer = page.locator('[contenteditable="true"][aria-label*="Ask ChatGPT"]:visible')
     if composer.count() != 1 or not composer.is_visible():
         raise ValueError("could not identify exactly one visible ChatGPT composer")
     composer_form = composer.locator("xpath=ancestor::form[1]")
@@ -141,7 +141,7 @@ def stage_message(page, message: str, attachments: list[Path]) -> None:
 
 
 def submit_message(page, message: str, timeout: float = 30) -> None:
-    composer = page.locator('[contenteditable="true"][aria-label*="Ask ChatGPT"]')
+    composer = page.locator('[contenteditable="true"][aria-label*="Ask ChatGPT"]:visible')
     composer_form = composer.locator("xpath=ancestor::form[1]")
     previous_user_count = page.locator('[data-message-author-role="user"]').count()
     send = page.get_by_role("button", name=re.compile(r"^(send|send message)$", re.I))
