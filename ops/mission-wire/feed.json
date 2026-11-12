@@ -1,9 +1,107 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-12T07:05:15.346Z",
-  "source_main_sha": "897887294342a4a26316db995410d4e0cb548ffb",
+  "generated_at": "2026-11-12T16:12:53Z",
+  "source_main_sha": "002504a4da95eb0c89f2649952cdec328718b1ea",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "creche-editable-blockout-source-kit-002504a4",
+      "desk": "front_page",
+      "format": "development",
+      "headline": "Crèche room gains an editable 3D construction kit, with Blender proof still ahead",
+      "summary": "A new source kit on main maps the Crèche artwork into a dimensioned, editable Blender room plan with doors, windows, collision proxies and named places for modular art. It is a concrete level-building starting point, not yet a verified 3D export or playable integration.",
+      "body": "The Crèche now has a committed Blender construction script, reference artwork, dimensions and an explicit verification plan. The design reserves gameplay circulation and attachment points for modular architectural pieces. Its authoring dimensions are choices inferred from illustrations, not measured physical geometry. The kit's README explicitly says the script has only been syntax-checked and has not been run in Blender; no generated .blend, .glb or game-level runtime proof is established. Next: run the build and verifier, inspect the resulting preview and openings, then test integration without replacing an existing level.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "CRECHE_BLOCKOUT_V1",
+      "occurred_at": "2026-11-12T16:12:53Z",
+      "bullets": [
+        "Source kit merged into main with Blender builder and reference images.",
+        "26 × 13 m interior and 1.75 m south entrance are design choices, not recovered measurements.",
+        "Named sockets reserve locations for modular architecture; finished meshes are not yet placed.",
+        "Blender execution, GLB export and game integration remain unverified."
+      ],
+      "links": [
+        {
+          "title": "Merged Crèche blockout source kit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/002504a4da95eb0c89f2649952cdec328718b1ea"
+        },
+        {
+          "title": "Source kit authoring commit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/adacd296cb25185683c441aa97559f8719a1d8da"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "The Crèche artwork now has a concrete route toward an editable 3D room. A new source kit provides a Blender builder, image-aligned architectural plan and reserved attachment points for modular scenery. The script has not yet been executed in Blender, so this is a source milestone rather than a finished level.",
+        "sections": [
+          {
+            "heading": "From illustration to room geometry",
+            "text": "The kit defines an interior floor, perimeter walls, three north window openings and a south doorway. It also keeps the central floor, side bays and exit passage clear for future gameplay. The scale and heights are deliberate design assumptions, not dimensions measured from the illustration."
+          },
+          {
+            "heading": "A home for modular art",
+            "text": "Named sockets reserve positions for sleeping alcoves, gothic windows, columns, archways, trim and rubble. These placeholders make the next asset-fitting pass more systematic without pretending that the finished 3D meshes are already imported."
+          },
+          {
+            "heading": "What is still unproven",
+            "text": "The README says the Blender script passed syntax checking but has not been run in Blender. The editable project, GLB export, preview, manifest verification and engine integration must still be demonstrated."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The art now has a reproducible spatial plan",
+            "explanation": "Explicit coordinates and gameplay clearances make it possible to check an actual build against the original artwork instead of placing each asset by eye."
+          },
+          {
+            "title": "A source kit is not a playable room",
+            "explanation": "The next meaningful leap is verified Blender output and a game-camera test, not another planning or review transition."
+          }
+        ],
+        "takeaway": "The Crèche has a more actionable level-construction foundation, but the build and playable result are not yet verified.",
+        "next_watch": "Look for a successful Blender build with a saved .blend, GLB, preview, manifest and visual verification, followed by a bounded game-engine import."
+      },
+      "details": {
+        "overview": "Merged source kit includes Blender 4.x construction script, reference images via Git LFS, schematic and execution handoff. README explicitly limits validation to syntax checking; generated build outputs are ignored and not proven. Source main SHA 002504a4da95eb0c89f2649952cdec328718b1ea.",
+        "ledger": [
+          {
+            "stage": "Source kit merged",
+            "status": "verified",
+            "evidence": "Merge commit 002504a4 contains script, dimensions, references and handoff."
+          },
+          {
+            "stage": "Blender runtime and artifacts",
+            "status": "unknown",
+            "evidence": "README says script not run in Blender; generated artifacts not established."
+          },
+          {
+            "stage": "Game integration",
+            "status": "unknown",
+            "evidence": "Handoff requires inspection of the actual game project before integration."
+          }
+        ],
+        "notes": [
+          "Design dimensions are assumptions from source images.",
+          "Collision proxies and named art sockets are not imported final assets."
+        ],
+        "unknowns": [
+          "Blender version compatibility and generated output correctness.",
+          "Actual in-engine visuals, collision and playability.",
+          "Independent review or acceptance of this kit."
+        ],
+        "actions": [
+          "Level author: run the builder and verifier in Blender, inspect outputs, and report concrete artifacts before integration."
+        ]
+      },
+      "related": [
+        {
+          "title": "Awakening Crèche artwork reaches a playable room candidate, but is not yet in main",
+          "context": "Earlier related Crèche runtime candidate; this new source kit supplies a separate editable architectural construction path.",
+          "story_id": "awakening-creche-runtime-cutover-pr146-20261112"
+        }
+      ]
+    },
     {
       "id": "awakening-creche-runtime-cutover-pr146-20261112",
       "desk": "front_page",
@@ -1468,167 +1566,6 @@
           }
         ],
         "next_gate": "Orchestration must verify the separate Operator Chassis review and explicitly lift the Weather bridge hold before acquisition."
-      }
-    },
-    {
-      "id": "findings-recovery-landed-closeout-6ce61c8f",
-      "headline": "Findings recovery bridge merges; implementation closeout lands while independent review remains ahead",
-      "summary": "PR #133 merged the exact-run findings recovery bridge into main, and PR #134 landed its implementation closeout. The bridge preserves original nonpassing R0-01/R0-02 findings and requires digest-bound evidence. Passing checks and archived implementation do not establish independent review acceptance, recovery application, or teardown.",
-      "body": "Main 6ce61c8f8b101d88e8c05f0312cd1f4931873743 includes PR #133 merge e311c9c6417cf4f403bd2586dcf6449a87743dbd and PR #134 closeout. The new code provides a read-only exact-run findings recovery plan and digest-bound apply mechanism restricted to a separate recovery checkout. The implementation closeout reports 326 paired-review runner tests, 14 artifact tests, and 13 synthetic bridge cases passing, plus changed-file checks. Those checks do not constitute a fresh independent PASS. The designated independent review review-agent-paired-review-findings-artifact-recovery-v1 remains the next gate; no recovery apply or canonical host teardown was independently verified. Private pilot pointer is dated November 8, so no operational counts are promoted. CI combined-status endpoint returned no statuses; broader CI health is unknown.",
-      "severity": "milestone",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-paired-review-findings-artifact-recovery-v1",
-      "occurred_at": "2026-11-10T11:49:09Z",
-      "bullets": [
-        "PR #133 implementation merged at e311c9c.",
-        "PR #134 implementation closeout merged at 6ce61c8.",
-        "326 runner, 14 artifact and 13 synthetic cases reported passing.",
-        "Independent review remains outstanding; no PASS inferred.",
-        "Recovery application and canonical teardown remain unverified."
-      ],
-      "links": [
-        {
-          "title": "Implementation merge PR #133",
-          "url": "https://github.com/braydio/CUSTODIAN/pull/133"
-        },
-        {
-          "title": "Implementation closeout PR #134",
-          "url": "https://github.com/braydio/CUSTODIAN/pull/134"
-        },
-        {
-          "title": "Main closeout merge",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/6ce61c8f8b101d88e8c05f0312cd1f4931873743"
-        },
-        {
-          "title": "Implementation merge commit",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/e311c9c6417cf4f403bd2586dcf6449a87743dbd"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "The recovery tool for stranded reviewer findings has crossed the merge line. CUSTODIAN now has a code path designed to preserve the original nonpassing findings without rewriting the review, and its implementation closeout has also landed. Independent acceptance is still a separate, unfinished gate.",
-        "sections": [
-          {
-            "heading": "From proposal to merged recovery mechanism",
-            "text": "PR #133 merged an exact-run read-only plan and digest-bound application path. It checks the preserved review's evidence and confines any eventual application to a separate recovery checkout, keeping the original review and target untouched."
-          },
-          {
-            "heading": "Closeout paperwork is not an approval",
-            "text": "PR #134 archived the implementation assignment and recorded passing test results. That establishes a landed implementation and documented closeout, not a fresh independent PASS. The original R0-01 and R0-02 findings remain nonpassing, and no recovery application is verified."
-          }
-        ],
-        "insights": [
-          {
-            "title": "A truthful recovery path now exists in main",
-            "explanation": "The tool is designed to carry the original review findings forward while retaining their nonpassing disposition, preventing evidence repair from masquerading as approval."
-          },
-          {
-            "title": "The remaining gate is independent scrutiny",
-            "explanation": "Implementation and closeout are merged, so attention shifts to the designated independent review and any later separately authorized exact-run recovery."
-          }
-        ],
-        "takeaway": "The findings bridge is landed and implementation-closeout documentation is merged; acceptance and recovery execution remain unverified.",
-        "next_watch": "Watch for a genuine independent review receipt and dispatcher-backed eligibility before any separately authorized recovery action."
-      },
-      "details": {
-        "overview": "GitHub partial inspection at main 6ce61c8f8b101d88e8c05f0312cd1f4931873743. PR #133 merged at e311c9c; PR #134 closeout at 6ce61c8f8b101d88e8c05f0312cd1f4931873743. Implementation summary reports 326 runner tests, 14 artifact tests and 13 synthetic findings bridge cases passing. No full live dispatcher audit or fresh private pilot observation was available.",
-        "ledger": [
-          {
-            "stage": "Recovery packet pair",
-            "status": "verified landed",
-            "evidence": "PR #132 and earlier main d37b2929."
-          },
-          {
-            "stage": "Implementation",
-            "status": "verified merged",
-            "evidence": "PR #133 merged at e311c9c."
-          },
-          {
-            "stage": "Validation",
-            "status": "reported passing",
-            "evidence": "Closeout summary reports 326 runner, 14 artifact, 13 synthetic bridge cases and CI checks."
-          },
-          {
-            "stage": "Implementation closeout",
-            "status": "verified merged",
-            "evidence": "PR #134 merged at 6ce61c8."
-          },
-          {
-            "stage": "Independent acceptance",
-            "status": "not established",
-            "evidence": "No independent PASS receipt inspected."
-          },
-          {
-            "stage": "Recovery apply and teardown",
-            "status": "unknown",
-            "evidence": "No host evidence or protected recovery authorization inspected."
-          }
-        ],
-        "notes": [
-          "CI combined status returned no checks; do not infer green or red.",
-          "The private pilot pointer is stale as of November 8."
-        ],
-        "unknowns": [
-          "Live dispatcher counts, worker claims, locks, worktrees, disk, and cleanup.",
-          "Independent review acceptance and any recovery execution."
-        ],
-        "actions": [
-          "Designated independent reviewer: review merged implementation and issue an evidence-backed disposition.",
-          "Protected recovery owner: await separate authorization and exact-run evidence gates before any application."
-        ]
-      },
-      "related": [
-        {
-          "title": "Findings recovery bridge reaches reviewable PR",
-          "context": "Earlier coverage described the implementation before its merge.",
-          "story_id": "findings-recovery-implementation-pr133-a4e9dbc8"
-        }
-      ],
-      "scorecard": {
-        "stage": "Implementation landed and archived; awaiting independent review",
-        "as_of": "2026-11-10T11:49:09Z",
-        "scope": "Named findings artifact recovery workstream only",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Recovery packet pair landed",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "PR #132."
-          },
-          {
-            "label": "Recovery implementation merged",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "PR #133."
-          },
-          {
-            "label": "Implementation closeout merged",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "PR #134."
-          },
-          {
-            "label": "Independent review acceptance",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No independent PASS inspected."
-          },
-          {
-            "label": "Separately authorized exact-run recovery",
-            "status": "blocked",
-            "verification": "unknown",
-            "evidence": "Requires separate authorization and verified evidence."
-          },
-          {
-            "label": "Canonical teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No host evidence."
-          }
-        ],
-        "next_gate": "Designated independent reviewer must inspect merged bridge and issue an authentic disposition."
       }
     }
   ],
