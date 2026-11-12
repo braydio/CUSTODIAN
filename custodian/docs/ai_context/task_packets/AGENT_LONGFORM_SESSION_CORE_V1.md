@@ -8,13 +8,13 @@
 - Depends on: none
 - Locks: agent-workflow
 - Kind: implementation
-- Review: auto
+- Review: `none`
 - Review stage: post-land
-- Review modes: workflow, code, architecture
-- Paired review workstream: review-agent-longform-session-core-v1
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: 0
 - Max automatic review cycles: 2
-- Review rationale: longform execution safety demands independent falsification
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: 0475b31eb030617aaacba972f0549a2798af3146
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc5e5e-018c-83ea-8617-ec4c15de7d62
 - Visual review: none

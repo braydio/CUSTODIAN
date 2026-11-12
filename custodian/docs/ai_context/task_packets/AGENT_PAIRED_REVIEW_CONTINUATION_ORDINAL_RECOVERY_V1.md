@@ -10,13 +10,13 @@
 - Depends on: none
 - Locks: paired-review-continuation-ordinal-recovery
 - Kind: implementation
-- Review: auto
+- Review: `none`
 - Review stage: post-land
-- Review modes: code, architecture, workflow
-- Paired review workstream: review-agent-paired-review-continuation-ordinal-recovery-v1
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: 0
 - Max automatic review cycles: 2
-- Review rationale: Exact-run reviewer provenance reconstruction is security-sensitive; independent review must validate the evidence boundary and adversarial rejection behavior.
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: 461cf501ca467e5492426f8e402d68c018d28da2
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae98bea-2dfc-83e8-a5ff-863e52d79ac0
 - Visual review: none

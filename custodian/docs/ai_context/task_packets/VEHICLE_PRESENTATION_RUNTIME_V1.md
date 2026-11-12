@@ -6,16 +6,16 @@
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P1`
-- Depends on: `review-vehicle-presentation-contract-v1`
+- Depends on: `vehicle-presentation-contract-v1`
 - Locks: `vehicle-presentation-runtime, vehicle-runtime`
 - Kind: `implementation`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, architecture, runtime`
-- Paired review workstream: `review-vehicle-presentation-runtime-v1`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `substantial reusable vehicle architecture and production pipeline change`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `ad846c21ef7f3d41cb437a9042555e907c3a2a63`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b`
 - Visual review: `none`

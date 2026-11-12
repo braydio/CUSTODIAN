@@ -5,16 +5,16 @@
 - Status: ready
 - Dispatch: auto
 - Priority: P1
-- Depends on: review-agent-orphan-recovery-observability-v1
+- Depends on: `agent-orphan-recovery-observability-v1`
 - Locks: agent-workflow
 - Kind: implementation
-- Review: auto
+- Review: `none`
 - Review stage: post-land
-- Review modes: code, architecture, workflow
-- Paired review workstream: review-agent-orphan-recovery-fenced-parking-v1
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: 0
 - Max automatic review cycles: 2
-- Review rationale: remote cross-clone claim fencing, dirty-work preservation and reviewer outcome correctness are safety-critical
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: 58934945d0e97020f8caffe078e865eb94409ced
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6adb61f3-35fc-83ea-87ed-ba961c7b5925
 - Visual review: none

@@ -22,7 +22,7 @@ class ReviewContractTests(unittest.TestCase):
         task_template = (root / "custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md").read_text()
         review_template = (root / "custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md").read_text()
         correction_template = (root / "custodian/docs/ai_context/AGENT_CORRECTION_PACKET_TEMPLATE.md").read_text()
-        self.assertIn("- Review: `auto`", task_template)
+        self.assertIn("- Review: `none`", task_template)
         self.assertIn("- Review stage: `post-land`", task_template)
         self.assertIn("- Review modes:", task_template)
         self.assertIn("- Paired review workstream:", task_template)

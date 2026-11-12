@@ -5,16 +5,16 @@
 - Status: `draft`
 - Dispatch: `manual`
 - Priority: `P1`
-- Depends on: `review-ash-bell-highlands-generated-destination`
+- Depends on: `ash-bell-highlands-generated-destination`
 - Locks: `ritualant-underground-route, ritualant-camera-presentation`
 - Kind: `implementation`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, runtime, visual`
-- Paired review workstream: `review-ritualant-north-egress-and-chapel-vista`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `substantial engineering default`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `435c422d6cb5`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac57cd9-e070-83ea-b432-7bc0082aef7c
 - Visual review: `conditional`

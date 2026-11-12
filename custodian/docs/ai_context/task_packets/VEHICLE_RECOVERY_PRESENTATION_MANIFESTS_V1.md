@@ -5,16 +5,16 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `review-vehicle-field-scout-buggy-asset-v2`
+- Depends on: `vehicle-field-scout-buggy-asset-v2`
 - Locks: `asset-pipeline-vehicle, vehicle-recovery-presentation`
 - Kind: `implementation`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `asset-pipeline, architecture, code`
-- Paired review workstream: `review-vehicle-recovery-presentation-manifests-v1`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `new shared Asset V2 families and required-asset truth consumed by the recovery loop`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `ce07a578c39bad0b4eacf8bb02ee09eb59241801`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b`
 - Visual review: `none`

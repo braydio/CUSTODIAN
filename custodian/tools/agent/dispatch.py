@@ -249,8 +249,14 @@ def _decision(
 ) -> tuple[bool, str | None]:
     if packet.error:
         return False, f"invalid packet metadata: {packet.error}"
-    if pairing_errors and packet.workstream in pairing_errors:
+    # Paired review retired 2026-11-12: pairing_errors is advisory only for
+    # implementation/correction packets and must never make one ineligible.
+    # The one exception is a `Kind: review` packet itself: its pairing
+    # error is the bounded-override safety bound on what a review may
+    # mutate, so a review packet with a pairing error still cannot claim.
+    if pairing_errors and packet.workstream in pairing_errors and packet.kind == "review":
         return False, f"invalid review pairing: {pairing_errors[packet.workstream]}"
+    _ = pairing_errors
     if validation_errors and packet.workstream in validation_errors:
         return False, f"invalid validation references: {validation_errors[packet.workstream]}"
     if queue_errors and packet.workstream in queue_errors:
@@ -550,8 +556,10 @@ def audit(repo: Path, *, as_json: bool = False) -> dict:
             owner_exceptions=owner_exceptions,
         )
         reasons = []
+        # Paired review retired 2026-11-12: pairing mismatches are advisory
+        # only and are reported in `pairing_advisory`, never in `reasons`
+        # and never as invalid_recovery.
         for error_map, label in (
-            (pairing_errors, "invalid review pairing"),
             (validation_errors, "invalid validation references"),
             (queue_errors, "invalid queue contract"),
         ):
@@ -589,7 +597,7 @@ def audit(repo: Path, *, as_json: bool = False) -> dict:
             actual_class = "legacy_quarantined"
         elif packet.workstream in claimed:
             actual_class = "claimed"
-        elif packet.error or packet.workstream in pairing_errors or packet.workstream in validation_errors or packet.workstream in queue_errors or active_counts.get(packet.workstream, 0) > 1 or packet.workstream in interrupted_claims:
+        elif packet.error or packet.workstream in validation_errors or packet.workstream in queue_errors or active_counts.get(packet.workstream, 0) > 1 or packet.workstream in interrupted_claims or (packet.kind == "review" and packet.workstream in pairing_errors):
             actual_class = "invalid_recovery"
         elif packet.status == "draft":
             actual_class = "parked_draft" if packet.dispatch == "manual" else "invalid_recovery"
@@ -621,6 +629,7 @@ def audit(repo: Path, *, as_json: bool = False) -> dict:
             "eligible_now": ok,
             "claim_next_eligible": auto_ok,
             "reasons": sorted(set(reasons)),
+            "pairing_advisory": pairing_errors.get(packet.workstream),
             "dependencies": list(packet.dependencies),
             "paired_review_workstream": packet.paired_review_workstream,
             "review_target_workstream": packet.review_target_workstream,
@@ -642,7 +651,7 @@ def audit(repo: Path, *, as_json: bool = False) -> dict:
             "recovery_disposition": None,
         })
     raw_active = len(packets)
-    managed = sum(not p.error and p.workstream not in queue_errors and p.workstream not in pairing_errors and p.workstream not in validation_errors for p in packets)
+    managed = sum(not p.error and p.workstream not in queue_errors and p.workstream not in validation_errors for p in packets)
     active_ids = {p.workstream for p in packets if p.workstream}
     archived_complete_ids = {p.workstream for p in archived if p.workstream and not p.error and p.status == "complete"}
     worktrees: dict[str, str] = {}
@@ -789,7 +798,7 @@ def _legacy_claim_diagnostics(
                         raise DispatchError(
                             f"packet for workstream {workstream_id} does not exist on origin/main. "
                             "If the packet is only local or on an unmerged authoring branch, "
-                            "first validate the implementation/review pair with "
+                            "first validate the implementation packet with "
                             "custodian/tools/agent/validate_task_packet_authoring.py, "
                             "promote only if authorized, update the managed index using "
                             "custodian/tools/agent/task_packet_index.py --write, "

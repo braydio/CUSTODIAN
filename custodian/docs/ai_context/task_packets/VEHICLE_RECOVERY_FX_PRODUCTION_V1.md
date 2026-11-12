@@ -6,16 +6,16 @@
 - Dispatch: `manual`
 - Authoring handoff: `auto`
 - Priority: `P1`
-- Depends on: `review-vehicle-recovery-presentation-manifests-v1`
+- Depends on: `vehicle-recovery-presentation-manifests-v1`
 - Locks: `asset-pipeline-effect, vehicle-recovery-presentation, vehicle-restoration-runtime, operator-vehicle-scanner`
 - Kind: `implementation`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, architecture, runtime, asset-pipeline`
-- Paired review workstream: `review-vehicle-recovery-fx-production-v1`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `production Asset V2 normalization plus cross-system runtime presentation wiring should receive an independent acceptance pass`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `f12717e61213d7d30ae6b3e670d45e71507cd784`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b`
 - Visual review: `none`

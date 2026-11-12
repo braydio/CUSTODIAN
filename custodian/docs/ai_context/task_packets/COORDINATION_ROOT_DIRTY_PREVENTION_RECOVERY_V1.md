@@ -9,13 +9,13 @@
 - Priority: `P0`
 - Depends on: `none`
 - Locks: `agent-workflow, coordination-root-hygiene`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, architecture, workflow`
-- Paired review workstream: `review-coordination-root-dirty-prevention-recovery-v1`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `introduces filesystem mutation guard and optional preservation/recovery flow around user-owned checkout; independent race/destructive-path falsification required`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `0c162bdde9de7baa177cc592f0df9c0e426c787e`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6adb61f3-35fc-83ea-87ed-ba961c7b5925`
 - Visual review: `none`

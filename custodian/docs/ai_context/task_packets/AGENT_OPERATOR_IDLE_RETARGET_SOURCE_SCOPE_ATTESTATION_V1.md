@@ -8,13 +8,13 @@
 - Depends on: `none`
 - Locks: `paired-review-source-provenance`
 - Kind: `correction`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, architecture, workflow`
-- Paired review workstream: `review-agent-operator-idle-retarget-source-scope-attestation-v1`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `An exact historical source authorization gates a preserved independent review; accidental broadening would bypass source ownership validation.`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `ea1249ce7059487efe3b61aff0999f18c948ba02`
 - Authoring chat: https://chatgpt.com/g/g-p-6add1d40fb9c81918972e72d33e8d286-custodian-assets/c/6ae05096-99b0-83ea-bcbd-3720e795052f
 - Visual review: `none`

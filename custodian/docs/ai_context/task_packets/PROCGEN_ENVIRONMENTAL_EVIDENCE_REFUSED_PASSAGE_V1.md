@@ -7,15 +7,15 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `review-procgen-environmental-evidence-v1`
+- Depends on: `procgen-environmental-evidence-v1`
 - Locks: `procgen-runtime`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, architecture, runtime`
-- Paired review workstream: `review-procgen-environmental-evidence-refused-passage-v1`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `New physical blocking props, deterministic procgen selection, two native interactions, and streaming lifecycle need independent route/collision/prompt proof.`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `eb4de63498ef13eacc86022613bfa35f825d8b7f`
 - Authoring chat: `https://chatgpt.com/share/6ae08da1-832c-83ea-8ea3-db1d47ac0576?ogimg=plain`
 - Visual review: `conditional`

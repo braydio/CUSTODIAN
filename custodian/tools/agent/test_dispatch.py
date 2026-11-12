@@ -378,16 +378,18 @@ class DispatchTests(unittest.TestCase):
         rendered = dispatch.status(self.repo, output=False)
         invalid = rendered.split("INVALID/RECOVERY (", 1)[1].split("PARKED DRAFT (", 1)[0]
         manual = rendered.split("MANUAL READY (", 1)[1].split("PARKED DRAFT (", 1)[0]
-        self.assertIn("manual-bad-pair", invalid)
-        self.assertIn("invalid review pairing", invalid)
+        # Paired review retired 2026-11-12: a pairing mismatch no longer
+        # makes an implementation invalid, so manual-bad-pair is manual-ready.
+        # The review packet itself is still invalid for its missing
+        # dependency identity (other-task), and manual-bad-validation is
+        # still invalid for its missing validation script.
+        self.assertIn("manual-bad-pair", manual)
+        self.assertNotIn("invalid review pairing", rendered)
         self.assertIn("manual-bad-validation", invalid)
         self.assertIn("invalid validation references", invalid)
         self.assertIn("manual-good", manual)
-        self.assertNotIn("manual-bad-pair", manual)
         self.assertNotIn("manual-bad-validation", manual)
 
-        with self.assertRaisesRegex(dispatch.DispatchError, "invalid review pairing"):
-            dispatch._legacy_claim_diagnostics(self.repo, "manual-bad-pair", "codex", False)
         with self.assertRaisesRegex(dispatch.DispatchError, "invalid validation references"):
             dispatch._legacy_claim_diagnostics(self.repo, "manual-bad-validation", "codex", False)
 
@@ -1430,14 +1432,16 @@ class DispatchTests(unittest.TestCase):
         self.assertEqual(dispatch.validate_review_pairing(packets), {})
         self.assertIn("manual-review-task", dispatch.status(self.repo, output=False).split("READY (", 1)[1])
 
-    def test_review_auto_requires_paired_review_declaration(self):
+    def test_review_auto_no_longer_requires_paired_review_declaration(self):
+        # Paired review retired 2026-11-12: an unpaired Review: auto packet
+        # parses cleanly and is claim-eligible; pairing is advisory only.
         self.add_packet("unpaired-auto", dispatch_value="auto", review="auto")
         packets = dispatch._packets(self.repo)
         p = next(p for p in packets if p.workstream == "unpaired-auto")
-        self.assertIn("Review: auto requires a Paired review workstream", p.error)
+        self.assertIsNone(p.error)
         rendered = dispatch.status(self.repo, output=False)
         ready_section = rendered.split("READY (", 1)[1].split("CLAIMED (", 1)[0]
-        self.assertNotIn("unpaired-auto", ready_section)
+        self.assertIn("unpaired-auto", ready_section)
 
     def test_paired_review_must_declare_kind_review(self):
         self.add_packet("impl-a", dispatch_value="auto", review="auto", paired_review_workstream="review-impl-a")
@@ -1482,9 +1486,11 @@ class DispatchTests(unittest.TestCase):
         message = errors.get("impl-ready", "")
         self.assertIn("must declare Status: ready", message)
         self.assertIn("must declare Dispatch: auto", message)
+        # Paired review retired 2026-11-12: the pairing diagnostic still
+        # reports the mismatch, but it no longer blocks the implementation.
         rendered = dispatch.status(self.repo, output=False)
-        self.assertIn("invalid review pairing", rendered)
-        self.assertNotIn("impl-ready", rendered.split("READY (", 1)[1].split("CLAIMED (", 1)[0])
+        self.assertNotIn("invalid review pairing", rendered)
+        self.assertIn("impl-ready", rendered.split("READY (", 1)[1].split("CLAIMED (", 1)[0])
 
     def test_paired_review_target_packet_must_be_exact_canonical_archive_path(self):
         self.add_packet("impl-target", dispatch_value="auto", review="auto", paired_review_workstream="review-impl-target")
@@ -1498,8 +1504,11 @@ class DispatchTests(unittest.TestCase):
             f"Review target packet must be '{archived_target('impl-target')}'",
             errors.get("impl-target", ""),
         )
+        # Paired review retired 2026-11-12: the pairing diagnostic still
+        # reports the mismatch, but it no longer blocks the implementation.
         rendered = dispatch.status(self.repo, output=False)
-        self.assertIn("invalid review pairing", rendered)
+        self.assertNotIn("invalid review pairing", rendered)
+        self.assertIn("impl-target", rendered.split("READY (", 1)[1].split("CLAIMED (", 1)[0])
 
     def test_paired_review_missing_target_packet_fails_closed(self):
         self.add_packet("impl-no-target", dispatch_value="auto", review="auto", paired_review_workstream="review-impl-no-target")
@@ -1706,11 +1715,16 @@ class DispatchTests(unittest.TestCase):
         self.assertTrue(dispatch.review_cycle_exhausted(packets["review-impl-j-review-corrections-2"]))
         self.assertFalse(dispatch.review_cycle_exhausted(packets["review-impl-k"]))
 
-    def test_invalid_review_pairing_blocks_explicit_claim_until_fixed(self):
-        path = self.add_packet("impl-guarded", dispatch_value="auto", review="auto")
-        with self.assertRaisesRegex(dispatch.DispatchError, "Review: auto requires a Paired review workstream"):
-            dispatch._legacy_claim_diagnostics(self.repo, "impl-guarded", "codex", False)
+    def test_unpaired_review_auto_no_longer_blocks_explicit_claim(self):
+        # Paired review retired 2026-11-12: an unpaired Review: auto packet
+        # is claim-eligible without a paired review. The paired version
+        # below still claims as before.
+        self.add_packet("impl-guarded", dispatch_value="auto", review="auto")
+        rendered = dispatch.status(self.repo, output=False)
+        self.assertIn("impl-guarded", rendered.split("READY (", 1)[1].split("CLAIMED (", 1)[0])
 
+        # Re-author the same packet with a paired review declared.
+        path = Path(self.repo) / "custodian/docs/ai_context/task_packets/IMPL_GUARDED.md"
         path.write_text(packet(
             "impl-guarded", dispatch_value="auto", review="auto",
             paired_review_workstream="review-impl-guarded",

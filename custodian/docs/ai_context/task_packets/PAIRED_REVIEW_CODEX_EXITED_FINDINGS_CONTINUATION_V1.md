@@ -9,13 +9,13 @@
 - Depends on: `agent-paired-review-procession-pass-closeout-recovery-v1`
 - Locks: `paired-review-codex-exited-findings-continuation`
 - Kind: `implementation`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, architecture`
-- Paired review workstream: `review-agent-paired-review-codex-exited-findings-continuation-v1`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `substantial engineering default`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `f06dd8943efe168937a552418a66a5561b59dc84`
 - Authoring chat: `not-recorded`
 - Visual review: `none`

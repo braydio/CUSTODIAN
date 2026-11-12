@@ -6,15 +6,15 @@
 - Status: `draft`
 - Dispatch: `manual`
 - Priority: `P2`
-- Depends on: `review-rope-cloth-preset-workbench-v1`
+- Depends on: `rope-cloth-preset-workbench-v1`
 - Locks: `rope-cloth-world-integration, world-presentation`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, architecture, runtime`
-- Paired review workstream: `review-rope-cloth-world-presentation-v1`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: The reusable library boundary and source/geometry invariants require fresh-context independent falsification.
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `ebfe3810eec146d7202a4378324b0f32c9e12fee`
 - Authoring chat: `not-recorded`
 - Visual review: `required`

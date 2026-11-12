@@ -6,15 +6,15 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P0`
-- Depends on: `review-mapper-source-write-safety-v1, review-carrow-mapper-transactional-editing-v1`
+- Depends on: `mapper-source-write-safety-v1, carrow-mapper-transactional-editing-v1`
 - Locks: `authored-level, carrow-yard-route`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, architecture, runtime, workflow`
-- Paired review workstream: `review-mapper-canvas-navigation-v1`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `substantial authoring-tool/data integrity change`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `0bcd4c2455ff1ba7993b6891b98e0101ea23aab8`
 - Authoring chat: `not-recorded`
 - Visual review: `none`

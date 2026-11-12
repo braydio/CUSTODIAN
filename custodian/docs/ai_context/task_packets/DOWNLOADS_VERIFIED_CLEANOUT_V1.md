@@ -5,16 +5,16 @@
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P1`
-- Depends on: `review-downloads-asset-reconciliation-v1, review-dropbox-asset-lifecycle-reconciler-v1`
+- Depends on: `downloads-asset-reconciliation-v1, dropbox-asset-lifecycle-reconciler-v1`
 - Locks: `downloads-housekeeping, dropbox-handoff`
 - Kind: `implementation`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `asset-pipeline, workflow, code`
-- Paired review workstream: `review-downloads-verified-cleanout-v1`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `destructive local cleanup requires independent evidence and non-overlapping lifecycle ownership`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `48646ce06a630d8d524353df6d335d53fbef1747`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acb367f-4ca0-83e8-a226-31a3ae38da20
 - Visual review: `none`

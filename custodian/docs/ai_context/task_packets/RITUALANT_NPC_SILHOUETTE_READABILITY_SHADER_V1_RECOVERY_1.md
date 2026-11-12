@@ -10,13 +10,13 @@
 - Depends on: `none`
 - Locks: `ritualant-npc-presentation`
 - Kind: `implementation`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, runtime, visual`
-- Paired review workstream: `review-ritualant-npc-silhouette-readability-shader-v1-recovery-1`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `shader and alpha-compositing correctness with human-owned visual acceptance`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `392639adcf96fbfc9db591b4fc09ba462fb7906c`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae7eb07-c554-83e9-911a-1335e640e4d0
 - Visual review: `required`

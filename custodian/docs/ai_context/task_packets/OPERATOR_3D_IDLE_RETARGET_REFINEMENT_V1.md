@@ -5,16 +5,16 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: P1
-- Depends on: `review-operator-3d-neutral-idle-retarget-fix-v1`
+- Depends on: `operator-3d-neutral-idle-retarget-fix-v1`
 - Locks: `operator-3d-animation-pipeline`
 - Kind: `implementation`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, asset-pipeline, workflow`
-- Paired review workstream: `review-operator-3d-neutral-idle-retarget-refinement-v1`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `Reusable anatomical coordinate mapping changes motion math and contact validation; independent technical review is warranted. Subjective idle selection remains human-owned.`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `fc307761111317c218bf39fd7e2c65d53ff118c5`
 - Authoring chat: https://chatgpt.com/g/g-p-6add1d40fb9c81918972e72d33e8d286-custodian-assets/c/6ae05096-99b0-83ea-bcbd-3720e795052f
 - Visual review: `required`
