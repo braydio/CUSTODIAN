@@ -15564,5 +15564,27 @@
       "128px canonical Operator in-game comparison, no obstructed routes or unexpected overdraw, no DL0/AP ownership violations",
       "Optional extras are supplemental only; core completeness does not depend on them"
     ]
+  },
+  "runtime_installation_workflow_v1": {
+    "status": "first_capture_and_collector_slice_proposed_requires_godot_review",
+    "design_spec": "design/02_features/debug_ui/ART_FIELD_NOTES_V1.md",
+    "human_source_approval": "required_per_asset_before_source_work_or_runtime_binding",
+    "candidate_only_staging": "never_counts_as_source_approval",
+    "operator_flag_trigger": "I_in_explicit_DevMode_session",
+    "flag_folder": "user://art_inspector/flags/",
+    "flag_collector": "custodian/tools/art/collect_art_flags.py",
+    "incremental_order": [
+      "capture_read_only_evidence",
+      "classify_scene_and_geometry",
+      "resolve_exact_asset_id_and_consumer",
+      "verify_human_approval_receipt_and_source_sha256",
+      "stage_immutable_source_and_normalize",
+      "asset_v2_plan_doctor_ingest",
+      "bind_scoped_consumer_with_geometry_gates",
+      "validate_in_game_and_close_flag"
+    ],
+    "runtime_write_authorization": "separate_reviewed_task_required",
+    "scope": "no_generation_no_approval_no_auto_placement_no_gameplay_changes",
+    "observatory_compatibility": "F9_F10_F11_are_unchanged"
   }
 }
