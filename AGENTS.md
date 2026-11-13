@@ -9,6 +9,10 @@
 > policy. The acceptance gate is focused validation plus the owner's review
 > of the landed change.
 
+Shared tooling and architecture problems outside your workstream are recorded, not fixed
+inline: see `custodian/docs/ai_context/ARCH_DEBT_POLICY.md` and the register at
+`custodian/docs/ai_context/debt/REGISTER.md`.
+
 This repository contains multiple eras of the project. For all active Godot work under `custodian/`, the mandatory local authority and workflow primer is:
 
 1. `custodian/AGENTS.md`

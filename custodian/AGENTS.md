@@ -328,6 +328,18 @@ ordinary edit/test loop.
 See `docs/ai_context/VALIDATION_RECIPES.md` for concrete command sequencing and
 resource checks.
 
+## Architecture And Tooling Debt
+
+Shared tooling or architecture problems outside your workstream do not stop your work.
+Follow `docs/ai_context/ARCH_DEBT_POLICY.md`: apply a safe workaround, keep going, and
+record a `docs/ai_context/debt/DEBT-NNNN-<slug>.md` item on your branch. Check
+`docs/ai_context/debt/REGISTER.md` first so you cite an existing item instead of
+duplicating it, and mention the ID in your closing summary.
+
+Do not fix shared lifecycle, guard or dispatcher code from an unrelated workstream, and
+do not open claims, fix packets or reviews for debt items. Stop only when the problem
+makes your own result unsafe or unverifiable; report that as a blocker, not as debt.
+
 ## Reusable Context Fetch Pipeline
 
 Before editing, run this retrieval pipeline:
