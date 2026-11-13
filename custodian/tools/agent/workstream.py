@@ -4381,6 +4381,7 @@ def main() -> int:
     p = subs.add_parser("recover-initial-checkout"); p.add_argument("workstream_id"); p.add_argument("--run-id", required=True); p.add_argument("--profile", required=True)
     mode = p.add_mutually_exclusive_group(required=True); mode.add_argument("--plan", action="store_true"); mode.add_argument("--apply", action="store_true"); p.add_argument("--plan-sha256", default=None)
     p = subs.add_parser("status"); p.add_argument("workstream_id", nargs="?")
+    p = subs.add_parser("reauthorize"); p.add_argument("workstream_id"); p.add_argument("--checkout", type=Path, required=True); p.add_argument("--repo", type=Path, default=None); p.add_argument("--pool", type=Path, default=Path.home() / "Projects/.custodian-turns")
     p = subs.add_parser("checkpoint"); p.add_argument("workstream_id"); p.add_argument("--checkout", type=Path, default=Path.cwd()); p.add_argument("--handoff", type=Path, default=None); p.add_argument("--repo", type=Path, default=None); p.add_argument("--pool", type=Path, default=Path.home() / "Projects/.custodian-turns"); p.add_argument("--keep", action="store_true")
     p = subs.add_parser("finish"); p.add_argument("workstream_id"); p.add_argument("--validation-report", type=Path); p.add_argument("--validation-report-after-sync", type=Path); p.add_argument("--pool", type=Path, default=Path.home() / "Projects/.custodian-turns")
     p.add_argument("--defer-root-sync", action="store_true",
@@ -4402,6 +4403,12 @@ def main() -> int:
                                    getattr(args, "authorization_url", None),
                                    getattr(args, "authorization_sha256", None), args.checkout_profile)
             print(json.dumps({"schema": "custodian.turn_dispatcher_v2.acquisition.v1", **result}, sort_keys=True, indent=2))
+        elif args.command == "reauthorize":
+            import turn_dispatcher_v2 as turn_v2
+            coordination_repo = (args.repo or root_repo()).resolve()
+            result = turn_v2.reauthorize_checkout(coordination_repo, args.workstream_id,
+                                                 args.checkout, args.pool)
+            print(json.dumps(result, sort_keys=True, indent=2))
         elif args.command == "checkpoint":
             import turn_dispatcher_v2 as turn_v2
             coordination_repo = (args.repo or root_repo()).resolve()
