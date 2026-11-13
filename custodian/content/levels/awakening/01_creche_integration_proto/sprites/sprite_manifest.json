@@ -1,0 +1,380 @@
+[
+  {
+    "socket": "SOUTH_DOOR_ARCH",
+    "sprite": "SOUTH_DOOR_ARCH.png",
+    "source_glb": "Nameless_Creche_05_Door_Archway_01.glb",
+    "source_sha256": "16a82280956d4bfd329c0e4a8acac67b4f49c2180a0c6d9ce7134416abad400c",
+    "translation_m": [
+      0.0088,
+      -8.7876,
+      2.0738
+    ],
+    "uniform_scale": 2.0776,
+    "repeat_count": 1,
+    "depth_order": 0
+  },
+  {
+    "socket": "SOUTH_DOOR_LEAF",
+    "sprite": "SOUTH_DOOR_LEAF.png",
+    "source_glb": "Nameless_Creche_06_Door_Body_01.glb",
+    "source_sha256": "5cfeef5ee7638486d3c7ae9275d4770962687ba74e1f4fe64aeb819d10dcf2c2",
+    "translation_m": [
+      0.0048,
+      -8.7247,
+      1.1901
+    ],
+    "uniform_scale": 1.19236,
+    "repeat_count": 1,
+    "depth_order": 1
+  },
+  {
+    "socket": "SOUTH_CROWN_TRIM",
+    "sprite": "SOUTH_CROWN_TRIM.png",
+    "source_glb": "Nameless_Creche_08_Stone_Crown_Moulding.glb",
+    "source_sha256": "a709eeb3491db1e1749f16a00e3b6f8634f933a9c3748de6b106935e9e107cc9",
+    "translation_m": [
+      0.0025,
+      -8.7024,
+      4.6693
+    ],
+    "uniform_scale": 0.6255,
+    "repeat_count": 21,
+    "depth_order": 2
+  },
+  {
+    "socket": "SOUTH_PIER_SKIN_01",
+    "sprite": "SOUTH_PIER_SKIN_01.png",
+    "source_glb": "Nameless_Creche_01_Thick_Column_01.glb",
+    "source_sha256": "a77d052ec72ad96522333ea4c58e033f85824eada1efb1c7a0165376ac9504f8",
+    "translation_m": [
+      -9.3711,
+      -8.354,
+      0.7974
+    ],
+    "uniform_scale": 0.7985,
+    "repeat_count": 4,
+    "depth_order": 3
+  },
+  {
+    "socket": "SOUTH_PIER_SKIN_02",
+    "sprite": "SOUTH_PIER_SKIN_02.png",
+    "source_glb": "Nameless_Creche_01_Thick_Column_01.glb",
+    "source_sha256": "a77d052ec72ad96522333ea4c58e033f85824eada1efb1c7a0165376ac9504f8",
+    "translation_m": [
+      -3.8086,
+      -8.354,
+      0.7974
+    ],
+    "uniform_scale": 0.7985,
+    "repeat_count": 4,
+    "depth_order": 4
+  },
+  {
+    "socket": "SOUTH_PIER_SKIN_03",
+    "sprite": "SOUTH_PIER_SKIN_03.png",
+    "source_glb": "Nameless_Creche_01_Thick_Column_01.glb",
+    "source_sha256": "a77d052ec72ad96522333ea4c58e033f85824eada1efb1c7a0165376ac9504f8",
+    "translation_m": [
+      3.8164,
+      -8.354,
+      0.7974
+    ],
+    "uniform_scale": 0.7985,
+    "repeat_count": 4,
+    "depth_order": 5
+  },
+  {
+    "socket": "SOUTH_PIER_SKIN_04",
+    "sprite": "SOUTH_PIER_SKIN_04.png",
+    "source_glb": "Nameless_Creche_01_Thick_Column_01.glb",
+    "source_sha256": "a77d052ec72ad96522333ea4c58e033f85824eada1efb1c7a0165376ac9504f8",
+    "translation_m": [
+      9.3476,
+      -8.354,
+      0.7974
+    ],
+    "uniform_scale": 0.7985,
+    "repeat_count": 4,
+    "depth_order": 6
+  },
+  {
+    "socket": "WEST_PIER_SKIN_03",
+    "sprite": "WEST_PIER_SKIN_03.png",
+    "source_glb": "Nameless_Creche_03_Column_01.glb",
+    "source_sha256": "5ac8eacb74d545178eac84982f3da46cf3df6acf5bbf90bf43f4c7e3f6f59963",
+    "translation_m": [
+      -13.0716,
+      -7.9146,
+      2.1537
+    ],
+    "uniform_scale": 2.15841,
+    "repeat_count": 2,
+    "depth_order": 7
+  },
+  {
+    "socket": "EAST_PIER_SKIN_03",
+    "sprite": "EAST_PIER_SKIN_03.png",
+    "source_glb": "Nameless_Creche_03_Column_01.glb",
+    "source_sha256": "5ac8eacb74d545178eac84982f3da46cf3df6acf5bbf90bf43f4c7e3f6f59963",
+    "translation_m": [
+      13.0884,
+      -7.9146,
+      2.1537
+    ],
+    "uniform_scale": 2.15841,
+    "repeat_count": 2,
+    "depth_order": 8
+  },
+  {
+    "socket": "RUBBLE_W_S",
+    "sprite": "RUBBLE_W_S.png",
+    "source_glb": "Nameless_Creche_02_Stone_Rubble_01.glb",
+    "source_sha256": "fb31eb13b437afd2b2b039845d24cefcf3c4a480da20aa3090222284085c17d5",
+    "translation_m": [
+      -11.6425,
+      -7.1553,
+      0.3241
+    ],
+    "uniform_scale": 0.75781,
+    "repeat_count": 1,
+    "depth_order": 9
+  },
+  {
+    "socket": "RUBBLE_E_S",
+    "sprite": "RUBBLE_E_S.png",
+    "source_glb": "Nameless_Creche_02_Stone_Rubble_01.glb",
+    "source_sha256": "fb31eb13b437afd2b2b039845d24cefcf3c4a480da20aa3090222284085c17d5",
+    "translation_m": [
+      11.6575,
+      -7.1553,
+      0.3241
+    ],
+    "uniform_scale": 0.75781,
+    "repeat_count": 1,
+    "depth_order": 10
+  },
+  {
+    "socket": "WEST_PIER_SKIN_02",
+    "sprite": "WEST_PIER_SKIN_02.png",
+    "source_glb": "Nameless_Creche_03_Column_01.glb",
+    "source_sha256": "5ac8eacb74d545178eac84982f3da46cf3df6acf5bbf90bf43f4c7e3f6f59963",
+    "translation_m": [
+      -13.0716,
+      -4.2271,
+      2.1537
+    ],
+    "uniform_scale": 2.15841,
+    "repeat_count": 2,
+    "depth_order": 11
+  },
+  {
+    "socket": "EAST_PIER_SKIN_02",
+    "sprite": "EAST_PIER_SKIN_02.png",
+    "source_glb": "Nameless_Creche_03_Column_01.glb",
+    "source_sha256": "5ac8eacb74d545178eac84982f3da46cf3df6acf5bbf90bf43f4c7e3f6f59963",
+    "translation_m": [
+      13.0884,
+      -4.2271,
+      2.1537
+    ],
+    "uniform_scale": 2.15841,
+    "repeat_count": 2,
+    "depth_order": 12
+  },
+  {
+    "socket": "WEST_PIER_SKIN_01",
+    "sprite": "WEST_PIER_SKIN_01.png",
+    "source_glb": "Nameless_Creche_03_Column_01.glb",
+    "source_sha256": "5ac8eacb74d545178eac84982f3da46cf3df6acf5bbf90bf43f4c7e3f6f59963",
+    "translation_m": [
+      -13.0716,
+      0.5229,
+      2.1537
+    ],
+    "uniform_scale": 2.15841,
+    "repeat_count": 2,
+    "depth_order": 13
+  },
+  {
+    "socket": "EAST_PIER_SKIN_01",
+    "sprite": "EAST_PIER_SKIN_01.png",
+    "source_glb": "Nameless_Creche_03_Column_01.glb",
+    "source_sha256": "5ac8eacb74d545178eac84982f3da46cf3df6acf5bbf90bf43f4c7e3f6f59963",
+    "translation_m": [
+      13.0884,
+      0.5229,
+      2.1537
+    ],
+    "uniform_scale": 2.15841,
+    "repeat_count": 2,
+    "depth_order": 14
+  },
+  {
+    "socket": "RUBBLE_W_N",
+    "sprite": "RUBBLE_W_N.png",
+    "source_glb": "Nameless_Creche_02_Stone_Rubble_01.glb",
+    "source_sha256": "fb31eb13b437afd2b2b039845d24cefcf3c4a480da20aa3090222284085c17d5",
+    "translation_m": [
+      -11.6425,
+      2.6947,
+      0.3241
+    ],
+    "uniform_scale": 0.75781,
+    "repeat_count": 1,
+    "depth_order": 15
+  },
+  {
+    "socket": "RUBBLE_E_N",
+    "sprite": "RUBBLE_E_N.png",
+    "source_glb": "Nameless_Creche_02_Stone_Rubble_01.glb",
+    "source_sha256": "fb31eb13b437afd2b2b039845d24cefcf3c4a480da20aa3090222284085c17d5",
+    "translation_m": [
+      11.6575,
+      2.6947,
+      0.3241
+    ],
+    "uniform_scale": 0.75781,
+    "repeat_count": 1,
+    "depth_order": 16
+  },
+  {
+    "socket": "NORTH_SLEEP_ALCOVE_01",
+    "sprite": "NORTH_SLEEP_ALCOVE_01.png",
+    "source_glb": "Nameless_Creche_09_Wall_Creche_01_Simple.glb",
+    "source_sha256": "5a631c0f8845ae5ac6e805f488561b84e0e9df36ce3c37fca849bdbd1f37f496",
+    "translation_m": [
+      -11.7418,
+      3.9304,
+      2.5574
+    ],
+    "uniform_scale": 1.78585,
+    "repeat_count": 1,
+    "depth_order": 17
+  },
+  {
+    "socket": "NORTH_SLEEP_ALCOVE_02",
+    "sprite": "NORTH_SLEEP_ALCOVE_02.png",
+    "source_glb": "Nameless_Creche_09_Wall_Creche_01_Simple.glb",
+    "source_sha256": "5a631c0f8845ae5ac6e805f488561b84e0e9df36ce3c37fca849bdbd1f37f496",
+    "translation_m": [
+      -6.8668,
+      3.9304,
+      2.5574
+    ],
+    "uniform_scale": 1.78585,
+    "repeat_count": 1,
+    "depth_order": 18
+  },
+  {
+    "socket": "NORTH_SLEEP_ALCOVE_03",
+    "sprite": "NORTH_SLEEP_ALCOVE_03.png",
+    "source_glb": "Nameless_Creche_09_Wall_Creche_01_Simple.glb",
+    "source_sha256": "5a631c0f8845ae5ac6e805f488561b84e0e9df36ce3c37fca849bdbd1f37f496",
+    "translation_m": [
+      6.8832,
+      3.9304,
+      2.5574
+    ],
+    "uniform_scale": 1.78585,
+    "repeat_count": 1,
+    "depth_order": 19
+  },
+  {
+    "socket": "NORTH_SLEEP_ALCOVE_04",
+    "sprite": "NORTH_SLEEP_ALCOVE_04.png",
+    "source_glb": "Nameless_Creche_09_Wall_Creche_01_Detailed.glb",
+    "source_sha256": "f812ed091bd2877d4883a570491c4d8b95ca083c650037040aea47b7415e18f8",
+    "translation_m": [
+      11.7644,
+      3.9253,
+      2.249
+    ],
+    "uniform_scale": 1.49381,
+    "repeat_count": 1,
+    "depth_order": 20
+  },
+  {
+    "socket": "NORTH_PIER_SKIN_01",
+    "sprite": "NORTH_PIER_SKIN_01.png",
+    "source_glb": "Nameless_Creche_01_Thick_Column_01.glb",
+    "source_sha256": "a77d052ec72ad96522333ea4c58e033f85824eada1efb1c7a0165376ac9504f8",
+    "translation_m": [
+      -9.8711,
+      4.116,
+      0.7974
+    ],
+    "uniform_scale": 0.7985,
+    "repeat_count": 4,
+    "depth_order": 21
+  },
+  {
+    "socket": "NORTH_PIER_SKIN_02",
+    "sprite": "NORTH_PIER_SKIN_02.png",
+    "source_glb": "Nameless_Creche_01_Thick_Column_01.glb",
+    "source_sha256": "a77d052ec72ad96522333ea4c58e033f85824eada1efb1c7a0165376ac9504f8",
+    "translation_m": [
+      -4.1211,
+      4.116,
+      0.7974
+    ],
+    "uniform_scale": 0.7985,
+    "repeat_count": 4,
+    "depth_order": 22
+  },
+  {
+    "socket": "NORTH_PIER_SKIN_03",
+    "sprite": "NORTH_PIER_SKIN_03.png",
+    "source_glb": "Nameless_Creche_01_Thick_Column_01.glb",
+    "source_sha256": "a77d052ec72ad96522333ea4c58e033f85824eada1efb1c7a0165376ac9504f8",
+    "translation_m": [
+      4.0039,
+      4.116,
+      0.7974
+    ],
+    "uniform_scale": 0.7985,
+    "repeat_count": 4,
+    "depth_order": 23
+  },
+  {
+    "socket": "NORTH_PIER_SKIN_04",
+    "sprite": "NORTH_PIER_SKIN_04.png",
+    "source_glb": "Nameless_Creche_01_Thick_Column_01.glb",
+    "source_sha256": "a77d052ec72ad96522333ea4c58e033f85824eada1efb1c7a0165376ac9504f8",
+    "translation_m": [
+      9.7539,
+      4.116,
+      0.7974
+    ],
+    "uniform_scale": 0.7985,
+    "repeat_count": 4,
+    "depth_order": 24
+  },
+  {
+    "socket": "NORTH_TRIPLE_GOTHIC_WINDOW_KIT",
+    "sprite": "NORTH_TRIPLE_GOTHIC_WINDOW_KIT.png",
+    "source_glb": "Nameless_Creche_02_Back_Window_Detailed.glb",
+    "source_sha256": "701f61a943cbb9123328d9aa3b67d7801284bdfaf6ceeea41ac3d44b9c64e888",
+    "translation_m": [
+      0.0104,
+      4.2169,
+      2.8098
+    ],
+    "uniform_scale": 2.31415,
+    "repeat_count": 1,
+    "depth_order": 25
+  },
+  {
+    "socket": "NORTH_CROWN_TRIM",
+    "sprite": "NORTH_CROWN_TRIM.png",
+    "source_glb": "Nameless_Creche_08_Stone_Crown_Moulding.glb",
+    "source_sha256": "a709eeb3491db1e1749f16a00e3b6f8634f933a9c3748de6b106935e9e107cc9",
+    "translation_m": [
+      0.0025,
+      4.3376,
+      4.6693
+    ],
+    "uniform_scale": 0.6255,
+    "repeat_count": 21,
+    "depth_order": 26
+  }
+]
