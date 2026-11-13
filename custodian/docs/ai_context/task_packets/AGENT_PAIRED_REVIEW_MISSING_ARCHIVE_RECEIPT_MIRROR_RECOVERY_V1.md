@@ -7,17 +7,17 @@
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P0`
-- Depends on: `review-agent-paired-review-archived-receipt-capture-recovery-v1`
+- Depends on: `agent-paired-review-archived-receipt-capture-recovery-v1`
 - Locks: `agent-paired-review-archived-receipt-capture-recovery`
 - User design hold: `open`
 - Kind: `implementation`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, architecture, workflow`
-- Paired review workstream: `review-agent-paired-review-missing-archive-receipt-mirror-recovery-v1`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: A separately authorized exact-run recovery will make an already-authenticated reviewer PASS durably acceptable. Its source pins, evidence immutability, race safety and canonical closeout need fresh independent verification.
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `c93d75d8cd57c2b36731cb640fac722faf6ccc2a`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af34a5d-ca7c-83ea-b267-382f1be560df
 - Visual review: `none`

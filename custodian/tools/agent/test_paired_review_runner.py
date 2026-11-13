@@ -532,7 +532,7 @@ class PairedReviewRunnerTests(unittest.TestCase):
 
     def test_profile_publication_inputs_accepts_both_historical_packet_fields(self):
         packets = (
-            ROOT / "custodian/docs/ai_context/task_packets/REVIEW_AGENT_PAIRED_REVIEW_RUNNER_CHECKOUT_PROFILE_V1.md",
+            ROOT / "custodian/docs/ai_context/task_packets/archived/REVIEW_AGENT_PAIRED_REVIEW_RUNNER_CHECKOUT_PROFILE_V1.md",
             ROOT / "custodian/docs/ai_context/task_packets/archived/AGENT_PAIRED_REVIEW_RUNNER_CHECKOUT_PROFILE_V1.md",
         )
         for packet_path in packets:
@@ -923,6 +923,12 @@ class PairedReviewRunnerTests(unittest.TestCase):
             shutil.copytree(ROOT / runner.PACKET_ROOT, packets, symlinks=True)
             active_path = repo / finish_index_recovery.ACTIVE
             archived_path = repo / finish_index_recovery.ARCHIVED
+            # The active packet was archived by the retirement; seed the disposable copy from its archive.
+            if not active_path.exists():
+                active_path.write_text(archived_path.read_text())
+            # The retirement dropped this packet from the index; restore the pinned pre-retirement index.
+            (packets / "README.md").write_text(runner._show_at(
+                ROOT, finish_index_recovery.REVIEWED_MAIN, f"{runner.PACKET_ROOT}/README.md"))
             archived_path.unlink(missing_ok=True)
             active_text = active_path.read_text()
             outcome_text = runner.review_outcome.render_review_outcome(
@@ -4247,7 +4253,7 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
                         runner.validate_eligible_review(Path("."), "review-sample")
 
     def test_actual_vaultwing_review_successor_refresh_is_not_a_current_gate(self):
-        review_path = "custodian/docs/ai_context/task_packets/REVIEW_VAULTWING_RUNTIME_HARDENING.md"
+        review_path = "custodian/docs/ai_context/task_packets/archived/REVIEW_VAULTWING_RUNTIME_HARDENING.md"
         content = (ROOT / review_path).read_text(encoding="utf-8")
         self.assertIn("- Refresh applies to: `successor`", content)
         parsed = runner.parse_packet(review_path, content)
@@ -13147,7 +13153,7 @@ Review exact provenance.
         )
         summary = ("# Review Summary\n\nR0-01 and R0-02 remain findings.\n\n"
                    f"Authoring chat: {runner.parse_packet(runner.FINDINGS_ARTIFACT_RECOVERY_ACTIVE,
-                       (ROOT / runner.FINDINGS_ARTIFACT_RECOVERY_ACTIVE).read_text()).authoring_chat}\n")
+                       (ROOT / runner.PACKET_ROOT / "archived" / Path(runner.FINDINGS_ARTIFACT_RECOVERY_ACTIVE).name).read_text()).authoring_chat}\n")
         return archive, summary
 
     def test_closeout_normalizes_authored_findings_without_changing_outcome(self):

@@ -6,16 +6,16 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P0`
-- Depends on: `agent-paired-review-failed-host-validation-import-recovery-v1, review-agent-paired-review-failed-host-validation-import-recovery-v1`
+- Depends on: `agent-paired-review-failed-host-validation-import-recovery-v1`
 - Locks: `paired-review-source-span-provenance, paired-review-host-import-recovery`
 - Kind: `implementation`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, architecture, workflow`
-- Paired review workstream: `review-agent-paired-review-direct-tail-receipt-closeout-v1`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `source-span provenance and coordinator-authored review receipts define protected review trust boundaries`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `d3476a38ca457d4186c11cec718592fef7e9ffbc`
 - Authoring chat: `not-recorded`
 - Visual review: `none`

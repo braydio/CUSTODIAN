@@ -8,13 +8,13 @@
 - Priority: `P1`
 - Depends on: `none`
 - Locks: `operator-ne-walk-authoring`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, architecture, visual, workflow`
-- Paired review workstream: `review-operator-2-5d-ne-walk-retargeting`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `nontrivial IK/animation solver and raster-authoring correctness, independent technical review after human animation acceptance`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `675ccf726bb79397b7242ef3059971a6f1a39448`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad06f67-3cb8-83ea-b34c-3ebf78a9e6fe`
 - Visual review: `required`

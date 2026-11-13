@@ -33,6 +33,16 @@ class RootGuardTests(unittest.TestCase):
             f"git -C {worktree} commit -m change", root, root
         ))
 
+    def test_allows_several_isolated_git_targets_from_root_cwd(self):
+        root = Path("/tmp/custodian-coordination")
+        worktree = Path("/tmp/custodian-turns/one")
+        self.assertFalse(guard.is_restricted(
+            f"git -C {worktree} add a.py && git -C {worktree} commit -m change", root, root
+        ))
+        self.assertTrue(guard.is_restricted(
+            f"git -C {worktree} add a.py && git commit -m change", root, root
+        ))
+
     def test_explicit_root_target_denied_from_other_checkout(self):
         root = Path("/tmp/custodian-coordination")
         worktree = Path("/tmp/custodian-turns/one")

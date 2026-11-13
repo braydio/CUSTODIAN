@@ -9,13 +9,13 @@
 - Depends on: `none`
 - Locks: `enemy-runtime, operator-runtime, combat-feel`
 - Kind: `implementation`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, architecture, runtime`
-- Paired review workstream: `review-combat-attack-tell-contact-alignment-v1`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: Changes to damage timing and parry counterplay require independent end-to-end falsification.
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `c4d150edec1ad60d3bc11336cad4333d60df384e`
 - Authoring chat: `not-recorded`
 - Visual review: `conditional`

@@ -10,13 +10,13 @@
 - Depends on: `none`
 - Locks: `paired-review-host-validation`
 - Kind: `implementation`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, architecture, workflow`
-- Paired review workstream: `review-agent-paired-review-missing-checkout-failed-coverage-recovery-v1`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `A narrowly scoped same-claim recovery will admit preserved failed evidence despite a missing checkout and create a new reviewer-capable checkout; exact historical identity, manifest-delta and fail-closed authorization require a fresh independent review.`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `1f71394036e62eb42a32a58090927d23f419ff9d`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af34a5d-ca7c-83ea-b267-382f1be560df`
 - Visual review: `none`

@@ -8,13 +8,13 @@
 - Depends on: `none`
 - Locks: `local-transit-lift, awakening-interaction`
 - Kind: `implementation`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, runtime, architecture`
-- Paired review workstream: `review-transit-lift-runtime-foundation-v1`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `extracts and hardens a live interaction/lifecycle authority while preserving Awakening compatibility`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `350ee94e4b3b80010c0970903f3418966df3b851`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391`
 - Visual review: `none`

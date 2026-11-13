@@ -1650,7 +1650,15 @@ python3 tools/assets/asset.py needs --check
 ```
 
 The smoke refreshes
-`docs/ai_context/reports/awakening_perimeter_support/camera_coverage_v1.json`.
+`docs/ai_context/reports/awakening_perimeter_support/camera_coverage_v1.json`
+only when explicitly invoked with `-- --write-report`. Routine validation checks
+the current scene geometry without modifying the tracked evidence report. To
+deliberately regenerate the canonical report, run:
+
+```bash
+godot --headless --path . --script res://tools/validation/awakening_perimeter_support_smoke.gd -- --write-report
+```
+
 Run all nine family plans/statuses and `asset doctor` when validating AP0; the
 global doctor can report pre-existing unrelated catalog hash mismatches, which
 must be separated from this foundation’s pending contracts.

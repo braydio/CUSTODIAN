@@ -6,16 +6,16 @@
 - Status: draft
 - Dispatch: manual
 - Priority: P2
-- Depends on: review-operator-3d-animation-batch-executor-v1
+- Depends on: `operator-3d-animation-batch-executor-v1`
 - Locks: operator-3d-animation-atlas-packaging
 - Kind: implementation
-- Review: auto
+- Review: `none`
 - Review stage: post-land
-- Review modes: code, asset-pipeline, workflow
-- Paired review workstream: review-operator-3d-directional-atlas-packaging-v1
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: 0
 - Max automatic review cycles: 2
-- Review rationale: Atlas index integrity and per-cell pixel preservation must be independently proved for full-length multi-page animation.
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: 4e3e88df4512f5bc8e4088d087b7bee3b974d3fe
 - Authoring chat: not-recorded
 - Visual review: none

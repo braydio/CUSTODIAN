@@ -8,13 +8,13 @@
 - Depends on: `operator-3d-animation-batch-pipeline-v1`
 - Locks: `operator-3d-animation-batch-executor`
 - Kind: `implementation`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, architecture, runtime, asset-pipeline, workflow`
-- Paired review workstream: `review-operator-3d-animation-batch-executor-v1`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: The preview adapter crosses a candidate-only pipeline boundary into a real Godot presenter, and the resumable executor later coordinates Blender artifacts, cache identity and candidate packaging; fresh review materially reduces the risk of accidental runtime authority, stale stages or duplicate body ownership.
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `e8be5776a6b38b1229d156104441190408409f8b`
 - Authoring chat: `not-recorded`
 - Visual review: `required`

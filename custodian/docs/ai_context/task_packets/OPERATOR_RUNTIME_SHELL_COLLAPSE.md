@@ -5,7 +5,7 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `operator-dependency-injection-spine, operator-loadout-domain-extraction, operator-melee-domain-extraction, operator-ranged-domain-extraction, operator-dodge-domain-extraction, operator-interaction-domain-extraction, operator-recovery-domain-extraction, operator-guard-parry-composition-polish, operator-ranged-static-weapon-socket-closeout, review-operator-chassis-authority-seal-v1`
+- Depends on: `operator-dependency-injection-spine, operator-loadout-domain-extraction, operator-melee-domain-extraction, operator-ranged-domain-extraction, operator-dodge-domain-extraction, operator-interaction-domain-extraction, operator-recovery-domain-extraction, operator-guard-parry-composition-polish, operator-ranged-static-weapon-socket-closeout, operator-chassis-authority-seal-v1`
 - Locks: `operator-runtime`
 - Kind: `implementation`
 - Review: `manual`

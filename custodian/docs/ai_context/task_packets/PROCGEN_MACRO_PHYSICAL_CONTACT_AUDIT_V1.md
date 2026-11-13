@@ -9,13 +9,13 @@
 - Priority: `P1`
 - Depends on: `none`
 - Locks: `procgen-macro-physical-contact-audit`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, runtime, architecture`
-- Paired review workstream: `review-procgen-macro-physical-contact-audit-v1`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `the audit must independently prove its physics/semantic measurements and honest gap classification before its findings influence later procgen fixes`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `3067be7817c1713f989a92753a7d199e913b82bc`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e`
 - Visual review: `none`

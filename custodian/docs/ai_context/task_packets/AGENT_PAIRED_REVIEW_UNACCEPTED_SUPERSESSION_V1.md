@@ -7,16 +7,16 @@
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P0`
-- Depends on: `review-agent-legacy-claim-scoped-snapshot-v1`
+- Depends on: `agent-legacy-claim-scoped-snapshot-v1`
 - Locks: `legacy-claim-scoped-snapshot`
 - Kind: `implementation`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, architecture, workflow`
-- Paired review workstream: `review-agent-paired-review-unaccepted-supersession-v1`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `This changes claim/ref retirement, historical preservation and dispatcher eligibility. A fresh independent review must challenge identity binding, crash recovery, races, and the invariant that an unaccepted historical PASS never satisfies review dependencies.`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `979cb454454554c1a1dedc9a506a36ec831407a1`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae5d404-c86c-83ea-aec4-6cd3d75af933`
 - Visual review: `none`

@@ -6,15 +6,15 @@
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P1`
-- Depends on: `review-codex-art-import-registration`
+- Depends on: `codex-art-import-registration`
 - Locks: `sprite-import-core, sprite-import-qa`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, architecture, asset-pipeline, workflow`
-- Paired review workstream: `review-codex-art-import-quality-gates`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `reusable production-art geometry, safety, and authoring semantics require independent falsification`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `d099e541941c5f7525f7c9af38f6e36536f9d574`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc3bfd-cf88-83ea-9156-be4e5c2851c0`
 - Visual review: `conditional`

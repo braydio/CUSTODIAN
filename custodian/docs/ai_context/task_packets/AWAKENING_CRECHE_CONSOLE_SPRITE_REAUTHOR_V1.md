@@ -5,7 +5,7 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `review-awakening-creche-console-idle-fx-binding-v1, awakening-interactible-clean-room-plates-v1`
+- Depends on: `awakening-creche-console-idle-fx-binding-v1, awakening-interactible-clean-room-plates-v1`
 - Locks: `awakening-interaction-presentation, awakening-interactible-asset-contracts`
 - Kind: `implementation`
 - Review: `none`
@@ -47,7 +47,7 @@ The prior Asset V2 plan `can_apply=true/source_count=0/output_count=0` saw no in
 
 ## Direct review and dispatcher authority
 
-The user waived a separate Codex paired reviewer **for this Crèche slice only**. Human/ChatGPT must still inspect actual new Godot gameplay captures, and objective technical tests remain mandatory. `Visual review: required` is not fulfilled by prior approval of the standalone console sprite. If final in-engine visual review has not been given, record it as pending, not passed. Do not fabricate completion or override packet-validation checks.
+The user waived a separate Codex paired reviewer **for this Crèche slice only**. Human/ChatGPT inspected the new gameplay captures and approved gameplay presentation; the newest connector/destination frame was not independently inspected at full resolution. Objective technical tests remain mandatory. This direct review is recorded in `custodian/docs/ai_context/asset_audits/AWAKENING_CRECHE_RUNTIME_VERIFICATION_20261110.json`. Do not overstate the pixel-inspection limitation or override packet-validation checks.
 
 The existing source-preparation workstream is archived complete; no missing source publication or new hero input is required. This packet is promoted to `ready/auto`; no claim, lock, new worktree, asset ingestion, runtime or Git LFS modification is performed by this packet-authoring change. Use `dispatch.py audit --json` to verify current eligible/unclaimed status and then `dispatch.py claim awakening-creche-console-sprite-reauthor-v1 --agent codex`; do not use `workstream.py start`.
 
@@ -55,29 +55,29 @@ Update `design/04_architecture/AWAKENING_FIRST_RETURN.md`, `design/04_architectu
 
 ## Completion Truth
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `<fill at closeout>`
-- Completion boundary satisfied: `<fill at closeout>`
-- Acceptance satisfied: `<fill at closeout>`
+- Goal satisfied: `yes; the approved 1464×1074 Crèche cutover, console presentation, trigger fix and truthful Asset V2 runtime verification are implemented on the claimed branch`
+- Completion boundary satisfied: `yes; actual scene, import, gameplay/FX capture, live traversal and direct gameplay-scale review evidence are recorded`
+- Acceptance satisfied: `yes, with the recorded limitation that the newest connector/destination frame was not independently inspected at full resolution`
 - Superseded/legacy production path disposition: `intentionally-preserved`
-- Evidence: `<fill at closeout>`
+- Evidence: `Asset V2 job job_20261110T003455Z_2cfe3ce7; custodian/docs/ai_context/asset_audits/AWAKENING_CRECHE_RUNTIME_VERIFICATION_20261110.json; reports/awakening_creche_gameplay_review/live_traversal_result.json; awakening_creche_runtime_asset_contract PASS; asset.py needs --check PASS; ChatGPT/user gameplay approval. Branch publication/landing remains pending normal GitHub CI.`
 
 ## Execution Feedback
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `success | partial | blocked`
-- Friction severity: `none | low | medium | high`
-- What went wrong: `<fill at closeout>`
-- Root cause / contributing factors: `<fill at closeout>`
-- Prevention / pipeline improvement: `<fill at closeout>`
-- Tooling / docs drift discovered: `<fill at closeout>`
-- Follow-up: `direct-user-chatgpt-game-scale-visual-verdict`
-- What worked: `<fill at closeout>`
+- Outcome: `partial; implementation and acceptance evidence are complete, supported checkpoint and main landing remain pending`
+- Friction severity: `low`
+- What went wrong: `The V2 checkpoint is blocked by 20,064 unresolved ignored paths; Asset V2 doctor also reports four unrelated designation-locker catalog hash mismatches.`
+- Root cause / contributing factors: `Dispatcher V2 does not consume the verified external ignored-file archive as a checkpoint preservation receipt; the locker hashes are outside this workstream and were preserved unchanged.`
+- Prevention / pipeline improvement: `Keep runtime verification scoped to exact source/runtime/scene/traversal evidence; preserve the Asset V2 doctor exceptions as separately owned baseline data; keep this one-time branch-publication exception scoped to the existing Crèche task.`
+- Tooling / docs drift discovered: `After ingest, the read-only Asset V2 plan correctly reports zero inbox sources/outputs; successful import and status are established by the job receipt and status, not by an empty plan.`
+- Follow-up: `publish only the curated Crèche task commit to the existing agent branch under the owner’s one-time authorization; retain the checkout; obtain a separate owner decision before any main landing`
+- What worked: `Existing approved sources and console art were reused, the live traversal found the early-trigger bug, and direct ChatGPT/user review approved the final gameplay presentation.`
 
 ## Next Handoff
 - Next workstream: `none`
-- Next packet state: `human-required`
-- Refresh owner: `chatgpt-user`
-- ChatGPT/user planning refresh required: `yes`
+- Next packet state: `owner-authorized agent-branch publication; main landing remains separately gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
-- Refresh reason: `Validate and review actual new Crèche gameplay screenshot/FX with the user and ChatGPT, after technical implementation`
-- Next action: `Post normal gameplay-scale captures and measured validation to this chat; request explicit final scene visual verdict`
-- Blockers or open questions: `No source/hero blocker remains; runtime work and final in-game visual validation are next`
+- Refresh reason: `none; direct gameplay presentation approval is recorded with its full-resolution limitation`
+- Next action: `Curate and publish the task-owned commit to agent/awakening-creche-console-sprite-reauthor-v1 using the owner’s one-time branch-only authorization; verify the exact remote SHA and keep this checkout. Main landing, V2 checkpoint completion, and checkout retirement are not authorized by that decision.`
+- Blockers or open questions: `20,064 ignored paths still prevent the canonical V2 checkpoint; the verified host-local preservation manifest does not clear that guard. Asset V2 doctor retains four unrelated awakening_designation_locker hash mismatches.`

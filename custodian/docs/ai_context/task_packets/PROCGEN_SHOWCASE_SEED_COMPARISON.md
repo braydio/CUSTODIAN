@@ -6,15 +6,15 @@
 - Status: `draft`
 - Dispatch: `manual`
 - Priority: `P2`
-- Depends on: `review-procgen-showcase-generation-controls, review-procgen-showcase-runtime-inspector`
+- Depends on: `procgen-showcase-generation-controls, procgen-showcase-runtime-inspector`
 - Locks: `procgen-showcase-inspector`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, architecture, runtime`
-- Paired review workstream: `review-procgen-showcase-seed-comparison`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `new game-world/dev-tool boundary; fresh independent proof`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `1326220d8172cee9322363b7a5c020acaf41f64c`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e`
 - Visual review: `none`

@@ -4058,15 +4058,21 @@
             "underlay",
             "omni"
           ],
-          "path": "content/levels/awakening/01_creche/awakening_creche_underlay_960x704.png",
+          "path": "content/levels/awakening/01_creche/awakening_creche_underlay_1464x1074.png",
           "frames": 1,
           "frame_size": [
-            960,
-            704
+            1464,
+            1074
           ],
-          "sha256": "3c19f69efd8f35ae9d4c0b78f69829f8905a75994a1f57238ce2f4cdfc98c22c",
+          "sha256": "9ce70dff57e7678234ff423643d255840ca66cf855067948763f73b2b426d77a",
           "provenance": "authored",
-          "source_asset": null
+          "source_asset": null,
+          "validation_evidence": [
+            {
+              "path": "custodian/docs/ai_context/asset_audits/AWAKENING_CRECHE_RUNTIME_VERIFICATION_20261110.json",
+              "sha256": "d0f7499dc58ad6fac933e9ef19c292dc314eabf6e3bdb280083df02410331013"
+            }
+          ]
         },
         "foreground::omni": {
           "state_id": "foreground",
@@ -4079,15 +4085,21 @@
             "foreground",
             "omni"
           ],
-          "path": "content/levels/awakening/01_creche/awakening_creche_foreground_960x704.png",
+          "path": "content/levels/awakening/01_creche/awakening_creche_foreground_1464x1074.png",
           "frames": 1,
           "frame_size": [
-            960,
-            704
+            1464,
+            1074
           ],
-          "sha256": "775d2b111f4573409e50df33b857952bbb05ee4f13baf4602976a80c59e89a5a",
+          "sha256": "515b287f877cf4cd940c11aeab6bfa05370ff651f06927ba46e13c212a252bfc",
           "provenance": "authored",
-          "source_asset": null
+          "source_asset": null,
+          "validation_evidence": [
+            {
+              "path": "custodian/docs/ai_context/asset_audits/AWAKENING_CRECHE_RUNTIME_VERIFICATION_20261110.json",
+              "sha256": "d0f7499dc58ad6fac933e9ef19c292dc314eabf6e3bdb280083df02410331013"
+            }
+          ]
         }
       }
     },

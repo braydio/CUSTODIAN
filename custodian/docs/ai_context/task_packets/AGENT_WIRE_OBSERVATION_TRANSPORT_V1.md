@@ -7,16 +7,16 @@
 - Dispatch: `auto`
 - Authoring handoff: auto
 - Priority: P2
-- Depends on: review-agent-wire-observation-export-v1
+- Depends on: `agent-wire-observation-export-v1`
 - Locks: none
 - Kind: implementation
-- Review: auto
+- Review: `none`
 - Review stage: post-land
-- Review modes: code, architecture, workflow
-- Paired review workstream: review-agent-wire-observation-transport-v1
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: 0
 - Max automatic review cycles: 2
-- Review rationale: Transport crosses the private host-to-Dropbox boundary and publishes evidence consumed by a separate reporting system; independent review must verify schema enforcement, privacy, atomicity, readback, and fail-closed behavior.
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: 38545e4c12b848861284d77c299790c046df6f62
 - Authoring chat: not-recorded
 - Visual review: none

@@ -7,16 +7,16 @@
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P0`
-- Depends on: `review-agent-paired-review-chassis-metadata-source-scope-v1`
+- Depends on: `agent-paired-review-chassis-metadata-source-scope-v1`
 - Locks: `paired-review-chassis-historical-fixture-overlay-v1, paired-review-runner-tests`
 - Kind: `implementation`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, workflow`
-- Paired review workstream: `review-agent-paired-review-chassis-historical-fixture-overlay-v1`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `A temporary test-only overlay participates in trusted paired-review host validation and must be independently checked for exact identity binding, confinement, and source preservation.`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `19661bc02ad8825451c4d5e3b21886d0744ab5b3`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6aef1f35-9d0c-83ea-9916-59c5660da5fd
 - Visual review: `none`

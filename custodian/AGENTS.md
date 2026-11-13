@@ -1,5 +1,11 @@
 # CUSTODIAN AGENTS PRIMER
 
+> **Paired review retired 2026-11-12 by owner decision.** Do not author new
+> paired review packets, do not set `Review: auto`, and do not add review
+> dependencies. Paired-review instructions elsewhere in this file are
+> superseded; see `docs/ai_context/PAIRED_REVIEW_RETIREMENT_20261112.md`
+> and `docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md` for the current policy.
+
 Mandatory entrypoint for any agent or developer working inside `custodian/`.
 
 If you entered from the repository root, stop here first before changing runtime code, docs, assets, pipelines, or design references.
@@ -322,6 +328,18 @@ ordinary edit/test loop.
 See `docs/ai_context/VALIDATION_RECIPES.md` for concrete command sequencing and
 resource checks.
 
+## Architecture And Tooling Debt
+
+Shared tooling or architecture problems outside your workstream do not stop your work.
+Follow `docs/ai_context/ARCH_DEBT_POLICY.md`: apply a safe workaround, keep going, and
+record a `docs/ai_context/debt/DEBT-NNNN-<slug>.md` item on your branch. Check
+`docs/ai_context/debt/REGISTER.md` first so you cite an existing item instead of
+duplicating it, and mention the ID in your closing summary.
+
+Do not fix shared lifecycle, guard or dispatcher code from an unrelated workstream, and
+do not open claims, fix packets or reviews for debt items. Stop only when the problem
+makes your own result unsafe or unverifiable; report that as a blocker, not as debt.
+
 ## Reusable Context Fetch Pipeline
 
 Before editing, run this retrieval pipeline:
@@ -417,17 +435,14 @@ Choose the lightest useful level:
 Do not create a packet merely because a task touches several files.
 
 Choose independent review by risk and evidence quality, not by file count or
-the word “runtime.” Express work may skip a packet and paired review for a
+the word “runtime.” Paired review was retired 2026-11-12 by owner decision:
+there is no Protected tier that keeps `Review: auto`, and no new paired
+review packets are authored. Express work may skip a packet entirely for a
 narrow, reversible, low-risk single-session change while retaining focused
 validation and Git safety. Standard work may use a compact packet when scope
-or acceptance needs a durable record; its ordinary default is `Review: none`
+or acceptance needs a durable record; its default is `Review: none`
 when focused checks directly prove correctness and scope, with a concise
-concrete risk rationale. Protected work keeps `Review: auto` and a fresh
-independent acceptance pass for consequential persistence/save-load,
-concurrency, irreversible operations, authority cutovers, dispatch/review/
-validation enforcement, dangerous asset-pipeline writes, or material evidence
-uncertainty. Human-owned visual and canon decisions remain human-owned. Existing
-published review decisions and dependencies do not change retroactively.
+concrete risk rationale. Human-owned visual and canon decisions remain human-owned.
 
 Task packet workflow:
 

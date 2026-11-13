@@ -8,13 +8,13 @@
 - Depends on: `none`
 - Locks: `procgen-archive-resolve-reconciliation`
 - Kind: `implementation`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `workflow, code, architecture`
-- Paired review workstream: `review-procgen-archive-resolve-split-reconciliation-v1`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `stranded claim/worktree recovery and multi-packet queue handoff require independent proof against data loss, fabricated completion, invalid locks and silent acceptance erosion`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `49a93aa726e26bd40220d3bdb658079ea9da3440`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ada4996-db70-83ea-8543-c09811c2c216`
 - Visual review: `none`

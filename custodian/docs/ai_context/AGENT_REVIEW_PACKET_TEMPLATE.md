@@ -1,6 +1,10 @@
 # AGENT REVIEW PACKET TEMPLATE
 
-Use full 40-character Reviewed main SHAs: the paired-review archived implementation resolver rejects abbreviated hashes.
+> **RETIRED 2026-11-12 by owner decision. Do not use this template to author
+> new review packets.** Paired review is gone; all active review packets
+> were archived on that date and their dependencies were rewritten to the
+> underlying implementation workstreams. This file is kept only as a
+> historical record of what a paired review packet used to look like.
 
 Repository defaults are inherited from `custodian/AGENTS.md` and the root
 `AGENTS.md`. This template is the paired post-land review counterpart to

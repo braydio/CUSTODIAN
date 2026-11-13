@@ -54,13 +54,20 @@ def is_restricted(command: str, cwd: Path, root: Path = ROOT) -> bool:
         return False
     # A root-origin git -C invocation targeting an isolated checkout is allowed.
     if root_cwd and not explicit_root:
-        matches = list(re.finditer(r"\bgit\s+-C\s+(['\"]?)(\S+?)\1(?=\s|$)", text))
-        if len(matches) == 1:
-            target = Path(matches[0].group(2)).expanduser()
-            target = target if target.is_absolute() else cwd / target
-            if target.resolve() != root.resolve():
-                return False
+        # Every mutating git invocation must carry its own `-C <isolated target>`;
+        # a bare mutation runs in the root and stays restricted.
+        for mutation in ROOT_MUTATION.finditer(text):
+            target = re.search(r"-C\s+(['\"]?)(\S+?)\1(?=\s|$)", mutation.group(0))
+            if not target or not _is_isolated(target.group(2), cwd, root):
+                return True
+        return False
     return True
+
+
+def _is_isolated(raw: str, cwd: Path, root: Path) -> bool:
+    target = Path(raw).expanduser()
+    target = target if target.is_absolute() else cwd / target
+    return target.resolve() != root.resolve()
 
 
 def hook() -> int:

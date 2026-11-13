@@ -47,13 +47,13 @@ Ready/Auto view, never selection authority.
 - Depends on: `none`
 - Locks: `none`
 - Kind: `implementation`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, architecture, runtime`
-- Paired review workstream: `review-WORKSTREAM_ID`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `<concise risk/evidence rationale for Review:none, or concrete reason Review:auto materially improves confidence>`
+- Review rationale: `<concise risk/evidence rationale: how focused checks prove correctness and scope>`
 - Reviewed main: `<full 40-character immutable main commit SHA>`
 - Authoring chat: `<exact ChatGPT conversation URL | not-recorded | n/a>`
 - Visual review: `none | conditional | required`
@@ -329,84 +329,58 @@ Before setting `Status: ready`:
 These four checks are objective closure facts, not subjective prose scoring:
 each either names a concrete authority/state or it does not.
 
-### Review Policy — Three Risk Paths
+### Review Policy — Paired Review Retired
 
-Select packet and review ceremony according to risk, reversibility, verification
-quality, and blast radius. File count and the label `runtime` do not decide review
-by themselves. These paths apply to newly authored or materially re-derived V2
-implementation packets; they do not rewrite existing packet decisions.
+Paired review was retired 2026-11-12 by owner decision. Do not author new
+paired review packets, do not set `Review: auto`, and do not add review
+dependencies. The acceptance gate for a packet is its focused validation
+plus the owner's review of the landed change.
 
 - **Express:** A narrow, reversible, low-risk, single-session change may skip
-  both packet and paired review. Keep focused validation and Git safety.
-- **Standard:** Ordinary bounded engineering may use a compact packet when scope,
-  acceptance, or deferred work benefits from a durable record. Its ordinary
-  review default is `Review: none` when focused checks directly prove
-  correctness and scope. Add a concise concrete `Review rationale` explaining
-  the risk and evidence; no special low-risk exemption ceremony is required.
-- **Protected:** Use `Review: auto` and fresh independent acceptance when the
-  consequences or uncertainty warrant an adversarial second pass. This includes
-  consequential persistence/save-load, concurrency, irreversible operations,
-  authority cutovers, dispatch/review/validation enforcement, dangerous
-  asset-pipeline writes, or material evidence uncertainty. Also select it when
-  focused checks cannot falsify plausible high-impact failures or the change is
-  hard to reverse. Subjective visual/canon decisions remain human-owned.
+  the packet entirely. Keep focused validation and Git safety.
+- **Standard (the default for everything):** Use `Review: none` with a
+  concise concrete `Review rationale` explaining the risk and the focused
+  checks that prove correctness and scope. No exemption ceremony is required.
+  If a change is genuinely high-risk or hard to reverse, say so in the
+  rationale and name the extra focused checks — do not reach for a paired
+  review to cover it. Subjective visual/canon decisions remain human-owned.
+- **Manual, only when human-owned:** Use `Review: manual` only when a
+  specific external environment, hardware, credentialed system, or
+  human-owned decision is the actual gate. It is not a substitute for
+  focused validation.
 
-Do not use `Review: none` for convenience or queue avoidance. A Standard change
-may still need `Review: auto` when its actual risk or evidence warrants it; a
-small Protected change remains Protected even if it touches few files. Preserve
-existing review gates and accepted-review dependencies.
-
-Use `Review: manual` only when a review is useful but cannot truthfully be
-auto-completed because it requires a specific external environment, hardware,
-credentialed system, or human-owned decision that the normal paired reviewer
-cannot resolve. Do not use manual review as a substitute for the ordinary
-`human_required` outcome inside an otherwise automatic technical review.
-
-Corrections created from independent-review findings remain `Review: auto`
-by default through `AGENT_CORRECTION_PACKET_TEMPLATE.md`.
-
-Legacy packets are not bulk-retrofitted. When new work materially relies on an
-older implementation that lacks V2 feedback or independent review, treat its
-packet as historical evidence rather than current proof: re-check the surviving
-live authority and focused behavior during authoring. If that legacy seam is
-high-risk, unclear, or central to the new acceptance contract, the new packet
-should use paired review.
+Do not preserve old review gates or accepted-review dependencies: a
+dependency on a `review-*` workstream means a dependency on the underlying
+implementation workstream, not on its review. Legacy packets were
+bulk-retrofitted to this policy on 2026-11-12: `Review: auto` became
+`Review: none`, paired review packets were archived, and `review-*`
+dependencies were rewritten to their implementation workstreams.
 
 Regardless of review intent, every completed V2 implementation/correction still
 writes `custodian.task_feedback.v1` Execution Feedback and mirrors it in the
-closing summary. Paired review is an additional correctness/evidence layer, not
-a replacement for implementation feedback.
+closing summary.
 
 ### Review Metadata
 
 Record the chosen review intent when the packet is created:
 
 ```text
-- Kind: `implementation` | `review` | `correction`
-- Review: `auto` | `manual` | `none`
+- Kind: `implementation` | `correction`
+- Review: `none` (paired review retired; `auto` is legacy-only, never author it)
 - Review stage: `post-land`
-- Review modes: comma-separated `code, architecture, runtime, visual,
-  asset-pipeline, workflow`, or `none`
-- Paired review workstream: `<id>` or `none`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 ```
 
 Parser defaults keep historical packets valid without this section: missing
 `Kind` is `implementation`; missing `Review` is `none`; this compatibility rule
-is not the authoring default for new/materially refreshed V2 packets. Missing
-`Review stage` defaults to `post-land` only when `Review` is `auto`;
-missing `Review cycle` is `0`; missing `Max automatic review cycles` is
-`2`.
+is not the authoring default for new/materially refreshed V2 packets.
 
-When `Review: auto` is selected, also create a paired review packet on
-`main` using `AGENT_REVIEW_PACKET_TEMPLATE.md`, and set this packet's
-`Paired review workstream` to its ID. The review-pairing consistency guard
-fails closed if the pair is missing or malformed; see `task_packets/README.md`
-for the full paired review/correction lifecycle. Auto review packets must carry
-the exact bounded review-artifact mutation override from that template; the
-dispatcher checks it before claim. Their explicit validation script paths must
-resolve to live scripts before an auto claim is allowed.
+Do not create a paired review packet. `AGENT_REVIEW_PACKET_TEMPLATE.md` is
+retired; the pairing diagnostic in `task_packet_contract.py` is advisory
+only and never blocks a claim.
 
 ## Completion Truth
 

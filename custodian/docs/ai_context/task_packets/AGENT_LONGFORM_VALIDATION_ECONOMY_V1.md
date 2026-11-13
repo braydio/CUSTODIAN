@@ -6,16 +6,16 @@
 - Dispatch: `auto`
 - Authoring handoff: auto
 - Priority: P1
-- Depends on: review-agent-longform-review-and-gate-hardening-v1
+- Depends on: `agent-longform-review-and-gate-hardening-v1`
 - Locks: agent-validation, agent-workflow
 - Kind: implementation
-- Review: auto
+- Review: `none`
 - Review stage: post-land
-- Review modes: code, workflow
-- Paired review workstream: review-agent-longform-validation-economy-v1
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: 0
 - Max automatic review cycles: 2
-- Review rationale: longform execution safety demands independent falsification
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: 029c31b0396842bc566a5616c46ab03c0696ad80
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc5e5e-018c-83ea-8617-ec4c15de7d62
 - Visual review: none

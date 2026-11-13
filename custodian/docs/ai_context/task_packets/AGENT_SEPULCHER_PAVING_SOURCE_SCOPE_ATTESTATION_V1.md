@@ -10,13 +10,13 @@
 - Depends on: `sepulcher-paving-native-quad-playtest-v1`
 - Locks: `paired-review-source-provenance`
 - Kind: `implementation`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, architecture, workflow`
-- Paired review workstream: `review-agent-sepulcher-paving-source-scope-attestation-v1`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `Post-hoc authorization of four historical source paths changes independent-review admission. It requires immutable provenance, fail-closed activation, adversarial tests, and fresh independent approval before original-review recovery.`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `9c8ce8d7774d9cbb1bf6a63dde0eda96bd426a2e`
 - Authoring chat: `not-recorded`
 - Visual review: `none`

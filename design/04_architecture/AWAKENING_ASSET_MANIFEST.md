@@ -1,6 +1,6 @@
 # Awakening / The First Return — Asset V2 Manifest
 
-> **Crèche floor canonical target, approved 2026-11-05:** **1464×1074 RGBA** (1 frame, transparent outside the authored floor), source SHA-256 `9ce70dff57e7678234ff423643d255840ca66cf855067948763f73b2b426d77a`, supersedes the old 960×704 Crèche presentation size **when** the Asset V2/Godot runtime cutover is reviewed and landed. The entire transparent canvas is not a walkable rectangle; Zone01's floor and envelope must be reauthored from measured geometry. **Not yet installed:** current registered family remains 960×704, with 704×512 walkable floor in `awakening_layout.gd`. See [canonical size and Codex-first implementation brief](AWAKENING_CRECHE_FLOOR_1464X1074_CANONICAL_V1.md). Existing 960 statements below describe historical/current production until the cutover.\n\n
+> **Crèche production cutover, implemented on the active runtime workstream:** the existing Asset V2 family binds the approved 1464×1074 underlay/foreground pair (underlay SHA-256 `9ce70dff57e7678234ff423643d255840ca66cf855067948763f73b2b426d77a`; foreground SHA-256 `515b287f877cf4cd940c11aeab6bfa05370ff651f06927ba46e13c212a252bfc`). Both layers use centered `(0,-96)` registration. Asset V2 records both states as imported, scene-bound and runtime-verified through `custodian/docs/ai_context/asset_audits/AWAKENING_CRECHE_RUNTIME_VERIFICATION_20261110.json`. The live traversal and console/screen-FX checks pass on the workstream branch. ChatGPT/user approved gameplay presentation; the newest connector/destination frame was not independently inspected at full resolution. The workstream has not yet landed on `origin/main`. See [canonical runtime cutover evidence](AWAKENING_CRECHE_FLOOR_1464X1074_CANONICAL_V1.md).
 **Status:** active production art contract
 
 **Scope:** sections 01–10 of `awakening_first_return.tscn`
@@ -61,7 +61,7 @@ All backdrop families use `direction_policy: omni`, `auto_mirror: false`, `layou
 
 | Family | Domain / owner | Canvas | Required states | Priority |
 |---|---|---:|---|---|
-| `awakening_creche_environment` | `levels/awakening/01_creche` / `awakening_creche` | 960×704 | `underlay`, `foreground` | P0 |
+| `awakening_creche_environment` | `levels/awakening/01_creche` / `awakening_creche` | 1464×1074 | `underlay`, `foreground` | P0 |
 | `awakening_ambulatory_environment` | `levels/awakening/02_ambulatory` / `awakening_ambulatory` | 1152×960 | `underlay`, `foreground` | P1 |
 | `awakening_attestation_environment` | `levels/awakening/03_attestation` / `awakening_attestation` | 832×928 | `underlay`, `foreground` | P1 |
 | `awakening_locker_reliquary_environment` | `levels/awakening/04_locker_reliquary` / `awakening_locker_reliquary` | 704×704 | `underlay`, `foreground` | P1 |
@@ -122,7 +122,7 @@ Canvas 128×128.
 
 Consumer: `res://scenes/awakening_first_return.tscn`.
 
-Published 2026-09-08. The baseline scene/FX binding subsequently landed and passed independent review: `AwakeningFirstReturn` currently attaches the activation FX through a measured `CrecheConsoleBody/ScreenAnchor` representing the **machine baked into the Crèche underlay**, without instantiating the separate idle hero sprite. This is a validated historical integration state, **not the final visual design**. The user has since chosen prop-free reauthored Crèche and Undergate underlays with independently rendered console/Port heroes; see `AWAKENING_INTERACTIBLE_CLEAN_ROOM_PLATES_V1.md`. The new Crèche plate (960×704) and the independently published 128×128 console hero must be introduced together in an approved, verified Asset V2 cutover, with the existing 8-frame screen FX re-anchored to the physical sprite.
+Published 2026-09-08; superseded for the Crèche by the approved 2026-11-10 runtime cutover on `awakening-creche-console-sprite-reauthor-v1`. The existing scene now renders the independently approved 128×128 idle hero once at `CrecheConsoleBody` and anchors the unchanged eight-frame, 8 FPS activation effect on its screen. Both 1464×1074 environment layers are registered at `(0,-96)`, and the original console/Operator gameplay anchors remain fixed. Asset V2 ingest job `job_20261110T003455Z_2cfe3ce7` records the exact underlay and foreground hashes; the active workstream's gameplay and visual evidence is linked in `AWAKENING_CRECHE_FLOOR_1464X1074_CANONICAL_V1.md`. These changes are on the workstream branch and are not yet landed on `origin/main`.
 The Crèche console is not part of the bidirectional Dust Lung lift authority.
 
 The activation overlay is a separate `effect` family so body and FX lifecycles remain independent.

@@ -10,13 +10,13 @@
 - Depends on: `weather-v2-presentation-contract-v1`
 - Locks: `paired-review-source-provenance`
 - Kind: `implementation`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, architecture, workflow`
-- Paired review workstream: `review-weather-v2-review-source-provenance-bridge-v1`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: The change alters paired-review host provenance validation. Exact receipt authentication and historical Git scope must be independently falsified while preserving ordinary trace handling and the landed owner-exception correction.
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `8e23d8b5418d7298dccc438c430652fe66d96333`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af2865a-62e0-83ea-b08d-d591648b381e
 - Visual review: `none`

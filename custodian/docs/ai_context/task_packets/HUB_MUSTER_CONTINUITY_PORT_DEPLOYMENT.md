@@ -5,16 +5,16 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `review-hub-forum-adjudication-contract-prewarm`
+- Depends on: `hub-forum-adjudication-contract-prewarm`
 - Locks: `hub-runtime, world-lifecycle, contract-bootstrap`
 - Kind: `implementation`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, architecture, runtime`
-- Paired review workstream: `review-hub-muster-continuity-port-deployment`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `substantial engineering default`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `348d00eea51e`
 
 - Goal: Make Muster Court → ordinary Continuity Port the real campaign departure path, consuming the accepted/prewarmed first Contract without duplicate generation and entering `game.tscn` only when that same Contract is READY.

@@ -7,16 +7,16 @@
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P1`
-- Depends on: `review-operator-3d-model-to-sprite-tooling-integration-v1`
+- Depends on: `operator-3d-model-to-sprite-tooling-integration-v1`
 - Locks: `operator-3d-visual-fidelity-candidate`
 - Kind: `implementation`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, architecture, asset-pipeline, workflow`
-- Paired review workstream: `review-operator-3d-visual-fidelity-candidate-v2`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: The work changes an experimental skinned character's proportions/materials and render sampling; independent inspection must verify immutable source derivation, unchanged rig compatibility, correct one-time nearest-neighbor reduction, and no false approval.
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `f848228723513d21412aee0fdbd6bec6514db4e8`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae4ca33-99cc-83ea-b344-8d13b65268d1`
 - Visual review: `required`

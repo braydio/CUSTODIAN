@@ -10,13 +10,13 @@
 - Depends on: none
 - Locks: git-ref-maintenance, agent-dispatcher
 - Kind: implementation
-- Review: auto
+- Review: `none`
 - Review stage: post-land
-- Review modes: code, workflow
-- Paired review workstream: review-broken-remote-tracking-ref-repair-v1
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: 0
 - Max automatic review cycles: 2
-- Review rationale: editing malformed local Git reference metadata requires independently verifiable exact-scope preservation and fail-closed concurrency handling
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: 5b74eb565b47b1b9c7f7edcf4fadffc1e65f62db
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af12561-89a4-83ea-bc7f-c896ec89bed0
 - Prior orchestration chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6aef81ab-23fc-83ea-8010-74334c76fb3a

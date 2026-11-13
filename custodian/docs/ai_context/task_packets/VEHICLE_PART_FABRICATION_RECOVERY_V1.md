@@ -5,16 +5,16 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `review-vehicle-diagnosis-knowledge-v1`
+- Depends on: `vehicle-diagnosis-knowledge-v1`
 - Locks: `vehicle-restoration-runtime, fabrication-runtime, vehicle-content, inventory-runtime`
 - Kind: `implementation`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, architecture, runtime`
-- Paired review workstream: `review-vehicle-part-fabrication-recovery-v1`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `cross-system recipe gating, persistent item output, atomic component consumption, and recovery-grade enforcement`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `78dee2c0fd939f5e245ca779a6095deb459739bd`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b`
 - Visual review: `none`
