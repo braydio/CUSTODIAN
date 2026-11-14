@@ -56,10 +56,15 @@ func _ready() -> void:
 	var presenter := presenter_script.new()
 	presenter.name = "ExhibitPresenter"
 	add_child(presenter)
-	var arena_host_script := preload("res://game/world/levels/authored/dev/procgen_showcase_gallery/procgen_arena_host.gd")
-	var arena_host := arena_host_script.new()
-	arena_host.name = "ProcgenArenaHost"
-	add_child(arena_host)
+	var session_script := preload("res://game/world/levels/authored/dev/procgen_showcase_gallery/procgen_arena_session.gd")
+	var session := session_script.new()
+	session.name = "ProcgenArenaSession"
+	add_child(session)
+	var controls_script := preload("res://game/world/levels/authored/dev/procgen_showcase_gallery/procgen_gallery_controls.gd")
+	var controls := controls_script.new()
+	controls.name = "ProcgenGalleryControls"
+	add_child(controls)
+	session.call("bind_controls", controls)
 
 
 func get_boundary_segments() -> Array:

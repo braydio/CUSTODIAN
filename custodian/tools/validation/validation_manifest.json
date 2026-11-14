@@ -4820,6 +4820,27 @@
       "needs_import": true
     },
     {
+      "id": "procgen_showcase_generation_controls",
+      "type": "godot_script",
+      "script": "res://tools/validation/levels/procgen_showcase_generation_controls_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "procgen_showcase",
+        "generated_region",
+        "generation_controls",
+        "determinism",
+        "cancellation"
+      ],
+      "owners": [
+        "custodian/content/data/dev/procgen_showcase/generation_presets.v1.json",
+        "custodian/game/world/levels/authored/dev/procgen_showcase_gallery/**",
+        "custodian/tools/validation/levels/procgen_showcase_generation_controls_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 900,
+      "needs_import": true
+    },
+    {
       "id": "npa_showcase_arena_foundation",
       "type": "godot_script",
       "script": "res://tools/validation/levels/npa_showcase_arena_foundation_smoke.gd",
