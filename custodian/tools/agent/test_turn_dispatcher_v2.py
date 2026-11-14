@@ -261,6 +261,189 @@ class TurnDispatcherTests(unittest.TestCase):
         run("git", "config", "user.email", "test@example.com", cwd=checkout)
         return result, checkout
 
+    def _resume(self):
+        return td.resume(self.repo, "example-task", "normal", self.base / "turns")
+
+    def _remove_turn(self, acquisition, checkout):
+        head = run("git", "rev-parse", "HEAD", cwd=checkout)
+        run("git", "worktree", "remove", str(checkout), cwd=self.repo)
+        run("git", "update-ref", "-d", f"refs/heads/{acquisition['local_branch']}", head, cwd=self.repo)
+
+    def test_resume_reuses_attached_checkout_idempotently_and_checkpoint_works(self):
+        acquisition, checkout = self.turn_checkout()
+        receipt = Path(acquisition["acquisition_receipt"])
+        original_receipt = receipt.read_bytes()
+        worktrees_before = td.attached(self.repo)
+        safe_owners = {"owners": [], "uncertain": [], "unrelated_unreadable": [], "scanned_pids": 0}
+        with patch.object(td, "_checkout_process_owners", return_value=safe_owners):
+            first = self._resume()
+            second = self._resume()
+        for resumed in (first, second):
+            self.assertEqual(resumed["result"], "resumed")
+            self.assertEqual(resumed["resume_disposition"], "attached-checkout")
+            self.assertEqual(Path(resumed["checkout"]), checkout)
+            self.assertEqual(resumed["turn_id"], acquisition["turn_id"])
+            self.assertEqual(resumed["run_id"], acquisition["run_id"])
+            self.assertEqual(resumed["acquisition_receipt"], acquisition["acquisition_receipt"])
+        self.assertEqual(receipt.read_bytes(), original_receipt)
+        self.assertEqual(td.attached(self.repo), worktrees_before)
+
+        handoff = checkout / "custodian/docs/ai_context/turn_handoffs/example-task.md"
+        handoff.parent.mkdir(parents=True, exist_ok=True)
+        handoff.write_text("Original goal: demo\nImplemented: none\nRemaining: work\n"
+                           "Validation: resume fixture\nSources/evidence: temporary Git\n"
+                           "Resume: continue same V2 turn\n", encoding="utf-8")
+        checkpoint = td.checkpoint(self.repo, "example-task", checkout, handoff,
+                                   "checkpoint after resume", self.base / "turns", retire=False)
+        self.assertFalse(checkpoint["retired"])
+        with patch.object(td, "_checkout_process_owners", return_value=safe_owners):
+            after_checkpoint = self._resume()
+        self.assertEqual(after_checkpoint["turn_id"], acquisition["turn_id"])
+        self.assertEqual(after_checkpoint["head"], checkpoint["head"])
+
+    def test_resume_refuses_dirty_untracked_and_ambiguous_ignored_data(self):
+        for kind in ("tracked", "untracked", "ignored"):
+            with self.subTest(kind=kind):
+                acquisition, checkout = self.turn_checkout()
+                if kind == "tracked":
+                    (checkout / "cache_input.py").write_text("changed\n", encoding="utf-8")
+                elif kind == "untracked":
+                    (checkout / "new.py").write_text("untracked\n", encoding="utf-8")
+                else:
+                    ignored = checkout / "evidence_local" / "private-proof.bin"
+                    ignored.parent.mkdir()
+                    ignored.write_bytes(b"unclassified local evidence")
+                with patch.object(td, "_checkout_process_owners", return_value={
+                        "owners": [], "uncertain": [], "unrelated_unreadable": [], "scanned_pids": 0}):
+                    with self.assertRaisesRegex(td.DispatchError, "changes|untracked|ignored data"):
+                        self._resume()
+                self.assertTrue(checkout.exists())
+                self.assertTrue(Path(acquisition["acquisition_receipt"]).is_file())
+                if kind == "tracked":
+                    run("git", "checkout", "--", "cache_input.py", cwd=checkout)
+                elif kind == "untracked":
+                    (checkout / "new.py").unlink()
+                else:
+                    ignored = checkout / "evidence_local" / "private-proof.bin"
+                    ignored.unlink()
+                    ignored.parent.rmdir()
+                self._remove_turn(acquisition, checkout)
+
+    def test_resume_refuses_wrong_pool_branch_and_missing_or_duplicate_receipts(self):
+        safe_owners = {"owners": [], "uncertain": [], "unrelated_unreadable": [], "scanned_pids": 0}
+        acquisition, checkout = self.turn_checkout()
+        with patch.object(td, "_checkout_process_owners", return_value=safe_owners):
+            with self.assertRaisesRegex(td.DispatchError, "outside the managed turn pool"):
+                td.resume(self.repo, "example-task", "normal", self.base / "other-pool")
+
+        receipt = Path(acquisition["acquisition_receipt"])
+        receipt.unlink()
+        with self.assertRaisesRegex(td.DispatchError, "no matching V2 acquisition receipt"):
+            self._resume()
+        self._remove_turn(acquisition, checkout)
+
+        acquisition, checkout = self.turn_checkout()
+        receipt = Path(acquisition["acquisition_receipt"])
+        duplicate = receipt.with_name("duplicate-acquisition.json")
+        duplicate.write_bytes(receipt.read_bytes())
+        with self.assertRaisesRegex(td.DispatchError, "multiple V2 acquisition receipts"):
+            self._resume()
+        duplicate.unlink()
+        self._remove_turn(acquisition, checkout)
+
+        acquisition, checkout = self.turn_checkout()
+        run("git", "checkout", "-b", "unexpected-branch", cwd=checkout)
+        with self.assertRaisesRegex(td.DispatchError, "wrong task branch"):
+            self._resume()
+        run("git", "checkout", "agent/example-task", cwd=checkout)
+        self._remove_turn(acquisition, checkout)
+
+    def test_resume_refuses_remote_divergence_and_source_provenance_mismatch(self):
+        acquisition, checkout = self.turn_checkout()
+        (checkout / "local.py").write_text("unpublished commit\n", encoding="utf-8")
+        run("git", "add", "local.py", cwd=checkout)
+        run("git", "commit", "-m", "unpublished local commit", cwd=checkout)
+        with patch.object(td, "_checkout_process_owners", return_value={
+                "owners": [], "uncertain": [], "unrelated_unreadable": [], "scanned_pids": 0}):
+            with self.assertRaisesRegex(td.DispatchError, "diverges from the authenticated remote"):
+                self._resume()
+        self.assertTrue(checkout.exists())
+        self._remove_turn(acquisition, checkout)
+
+        acquisition, checkout = self.turn_checkout()
+        receipt = Path(acquisition["acquisition_receipt"])
+        payload = json.loads(receipt.read_text(encoding="utf-8"))
+        payload["source_sha"] = "0" * 40
+        receipt.write_text(json.dumps(payload), encoding="utf-8")
+        with self.assertRaises(td.DispatchError):
+            self._resume()
+        self.assertTrue(checkout.exists())
+
+    def test_resume_refuses_changed_packet_process_owner_and_continuation_lock(self):
+        acquisition, checkout = self.turn_checkout()
+        self.publish_dependency_change()
+        with patch.object(td, "_checkout_process_owners", return_value={
+                "owners": [], "uncertain": [], "unrelated_unreadable": [], "scanned_pids": 0}):
+            with self.assertRaisesRegex(td.DispatchError, "packet provenance changed"):
+                self._resume()
+        self._remove_turn(acquisition, checkout)
+
+        acquisition, checkout = self.turn_checkout()
+        with patch.object(td, "_checkout_process_owners", return_value={
+                "owners": [{"pid": "77"}], "uncertain": [], "unrelated_unreadable": [], "scanned_pids": 1}):
+            with self.assertRaisesRegex(td.DispatchError, "active process owner"):
+                self._resume()
+        with patch.object(td, "_checkout_process_owners", return_value={
+                "owners": [], "uncertain": [{"pid": "78"}], "unrelated_unreadable": [], "scanned_pids": 1}):
+            with self.assertRaisesRegex(td.DispatchError, "ownership is uncertain"):
+                self._resume()
+
+        lock = td._continuation_lock(self.repo, acquisition["turn_id"])
+        try:
+            with self.assertRaisesRegex(td.DispatchError, "another V2 continuation/checkpoint"):
+                self._resume()
+        finally:
+            lock.close()
+
+    def test_resume_refuses_changed_origin_and_foreign_git_common_directory(self):
+        acquisition, checkout = self.turn_checkout()
+        real_git = td.git
+
+        def mismatched_checkout_remote(repo, *args, **kwargs):
+            if Path(repo).resolve() == checkout.resolve() and args == ("remote", "get-url", "origin"):
+                return str(self.base / "different-origin.git")
+            return real_git(repo, *args, **kwargs)
+
+        with (patch.object(td, "git", side_effect=mismatched_checkout_remote),
+              patch.object(td, "_checkout_process_owners", return_value={
+                  "owners": [], "uncertain": [], "unrelated_unreadable": [], "scanned_pids": 0})):
+            with self.assertRaisesRegex(td.DispatchError, "different or missing origin remotes"):
+                self._resume()
+        self._remove_turn(acquisition, checkout)
+
+        foreign_repo = self.base / "foreign-repo"
+        run("git", "clone", "--branch", "main", str(self.origin), str(foreign_repo))
+        run("git", "config", "user.name", "Test", cwd=foreign_repo)
+        run("git", "config", "user.email", "test@example.com", cwd=foreign_repo)
+        foreign_pool = self.base / "foreign-turns"
+        foreign_pool.mkdir()
+        foreign_checkout = foreign_pool / "turn-example-task-foreign"
+        run("git", "worktree", "add", "-b", "agent/example-task", str(foreign_checkout),
+            "origin/main", cwd=foreign_repo)
+        with self.assertRaisesRegex(td.DispatchError, "same Git common directory"):
+            td._resume_attached_checkout(self.repo, "example-task", foreign_checkout, foreign_pool)
+
+    def test_resume_of_already_retired_checkout_uses_safe_fresh_checkout_behavior(self):
+        original, checkout = self.turn_checkout()
+        head = run("git", "rev-parse", "HEAD", cwd=checkout)
+        run("git", "worktree", "remove", str(checkout), cwd=self.repo)
+        resumed = self._resume()
+        self.assertEqual(resumed["resume_disposition"], "fresh-checkout")
+        self.assertNotEqual(resumed["turn_id"], original["turn_id"])
+        self.assertNotEqual(Path(resumed["checkout"]), checkout)
+        self.assertEqual(resumed["source_sha"], head)
+        self.assertEqual(run("git", "rev-parse", "HEAD", cwd=Path(resumed["checkout"])), head)
+
     def handoff(self):
         path = self.base / "handoff.md"
         path.write_text("Original goal: demo\nImplemented: demo\nRemaining: none\n"

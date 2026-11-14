@@ -485,6 +485,205 @@ def begin(repo: Path, workstream: str, mode: str, pool: Path,
     return result
 
 
+def _attached_worktree_records(repo: Path) -> list[dict[str, str]]:
+    records = []
+    for block in git(repo, "worktree", "list", "--porcelain").split("\n\n"):
+        fields = block.splitlines()
+        if not fields or not fields[0].startswith("worktree "):
+            continue
+        record = {"path": str(Path(fields[0].removeprefix("worktree ")).resolve())}
+        for field in fields[1:]:
+            if field.startswith("branch "):
+                record["branch"] = field.removeprefix("branch ").removeprefix("refs/heads/")
+        records.append(record)
+    return records
+
+
+def _attached_resume_candidate(repo: Path, workstream: str) -> Path | None:
+    """Find one attached checkout authenticated by this task's V2 receipt."""
+    worktrees = _attached_worktree_records(repo)
+    by_path = {Path(item["path"]): item for item in worktrees}
+    canonical_branch = f"agent/{workstream}"
+    canonical_attached = [Path(item["path"]) for item in worktrees
+                          if item.get("branch") == canonical_branch]
+    if len(canonical_attached) > 1:
+        raise DispatchError("multiple attached checkouts use the canonical V2 task branch")
+
+    folder = acquisition_record_path(repo, "placeholder").parent
+    attached_receipts: list[tuple[dict, Path]] = []
+    if folder.is_symlink():
+        raise DispatchError("V2 acquisition receipt directory is a symbolic link")
+    if folder.is_dir():
+        for path in folder.glob("*.json"):
+            if path.is_symlink():
+                raise DispatchError("V2 acquisition receipt is a symbolic link")
+            if not path.is_file():
+                continue
+            try:
+                payload = json.loads(path.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError) as exc:
+                raise DispatchError(f"V2 acquisition receipt is unreadable: {path.name}") from exc
+            if not isinstance(payload, dict):
+                raise DispatchError(f"V2 acquisition receipt is malformed: {path.name}")
+            if payload.get("workstream") != workstream:
+                continue
+            checkout_raw = payload.get("checkout")
+            if not isinstance(checkout_raw, str) or not checkout_raw:
+                raise DispatchError("V2 acquisition receipt has no checkout identity")
+            checkout = Path(checkout_raw).expanduser().resolve()
+            if checkout in by_path:
+                attached_receipts.append((payload, checkout))
+
+    if len(attached_receipts) > 1:
+        raise DispatchError("multiple V2 acquisition receipts identify attached checkouts for this task")
+    if attached_receipts:
+        payload, checkout = attached_receipts[0]
+        if by_path[checkout].get("branch") != canonical_branch:
+            raise DispatchError("attached V2 checkout is on the wrong task branch")
+        if canonical_attached and canonical_attached[0] != checkout:
+            raise DispatchError("canonical task branch and V2 acquisition identify different checkouts")
+        return checkout
+    if canonical_attached:
+        raise DispatchError("attached canonical task branch has no matching V2 acquisition receipt")
+    return None
+
+
+def _resume_attached_checkout(repo: Path, workstream: str, checkout: Path, pool: Path) -> dict:
+    repo = repo_root(repo)
+    checkout = checkout.expanduser().absolute()
+    pool = pool.expanduser().resolve()
+    validate_id(workstream)
+    canonical_branch = f"agent/{workstream}"
+    if pool == repo or pool in repo.parents or pool in attached(repo):
+        raise DispatchError("turn pool must be outside the coordination repository and its attached worktrees")
+    if checkout.is_symlink() or not checkout.exists() or not checkout.is_dir():
+        raise DispatchError("attached V2 checkout path is missing or unsafe")
+    if checkout.resolve().parent != pool or not checkout.name.startswith(f"turn-{workstream}-"):
+        raise DispatchError("attached V2 checkout is outside the managed turn pool")
+    if repo not in attached(repo):
+        raise DispatchError("resume requires the stable attached coordination repo")
+    repo_common = Path(git(repo, "rev-parse", "--path-format=absolute", "--git-common-dir")).resolve()
+    checkout_common = Path(git(checkout, "rev-parse", "--path-format=absolute", "--git-common-dir")).resolve()
+    if repo_common != checkout_common:
+        raise DispatchError("coordination repo and turn checkout do not share the same Git common directory")
+    if checkout.resolve() not in attached(repo):
+        raise DispatchError("resume requires the exact attached turn checkout")
+    branch = git(checkout, "symbolic-ref", "--short", "HEAD", check=False)
+    if branch != canonical_branch:
+        raise DispatchError("attached V2 checkout is on the wrong task branch")
+
+    acquisition = read_acquisition(repo, branch, checkout.resolve())
+    if (acquisition.get("schema") != "custodian.turn_dispatcher_v2.acquisition.v1"
+            or acquisition.get("workstream") != workstream
+            or acquisition.get("local_branch") != branch
+            or acquisition.get("branch") != canonical_branch
+            or not acquisition.get("turn_id")
+            or not acquisition.get("run_id")):
+        raise DispatchError("V2 acquisition receipt does not authenticate the original task identity")
+    receipt_path = acquisition_record_path(repo, acquisition["turn_id"])
+    if receipt_path.is_symlink() or not receipt_path.is_file():
+        raise DispatchError("original V2 acquisition receipt is missing or unsafe")
+    receipt_sha = hashlib.sha256(receipt_path.read_bytes()).hexdigest()
+    retirement_path = retirement_record_path(repo, acquisition["turn_id"])
+    if retirement_path.is_symlink():
+        raise DispatchError("V2 retirement receipt is a symbolic link")
+    if retirement_path.exists():
+        raise DispatchError("V2 acquisition is already retiring or retired")
+
+    lock = _continuation_lock(repo, acquisition["turn_id"])
+    try:
+        if hashlib.sha256(receipt_path.read_bytes()).hexdigest() != receipt_sha:
+            raise DispatchError("original V2 acquisition receipt changed while resume was fenced")
+        acquisition = read_acquisition(repo, branch, checkout.resolve())
+        process_ownership = _checkout_process_owners(checkout)
+        if process_ownership.get("owners"):
+            pids = ", ".join(item["pid"] for item in process_ownership["owners"])
+            raise DispatchError(f"checkout has active process owner(s): {pids}")
+        if process_ownership.get("uncertain"):
+            pids = ", ".join(item["pid"] for item in process_ownership["uncertain"])
+            raise DispatchError(f"process ownership is uncertain for PID(s) {pids}")
+
+        remote_url = git(repo, "remote", "get-url", "origin", check=False)
+        checkout_remote_url = git(checkout, "remote", "get-url", "origin", check=False)
+        if not remote_url or checkout_remote_url != remote_url:
+            raise DispatchError("coordination repo and turn checkout have different or missing origin remotes")
+
+        head = git(checkout, "rev-parse", "HEAD")
+        source_sha = acquisition.get("source_sha")
+        if not source_sha or not is_ancestor(repo, source_sha, head):
+            raise DispatchError("checkout HEAD no longer descends from the authenticated acquisition source")
+        remote_head = remote_branch(repo, canonical_branch)
+        if not remote_head:
+            raise DispatchError("authenticated remote task branch is missing")
+        fetched_remote = fetch_branch(repo, canonical_branch, remote_head)
+        if fetched_remote != head:
+            raise DispatchError("checkout HEAD diverges from the authenticated remote task branch")
+
+        main_sha, _ = latest_main(repo)
+        original_main = acquisition.get("task_definition_sha")
+        if not original_main or not is_ancestor(repo, original_main, main_sha):
+            raise DispatchError("original task definition is not in current origin/main ancestry")
+        definition = remote_definition(repo, main_sha, workstream)
+        if acquisition.get("definition_kind") == "published-packet":
+            if (definition.get("kind") != "published-packet"
+                    or definition.get("path") != acquisition.get("packet")
+                    or definition.get("sha256") != acquisition.get("definition_sha256")):
+                raise DispatchError("authenticated task packet provenance changed after acquisition")
+        elif acquisition.get("definition_kind") == "missing":
+            if (definition.get("kind") != "missing"
+                    or acquisition.get("mode") != "owner-authorized"
+                    or not acquisition.get("owner_authorization")):
+                raise DispatchError("owner-authorized task provenance changed after acquisition")
+        else:
+            raise DispatchError("V2 acquisition has unsupported task-definition provenance")
+        if has_design_hold(definition.get("fields", {})):
+            raise DispatchError("current packet contains an unresolved user-owned design hold")
+
+        before_status = git(checkout, "status", "--porcelain=v1", "--untracked-files=all")
+        if before_status:
+            raise DispatchError("attached V2 checkout has tracked or untracked changes")
+        untracked = safe_untracked(checkout)
+        if untracked:
+            raise DispatchError("attached V2 checkout has untracked data")
+        ignored_before = ignored_inventory(checkout)
+        if any(item.get("classification") == "unresolved" for item in ignored_before):
+            raise DispatchError("unclassified ignored data requires preservation before resume")
+        lfs = lfs_files(checkout)
+        if lfs:
+            git(checkout, "lfs", "fsck", "--objects")
+
+        if (git(checkout, "rev-parse", "HEAD") != head
+                or git(checkout, "status", "--porcelain=v1", "--untracked-files=all") != before_status
+                or ignored_inventory(checkout) != ignored_before
+                or remote_branch(repo, canonical_branch) != remote_head):
+            raise DispatchError("checkout or authenticated remote changed while resume evidence was collected")
+        return {**acquisition, "operation": "resume", "result": "resumed",
+                "checkout": str(checkout.resolve()), "head": head, "remote_head": remote_head,
+                "lfs_files": lfs, "ignored_inventory": ignored_before,
+                "process_ownership": process_ownership, "acquisition_receipt": str(receipt_path),
+                "verified": True, "reused": True}
+    finally:
+        lock.close()
+
+
+def resume(repo: Path, workstream: str, mode: str, pool: Path,
+           checkout_profile: str | None = None) -> dict:
+    """Reuse one authenticated attached V2 checkout, or preserve fresh resume behavior."""
+    repo = repo_root(repo)
+    validate_id(workstream)
+    if mode not in {"normal", "historical"}:
+        raise DispatchError(f"unknown resume mode: {mode}")
+    pool = pool.expanduser().resolve()
+    candidate = _attached_resume_candidate(repo, workstream)
+    if candidate is None:
+        result = begin(repo, workstream, mode, pool, checkout_profile=checkout_profile)
+        result.update({"operation": "resume", "resume_disposition": "fresh-checkout"})
+        return result
+    result = _resume_attached_checkout(repo, workstream, candidate, pool)
+    result["resume_disposition"] = "attached-checkout"
+    return result
+
+
 def write_receipt(repo: Path, payload: dict) -> str:
     common = Path(git(repo, "rev-parse", "--git-common-dir"))
     if not common.is_absolute():
