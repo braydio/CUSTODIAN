@@ -299,6 +299,9 @@ def _decision(
 
 
 def _fetch(repo: Path) -> None:
+    # Read-only observers audit the cached remote state and never write refs.
+    if os.environ.get("CUSTODIAN_READONLY_OBSERVER") == "1":
+        return
     git(repo, "fetch", "--prune", "origin")
 
 

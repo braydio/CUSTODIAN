@@ -173,6 +173,13 @@ def _remote_sha(repo: Path, ref: str) -> str | None:
 def _fetch_object(repo: Path, ref: str, expected_sha: str) -> None:
     if not SHA_RE.fullmatch(expected_sha):
         raise ParkingError("parking ref did not resolve to a commit SHA")
+    if os.environ.get("CUSTODIAN_READONLY_OBSERVER") == "1":
+        # Read-only observers accept only parking commits already held locally.
+        present = subprocess.run(["git", "cat-file", "-e", f"{expected_sha}^{{commit}}"],
+                                 cwd=repo, capture_output=True)
+        if present.returncode:
+            raise ParkingError("parking record is not local; read-only observers do not fetch it")
+        return
     fetch = subprocess.run(
         ["git", "fetch", "--no-tags", "--no-write-fetch-head", "origin", ref],
         cwd=repo, text=True, capture_output=True, timeout=30.0,

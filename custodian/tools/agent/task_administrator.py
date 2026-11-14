@@ -25,6 +25,7 @@ MAX_OUTPUT = 8 * 1024 * 1024
 MAX_TURNS_PER_POLL = 1
 MAX_TURNS_PER_DAY = 3
 ALLOWED_ACTIONS = {"INSPECT", "DIAGNOSE", "ESCALATE", "HALT"}
+READONLY_OBSERVER_ENV = "CUSTODIAN_READONLY_OBSERVER"
 
 
 class ObserverError(RuntimeError):
@@ -58,8 +59,10 @@ def private_store(repo: Path) -> Path:
 
 
 def _command(repo: Path, *args: str, timeout: int = 90) -> tuple[int, str, str]:
+    # Sources run as read-only observers: they must not fetch or write Git refs.
+    env = {**os.environ, READONLY_OBSERVER_ENV: "1"}
     p = subprocess.run([sys.executable, *args], cwd=repo, text=True,
-                       capture_output=True, timeout=timeout)
+                       capture_output=True, timeout=timeout, env=env)
     if len(p.stdout) > MAX_OUTPUT or len(p.stderr) > MAX_OUTPUT:
         return 125, "", "source output exceeded limit"
     return p.returncode, p.stdout, p.stderr[-4000:]

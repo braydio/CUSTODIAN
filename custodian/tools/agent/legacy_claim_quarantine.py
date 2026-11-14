@@ -339,6 +339,8 @@ def build_batch_plan(repo: Path, targets: dict[str, str | None], snapshot_manife
 
 
 def _fetch_quarantine_refs(repo: Path) -> None:
+    if os.environ.get("CUSTODIAN_READONLY_OBSERVER") == "1":
+        return
     listing = subprocess.run(["git", "ls-remote", "--refs", "origin", f"{REF_PREFIX}/*"],
                              cwd=repo, text=True, capture_output=True, timeout=20)
     if listing.returncode:
@@ -359,8 +361,13 @@ def fetch_records(repo: Path) -> None:
 
 
 def quarantined_identities(repo: Path) -> set[str]:
-    fetch_records(repo)
-    prefix = f"refs/remotes/origin/{REF_PREFIX.removeprefix('refs/')}/"
+    # A read-only observer reports the quarantine records already held locally,
+    # instead of fetching the remote copies into tracking refs.
+    if os.environ.get("CUSTODIAN_READONLY_OBSERVER") == "1":
+        prefix = f"{REF_PREFIX}/"
+    else:
+        fetch_records(repo)
+        prefix = f"refs/remotes/origin/{REF_PREFIX.removeprefix('refs/')}/"
     refs = git(repo, "for-each-ref", "--format=%(refname)", prefix).splitlines()
     return {ref.removeprefix(prefix) for ref in refs}
 
