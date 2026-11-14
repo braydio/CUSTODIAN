@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-showcase-runtime-inspector`
 - Kind: `implementation`
-- Status: `draft`
+- Status: `ready`
 - Dispatch: `manual`
 - Priority: `P1`
 - Depends on: `procgen-showcase-generation-controls, procgen-showcase-exhibit-catalog`
@@ -13,22 +13,22 @@
 - Review modes: `none`
 - Paired review workstream: `none`
 - Review cycle: `0`
-- Max automatic review cycles: `2`
+- Max automatic review cycles: `0`
 - Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
-- Reviewed main: `1326220d8172cee9322363b7a5c020acaf41f64c`
+- Reviewed main: `074e7c9329b598056785130676fa69fae2b6a18f`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e`
-- Visual review: `conditional`
+- Visual review: `none`
 - Goal: Inspect live accepted generated-world truth through read-only terrain/route/playability/POI/asset provenance overlays without new authority.
-- Completion boundary: Ship the exact PGA-5 scoped behavior on real repository owners, register its focused smoke and pass the paired fresh-context review; no proxy closure or speculative ownership changes.
-- Current measured state: ProcGenTilemap exposes generation/export and debug/read-only contracts, but a gallery-scoped structured snapshot with bounded overlay cost has not been proven.
+- Completion boundary: Ship the exact PGA-5 scoped behavior through the existing gallery owners, register its focused smoke, pass affected runtime validation, and obtain owner review of the landed change; no proxy closure or speculative ownership changes.
+- Current measured state: PGA-4 owns the accepted arena session and exposes lifecycle status, but it has no public accepted-world snapshot. PGA-5 needs one detached projection through that ownership chain; bounded overlays and stale-state clearing remain unimplemented.
 - Evidence: `design/02_features/procgen/PROCGEN_SHOWCASE_GALLERY_ARENA_ROADMAP.md`; `custodian/game/world/levels/authored/dev/lords_of_pain_test_gallery/`; `custodian/game/world/levels/authored/dev/npa_showcase_arena/`; `custodian/game/world/levels/generated_region_level.gd`; `custodian/game/world/procgen/proc_gen_tilemap.gd`.
 - Task-specific authority: `design/02_features/procgen/PROCGEN_SHOWCASE_GALLERY_ARENA_ROADMAP.md`; `design/02_features/procgen/PROCGEN_PLAYABILITY_PASS_V1.md`; `custodian/game/world/levels/level_loader.gd`; `custodian/game/world/procgen/generation/`.
 - Work surface: `custodian/game/world/levels/authored/dev/procgen_showcase_gallery/procgen_gallery_inspector.gd`, `custodian/game/world/levels/authored/dev/procgen_showcase_gallery/procgen_gallery_overlay.gd`, `custodian/game/world/levels/authored/dev/procgen_showcase_gallery/procgen_arena_session.gd`, `custodian/game/world/procgen/generation/accepted_world_export.gd` (read-only consumption), `procgen_showcase_inspector_smoke.gd` (planned in `custodian/tools/validation/levels/`), `custodian/tools/validation/validation_manifest.json`.
-- Change: Expose event/request-driven inspector snapshots of accepted seed, attempt count/failure reason, playable component/spawn evidence, floor/collision/navigation, route bands/anchors, sites and registered presentation provenance when available. Render limited toggleable debug overlays using copied read-only descriptors. Query existing canonical get_level_data/debug getters; add an explicitly read-only projection adapter only if public API is insufficient. No per-frame world scan, fake labels or input from overlay to gameplay authority.
+- Change: Expose event/request-driven inspector snapshots of session state, selected seed/preset, busy/accepted/staging counts, Operator activity, accepted-host profile/map size/room count/fingerprint, and available canonical map/spawn/playability/route/site data. Render limited toggleable debug overlays using copied read-only descriptors. Query existing canonical getters; add only the narrow detached session/host projection required. Report unavailable fields honestly. No per-frame world scan, fake labels or input from overlay to gameplay authority.
 - Preserve: No candidate mutation, pathfinding duplication, public debug data changing generation fingerprint, or global HUD/Operator UI takeover.
 - Non-goals: Do not add a second generator, parallel gameplay authority, fake telemetry, noncanonical runtime art files, generic procgen refactor, or unrelated NPA/LoP modifications.
 - Acceptance: Overlay counts/fingerprints agree with map owners; disabled costs near zero; opaque/missing fields say unavailable; teardown and seed swap cannot show stale data.
-- Validation: NEW inspector smoke with real fixed-seed snapshot/overlay toggles and stale teardown; directly affected existing procgen debug/playability tests; changed/diff.
+- Validation: `procgen_showcase_runtime_inspector`, `procgen_showcase_generation_controls`, `procgen_showcase_generated_arena`, `procgen_showcase_exhibit_catalog`, `procgen_candidate_semantic_model`, `procgen_accepted_world_export_parity`, and `procgen_playability`, plus changed-file checks.
 - Task overrides: `none`
 - Deferred: Human visual comparison deferred to PGA-7; no new semantic authority.
 
@@ -37,33 +37,28 @@
 - Use existing functions and read-only APIs whenever possible; add just a focused controller or accessor, not large stateful blocks in `proc_gen_tilemap.gd`.
 - If real code diverges materially from the packet's ownership boundary, stop and request the scoped architecture refresh instead of improvising a second system.
 
-## Preparatory implementation audit (2026-10-15; live main `96c44f5444abb87eb5c054ad883e69d023ff845f`)
+## Realized API refresh (2026-11-14; fetched `origin/main@074e7c9329b598056785130676fa69fae2b6a18f`)
 
-**This is a preparatory exact-path implementation plan, not the final realized-API refresh.** PGA-5 is still `draft/manual`; the relevant predecessor reviews and direct API checks named below remain mandatory. Do not add `Authoring handoff: auto`, promote, or claim as a result of this section.
-
-### Canonical snapshot boundaries (pre-PGA-2/PGA-4 API freeze)
-- `custodian/game/world/procgen/generation/accepted_world_export.gd::ProcgenAcceptedWorldExport.LEVEL_DATA_SCHEMA` owns the exported generated-world keys and detached copies. Consume exported `floor_cells`, `wall_cells`, `region_tiles`, `road_semantics`, `main_route_cells`, `route_playability`, `biome_summary`, `encounter_plan`, `faction_activity_sites` and other **present** keys as data. Do NOT invoke its mutating `capture_tile_state` from a debug overlay.
-- `ProcGenTilemap.get_level_data()`, `get_runtime_health_snapshot()` and `ProcgenPerformanceSnapshot.generation_snapshot(tilemap)` are existing read APIs. `CandidateSemanticAdapter.fingerprint_runtime_state` is the existing fingerprint authority. Stage/report facts must be scoped to the gallery host's accepted map, not arbitrary `SceneTree` first-node selection.
-- `custodian/game/world/levels/authored/dev/procgen_showcase_gallery/procgen_gallery_inspector.gd` should project one detached, versioned readout per accepted `generation_id` / session request, with `available`, `unavailable` or `not_applicable` per field. Compare counts to source dictionaries, not painted/unpainted streaming visibility when those differ.
-- `custodian/game/world/levels/authored/dev/procgen_showcase_gallery/procgen_gallery_overlay.gd` is presentation-only. Build bounded spatial glyphs/lines from the snapshot (and only for explicit enabled layers or changed events); no continual full-map scan, render-side collision inference, accepting input as gameplay data, or write into `ProcGenTilemap`.
-- Provenance: resolve catalog `exhibit_id` to actual loaded `source authority` and optional runtime asset reference from **landed PGA-2**, with truthful N/A if unresolved. Do not render pending Asset V2 inbox items or claim an unavailable actor/biome.
-- Planned `procgen_showcase_inspector_smoke.gd` under `custodian/tools/validation/levels/`: fixed accepted map + source parity, disabled overlay cost bounded, clear on seed/session change/host disposal, missing-data N/A and absence of source mutation. Run `procgen_accepted_world_export_parity`, `procgen_candidate_semantic_model` and the PGA-2/PGA-4 focused smokes.
-
-### Required *final* refresh after PGA-2 and PGA-4 reviews
-Resolve the exact catalog lookup API and session accepted-map/level_data getter from their landed sources/review receipts. Choose a narrow read-only host/session projection if needed; do not access private fields or create a second map-export authority. Retain `draft/manual` until this is inspected on main.
+- `ProcgenArenaSession.get_session_status()` and `session_updated(status)` are the lifecycle boundary. Status includes state, selected seed/preset, generation fingerprint, busy state, accepted/staging counts and Operator activity; it intentionally does not expose host/map references. `get_presets()` returns a deep copy.
+- `ProcgenArenaHost.get_arena_status()` is the accepted-host source for ready/active, seed/profile/preset/map size/room count and generation fingerprint. The host's accepted region/map remain private. `GeneratedRegionLevel.get_generated_map()` is the region's existing map ownership path.
+- Add a narrow session-owned read method that delegates through the accepted host and returns a detached inspector snapshot. Do not expose host, region, or map references. Use `ProcGenTilemap.get_level_data()` / `ProcgenAcceptedWorldExport.build_level_data()` and project only present, allowlisted fields; deep-copy mutable values. Never call mutating `capture_tile_state()`.
+- Available read authorities include `get_runtime_health_snapshot()`, `get_player_spawn()`, `get_main_playable_component()`, `is_valid_spawn_cell()`, `is_runtime_navigation_walkable()`, `get_floor_tilemap()`, and `get_walls_tilemap()`. `ProcgenPerformanceSnapshot.generation_snapshot()` / `fingerprint_generation()` remain the fingerprint authorities.
+- The exhibit catalog's `load_report()` gives validated static provenance. Associate it with accepted map data only on exact identifier match; otherwise report unavailable/N/A. Do not infer map provenance from a catalog entry alone.
+- Build/update on accepted lifecycle or fingerprint changes, or explicit refresh. Preserve the old accepted snapshot while staging; invalidate on accepted-host replacement/disposal and session/inspector teardown. Overlay rendering consumes copied descriptors only, with at most 1024 descriptors per layer, and performs no per-frame source query or full-world scan.
+- Keep the Operator, camera, LevelLoader, generator, map acceptance, collision and navigation authorities unchanged.
 
 ## Refresh Planning Authority
 - Refresh owner: `chatgpt-user`
-- ChatGPT/user planning refresh required: `yes`
-- Refresh planning chat: `not-recorded`
-- Refresh instruction: `Refresh actual landed catalog/controls/accepted-world read APIs before choosing overlay snapshot owners.` Bring the exact predecessor closing summary/review finding IDs plus refreshed `origin/main` code paths to this planning chat. Reconcile ownership and test paths; then run targeted paired authoring preflight, promote both to ready/auto and regenerate managed README. Never self-promote this draft from dependency completion alone.
+- ChatGPT/user planning refresh required: `completed for PGA-5 API and scope`
+- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af77714-565c-83ea-be53-4049119e3619`
+- Original program authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e`
+- This refresh records a realized-API plan; it is not a dispatcher claim, implementation result, or owner acceptance.
 
 ## Next Handoff
-- Next workstream: `review-procgen-showcase-runtime-inspector`
-- Next packet state: `dependency-gated`
+- Next workstream: `procgen-showcase-runtime-inspector`
+- Next packet state: `ready/manual`
 - Refresh owner: `execution-agent`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e`
-- Refresh reason: `normal independent fresh-context review of landed implementation`
-- Next action: `Land, archive implementation, then run fresh paired review; do not advance the subsequent PGA slice until review archives complete.`
-- Blockers or open questions: `Explicit architecture/API refresh required before promotion`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af77714-565c-83ea-be53-4049119e3619`
+- Next action: `Acquire through the canonical V2 dispatcher, then implement, validate, publish a feature branch and draft PR under RC-075.`
+- Blockers or open questions: `None established by the realized API audit; dispatcher and live capacity checks remain mandatory.`

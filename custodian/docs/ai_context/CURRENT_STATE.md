@@ -209,21 +209,18 @@ and Type B generation landed after that milestone; see the current 2026-10-17
 compound status above for the accurate runtime/review split. Focused checks are in
 `compound_archetype_profile_smoke.gd`.
 
-## Procgen Showcase Gallery Shell (2026-10-15)
+## Procgen Showcase Gallery and Arena (2026-11-14)
 
 The registered dev-only `procgen_showcase_gallery` destination provides five
 connected authored exhibit wings and an intentionally sealed central arena
-threshold. The production scene contains no Operator/controller/camera or map
-generator; its standalone playtest wrapper owns the real Operator and standard
-runtime systems. Reset-on-entry ingress/return preserves the same Operator.
-The gallery's PGA-1 shell and independent fresh-context review are archived
-**passed**. PGA-2 implementation now supplies a validated manifest and gallery-local,
-inspect-only selector for real biome profiles, region-kind semantics, site API
-references, and registered terrain-stamp previews; population is explicitly
-N/A because this slice has no safe read-only query. It does not generate a map
-or alter world authority. PGA-2 passed its focused catalog and shell smokes plus
-42/42 changed-file checks; its paired review follows implementation landing.
-PGA-3 arena status remains governed by its packet and dispatcher lifecycle. See
+threshold. PGA-1 is archived complete. PGA-2 provides a validated manifest and
+inspect-only catalog; focused catalog/shell smokes and 42/42 changed-file checks
+are recorded, with owner acceptance governing closeout. PGA-3's generated arena
+is merged on main at `f1bccf0d4eb8d06d20f3be52edc4bfde7afda9b3`. PGA-4's seed/session
+controls are merged at `fd469bd6989e10e48401143eec73d25a444c50b3`, with owner
+acceptance recorded in the current orchestration. PGA-5's packet has a realized
+API refresh and is ready/manual for V2 dispatcher acquisition. Paired reviews are
+retired; focused validation and owner review govern landed changes. See
 `design/02_features/procgen/PROCGEN_SHOWCASE_GALLERY_ARENA_ROADMAP.md`.
 
 ## Dropbox asset lifecycle reconciliation tooling (2026-10-13)
