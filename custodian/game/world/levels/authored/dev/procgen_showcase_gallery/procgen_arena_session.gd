@@ -206,8 +206,12 @@ func _load_presets() -> Dictionary:
 
 
 func _valid_preset(preset: Dictionary) -> bool:
+	var map_size: Variant = preset.get("map_size", null)
+	if not map_size is Array or map_size.size() != 2:
+		return false
 	return str(preset.get("profile_id", "")) == "sundered_keep_ascent" \
-			and preset.get("map_size", null) == [96, 96] \
+			and int(map_size[0]) == 96 \
+			and int(map_size[1]) == 96 \
 			and int(preset.get("room_count", 0)) == 12 \
 			and int(preset.get("seed", -1)) >= 0 \
 			and int(preset.get("seed", -1)) <= MAX_SEED \
