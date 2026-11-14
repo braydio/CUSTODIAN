@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import fcntl
 import importlib.util
 import json
 import marshal
@@ -503,6 +504,246 @@ def acquisition_record_path(repo: Path, turn_id: str) -> Path:
     return common / "custodian-turn-dispatcher-v2" / "acquisitions" / f"{turn_id}.json"
 
 
+
+def continuation_root(repo: Path) -> Path:
+    common = Path(git(repo, "rev-parse", "--git-common-dir"))
+    common = common if common.is_absolute() else (repo / common)
+    return common.resolve() / "custodian-turn-dispatcher-v2" / "continuations"
+
+
+def continuation_record_path(repo: Path, continuation_id: str) -> Path:
+    return continuation_root(repo) / f"{continuation_id}.json"
+
+
+def _atomic_private_json(path: Path, payload: dict) -> None:
+    if path.parent.is_symlink():
+        raise DispatchError("continuation record directory is a symbolic link")
+    path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+    temporary = path.with_name(path.name + f".{uuid.uuid4().hex}.tmp")
+    try:
+        with temporary.open("x", encoding="utf-8") as stream:
+            stream.write(json.dumps(payload, indent=2, sort_keys=True) + "\n")
+        os.chmod(temporary, 0o600)
+        os.link(temporary, path)
+    except FileExistsError as exc:
+        raise DispatchError(f"continuation record already exists: {path.name}") from exc
+    finally:
+        if temporary.exists():
+            temporary.unlink()
+
+
+def _dependency_only_change(original: str, current: str) -> bool:
+    marker = re.compile(r"(?m)^(- Depends on: ).*$")
+    if len(marker.findall(original)) != 1 or len(marker.findall(current)) != 1:
+        return False
+    return marker.sub(r"\1<dependency-metadata>", original, count=1) == marker.sub(
+        r"\1<dependency-metadata>", current, count=1)
+
+
+def _checkout_process_owners(checkout: Path, proc_root: Path = Path("/proc")) -> dict:
+    """Identify matching owners; separate opaque unrelated services from uncertainty."""
+    if not proc_root.is_dir():
+        raise DispatchError("process ownership cannot be established: /proc is unavailable")
+    target = checkout.resolve()
+    owners, uncertain, unrelated_unreadable = [], [], []
+    scanned = 0
+    trusted_units = {"systemd", "sd-pam", "(sd-pam)", "ssh-agent"}
+    for entry in proc_root.iterdir():
+        if not entry.name.isdigit() or int(entry.name) == os.getpid():
+            continue
+        try:
+            entry.stat()
+            comm = (entry / "comm").read_text(encoding="utf-8", errors="replace").strip()
+            cgroup = (entry / "cgroup").read_text(encoding="utf-8", errors="replace").strip()
+            scanned += 1
+            links = [entry / "cwd", entry / "root"]
+            fd_dir = entry / "fd"
+            denied = False
+            if fd_dir.is_dir():
+                try:
+                    links.extend(fd_dir.iterdir())
+                except PermissionError:
+                    denied = True
+            for link in links:
+                try:
+                    value = Path(os.readlink(link)).resolve()
+                except (FileNotFoundError, ProcessLookupError):
+                    continue
+                except PermissionError:
+                    denied = True
+                    continue
+                if value == target or target in value.parents:
+                    owners.append({"pid": entry.name, "comm": comm, "cgroup": cgroup})
+                    break
+            else:
+                if denied:
+                    unit_match = any(unit in cgroup for unit in ("init.scope", "ssh-agent.service"))
+                    if comm in trusted_units and unit_match:
+                        unrelated_unreadable.append({"pid": entry.name, "comm": comm,
+                            "cgroup": cgroup, "classification": "known-unrelated-service"})
+                    else:
+                        uncertain.append({"pid": entry.name, "comm": comm, "cgroup": cgroup})
+        except (FileNotFoundError, ProcessLookupError):
+            continue
+        except PermissionError:
+            uncertain.append({"pid": entry.name, "comm": "unreadable", "cgroup": "unreadable"})
+    return {"owners": owners, "uncertain": uncertain,
+            "unrelated_unreadable": unrelated_unreadable, "scanned_pids": scanned}
+
+
+def _continuation_lock(repo: Path, turn_id: str):
+    root = continuation_root(repo)
+    folder = root / "locks"
+    if root.is_symlink() or folder.is_symlink():
+        raise DispatchError("continuation lock directory is a symbolic link")
+    folder.mkdir(parents=True, exist_ok=True, mode=0o700)
+    path = folder / f"{turn_id}.lock"
+    if path.is_symlink():
+        raise DispatchError("continuation lock file is a symbolic link")
+    stream = path.open("a+")
+    try:
+        fcntl.flock(stream.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError as exc:
+        stream.close()
+        raise DispatchError("another V2 continuation/checkpoint operation owns this checkout") from exc
+    return stream
+
+
+def _continuations_for_checkout(repo: Path, workstream: str, checkout: Path) -> list[dict]:
+    folder = continuation_root(repo)
+    if folder.is_symlink():
+        raise DispatchError("continuation record directory is a symbolic link")
+    found = []
+    if not folder.is_dir():
+        return found
+    for path in folder.glob("*.json"):
+        if path.is_symlink() or not path.is_file():
+            continue
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            raise DispatchError(f"continuation record is unreadable: {path.name}") from exc
+        if (isinstance(payload, dict) and payload.get("workstream") == workstream
+                and Path(payload.get("checkout", "")).resolve() == checkout.resolve()):
+            found.append(payload)
+    return found
+
+
+def reauthorize_checkout(repo: Path, workstream: str, checkout: Path, pool: Path) -> dict:
+    """Authenticate one dependency-metadata-only update on an attached V2 checkout."""
+    repo, checkout, pool = repo_root(repo), checkout.expanduser().resolve(), pool.expanduser().resolve()
+    validate_id(workstream)
+    if checkout.parent != pool or not checkout.name.startswith(f"turn-{workstream}-"):
+        raise DispatchError("checkout is outside the managed V2 turn pool")
+    if checkout == repo or repo not in attached(repo) or checkout not in attached(repo):
+        raise DispatchError("reauthorization requires the exact attached checkout and stable coordination repo")
+    repo_common = Path(git(repo, "rev-parse", "--path-format=absolute", "--git-common-dir")).resolve()
+    checkout_common = Path(git(checkout, "rev-parse", "--path-format=absolute", "--git-common-dir")).resolve()
+    if repo_common != checkout_common:
+        raise DispatchError("coordination repo and checkout do not share Git common directory")
+    branch = git(checkout, "symbolic-ref", "--short", "HEAD")
+    if branch != f"agent/{workstream}":
+        raise DispatchError("reauthorization requires the exact canonical task branch")
+    acquisition = read_acquisition(repo, branch, checkout)
+    if acquisition.get("workstream") != workstream or acquisition.get("branch") != branch:
+        raise DispatchError("original acquisition does not authenticate this task branch")
+    lock = _continuation_lock(repo, acquisition["turn_id"])
+    try:
+        process_evidence = _checkout_process_owners(checkout)
+        if process_evidence["owners"]:
+            pids = ", ".join(item["pid"] for item in process_evidence["owners"])
+            raise DispatchError(f"checkout has active process owner(s): {pids}")
+        if process_evidence["uncertain"]:
+            pids = ", ".join(item["pid"] for item in process_evidence["uncertain"])
+            raise DispatchError(f"process ownership is uncertain for PID(s) {pids}; inspect these processes before continuing")
+        if _continuations_for_checkout(repo, workstream, checkout):
+            raise DispatchError("a continuation already exists for this checkout; refusing a conflicting successor")
+        head = git(checkout, "rev-parse", "HEAD")
+        if not is_ancestor(repo, acquisition.get("source_sha", ""), head):
+            raise DispatchError("checkout HEAD no longer descends from authenticated acquisition source")
+        remote = remote_branch(repo, branch)
+        if not remote or not is_ancestor(repo, remote, head):
+            raise DispatchError("remote task branch is missing or not preserved in checkout ancestry")
+        before_status = git(checkout, "status", "--porcelain=v1", "--untracked-files=all")
+        untracked = safe_untracked(checkout)
+        assert_no_secret_content(checkout, untracked)
+        ignored_before = ignored_inventory(checkout)
+        if any(x["classification"] == "unresolved" for x in ignored_before):
+            raise DispatchError("unclassified ignored data requires preservation before reauthorization")
+        lfs = lfs_files(checkout)
+        if lfs:
+            git(checkout, "lfs", "fsck", "--objects")
+        original_receipt_path = acquisition_record_path(repo, acquisition["turn_id"])
+        original_receipt_sha = hashlib.sha256(original_receipt_path.read_bytes()).hexdigest()
+        original_main = acquisition.get("task_definition_sha")
+        main_sha, _ = latest_main(repo)
+        if not original_main or not is_ancestor(repo, original_main, main_sha):
+            raise DispatchError("original task definition commit is not in current main ancestry")
+        packet_path = acquisition.get("packet")
+        if not isinstance(packet_path, str) or not packet_path.startswith(PACKETS + "/"):
+            raise DispatchError("original acquisition packet path is invalid")
+        original_packet = git(repo, "show", f"{original_main}:{packet_path}")
+        if hashlib.sha256(original_packet.encode("utf-8")).hexdigest() != acquisition.get("definition_sha256"):
+            raise DispatchError("original packet bytes do not match immutable acquisition digest")
+        definition = remote_definition(repo, main_sha, workstream)
+        if definition.get("kind") != "published-packet" or definition.get("path") != packet_path:
+            raise DispatchError("current authenticated packet identity/path changed")
+        if definition.get("sha256") == acquisition.get("definition_sha256"):
+            raise DispatchError("packet definition is unchanged; no continuation is needed")
+        if not _dependency_only_change(original_packet, definition["content"]):
+            raise DispatchError("packet change is outside the explicitly permitted dependency-metadata field")
+        if has_design_hold(definition["fields"]):
+            raise DispatchError("current packet contains an unresolved user-owned design hold")
+        if (git(checkout, "status", "--porcelain=v1", "--untracked-files=all") != before_status
+                or ignored_inventory(checkout) != ignored_before):
+            raise DispatchError("checkout changed while reauthorization evidence was collected")
+        continuation_id = uuid.uuid4().hex
+        record = {"schema": "custodian.turn_dispatcher_v2.continuation.v1", "status": "active",
+            "continuation_id": continuation_id, "workstream": workstream, "checkout": str(checkout),
+            "local_branch": branch, "branch": branch, "head": head,
+            "source": acquisition["source"], "source_sha": acquisition["source_sha"],
+            "original_turn_id": acquisition["turn_id"], "original_acquisition_sha256": original_receipt_sha,
+            "original_packet": packet_path, "original_packet_sha256": acquisition["definition_sha256"],
+            "original_task_definition_sha": original_main, "current_packet_sha256": definition["sha256"],
+            "current_task_definition_sha": main_sha, "remote_head": remote, "untracked": untracked,
+            "ignored_inventory": ignored_before, "lfs_files": lfs,
+            "process_ownership": process_evidence, "created_at_unix": int(time.time())}
+        record_path = continuation_record_path(repo, continuation_id)
+        _atomic_private_json(record_path, record)
+        return {"continuation_id": continuation_id, "continuation_record": str(record_path),
+            "workstream": workstream, "checkout": str(checkout), "branch": branch, "head": head,
+            "original_packet_sha256": acquisition["definition_sha256"],
+            "current_packet_sha256": definition["sha256"], "retired": False}
+    finally:
+        lock.close()
+
+
+def read_continuation(repo: Path, acquisition: dict, checkout: Path, definition: dict, main_sha: str) -> dict | None:
+    matches = _continuations_for_checkout(repo, acquisition["workstream"], checkout)
+    if not matches:
+        return None
+    if len(matches) != 1:
+        raise DispatchError("multiple continuation records identify this checkout")
+    record = matches[0]
+    original_path = acquisition_record_path(repo, acquisition["turn_id"])
+    if (record.get("schema") != "custodian.turn_dispatcher_v2.continuation.v1"
+            or record.get("status") != "active"
+            or record.get("original_turn_id") != acquisition.get("turn_id")
+            or record.get("original_acquisition_sha256") != hashlib.sha256(original_path.read_bytes()).hexdigest()
+            or record.get("checkout") != str(checkout)
+            or record.get("local_branch") != acquisition.get("local_branch")
+            or record.get("branch") != acquisition.get("branch")
+            or record.get("source_sha") != acquisition.get("source_sha")
+            or record.get("original_packet_sha256") != acquisition.get("definition_sha256")
+            or record.get("current_packet_sha256") != definition.get("sha256")
+            or record.get("head") != git(checkout, "rev-parse", "HEAD")):
+        raise DispatchError("successor continuation does not authenticate the current checkout and packet")
+    if not is_ancestor(repo, record.get("source_sha", ""), record.get("head", "")):
+        raise DispatchError("successor continuation source ancestry is invalid")
+    if not is_ancestor(repo, record.get("current_task_definition_sha", ""), main_sha):
+        raise DispatchError("successor task definition is not in current main ancestry")
+    return record
+
 def retirement_record_path(repo: Path, turn_id: str) -> Path:
     common = Path(git(repo, "rev-parse", "--git-common-dir"))
     if not common.is_absolute():
@@ -648,7 +889,7 @@ def assert_no_secret_content(checkout: Path, untracked: list[str]) -> None:
 def add_handoff_metadata(body: str, workstream: str,
                          packet: str, main_sha: str, branch: str,
                          base_sha: str, source: str, source_sha: str,
-                         mode: str) -> str:
+                         mode: str, continuation: dict | None = None) -> str:
     required = ("Original goal:", "Implemented:", "Remaining:", "Validation:",
                 "Resume:", "Sources/evidence:")
     for label in required:
@@ -659,7 +900,12 @@ def add_handoff_metadata(body: str, workstream: str,
              f"Task definition: {packet} at origin/main {main_sha}",
              f"Remote branch: {branch}", f"Acquisition mode: {mode}",
              f"Acquisition source: {source}", f"Acquisition source commit: {source_sha}",
-             f"Checkpoint base: {base_sha}", marker_end]
+             f"Checkpoint base: {base_sha}"]
+    if continuation:
+        lines.extend([f"Continuation identity: {continuation['continuation_id']}",
+                      f"Original packet SHA-256: {continuation['original_packet_sha256']}",
+                      f"Current packet SHA-256: {continuation['current_packet_sha256']}"])
+    lines.append(marker_end)
     block = "\n".join(lines)
     if marker_start in body and marker_end in body:
         before = body.split(marker_start, 1)[0]
@@ -769,8 +1015,8 @@ def ignored_inventory(checkout: Path) -> list[dict]:
     return entries
 
 
-def checkpoint(repo: Path, workstream: str, checkout: Path, handoff: Path,
-               message: str, pool: Path, retire: bool = True) -> dict:
+def _checkpoint_locked(repo: Path, workstream: str, checkout: Path, handoff: Path,
+                       message: str, pool: Path, retire: bool = True) -> dict:
     repo, checkout, pool = repo_root(repo), checkout.expanduser().resolve(), pool.expanduser().resolve()
     validate_id(workstream)
     if checkout.parent != pool or not checkout.name.startswith(f"turn-{workstream}-"):
@@ -824,14 +1070,11 @@ def checkpoint(repo: Path, workstream: str, checkout: Path, handoff: Path,
         parent = parent / part
         if parent.is_symlink():
             raise DispatchError("handoff directory contains a symbolic link")
-    target.parent.mkdir(parents=True, exist_ok=True)
     if target.is_symlink() or not target.resolve().is_relative_to(checkout):
         raise DispatchError("handoff target escapes the exact turn checkout")
-    if handoff.resolve() != target.resolve():
-        shutil.copyfile(handoff, target)
-    body = target.read_text(encoding="utf-8")
     main_sha, _ = latest_main(repo)
     definition = remote_definition(repo, main_sha, workstream)
+    continuation = None
     if definition["kind"] == "missing":
         if acquisition.get("mode") != "owner-authorized" or not acquisition.get("owner_authorization"):
             raise DispatchError("authenticated task definition disappeared before checkpoint")
@@ -841,12 +1084,19 @@ def checkpoint(repo: Path, workstream: str, checkout: Path, handoff: Path,
         if acquisition.get("definition_kind") == "missing":
             raise DispatchError("a published task definition appeared after owner-authorized acquisition; re-acquire before checkpoint")
         packet_path = definition["path"]
-        if acquisition.get("definition_kind") == "published-packet" and definition["sha256"] != acquisition.get("definition_sha256"):
-            raise DispatchError("published task definition changed after acquisition; re-acquire before checkpoint")
+        continuation = read_continuation(repo, acquisition, checkout, definition, main_sha)
+        if (acquisition.get("definition_kind") == "published-packet"
+                and definition["sha256"] != acquisition.get("definition_sha256")
+                and continuation is None):
+            raise DispatchError("published task definition changed after acquisition; explicit same-checkout reauthorization required")
+    target.parent.mkdir(parents=True, exist_ok=True)
+    if handoff.resolve() != target.resolve():
+        shutil.copyfile(handoff, target)
+    body = target.read_text(encoding="utf-8")
     base_sha = git(checkout, "rev-parse", "HEAD")
     body = add_handoff_metadata(body, workstream, packet_path, main_sha,
                                 branch, base_sha, acquisition["source"],
-                                acquisition["source_sha"], acquisition["mode"])
+                                acquisition["source_sha"], acquisition["mode"], continuation)
     target.write_text(body, encoding="utf-8")
     try:
         untracked = safe_untracked(checkout)
@@ -905,7 +1155,8 @@ def checkpoint(repo: Path, workstream: str, checkout: Path, handoff: Path,
             "status": "remote-verified", "turn_id": turn_id,
             "workstream": workstream, "checkout": str(checkout),
             "local_branch": local_branch, "branch": branch, "head": sha,
-            "handoff": str(rel), "ignored_inventory": ignored_before}
+            "handoff": str(rel), "ignored_inventory": ignored_before,
+            "continuation_id": continuation.get("continuation_id") if continuation else None}
         retirement_path = write_retirement_record(repo, turn_id, retirement)
         git(repo, "worktree", "remove", str(checkout))
         if checkout.exists() or checkout in attached(repo):
@@ -917,11 +1168,27 @@ def checkpoint(repo: Path, workstream: str, checkout: Path, handoff: Path,
         "workstream": workstream, "checkout": str(checkout), "branch": branch,
         "head": sha, "handoff": str(rel), "ignored_disposable": disposable,
         "ignored_inventory": ignored_before,
+        "continuation_id": continuation.get("continuation_id") if continuation else None,
         "retired": retire})
     return {"workstream": workstream, "branch": branch, "head": sha,
             "handoff": str(rel), "retired": retire, "receipt": receipt,
-            "retirement_receipt": str(retirement_path) if retirement_path else None}
+            "retirement_receipt": str(retirement_path) if retirement_path else None,
+            "continuation_id": continuation.get("continuation_id") if continuation else None}
 
+
+
+def checkpoint(repo: Path, workstream: str, checkout: Path, handoff: Path,
+               message: str, pool: Path, retire: bool = True) -> dict:
+    repo, checkout = repo_root(repo), checkout.expanduser().resolve()
+    if checkout in attached(repo):
+        branch = git(checkout, "symbolic-ref", "--short", "HEAD")
+        acquisition = read_acquisition(repo, branch, checkout)
+        lock = _continuation_lock(repo, acquisition["turn_id"])
+        try:
+            return _checkpoint_locked(repo, workstream, checkout, handoff, message, pool, retire)
+        finally:
+            lock.close()
+    return _checkpoint_locked(repo, workstream, checkout, handoff, message, pool, retire)
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
@@ -934,6 +1201,10 @@ def main(argv: list[str] | None = None) -> int:
         cmd.add_argument("--mode", choices=("normal", "historical", "owner-authorized"), default="normal")
         cmd.add_argument("--authorization-url")
         cmd.add_argument("--authorization-sha256")
+    cmd = sub.add_parser("reauthorize")
+    cmd.add_argument("workstream")
+    cmd.add_argument("--checkout", type=Path, required=True)
+    cmd.add_argument("--pool", type=Path, default=Path.home() / "Projects/.custodian-turns")
     cmd = sub.add_parser("checkpoint")
     cmd.add_argument("workstream")
     cmd.add_argument("--checkout", type=Path, required=True)
@@ -948,6 +1219,8 @@ def main(argv: list[str] | None = None) -> int:
         elif args.action == "begin":
             result = begin(args.repo, args.workstream, args.mode, args.pool,
                            args.authorization_url, args.authorization_sha256)
+        elif args.action == "reauthorize":
+            result = reauthorize_checkout(args.repo, args.workstream, args.checkout, args.pool)
         else:
             result = checkpoint(args.repo, args.workstream, args.checkout,
                                 args.handoff, args.message, args.pool, not args.keep)

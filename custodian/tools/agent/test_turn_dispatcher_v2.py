@@ -312,6 +312,182 @@ class TurnDispatcherTests(unittest.TestCase):
         run("git", "worktree", "remove", str(resumed_checkout), cwd=self.repo)
         run("git", "update-ref", "-d", f"refs/heads/{resumed['local_branch']}", resumed_sha, cwd=self.repo)
 
+    def publish_dependency_change(self, old="blocked-predecessor", new="replacement-predecessor"):
+        packet = self.repo / "custodian/docs/ai_context/task_packets/EXAMPLE.md"
+        text = packet.read_text(encoding="utf-8")
+        packet.write_text(text.replace(f"Depends on: {old}", f"Depends on: {new}"), encoding="utf-8")
+        run("git", "add", str(packet.relative_to(self.repo)), cwd=self.repo)
+        run("git", "commit", "-m", "update packet dependency metadata", cwd=self.repo)
+        run("git", "push", "origin", "main", cwd=self.repo)
+
+    def test_metadata_only_packet_change_reauthorizes_same_checkout_and_checkpoints(self):
+        result, checkout = self.turn_checkout()
+        handoff = checkout / "custodian/docs/ai_context/turn_handoffs/example-task.md"
+        handoff.parent.mkdir(parents=True)
+        handoff.write_text("Original goal: demo\nImplemented: none\nRemaining: work\n"
+                           "Validation: not run\nSources/evidence: none\nResume: continue\n", encoding="utf-8")
+        receipt = Path(result["acquisition_receipt"])
+        original_receipt, original_handoff = receipt.read_bytes(), handoff.read_bytes()
+        before_worktrees = td.attached(self.repo)
+        self.publish_dependency_change()
+        permission_case = {"owners": [], "uncertain": [], "scanned_pids": 3,
+                           "unrelated_unreadable": [{"pid": "717", "comm": "systemd",
+                               "cgroup": "/user.slice/user-1000.slice/user@1000.service/init.scope",
+                               "classification": "known-unrelated-service"}]}
+        with patch.object(td, "_checkout_process_owners", return_value=permission_case):
+            continuation = td.reauthorize_checkout(self.repo, "example-task", checkout, self.base / "turns")
+        self.assertEqual(td.attached(self.repo), before_worktrees)
+        self.assertEqual(receipt.read_bytes(), original_receipt)
+        self.assertEqual(handoff.read_bytes(), original_handoff)
+        record = json.loads(Path(continuation["continuation_record"]).read_text(encoding="utf-8"))
+        self.assertEqual(record["original_turn_id"], result["turn_id"])
+        self.assertEqual(record["original_acquisition_sha256"], __import__("hashlib").sha256(original_receipt).hexdigest())
+        self.assertEqual(record["original_packet_sha256"], result["definition_sha256"])
+        self.assertNotEqual(record["original_packet_sha256"], record["current_packet_sha256"])
+        self.assertEqual(record["process_ownership"]["unrelated_unreadable"][0]["pid"], "717")
+        output = td.checkpoint(self.repo, "example-task", checkout, handoff,
+                               "metadata continuation checkpoint", self.base / "turns", retire=False)
+        self.assertEqual(output["continuation_id"], continuation["continuation_id"])
+        saved = run("git", "-C", str(checkout), "show", "HEAD:custodian/docs/ai_context/turn_handoffs/example-task.md")
+        self.assertIn(f"Continuation identity: {continuation['continuation_id']}", saved)
+        self.assertIn(f"Original packet SHA-256: {result['definition_sha256']}", saved)
+
+    def test_reauthorization_rejects_scope_change_and_preserves_checkout(self):
+        result, checkout = self.turn_checkout()
+        packet = self.repo / "custodian/docs/ai_context/task_packets/EXAMPLE.md"
+        packet.write_text(packet.read_text().replace("- Status: draft", "- Status: ready"), encoding="utf-8")
+        run("git", "add", str(packet.relative_to(self.repo)), cwd=self.repo)
+        run("git", "commit", "-m", "change packet outside dependency metadata", cwd=self.repo)
+        run("git", "push", "origin", "main", cwd=self.repo)
+        with patch.object(td, "_checkout_process_owners", return_value={"owners":[],"uncertain":[],"unrelated_unreadable":[],"scanned_pids":0}):
+            with self.assertRaisesRegex(td.DispatchError, "outside the explicitly permitted"):
+                td.reauthorize_checkout(self.repo, "example-task", checkout, self.base / "turns")
+        self.assertTrue(checkout.exists())
+        self.assertEqual(td.git(checkout, "rev-parse", "HEAD"), result["source_sha"])
+        self.assertEqual(list(td.continuation_root(self.repo).glob("*.json")), [])
+
+    def test_reauthorization_rejects_ambiguous_packet_identity(self):
+        result, checkout = self.turn_checkout()
+        self.publish_dependency_change()
+        duplicate = self.repo / "custodian/docs/ai_context/task_packets/DUPLICATE.md"
+        duplicate.write_text("- Workstream: example-task\n- Status: draft\n", encoding="utf-8")
+        run("git", "add", str(duplicate.relative_to(self.repo)), cwd=self.repo)
+        run("git", "commit", "-m", "introduce ambiguous packet identity", cwd=self.repo)
+        run("git", "push", "origin", "main", cwd=self.repo)
+        with patch.object(td, "_checkout_process_owners", return_value={"owners":[],"uncertain":[],"unrelated_unreadable":[],"scanned_pids":0}):
+            with self.assertRaisesRegex(td.DispatchError, "ambiguous authenticated"):
+                td.reauthorize_checkout(self.repo, "example-task", checkout, self.base / "turns")
+        self.assertEqual(list(td.continuation_root(self.repo).glob("*.json")), [])
+        self.assertTrue(checkout.exists())
+        self.assertEqual(td.git(checkout, "rev-parse", "HEAD"), result["source_sha"])
+
+    def test_reauthorization_rejects_wrong_attached_branch(self):
+        _result, checkout = self.turn_checkout()
+        self.publish_dependency_change()
+        run("git", "checkout", "-b", "unexpected-branch", cwd=checkout)
+        with patch.object(td, "_checkout_process_owners", return_value={"owners":[],"uncertain":[],"unrelated_unreadable":[],"scanned_pids":0}):
+            with self.assertRaisesRegex(td.DispatchError, "exact canonical task branch"):
+                td.reauthorize_checkout(self.repo, "example-task", checkout, self.base / "turns")
+        self.assertTrue(checkout.exists())
+        self.assertEqual(list(td.continuation_root(self.repo).glob("*.json")), [])
+
+    def test_checkpoint_rejects_head_changed_after_successor_creation(self):
+        _result, checkout = self.turn_checkout()
+        self.publish_dependency_change()
+        handoff = self.handoff()
+        with patch.object(td, "_checkout_process_owners", return_value={"owners":[],"uncertain":[],"unrelated_unreadable":[],"scanned_pids":0}):
+            continuation = td.reauthorize_checkout(self.repo, "example-task", checkout, self.base / "turns")
+        (checkout / "post-reauth.py").write_text("unrelated concurrent writer\n", encoding="utf-8")
+        run("git", "add", "post-reauth.py", cwd=checkout)
+        run("git", "commit", "-m", "concurrent checkout writer", cwd=checkout)
+        with self.assertRaisesRegex(td.DispatchError, "does not authenticate the current checkout"):
+            td.checkpoint(self.repo, "example-task", checkout, handoff,
+                          "must refuse stale continuation", self.base / "turns", retire=False)
+        self.assertTrue(Path(continuation["continuation_record"]).is_file())
+        self.assertTrue(checkout.exists())
+
+    def test_process_scan_distinguishes_known_unrelated_denial_from_checkout_owner(self):
+        checkout = self.base / "target-checkout"
+        checkout.mkdir()
+        proc = self.base / "fake-proc"
+        service = proc / "101"
+        service.mkdir(parents=True)
+        (service / "comm").write_text("ssh-agent\n")
+        (service / "cgroup").write_text("0::/user.slice/user-1000.slice/app.slice/ssh-agent.service\n")
+        (service / "cwd").symlink_to(self.base)
+        (service / "root").symlink_to("/")
+        (service / "fd").mkdir()
+        actual = proc / "202"
+        actual.mkdir()
+        (actual / "comm").write_text("python3\n")
+        (actual / "cgroup").write_text("0::/user.slice/user-1000.slice/app.slice/codex.scope\n")
+        (actual / "cwd").symlink_to(checkout)
+        (actual / "root").symlink_to("/")
+        (actual / "fd").mkdir()
+        real_readlink = td.os.readlink
+        def readlink(path):
+            if str(path) == str(service / "cwd"):
+                raise PermissionError("simulated protected system service")
+            return real_readlink(path)
+        with patch.object(td.os, "readlink", side_effect=readlink):
+            evidence = td._checkout_process_owners(checkout, proc)
+        self.assertEqual([x["pid"] for x in evidence["owners"]], ["202"])
+        self.assertEqual([x["pid"] for x in evidence["unrelated_unreadable"]], ["101"])
+        self.assertEqual(evidence["uncertain"], [])
+
+    def test_checkpoint_accepts_unrelated_main_advance(self):
+        _result, checkout = self.turn_checkout()
+        self.publish_dependency_change()
+        handoff = checkout / "custodian/docs/ai_context/turn_handoffs/example-task.md"
+        handoff.parent.mkdir(parents=True)
+        handoff.write_text("Original goal: demo\nImplemented: none\nRemaining: work\nValidation: not run\nSources/evidence: none\nResume: continue\n")
+        with patch.object(td, "_checkout_process_owners", return_value={"owners":[],"uncertain":[],"unrelated_unreadable":[],"scanned_pids":0}):
+            continuation = td.reauthorize_checkout(self.repo, "example-task", checkout, self.base / "turns")
+        note = self.repo / "unrelated.txt"
+        note.write_text("unrelated main advancement\n")
+        run("git", "add", "unrelated.txt", cwd=self.repo)
+        run("git", "commit", "-m", "unrelated main advancement", cwd=self.repo)
+        run("git", "push", "origin", "main", cwd=self.repo)
+        output = td.checkpoint(self.repo, "example-task", checkout, handoff,
+                               "checkpoint after unrelated main", self.base / "turns", retire=False)
+        self.assertEqual(output["continuation_id"], continuation["continuation_id"])
+
+    def test_checkpoint_refuses_packet_change_after_reauthorization(self):
+        _result, checkout = self.turn_checkout()
+        self.publish_dependency_change()
+        handoff = checkout / "custodian/docs/ai_context/turn_handoffs/example-task.md"
+        handoff.parent.mkdir(parents=True)
+        handoff.write_text("Original goal: demo\nImplemented: none\nRemaining: work\nValidation: not run\nSources/evidence: none\nResume: continue\n")
+        with patch.object(td, "_checkout_process_owners", return_value={"owners":[],"uncertain":[],"unrelated_unreadable":[],"scanned_pids":0}):
+            continuation = td.reauthorize_checkout(self.repo, "example-task", checkout, self.base / "turns")
+        before = td.git(checkout, "status", "--porcelain", "--untracked-files=all")
+        self.publish_dependency_change(old="replacement-predecessor", new="later-predecessor")
+        with self.assertRaisesRegex(td.DispatchError, "does not authenticate the current checkout and packet"):
+            td.checkpoint(self.repo, "example-task", checkout, handoff,
+                          "reject later packet drift", self.base / "turns", retire=False)
+        self.assertEqual(td.git(checkout, "status", "--porcelain", "--untracked-files=all"), before)
+        self.assertTrue(Path(continuation["continuation_record"]).is_file())
+
+    def test_reauthorization_rejects_process_lock_and_duplicate_successor(self):
+        result, checkout = self.turn_checkout()
+        self.publish_dependency_change()
+        with patch.object(td, "_checkout_process_owners", return_value={"owners":[{"pid":"4242"}],"uncertain":[],"unrelated_unreadable":[],"scanned_pids":1}):
+            with self.assertRaisesRegex(td.DispatchError, "active process owner"):
+                td.reauthorize_checkout(self.repo, "example-task", checkout, self.base / "turns")
+        lock = td._continuation_lock(self.repo, result["turn_id"])
+        try:
+            with patch.object(td, "_checkout_process_owners", return_value={"owners":[],"uncertain":[],"unrelated_unreadable":[],"scanned_pids":0}):
+                with self.assertRaisesRegex(td.DispatchError, "another V2 continuation"):
+                    td.reauthorize_checkout(self.repo, "example-task", checkout, self.base / "turns")
+        finally:
+            lock.close()
+        with patch.object(td, "_checkout_process_owners", return_value={"owners":[],"uncertain":[],"unrelated_unreadable":[],"scanned_pids":0}):
+            first = td.reauthorize_checkout(self.repo, "example-task", checkout, self.base / "turns")
+            with self.assertRaisesRegex(td.DispatchError, "continuation already exists"):
+                td.reauthorize_checkout(self.repo, "example-task", checkout, self.base / "turns")
+        self.assertTrue(Path(first["continuation_record"]).is_file())
+        self.assertEqual(td.git(checkout, "rev-parse", "HEAD"), result["source_sha"])
+
     def test_checkpoint_retries_after_crash_beneath_exact_checkout_removal(self):
         result, checkout = self.turn_checkout()
         (checkout / "durable.py").write_text("verified\n", encoding="utf-8")
