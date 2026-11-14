@@ -78,6 +78,7 @@ packet, not as chat-only downloads.
 - `AGENT_BLOCKER_INBOX_PUBLISHER_V1.md` — Publish strict, redacted, persistent blocker events into dedicated ops/blocker-inbox branch without affecting dispatcher or reviewer outcomes.
 - `AGENT_BLOCKER_RECOVERY_RECONCILIATION_V1.md` — Support ChatGPT on-demand blocker triage, root-cause grouping and evidence-verified incident closure without autonomous claim or reviewer authority.
 - `AGENT_BOUNDED_TASK_CONTEXT_V1.md` — Stop Codex from repeatedly flooding its context with full repository-wide queue search and massive authority-document dumps while preserving accurate task/AG...
+- `AGENT_CHAT_RELAY_SUPERVISED_CONTINUATION_V1.md` — Make CUSTODIAN's existing authenticated ChatGPT relay and Codex handoff persist across individual 600-second response-reading windows, process exits, and ser...
 - `AGENT_LONGFORM_REVIEW_AND_GATE_HARDENING_V1.md` — Review and human gate truth through the existing CUSTODIAN workflow authorities.
 - `AGENT_LONGFORM_SESSION_CORE_V1.md` — Real CLI and durable accounting through the existing CUSTODIAN workflow authorities.
 - `AGENT_LONGFORM_TELEMETRY_AND_STANDARD_ADOPTION_V1.md` — Truthful usage and standard execution reuse through the existing CUSTODIAN workflow authorities.
