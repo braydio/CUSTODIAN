@@ -1,9 +1,102 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-14T09:40:30Z",
-  "source_main_sha": "98dcde474ed92ae36a1d45c5f8faf94b1e75d1f6",
+  "generated_at": "2026-11-14T13:15:16Z",
+  "source_main_sha": "3f7046e70baaaea0870494a4f9995f20419893ca",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "operator-preview-refresh-race-main-1c4657a7",
+      "headline": "Operator's 3D animation preview now recovers from a startup refresh freeze",
+      "summary": "A race between the Operator Workbench's initial asset refresh and preview selection could leave a 3D animation frozen on frame zero. A focused fix now reloads the preview after refresh settles. The change merged to main and repository validation passed; real-source animation tests were reported, but deployed runtime behavior is not verified.",
+      "body": "When an artist selected a 3D animation while the Workbench's startup asset browser was still refreshing, the preview could remain locked at its first frame until the artist selected it again. The new handoff retries loading after the refresh completes, allowing playback to advance. The implementation merged to main on November 14. Its pull request reports a before-and-after reproduction, a passing UI smoke, two candidate UI tests, and a 320-frame real-source smoke. Main repository validation passed. This is a source-level usability fix, not proof of deployment or full gameplay acceptance.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "operator-preview-refresh-race-20261114",
+      "occurred_at": "2026-11-14T13:15:16Z",
+      "desk": "front_page",
+      "format": "development",
+      "bullets": [
+        "Preview selection during startup refresh no longer needs a manual reselect in the reproduced test",
+        "Real-source 320-frame smoke reported passing",
+        "Main repository validation succeeded",
+        "Next: confirm interactive preview behavior in the intended Workbench environment"
+      ],
+      "links": [
+        {
+          "title": "Merged preview fix",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/1c4657a7af13411e8f2eb5837ae909093415cbb2"
+        },
+        {
+          "title": "Reproduction and validation",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/156"
+        },
+        {
+          "title": "Main repository validation",
+          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/43596796561"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "The Operator's 3D animation preview has shed a frustrating startup freeze. Selecting a motion while the asset browser was still refreshing could leave the animation stuck on its first frame; the Workbench now resumes loading once the refresh finishes.",
+        "sections": [
+          {
+            "heading": "A timing bug in the artist's workflow",
+            "text": "The initial asset refresh can take several seconds for 3D candidates. Entering preview during that window previously left a preview-replacement lock in place, so playback did not advance until the user selected the animation again."
+          },
+          {
+            "heading": "The preview now finishes its handoff",
+            "text": "The fix reruns the preview load after the browser refresh settles. In the reported reproduction, the same sequence that previously stopped at frame zero advanced through frames and wrapped normally."
+          },
+          {
+            "heading": "What is verified",
+            "text": "The fix merged into main and repository validation succeeded. Focused UI tests and a 320-frame source smoke were reported passing; a live deployment or complete gameplay session has not been independently verified."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Small UI races can conceal working art",
+            "explanation": "The animation assets were not necessarily defective: a stuck preview handoff could make them appear frozen. Removing the lock race makes candidate inspection more reliable."
+          }
+        ],
+        "takeaway": "The Workbench's source-level 3D preview startup race is fixed and merged, with interactive environment validation the next useful check.",
+        "next_watch": "Observe a real Workbench preview selected while its initial 3D asset refresh is still in progress."
+      },
+      "details": {
+        "overview": "PR #156 merged as 1c4657a7 at 2026-11-14T12:50:31Z. The PR reports reproduction before and after the change, UI smoke success, 2 candidate UI tests and 320/320 source-frame smoke. Main Validate Repository run 43596796561 succeeded at 3f7046e7, which includes the fix and the subsequent resume patch.",
+        "ledger": [
+          {
+            "stage": "Source integration",
+            "status": "verified merged",
+            "evidence": "PR #156 and merge commit 1c4657a7."
+          },
+          {
+            "stage": "Focused preview reproduction",
+            "status": "reported passing",
+            "evidence": "PR describes frozen frame zero before fix and advancing frames after."
+          },
+          {
+            "stage": "Main repository CI",
+            "status": "verified success",
+            "evidence": "Validate Repository run 43596796561 at 3f7046e7."
+          }
+        ],
+        "notes": [],
+        "unknowns": [
+          "No independent proof of deployed Workbench behavior."
+        ],
+        "actions": [
+          "Owner: perform a hands-on Workbench startup-refresh preview test."
+        ]
+      },
+      "related": [
+        {
+          "title": "Operator Workbench gains a guarded intake for 320 directional animation frames",
+          "context": "The earlier intake established the 3D candidate preview workflow that this timing fix stabilizes.",
+          "story_id": "operator-3d-workbench-candidate-intake-main-9e0bfa8d"
+        }
+      ]
+    },
     {
       "id": "procgen-runtime-inspector-main-98dcde47",
       "headline": "Generated dungeons gain a live inspection view with five optional map overlays",
@@ -1231,146 +1324,6 @@
           }
         ],
         "next_gate": "Worker proof owner resolves the bounded security anomalies before independent acceptance."
-      }
-    },
-    {
-      "id": "findings-recovery-owner-hold-a16fb3ec",
-      "headline": "Findings recovery is placed on an owner-decision hold; automatic handoff switched off",
-      "summary": "After landing a read-only findings recovery, CUSTODIAN blocked the implementation packet pending an owner-controlled approval design. PR #139 also changed both implementation and paired-review authoring handoffs to manual. No recovery apply, accepted review or host cleanup is established.",
-      "body": "Main a16fb3ec merges PR #139, changing authoring handoff from auto to manual for the findings-closeout implementation and paired review. Earlier PR #138 marked the implementation blocked with an open user-owned decision: whether to establish a signing credential unavailable to the executing agent. The paired review remains labeled ready/auto for dispatch, but its dependency is blocked and its authoring handoff is manual. The landed recovery implementation retains a read-only plan and deliberately disabled apply. No independent acceptance, execution, or canonical teardown is established. GitHub-only partial coverage; no fresh private observation counts.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-findings-bridge-review-closeout-recovery-v1",
-      "occurred_at": "2026-11-11T00:13:45Z",
-      "bullets": [
-        "Implementation packet explicitly blocked pending owner decision.",
-        "Both paired packets now use manual authoring handoff.",
-        "Review packet remains ready in Git but depends on blocked implementation.",
-        "No authenticated apply, accepted review or teardown proved."
-      ],
-      "links": [
-        {
-          "title": "Owner decision hold, PR #138",
-          "url": "https://github.com/braydio/CUSTODIAN/pull/138"
-        },
-        {
-          "title": "Manual handoff guard, PR #139",
-          "url": "https://github.com/braydio/CUSTODIAN/pull/139"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN has tightened the brakes on its findings-closeout repair. The recovery code has landed, but the task is now explicitly blocked on a decision only the project owner can make. A subsequent merge also disables automatic authoring handoff for the implementation and its paired review.",
-        "sections": [
-          {
-            "heading": "A safeguard becomes an explicit project gate",
-            "text": "The implementation packet now records an open decision about whether to establish a signing credential controlled by the owner and inaccessible to the executing agent. That decision does not itself authorize recovery or key enrollment."
-          },
-          {
-            "heading": "Automatic authoring no longer advances the pair",
-            "text": "PR #139 switches both packets' authoring handoff to manual. The review packet still carries ready/auto dispatch labels, but its implementation dependency is blocked. Those labels are not proof of a running review."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The bottleneck is trust, not code landing",
-            "explanation": "The read-only recovery implementation is merged. The unresolved issue is how to establish approval that an executing agent cannot manufacture itself."
-          },
-          {
-            "title": "A ready review is not an accepted review",
-            "explanation": "The paired review remains listed as ready, but no independent passing receipt or actual protected recovery was established."
-          }
-        ],
-        "takeaway": "Recovery is deliberately held pending an owner-controlled authorization design; the protected findings outcome remains unchanged.",
-        "next_watch": "An explicit owner design decision and an independently reviewed authorization boundary, before any separately approved recovery apply."
-      },
-      "details": {
-        "overview": "GitHub partial coverage; inspected main a16fb3ece74f90358dac36d1b981348efeaba412. No fresh canonical dispatcher or host audit.",
-        "ledger": [
-          {
-            "stage": "Recovery implementation landing",
-            "status": "verified",
-            "evidence": "PR #137 merged at 81c39888."
-          },
-          {
-            "stage": "Owner-decision hold",
-            "status": "verified",
-            "evidence": "PR #138 sets implementation blocked and decision open."
-          },
-          {
-            "stage": "Manual handoff guard",
-            "status": "verified",
-            "evidence": "PR #139 changes both authoring handoffs to manual."
-          },
-          {
-            "stage": "Independent review, apply and teardown",
-            "status": "unknown/blocked",
-            "evidence": "No accepted receipt or host execution proof; apply deliberately disabled."
-          }
-        ],
-        "notes": [
-          "Review ready/auto dispatch metadata remains despite blocked dependency."
-        ],
-        "unknowns": [
-          "Canonical dispatcher state and host processes",
-          "Current worktree, lock and disk state"
-        ],
-        "actions": [
-          "Project owner: decide whether and how to establish independently controlled signing authorization."
-        ]
-      },
-      "related": [
-        {
-          "title": "Findings-closeout repair lands, but its protected recovery remains deliberately disabled",
-          "context": "The earlier implementation landing explains why the subsequent owner hold is necessary.",
-          "story_id": "findings-bridge-implementation-landed-81c39888"
-        }
-      ],
-      "scorecard": {
-        "stage": "Implementation landed; owner authorization design blocked",
-        "as_of": "2026-11-11T00:14:52Z",
-        "scope": "Named findings-closeout implementation and paired review packets only",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Implementation merged",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "PR #137"
-          },
-          {
-            "label": "Owner decision hold documented",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "PR #138"
-          },
-          {
-            "label": "Manual authoring handoff",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "PR #139"
-          },
-          {
-            "label": "Independent review",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No accepted receipt inspected"
-          },
-          {
-            "label": "Authorized recovery apply",
-            "status": "blocked",
-            "verification": "verified",
-            "evidence": "No independent owner credential"
-          },
-          {
-            "label": "Canonical cleanup",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No host proof"
-          }
-        ],
-        "next_gate": "Project owner selects a genuinely independent approval mechanism before any recovery authorization."
       }
     }
   ],
