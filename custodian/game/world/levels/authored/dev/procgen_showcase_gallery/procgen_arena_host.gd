@@ -323,4 +323,3 @@ func _dispose_region() -> void:
 	_region = null
 	_entry_ready = false
 	_arena_bounds = Rect2()
-
