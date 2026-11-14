@@ -756,6 +756,12 @@ class OperatorWorkbenchApp(App):
                     self.state.preview_playing = same_preview and not pending_live
                     self._browser_preview_play_intent = False
                     self._reset_preview_clock()
+                elif self.state.mode == "preview" and self._preview_replacing:
+                    # A preview entered during this refresh skipped its own release; reload once the refresh has settled.
+                    self.run_worker(
+                        self._load_preview(), group="preview-after-refresh", exclusive=True,
+                        exit_on_error=False,
+                    )
                 self._schedule_pending_live_preview()
 
     async def _load_session(
