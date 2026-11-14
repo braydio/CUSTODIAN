@@ -16,6 +16,8 @@ var _gallery: Node2D
 var _region: Node
 var _operator: Node2D
 var _camera: Camera2D
+var _camera_parent: Node
+var _camera_index := -1
 var _arena_bounds := Rect2()
 var _entry_ready := false
 var _arena_active := false
@@ -141,6 +143,7 @@ func _exit_tree() -> void:
 	_cancelled = true
 	if _arena_active and is_instance_valid(_operator) and is_instance_valid(_gallery):
 		_operator.global_position = _gallery_return_position
+		_ensure_camera_attached()
 		_gallery.call("refresh_route_camera", _operator)
 		_arena_active = false
 	_operator = null
@@ -167,6 +170,8 @@ func _enter_arena(actor: Node2D) -> void:
 	_gallery_return_position = prior_position
 	_operator = actor
 	_camera = get_node_or_null("/root/GameRoot/World/Camera2D") as Camera2D
+	_camera_parent = _camera.get_parent() if is_instance_valid(_camera) else null
+	_camera_index = _camera.get_index() if is_instance_valid(_camera) else -1
 	var map := _region.call("get_generated_map") as Node
 	if _camera == null or map == null:
 		_last_failure = "arena entry requires the existing world camera and generated map"
@@ -204,19 +209,61 @@ func _return_to_gallery(actor: Node2D) -> void:
 	actor.global_position = _gallery_return_position
 	if not _restore_gallery_camera(actor):
 		actor.global_position = prior_position
-		if is_instance_valid(_region):
-			_region.call("refresh_route_camera", actor)
+		if _restore_region_camera(actor):
+			_transitioning = false
+			_last_failure = "gallery camera restoration failed; generated arena remains active"
+			return
+		actor.global_position = _gallery_return_position
+		if _restore_gallery_camera(actor):
+			_finish_gallery_return()
+			return
+		actor.global_position = prior_position
 		_transitioning = false
-		_last_failure = "gallery camera restoration failed; generated arena retained"
+		_last_failure = "camera could not be restored to a validated route; arena retained"
+		push_error(_last_failure)
 		return
+	_finish_gallery_return()
+
+
+func _finish_gallery_return() -> void:
 	_arena_active = false
 	_entry_ready = false
 	_operator = null
 	_camera = null
+	_camera_parent = null
+	_camera_index = -1
 	_dispose_region()
 	_status_label.text = "GENERATED ARENA · REOPEN THE GALLERY TO REGENERATE"
 	_transitioning = false
 	_last_failure = ""
+
+
+func _restore_gallery_camera(actor: Node) -> bool:
+	if not _ensure_camera_attached():
+		return false
+	return bool(_gallery.call("refresh_route_camera", actor)) and _camera.call("get_runtime_map") == _gallery
+
+
+func _restore_region_camera(actor: Node) -> bool:
+	if not _ensure_camera_attached() or not is_instance_valid(_region):
+		return false
+	var map := _region.call("get_generated_map") as Node
+	return bool(_region.call("refresh_route_camera", actor)) and _camera.call("get_runtime_map") == map
+
+
+func _ensure_camera_attached() -> bool:
+	if not is_instance_valid(_camera) or not is_instance_valid(_camera_parent) or not _camera_parent.is_inside_tree():
+		return false
+	if not _camera.is_inside_tree():
+		_camera_parent.add_child(_camera)
+		if _camera_index >= 0:
+			_camera_parent.move_child(_camera, mini(_camera_index, _camera_parent.get_child_count() - 1))
+	return _camera.is_inside_tree()
+
+
+func _set_status(message: String) -> void:
+	if is_instance_valid(_status_label):
+		_status_label.text = message
 
 
 func _ensure_region_separation(floor_layer: TileMapLayer) -> void:

@@ -238,7 +238,11 @@
       "type": "python",
       "script": "custodian/tools/validation/verify_awakening_creche_asset_v2_runtime.py",
       "tier": "unit",
-      "tags": ["awakening", "asset_v2", "runtime_verification"],
+      "tags": [
+        "awakening",
+        "asset_v2",
+        "runtime_verification"
+      ],
       "owners": [
         "custodian/asset_drop/source_work/awakening/awakening_creche_environment/**",
         "custodian/content/metadata/assets/families/awakening_creche_environment.asset.json",
@@ -1298,7 +1302,11 @@
       "type": "godot_script",
       "script": "res://tools/validation/weather_v2_profile_contract_smoke.gd",
       "tier": "integration",
-      "tags": ["environment", "weather", "determinism"],
+      "tags": [
+        "environment",
+        "weather",
+        "determinism"
+      ],
       "owners": [
         "custodian/game/world/environment/**",
         "custodian/game/world/lighting/**"
@@ -1311,7 +1319,11 @@
       "type": "godot_script",
       "script": "res://tools/validation/weather_v2_profile_baseline.gd",
       "tier": "integration",
-      "tags": ["environment", "weather", "performance"],
+      "tags": [
+        "environment",
+        "weather",
+        "performance"
+      ],
       "owners": [
         "custodian/game/world/environment/**",
         "custodian/game/world/lighting/**"
@@ -4765,6 +4777,27 @@
         "design/02_features/procgen/PROCGEN_SHOWCASE_GALLERY_ARENA_ROADMAP.md"
       ],
       "timeout_sec": 90,
+      "needs_import": true
+    },
+    {
+      "id": "procgen_showcase_generated_arena",
+      "type": "godot_script",
+      "script": "res://tools/validation/levels/procgen_showcase_generated_arena_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "procgen_showcase",
+        "generated_region",
+        "arena",
+        "operator_transfer",
+        "rollback"
+      ],
+      "owners": [
+        "custodian/game/world/levels/authored/dev/procgen_showcase_gallery/**",
+        "custodian/game/world/levels/generated_region_level.gd",
+        "custodian/tools/validation/levels/procgen_showcase_generated_arena_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 240,
       "needs_import": true
     },
     {
