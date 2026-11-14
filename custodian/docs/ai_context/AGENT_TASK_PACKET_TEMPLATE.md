@@ -21,7 +21,8 @@ category ID for the primary work surface. Copy that ID into `- Category:`
 (after `Workstream:`). Reviews and corrections inherit their parent category;
 never classify them as agent-ops merely because they are reviews. Run
 `python3 custodian/tools/agent/check_packet_categories.py <new packet paths...>`
-and the existing paired authoring preflight before publication. See
+and the targeted `validate_task_packet_authoring.py` preflight for the new
+implementation or correction packet before publication. See
 `TASK_PACKET_CATEGORY_AUTHORING.md`. Existing legacy packets without categories
 remain valid and are shown as Uncategorized by Mission Control.
 

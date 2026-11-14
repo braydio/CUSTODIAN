@@ -51,14 +51,20 @@ A unique explicit workstream identity is required to pair packet and summary mir
 ## Agent Workstream Lifecycle
 
 Every packeted implementation run claims through `dispatch.py claim-next` or
-`dispatch.py claim <id>`. Direct `workstream.py start <stable-kebab-id>` uses
-the same exclusivity protocol for manual work and will not adopt existing
-state; use explicit `workstream.py resume <id>` after inspecting recovery
-state. Implement and validate in the returned sibling
-`.custodian-worktrees/` checkout. Use `checkpoint` for intentionally incomplete
-work and `finish --validation-report <json>` for validated completed work. See
-`AGENT_WORKSTREAM_LIFECYCLE.md` for recovery, synchronization, cleanup, and
-branch archive rules.
+`dispatch.py claim <id>`. Direct `workstream.py start <stable-kebab-id>` is a
+fresh V2 acquisition and does not adopt an existing attached checkout. Before
+continuing the same workstream, inspect its original acquisition, branch, and
+checkout provenance. `workstream.py resume <id>` is the intended entrypoint,
+but the current attached-checkout refusal is tracked as `DEBT-0001` in
+`debt/REGISTER.md`: if it refuses, preserve the checkout and report the actual
+blocker; do not silently use a new claim or bypass the lifecycle.
+
+Implement and validate only in the exact checkout returned by V2, ordinarily
+under `~/Projects/.custodian-turns/`. Use `checkpoint` for incomplete work;
+V2 `finish --validation-report <json>` verifies a turn checkpoint and retires
+its checkout, but does not land the task on `origin/main`. GitHub CI and branch
+protection govern main landing. See `AGENT_WORKSTREAM_LIFECYCLE.md` for
+recovery, synchronization, cleanup, and branch archive rules.
 
 Run focused lifecycle tests after changes to agent Git tooling:
 
