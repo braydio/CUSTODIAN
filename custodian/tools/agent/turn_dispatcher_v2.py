@@ -24,6 +24,7 @@ ID = re.compile(r"^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$")
 HEADER = re.compile(r"^- ([A-Za-z][A-Za-z /-]+):\s*(.*)$", re.M)
 PACKETS = "custodian/docs/ai_context/task_packets"
 HANDOFFS = Path("custodian/docs/ai_context/turn_handoffs")
+PF_KTHREAD = 0x00200000
 DESIGN_HOLD_FIELDS = {"user design hold", "user-owned design decision"}
 OPEN_VALUES = {"open", "true", "yes", "unresolved", "required", "pending"}
 
@@ -540,22 +541,58 @@ def _dependency_only_change(original: str, current: str) -> bool:
         r"\1<dependency-metadata>", current, count=1)
 
 
+def _parse_proc_stat_identity(stat_text: str, expected_pid: str) -> tuple[str, bool]:
+    """Return (comm, is_kernel_thread) from Linux proc stat, or reject malformed data."""
+    open_paren = stat_text.find("(")
+    close_paren = stat_text.rfind(")")
+    if open_paren <= 0 or close_paren <= open_paren:
+        raise ValueError("malformed proc stat command field")
+    try:
+        pid = stat_text[:open_paren].strip()
+        if not pid.isdecimal() or pid != expected_pid:
+            raise ValueError("proc stat PID does not match directory")
+        comm = stat_text[open_paren + 1:close_paren]
+        fields_after_comm = stat_text[close_paren + 1:].split()
+        # Token 0 is field 3 (state); flags is field 9, token 6 after comm.
+        if not comm or len(fields_after_comm) <= 6:
+            raise ValueError("proc stat is missing required fields")
+        flags = int(fields_after_comm[6], 10)
+        if flags < 0:
+            raise ValueError("proc stat flags cannot be negative")
+    except (TypeError, ValueError) as exc:
+        raise ValueError("malformed proc stat identity") from exc
+    if len(fields_after_comm[0]) != 1:
+        raise ValueError("malformed proc stat state")
+    return comm, bool(flags & PF_KTHREAD)
+
+
 def _checkout_process_owners(checkout: Path, proc_root: Path = Path("/proc")) -> dict:
-    """Identify matching owners; separate opaque unrelated services from uncertainty."""
+    """Identify owners; classify only positively verified kernel threads as unrelated."""
     if not proc_root.is_dir():
         raise DispatchError("process ownership cannot be established: /proc is unavailable")
     target = checkout.resolve()
-    owners, uncertain, unrelated_unreadable = [], [], []
+    owners, uncertain, unrelated_unreadable, kernel_threads = [], [], [], []
     scanned = 0
     trusted_units = {"systemd", "sd-pam", "(sd-pam)", "ssh-agent"}
     for entry in proc_root.iterdir():
         if not entry.name.isdigit() or int(entry.name) == os.getpid():
             continue
+        scanned += 1
         try:
             entry.stat()
-            comm = (entry / "comm").read_text(encoding="utf-8", errors="replace").strip()
+            try:
+                comm, is_kernel_thread = _parse_proc_stat_identity(
+                    (entry / "stat").read_text(encoding="utf-8", errors="strict"), entry.name)
+            except (OSError, UnicodeError, ValueError) as exc:
+                uncertain.append({"pid": entry.name, "comm": "unreadable",
+                                  "cgroup": "unreadable",
+                                  "reason": f"proc-stat-identity-unavailable: {exc}"})
+                continue
+            if is_kernel_thread:
+                kernel_threads.append({"pid": entry.name, "comm": comm,
+                                       "classification": "verified-kernel-thread"})
+                continue
             cgroup = (entry / "cgroup").read_text(encoding="utf-8", errors="replace").strip()
-            scanned += 1
             links = [entry / "cwd", entry / "root"]
             fd_dir = entry / "fd"
             denied = False
@@ -582,13 +619,17 @@ def _checkout_process_owners(checkout: Path, proc_root: Path = Path("/proc")) ->
                         unrelated_unreadable.append({"pid": entry.name, "comm": comm,
                             "cgroup": cgroup, "classification": "known-unrelated-service"})
                     else:
-                        uncertain.append({"pid": entry.name, "comm": comm, "cgroup": cgroup})
+                        uncertain.append({"pid": entry.name, "comm": comm, "cgroup": cgroup,
+                                          "reason": "ownership-paths-unreadable"})
         except (FileNotFoundError, ProcessLookupError):
             continue
         except PermissionError:
-            uncertain.append({"pid": entry.name, "comm": "unreadable", "cgroup": "unreadable"})
+            uncertain.append({"pid": entry.name, "comm": "unreadable", "cgroup": "unreadable",
+                              "reason": "process-metadata-unreadable"})
     return {"owners": owners, "uncertain": uncertain,
-            "unrelated_unreadable": unrelated_unreadable, "scanned_pids": scanned}
+            "unrelated_unreadable": unrelated_unreadable,
+            "kernel_threads": kernel_threads, "kernel_thread_count": len(kernel_threads),
+            "scanned_pids": scanned}
 
 
 def _continuation_lock(repo: Path, turn_id: str):
