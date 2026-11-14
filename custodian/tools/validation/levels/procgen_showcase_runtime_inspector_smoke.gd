@@ -49,7 +49,7 @@ func _run() -> void:
 	if staging_host == null or not staging_host.has_method("get_inspector_snapshot"):
 		_finish(game, ["accepted/staging arena host failed to load its inspector projection API"])
 		return
-	if not await _wait_for_revision(session, 1):
+	if not await _wait_for_revision(session, 1, "initial accepted world"):
 		errors.append("accepted generated arena did not become ready: %s" % str(session.call("get_session_status").get("error", "timeout")))
 		_finish(game, errors)
 		return
@@ -120,7 +120,7 @@ func _run() -> void:
 		var during_staging: Dictionary = inspector.call("get_snapshot")
 		if str(during_staging.get("generation_fingerprint", "")) != source_fingerprint:
 			errors.append("staging displaced the prior accepted snapshot before replacement commit")
-		if not await _wait_for_revision(session, revision_before + 1):
+		if not await _wait_for_revision(session, revision_before + 1, "replacement accepted world"):
 			errors.append("replacement accepted generation did not complete: %s" % str(session.call("get_session_status").get("error", "timeout")))
 		else:
 			var replacement: Dictionary = inspector.call("get_snapshot")
@@ -150,7 +150,8 @@ func _run() -> void:
 	_finish(game, errors)
 
 
-func _wait_for_revision(session: Node, target_revision: int) -> bool:
+func _wait_for_revision(session: Node, target_revision: int, stage: String) -> bool:
+	print("PROCGEN_INSPECTOR_WAIT_STAGE: %s" % stage)
 	var started := Time.get_ticks_msec()
 	while Time.get_ticks_msec() - started < MAX_GENERATION_MSEC:
 		var status: Dictionary = session.call("get_session_status")
