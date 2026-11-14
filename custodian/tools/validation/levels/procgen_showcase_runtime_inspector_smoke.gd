@@ -1,0 +1,232 @@
+extends SceneTree
+
+const PLAYTEST_SCENE := preload("res://game/world/levels/authored/dev/procgen_showcase_gallery/procgen_showcase_gallery_playtest.tscn")
+const MAX_GENERATION_MSEC := 180000
+const LAYER_NAMES := ["terrain", "route", "playability", "sites", "vistas"]
+
+
+func _init() -> void:
+	call_deferred("_run")
+
+
+func _run() -> void:
+	var errors: Array[String] = []
+	for script_path in [
+		"res://game/world/levels/authored/dev/procgen_showcase_gallery/procgen_arena_session.gd",
+		"res://game/world/levels/authored/dev/procgen_showcase_gallery/procgen_arena_host.gd",
+		"res://game/world/levels/authored/dev/procgen_showcase_gallery/procgen_gallery_inspector.gd",
+		"res://game/world/levels/authored/dev/procgen_showcase_gallery/procgen_gallery_overlay.gd",
+	]:
+		var script_resource := ResourceLoader.load(script_path) as Script
+		if script_resource == null or not script_resource.can_instantiate():
+			errors.append("required inspector/session script failed to load: %s" % script_path)
+	if not errors.is_empty():
+		_finish(null, errors)
+		return
+	var game := PLAYTEST_SCENE.instantiate() as Node2D
+	if game == null:
+		_finish(null, ["procgen gallery playtest scene failed to instantiate"])
+		return
+	game.name = "GameRoot"
+	root.add_child(game)
+	await process_frame
+	var gallery := game.get_node_or_null("World/Level") as Node2D
+	var session := gallery.get_node_or_null("ProcgenArenaSession") as Node if gallery != null else null
+	var inspector := gallery.get_node_or_null("ProcgenGalleryInspector") as Node if gallery != null else null
+	var controls := gallery.get_node_or_null("ProcgenGalleryControls") as Node if gallery != null else null
+	var overlay := inspector.get_node_or_null("ProcgenGalleryOverlay") as Node2D if inspector != null else null
+	if gallery == null or session == null or inspector == null or overlay == null or controls == null:
+		_finish(game, ["gallery/session/inspector/overlay/controls did not load before generation wait"])
+		return
+	if not session.has_method("get_session_status") or not session.has_method("get_accepted_inspector_snapshot") or not inspector.has_method("get_snapshot"):
+		_finish(game, ["loaded session or inspector is missing its required read API"])
+		return
+	var startup_status: Dictionary = session.call("get_session_status")
+	if int(startup_status.get("accepted_host_count", 0)) == 0 and int(startup_status.get("staging_host_count", 0)) == 0:
+		_finish(game, ["session did not create an accepted or staging host: %s" % str(startup_status.get("error", "no host"))])
+		return
+	var staging_host := gallery.get_node_or_null("ProcgenArenaHost") as Node
+	if staging_host == null or not staging_host.has_method("get_inspector_snapshot"):
+		_finish(game, ["accepted/staging arena host failed to load its inspector projection API"])
+		return
+	if not await _wait_for_revision(session, 1, "initial accepted world"):
+		errors.append("accepted generated arena did not become ready: %s" % str(session.call("get_session_status").get("error", "timeout")))
+		_finish(game, errors)
+		return
+	var first: Dictionary = inspector.call("get_snapshot")
+	var first_status: Dictionary = session.call("get_session_status")
+	if first.is_empty() or str(first.get("schema", "")) != "custodian.procgen_showcase_inspector_snapshot.v1":
+		errors.append("inspector did not publish its versioned detached accepted-world snapshot")
+	if str(first.get("generation_fingerprint", "")) != str(first_status.get("fingerprint", "")):
+		errors.append("inspector fingerprint differs from the accepted session fingerprint")
+	if not bool(first.get("spawn_valid", false)) or not bool(first.get("spawn_navigation_walkable", false)):
+		errors.append("inspector did not report the accepted spawn as valid and navigation-walkable")
+	if not _has_no_object_references(first):
+		errors.append("inspector snapshot contains an Object/Node reference")
+	var layers: Dictionary = first.get("layers", {})
+	var limits: Dictionary = first.get("layer_limits", {})
+	for layer in LAYER_NAMES:
+		var descriptors: Variant = layers.get(layer, null)
+		if not descriptors is Array:
+			errors.append("overlay layer %s is missing its detached descriptor array" % layer)
+		elif descriptors.size() > int(limits.get(layer, 0)) or descriptors.size() > 1024:
+			errors.append("overlay layer %s exceeds its descriptor cap" % layer)
+		else:
+			for point: Variant in descriptors:
+				if not point is Vector2:
+					errors.append("overlay layer %s contains a non-position descriptor" % layer)
+					break
+	if not _provenance_is_exact(first):
+		errors.append("catalog provenance was reported without an exact map authority ID match")
+	var original_builds := int(inspector.call("get_snapshot_build_count"))
+	var region := gallery.get_node_or_null("GeneratedArenaRegion") as Node
+	if region == null or not region.has_method("get_generated_map"):
+		errors.append("accepted generated-region owner is missing after inspector ready")
+		_finish(game, errors)
+		return
+	var procgen := region.call("get_generated_map") as ProcGenTilemap
+	if procgen == null:
+		errors.append("accepted generated region did not expose a ProcGenTilemap")
+		_finish(game, errors)
+		return
+	var canonical_data: Dictionary = procgen.call("get_level_data")
+	var canonical_health: Dictionary = procgen.call("get_runtime_health_snapshot")
+	var first_counts: Dictionary = first.get("counts", {})
+	if int(first_counts.get("floor", -1)) != int(canonical_health.get("floor_cells", -2)):
+		errors.append("inspector floor count differs from canonical runtime health")
+	if int(first_counts.get("walls", -1)) != int(canonical_health.get("wall_cells", -2)):
+		errors.append("inspector wall count differs from canonical runtime health")
+	if int(first_counts.get("route", -1)) != (canonical_data.get("main_route_cells", []) as Array).size():
+		errors.append("inspector route count differs from canonical level data")
+	if int(first_counts.get("sites", -1)) != _site_count(canonical_data):
+		errors.append("inspector site count differs from canonical level data")
+	var world := game.get_node("World") as Node2D
+	var operator_id := world.get_node("Operator").get_instance_id()
+	var camera_id := world.get_node("Camera2D").get_instance_id()
+	var source_fingerprint := str(session.call("get_session_status").get("fingerprint", ""))
+	var component_queries := int(procgen.get("main_playable_component_query_count"))
+	inspector.call("refresh_snapshot")
+	if int(inspector.call("get_snapshot_build_count")) != original_builds + 1:
+		errors.append("explicit refresh did not rebuild one accepted-world snapshot")
+	if int(procgen.get("main_playable_component_query_count")) != component_queries + 1:
+		errors.append("explicit refresh did not use the canonical source projection exactly once")
+	original_builds = int(inspector.call("get_snapshot_build_count"))
+	component_queries = int(procgen.get("main_playable_component_query_count"))
+	first["seed"] = -1
+	(first.get("layers", {}).get("terrain", []) as Array).clear()
+	if int(inspector.call("get_snapshot").get("seed", -1)) != 417203:
+		errors.append("mutating the caller's snapshot changed the inspector's cached copy")
+	for layer in LAYER_NAMES:
+		inspector.call("set_layer_enabled", layer, true)
+		inspector.call("set_layer_enabled", layer, false)
+	if int(inspector.call("get_snapshot_build_count")) != original_builds:
+		errors.append("overlay toggles rebuilt the accepted source snapshot")
+	if int(procgen.get("main_playable_component_query_count")) != component_queries:
+		errors.append("overlay toggles queried the source map again")
+	if str(session.call("get_session_status").get("fingerprint", "")) != source_fingerprint:
+		errors.append("overlay toggles changed the accepted map fingerprint")
+	if overlay.is_processing() or overlay.is_physics_processing():
+		errors.append("overlay runs a per-frame process loop")
+	var revision_before := int(session.call("get_session_status").get("accepted_revision", 0))
+	if not bool(session.call("reroll_explicit_seed", 417204)):
+		errors.append("explicit replacement generation was rejected")
+	else:
+		var during_staging: Dictionary = inspector.call("get_snapshot")
+		if str(during_staging.get("generation_fingerprint", "")) != source_fingerprint:
+			errors.append("staging displaced the prior accepted snapshot before replacement commit")
+		if not await _wait_for_revision(session, revision_before + 1, "replacement accepted world"):
+			errors.append("replacement accepted generation did not complete: %s" % str(session.call("get_session_status").get("error", "timeout")))
+		else:
+			var replacement: Dictionary = inspector.call("get_snapshot")
+			if int(replacement.get("seed", -1)) != 417204:
+				errors.append("inspector retained stale seed data after accepted-host replacement")
+			if str(replacement.get("generation_fingerprint", "")) != str(session.call("get_session_status").get("fingerprint", "")):
+				errors.append("replacement snapshot fingerprint does not match the accepted session")
+			if world.get_node("Operator").get_instance_id() != operator_id or world.get_node("Camera2D").get_instance_id() != camera_id:
+				errors.append("accepted map replacement changed Operator or camera identity")
+			var replacement_fingerprint := str(replacement.get("generation_fingerprint", ""))
+			if bool(session.call("reroll_explicit_seed", 417205)):
+				var cancelled := bool(session.call("cancel_generation"))
+				if not cancelled:
+					errors.append("staging cancellation request was rejected")
+				for _frame in range(60):
+					if int(session.call("get_session_status").get("staging_host_count", 0)) == 0:
+						break
+					await process_frame
+				var after_cancel: Dictionary = inspector.call("get_snapshot")
+				if str(after_cancel.get("generation_fingerprint", "")) != replacement_fingerprint:
+					errors.append("cancelling staging lost or retained stale accepted-world state")
+				if int(session.call("get_session_status").get("staging_host_count", -1)) != 0:
+					errors.append("cancelled staging host was not released")
+			else:
+				errors.append("replacement generation could not start for cancellation coverage")
+	inspector.call("_exit_tree")
+	if not (inspector.call("get_snapshot") as Dictionary).is_empty():
+		errors.append("inspector retained snapshot state after teardown invalidation")
+	_finish(game, errors)
+
+
+func _wait_for_revision(session: Node, target_revision: int, stage: String) -> bool:
+	print("PROCGEN_INSPECTOR_WAIT_STAGE: %s" % stage)
+	var started := Time.get_ticks_msec()
+	while Time.get_ticks_msec() - started < MAX_GENERATION_MSEC:
+		var status: Dictionary = session.call("get_session_status")
+		if int(status.get("accepted_revision", 0)) >= target_revision and bool(status.get("accepted_ready", false)):
+			return true
+		await process_frame
+	return false
+
+
+func _provenance_is_exact(snapshot: Dictionary) -> bool:
+	var data: Dictionary = snapshot.get("data", {})
+	var observed: Dictionary = {}
+	var biomes: Variant = data.get("biome_id_by_cell", {})
+	if biomes is Dictionary:
+		for value in biomes.values():
+			observed[str(value)] = true
+	var regions: Variant = data.get("region_tiles", {})
+	if regions is Dictionary:
+		for value: Variant in regions.values():
+			if value is Dictionary:
+				observed[str(value.get("region_type", ""))] = true
+	for entry: Variant in snapshot.get("exhibit_provenance", []):
+		if not entry is Dictionary or not observed.has(str(entry.get("source_authority_id", ""))):
+			return false
+	return true
+
+
+func _has_no_object_references(value: Variant) -> bool:
+	if value is Object:
+		return false
+	if value is Dictionary:
+		for key: Variant in value:
+			if not _has_no_object_references(key) or not _has_no_object_references(value[key]):
+				return false
+	if value is Array:
+		for item: Variant in value:
+			if not _has_no_object_references(item):
+				return false
+	return true
+
+
+func _site_count(data: Dictionary) -> int:
+	var count := 0
+	for key in ["faction_activity_sites", "story_room_sites", "special_room_sites"]:
+		var sites: Variant = data.get(key, [])
+		if sites is Array:
+			count += sites.size()
+	return count
+
+
+func _finish(game: Node, errors: Array[String]) -> void:
+	if is_instance_valid(game):
+		game.queue_free()
+	await process_frame
+	await process_frame
+	if errors.is_empty():
+		print("PROCGEN_SHOWCASE_RUNTIME_INSPECTOR_SMOKE_PASS")
+		quit(0)
+	else:
+		for error in errors:
+			push_error(error)
+		quit(1)

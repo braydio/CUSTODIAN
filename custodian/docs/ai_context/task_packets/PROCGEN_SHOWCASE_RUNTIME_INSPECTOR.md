@@ -28,7 +28,7 @@
 - Preserve: No candidate mutation, pathfinding duplication, public debug data changing generation fingerprint, or global HUD/Operator UI takeover.
 - Non-goals: Do not add a second generator, parallel gameplay authority, fake telemetry, noncanonical runtime art files, generic procgen refactor, or unrelated NPA/LoP modifications.
 - Acceptance: Overlay counts/fingerprints agree with map owners; disabled costs near zero; opaque/missing fields say unavailable; teardown and seed swap cannot show stale data.
-- Validation: `procgen_showcase_runtime_inspector`, `procgen_showcase_generation_controls`, `procgen_showcase_generated_arena`, `procgen_showcase_exhibit_catalog`, `procgen_candidate_semantic_model`, `procgen_accepted_world_export_parity`, and `procgen_playability`, plus changed-file checks.
+- Validation: `procgen_showcase_runtime_inspector`, `procgen_showcase_generation_controls`, `procgen_showcase_generated_arena`, `procgen_showcase_exhibit_catalog`, `procgen_candidate_semantic_model`, `procgen_accepted_world_export_parity`, and `contract_world_playable_region_spawn_validity`, plus changed-file checks. The registered playability contract currently emits an expected fixture warning when `/root/GameRoot/World/ContractMap` is absent; retain that classification as fixture context, not as a new failure or invented test ID.
 - Task overrides: `none`
 - Deferred: Human visual comparison deferred to PGA-7; no new semantic authority.
 
