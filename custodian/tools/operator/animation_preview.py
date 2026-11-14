@@ -27,7 +27,7 @@ def consume_duration(elapsed_sec: float, duration: float) -> tuple[bool, float]:
         return False, max(0.0, elapsed_sec)
     return True, max(0.0, elapsed_sec - interval)
 
-PreviewSource = Literal["live", "workbench", "canonical", "runtime"]
+PreviewSource = Literal["live", "workbench", "canonical", "runtime", "candidate"]
 ZoomMode = Literal["auto", "1x", "2x", "3x", "fit"]
 CompositionMode = Literal["body", "fx", "body_fx"]
 PLAN_SCHEMA = "custodian.operator_animation_implementation_plan.v2"
@@ -77,7 +77,8 @@ class PreviewFrameComparison:
 
 
 def preview_source_label(source: str) -> str:
-    return {"live": "LIVE", "workbench": "SAVED", "canonical": "CANONICAL", "runtime": "RUNTIME"}.get(source, source.upper())
+    return {"live": "LIVE", "workbench": "SAVED", "canonical": "CANONICAL", "runtime": "RUNTIME",
+            "candidate": "3D CANDIDATE"}.get(source, source.upper())
 
 
 def compare_frames(left: Image.Image | None, right: Image.Image | None, *, left_size: tuple[int, int] | None = None, right_size: tuple[int, int] | None = None) -> tuple[Image.Image, FrameDiffMetrics]:

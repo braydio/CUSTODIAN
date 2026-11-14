@@ -115,8 +115,12 @@ def pure_service_smoke() -> None:
         records = service.browser_records()
         run = next(row for row in records if row.selection.action == "run_01")
         assert run.frames == 6 and run.layers == ("lower_body", "upper_body")
-        assert len(service.filter_records(records, "locomotion")) == 3
-        assert len(service.filter_records(records, "RUN_01")) == 2
+        # operator_3d_80 rows are MISSING placeholders until the candidate intake registers them; they match
+        # these queries by design, so the legacy counts exclude them and the 3D rows are asserted separately.
+        legacy_only = lambda rows: [row for row in rows if row.selection.art_generation != "operator_3d_80"]
+        assert len(legacy_only(service.filter_records(records, "locomotion"))) == 3
+        assert len(legacy_only(service.filter_records(records, "RUN_01"))) == 2
+        assert sum(row.selection.art_generation == "operator_3d_80" for row in records) == 16
         assert service.available_directions(run.selection) == ("e", "w")
         candidates = service.transition_candidates(run.selection)
         assert tuple(candidate.action for candidate in candidates) == ("walk_01", "guard_01")

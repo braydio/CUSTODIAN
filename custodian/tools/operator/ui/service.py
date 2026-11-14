@@ -22,6 +22,7 @@ import animation_preview
 import animation_motion_preview
 import operator_art_worktree
 import operator_animation_targets
+import operator_3d_candidate_intake as candidate_intake
 import operator_2_5d_timing_authority as timing_authority
 from operator_2_5d_ingress import Operator2DIngress
 
@@ -184,14 +185,43 @@ class WorkbenchService:
                 detail = f"SUPERSEDED · {detail}"
             records.append(AnimationRecord(selection, frames, layers, completeness, detail, status))
         legacy_records = (*records, *self._new_workbench_records({r.selection for r in records}))
+        candidates = self._candidate_records(reachability)
         if not self.plan_path.is_file():
-            return legacy_records
+            return (*legacy_records, *candidates)
         payload = operator_animation_targets.load_plan(self.plan_path)
         targets = operator_animation_targets.project_targets(
             payload, repo_root=self.repo_root, workspace_root=self.workspace_root,
             legacy_records=legacy_records,
         )
-        return (*legacy_records, *targets)
+        return (*legacy_records, *targets, *candidates)
+
+    def _candidate_records(self, reachability: dict[tuple[str, str, str], str]) -> tuple[AnimationRecord, ...]:
+        """Candidate-only 3D records: one per semantic direction of every explicitly mapped action.
+
+        Independent of the legacy and 128px projections. A direction without a registered
+        session is shown as MISSING rather than omitted.
+        """
+        records = []
+        for identity in candidate_intake.ACTION_MAP.values():
+            key = (identity["profile"], identity["group"], identity["action"])
+            status = reachability.get(key, "DORMANT")
+            for direction in candidate_intake.WORKBENCH_DIRECTIONS.values():
+                selection = AnimationSelection(*key, direction, art_generation=candidate_intake.GENERATION)
+                found = candidate_intake.candidate_status(
+                    self.workspace_root, self.repo_root, profile=key[0], group=key[1], action=key[2], direction=direction,
+                )
+                if found["registered"]:
+                    records.append(AnimationRecord(
+                        selection, found["frames"], (candidate_intake.LAYER,), "CANDIDATE",
+                        "3D source · candidate_unapproved", status, coverage_status=found["coverage"],
+                        workflow_status="IMPORTED_UNAPPROVED", canonical_complete=False,
+                    ))
+                else:
+                    records.append(AnimationRecord(
+                        selection, 0, (candidate_intake.LAYER,), found["coverage"], found["reason"], status,
+                        coverage_status=found["coverage"], workflow_status="NONE", canonical_complete=False,
+                    ))
+        return tuple(records)
 
     def _new_workbench_records(self, published: set[AnimationSelection]) -> list[AnimationRecord]:
         """List created-but-unpublished animations from their saved workbench sessions."""
@@ -236,6 +266,7 @@ class WorkbenchService:
         """Compose and copy the selected semantic animation without publishing it."""
         if mode not in ("body", "fx", "body_fx"):
             raise ValueError(f"unsupported copy mode: {mode}")
+        self._reject_candidate(selection, "Copy spritesheet")
         if source is None:
             try:
                 requested = "workbench" if (self.workspace(selection) / "workbench.json").exists() else "runtime"
@@ -318,6 +349,10 @@ class WorkbenchService:
         return rows
 
     def preview(self, selection: AnimationSelection, source: str = "runtime"):
+        if selection.art_generation == candidate_intake.GENERATION:
+            if source != "candidate":
+                raise ValueError("3D candidates have a single source: candidate")
+            return self._candidate_preview(selection)
         if selection.art_generation != "legacy_96":
             raise ValueError("2.5D target previews do not read legacy runtime art; source intake and review are later workstream slices")
         if source == "workbench":
@@ -326,6 +361,18 @@ class WorkbenchService:
             selection.profile, selection.group, selection.action, selection.direction,
         )
         return self.preview_provider.load(identity, source)
+
+    def _candidate_preview(self, selection: AnimationSelection) -> animation_preview.Preview:
+        """Hash-verified staged frames for one 3D candidate direction. Never falls back to legacy art."""
+        manifest = self.workspace(selection) / candidate_intake.CANDIDATE_FILE
+        if not manifest.is_file():
+            raise ValueError(f"no registered 3D candidate for {selection.authoring_identity}; run the candidate intake")
+        loaded = candidate_intake.load_candidate_frames(manifest, repo_root=self.repo_root)
+        identity = animation_preview.SemanticIdentity(
+            selection.profile, selection.group, selection.action, selection.direction,
+        )
+        return animation_preview.Preview(identity, "candidate", loaded["frames"], loaded["size"],
+                                         loaded["fingerprint"], loaded["paths"])
 
     def live_preview(
         self, selection: AnimationSelection, strip_path: Path, *,
@@ -341,9 +388,13 @@ class WorkbenchService:
     def transition_candidates(
         self, selection: AnimationSelection,
     ) -> tuple[AnimationSelection, ...]:
+        if selection.art_generation == candidate_intake.GENERATION:
+            return ()
         candidates = []
         for record in self.browser_records():
             candidate = record.selection
+            if candidate.art_generation == candidate_intake.GENERATION or selection.art_generation == candidate_intake.GENERATION:
+                continue  # candidate-only 3D frames have no transition support, as source or target
             if candidate.profile != selection.profile or candidate.direction != selection.direction:
                 continue
             if candidate.group == selection.group and candidate.action == selection.action:
@@ -359,6 +410,7 @@ class WorkbenchService:
         return tuple(candidates)
 
     def transition_preview(self, selection: AnimationSelection, primary_source: str):
+        self._reject_candidate(selection, "Transition preview")
         sources = ("workbench", "canonical", "runtime") if primary_source in ("live", "workbench") else (("canonical", "runtime") if primary_source == "canonical" else ("runtime", "canonical"))
         errors = []
         workbench_error = getattr(self.model, "WorkbenchError", model.WorkbenchError)
@@ -763,6 +815,9 @@ class WorkbenchService:
         )
 
     def workspace(self, selection: AnimationSelection) -> Path:
+        if selection.art_generation == candidate_intake.GENERATION:
+            return (self.workspace_root / selection.art_generation / selection.profile
+                    / selection.group / selection.action / selection.direction)
         if selection.art_generation != "legacy_96":
             if selection.art_generation != "operator_2_5d_128":
                 raise ValueError(f"unsupported Operator art generation: {selection.art_generation}")
@@ -1024,7 +1079,39 @@ class WorkbenchService:
             str(audit.get("level", "GREEN")), report,
         )
 
+    def _candidate_session(self, selection: AnimationSelection) -> SessionView:
+        """Read-only SessionView for a registered 3D candidate. Never reads legacy or canonical sources."""
+        found = candidate_intake.candidate_status(
+            self.workspace_root, self.repo_root, profile=selection.profile, group=selection.group,
+            action=selection.action, direction=selection.direction,
+        )
+        if not found["registered"]:
+            raise ValueError(f"no usable 3D candidate for {selection.authoring_identity}: {found['reason']}")
+        frame = found["data"]["frames"]
+        count, width, height = int(frame["count"]), int(frame["width"]), int(frame["height"])
+        ws = self.workspace(selection)
+        layer = LayerView(candidate_intake.LAYER, "candidate_3d", "operator_3d", selection.profile,
+                          count, count, 0, f"{width}×{height}", publishing=False)
+        try: workspace_display = str(ws.relative_to(self.repo_root))
+        except ValueError: workspace_display = str(ws)
+        return SessionView(
+            selection, source_frames=count, workspace_frames=count, document_frames=count,
+            workbench_state="3D CANDIDATE / READ ONLY", contract_state="CANDIDATE_UNAPPROVED",
+            dependency_status="GREEN", workspace_path=ws, aseprite_path="3D source / no Aseprite document",
+            layers=(layer,), completeness="CANDIDATE",
+            completeness_detail="3D source · candidate_unapproved · not publishable",
+            workspace_display=workspace_display, document_canvas=(width, height),
+            coverage_status=found["coverage"], workflow_status="IMPORTED_UNAPPROVED",
+        )
+
+    @staticmethod
+    def _reject_candidate(selection: AnimationSelection, operation: str) -> None:
+        if selection.art_generation == candidate_intake.GENERATION:
+            raise ValueError(f"{operation} is unavailable for operator_3d_80 candidates; the 3D intake is read-only")
+
     def session(self, selection: AnimationSelection) -> SessionView:
+        if selection.art_generation == candidate_intake.GENERATION:
+            return self._candidate_session(selection)
         ws = self.workspace(selection)
         if selection.art_generation == "operator_2_5d_128":
             projected = next((record for record in self.discover_browser_records()
@@ -1125,9 +1212,12 @@ class WorkbenchService:
         def stamp(path: Path) -> int | None:
             try: return path.stat().st_mtime_ns
             except FileNotFoundError: return None
+        if selection.art_generation == candidate_intake.GENERATION:
+            return stamp(ws / candidate_intake.CANDIDATE_FILE), None
         return stamp(ws / "workbench.json"), stamp(ws / "workbench.aseprite")
 
     def edit(self, selection: AnimationSelection):
+        self._reject_candidate(selection, "Edit")
         manifest = self.workspace(selection) / "workbench.json"
         if manifest.is_file() and self.workbench.load(manifest).get("creation"):
             ws = manifest.parent
@@ -1151,6 +1241,7 @@ class WorkbenchService:
         return Operator2DPolish(art)
 
     def polish_attach(self, selection: AnimationSelection) -> Path:
+        self._reject_candidate(selection, "Polish")
         manifest = self.workspace(selection) / "workbench.json"
         if not manifest.is_file():
             raise ValueError("this exact target has no saved Workbench; complete accepted WB25-2 ingress first")
@@ -1206,6 +1297,7 @@ class WorkbenchService:
         return self._popen([str(binary), str(document)])
 
     def adopt_fx_layer(self, selection: AnimationSelection, layer_name: str, *, live_document_path: str | None = None, live_modified: bool | None = None):
+        self._reject_candidate(selection, "FX adoption")
         manifest=self.workspace(selection)/"workbench.json"
         if not manifest.is_file():
             raise self.model.WorkbenchError("Workbench absent; open/edit the selected animation before adopting an FX layer")
@@ -1214,6 +1306,7 @@ class WorkbenchService:
             source_root=self.source_root,weapon_root=self.weapon_root,repo_root=self.repo_root)
 
     def frame_preview(self, selection: AnimationSelection, operation: str, position: int, fill: str = "duplicate-prev") -> MigrationView:
+        self._reject_candidate(selection, "Frame editing")
         report = self.workbench.frame_migrate(
             selection.profile, selection.action, selection.direction, operation, position,
             fill, "auto", selection.group, selection.weapon_id, selection.linked_profile,
@@ -1222,6 +1315,7 @@ class WorkbenchService:
         return self.migration_view(report)  # type: ignore[return-value]
 
     def frame_apply(self, selection: AnimationSelection, operation: str, position: int, fill: str = "duplicate-prev") -> MigrationView:
+        self._reject_candidate(selection, "Frame editing")
         report = self.workbench.frame_migrate(
             selection.profile, selection.action, selection.direction, operation, position,
             fill, "auto", selection.group, selection.weapon_id, selection.linked_profile,
@@ -1230,14 +1324,20 @@ class WorkbenchService:
         return self.migration_view(report)  # type: ignore[return-value]
 
     def canvas_preview(self, selection: AnimationSelection, width: int, height: int, scope: str = "animation") -> CanvasMigrationView:
+        self._reject_candidate(selection, "Canvas migration")
         report = self.workbench.canvas_migrate(selection.profile, selection.action, selection.direction, width, height, scope, selection.group, selection.weapon_id, selection.linked_profile, self.workspace_root, self.aseprite, True)
         return self.migration_view(report)  # type: ignore[return-value]
 
     def canvas_apply(self, selection: AnimationSelection, width: int, height: int, scope: str = "animation") -> CanvasMigrationView:
+        self._reject_candidate(selection, "Canvas migration")
         report = self.workbench.canvas_migrate(selection.profile, selection.action, selection.direction, width, height, scope, selection.group, selection.weapon_id, selection.linked_profile, self.workspace_root, self.aseprite, False)
         return self.migration_view(report)  # type: ignore[return-value]
 
     def publish_preview(self, selection: AnimationSelection, full_validate: bool = False) -> PublishView:
+        if selection.art_generation == candidate_intake.GENERATION:
+            return PublishView(selection, 0, 0, (), (), None, "GREEN", publish_enabled=False,
+                               publish_block_reason="operator_3d_80 is candidate-only intake; runtime publication is not available for 3D candidates.",
+                               readiness_status="blocked", readiness_summary="3D candidate publication is disabled")
         if selection.art_generation == "operator_2_5d_128":
             return PublishView(selection, 0, 0, (), (), None, "GREEN", publish_enabled=False,
                                publish_block_reason="2.5D runtime publication is reserved for the runtime-promotion workstream.",
@@ -1393,6 +1493,8 @@ class WorkbenchService:
         this in its Publish review step). ``force_stale`` only waives source-freshness; it
         never waives checkout identity, dirty state, dependencies, transactions, or landing.
         """
+        if selection.art_generation == candidate_intake.GENERATION:
+            raise self.model.WorkbenchError("3D candidate generation operator_3d_80 is candidate-only; runtime publication is disabled")
         if selection.art_generation == "operator_2_5d_128":
             raise self.model.WorkbenchError("2.5D runtime publication is disabled in guided ingress")
         pending_path = operator_art_worktree._pending_path(self.repo_root, self.workspace_root)
@@ -1656,6 +1758,8 @@ class WorkbenchService:
         return [[str(part) for part in command] for command in self.workbench._validation_commands(data, full)]
 
     def validate(self, selection: AnimationSelection, full: bool = False) -> list[str]:
+        if selection.art_generation == candidate_intake.GENERATION:
+            return self._validate_candidate(selection)
         output = []
         for command in self.validation_commands(selection, full):
             result = subprocess.run(command, cwd=self.repo_root, text=True, capture_output=True)
@@ -1664,6 +1768,25 @@ class WorkbenchService:
             if result.returncode:
                 raise self.model.WorkbenchError(f"validation failed ({result.returncode}): {' '.join(command)}\n{combined}")
         return output[-120:]
+
+    def _validate_candidate(self, selection: AnimationSelection) -> list[str]:
+        """Read-only frame-integrity check of every registered 3D candidate, against the staged sources."""
+        manifest = self.workspace(selection) / candidate_intake.CANDIDATE_FILE
+        if not manifest.is_file():
+            raise self.model.WorkbenchError(f"no registered 3D candidate for {selection.authoring_identity}")
+        stage_ref = json.loads(manifest.read_text(encoding="utf-8"))["source"]["stage_root"]
+        stage_root = candidate_intake.resolve_stage_ref(stage_ref, self.repo_root)
+        contract = self.repo_root / "custodian/tools/character3d/contracts/operator.v1.json"
+        if not contract.is_file():
+            raise self.model.WorkbenchError("character3d contract is not present in this checkout; validation needs the landed contract")
+        try:
+            report = candidate_intake.verify(contract, stage_root, self.workspace_root, tuple(candidate_intake.ACTION_MAP))
+        except candidate_intake.IntakeError as error:
+            raise self.model.WorkbenchError(f"3D candidate validation failed: {error}") from error
+        lines = [f"{row['status']} {row['action']} {row['direction']} ({row['frames']} frames)" for row in report["sessions"]]
+        if not report["ok"]:
+            raise self.model.WorkbenchError("3D candidate validation failed:\n" + "\n".join(lines))
+        return [*lines, f"validated {report['validated_frames']} staged frames across {report['directional_sessions']} sessions"]
 
     def transaction_state(self, selection: AnimationSelection) -> tuple[str, str] | None:
         tx_root = self.workspace(selection) / "transactions"

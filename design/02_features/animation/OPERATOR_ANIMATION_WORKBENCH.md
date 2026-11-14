@@ -443,3 +443,39 @@ undo rather than restoring a disk backup. Human edits invalidate Art Agent
 mutation/undo authority; unknown live outcomes close the session fail-closed.
 When no matching live document is open, the legacy headless Art Agent path
 remains available.
+
+### 3D candidate intake (`operator_3d_80`)
+
+Eight-direction, full-body Operator animations derived from the hash-pinned 24-joint Operator master are browsable and previewable in the Workbench as a candidate-only generation. Two actions are registered first: `walking` maps to `unarmed/locomotion/walk_01` (25 frames, pivot 50,107) and `running` maps to `unarmed/locomotion/run_01` (15 frames, pivot 62,108). Both are 160×160 RGBA, looping, with a provisional 24 FPS preview sampling rate.
+
+Authority:
+
+- The character3d contract (`custodian/tools/character3d/contracts/operator.v1.json`) and its master SHA-256 are the source identity. The master hash is source identity, not production-art approval.
+- Staged PNGs under `custodian/.ai/operator_3d_animation_preview/` are generated, ignored derivatives. They are never rendered, resized, mirrored, or re-centred by the Workbench. The pivot is metadata.
+- Each registered direction is a read-only `candidate.json` under `.ai/operator_animation_workbench/operator_3d_80/…` that points at those staged frames by path and SHA-256. No `workbench.aseprite` is created and no canonical source is written.
+- `timing_authority` is `false`, `approval_state` is `candidate_unapproved`, and `runtime_published` is `false`. The 24 FPS preview sampling is not an approved animation clock.
+
+Commands (run from the implementation checkout; `ART_CHECKOUT` is the persistent `workbench/operator-art` checkout):
+
+```sh
+python3 custodian/tools/character3d/stage/operator_stage.py --probe "$PROBE" --batch "$BATCH" \
+  --repo "$ART_CHECKOUT" --actions walking running --skip-50ppm
+python3 custodian/tools/operator/operator_3d_candidate_intake.py --plan|--apply|--verify \
+  --contract custodian/tools/character3d/contracts/operator.v1.json \
+  --stage-root "$ART_CHECKOUT/custodian/.ai/operator_3d_animation_preview" \
+  --workbench-root "$ART_CHECKOUT/.ai/operator_animation_workbench" --actions walking running
+```
+
+`--plan` validates everything and writes nothing. `--apply` validates the whole request before writing, stages candidate files in a temporary directory under the Workbench root, and promotes them only after every session is ready. A failed promotion removes the files it created. Re-running `--apply` with identical inputs is a no-op. An existing session with different provenance or content is refused and preserved. `--verify` re-reads the staged sources and checks each registered session byte-for-byte.
+
+Validation covers the contract schema and master hash, the source motion hash, the eight render directions, frame count, pivot, loop flag, the exact frame index set, path confinement with symbolic links refused, every frame's SHA-256, RGBA mode, the 160×160 size, and alpha inside the contract's clearance. The stager's `--actions` and `--skip-50ppm` options leave every other staged action untouched and write a receipt under `receipts/`.
+
+Workbench behaviour for `operator_3d_80`:
+
+- The browser shows one row per semantic direction for every mapped action: 16 rows. A direction with no registered session appears as `MISSING`, not omitted. The rows are shown alongside legacy and 128px rows and match the same text filters.
+- Preview loads only the selected direction's staged frames, verifies each frame's hash before display, and labels them `3D CANDIDATE`. It never falls back to legacy 96px art. Playback, zoom, and frame stepping use the existing preview controls.
+- Validation (`v`) is read-only: it re-verifies every registered session against its staged sources.
+- Disabled in the UI and refused in the service: Edit, New Animation, Import, frame add/remove, canvas migration, FX adoption, Polish, Copy spritesheet, the Timeline and Motion modes, comparison and transition views, and Publish. Publication is refused in `publish_preview()`, in `publish()` before any legacy transaction, and in `animation_workbench.publish()` as defense in depth.
+- Legacy 96px sessions, the 128px target projection, and their publication paths are unchanged. Transition candidates exclude this generation.
+
+Not yet covered: the Idle motion (`unarmed/posture/idle_relaxed_01`), the root marker overlay, unified target models, runtime publication, and any change to `operator.gd`, the presenter, or the Godot runtime catalog. Those are later phases.
