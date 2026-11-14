@@ -1,9 +1,105 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-14T05:47:35Z",
-  "source_main_sha": "9e0bfa8ddab729c4b02365a98afa9fb0f448b365",
+  "generated_at": "2026-11-14T07:16:32Z",
+  "source_main_sha": "074e7c9329b598056785130676fa69fae2b6a18f",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "procgen-gallery-generation-controls-main-fd469bd6",
+      "headline": "The generated dungeon now has seed controls, rerolls and safer regeneration",
+      "summary": "The procgen gallery now includes a generation panel for repeating a seed, choosing a new seed, cancelling pending generation and viewing errors. Its session controller protects the existing Operator and arena during replacement. The changes merged to main; automated smoke is registered, but a passing main CI or interactive playthrough has not been confirmed.",
+      "body": "The procedural dungeon showcase gained a generation session and visible controls. Players or testers can enter a numeric seed, regenerate the same layout or reroll; the only validated preset currently uses the 96×96 Sundered Keep Ascent arena with 12 rooms. A staged candidate is kept separate from the accepted arena, and regeneration is disabled while the Operator is inside. The merge registers a focused Godot smoke for determinism, cancellation, actor/camera reuse and cleanup. This verifies source integration, not passing CI or a deployed gameplay release.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "world-procgen",
+      "workstream": "procgen-showcase-generation-controls",
+      "occurred_at": "2026-11-14T07:16:32Z",
+      "desk": "front_page",
+      "format": "development",
+      "bullets": [
+        "Seed entry, same-seed repeat and reroll controls landed",
+        "Staged generation keeps the accepted arena separate until replacement",
+        "Only one proven preset: 96×96, 12 rooms",
+        "Next: verify main Godot smoke and interactive regeneration"
+      ],
+      "links": [
+        {
+          "title": "Merged generation controls",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/fd469bd6989e10e48401143eec73d25a444c50b3"
+        },
+        {
+          "title": "Generation controls PR",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/154"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN's generated dungeon is no longer locked to one hard-coded run. The gallery now has a seed-and-regenerate control panel, turning its arena into something testers can explore repeatedly while keeping the existing Operator and camera intact.",
+        "sections": [
+          {
+            "heading": "A dungeon you can regenerate",
+            "text": "The new panel exposes the selected seed and generation status, with repeat-the-same-seed, reroll, cancellation and error feedback. The initial preset is deliberately narrow: Sundered Keep Ascent, 96×96 cells and 12 rooms. Other profiles and sizes are not yet proven."
+          },
+          {
+            "heading": "Protect the world already on screen",
+            "text": "A session controller separates the accepted arena from a staging candidate, rejects stale generation results and prevents replacement while the Operator occupies the arena. This addresses a real usability problem: trying another map should not unexpectedly strand or duplicate the player."
+          },
+          {
+            "heading": "What is and is not proven",
+            "text": "The source and registered focused Godot smoke landed in main. The smoke covers deterministic generation, cancellation, map lifecycle and Operator/camera identity, but this inspection did not establish a passing main CI run or a human interactive playthrough."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Reproducible worlds make debugging practical",
+            "explanation": "Repeating a seed gives artists and gameplay developers a stable environment for comparing changes, while rerolling allows variation without manually editing the level."
+          },
+          {
+            "title": "The safe replacement boundary is part of the feature",
+            "explanation": "Preserving the accepted arena until a new candidate is ready keeps generation experiments from disrupting the existing player route."
+          }
+        ],
+        "takeaway": "Generation controls are integrated into main with a bounded initial preset; runtime and interactive validation remain the next proof gates.",
+        "next_watch": "Confirm the registered Godot smoke on main and demonstrate same-seed repeat, reroll, cancellation and safe return in an interactive session."
+      },
+      "details": {
+        "overview": "Merged PR #154 at 2026-11-14T06:47:41Z; inspected merge diff against main. Added generation_presets.v1.json, procgen_arena_session.gd, procgen_gallery_controls.gd and procgen_showcase_generation_controls_smoke.gd, with gallery and host integration. No canonical dispatcher audit or validated fresh private observation available.",
+        "ledger": [
+          {
+            "stage": "Source integration",
+            "status": "verified landed",
+            "evidence": "Main merge fd469bd6989e10e48401143eec73d25a444c50b3"
+          },
+          {
+            "stage": "Focused validation registration",
+            "status": "verified in source",
+            "evidence": "validation_manifest.json registers procgen_showcase_generation_controls; registration is not a passing run"
+          },
+          {
+            "stage": "Runtime and interactive validation",
+            "status": "unknown",
+            "evidence": "No passing main CI or interactive proof inspected"
+          }
+        ],
+        "notes": [
+          "Only the ascent_compact preset is declared and bounded to a proven generation request."
+        ],
+        "unknowns": [
+          "Main Godot pipeline result and hands-on usability remain unverified.",
+          "Host process and full packet/workstream counts unavailable."
+        ],
+        "actions": [
+          "Validation owner: run registered generation-controls smoke and confirm main pipeline; then perform interactive gallery playthrough."
+        ]
+      },
+      "related": [
+        {
+          "title": "A generated dungeon arena now connects to the gallery's existing Operator",
+          "context": "This earlier milestone supplied the arena and shared Operator route that the new controls regenerate.",
+          "story_id": "procgen-gallery-generated-arena-main-f1bccf0d"
+        }
+      ]
+    },
     {
       "id": "procgen-gallery-generated-arena-main-f1bccf0d",
       "headline": "A generated dungeon arena now connects to the gallery's existing Operator",
@@ -1305,117 +1401,6 @@
           }
         ],
         "next_gate": "Independent reviewer assesses the authorization limitation before any separate recovery approval."
-      }
-    },
-    {
-      "id": "isolated-worker-proof-ready-926df151",
-      "headline": "Isolated worker security proof enters automatic queue, without enabling a service",
-      "summary": "CUSTODIAN added and marked ready an isolated systemd worker proof and paired review. The planned test checks credential separation, loopback/Chrome DevTools denial and toolchain access. This is only a task handoff; no sandbox deployment or passing host proof is established.",
-      "body": "Main 895df534 authored a test-only isolated worker proof packet; 926df151 changed its implementation and review packets to ready/auto. The plan requires a distinct unprivileged account, isolated model and read-only Git LFS access, loopback denial, and in-unit runtime evidence. Missing isolated credentials are explicitly blocking. No service activation, runtime proof or independent review is demonstrated by these commits.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "platform-performance",
-      "workstream": "agent-isolated-worker-proof-v1",
-      "occurred_at": "2026-11-10T23:34:32Z",
-      "bullets": [
-        "Implementation and paired review are ready/auto in Git.",
-        "Proof is test-only; recurring service prohibited.",
-        "Distinct credentials and real in-unit evidence are required.",
-        "No host activation or acceptance verified."
-      ],
-      "links": [
-        {
-          "title": "Packet authoring",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/895df534ed010f46aec29fb67458995246175e23"
-        },
-        {
-          "title": "Ready/auto transition",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/926df15195f7c0e98adfca597adcae8c00637219"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "A new security-focused task is now eligible for automatic handoff: prove that a disposable CUSTODIAN worker can operate without inheriting the main user's credentials or access to privileged local services. The repository contains a rigorous test plan, not a running worker.",
-        "sections": [
-          {
-            "heading": "Prove the boundary from inside",
-            "text": "The packet calls for a dedicated unprivileged systemd identity and actual process-level checks. It specifically tests denial of local Chrome DevTools and other loopback listeners while retaining safe access to required development tools."
-          },
-          {
-            "heading": "No shortcut through owner credentials",
-            "text": "A distinct read-only Git LFS identity and isolated model authentication are required where applicable. If those cannot be obtained, the proof must fail or remain incomplete rather than borrowing the owner's access."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Configuration alone cannot prove isolation",
-            "explanation": "The packet demands observed behavior from inside the service, including denied access to privileged sockets and credentials."
-          }
-        ],
-        "takeaway": "The proof has entered the queue, but no sandbox installation, successful test or independent acceptance is established.",
-        "next_watch": "Look for a bounded host proof with actual in-unit results and an independent review."
-      },
-      "details": {
-        "overview": "Main 926df151 marks both named packets ready/auto. No canonical dispatcher audit or fresh host observation available.",
-        "ledger": [
-          {
-            "stage": "Packet authored",
-            "status": "verified",
-            "evidence": "895df534"
-          },
-          {
-            "stage": "Automatic eligibility",
-            "status": "verified",
-            "evidence": "926df151"
-          },
-          {
-            "stage": "Host proof and review",
-            "status": "unknown",
-            "evidence": "No execution or accepted review receipt inspected."
-          }
-        ],
-        "notes": [],
-        "unknowns": [
-          "Isolated credentials and host provisioning",
-          "Actual runtime isolation and cleanup"
-        ],
-        "actions": [
-          "Workflow owner: collect genuine in-unit isolation evidence before claiming proof."
-        ]
-      },
-      "related": [],
-      "scorecard": {
-        "stage": "Ready for handoff, execution unverified",
-        "as_of": "2026-11-10T23:40:27Z",
-        "scope": "Named isolated worker implementation and paired review packets",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Proof packet authored",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "895df534"
-          },
-          {
-            "label": "Ready/auto handoff",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "926df151"
-          },
-          {
-            "label": "Test-only host proof",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No runtime evidence"
-          },
-          {
-            "label": "Independent review",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No accepted receipt"
-          }
-        ],
-        "next_gate": "Obtain separate credentials and perform the bounded host proof, without enabling recurring service."
       }
     }
   ],
