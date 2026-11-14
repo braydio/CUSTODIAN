@@ -1,7 +1,7 @@
 extends SceneTree
 
 const PLAYTEST_SCENE := preload("res://game/world/levels/authored/dev/procgen_showcase_gallery/procgen_showcase_gallery_playtest.tscn")
-const MAX_GENERATION_FRAMES := 2400
+const MAX_GENERATION_MSEC := 150000
 
 class FailedStageCandidate extends Node:
 	func dispose_if_safe() -> bool:
@@ -135,15 +135,14 @@ func _run() -> void:
 
 
 func _wait_until_ready(session: Node) -> bool:
-	var frames := 0
-	while frames < MAX_GENERATION_FRAMES:
+	var deadline_msec := Time.get_ticks_msec() + MAX_GENERATION_MSEC
+	while Time.get_ticks_msec() < deadline_msec:
 		var status: Dictionary = session.call("get_session_status")
 		if str(status.get("state", "")) == "READY":
 			return true
 		if str(status.get("state", "")) == "FAILED":
 			return false
 		await process_frame
-		frames += 1
 	return false
 
 
