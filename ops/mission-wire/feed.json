@@ -1,9 +1,186 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-12T23:55:20.209Z",
-  "source_main_sha": "e2df427c1f80807830a27e3ea230a463787b4691",
+  "generated_at": "2026-11-14T05:47:35Z",
+  "source_main_sha": "9e0bfa8ddab729c4b02365a98afa9fb0f448b365",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "procgen-gallery-generated-arena-main-f1bccf0d",
+      "headline": "A generated dungeon arena now connects to the gallery's existing Operator",
+      "summary": "A seeded 12-room, 96×96 generated arena has landed in main. Its entry and return use the existing Operator and camera rather than spawning a second player. Local Godot smoke tests passed, but a branch-level Godot pipeline run failed and the new main run is still in progress.",
+      "body": "The procgen showcase can stage a disposable arena beyond the gallery's sealed threshold. It uses the existing Operator and camera for entry and return, with guards against missing actors and a failed return. A registered headless smoke reported 1,114 walkable tiles and passed. This is source integration and reported local validation, not a demonstrated live game release. Branch Godot CI failed before merge; main pipeline validation remains in progress.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "procgen-showcase-generated-arena-rc067",
+      "occurred_at": "2026-11-14T05:47:35Z",
+      "desk": "front_page",
+      "format": "development",
+      "bullets": [
+        "12 rooms generated from seed 417203 on a 96×96 map",
+        "Same Operator and camera enter and return",
+        "Investigate branch Godot CI failure and await main pipeline result"
+      ],
+      "links": [
+        {
+          "title": "Main merge",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/f1bccf0d4eb8d06d20f3be52edc4bfde7afda9b3"
+        },
+        {
+          "title": "Implementation and local test evidence",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/152"
+        },
+        {
+          "title": "Failed branch Godot CI",
+          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/43554856826"
+        },
+        {
+          "title": "Main Godot pipeline",
+          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/43562908670"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "The procedural-generation showcase has crossed from an isolated map demonstration into the gallery's game-source flow. A seeded dungeon arena now has a guarded route for the existing Operator to enter and return, without creating a second player.",
+        "sections": [
+          {
+            "heading": "A dungeon behind the threshold",
+            "text": "The implementation generates a 96×96 map with 12 rooms from a fixed seed, using the existing generated-region system. The arena remains behind the gallery's sealed threshold until the necessary world actor and camera are present."
+          },
+          {
+            "heading": "Returning safely matters",
+            "text": "The route reuses the world's Operator and camera. Local smoke tests exercised entry, navigation, return, and a failed-return case that keeps the actor safe. The reported map contained 1,114 walkable tiles."
+          },
+          {
+            "heading": "The remaining proof boundary",
+            "text": "The PR merged into main, but the branch's Godot Level Pipeline had failed and the fresh main pipeline was still running when checked. That is not evidence of a deployed, user-played level."
+          }
+        ],
+        "insights": [
+          {
+            "title": "One player across two spaces",
+            "explanation": "Reusing the existing Operator and camera avoids creating a competing player instance, an important foundation for making generated regions feel connected to the game world."
+          }
+        ],
+        "takeaway": "A guarded generated arena is now in main with reported local Godot smoke success; CI and interactive gameplay verification remain separate gates.",
+        "next_watch": "Inspect the main Godot pipeline result, diagnose any remaining failure, then demonstrate interactive entry and return."
+      },
+      "details": {
+        "overview": "Merged PR #152 at 2026-11-14 05:43:33 UTC. Reported local Godot 4.7.2 smoke PASS; branch pipeline failure and main pipeline pending at observation.",
+        "ledger": [
+          {
+            "stage": "Source integration",
+            "status": "verified landed",
+            "evidence": "Merge f1bccf0d4eb8d06d20f3be52edc4bfde7afda9b3"
+          },
+          {
+            "stage": "Local validation",
+            "status": "reported PASS",
+            "evidence": "PR #152 lists registered arena and lifecycle smokes"
+          },
+          {
+            "stage": "CI",
+            "status": "unresolved",
+            "evidence": "Branch Godot workflow 43554856826 failed; main workflow 43562908670 in progress"
+          }
+        ],
+        "notes": [],
+        "unknowns": [
+          "Interactive end-user gameplay proof and deployed runtime status unknown"
+        ],
+        "actions": [
+          "Owner: inspect Godot pipeline failure and validate current main before claiming release"
+        ]
+      },
+      "related": []
+    },
+    {
+      "id": "operator-3d-workbench-candidate-intake-main-9e0bfa8d",
+      "headline": "Operator Workbench gains a guarded intake for 320 directional animation frames",
+      "summary": "The Operator 3D Workbench candidate intake has landed in main. It registers 16 walking/running directional sessions and 320 frames with verification states and repeat-safe apply, while deliberately refusing publication. Reported focused tests passed; live interactive launch remains unproven.",
+      "body": "The Workbench now contains a candidate-only intake for 3D-derived Operator motion. Walking and running sessions span 16 directional combinations and 320 frames. The intake exposes verified/registered/invalid/missing states, uses transactional apply, and blocks publication both in UI and backend. PR tests and smoke checks were reported passing. The merge is not proof that the frames are shipped as gameplay animations; interactive UI launch from the art checkout remains a follow-up.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "operator-3d-workbench-intake-v1",
+      "occurred_at": "2026-11-14T05:47:35Z",
+      "desk": "front_page",
+      "format": "development",
+      "bullets": [
+        "16 directional sessions and 320 candidate frames",
+        "Transactional, repeat-safe intake with explicit validation states",
+        "Publication intentionally refused pending further gates"
+      ],
+      "links": [
+        {
+          "title": "Main merge",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/9e0bfa8ddab729c4b02365a98afa9fb0f448b365"
+        },
+        {
+          "title": "Intake and test evidence",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/148"
+        },
+        {
+          "title": "Main validation workflow",
+          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/43562955306"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "The Operator's 3D-to-2D animation workflow has gained a controlled landing zone. The Workbench can register and verify 320 staged walking and running frames across directional sessions, without accidentally publishing unfinished art.",
+        "sections": [
+          {
+            "heading": "Candidate motion, not a release",
+            "text": "Sixteen directional walking and running sessions are registered with explicit VERIFIED, REGISTERED, INVALID and MISSING states. The intake is deliberately candidate-only, keeping unfinished frames out of published gameplay assets."
+          },
+          {
+            "heading": "Safe to repeat",
+            "text": "The implementation uses transactional apply and reports a zero-write repeat apply in its host evidence. Focused tests and Workbench smoke checks were reported passing."
+          },
+          {
+            "heading": "Next, prove the artist-facing path",
+            "text": "A literal interactive Workbench launch from the art checkout was explicitly left for follow-up. Main CI was still in progress at observation; this merge does not demonstrate playable 3D-derived Operator animation."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The bridge between Blender and gameplay is becoming inspectable",
+            "explanation": "Verified candidate states make animation import a reviewable workflow instead of a blind asset copy. Publication remains a separate deliberate action."
+          }
+        ],
+        "takeaway": "Candidate intake is merged and locally tested; actual publication and interactive game animation remain unverified.",
+        "next_watch": "Prove interactive Workbench launch and validate the complete candidate-to-published animation path."
+      },
+      "details": {
+        "overview": "Merged PR #148 at 2026-11-14 05:44:10 UTC; tests and 320-frame host checks reported in PR.",
+        "ledger": [
+          {
+            "stage": "Source integration",
+            "status": "verified landed",
+            "evidence": "Merge 9e0bfa8ddab729c4b02365a98afa9fb0f448b365"
+          },
+          {
+            "stage": "Focused tests",
+            "status": "reported PASS",
+            "evidence": "PR #148: intake 55/55, candidate UI 2/2, character3d 23 with one skipped"
+          },
+          {
+            "stage": "Live art checkout launch",
+            "status": "not demonstrated",
+            "evidence": "Explicitly deferred in PR description"
+          }
+        ],
+        "notes": [],
+        "unknowns": [
+          "Main CI outcome pending",
+          "Published gameplay animation not demonstrated"
+        ],
+        "actions": [
+          "Owner: validate interactive Workbench launch and publishing gates"
+        ]
+      },
+      "related": []
+    },
     {
       "id": "awakening-creche-main-runtime-cutover-e2df427c",
       "desk": "front_page",
@@ -1239,283 +1416,6 @@
           }
         ],
         "next_gate": "Obtain separate credentials and perform the bounded host proof, without enabling recurring service."
-      }
-    },
-    {
-      "id": "findings-bridge-recovery-ready-c6753030",
-      "headline": "Findings-closeout recovery enters automatic queue as missing-checkout repair is drafted",
-      "summary": "CUSTODIAN has made the findings-bridge closeout recovery packet ready for automatic dispatch, while a separate missing-checkout recovery is newly documented as a manual draft. Both address stranded paired-review evidence; neither commit proves execution, accepted review, or released host claims.",
-      "body": "Main c6753030 changes the findings-bridge implementation and paired review packet from draft/manual to ready/auto. The underlying recovery proposal, introduced in 5006f31c, would preserve an authentic nonpassing findings disposition whose reviewer stderr causes the strict session parser to reject the session. A separate P0 manual draft at b513f9a0 targets a missing historical checkout with preserved incomplete host-validation coverage. These are packet and dispatch eligibility changes, not verified runtime execution. The private WIRE pilot latest pointer was last modified November 8, so it cannot support fresh host counts. Independent review and canonical teardown remain unverified.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-findings-bridge-review-closeout-recovery-v1",
-      "occurred_at": "2026-11-10T20:51:52Z",
-      "bullets": [
-        "Findings-bridge implementation and paired review packets are marked ready/auto in Git.",
-        "Missing-checkout recovery remains a separate P0 manual draft.",
-        "Neither change proves a dispatcher launch or an accepted review.",
-        "Fresh private operational counts are unavailable."
-      ],
-      "links": [
-        {
-          "title": "Ready/auto handoff",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/c67530302489e734c92af66c1737f9851dcd4ac6"
-        },
-        {
-          "title": "Findings bridge packet creation",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/5006f31c2fbc6118e7c549b8408820839d1edebb"
-        },
-        {
-          "title": "Missing-checkout recovery proposal",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/b513f9a0b0299a5b1c4bb562d39b2bf8f73e6bbc"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "A new CUSTODIAN recovery route is now eligible for automatic task handoff. It aims to preserve a legitimate negative review result that strict session parsing could not close out. Another newly drafted repair addresses a different stranded review whose original checkout is missing. These changes advance the recovery plan, not proof that either repair has run.",
-        "sections": [
-          {
-            "heading": "The queue is ready, but execution is not established",
-            "text": "The findings-bridge implementation and its paired review changed from manual drafts to ready/auto packets. That makes them eligible under the documented workflow; it does not establish a live worker, claimed checkout, completed implementation or independent PASS."
-          },
-          {
-            "heading": "Two failures require different recovery paths",
-            "text": "The findings bridge concerns a preserved nonpassing reviewer outcome rejected because its session has nonempty stderr. The missing-checkout proposal concerns a historical validation attempt with incomplete coverage and an absent checkout. Both are designed to retain original evidence and fail closed rather than silently recasting failures as success."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Eligibility is not execution",
-            "explanation": "The latest Git change is a dispatch-policy transition, not a host observation. Reporting it as running would obscure the remaining verification gate."
-          },
-          {
-            "title": "Negative review evidence is worth preserving",
-            "explanation": "A failed or findings-bearing review can be an important durable outcome. The new proposal seeks authenticated closeout without turning that result into an accepted PASS."
-          }
-        ],
-        "takeaway": "The recovery workflow has gained a ready automatic handoff and a distinct drafted repair, while host execution and acceptance remain unknown.",
-        "next_watch": "Look for a landed implementation, a genuine independent review receipt and authenticated host evidence before promoting either recovery to completed status."
-      },
-      "details": {
-        "overview": "GitHub partial coverage only. No fresh canonical dispatcher audit or valid private pilot observation; no operational counts are promoted.",
-        "ledger": [
-          {
-            "stage": "Findings bridge packet handoff",
-            "status": "verified ready/auto in Git",
-            "evidence": "c6753030 changes two packet headers."
-          },
-          {
-            "stage": "Missing-checkout recovery design",
-            "status": "verified draft/manual in Git",
-            "evidence": "b513f9a0 adds P0 packet."
-          },
-          {
-            "stage": "Implementation, independent review and teardown",
-            "status": "unknown",
-            "evidence": "No matching accepted receipts or fresh host proof inspected."
-          }
-        ],
-        "notes": [
-          "Private pilot pointer last modified November 8; content freshness not established."
-        ],
-        "unknowns": [
-          "Current live dispatcher counts and claims.",
-          "Whether ready packets have been picked up.",
-          "Accepted independent review and verified cleanup."
-        ],
-        "actions": [
-          "Workflow owner: obtain bounded execution and review receipts before declaring progress beyond eligibility."
-        ]
-      },
-      "related": [],
-      "scorecard": {
-        "stage": "Ready for automatic handoff; execution unverified",
-        "as_of": "2026-11-10T21:08:08Z",
-        "scope": "Named findings bridge recovery packet and paired review, GitHub only",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Recovery proposal recorded",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "5006f31c"
-          },
-          {
-            "label": "Automatic handoff eligibility",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "c6753030"
-          },
-          {
-            "label": "Implementation landed",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "Not established in inspected evidence"
-          },
-          {
-            "label": "Independent review accepted",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No accepted PASS inspected"
-          },
-          {
-            "label": "Canonical teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No host proof"
-          }
-        ],
-        "next_gate": "Obtain authenticated execution and implementation evidence, followed by an independent review receipt."
-      }
-    },
-    {
-      "id": "archive-lifecycle-resolver-landed-6ef13efb",
-      "headline": "Archive-history resolver lands; Ash-Bell review awaits independent verification",
-      "summary": "CUSTODIAN merged the archive-history resolver fix through PR #135, then archived its completed implementation packet through PR #136. The change distinguishes an original archived review target from a later byte-identical restoration using Git lifecycle ancestry. The completion record reports four focused tests and 326 existing runner tests passing, but independent review has not yet been accepted.",
-      "body": "Main commit 6ef13efbbd1486f18d0f799817d6f521ef564c46 merges resolver implementation 781ecf984bec706849a37ad69e9bc7123afe62b1. The new resolver examines matching active packet identity, archive introduction, and later active-path retirement when multiple archive additions exist, rejecting ambiguous histories. Main c93d75d8cd57c2b36731cb640fac722faf6ccc2a merges completion archive PR #136. Its completion summary reports four focused regression tests, 326 existing runner tests, green pre/post merge checks and a retired V2 checkout; these are reported validation and retirement evidence, not an independently verified host teardown. The paired independent review remains pending, so the Ash-Bell asset-intake review is still gated. The private WIRE observation pointer was last modified November 8 and is stale for this run; dispatcher totals and host liveness are unavailable.",
-      "severity": "milestone",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-review-archive-lifecycle-disambiguation-v1",
-      "occurred_at": "2026-11-10T18:33:45Z",
-      "bullets": [
-        "Resolver code and focused tests merged through PR #135.",
-        "Implementation completion packet archived through PR #136.",
-        "Completion summary reports four focused and 326 runner tests passing.",
-        "Independent paired review still pending; Ash-Bell review remains gated.",
-        "No fresh authenticated operational counts or teardown proof."
-      ],
-      "links": [
-        {
-          "title": "Resolver implementation merge",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/6ef13efbbd1486f18d0f799817d6f521ef564c46"
-        },
-        {
-          "title": "Implementation commit",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/781ecf984bec706849a37ad69e9bc7123afe62b1"
-        },
-        {
-          "title": "Completion archive merge",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/c93d75d8cd57c2b36731cb640fac722faf6ccc2a"
-        },
-        {
-          "title": "Implementation PR #135",
-          "url": "https://github.com/braydio/CUSTODIAN/pull/135"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "A review-history repair that was only a proposal earlier today has now reached CUSTODIAN's main branch. The new resolver uses a packet's Git lifecycle to distinguish its original archived implementation from a later restoration of identical content, removing a specific obstacle to Ash-Bell asset-intake review. Independent acceptance is still ahead.",
-        "sections": [
-          {
-            "heading": "A history problem now has a code fix",
-            "text": "The resolver previously encountered multiple archive-addition events and could not safely identify the original implementation. The landed correction checks for a matching active packet before the archive introduction and evidence that the active packet was subsequently retired. If history cannot establish one authentic candidate, it still refuses to guess."
-          },
-          {
-            "heading": "Completion is not independent acceptance",
-            "text": "The implementation packet is now archived as complete. Its published summary reports focused and broader test passes, along with green checks. But the paired independent review is a separate gate and remains pending; the Ash-Bell intake review should not be treated as cleared."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Git ancestry, not matching bytes, anchors review identity",
-            "explanation": "The repair addresses a provenance failure that could misattribute a review to the wrong historical implementation. It preserves fail-closed behavior when ancestry cannot prove a unique target."
-          },
-          {
-            "title": "The bottleneck moves from coding to independent review",
-            "explanation": "With code landed and implementation paperwork archived, the highest-leverage next step is a fresh paired-review receipt. The art pipeline remains dependent on that acceptance."
-          }
-        ],
-        "takeaway": "The generic resolver correction is landed and its implementation packet archived, but the independent reviewer has not accepted it.",
-        "next_watch": "Watch for a genuine independent PASS on review-agent-review-archive-lifecycle-disambiguation-v1, then a controlled resumption of the preserved Ash-Bell asset-intake review."
-      },
-      "details": {
-        "overview": "Observed main merge commits for implementation and completion archive. Test and V2 retirement figures come from the published completion summary, not a fresh host audit. Operational pilot observation remains stale.",
-        "ledger": [
-          {
-            "stage": "Implementation landed",
-            "status": "verified",
-            "evidence": "PR #135 merge 6ef13efb; code 781ecf98."
-          },
-          {
-            "stage": "Validation",
-            "status": "reported in landed completion summary",
-            "evidence": "Four focused tests, 326 runner tests, and green checks reported in PR #136 summary."
-          },
-          {
-            "stage": "Implementation packet archival",
-            "status": "verified",
-            "evidence": "PR #136 merge c93d75d8; packet moved to archived with implementation commit identity."
-          },
-          {
-            "stage": "Independent paired review",
-            "status": "pending",
-            "evidence": "Completion summary explicitly states no independent PASS."
-          },
-          {
-            "stage": "Canonical host teardown",
-            "status": "unknown",
-            "evidence": "Published summary reports V2 checkout retired, but no fresh authenticated host proof inspected."
-          }
-        ],
-        "notes": [
-          "Documentation identifies a possible V2 finish/landing guidance conflict for a separate bounded correction."
-        ],
-        "unknowns": [
-          "Fresh canonical dispatcher counts and host state.",
-          "Independent review outcome and Ash-Bell resumption."
-        ],
-        "actions": [
-          "Independent reviewer: execute fresh review against landed implementation and produce findings-first receipt.",
-          "Ash-Bell owner: resume preserved intake review only after accepted independent review."
-        ]
-      },
-      "related": [
-        {
-          "title": "New review-history repair proposed to unblock Ash-Bell asset intake",
-          "context": "Earlier coverage documented the repair plan before implementation landed.",
-          "story_id": "archive-lifecycle-resolver-packet-7f28dadf"
-        }
-      ],
-      "scorecard": {
-        "stage": "Implementation landed and archived; independent review pending",
-        "as_of": "2026-11-10T19:09:40Z",
-        "scope": "Named resolver implementation and paired review only; GitHub partial coverage",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Repair packets authored",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "7f28dadf"
-          },
-          {
-            "label": "Resolver implementation and regression tests landed",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "781ecf98 and PR #135"
-          },
-          {
-            "label": "Implementation packet archived",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "PR #136"
-          },
-          {
-            "label": "Independent paired review accepted",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No accepted review receipt inspected"
-          },
-          {
-            "label": "Ash-Bell intake review resumed",
-            "status": "blocked",
-            "verification": "unknown",
-            "evidence": "Requires independent acceptance"
-          }
-        ],
-        "next_gate": "Independent reviewer must issue a genuine accepted receipt for the landed resolver before Ash-Bell intake review resumes."
       }
     }
   ],
