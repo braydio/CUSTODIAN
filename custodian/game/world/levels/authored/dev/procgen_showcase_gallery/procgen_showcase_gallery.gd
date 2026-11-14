@@ -56,6 +56,10 @@ func _ready() -> void:
 	var presenter := presenter_script.new()
 	presenter.name = "ExhibitPresenter"
 	add_child(presenter)
+	var arena_host_script := preload("res://game/world/levels/authored/dev/procgen_showcase_gallery/procgen_arena_host.gd")
+	var arena_host := arena_host_script.new()
+	arena_host.name = "ProcgenArenaHost"
+	add_child(arena_host)
 
 
 func get_boundary_segments() -> Array:
@@ -95,7 +99,7 @@ func _build_gallery() -> void:
 		_add_label(background, str(wing["label"]) + " · EXHIBIT WING", wing["anchor"] + Vector2(-250, -300), 22)
 		_add_exhibit_marker(props, wing)
 	_add_floor(background, Rect2(-210, -500, 420, 18), Color("#b58c49"), "SEALED ARENA THRESHOLD")
-	_add_label(background, "ARENA SEALED · GENERATED MAP NOT LOADED", Vector2(-330, -590), 18)
+	_add_label(background, "ARENA SEALED · INTERACT AT THE THRESHOLD WHEN READY", Vector2(-330, -590), 18)
 	_add_label(background, "PROCGEN SHOWCASE · PGA-2 EXHIBIT CATALOG", Vector2(-470, -80), 22)
 
 

@@ -83,6 +83,11 @@ func get_spawn_position(spawn_id: StringName) -> Vector2:
 	return _spawn_positions.get(spawn_id, global_position) as Vector2
 
 
+## Read-only access to the staged map for its disposal-owning host.
+func get_generated_map() -> Node:
+	return _map if is_instance_valid(_map) else null
+
+
 func activate_route_node(actor: Node, spawn_id: StringName) -> bool:
 	if not (actor is Node2D) or not has_spawn(spawn_id):
 		return false

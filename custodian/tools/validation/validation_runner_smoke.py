@@ -24,6 +24,7 @@ def main() -> int:
         "expected_hub_twin_missing_spawn_rollback": "hub_twin_solaria_route",
         "expected_hub_twin_missing_spawn_rollback_manager": "hub_twin_solaria_route",
         "expected_hub_twin_activation_rollback": "hub_twin_solaria_route",
+        "expected_procgen_showcase_failed_return_safe_retention": "procgen_showcase_generated_arena",
     }
     excludes = runner.load_coverage_excludes()
     assert tests and len({item["id"] for item in tests}) == len(tests)
