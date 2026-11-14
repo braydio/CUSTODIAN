@@ -21,6 +21,7 @@ var _state := GenerationState.IDLE
 var _last_error := ""
 var _token := 0
 var _last_fingerprint := ""
+var _accepted_revision := 0
 var _destroying := false
 
 
@@ -55,13 +56,22 @@ func get_session_status() -> Dictionary:
 		"preset_id": _selected_preset_id,
 		"error": _last_error,
 		"fingerprint": _last_fingerprint,
+		"accepted_revision": _accepted_revision,
 		"busy": _state == GenerationState.BUILDING,
 		"operator_in_arena": bool(accepted_status.get("active", false)),
-		"accepted_ready": bool(accepted_status.get("ready", false)),
+		"accepted_ready": bool(accepted_status.get("ready", false)) or bool(accepted_status.get("active", false)),
 		"staging_complete": bool(staging_status.get("staging_complete", false)),
 		"accepted_host_count": 1 if is_instance_valid(_accepted_host) else 0,
 		"staging_host_count": 1 if is_instance_valid(_staging_host) else 0,
 	}
+
+
+## Detached read-only projection of the currently accepted generated world.
+## The session remains the sole authority that selects which host is accepted.
+func get_accepted_inspector_snapshot() -> Dictionary:
+	if not is_instance_valid(_accepted_host) or not _accepted_host.has_method("get_inspector_snapshot"):
+		return {}
+	return (_accepted_host.call("get_inspector_snapshot") as Dictionary).duplicate(true)
 
 
 func set_seed(seed_value: int) -> bool:
@@ -174,6 +184,7 @@ func _on_candidate_staged(status: Dictionary, candidate: Node, candidate_token: 
 	_accepted_host = candidate
 	_staging_host = null
 	_last_fingerprint = str(status.get("generation_fingerprint", ""))
+	_accepted_revision += 1
 	_state = GenerationState.READY
 	_last_error = ""
 	if is_instance_valid(previous):

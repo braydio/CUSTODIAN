@@ -13,6 +13,7 @@ const SPAWN_ID: StringName = &"ArenaSpawn"
 const ENTRY_POSITION := Vector2(0, -440)
 const MINIMUM_SEPARATION := 256.0
 const PERFORMANCE_SNAPSHOT_SCRIPT := preload("res://game/world/procgen/diagnostics/procgen_performance_snapshot.gd")
+const EXHIBIT_CATALOG_SCRIPT := preload("res://game/world/levels/authored/dev/procgen_showcase_gallery/procgen_exhibit_catalog.gd")
 const PROFILE_PATHS := {
 	"sundered_keep_ascent": "res://content/procgen/world_profiles/sundered_keep_ascent.json",
 }
@@ -277,6 +278,176 @@ func get_arena_status() -> Dictionary:
 		"generation_fingerprint": _generation_fingerprint,
 		"interaction_enabled": _interaction_enabled,
 	}
+
+
+## Returns only detached values for the gallery inspector; no runtime owner or
+## map reference crosses this boundary.
+func get_inspector_snapshot() -> Dictionary:
+	if not _session_accepted or not is_instance_valid(_region) or not _region.has_method("get_generated_map"):
+		return {}
+	var map := _region.call("get_generated_map") as ProcGenTilemap
+	if not is_instance_valid(map):
+		return {}
+	var level_data: Dictionary = map.call("get_level_data")
+	var health: Dictionary = map.call("get_runtime_health_snapshot")
+	var spawn: Vector2i = map.call("get_player_spawn")
+	var component: Dictionary = map.call("get_main_playable_component")
+	var host_status := get_arena_status()
+	var floor_layer := map.call("get_floor_tilemap") as TileMapLayer
+	var layers := {
+		"terrain": _sample_cell_positions(level_data.get("floor_cells", []), floor_layer),
+		"route": _sample_cell_positions(level_data.get("main_route_centerline_cells", level_data.get("main_route_cells", [])), floor_layer, false),
+		"playability": _sample_cell_positions(_dictionary_keys(component), floor_layer),
+		"vistas": _sample_cell_positions(level_data.get("vista_cells", []), floor_layer),
+		"sites": _sample_site_positions(level_data, floor_layer),
+	}
+	var exact_exhibits := _matching_exhibit_provenance(level_data)
+	var detached_data := {}
+	for key in [
+		"generation_id", "map_size", "wall_cells", "route_playability",
+		"route_playability_audit", "biome_summary", "biome_id_by_cell", "region_tiles",
+		"faction_activity_sites", "story_room_sites", "special_room_sites",
+	]:
+		if level_data.has(key):
+			detached_data[key] = _copy_value(level_data[key])
+	return {
+		"schema": "custodian.procgen_showcase_inspector_snapshot.v1",
+		"generation_fingerprint": str(host_status.get("generation_fingerprint", "")),
+		"generation_id": str(level_data.get("generation_id", "")),
+		"seed": int(host_status.get("seed", -1)),
+		"preset_id": str(host_status.get("preset_id", "")),
+		"profile_id": str(host_status.get("profile_id", "")),
+		"map_size": _copy_value(host_status.get("map_size", Vector2i.ZERO)),
+		"room_count": int(host_status.get("room_count", 0)),
+		"map_bounds": _copy_value(host_status.get("map_bounds", Rect2())),
+		"spawn": spawn,
+		"spawn_valid": bool(map.call("is_valid_spawn_cell", spawn)),
+		"spawn_navigation_walkable": bool(map.call("is_runtime_navigation_walkable", spawn)),
+		"playable_component_count": component.size(),
+		"operator_in_arena": bool(host_status.get("active", false)),
+		"counts": {
+			"floor": int(health.get("floor_cells", 0)),
+			"walls": int(health.get("wall_cells", 0)),
+			"route": _array_size(level_data.get("main_route_cells", [])),
+			"vistas": _array_size(level_data.get("vista_cells", [])),
+			"sites": _site_count(level_data),
+		},
+		"layers": layers,
+		"layer_limits": {"terrain": 1024, "route": 1024, "playability": 1024, "vistas": 1024, "sites": 1024},
+		"health": _select_health(health),
+		"exhibit_provenance": exact_exhibits,
+		"available_fields": {
+			"route": level_data.has("main_route_cells"),
+			"sites": level_data.has("faction_activity_sites") or level_data.has("story_room_sites") or level_data.has("special_room_sites"),
+			"biome_provenance": not exact_exhibits.is_empty(),
+		},
+		"data": detached_data,
+	}
+
+
+func _sample_cell_positions(raw_cells: Variant, floor_layer: TileMapLayer, sort_cells: bool = true) -> Array[Vector2]:
+	var result: Array[Vector2] = []
+	if floor_layer == null or not raw_cells is Array:
+		return result
+	var cells: Array = raw_cells.duplicate()
+	if sort_cells:
+		cells.sort_custom(func(a: Variant, b: Variant) -> bool:
+			if not a is Vector2i or not b is Vector2i:
+				return str(a) < str(b)
+			return a.y < b.y if a.y != b.y else a.x < b.x
+		)
+	var stride := maxi(1, ceili(float(cells.size()) / 1024.0))
+	for index in range(0, cells.size(), stride):
+		var cell: Variant = cells[index]
+		if cell is Vector2i:
+			result.append(_cell_to_gallery_position(cell, floor_layer))
+	return result
+
+
+func _sample_site_positions(level_data: Dictionary, floor_layer: TileMapLayer) -> Array[Vector2]:
+	var cells: Array[Vector2i] = []
+	for key in ["faction_activity_sites", "story_room_sites", "special_room_sites"]:
+		var sites: Variant = level_data.get(key, [])
+		if not sites is Array:
+			continue
+		for site: Variant in sites:
+			if site is Dictionary and site.get("cell") is Vector2i:
+				cells.append(site.cell)
+	return _sample_cell_positions(cells, floor_layer)
+
+
+func _cell_to_gallery_position(cell: Vector2i, floor_layer: TileMapLayer) -> Vector2:
+	var world_position := floor_layer.to_global(floor_layer.map_to_local(cell))
+	return _gallery.to_local(world_position) if is_instance_valid(_gallery) else world_position
+
+
+func _dictionary_keys(source: Dictionary) -> Array[Vector2i]:
+	var result: Array[Vector2i] = []
+	for key: Variant in source.keys():
+		if key is Vector2i:
+			result.append(key)
+	return result
+
+
+func _matching_exhibit_provenance(level_data: Dictionary) -> Array[Dictionary]:
+	var observed_ids: Dictionary = {}
+	var biome_ids: Variant = level_data.get("biome_id_by_cell", {})
+	if biome_ids is Dictionary:
+		for biome_id in biome_ids.values():
+			observed_ids[str(biome_id)] = true
+	var regions: Variant = level_data.get("region_tiles", {})
+	if regions is Dictionary:
+		for region: Variant in regions.values():
+			if region is Dictionary:
+				observed_ids[str(region.get("region_type", ""))] = true
+	var report: Dictionary = EXHIBIT_CATALOG_SCRIPT.load_report()
+	var matches: Array[Dictionary] = []
+	for entry: Variant in report.get("valid", []):
+		if not entry is Dictionary:
+			continue
+		var authority_id := str(entry.get("source_authority_id", ""))
+		if not authority_id.is_empty() and observed_ids.has(authority_id):
+			matches.append({
+				"exhibit_id": str(entry.get("exhibit_id", "")),
+				"source_authority_path": str(entry.get("source_authority_path", "")),
+				"source_authority_id": authority_id,
+			})
+	return matches
+
+
+func _select_health(health: Dictionary) -> Dictionary:
+	var result := {}
+	for key in ["floor_cells", "wall_cells", "runtime_wall_body_count", "navigation_revision", "painted_floor_cell_count", "painted_wall_cell_count"]:
+		if health.has(key):
+			result[key] = health[key]
+	return result
+
+
+func _copy_value(value: Variant) -> Variant:
+	if value is Dictionary:
+		var result := {}
+		for key: Variant in value:
+			if not key is Object:
+				result[_copy_value(key)] = _copy_value(value[key])
+		return result
+	if value is Array:
+		var result: Array = []
+		for item: Variant in value:
+			result.append(_copy_value(item))
+		return result
+	if value is Object:
+		return null
+	return value
+
+
+func _array_size(value: Variant) -> int:
+	return value.size() if value is Array else 0
+
+
+func _site_count(level_data: Dictionary) -> int:
+	return _array_size(level_data.get("faction_activity_sites", [])) \
+		+ _array_size(level_data.get("story_room_sites", [])) \
+		+ _array_size(level_data.get("special_room_sites", []))
 
 
 func _enter_arena(actor: Node2D) -> void:

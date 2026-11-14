@@ -57,6 +57,10 @@ func _ready() -> void:
 	presenter.name = "ExhibitPresenter"
 	add_child(presenter)
 	var session_script := preload("res://game/world/levels/authored/dev/procgen_showcase_gallery/procgen_arena_session.gd")
+	var inspector_script := preload("res://game/world/levels/authored/dev/procgen_showcase_gallery/procgen_gallery_inspector.gd")
+	var inspector := inspector_script.new()
+	inspector.name = "ProcgenGalleryInspector"
+	add_child(inspector)
 	var session := session_script.new()
 	session.name = "ProcgenArenaSession"
 	add_child(session)
@@ -64,6 +68,7 @@ func _ready() -> void:
 	var controls := controls_script.new()
 	controls.name = "ProcgenGalleryControls"
 	add_child(controls)
+	inspector.call("bind_session", session, controls)
 	session.call("bind_controls", controls)
 
 

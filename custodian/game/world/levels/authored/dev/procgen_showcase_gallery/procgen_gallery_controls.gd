@@ -10,6 +10,11 @@ var _error_label: Label
 var _same_seed_button: Button
 var _reroll_button: Button
 var _cancel_button: Button
+var _refresh_inspector_button: Button
+var _inspector: Node
+var _inspector_label: Label
+var _inspector_layout: VBoxContainer
+var _layer_buttons: Dictionary = {}
 
 
 func _ready() -> void:
@@ -29,6 +34,18 @@ func bind_session(session: Node, presets: Dictionary) -> void:
 	refresh_status(_session.call("get_session_status"))
 
 
+func bind_inspector(inspector: Node) -> void:
+	_inspector = inspector
+	for layer in ["terrain", "route", "playability", "sites", "vistas"]:
+		var toggle := CheckButton.new()
+		toggle.text = layer.to_upper()
+		toggle.toggled.connect(_on_overlay_toggled.bind(layer))
+		_layer_buttons[layer] = toggle
+		_inspector_layout.add_child(toggle)
+	if is_instance_valid(_inspector):
+		refresh_inspector_snapshot(_inspector.call("get_snapshot"))
+
+
 func refresh_status(status: Dictionary) -> void:
 	if not is_instance_valid(_status_label):
 		return
@@ -43,46 +60,93 @@ func refresh_status(status: Dictionary) -> void:
 	_cancel_button.disabled = not busy
 
 
+func refresh_inspector_snapshot(snapshot: Dictionary) -> void:
+	if not is_instance_valid(_inspector_label):
+		return
+	if snapshot.is_empty():
+		_inspector_label.text = "INSPECTOR · waiting for accepted world"
+		return
+	var counts: Dictionary = snapshot.get("counts", {})
+	var provenance: Array = snapshot.get("exhibit_provenance", [])
+	var provenance_ids: Array[String] = []
+	for entry: Variant in provenance:
+		if entry is Dictionary:
+			provenance_ids.append(str(entry.get("exhibit_id", "")))
+	var provenance_text := ", ".join(provenance_ids) if not provenance_ids.is_empty() else "unavailable"
+	var spawn_text := "VALID" if bool(snapshot.get("spawn_valid", false)) and bool(snapshot.get("spawn_navigation_walkable", false)) else "UNAVAILABLE"
+	_inspector_label.text = "INSPECTOR · %s · spawn %s\nfloor %d · walls %d · route %d · sites %d · component %d\nCATALOG MATCH: %s" % [
+		str(snapshot.get("generation_fingerprint", "—")).substr(0, 12),
+		spawn_text,
+		int(counts.get("floor", 0)),
+		int(counts.get("walls", 0)),
+		int(counts.get("route", 0)),
+		int(counts.get("sites", 0)),
+		int(snapshot.get("playable_component_count", 0)),
+		provenance_text,
+	]
+
+
 func _build_ui() -> void:
 	var panel := PanelContainer.new()
 	panel.name = "GenerationControlsPanel"
-	panel.position = Vector2(16, 16)
+	panel.position = Vector2(420, 16)
 	panel.custom_minimum_size = Vector2(410, 0)
 	add_child(panel)
-	var layout := VBoxContainer.new()
-	panel.add_child(layout)
+	_inspector_layout = VBoxContainer.new()
+	panel.add_child(_inspector_layout)
 	var heading := Label.new()
 	heading.text = "PROCGEN ARENA · GENERATION CONTROLS"
-	layout.add_child(heading)
+	_inspector_layout.add_child(heading)
 	_status_label = Label.new()
 	_status_label.text = "IDLE"
-	layout.add_child(_status_label)
+	_inspector_layout.add_child(_status_label)
 	_preset_select = OptionButton.new()
 	_preset_select.item_selected.connect(_on_preset_selected)
-	layout.add_child(_preset_select)
+	_inspector_layout.add_child(_preset_select)
 	_seed_input = SpinBox.new()
 	_seed_input.min_value = 0
 	_seed_input.max_value = 2147483647
 	_seed_input.step = 1
 	_seed_input.value = 417203
 	_seed_input.value_changed.connect(_on_seed_changed)
-	layout.add_child(_seed_input)
+	_inspector_layout.add_child(_seed_input)
 	_same_seed_button = Button.new()
 	_same_seed_button.text = "REGENERATE SAME SEED"
 	_same_seed_button.pressed.connect(_on_regenerate_same_seed)
-	layout.add_child(_same_seed_button)
+	_inspector_layout.add_child(_same_seed_button)
 	_reroll_button = Button.new()
 	_reroll_button.text = "REROLL WITH THIS SEED"
 	_reroll_button.pressed.connect(_on_reroll)
-	layout.add_child(_reroll_button)
+	_inspector_layout.add_child(_reroll_button)
 	_cancel_button = Button.new()
 	_cancel_button.text = "CANCEL STAGING"
 	_cancel_button.pressed.connect(_on_cancel)
-	layout.add_child(_cancel_button)
+	_inspector_layout.add_child(_cancel_button)
 	_error_label = Label.new()
 	_error_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_error_label.modulate = Color("#ef9b82")
-	layout.add_child(_error_label)
+	_inspector_layout.add_child(_error_label)
+	_inspector_label = Label.new()
+	_inspector_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_inspector_label.text = "INSPECTOR · waiting for accepted world"
+	_inspector_layout.add_child(_inspector_label)
+	var overlay_heading := Label.new()
+	overlay_heading.text = "READ-ONLY OVERLAYS"
+	_inspector_layout.add_child(overlay_heading)
+	_refresh_inspector_button = Button.new()
+	_refresh_inspector_button.text = "REFRESH ACCEPTED SNAPSHOT"
+	_refresh_inspector_button.pressed.connect(_on_refresh_inspector)
+	_inspector_layout.add_child(_refresh_inspector_button)
+
+
+func _on_overlay_toggled(enabled: bool, layer: String) -> void:
+	if is_instance_valid(_inspector):
+		_inspector.call("set_layer_enabled", layer, enabled)
+
+
+func _on_refresh_inspector() -> void:
+	if is_instance_valid(_inspector):
+		_inspector.call("refresh_snapshot")
 
 
 func _on_seed_changed(value: float) -> void:
