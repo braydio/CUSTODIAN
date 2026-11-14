@@ -41,6 +41,13 @@ func _ready() -> void:
 	_status_label.add_theme_font_size_override("font_size", 16)
 	_status_label.modulate = Color("#f0d89d")
 	add_child(_status_label)
+	var world := _gallery.get_parent()
+	var world_operator := world.get_node_or_null("Operator") if world != null else null
+	var world_camera := world.get_node_or_null("Camera2D") if world != null else null
+	if not world_operator is Node2D or not world_camera is Camera2D:
+		_last_failure = "arena staging requires the existing world Operator and camera"
+		_set_status("ARENA UNAVAILABLE")
+		return
 	_region = REGION_SCRIPT.new()
 	_region.name = "GeneratedArenaRegion"
 	_gallery.add_child(_region)
