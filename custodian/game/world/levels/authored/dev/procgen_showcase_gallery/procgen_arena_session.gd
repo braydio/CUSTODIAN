@@ -126,7 +126,7 @@ func _start_candidate(seed_value: int, preset_id: String, initial: bool) -> void
 	var request := _presets[preset_id].duplicate(true)
 	request["seed"] = seed_value
 	var candidate := HOST_SCRIPT.new() as Node
-	candidate.name = "ProcgenArenaHostStaging"
+	candidate.name = "ProcgenArenaHost" if not is_instance_valid(_accepted_host) else "ProcgenArenaHostStaging"
 	if not bool(candidate.call("configure_generation_request", request)):
 		candidate.free()
 		_fail("Generation request did not pass the host's validated preset contract.")
