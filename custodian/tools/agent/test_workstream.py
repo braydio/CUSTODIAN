@@ -2428,6 +2428,44 @@ class WorkstreamTests(unittest.TestCase):
         self.assertIn(str(self.base / "turns" / "turn-agent-cli-work"),
                       git(self.repo, "worktree", "list", "--porcelain"))
 
+    def test_cli_resume_routes_to_resume_operation_and_start_stays_begin(self):
+        calls = []
+        result = {"result": "fixture", "workstream": "cli-fixture"}
+
+        def begin(*args, **kwargs):
+            calls.append(("begin", args, kwargs))
+            return result
+
+        def resume(*args, **kwargs):
+            calls.append(("resume", args, kwargs))
+            return result
+
+        stdout = io.StringIO()
+        with (mock.patch.dict(sys.modules, {"turn_dispatcher_v2": turn_dispatcher_v2}),
+              mock.patch.object(turn_dispatcher_v2, "begin", side_effect=begin),
+              mock.patch.object(turn_dispatcher_v2, "resume", side_effect=resume),
+              mock.patch.object(workstream, "root_repo", return_value=self.repo),
+              mock.patch.object(sys, "argv", ["workstream.py", "resume", "cli-fixture",
+                                               "--pool", str(self.base / "pool")]),
+              mock.patch("sys.stdout", stdout)):
+            self.assertEqual(workstream.main(), 0)
+        self.assertEqual([call[0] for call in calls], ["resume"])
+        self.assertEqual(calls[0][1][:3], (self.repo.resolve(), "cli-fixture", "historical"))
+        self.assertEqual(json.loads(stdout.getvalue())["result"], "fixture")
+
+        calls.clear()
+        stdout = io.StringIO()
+        with (mock.patch.dict(sys.modules, {"turn_dispatcher_v2": turn_dispatcher_v2}),
+              mock.patch.object(turn_dispatcher_v2, "begin", side_effect=begin),
+              mock.patch.object(turn_dispatcher_v2, "resume", side_effect=resume),
+              mock.patch.object(workstream, "root_repo", return_value=self.repo),
+              mock.patch.object(sys, "argv", ["workstream.py", "start", "cli-fixture",
+                                               "--pool", str(self.base / "pool")]),
+              mock.patch("sys.stdout", stdout)):
+            self.assertEqual(workstream.main(), 0)
+        self.assertEqual([call[0] for call in calls], ["begin"])
+        self.assertEqual(json.loads(stdout.getvalue())["result"], "fixture")
+
     def test_checkpoint_pushes_and_retains_recovery_branch(self):
         path = workstream.start("checkpoint-me", self.repo)
         (path / "saved").write_text("recoverable\n")

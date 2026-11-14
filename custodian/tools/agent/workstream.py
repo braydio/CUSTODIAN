@@ -4398,10 +4398,17 @@ def main() -> int:
         if args.command in {"start", "resume"}:
             import turn_dispatcher_v2 as turn_v2
             coordination_repo = (args.repo or root_repo()).resolve()
-            mode = args.mode
-            result = turn_v2.begin(coordination_repo, args.workstream_id, mode, args.pool,
-                                   getattr(args, "authorization_url", None),
-                                   getattr(args, "authorization_sha256", None), args.checkout_profile)
+            if args.command == "start":
+                result = turn_v2.begin(
+                    coordination_repo, args.workstream_id, args.mode, args.pool,
+                    getattr(args, "authorization_url", None),
+                    getattr(args, "authorization_sha256", None), args.checkout_profile,
+                )
+            else:
+                result = turn_v2.resume(
+                    coordination_repo, args.workstream_id, args.mode, args.pool,
+                    args.checkout_profile,
+                )
             print(json.dumps({"schema": "custodian.turn_dispatcher_v2.acquisition.v1", **result}, sort_keys=True, indent=2))
         elif args.command == "reauthorize":
             import turn_dispatcher_v2 as turn_v2
