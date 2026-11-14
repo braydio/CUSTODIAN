@@ -1,9 +1,105 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-14T07:16:32Z",
-  "source_main_sha": "074e7c9329b598056785130676fa69fae2b6a18f",
+  "generated_at": "2026-11-14T09:40:30Z",
+  "source_main_sha": "98dcde474ed92ae36a1d45c5f8faf94b1e75d1f6",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "procgen-runtime-inspector-main-98dcde47",
+      "headline": "Generated dungeons gain a live inspection view with five optional map overlays",
+      "summary": "CUSTODIAN's procedural arena now has a runtime inspector showing detached snapshots and five optional, bounded overlays for terrain, routes, playability, sites and vistas. The implementation merged to main after focused validation. Main-branch Godot and repository checks are still running; interactive gameplay remains unverified.",
+      "body": "The procgen gallery can now inspect the accepted generated arena through its runtime map APIs, rather than treating generation as an opaque operation. Five optional overlays expose terrain, route, playability, sites and vistas, with a 1,024-descriptor limit per layer and overlays off by default. Snapshot refresh responds to arena replacement and cancellation, and teardown invalidates stale data. Focused validation reported 8/8 passing checks, while an earlier Godot pipeline had unrelated authored-level failures. The merge to main is verified, but its new main checks were still in progress at observation and no interactive gameplay proof was observed.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "world-procgen",
+      "workstream": "procgen-showcase-runtime-inspector",
+      "occurred_at": "2026-11-14T09:40:30Z",
+      "desk": "front_page",
+      "format": "development",
+      "bullets": [
+        "Inspect the accepted generated arena with five opt-in map overlays",
+        "Overlay data is capped and disabled by default",
+        "Focused validation reported 8/8 passed before merge",
+        "Next: main CI results and an interactive inspector demonstration"
+      ],
+      "links": [
+        {
+          "title": "Merged runtime inspector",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/98dcde474ed92ae36a1d45c5f8faf94b1e75d1f6"
+        },
+        {
+          "title": "Inspector implementation and acceptance record",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/155"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN's procedural dungeon can now explain what it generated. A new inspection panel and five optional map overlays reveal the arena's terrain, routes, playable regions, sites and vistas, giving designers a clearer view of the world beneath the scene.",
+        "sections": [
+          {
+            "heading": "A window into generated geography",
+            "text": "The inspector reads a detached snapshot of the accepted arena using the existing runtime map APIs. Its overlays are optional and individually bounded, so inspection need not flood the gallery with visual markers."
+          },
+          {
+            "heading": "Inspection follows the world, not stale results",
+            "text": "The implementation refreshes when the accepted arena changes and invalidates snapshots on cancellation or teardown. That matters when testers repeatedly regenerate the same dungeon or explore new seeds."
+          },
+          {
+            "heading": "The remaining proof boundary",
+            "text": "The implementation landed on main and focused tests were reported passing. At observation, main-branch CI was still in progress and a hands-on interactive demonstration had not been confirmed."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Procgen is becoming inspectable",
+            "explanation": "Visualizing routes and playability makes generated levels easier to debug and refine, connecting the earlier seed controls to practical design iteration."
+          },
+          {
+            "title": "Bounded overlays protect usability",
+            "explanation": "The default-off, capped layers keep inspection optional rather than overwhelming the dungeon presentation."
+          }
+        ],
+        "takeaway": "A runtime inspector is integrated into main, making generated dungeon structure visible to developers; final main CI and interactive validation remain open.",
+        "next_watch": "Check main Godot pipeline and demonstrate overlay refresh after seed rerolls, cancellation and arena replacement."
+      },
+      "details": {
+        "overview": "PR #155 merged at 2026-11-14T09:37:21Z as 98dcde474ed92ae36a1d45c5f8faf94b1e75d1f6. Focused acceptance in PR description reports 8/8 selected tests passing at implementation revision 72d6eb41. Main CI was in progress when inspected. Prior authored-level Godot failures were documented as unrelated, not suppressed.",
+        "ledger": [
+          {
+            "stage": "Source integration",
+            "status": "verified merged",
+            "evidence": "Merge commit 98dcde47 includes inspector, overlay, gallery integration and registered smoke."
+          },
+          {
+            "stage": "Focused validation",
+            "status": "reported passing",
+            "evidence": "PR #155 reports 8/8 selected tests passed, no failed or infrastructure errors."
+          },
+          {
+            "stage": "Main CI",
+            "status": "in progress",
+            "evidence": "Validate Repository and Godot Level Pipeline queued/running at merge SHA."
+          }
+        ],
+        "notes": [
+          "Shutdown retention observations are not proof of a memory leak or leak-free shutdown."
+        ],
+        "unknowns": [
+          "No confirmed interactive playthrough or deployment.",
+          "Final main CI conclusions not yet observed."
+        ],
+        "actions": [
+          "Owner: inspect main CI and run an interactive inspector refresh/cancellation demonstration."
+        ]
+      },
+      "related": [
+        {
+          "title": "The generated dungeon now has seed controls, rerolls and safer regeneration",
+          "context": "Seed rerolls and safe arena replacement provide the generation workflow this inspector now observes.",
+          "story_id": "procgen-gallery-generation-controls-main-fd469bd6"
+        }
+      ]
+    },
     {
       "id": "procgen-gallery-generation-controls-main-fd469bd6",
       "headline": "The generated dungeon now has seed controls, rerolls and safer regeneration",
@@ -1275,132 +1371,6 @@
           }
         ],
         "next_gate": "Project owner selects a genuinely independent approval mechanism before any recovery authorization."
-      }
-    },
-    {
-      "id": "findings-bridge-implementation-landed-81c39888",
-      "headline": "Findings-closeout repair lands, but its protected recovery remains deliberately disabled",
-      "summary": "PR #137 merged a carefully bounded recovery implementation for a stranded negative review. Its read-only evidence plan and tests are reported successful, but recovery apply is disabled because authenticated owner approval cannot be established. Independent review and actual closeout remain outstanding.",
-      "body": "Main 81c39888 merged the exact-run findings-closeout recovery. The implementation preserves findings / R0-01, restricts output to a sanitized projection, and refuses forged PASS. The published completion summary reports 14 focused and 326 regression tests passing and a read-only protected plan, but the apply operation remains disabled for lack of independently verifiable approval. This is landed implementation, not an executed recovery, accepted independent review, or verified cleanup. Private WIRE observation dated November 8 is stale; no current dispatcher counts are asserted.",
-      "severity": "milestone",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-findings-bridge-review-closeout-recovery-v1",
-      "occurred_at": "2026-11-10T23:05:49Z",
-      "bullets": [
-        "Implementation merged through PR #137.",
-        "Read-only plan and tests reported passing.",
-        "Apply disabled pending authenticated authorization.",
-        "Independent review and protected closeout remain outstanding."
-      ],
-      "links": [
-        {
-          "title": "Merge PR #137",
-          "url": "https://github.com/braydio/CUSTODIAN/pull/137"
-        },
-        {
-          "title": "Merge commit",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/81c39888de2231a424d9e64b9893212882f713c0"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN has merged a recovery tool for a stranded review that legitimately produced findings. The tool can inspect and authenticate the original evidence without recasting the negative outcome as a pass. The actual repair is still locked behind an authorization mechanism that has not been established.",
-        "sections": [
-          {
-            "heading": "A narrow repair reaches main",
-            "text": "The merged code checks exact-run evidence, preserved checkout state and the original findings disposition. The published completion report describes successful focused tests and a protected read-only plan."
-          },
-          {
-            "heading": "Why the final switch stays off",
-            "text": "The implementation refuses to accept a caller-written approval receipt as proof of owner authorization. Its apply operation is deliberately disabled. Independent review must assess that limitation, and the protected review has not been closed."
-          }
-        ],
-        "insights": [
-          {
-            "title": "A landed tool is not a recovered review",
-            "explanation": "The merge improves evidence handling, but does not release claims or change the original nonpassing outcome."
-          },
-          {
-            "title": "Authorization is the remaining hard gate",
-            "explanation": "The safeguard prevents a convincing-looking self-issued approval from becoming permission to alter protected state."
-          }
-        ],
-        "takeaway": "The evidence-inspection portion has landed; recovery apply, independent acceptance and canonical cleanup remain unverified.",
-        "next_watch": "An independent review receipt assessing the disabled apply path and a separately authenticated owner-approval mechanism."
-      },
-      "details": {
-        "overview": "GitHub partial coverage. Source main 926df151; protected host state not independently observed this run.",
-        "ledger": [
-          {
-            "stage": "Implementation landing",
-            "status": "verified",
-            "evidence": "PR #137 merged at 81c39888."
-          },
-          {
-            "stage": "Focused and regression validation",
-            "status": "reported",
-            "evidence": "Completion summary reports 14 focused and 326 regression tests."
-          },
-          {
-            "stage": "Recovery apply",
-            "status": "blocked",
-            "evidence": "No independently verifiable owner authorization; apply disabled."
-          },
-          {
-            "stage": "Independent acceptance and teardown",
-            "status": "unknown",
-            "evidence": "No accepted review or authenticated cleanup proof inspected."
-          }
-        ],
-        "notes": [],
-        "unknowns": [
-          "Host claim and process state",
-          "Canonical dispatcher counts"
-        ],
-        "actions": [
-          "Review owner: independently assess the landed implementation and authorization gap."
-        ]
-      },
-      "related": [],
-      "scorecard": {
-        "stage": "Implementation landed; recovery apply blocked",
-        "as_of": "2026-11-10T23:40:27Z",
-        "scope": "Named findings-closeout recovery workstream only",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Implementation merged",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "81c39888"
-          },
-          {
-            "label": "Read-only validation",
-            "status": "done",
-            "verification": "reported",
-            "evidence": "Published completion summary"
-          },
-          {
-            "label": "Independent review",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No acceptance receipt inspected"
-          },
-          {
-            "label": "Authenticated apply",
-            "status": "blocked",
-            "verification": "verified",
-            "evidence": "Apply intentionally disabled"
-          },
-          {
-            "label": "Canonical teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No host proof"
-          }
-        ],
-        "next_gate": "Independent reviewer assesses the authorization limitation before any separate recovery approval."
       }
     }
   ],
