@@ -1,6 +1,6 @@
 # Procgen Showcase Gallery Arena · Implementation Roadmap
 
-**Status:** executing. PGA-1 is archived complete; PGA-2 focused implementation validation is recorded; PGA-3 and PGA-4 implementations are merged on main (see DAG). Paired reviews were retired by owner decision on 2026-11-12. Current acceptance is focused validation plus owner review of the landed change.
+**Status:** executing. PGA-1 and PGA-2 are accepted; PGA-3, PGA-4 and PGA-5 are landed. PGA-5 merged in PR #155 at `98dcde474ed92ae36a1d45c5f8faf94b1e75d1f6` with focused/affected runtime checks and canonical 8/8 changed-file validation accepted. PGA-6 is the next authorized slice; the current packet is being published through the guarded automatic authoring handoff. Paired reviews retired 2026-11-12; focused validation and owner acceptance govern landing.
 **Original architecture baseline:** `main@1326220d8172cee9322363b7a5c020acaf41f64c` (2026-10-14).
 **PGA-1 verified:** implementation `b7ba5f154cbdee49ad9f56506868b95a0c02d301`; passed fresh-context review archived on main with 6 focused and 46/46 changed-file checks, zero blocking defects/gaps (2026-10-15).
 **Post-review refresh:** verified against `main@8edc7252b1f1f71d057d7d9b92977b58922bfbdc` (2026-10-15); targeted authoring workflow passed and published PGA-3 pair/index at `95c89d47ac893f1c78d6cc91910a97960cac8802`. Claim eligibility still depends on fresh dispatcher claims/locks.
@@ -31,18 +31,18 @@ One dev-only registered authored destination, with five accessible curated wings
 | PGA-2 | `procgen-showcase-exhibit-catalog` | `procgen-showcase-gallery-shell` | **implementation validated; owner acceptance governs closeout** | five-wing catalog after gallery-shell acceptance |
 | PGA-3 | `procgen-showcase-generated-arena` | `procgen-showcase-gallery-shell` | **merged on main at `f1bccf0d4eb8d06d20f3be52edc4bfde7afda9b3`** | generated-world host |
 | PGA-4 | `procgen-showcase-generation-controls` | `procgen-showcase-generated-arena` | **merged on main at `fd469bd6989e10e48401143eec73d25a444c50b3`; owner acceptance recorded in orchestration** | seed/session lifecycle |
-| PGA-5 | `procgen-showcase-runtime-inspector` | `procgen-showcase-generation-controls, procgen-showcase-exhibit-catalog` | **realized-API refresh published; ready/manual for canonical dispatch** | read-only runtime diagnostics |
-| PGA-6 | `procgen-showcase-exemplar-search` | `procgen-showcase-exhibit-catalog, procgen-showcase-generation-controls, procgen-showcase-runtime-inspector` | draft/manual; explicit ChatGPT/user refresh after owner acceptance | semantic exemplar lookup |
+| PGA-5 | `procgen-showcase-runtime-inspector` | `procgen-showcase-generation-controls, procgen-showcase-exhibit-catalog` | **landed via PR #155 at `98dcde474ed92ae36a1d45c5f8faf94b1e75d1f6`; owner-accepted** | read-only runtime diagnostics |
+| PGA-6 | `procgen-showcase-exemplar-search` | `procgen-showcase-exhibit-catalog, procgen-showcase-generation-controls, procgen-showcase-runtime-inspector` | **RC-079 realized-API refresh published as draft/manual with automatic targeted-authoring opt-in; claim only after verified ready/auto promotion** | transactional semantic exemplar lookup |
 | PGA-7 | `procgen-showcase-seed-comparison` | `procgen-showcase-generation-controls, procgen-showcase-runtime-inspector` | draft/manual; explicit ChatGPT/user refresh after owner acceptance | seed comparison/capture |
 | PGA-8 | `procgen-showcase-integration-closeout` | `procgen-showcase-exemplar-search, procgen-showcase-seed-comparison` | draft/manual; explicit ChatGPT/user refresh after owner acceptance | integration validation |
 
-**Count:** 8 implementation slices. PGA-1 is archived complete. PGA-2 implementation and focused validation are recorded; owner acceptance governs closeout. PGA-3 and PGA-4 implementations are merged at the SHAs above; PGA-4 owner acceptance is recorded in the current orchestration. PGA-5's realized API refresh is recorded in its packet and it is ready for manual V2 dispatch. PGA-6 through PGA-8 retain predecessor/owner-acceptance planning gates. Do not create or require paired-review packets. Focused validation and owner review govern landed changes.
+**Count:** 8 implementation slices. PGA-1/PGA-2 accepted; PGA-3/PGA-4/PGA-5 landed, with PGA-5 final merge at `98dcde474ed92ae36a1d45c5f8faf94b1e75d1f6`. PGA-6 is the next implementation, gated on the targeted automatic packet-authoring handoff and canonical claim. PGA-7/PGA-8 retain their own refresh/dependency gates. No new paired-review packets; focused validation and owner acceptance govern landing.
 
 ## Sequential implementation preparation (2026-10-15)
 
 **User execution preference:** implement in ascending PGA slice order, even where the dependency DAG would permit independent parallel implementations. Do not create concurrent gallery-owner workstreams. Complete focused validation, land the change, and obtain owner acceptance before starting the next implementation. PGA-1's implementation and historical review are archived complete.
 
-A preparatory audit updated implementation notes and retired review probes. PGA-4 and PGA-5 have now been refreshed against their realized main APIs; PGA-5 is ready/manual for dispatcher acquisition. PGA-6 needs proven catalog query predicates, PGA-7 needs real session/inspector/capture APIs, and PGA-8 needs all predecessor implementations and end-to-end proof. Refresh each remaining successor against actual code and validation evidence after its predecessors land and receive owner acceptance. Do not create paired-review packets.
+PGA-6's realized-API refresh (RC-079) is published against PGA-5's landed accepted-host/inspector interfaces: session `request_generation` currently auto-accepts valid staging, so exemplar filtering requires a search-only precommit predicate gate inside the session/host. All nine catalog entries still declare `inspect_only`; enable `candidate_query` only on per-entry proven read-only ID predicates and real positive fixtures. PGA-7 requires its separate capture API refresh; PGA-8 waits on PGA-6/PGA-7 end-to-end evidence. Do not create paired-review packets.
 
 **Concrete read authorities verified during preparation:** `custodian/game/world/levels/generated_region_level.gd::prepare_generated_region`; `custodian/game/world/procgen/generation/accepted_world_export.gd::ProcgenAcceptedWorldExport.LEVEL_DATA_SCHEMA` and detached `build_level_data`; `custodian/game/world/procgen/diagnostics/procgen_performance_snapshot.gd` and `CandidateSemanticAdapter.fingerprint_runtime_state`; `custodian/debug/debug_snapshot_collector.gd` (background reference only, not a second gallery overlay authority). Do not infer future API names for the not-yet-landed gallery host, catalog, inspector or session.
 
@@ -51,7 +51,7 @@ A preparatory audit updated implementation notes and retired review probes. PGA-
 ## Workflow, asset and acceptance guardrails
 
 - Root `AGENTS.md`, `custodian/AGENTS.md` and `custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md` own worktree and dispatch policy. Historical PGA-1/PGA-2 review records remain evidence only. PGA-3 implementation packet passed the GitHub targeted authoring handoff and was published ready/auto with a verified managed index; focused validation and owner acceptance govern the landed change.
-- PGA-5 has a completed realized-API refresh and remains manual for V2 dispatch. PGA-6+ retain explicit future planning-refresh gates. Do not create paired-review packets or add review dependencies.
+- PGA-5 is landed and accepted. PGA-6's updated packet is `draft/manual` with `Authoring handoff: auto`; require the GitHub targeted validator to promote it to `ready/auto` before the canonical dispatcher claim. PGA-7/PGA-8 retain future planning-refresh gates. Do not create paired-review packets or review dependencies.
 - No new images are required for the first eight slices. Existing ingested production art and canonical metadata only. If later explicitly commissioned: separate Asset Pipeline V2 family under `custodian/content/metadata/assets/families/`, source in `custodian/asset_drop/source_work/procgen_showcase/<family>/<state>_source.png`, normalized intake `custodian/asset_drop/inbox/<family>/<state>.png`; exact source/normalized pixels and frames must be established against the actual family/consumer before creating a claimable art task. Do not invent them now.
 - Each implementation adds its own focused smoke under `custodian/tools/validation/levels/` and registers ownership in `validation_manifest.json`. Run existing directly affected smoke before changed-file closeout. Gallery controls must never mutate Hub, world acceptance, candidate selection, real actor health, or canonical collision/nav.
 - Inspect performance of generated seeds before offering unbounded search or concurrent maps. Exemplar search must be bounded and may truthfully fail; comparison stores lightweight receipts and at most one active generated world.
@@ -62,8 +62,8 @@ A preparatory audit updated implementation notes and retired review probes. PGA-
 ## Proposed human-review milestones
 
 1. After PGA-1 owner acceptance: spatial layout/threshold and gallery walkaround; reconcile PGA-3 host.
-2. PGA-3 and PGA-4 implementation status is recorded above; PGA-5 refresh reconciles the accepted host/session API. Remaining owner review: true generated spawn, camera/nav and safe exit proof.
-3. After PGA-5 owner acceptance: confirm which semantics have truthful query predicates; refresh PGA-6/7.
+2. PGA-3/PGA-4/PGA-5 implementations have landed; PGA-5 focused smoke and regression acceptance passed, including accepted spawn, canonical map parity and preserved Operator/camera identity. PGA-6 must prove positive match, negative rollback and cancellation without changing an existing accepted world.
+3. PGA-5 accepted: PGA-6 packet refreshed in RC-079 and opt-in authoring publication initiated; exact search predicates remain fixture-gated. PGA-7 remains a separate later refresh.
 4. After PGA-7 owner acceptance: end-to-end UI/visual acceptance for PGA-8 without repeating code evidence.
 
 ## Packet destinations
@@ -132,6 +132,11 @@ to the agreed five-wing layout, seal or encounter/candidate authority is
 authorized. The PGA-3 implementation packet contains exact-path handoffs.
 Automatic authoring publication **passed** in commit `95c89d47`; the implementation
 subsequently merged to main at `f1bccf0d4eb8d06d20f3be52edc4bfde7afda9b3`.
+
+
+## PGA-6 realized acceptance boundary (2026-11-14)
+
+Current source manifest `custodian/content/data/dev/procgen_showcase/exhibits.v1.json` declares all nine exhibits `inspect_only`. Catalog `ProcgenExhibitCatalog.load_report()/validate_manifest()` validates source identity but does not certify generated-world matchability. Inspector host `get_inspector_snapshot()` returns copied `data.biome_id_by_cell`, `data.region_tiles`, `exhibit_provenance`, exact fingerprint, and spawn/playability facts; `ProcgenArenaSession.get_accepted_inspector_snapshot()` publishes this only from the accepted host. The normal PGA-4 `_on_candidate_staged()` immediately commits a successful candidate, so PGA-6 must insert a **search-only pre-acceptance semantic evaluation** through session/host, preserve the accepted world on all negatives/cancels, and never export host/map references. Verify actual semantic identities and a reproducible accepted positive seed before marking any of `terrain.scrubland`, `terrain.woodland`, `topology.room`, or `topology.corridor` as `candidate_query`. Other entries remain inspect-only until independently proven. No assets needed. The task packet contains the detailed file scope, search statuses and smoke matrix.
 
 ## Future scope, deliberately not included
 

@@ -1,3 +1,4 @@
+- `custodian/docs/ai_context/task_packets/PROCGEN_SHOWCASE_EXEMPLAR_SEARCH.md` — PGA-6 targeted auto-authoring-eligible transactional exemplar-search packet; uses PGA-4 canonical staged generation and PGA-5 detached semantic proof, requires real positive fixtures, finite negative rollback, cancel fencing and no forced features. Planning: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af77714-565c-83ea-be53-4049119e3619.
 ## Current agent summary and checkout ownership
 
 - `custodian/docs/ai_context/agent_summaries/` — durable per-workstream summaries.
