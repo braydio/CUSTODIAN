@@ -11,15 +11,44 @@ func _init() -> void:
 
 func _run() -> void:
 	var errors: Array[String] = []
+	for script_path in [
+		"res://game/world/levels/authored/dev/procgen_showcase_gallery/procgen_arena_session.gd",
+		"res://game/world/levels/authored/dev/procgen_showcase_gallery/procgen_arena_host.gd",
+		"res://game/world/levels/authored/dev/procgen_showcase_gallery/procgen_gallery_inspector.gd",
+		"res://game/world/levels/authored/dev/procgen_showcase_gallery/procgen_gallery_overlay.gd",
+	]:
+		var script_resource := ResourceLoader.load(script_path) as Script
+		if script_resource == null or not script_resource.can_instantiate():
+			errors.append("required inspector/session script failed to load: %s" % script_path)
+	if not errors.is_empty():
+		_finish(null, errors)
+		return
 	var game := PLAYTEST_SCENE.instantiate() as Node2D
+	if game == null:
+		_finish(null, ["procgen gallery playtest scene failed to instantiate"])
+		return
 	game.name = "GameRoot"
 	root.add_child(game)
 	await process_frame
-	var gallery := game.get_node("World/Level") as Node2D
-	var session := gallery.get_node("ProcgenArenaSession") as Node
-	var inspector := gallery.get_node("ProcgenGalleryInspector") as Node
-	var overlay := inspector.get_node("ProcgenGalleryOverlay") as Node2D
-	var controls := gallery.get_node("ProcgenGalleryControls") as Node
+	var gallery := game.get_node_or_null("World/Level") as Node2D
+	var session := gallery.get_node_or_null("ProcgenArenaSession") as Node if gallery != null else null
+	var inspector := gallery.get_node_or_null("ProcgenGalleryInspector") as Node if gallery != null else null
+	var controls := gallery.get_node_or_null("ProcgenGalleryControls") as Node if gallery != null else null
+	var overlay := inspector.get_node_or_null("ProcgenGalleryOverlay") as Node2D if inspector != null else null
+	if gallery == null or session == null or inspector == null or overlay == null or controls == null:
+		_finish(game, ["gallery/session/inspector/overlay/controls did not load before generation wait"])
+		return
+	if not session.has_method("get_session_status") or not session.has_method("get_accepted_inspector_snapshot") or not inspector.has_method("get_snapshot"):
+		_finish(game, ["loaded session or inspector is missing its required read API"])
+		return
+	var startup_status: Dictionary = session.call("get_session_status")
+	if int(startup_status.get("accepted_host_count", 0)) == 0 and int(startup_status.get("staging_host_count", 0)) == 0:
+		_finish(game, ["session did not create an accepted or staging host: %s" % str(startup_status.get("error", "no host"))])
+		return
+	var staging_host := gallery.get_node_or_null("ProcgenArenaHost") as Node
+	if staging_host == null or not staging_host.has_method("get_inspector_snapshot"):
+		_finish(game, ["accepted/staging arena host failed to load its inspector projection API"])
+		return
 	if not await _wait_for_revision(session, 1):
 		errors.append("accepted generated arena did not become ready: %s" % str(session.call("get_session_status").get("error", "timeout")))
 		_finish(game, errors)
@@ -50,8 +79,16 @@ func _run() -> void:
 	if not _provenance_is_exact(first):
 		errors.append("catalog provenance was reported without an exact map authority ID match")
 	var original_builds := int(inspector.call("get_snapshot_build_count"))
-	var map := gallery.get_node("ProcgenArenaHost/GeneratedArenaRegion")
-	var procgen: ProcGenTilemap = map.call("get_generated_map")
+	var region := gallery.get_node_or_null("ProcgenArenaHost/GeneratedArenaRegion") as Node
+	if region == null or not region.has_method("get_generated_map"):
+		errors.append("accepted generated-region owner is missing after inspector ready")
+		_finish(game, errors)
+		return
+	var procgen := region.call("get_generated_map") as ProcGenTilemap
+	if procgen == null:
+		errors.append("accepted generated region did not expose a ProcGenTilemap")
+		_finish(game, errors)
+		return
 	var source_fingerprint := str(session.call("get_session_status").get("fingerprint", ""))
 	var component_queries := int(procgen.get("main_playable_component_query_count"))
 	inspector.call("refresh_snapshot")
