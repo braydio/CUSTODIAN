@@ -78,10 +78,9 @@ func _run() -> void:
 		await process_frame
 		if not bool(session.call("cancel_generation")):
 			errors.append("in-flight generation could not be cancelled")
-		var cancel_wait := 0
-		while int(session.call("get_session_status").get("staging_host_count", 0)) != 0 and cancel_wait < MAX_GENERATION_FRAMES:
+		var cancel_deadline := Time.get_ticks_msec() + 10000
+		while int(session.call("get_session_status").get("staging_host_count", 0)) != 0 and Time.get_ticks_msec() < cancel_deadline:
 			await process_frame
-			cancel_wait += 1
 		if int(session.call("get_session_status").get("staging_host_count", 0)) != 0:
 			errors.append("cancelled staging host did not release its session ownership")
 		elif not bool(session.call("request_generation", 417203, "ascent_compact")):
