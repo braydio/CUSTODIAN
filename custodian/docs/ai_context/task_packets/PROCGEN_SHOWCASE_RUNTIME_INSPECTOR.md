@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-showcase-runtime-inspector`
 - Kind: `implementation`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `manual`
 - Priority: `P1`
 - Depends on: `procgen-showcase-generation-controls, procgen-showcase-exhibit-catalog`
@@ -20,7 +20,7 @@
 - Visual review: `none`
 - Goal: Inspect live accepted generated-world truth through read-only terrain/route/playability/POI/asset provenance overlays without new authority.
 - Completion boundary: Ship the exact PGA-5 scoped behavior through the existing gallery owners, register its focused smoke, pass affected runtime validation, and obtain owner review of the landed change; no proxy closure or speculative ownership changes.
-- Current measured state: PGA-4 owns the accepted arena session and exposes lifecycle status, but it has no public accepted-world snapshot. PGA-5 needs one detached projection through that ownership chain; bounded overlays and stale-state clearing remain unimplemented.
+- Current measured state: Completed and owner-accepted via PR #155, merged on `origin/main` at `98dcde474ed92ae36a1d45c5f8faf94b1e75d1f6`. Session-owned detached snapshots, event-driven invalidation and five bounded opt-in overlays are implemented. Focused and affected regressions passed; canonical changed-file checks passed 8/8. Known Godot shutdown-retention counts and unrelated Sundered Keep authored-level CI failures remain recorded, not silently waived.
 - Evidence: `design/02_features/procgen/PROCGEN_SHOWCASE_GALLERY_ARENA_ROADMAP.md`; `custodian/game/world/levels/authored/dev/lords_of_pain_test_gallery/`; `custodian/game/world/levels/authored/dev/npa_showcase_arena/`; `custodian/game/world/levels/generated_region_level.gd`; `custodian/game/world/procgen/proc_gen_tilemap.gd`.
 - Task-specific authority: `design/02_features/procgen/PROCGEN_SHOWCASE_GALLERY_ARENA_ROADMAP.md`; `design/02_features/procgen/PROCGEN_PLAYABILITY_PASS_V1.md`; `custodian/game/world/levels/level_loader.gd`; `custodian/game/world/procgen/generation/`.
 - Work surface: `custodian/game/world/levels/authored/dev/procgen_showcase_gallery/procgen_gallery_inspector.gd`, `custodian/game/world/levels/authored/dev/procgen_showcase_gallery/procgen_gallery_overlay.gd`, `custodian/game/world/levels/authored/dev/procgen_showcase_gallery/procgen_arena_session.gd`, `custodian/game/world/procgen/generation/accepted_world_export.gd` (read-only consumption), `procgen_showcase_inspector_smoke.gd` (planned in `custodian/tools/validation/levels/`), `custodian/tools/validation/validation_manifest.json`.
@@ -54,11 +54,32 @@
 - Original program authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e`
 - This refresh records a realized-API plan; it is not a dispatcher claim, implementation result, or owner acceptance.
 
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: `procgen_gallery_inspector.gd`, `procgen_gallery_overlay.gd`, `procgen_arena_session.gd`, `procgen_arena_host.gd`, and `procgen_showcase_runtime_inspector_smoke.gd` landed in PR #155 at `98dcde474ed92ae36a1d45c5f8faf94b1e75d1f6`. Focused real-map smoke PASS for seeds 417203/417204; PGA-2/3/4, export parity, semantic and registered playability checks PASS; canonical changed-file selection PASS 8/8 with no failures, skips, timeouts or infrastructure errors. Owner accepted RC-076 and authorized RC-077 landing. Existing production generator/LevelLoader remains authoritative.
+
+## Execution Feedback
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: `Initial import TLS/file-size preflight failed; original smoke assumed wrong generated-region parent; obsolete packet playability test ID was corrected; unrelated recurring Sundered Keep CI failure persisted.`
+- Root cause / contributing factors: `Import infrastructure, smoke scene-path assumption, and packet/manifest identifier drift. The affected gameplay code was not the cause of the Sundered Keep workflow failure.`
+- Prevention / pipeline improvement: `Use known registered validation IDs and gallery sibling region ownership; run populated-cache direct focused smoke when full import fails for unrelated infrastructure reasons; preserve separate CI debt.`
+- Tooling / docs drift discovered: `Replaced nonexistent procgen_playability with contract_world_playable_region_spawn_validity; updated PGA-5 completion/next-handoff after merge.`
+- Follow-up: `manual-follow-up`
+- What worked: `Focused canonical validation and A-to-B generation snapshots proved the read-only inspector.`
+
 ## Next Handoff
-- Next workstream: `procgen-showcase-runtime-inspector`
-- Next packet state: `ready/manual`
+- Next workstream: `procgen-showcase-exemplar-search`
+- Next packet state: `ready` 
 - Refresh owner: `execution-agent`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af77714-565c-83ea-be53-4049119e3619`
-- Next action: `Acquire through the canonical V2 dispatcher, then implement, validate, publish a feature branch and draft PR under RC-075.`
-- Blockers or open questions: `None established by the realized API audit; dispatcher and live capacity checks remain mandatory.`
+- Summary backlink: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af77714-565c-83ea-be53-4049119e3619`
+- Refresh reason: `RC-079 realized-API planning is published in the successor packet; runtime predicate proofs remain implementation acceptance.`
+- Next action: `Verify PGA-6 authoring handoff promoted its current draft/auto-opt-in packet to ready/auto, then claim via canonical dispatch.py and implement its transactional search acceptance gate.`
+- Blockers or open questions: `Successor is not claimable until GitHub authoring promotion and live dispatcher checks pass; no positive candidate_query identities are yet proven by real-world smoke.`
