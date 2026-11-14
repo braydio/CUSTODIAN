@@ -406,12 +406,90 @@ class TurnDispatcherTests(unittest.TestCase):
         self.assertTrue(Path(continuation["continuation_record"]).is_file())
         self.assertTrue(checkout.exists())
 
+    def _fake_process(self, proc, pid, comm, *, kernel_thread=False, cgroup="0::/user.slice/app.slice/test.service"):
+        entry = proc / str(pid)
+        entry.mkdir(parents=True)
+        flags = td.PF_KTHREAD if kernel_thread else 0
+        (entry / "stat").write_text(
+            f"{pid} ({comm}) S 1 1 1 0 -1 {flags} 0 0 0\n", encoding="utf-8")
+        (entry / "comm").write_text(f"{comm}\n", encoding="utf-8")
+        (entry / "cgroup").write_text(f"{cgroup}\n", encoding="utf-8")
+        (entry / "fd").mkdir()
+        return entry
+
+    def test_process_scan_classifies_authenticated_kernel_thread_without_reading_links(self):
+        checkout = self.base / "target-checkout"
+        checkout.mkdir()
+        proc = self.base / "fake-proc-kthread"
+        entry = self._fake_process(proc, 101, "kworker)proof", kernel_thread=True)
+        (entry / "cwd").symlink_to(self.base)
+        (entry / "root").symlink_to("/")
+        with patch.object(td.os, "readlink", side_effect=PermissionError("links are opaque")) as readlink:
+            evidence = td._checkout_process_owners(checkout, proc)
+        self.assertEqual(evidence["kernel_thread_count"], 1)
+        self.assertEqual(evidence["kernel_threads"], [{
+            "pid": "101", "comm": "kworker)proof", "classification": "verified-kernel-thread"}])
+        self.assertEqual(evidence["owners"], [])
+        self.assertEqual(evidence["uncertain"], [])
+        readlink.assert_not_called()
+
+    def test_process_name_alone_does_not_exempt_unreadable_user_processes(self):
+        checkout = self.base / "target-checkout"
+        checkout.mkdir()
+        proc = self.base / "fake-proc-unreadable"
+        self._fake_process(proc, 201, "kworker/2:1")
+        self._fake_process(proc, 202, "python3")
+        with patch.object(td.os, "readlink", side_effect=PermissionError("ownership path denied")):
+            evidence = td._checkout_process_owners(checkout, proc)
+        self.assertEqual(evidence["kernel_thread_count"], 0)
+        self.assertEqual({item["pid"] for item in evidence["uncertain"]}, {"201", "202"})
+        self.assertTrue(all(item["reason"] == "ownership-paths-unreadable"
+                            for item in evidence["uncertain"]))
+
+    def test_process_scan_detects_user_space_checkout_owner_by_open_fd(self):
+        checkout = self.base / "target-checkout"
+        checkout.mkdir()
+        proc = self.base / "fake-proc-owner"
+        entry = self._fake_process(proc, 301, "python3")
+        target_file = checkout / "open-file.txt"
+        target_file.write_text("fixture\n", encoding="utf-8")
+        (entry / "cwd").symlink_to(self.base)
+        (entry / "root").symlink_to("/")
+        (entry / "fd" / "3").symlink_to(target_file)
+        evidence = td._checkout_process_owners(checkout, proc)
+        self.assertEqual(evidence["owners"], [{
+            "pid": "301", "comm": "python3", "cgroup": "0::/user.slice/app.slice/test.service"}])
+        self.assertEqual(evidence["uncertain"], [])
+
+    def test_process_scan_keeps_malformed_or_unreadable_stat_uncertain(self):
+        checkout = self.base / "target-checkout"
+        checkout.mkdir()
+        proc = self.base / "fake-proc-bad-stat"
+        malformed = self._fake_process(proc, 401, "bad-stat")
+        (malformed / "stat").write_text("401 (bad-stat) S 1 2\n", encoding="utf-8")
+        unreadable = self._fake_process(proc, 402, "unreadable-stat")
+        original_read_text = Path.read_text
+
+        def read_text(path, *args, **kwargs):
+            if path == unreadable / "stat":
+                raise PermissionError("stat denied")
+            return original_read_text(path, *args, **kwargs)
+
+        with patch.object(Path, "read_text", read_text):
+            evidence = td._checkout_process_owners(checkout, proc)
+        self.assertEqual(evidence["kernel_thread_count"], 0)
+        self.assertEqual({item["pid"] for item in evidence["uncertain"]}, {"401", "402"})
+        reasons = {item["pid"]: item["reason"] for item in evidence["uncertain"]}
+        self.assertIn("proc-stat-identity-unavailable", reasons["401"])
+        self.assertIn("proc-stat-identity-unavailable", reasons["402"])
+
     def test_process_scan_distinguishes_known_unrelated_denial_from_checkout_owner(self):
         checkout = self.base / "target-checkout"
         checkout.mkdir()
         proc = self.base / "fake-proc"
         service = proc / "101"
         service.mkdir(parents=True)
+        (service / "stat").write_text("101 (ssh-agent) S 1 1 1 0 -1 0 0 0 0\n", encoding="utf-8")
         (service / "comm").write_text("ssh-agent\n")
         (service / "cgroup").write_text("0::/user.slice/user-1000.slice/app.slice/ssh-agent.service\n")
         (service / "cwd").symlink_to(self.base)
@@ -419,6 +497,7 @@ class TurnDispatcherTests(unittest.TestCase):
         (service / "fd").mkdir()
         actual = proc / "202"
         actual.mkdir()
+        (actual / "stat").write_text("202 (python3) S 1 1 1 0 -1 0 0 0 0\n", encoding="utf-8")
         (actual / "comm").write_text("python3\n")
         (actual / "cgroup").write_text("0::/user.slice/user-1000.slice/app.slice/codex.scope\n")
         (actual / "cwd").symlink_to(checkout)
