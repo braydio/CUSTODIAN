@@ -51,6 +51,11 @@
       "id": "expected_hub_twin_activation_rollback",
       "test_id": "hub_twin_solaria_route",
       "pattern": "^ERROR: \\[RouteTraversalManager\\] hub_twin_solaria/crown_transfer_to_twin_solaria failed: active instance changed before commit$"
+    },
+    {
+      "id": "expected_procgen_showcase_failed_return_safe_retention",
+      "test_id": "procgen_showcase_generated_arena",
+      "pattern": "^ERROR: camera could not be restored to a validated route; arena retained$"
     }
   ]
 }
