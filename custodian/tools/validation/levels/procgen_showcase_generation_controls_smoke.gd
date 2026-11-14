@@ -31,7 +31,7 @@ func _run() -> void:
 	var camera_id := camera.get_instance_id()
 	var level_id := world.get_node("LevelLoader").get_instance_id() if world.has_node("LevelLoader") else -1
 	if not await _wait_until_ready(session):
-		errors.append("initial real arena generation failed: %s" % str(session.call("get_session_status").get("error", "timeout")))
+		errors.append("initial real arena generation failed: %s" % _failure_detail(session))
 		_finish(game, errors)
 		return
 	var initial_host := gallery.get_node_or_null("ProcgenArenaHost") as Node
@@ -143,6 +143,20 @@ func _wait_until_ready(session: Node) -> bool:
 			return false
 		await process_frame
 	return false
+
+
+func _failure_detail(session: Node) -> String:
+	var status: Dictionary = session.call("get_session_status")
+	var candidate := session.get("_staging_host") as Node
+	if not is_instance_valid(candidate):
+		candidate = session.get("_accepted_host") as Node
+	var host_status: Dictionary = candidate.call("get_arena_status") if is_instance_valid(candidate) else {}
+	return "state=%s session_error=%s host_failure=%s staging_complete=%s" % [
+		str(status.get("state", "unknown")),
+		str(status.get("error", "")),
+		str(host_status.get("failure", "")),
+		str(host_status.get("staging_complete", false)),
+	]
 
 
 func _count_procgen_maps(node: Node) -> int:

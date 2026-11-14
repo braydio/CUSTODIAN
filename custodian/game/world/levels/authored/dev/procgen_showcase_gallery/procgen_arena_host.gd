@@ -179,7 +179,7 @@ func _validate_generation_request(request: Dictionary) -> String:
 	var profile_id := str(request.get("profile_id", ""))
 	if seed_value < 0 or seed_value > 2147483647:
 		return "generation seed must be in the supported non-negative 32-bit range"
-	if not map_size is Array or map_size.size() != 2 or map_size != [96, 96]:
+	if not map_size is Array or map_size.size() != 2 or int(map_size[0]) != 96 or int(map_size[1]) != 96:
 		return "generation preset map size is not runtime-validated"
 	if int(request.get("room_count", -1)) != ROOM_COUNT:
 		return "generation preset room count is not runtime-validated"
