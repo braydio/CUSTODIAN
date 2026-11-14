@@ -61,6 +61,16 @@ with the actual agent identified inside the file. Historical root-named
 summaries are archived byte-identically in `agent_summaries/`.
 See root `AGENTS.md` and `agent_summaries/README.md`.
 
+## Worktree creation gate (owner update 2026-11-14)
+
+The previous two-safe-retirements-per-new-worktree ratio is removed. Do not
+block an otherwise authorized V2 claim because zero existing worktrees are
+eligible for retirement or because many worktrees are attached. Preserve
+claim/branch ownership checks, capacity checks, canonical dispatcher
+acquisition, root checkout isolation, and all untracked/ignored/unique data.
+Turn-end inventory and safe retirement remain independent obligations; no
+force cleanup or root implementation edits are authorized by this change.
+
 ## V2 task acquisition and turn lifecycle
 
 Use `custodian/tools/agent/dispatch.py claim` or `claim-next` as the canonical

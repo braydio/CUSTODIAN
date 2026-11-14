@@ -41,11 +41,21 @@ Claude Bash commands are additionally protected by the repository
 same rule via their startup instructions and V2 task acquisition. The hook is
 a preventive command guard, not a guarantee against other tools writing files.
 
-The project-wide worktree budget is **two safe retirements before each new
-worktree**. A retirement requires the canonical ownership, remote commit,
-untracked/ignored evidence and active-claim checks. Never delete an unsafe
-worktree just to satisfy the ratio; report the blocker and reuse an eligible
-existing checkout or sequence the tasks.
+**Worktree creation is not gated by retirement counts.** The former
+"two safe retirements before each new worktree" ratio is retired by explicit
+project-owner decision (2026-11-14). No minimum number of retirements, total
+attached-worktree count, or GC eligibility finding may by itself block a
+new otherwise-authorized V2 checkout. Use the canonical dispatcher/workstream
+claim and checkout-isolation workflow, verify the requested workstream's
+claim/ownership and available disk/resources, and preserve the coordination
+root. Do not create extra speculative checkouts.
+
+Existing checkout retirement remains a separate preservation-first lifecycle:
+verify canonical ownership, remote commit, tracked/untracked/ignored content,
+unique evidence, active claims, and writers before removal. Never delete,
+reset, force-retire, or reassign an unsafe checkout to free a slot. Retire
+safely eligible checkouts at normal turn boundaries without treating
+retirement as a prerequisite for unrelated feature delivery.
 
 ## Historical Archive Boundary
 
