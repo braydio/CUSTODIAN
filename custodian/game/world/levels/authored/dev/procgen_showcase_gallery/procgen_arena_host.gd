@@ -1,9 +1,10 @@
 extends Node2D
 class_name ProcgenArenaHost
 
+signal staging_finished(status: Dictionary)
+
 const REGION_SCRIPT := preload("res://game/world/levels/generated_region_level.gd")
 const GENERATION_SCENE := "res://game/world/procgen/proc_gen_map.tscn"
-const PROFILE_PATH := "res://content/procgen/world_profiles/sundered_keep_ascent.json"
 const PROFILE_ID := "sundered_keep_ascent"
 const GENERATION_SEED := 417203
 const MAP_SIZE := [96, 96]
@@ -11,6 +12,18 @@ const ROOM_COUNT := 12
 const SPAWN_ID: StringName = &"ArenaSpawn"
 const ENTRY_POSITION := Vector2(0, -440)
 const MINIMUM_SEPARATION := 256.0
+const PERFORMANCE_SNAPSHOT_SCRIPT := preload("res://game/world/procgen/diagnostics/procgen_performance_snapshot.gd")
+const PROFILE_PATHS := {
+	"sundered_keep_ascent": "res://content/procgen/world_profiles/sundered_keep_ascent.json",
+}
+
+var _generation_request := {
+	"preset_id": "ascent_compact",
+	"seed": GENERATION_SEED,
+	"map_size": MAP_SIZE.duplicate(),
+	"room_count": ROOM_COUNT,
+	"profile_id": PROFILE_ID,
+}
 
 var _gallery: Node2D
 var _region: Node
@@ -23,6 +36,11 @@ var _entry_ready := false
 var _arena_active := false
 var _transitioning := false
 var _cancelled := false
+var _staging_complete := false
+var _session_managed := false
+var _session_accepted := true
+var _interaction_enabled := true
+var _generation_fingerprint := ""
 var _gallery_return_position := Vector2.ZERO
 var _last_failure := ""
 var _status_label: Label
@@ -41,46 +59,58 @@ func _ready() -> void:
 	_status_label.add_theme_font_size_override("font_size", 16)
 	_status_label.modulate = Color("#f0d89d")
 	add_child(_status_label)
+	var request_error := _validate_generation_request(_generation_request)
+	if not request_error.is_empty():
+		_last_failure = request_error
+		_set_status("ARENA UNAVAILABLE")
+		_finish_staging()
+		return
 	var world := _gallery.get_parent()
 	var world_operator := world.get_node_or_null("Operator") if world != null else null
 	var world_camera := world.get_node_or_null("Camera2D") if world != null else null
 	if not world_operator is Node2D or not world_camera is Camera2D:
 		_last_failure = "arena staging requires the existing world Operator and camera"
 		_set_status("ARENA UNAVAILABLE")
+		_finish_staging()
 		return
 	_region = REGION_SCRIPT.new()
-	_region.name = "GeneratedArenaRegion"
+	_region.name = "GeneratedArenaRegionStaging" if _session_managed and not _session_accepted else "GeneratedArenaRegion"
 	_gallery.add_child(_region)
 	var staging_margin := float(maxi(MAP_SIZE[0], MAP_SIZE[1])) * 32.0
 	_region.position = Vector2(_gallery_world_bounds().end.x + MINIMUM_SEPARATION + staging_margin, 0.0)
-	var profile := _load_profile()
+	var profile_id := str(_generation_request.get("profile_id", PROFILE_ID))
+	var profile := _load_profile(profile_id)
 	if profile.is_empty():
 		_last_failure = "arena world profile could not be loaded"
 		_set_status("ARENA UNAVAILABLE")
 		_region.queue_free()
 		_region = null
+		_finish_staging()
 		return
 	var result: Dictionary = await _region.call("prepare_generated_region", {
 		"scene_path": GENERATION_SCENE,
-		"seed": GENERATION_SEED,
-		"map_size": MAP_SIZE,
-		"room_count": ROOM_COUNT,
-		"profile_id": PROFILE_ID,
+		"seed": int(_generation_request.get("seed", GENERATION_SEED)),
+		"map_size": _generation_request.get("map_size", MAP_SIZE),
+		"room_count": int(_generation_request.get("room_count", ROOM_COUNT)),
+		"profile_id": profile_id,
 		"profile": profile,
 		"spawns": [SPAWN_ID],
 	})
 	if _cancelled or not is_inside_tree():
 		_dispose_region()
+		_finish_staging()
 		return
 	if not bool(result.get("succeeded", false)):
 		_last_failure = str(result.get("reason", "generated arena staging failed"))
 		_set_status("ARENA UNAVAILABLE")
 		_dispose_region()
+		_finish_staging()
 		return
 	if not bool(_region.call("has_spawn", SPAWN_ID)):
 		_last_failure = "generated arena did not expose its named canonical spawn"
 		_set_status("ARENA UNAVAILABLE")
 		_dispose_region()
+		_finish_staging()
 		return
 	var map := _region.call("get_generated_map") as Node
 	var floor_layer := map.call("get_floor_tilemap") as TileMapLayer if map != null else null
@@ -88,6 +118,7 @@ func _ready() -> void:
 		_last_failure = "generated arena has no accepted floor layer"
 		_set_status("ARENA UNAVAILABLE")
 		_dispose_region()
+		_finish_staging()
 		return
 	_ensure_region_separation(floor_layer)
 	_arena_bounds = _get_map_bounds(map, floor_layer)
@@ -95,11 +126,73 @@ func _ready() -> void:
 		_last_failure = "generated arena bounds overlap the authored gallery"
 		_set_status("ARENA UNAVAILABLE")
 		_dispose_region()
+		_finish_staging()
 		return
 	map.visible = false
 	map.process_mode = Node.PROCESS_MODE_DISABLED
+	_generation_fingerprint = PERFORMANCE_SNAPSHOT_SCRIPT.fingerprint_generation(map as ProcGenTilemap)
 	_entry_ready = true
 	_status_label.text = "INTERACT · ENTER GENERATED ARENA"
+	_finish_staging()
+	if _session_managed and not _session_accepted:
+		set_interaction_enabled(false)
+
+
+func configure_generation_request(request: Dictionary) -> bool:
+	if is_inside_tree() or _staging_complete:
+		return false
+	if not _validate_generation_request(request).is_empty():
+		return false
+	_generation_request = request.duplicate(true)
+	_session_managed = true
+	_session_accepted = false
+	_interaction_enabled = false
+	return true
+
+
+func set_session_accepted(accepted: bool) -> void:
+	_session_managed = true
+	_session_accepted = accepted
+	if accepted and is_instance_valid(_region):
+		_region.name = "GeneratedArenaRegion"
+	set_interaction_enabled(accepted)
+
+
+func set_interaction_enabled(enabled: bool) -> void:
+	_interaction_enabled = enabled
+	if is_instance_valid(_status_label) and _entry_ready:
+		_status_label.visible = enabled or _arena_active
+
+
+func dispose_if_safe() -> bool:
+	if _arena_active or _transitioning:
+		return false
+	cancel_generation()
+	if is_inside_tree():
+		queue_free()
+	return true
+
+
+func _validate_generation_request(request: Dictionary) -> String:
+	var seed_value := int(request.get("seed", -1))
+	var map_size: Variant = request.get("map_size", [])
+	var profile_id := str(request.get("profile_id", ""))
+	if seed_value < 0 or seed_value > 2147483647:
+		return "generation seed must be in the supported non-negative 32-bit range"
+	if not map_size is Array or map_size.size() != 2 or map_size != [96, 96]:
+		return "generation preset map size is not runtime-validated"
+	if int(request.get("room_count", -1)) != ROOM_COUNT:
+		return "generation preset room count is not runtime-validated"
+	if not PROFILE_PATHS.has(profile_id):
+		return "generation preset profile is not runtime-validated"
+	if str(request.get("preset_id", "")) != "ascent_compact":
+		return "generation preset ID is unknown"
+	return ""
+
+
+func _finish_staging() -> void:
+	_staging_complete = true
+	staging_finished.emit(get_arena_status())
 
 
 func get_interaction_position() -> Vector2:
@@ -113,7 +206,7 @@ func get_interaction_distance() -> float:
 
 
 func can_interact(actor: Node = null) -> bool:
-	if _transitioning or not is_instance_valid(actor) or not (actor is Node2D):
+	if not _interaction_enabled or _transitioning or not is_instance_valid(actor) or not (actor is Node2D):
 		return false
 	if _arena_active:
 		return actor == _operator and _region != null and is_instance_valid(_region)
@@ -163,9 +256,15 @@ func get_arena_status() -> Dictionary:
 		"active": _arena_active,
 		"transitioning": _transitioning,
 		"failure": _last_failure,
-		"seed": GENERATION_SEED,
-		"profile_id": PROFILE_ID,
+		"seed": int(_generation_request.get("seed", GENERATION_SEED)),
+		"profile_id": str(_generation_request.get("profile_id", PROFILE_ID)),
+		"preset_id": str(_generation_request.get("preset_id", "ascent_compact")),
+		"map_size": _generation_request.get("map_size", MAP_SIZE),
+		"room_count": int(_generation_request.get("room_count", ROOM_COUNT)),
 		"map_bounds": _arena_bounds,
+		"staging_complete": _staging_complete,
+		"generation_fingerprint": _generation_fingerprint,
+		"interaction_enabled": _interaction_enabled,
 	}
 
 
@@ -310,10 +409,11 @@ func _gallery_world_bounds() -> Rect2:
 	return bounds
 
 
-func _load_profile() -> Dictionary:
-	if not FileAccess.file_exists(PROFILE_PATH):
+func _load_profile(profile_id: String) -> Dictionary:
+	var profile_path := str(PROFILE_PATHS.get(profile_id, ""))
+	if profile_path.is_empty() or not FileAccess.file_exists(profile_path):
 		return {}
-	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(PROFILE_PATH))
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(profile_path))
 	return parsed as Dictionary if parsed is Dictionary else {}
 
 
