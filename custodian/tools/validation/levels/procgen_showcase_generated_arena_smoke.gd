@@ -55,8 +55,22 @@ func _run() -> void:
 			errors.append("generated region omitted its named ArenaSpawn")
 		if map.visible or map.process_mode != Node.PROCESS_MODE_DISABLED:
 			errors.append("staged arena should be hidden and inactive before interaction")
-	if status.get("map_bounds", Rect2()).intersects(gallery.call("get_camera_bounds")):
-		errors.append("generated map bounds overlap the authored gallery bounds")
+	var gallery_bounds: Rect2 = gallery.call("get_camera_bounds")
+	var map_bounds: Rect2 = status.get("map_bounds", Rect2())
+	if not _world_rect_contains_local_rect(gallery, gallery_bounds, Rect2(-1, -1, 2, 2)):
+		errors.append("gallery camera bounds are not expressed in the gallery world coordinates")
+	for floor_region: Rect2 in gallery.call("get_gallery_floor_regions"):
+		if not _world_rect_contains_local_rect(gallery, gallery_bounds, floor_region):
+			errors.append("gallery camera bounds omit an authored playable floor region")
+			break
+	for segment: Array in gallery.call("get_boundary_segments"):
+		if segment.size() != 2 or not gallery_bounds.has_point(gallery.to_global(segment[0])) or not gallery_bounds.has_point(gallery.to_global(segment[1])):
+			errors.append("gallery camera bounds omit an authored collision rail endpoint")
+			break
+	if map_bounds.position.x < gallery_bounds.end.x + 256.0:
+		errors.append("generated map does not preserve the 256-world-unit gap beyond the complete gallery envelope")
+	if map_bounds.intersects(gallery_bounds.grow(256.0)):
+		errors.append("generated map bounds overlap the protected authored gallery envelope")
 	if camera.call("get_runtime_map") != gallery:
 		errors.append("staging changed the active gallery camera binding")
 	var boundary := gallery.get_node("Collision/PathBoundaryCollision") as StaticBody2D
@@ -121,6 +135,19 @@ func _count_named_nodes(node: Node, target_name: String) -> int:
 	for child in node.get_children():
 		count += _count_named_nodes(child, target_name)
 	return count
+
+
+func _world_rect_contains_local_rect(owner: Node2D, world_bounds: Rect2, local_rect: Rect2) -> bool:
+	var corners: Array[Vector2] = [
+		owner.to_global(local_rect.position),
+		owner.to_global(Vector2(local_rect.end.x, local_rect.position.y)),
+		owner.to_global(local_rect.end),
+		owner.to_global(Vector2(local_rect.position.x, local_rect.end.y)),
+	]
+	for corner in corners:
+		if not world_bounds.has_point(corner):
+			return false
+	return true
 
 
 func _finish(game: Node, errors: Array[String]) -> void:
