@@ -162,6 +162,10 @@ When a CUSTODIAN task packet or review packet contains an `Authoring chat:` or `
 This applies whether the summary is written in the agent summary home, beside archived packet evidence, or generated during workstream finish. The backlink is part of the durable handoff so the user can return to the exact planning/review conversation before a required refresh or human decision.
 
 ## Tooling And Scripts
+## Chat relay and orchestration
+
+Use the root `CUSTODIAN_CHAT_RELAY.md` instructions for ChatGPT relay work. Do not send the orchestrator unsolicited status/check-in messages or ask for another instruction unless the user or active task explicitly requests that outbound message. When a response is in progress, keep polling that same turn with the response reader at `--interval 120`; do not stage another draft or submit through relay UI tools.
+
 
 Use the indexed scripts before inventing one-off commands. `docs/ai_context/FILE_INDEX.md` is the high-signal map for tool ownership, and `docs/ai_context/VALIDATION_RECIPES.md` is the command-selection authority.
 

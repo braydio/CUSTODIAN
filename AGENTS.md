@@ -23,6 +23,8 @@ Active Godot feature specifications live under `design/02_features/`. Do not add
 
 For authenticated ChatGPT browser relay setup, see [`CUSTODIAN_CHAT_RELAY.md`](CUSTODIAN_CHAT_RELAY.md).
 
+For ChatGPT orchestration, follow the outbound-message and response-polling rules in `CUSTODIAN_CHAT_RELAY.md`: send only when the user or active task explicitly requests an outbound message, and poll an in-progress answer at two-minute intervals instead of sending another prompt.
+
 ## Concurrent Agent Checkout Isolation (current policy)
 
 The checkout at `~/Projects/CUSTODIAN` is the shared **coordination root**, not a
