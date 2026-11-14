@@ -32,7 +32,7 @@ func _ready() -> void:
 		_fail("No validated generation presets are available.")
 		return
 	_selected_preset_id = str(_presets.keys()[0])
-	_selected_seed = int(_presets[_selected_preset_id].get("seed", DEFAULT_SEED))
+	_selected_seed = int(_presets[_selected_preset_id].get("seed", _presets[_selected_preset_id].get("validated_seed", DEFAULT_SEED)))
 	_start_candidate(_selected_seed, _selected_preset_id, true)
 
 
@@ -87,7 +87,7 @@ func set_preset(preset_id: String) -> bool:
 	if not _presets.has(preset_id) or _is_busy_or_active():
 		return false
 	_selected_preset_id = preset_id
-	_selected_seed = int(_presets[preset_id].get("seed", _selected_seed))
+	_selected_seed = int(_presets[preset_id].get("seed", _presets[preset_id].get("validated_seed", _selected_seed)))
 	_last_error = ""
 	_publish_status()
 	return true
@@ -222,12 +222,13 @@ func _valid_preset(preset: Dictionary) -> bool:
 	var map_size: Variant = preset.get("map_size", null)
 	if not map_size is Array or map_size.size() != 2:
 		return false
+	var seed_value := int(preset.get("seed", preset.get("validated_seed", -1)))
 	return str(preset.get("profile_id", "")) == "sundered_keep_ascent" \
 			and int(map_size[0]) == 96 \
 			and int(map_size[1]) == 96 \
 			and int(preset.get("room_count", 0)) == 12 \
-			and int(preset.get("seed", -1)) >= 0 \
-			and int(preset.get("seed", -1)) <= MAX_SEED \
+			and seed_value >= 0 \
+			and seed_value <= MAX_SEED \
 			and not str(preset.get("preset_id", "")).is_empty()
 
 

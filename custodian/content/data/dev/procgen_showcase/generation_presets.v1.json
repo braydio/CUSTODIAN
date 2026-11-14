@@ -1,13 +1,13 @@
 {
-  "schema": "custodian.procgen_generation_presets.v1",
+  "schema": "custodian.procgen_showcase_generation_presets.v1",
   "presets": [
     {
       "preset_id": "ascent_compact",
       "label": "Sundered Keep Ascent · 96 × 96 · 12 rooms",
       "profile_id": "sundered_keep_ascent",
-      "seed": 417203,
       "map_size": [96, 96],
-      "room_count": 12
+      "room_count": 12,
+      "validated_seed": 417203
     }
   ]
 }
