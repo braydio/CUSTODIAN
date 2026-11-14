@@ -89,6 +89,20 @@ func _run() -> void:
 		errors.append("accepted generated region did not expose a ProcGenTilemap")
 		_finish(game, errors)
 		return
+	var canonical_data: Dictionary = procgen.call("get_level_data")
+	var canonical_health: Dictionary = procgen.call("get_runtime_health_snapshot")
+	var first_counts: Dictionary = first.get("counts", {})
+	if int(first_counts.get("floor", -1)) != int(canonical_health.get("floor_cells", -2)):
+		errors.append("inspector floor count differs from canonical runtime health")
+	if int(first_counts.get("walls", -1)) != int(canonical_health.get("wall_cells", -2)):
+		errors.append("inspector wall count differs from canonical runtime health")
+	if int(first_counts.get("route", -1)) != (canonical_data.get("main_route_cells", []) as Array).size():
+		errors.append("inspector route count differs from canonical level data")
+	if int(first_counts.get("sites", -1)) != _site_count(canonical_data):
+		errors.append("inspector site count differs from canonical level data")
+	var world := game.get_node("World") as Node2D
+	var operator_id := world.get_node("Operator").get_instance_id()
+	var camera_id := world.get_node("Camera2D").get_instance_id()
 	var source_fingerprint := str(session.call("get_session_status").get("fingerprint", ""))
 	var component_queries := int(procgen.get("main_playable_component_query_count"))
 	inspector.call("refresh_snapshot")
@@ -128,6 +142,8 @@ func _run() -> void:
 				errors.append("inspector retained stale seed data after accepted-host replacement")
 			if str(replacement.get("generation_fingerprint", "")) != str(session.call("get_session_status").get("fingerprint", "")):
 				errors.append("replacement snapshot fingerprint does not match the accepted session")
+			if world.get_node("Operator").get_instance_id() != operator_id or world.get_node("Camera2D").get_instance_id() != camera_id:
+				errors.append("accepted map replacement changed Operator or camera identity")
 			var replacement_fingerprint := str(replacement.get("generation_fingerprint", ""))
 			if bool(session.call("reroll_explicit_seed", 417205)):
 				var cancelled := bool(session.call("cancel_generation"))
@@ -191,6 +207,15 @@ func _has_no_object_references(value: Variant) -> bool:
 			if not _has_no_object_references(item):
 				return false
 	return true
+
+
+func _site_count(data: Dictionary) -> int:
+	var count := 0
+	for key in ["faction_activity_sites", "story_room_sites", "special_room_sites"]:
+		var sites: Variant = data.get(key, [])
+		if sites is Array:
+			count += sites.size()
+	return count
 
 
 func _finish(game: Node, errors: Array[String]) -> void:
