@@ -15,6 +15,10 @@
 - Active review `review-operator-art-registration-profile-review-corrections-1-r1` is queued, covering the earlier Operator normalization-plan approval digest fixes. The first slice depends on its reviewed completion before changing shared source normalization authority.
 - The code-review graph was not available in this session; audit used pinned live-main file and queue inspection, not a locally executed Aseprite/Godot smoke. No existing production art is being normalized in packet authoring.
 
+## 2026-10-17 precision audit amendment
+
+The reusable pipeline remains proposed, not implemented. The converter `pixelart` alias currently forces crisp (`--choose 1`), and the Python converter always emits binary-alpha candidates. This policy remains authoritative for accepted Operator pixel-art profiles, **not** for every detailed 2.5D building. See [Pixelart Deterministic Normalization Hardening V1](PIXELART_DETERMINISTIC_NORMALIZATION_HARDENING_V1.md) for source-overwrite/invalid-size/empty-output safeguards, explicit static architectural alpha/resize policies, component/assembly contracts, and machine-only QA evidence. These are additions to existing stage 1 and stage 3 implementation packets, not a sixth parallel resizer or an assertion they have landed.
+
 ## Product contract
 
 Given a PNG source master and explicit family/state/direction or Operator profile, produce a **reviewed, deterministic, exact-size, pixel-art-clean** strip plus source→plan→review→inbox evidence, with a clear separation between preview/staging and runtime publication.

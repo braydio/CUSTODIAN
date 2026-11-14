@@ -107,6 +107,40 @@
       "dropbox_content_hash": "57e20f97c82063ea9ebe7bd6facd4779145e21c2d0ddf083ffee4b60c8115785",
       "dropbox_path": "/CUSTODIAN/asset_batches/ash-bell-ritualant/CUSTODIAN_Ash_Bell_Surface_Lift_V2_Full_Resolution_Source_20261013.zip",
       "package_size_bytes": 7801299
+    },
+    {
+      "batch_id": "sepulcher-memorial-slab-approved-source-20261107",
+      "sha256": "349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028",
+      "decision": "approved",
+      "reviewed_by": "user",
+      "reviewed_at": "2026-11-07T07:10:46Z",
+      "authoring_chat": "https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae9a2f9-cf10-83e8-bffe-5f16e079abac",
+      "review_note": "User explicitly approved installation of the refined Sepulcher Memorial Slab in the current Codex conversation. This approval applies to the exact Dropbox object identified below; source bytes independently retrieved at immutable revision and SHA-256 pinned.",
+      "sources": [
+        {
+          "entry": "custodian/asset_drop/source_work/hub/first_set/hub_sepulcher_grave_evidence_art/memorial_slab_source.png",
+          "family_id": "hub_sepulcher_grave_evidence_art",
+          "state_id": "memorial_slab",
+          "sha256": "349d642e74f246fc277993c5bfd46889795e3f771d7846e98daba9b031b2d028",
+          "source_dimensions": [
+            1620,
+            971
+          ],
+          "frames": 1,
+          "target_frame_size": [
+            160,
+            96
+          ],
+          "state_decision": "approved_runtime",
+          "target_fps": null,
+          "loop": false
+        }
+      ],
+      "dropbox_file_id": "id:8NXqdXuW6GUAAAAAAAAGsw",
+      "dropbox_revision": "65f4aa8f42035915cdd61",
+      "dropbox_content_hash": "fa15ca085092805147abfdd73bdfef0053d4f7344c84ac9bea7cd73e0052ad39",
+      "dropbox_path": "/CUSTODIAN/implementation_inputs/custodian_sepulcher_memorial_slab_refined_v2_source_20261102.png",
+      "package_size_bytes": 2252263
     }
   ]
 }

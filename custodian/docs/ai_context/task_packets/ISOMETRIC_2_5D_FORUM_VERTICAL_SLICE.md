@@ -10,7 +10,7 @@
 - Status: `draft`
 - Dispatch: `manual`
 - Priority: `P2`
-- Depends on: `review-isometric-2-5d-presentation-foundation, operator-2-5d-animation-viability-audit, review-operator-2-5d-canonical-visual-contract`
+- Depends on: `isometric-2-5d-presentation-foundation, operator-2-5d-animation-viability-audit, operator-2-5d-canonical-visual-contract`
 - Locks: `world-presentation, presentation-experiments, asset-pipeline`
 - Kind: `implementation`
 - Review: `none`

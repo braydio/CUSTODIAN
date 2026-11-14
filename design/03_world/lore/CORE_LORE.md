@@ -235,6 +235,8 @@ The player should never be told the full cosmology at once. Each layer should fe
 
 Provenance is never presented as supernatural. It is always forensic: where did this come from, through what route, with what evidence chain.
 
+**Narrative delivery guardrail:** A credible local history is not required to contain an impossible record or unresolved contradiction. Authors should establish what happened, why people acted, what physical costs followed, and what the player can actually learn. Use extraordinary continuity contradictions only when specific canon and material evidence justify them. Reserve uncertainty about the Severing, the Pale, designation/personhood, and the Crown Reciprocal Incident for their established arcs; do not copy their ambiguity into unrelated locations as atmosphere. An earned factual explanation can be more affecting than a perpetual question. See `design/00_meta/MASTER_DESIGN_DOCTRINE.md` for the project-wide storytelling standard.
+
 ---
 
 ## Cross-References

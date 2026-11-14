@@ -49,3 +49,4 @@ content/sprites/operator/runtime/body/melee/operator__body__melee__fast_01__n__6
 content/sprites/operator/runtime/body/melee/operator__body__melee__fast_01__s__6__96.png !filter !diff !merge text=auto eol=lf
 content/sprites/operator/runtime/body/melee/operator__body__melee__fast_01__w__6__96.png !filter !diff !merge text=auto eol=lf
 content/ui/inventory/icons/icon_command_terminal.png !filter !diff !merge text=auto eol=lf
+asset_drop/source_work/operator/motion_foundry/operator_south_visible_surface_v1/extracted/pixel_ownership.csv -text -diff !eol

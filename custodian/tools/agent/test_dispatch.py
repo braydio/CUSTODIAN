@@ -11,6 +11,7 @@ import sys
 import tempfile
 import threading
 import time
+import types
 import unittest
 from pathlib import Path
 from unittest import mock
@@ -105,7 +106,9 @@ class DispatchTests(unittest.TestCase):
         lifecycle = self.repo / "custodian/tools/agent/workstream.py"
         lifecycle.parent.mkdir(parents=True)
         shutil.copyfile(SCRIPT.with_name("workstream.py"), lifecycle)
-        git(self.repo, "add", "base", str(lifecycle.relative_to(self.repo))); git(self.repo, "commit", "-m", "base"); git(self.repo, "push", "-u", "origin", "main")
+        provisioning = self.repo / "custodian/tools/agent/worktree_provisioning.py"
+        shutil.copyfile(SCRIPT.with_name("worktree_provisioning.py"), provisioning)
+        git(self.repo, "add", "base", str(lifecycle.relative_to(self.repo)), str(provisioning.relative_to(self.repo))); git(self.repo, "commit", "-m", "base"); git(self.repo, "push", "-u", "origin", "main")
         git(self.repo, "symbolic-ref", "refs/remotes/origin/HEAD", "refs/remotes/origin/main")
 
     def tearDown(self):
@@ -114,6 +117,82 @@ class DispatchTests(unittest.TestCase):
             if lines and Path(lines[0].removeprefix("worktree ")).resolve() != self.repo.resolve():
                 git(self.repo, "worktree", "remove", "--force", lines[0].removeprefix("worktree "), check=False)
         self.temp.cleanup()
+
+    def test_owner_exception_loader_and_json_audit_keep_review_unresolved_pending(self):
+        review_id = "review-operator-chassis-authority-seal-v1"
+        implementation_path = f"{dispatch.PACKET_ROOT}/archived/OPERATOR_CHASSIS_AUTHORITY_SEAL_V1.md"
+        review_path = f"{dispatch.PACKET_ROOT}/REVIEW_OPERATOR_CHASSIS_AUTHORITY_SEAL_V1.md"
+        record = {
+            "review_workstream": review_id,
+            "implementation_workstream": "operator-chassis-authority-seal-v1",
+            "main_sha": "a" * 40,
+            "implementation_commit": "b" * 40,
+            "preserved_review_runs": [{"implementation_commit": "b" * 40,
+                                        "metadata_sha256": "c" * 64}],
+            "decision": "waived_unresolved",
+            "disposition": "owner_accepted_with_review_exception",
+            "original_review_outcome": "unresolved",
+            "claim_retirement": "already_absent",
+            "claim_inventory": {},
+            "authorization_source_url": "https://chatgpt.com/example",
+            "authorization_message_sha256": "d" * 64,
+        }
+        record_path = "custodian/docs/ai_context/owner_review_exceptions/" + review_id + ".json"
+        owner_module = types.ModuleType("owner_review_exception")
+        owner_module.verify_record = lambda *args: (True, None)
+        owner_module.activation_review_accepted = lambda *args: False
+
+        def fake_git(repo, *args, check=True):
+            if args[:4] == ("ls-tree", "-r", "--name-only", "origin/main"):
+                return record_path
+            if args[:2] == ("show", f"origin/main:{record_path}"):
+                return json.dumps(record)
+            if args[:2] == ("show", f"origin/main:{implementation_path}"):
+                return "# archived implementation packet"
+            if args[:2] == ("show", f"origin/main:{review_path}"):
+                return "# unresolved paired review packet"
+            if args[:2] == ("show", f"origin/main:{dispatch.PACKET_ROOT}/archived/REVIEW_OWNER_REVIEW_EXCEPTION_LANE_V1.md"):
+                return "# pending activation review"
+            if args[:2] == ("show", f"origin/main:{dispatch.PACKET_ROOT}/archived/OWNER_REVIEW_EXCEPTION_LANE_V1.md"):
+                return "# activation target"
+            if args[0] == "worktree" and args[1] == "list":
+                return ""
+            if args[:2] == ("for-each-ref", "--format=%(refname:short) %(objectname)"):
+                return ""
+            if args[0] == "rev-list":
+                return "0 0"
+            return ""
+
+        def fake_subprocess_run(args, **kwargs):
+            if args[:2] == ["git", "show"]:
+                output = ("implementation source" if implementation_path in args[-1]
+                          else "review source")
+                return subprocess.CompletedProcess(args, 0, output, "")
+            return subprocess.CompletedProcess(args, 0, "", "")
+
+        with mock.patch.dict(sys.modules, {"owner_review_exception": owner_module}), \
+             mock.patch.object(dispatch, "git", side_effect=fake_git), \
+             mock.patch.object(dispatch.subprocess, "run", side_effect=fake_subprocess_run), \
+             mock.patch.object(dispatch, "parse_packet", return_value=types.SimpleNamespace(
+                 workstream=record["implementation_workstream"])), \
+             mock.patch.object(dispatch, "_fetch"), \
+             mock.patch.object(dispatch, "_packets", return_value=[]), \
+             mock.patch.object(dispatch, "_archived_packets", return_value=[]), \
+             mock.patch.object(dispatch, "_claimed", return_value=set()), \
+             mock.patch.object(dispatch, "_execution_lock_holders", return_value=(set(), {})), \
+             mock.patch.object(dispatch, "_remote_claim_state", return_value=(set(), set())), \
+             mock.patch.object(dispatch, "_packet_texts", return_value={}), \
+             mock.patch.object(dispatch, "validate_review_pairing", return_value={}), \
+             mock.patch.object(dispatch, "validate_packet_validation_references", return_value={}), \
+             mock.patch.object(dispatch, "validate_queue_contract", return_value={}), \
+             mock.patch.object(dispatch, "_review_gate", return_value=({}, set())):
+            loaded = dispatch._owner_review_exceptions(self.repo)
+            audit = dispatch.audit(self.repo, as_json=True)
+
+        self.assertEqual(loaded[review_id]["activation_state"], "awaiting_owner_exception_lane_review")
+        exception = audit["owner_review_exceptions"][0]
+        self.assertEqual(exception["activation_state"], "awaiting_owner_exception_lane_review")
+        self.assertEqual(exception["original_review_outcome"], "unresolved")
 
     def add_packet(self, workstream, *, filename=None, text=None, archived=False, publish=True, push=True, **metadata):
         folder = dispatch.PACKET_ROOT + ("/archived" if archived else "")
@@ -141,10 +220,23 @@ class DispatchTests(unittest.TestCase):
         self.add_packet("auto-task", dispatch_value="auto")
         self.assertIn("auto-task", dispatch.status(self.repo, output=False).split("READY", 1)[1])
 
+    def test_capacity_refusal_happens_before_remote_claim_creation(self):
+        workstream_id = "capacity-blocked"
+        self.add_packet(workstream_id, dispatch_value="auto")
+        with mock.patch.object(dispatch.worktree_provisioning, "preflight_capacity", return_value={
+            "sufficient": False,
+            "required_free_bytes": 2_000_000_000,
+            "available_free_bytes": 100,
+            "local_lfs_failures": [],
+        }):
+            with self.assertRaisesRegex(dispatch.DispatchError, "before remote claim creation by checkout capacity"):
+                dispatch._legacy_claim_diagnostics(self.repo, workstream_id, "codex", False)
+        self.assertEqual(git(self.repo, "ls-remote", "origin", f"refs/heads/dispatch-claims/{workstream_id}"), "")
+
     def test_local_only_packet_claim_reports_exact_promotion_sequence(self):
         self.add_packet("local-authoring-only", dispatch_value="auto", push=False)
         with self.assertRaises(dispatch.DispatchError) as caught:
-            dispatch.claim(self.repo, "local-authoring-only", "codex", False)
+            dispatch._legacy_claim_diagnostics(self.repo, "local-authoring-only", "codex", False)
         message = str(caught.exception)
         self.assertIn("does not exist on origin/main", message)
         self.assertIn("validate_task_packet_authoring.py", message)
@@ -163,7 +255,7 @@ class DispatchTests(unittest.TestCase):
         output = []
         with mock.patch.object(dispatch, "_load_workstream", return_value=mock.Mock(start=publish_workstream)), \
              mock.patch("builtins.print", side_effect=lambda *args, **kwargs: output.append(" ".join(map(str, args)))):
-            self.assertEqual(dispatch.claim(self.repo, "visual-task", "codex", False), 0)
+            self.assertEqual(dispatch._legacy_claim_diagnostics(self.repo, "visual-task", "codex", False), 0)
         rendered = "\n".join(output)
         sentinel = next(line for line in rendered.splitlines() if line.startswith("CUSTODIAN_DISPATCH_RESULT_JSON:"))
         receipt = json.loads(sentinel.removeprefix("CUSTODIAN_DISPATCH_RESULT_JSON:"))
@@ -187,7 +279,7 @@ class DispatchTests(unittest.TestCase):
         rendered = dispatch.status(self.repo, output=False)
         self.assertIn("draft/auto", rendered.split("INVALID/RECOVERY (", 1)[1])
         with self.assertRaisesRegex(dispatch.DispatchError, "draft/auto"):
-            dispatch.claim(self.repo, "draft-v2", "codex", True)
+            dispatch._legacy_claim_diagnostics(self.repo, "draft-v2", "codex", True)
 
     def test_queue_audit_classifies_canonical_states_and_fails_closed(self):
         self.add_packet("free", dispatch_value="auto")
@@ -214,12 +306,12 @@ class DispatchTests(unittest.TestCase):
         self.assertIn("draft/auto", rendered.split("INVALID/RECOVERY (", 1)[1])
         self.assertIn("missing dependency identity: absent-workstream", rendered)
         with self.assertRaisesRegex(dispatch.DispatchError, "dependency: base"):
-            dispatch.claim(self.repo, "gated", "codex", True)
+            dispatch._legacy_claim_diagnostics(self.repo, "gated", "codex", True)
         with self.assertRaisesRegex(dispatch.DispatchError, "manual dispatch"):
-            dispatch.claim(self.repo, "manual-ready", "codex", True)
+            dispatch._legacy_claim_diagnostics(self.repo, "manual-ready", "codex", True)
         fake = mock.Mock(); fake.start.side_effect = publish_workstream
         with mock.patch.object(dispatch, "_load_workstream", return_value=fake), mock.patch("builtins.print"):
-            dispatch.claim(self.repo, "manual-ready", "codex", False)
+            dispatch._legacy_claim_diagnostics(self.repo, "manual-ready", "codex", False)
         self.assertEqual(fake.start.call_args.args[0], "manual-ready")
 
     def test_full_audit_is_stable_and_uses_explicit_claim_decisions(self):
@@ -261,7 +353,7 @@ class DispatchTests(unittest.TestCase):
         rendered = dispatch.status(self.repo, output=False)
         self.assertIn("missing required V2 metadata: Reviewed main", rendered)
         with self.assertRaisesRegex(dispatch.DispatchError, "missing required V2 metadata"):
-            dispatch.claim(self.repo, "incomplete-v2", "codex", True)
+            dispatch._legacy_claim_diagnostics(self.repo, "incomplete-v2", "codex", True)
         result = dispatch.audit(self.repo)
         row = next(item for item in result["packets"] if item["workstream"] == "incomplete-v2")
         self.assertEqual(row["actual_class"], "invalid_recovery")
@@ -286,18 +378,20 @@ class DispatchTests(unittest.TestCase):
         rendered = dispatch.status(self.repo, output=False)
         invalid = rendered.split("INVALID/RECOVERY (", 1)[1].split("PARKED DRAFT (", 1)[0]
         manual = rendered.split("MANUAL READY (", 1)[1].split("PARKED DRAFT (", 1)[0]
-        self.assertIn("manual-bad-pair", invalid)
-        self.assertIn("invalid review pairing", invalid)
+        # Paired review retired 2026-11-12: a pairing mismatch no longer
+        # makes an implementation invalid, so manual-bad-pair is manual-ready.
+        # The review packet itself is still invalid for its missing
+        # dependency identity (other-task), and manual-bad-validation is
+        # still invalid for its missing validation script.
+        self.assertIn("manual-bad-pair", manual)
+        self.assertNotIn("invalid review pairing", rendered)
         self.assertIn("manual-bad-validation", invalid)
         self.assertIn("invalid validation references", invalid)
         self.assertIn("manual-good", manual)
-        self.assertNotIn("manual-bad-pair", manual)
         self.assertNotIn("manual-bad-validation", manual)
 
-        with self.assertRaisesRegex(dispatch.DispatchError, "invalid review pairing"):
-            dispatch.claim(self.repo, "manual-bad-pair", "codex", False)
         with self.assertRaisesRegex(dispatch.DispatchError, "invalid validation references"):
-            dispatch.claim(self.repo, "manual-bad-validation", "codex", False)
+            dispatch._legacy_claim_diagnostics(self.repo, "manual-bad-validation", "codex", False)
 
     def test_priority_and_path_tiebreak_order(self):
         self.add_packet("late", dispatch_value="auto", priority="P2", filename="z-late.md")
@@ -311,7 +405,7 @@ class DispatchTests(unittest.TestCase):
         fake.start.side_effect = publish_workstream
         with mock.patch.object(dispatch, "_load_workstream", return_value=fake):
             with mock.patch("builtins.print"):
-                dispatch.claim(self.repo, None, "codex", True)
+                dispatch._legacy_claim_diagnostics(self.repo, None, "codex", True)
         self.assertEqual(fake.start.call_args.args[0], "path-a")
 
     def test_archived_complete_dependency_satisfies_dependency(self):
@@ -488,9 +582,9 @@ class DispatchTests(unittest.TestCase):
         self.assertIn("interrupted — remote dispatch claim interrupted; recovery required", rendered)
         self.assertIn("INVALID/RECOVERY (1)", rendered)
         with self.assertRaisesRegex(dispatch.DispatchError, "recovery required"):
-            dispatch.claim(self.repo, "interrupted", "codex", False)
+            dispatch._legacy_claim_diagnostics(self.repo, "interrupted", "codex", False)
         with mock.patch.object(dispatch, "_load_workstream", side_effect=AssertionError("ineligible task started")):
-            self.assertEqual(dispatch.claim(self.repo, None, "codex", True), 0)
+            self.assertEqual(dispatch._legacy_claim_diagnostics(self.repo, None, "codex", True), 0)
         self.assertTrue(git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/dispatch-claims/interrupted"))
         self.assertNotIn("refs/remotes/origin/agent/interrupted", git(self.repo, "for-each-ref", "--format=%(refname)", "refs/remotes/origin/agent"))
 
@@ -543,7 +637,7 @@ class DispatchTests(unittest.TestCase):
                 # from both threads can leave it replaced after this test and
                 # suppress output in a later test module in the same process.
                 with mock.patch.object(dispatch, "_load_workstream", return_value=mock.Mock(start=start)):
-                    dispatch.claim(repo, "race-task", "codex", False)
+                    dispatch._legacy_claim_diagnostics(repo, "race-task", "codex", False)
                 outcomes.append("claimed")
             except (dispatch.DispatchError, dispatch.WorkflowControlError) as error:
                 outcomes.append(str(error))
@@ -569,7 +663,7 @@ class DispatchTests(unittest.TestCase):
             return real_run(args, **kwargs)
         with mock.patch.object(dispatch, "_load_workstream", return_value=mock.Mock(start=publish_workstream)), \
              mock.patch("subprocess.run", side_effect=fail_claim_delete), mock.patch("builtins.print"):
-            dispatch.claim(self.repo, "cleanup-task", "codex", False)
+            dispatch._legacy_claim_diagnostics(self.repo, "cleanup-task", "codex", False)
         rendered = dispatch.status(self.repo, output=False)
         self.assertIn("cleanup-task (remote claim cleanup pending)", rendered)
         self.assertTrue(git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/dispatch-claims/cleanup-task"))
@@ -591,7 +685,7 @@ class DispatchTests(unittest.TestCase):
         with mock.patch.object(dispatch, "_load_workstream", return_value=mock.Mock(start=coordinated_start)):
             self.assertIn("coordination-task", dispatch.status(existing, output=False))
             with mock.patch("builtins.print"):
-                dispatch.claim(existing, "coordination-task", "codex", False)
+                dispatch._legacy_claim_diagnostics(existing, "coordination-task", "codex", False)
         self.assertEqual(git(self.repo, "worktree", "list", "--porcelain").count("worktree "), 3)
         self.assertTrue((claimed_worktree / "base").exists())
         self.assertEqual(git(existing, "branch", "--show-current"), "agent/existing-task")
@@ -605,7 +699,7 @@ class DispatchTests(unittest.TestCase):
         self.assertIn("P2 attached", rendered.split("READY (", 1)[1])
         self.assertNotIn("CLAIMED (1)\nattached", rendered)
         with self.assertRaisesRegex(dispatch.DispatchError, "already exists or is attached"):
-            dispatch.claim(self.repo, "attached", "codex", False)
+            dispatch._legacy_claim_diagnostics(self.repo, "attached", "codex", False)
         self.assertTrue(path.is_dir())
         self.assertEqual(git(path, "branch", "--show-current"), "agent/attached")
         self.assertFalse(git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/agent/attached"))
@@ -619,7 +713,7 @@ class DispatchTests(unittest.TestCase):
         git(path, "commit", "-m", "unique local work")
         self.assertIn("P2 unique-local", dispatch.status(self.repo, output=False).split("READY (", 1)[1])
         with self.assertRaisesRegex(dispatch.DispatchError, "unique commits; explicit recovery required"):
-            dispatch.claim(self.repo, "unique-local", "codex", False)
+            dispatch._legacy_claim_diagnostics(self.repo, "unique-local", "codex", False)
         self.assertTrue(git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/dispatch-claims/unique-local"))
         self.assertFalse(git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/agent/unique-local"))
 
@@ -633,7 +727,169 @@ class DispatchTests(unittest.TestCase):
         self.assertIn("collision", rendered.split("DEPENDENCY/LOCK BLOCKED (", 1)[1])
         self.assertIn("independent", rendered.split("READY (", 1)[1])
 
-    def test_cli_busy_dispatcher_fails_fast_without_claim_side_effects(self):
+    def test_verified_park_releases_only_lock_while_claim_identity_stays_protected(self):
+        holder_id = "review-agent-paired-review-declared-doc-archive-gate-v1"
+        target_id = "agent-paired-review-declared-doc-archive-gate-v1"
+        self.add_packet(
+            holder_id, dispatch_value="auto", locks="paired-review-source-provenance",
+            kind="review", review_target_workstream=target_id,
+        )
+        self.add_packet(target_id, dispatch_value="auto", locks="paired-review-source-provenance")
+        self.add_packet("after-held-review", dispatch_value="auto", depends=holder_id)
+        self._publish_claimed_workstream(holder_id)
+        state = {"state": "parked", "record_sha": "a" * 40, "lock_released": True, "reason": None}
+        with mock.patch.object(dispatch, "_execution_lock_holders", return_value=(set(), {holder_id: state})):
+            audit = dispatch.audit(self.repo)
+            holder = next(row for row in audit["packets"] if row["workstream"] == holder_id)
+            target = next(row for row in audit["packets"] if row["workstream"] == target_id)
+            downstream = next(row for row in audit["packets"] if row["workstream"] == "after-held-review")
+            self.assertEqual(holder["actual_class"], "claimed")
+            self.assertTrue(holder["claimed"])
+            self.assertFalse(holder["execution_lock_held"])
+            self.assertEqual(holder["parking_state"], "parked")
+            self.assertTrue(target["eligible_now"])
+            self.assertFalse(downstream["eligible_now"])
+            self.assertIn("dependency not archived complete: " + holder_id, downstream["reasons"])
+            with self.assertRaisesRegex(dispatch.DispatchError, "ALREADY CLAIMED"):
+                dispatch._legacy_claim_diagnostics(self.repo, holder_id, "codex", False)
+
+    def test_invalid_parking_record_keeps_original_lock_occupancy(self):
+        holder_id = "review-agent-paired-review-declared-doc-archive-gate-v1"
+        target_id = "agent-paired-review-declared-doc-archive-gate-v1"
+        self.add_packet(
+            holder_id, dispatch_value="auto", locks="paired-review-source-provenance",
+            kind="review", review_target_workstream=target_id,
+        )
+        self.add_packet(target_id, dispatch_value="auto", locks="paired-review-source-provenance")
+        self._publish_claimed_workstream(holder_id)
+        state = {"state": "invalid", "record_sha": "b" * 40, "lock_released": False,
+                 "reason": "identity mismatch"}
+        with mock.patch.object(dispatch, "_execution_lock_holders", return_value=({holder_id}, {holder_id: state})):
+            audit = dispatch.audit(self.repo)
+            holder = next(row for row in audit["packets"] if row["workstream"] == holder_id)
+            target = next(row for row in audit["packets"] if row["workstream"] == target_id)
+            self.assertTrue(holder["claimed"])
+            self.assertTrue(holder["execution_lock_held"])
+            self.assertFalse(target["eligible_now"])
+            self.assertIn("lock: paired-review-source-provenance held by " + holder_id, target["reasons"])
+
+    def test_archived_claim_retains_its_lock_until_quarantine_is_verified(self):
+        holder_id = "archived-stranded-owner"
+        target_id = "archived-owner-lock-candidate"
+        self.add_packet(holder_id, archived=True, status="blocked", dispatch_value="auto", locks="shared-reset-lock")
+        self.add_packet(target_id, dispatch_value="auto", locks="shared-reset-lock")
+        git(self.repo, "branch", f"agent/{holder_id}", "origin/main")
+        git(self.repo, "push", "origin", f"agent/{holder_id}")
+        git(self.repo, "fetch", "origin")
+        audit = dispatch.audit(self.repo)
+        target = next(row for row in audit["packets"] if row["workstream"] == target_id)
+        self.assertFalse(target["eligible_now"])
+        self.assertIn(f"lock: shared-reset-lock held by {holder_id}", target["reasons"])
+
+    def test_legacy_quarantine_releases_only_verified_lock_and_keeps_identity(self):
+        import legacy_claim_quarantine as quarantine
+        holder_id = "legacy-held-review"
+        target_id = "next-independent-work"
+        self.add_packet(holder_id, dispatch_value="auto", locks="shared-authoring", kind="review",
+                        review_target_workstream="reviewed-implementation")
+        self.add_packet(target_id, dispatch_value="auto", locks="shared-authoring")
+        self.add_packet("dependent-review", dispatch_value="auto", depends=holder_id)
+        path = self._publish_claimed_workstream(holder_id)
+        claim_sha = git(self.repo, "rev-parse", "origin/main")
+        git(self.repo, "push", "origin", f"{claim_sha}:refs/heads/dispatch-claims/{holder_id}")
+        run_id = "20261020T000000Z-inactive"
+        trace = quarantine.common_dir(self.repo) / "custodian-workflow" / "traces" / holder_id / f"{run_id}.jsonl"
+        trace.parent.mkdir(parents=True, exist_ok=True)
+        trace.write_text("\n".join(json.dumps(event) for event in (
+            {"event": "run_started", "host": quarantine.socket.gethostname(), "pid": 999999999,
+             "workstream": holder_id, "run_id": run_id, "timestamp_utc": "2026-10-20T00:00:00Z"},
+            {"event": "remote_claim_acquired", "host": quarantine.socket.gethostname(), "pid": 999999999,
+             "workstream": holder_id, "run_id": run_id, "data": {
+                 "remote_ref": f"refs/heads/dispatch-claims/{holder_id}",
+                 "claim_oid": git(self.repo, "ls-remote", "origin", f"refs/heads/dispatch-claims/{holder_id}").split()[0]}},
+            {"event": "worktree_published", "host": quarantine.socket.gethostname(), "pid": 999999999,
+             "workstream": holder_id, "run_id": run_id, "data": {
+                 "branch": f"agent/{holder_id}", "head": git(path, "rev-parse", "HEAD"),
+                 "upstream": git(path, "rev-parse", "@{upstream}"), "worktree": str(path)}},
+        )) + "\n")
+        snapshot = quarantine.snapshot(self.repo, [holder_id], self.base / "reset-backup")
+        plan = quarantine.build_plan(self.repo, holder_id, run_id, Path(snapshot["path"]))
+        self.assertTrue(plan["lock_released"])
+        quarantine.apply_plan(self.repo, plan, plan["plan_sha256"])
+        audit = dispatch.audit(self.repo)
+        holder = next(row for row in audit["packets"] if row["workstream"] == holder_id)
+        target = next(row for row in audit["packets"] if row["workstream"] == target_id)
+        dependent = next(row for row in audit["packets"] if row["workstream"] == "dependent-review")
+        self.assertEqual(holder["actual_class"], "legacy_quarantined")
+        self.assertTrue(holder["claimed"])
+        self.assertFalse(holder["execution_lock_held"])
+        self.assertTrue(holder["quarantine_execution_lock_released"])
+        self.assertTrue(target["eligible_now"])
+        self.assertFalse(dependent["eligible_now"])
+        with self.assertRaisesRegex(dispatch.DispatchError, "ALREADY CLAIMED"):
+            dispatch._legacy_claim_diagnostics(self.repo, holder_id, "codex", False)
+
+    def test_quarantined_interrupted_claim_is_preserved_without_becoming_claimable(self):
+        import legacy_claim_quarantine as quarantine
+        workstream_id = "interrupted-legacy"
+        self.add_packet(workstream_id, dispatch_value="auto", locks="old-lane")
+        claim_sha = git(self.repo, "rev-parse", "origin/main")
+        git(self.repo, "push", "origin", f"{claim_sha}:refs/heads/dispatch-claims/{workstream_id}")
+        git(self.repo, "fetch", "origin")
+        snapshot = quarantine.snapshot(self.repo, [workstream_id], self.base / "interrupted-backup")
+        plan = quarantine.build_plan(self.repo, workstream_id, None, Path(snapshot["path"]))
+        self.assertFalse(plan["lock_released"])
+        quarantine.apply_plan(self.repo, plan, plan["plan_sha256"])
+        audit = dispatch.audit(self.repo)
+        row = next(row for row in audit["packets"] if row["workstream"] == workstream_id)
+        claim = next(row for row in audit["remote_dispatch_claims"] if row["workstream"] == workstream_id)
+        self.assertEqual(row["actual_class"], "legacy_quarantined")
+        self.assertTrue(row["claimed"])
+        self.assertEqual(claim["recovery_disposition"], "legacy_quarantined")
+        self.assertTrue(git(self.repo, "ls-remote", "--heads", "origin", f"refs/heads/dispatch-claims/{workstream_id}"))
+        with self.assertRaisesRegex(dispatch.DispatchError, "ALREADY CLAIMED"):
+            dispatch._legacy_claim_diagnostics(self.repo, workstream_id, "codex", False)
+
+    def test_quarantine_ref_with_stale_branch_restores_lock(self):
+        import legacy_claim_quarantine as quarantine
+        holder_id = "stale-quarantined-review"
+        target_id = "stale-lock-candidate"
+        self.add_packet(holder_id, dispatch_value="auto", locks="same-lock", kind="review",
+                        review_target_workstream="implementation")
+        self.add_packet(target_id, dispatch_value="auto", locks="same-lock")
+        path = self._publish_claimed_workstream(holder_id)
+        claim_sha = git(self.repo, "rev-parse", "origin/main")
+        git(self.repo, "push", "origin", f"{claim_sha}:refs/heads/dispatch-claims/{holder_id}")
+        run_id = "20261020T000000Z-stale"
+        trace = quarantine.common_dir(self.repo) / "custodian-workflow" / "traces" / holder_id / f"{run_id}.jsonl"
+        trace.parent.mkdir(parents=True, exist_ok=True)
+        branch_head = git(path, "rev-parse", "HEAD")
+        trace.write_text("\n".join(json.dumps(event) for event in (
+            {"event": "run_started", "host": quarantine.socket.gethostname(), "pid": 999999998,
+             "workstream": holder_id, "run_id": run_id, "timestamp_utc": "2026-10-20T00:00:00Z"},
+            {"event": "remote_claim_acquired", "host": quarantine.socket.gethostname(), "pid": 999999998,
+             "workstream": holder_id, "run_id": run_id, "data": {
+                 "remote_ref": f"refs/heads/dispatch-claims/{holder_id}",
+                 "claim_oid": git(self.repo, "ls-remote", "origin", f"refs/heads/dispatch-claims/{holder_id}").split()[0]}},
+            {"event": "worktree_published", "host": quarantine.socket.gethostname(), "pid": 999999998,
+             "workstream": holder_id, "run_id": run_id, "data": {
+                 "branch": f"agent/{holder_id}", "head": branch_head, "upstream": branch_head,
+                 "worktree": str(path)}},
+        )) + "\n")
+        snapshot = quarantine.snapshot(self.repo, [holder_id], self.base / "stale-backup")
+        plan = quarantine.build_plan(self.repo, holder_id, run_id, Path(snapshot["path"]))
+        quarantine.apply_plan(self.repo, plan, plan["plan_sha256"])
+        (path / "change.txt").write_text("advance ref\n")
+        git(path, "add", "change.txt"); git(path, "commit", "-m", "advance claim branch")
+        git(path, "push", "origin", f"agent/{holder_id}"); git(self.repo, "fetch", "origin")
+        audit = dispatch.audit(self.repo)
+        holder = next(row for row in audit["packets"] if row["workstream"] == holder_id)
+        target = next(row for row in audit["packets"] if row["workstream"] == target_id)
+        self.assertEqual(holder["quarantine_state"], "invalid")
+        self.assertTrue(holder["execution_lock_held"])
+        self.assertFalse(target["eligible_now"])
+
+    def test_cli_v2_claim_ignores_legacy_dispatch_mutex(self):
         self.add_packet("busy-task", dispatch_value="auto")
         main_before = git(self.repo, "rev-parse", "origin/main")
         lock_path = dispatch._git_common_dir(self.repo) / "custodian-workflow" / "dispatch.lock"
@@ -650,29 +906,18 @@ class DispatchTests(unittest.TestCase):
             self.assertEqual(holder.stdout.readline().strip(), "ready")
             holder.stdout.close()
             self.assertIn("busy-task", dispatch.status(self.repo, output=False))
-            started = time.monotonic()
             result = subprocess.run(
-                [sys.executable, str(SCRIPT), "claim-next", "--agent", "codex"],
+                [sys.executable, str(SCRIPT), "claim-next", "--agent", "codex",
+                 "--pool", str(self.base / "turns")],
                 cwd=self.repo, text=True, capture_output=True, timeout=3,
             )
-            self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
-            self.assertIn("LOCAL DISPATCH BUSY", result.stderr)
-            self.assertLess(time.monotonic() - started, 1.0)
-            wait_started = time.monotonic()
-            waited = subprocess.run(
-                [sys.executable, str(SCRIPT), "claim", "busy-task", "--agent", "codex", "--lock-wait-seconds", "0.25"],
-                cwd=self.repo, text=True, capture_output=True, timeout=3,
-            )
-            waited_elapsed = time.monotonic() - wait_started
-            self.assertEqual(waited.returncode, 2, waited.stdout + waited.stderr)
-            self.assertIn("LOCAL DISPATCH BUSY", waited.stderr)
-            self.assertGreaterEqual(waited_elapsed, 0.25)
-            self.assertLess(waited_elapsed, 1.5)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertIn('"workstream": "busy-task"', result.stdout)
+            self.assertTrue((self.base / "turns").is_dir())
             self.assertTrue(lock_path.exists())
-            self.assertFalse(git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/agent/busy-task"))
+            self.assertTrue(git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/agent/busy-task"))
             self.assertFalse(git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/dispatch-claims/busy-task"))
-            self.assertNotIn("refs/heads/agent/busy-task", git(self.repo, "worktree", "list", "--porcelain"))
-            self.assertFalse(git(self.repo, "branch", "--list", "agent/busy-task"))
+            self.assertIn(str(self.base / "turns"), git(self.repo, "worktree", "list", "--porcelain"))
             self.assertFalse(dispatch._last_claim_path(self.repo).exists())
             self.assertTrue((self.repo / dispatch.PACKET_ROOT / "BUSY_TASK.md").exists())
             self.assertEqual(git(self.repo, "rev-parse", "origin/main"), main_before)
@@ -696,13 +941,13 @@ class DispatchTests(unittest.TestCase):
 
         def claim_a():
             try:
-                dispatch.claim(self.repo, "task-a", "codex", False)
+                dispatch._legacy_claim_diagnostics(self.repo, "task-a", "codex", False)
             except Exception as error:  # surfaced in the parent after thread join
                 errors.append(error)
 
         def claim_b():
             try:
-                dispatch.claim(self.repo, "task-b", "codex", False)
+                dispatch._legacy_claim_diagnostics(self.repo, "task-b", "codex", False)
             except Exception as error:
                 errors.append(error)
             finally:
@@ -737,7 +982,7 @@ class DispatchTests(unittest.TestCase):
         with mock.patch.object(dispatch, "_load_workstream", return_value=mock.Mock(start=publish_workstream)), \
              mock.patch.object(dispatch.RunTrace, "publish", fail_publish), \
              mock.patch("builtins.print", side_effect=lambda *args, **kwargs: output.append(" ".join(map(str, args)))):
-            self.assertEqual(dispatch.claim(self.repo, "diagnostic-failure", "codex", False), 0)
+            self.assertEqual(dispatch._legacy_claim_diagnostics(self.repo, "diagnostic-failure", "codex", False), 0)
         rendered = "\n".join(output)
         self.assertIn("CLAIMED", rendered)
         self.assertIn("CUSTODIAN_DISPATCH_RESULT_JSON:", rendered)
@@ -775,7 +1020,7 @@ class DispatchTests(unittest.TestCase):
             captured.setdefault(thread_output.key, []).append(" ".join(map(str, args)))
         def run():
             thread_output.key = threading.get_ident()
-            dispatch.claim(self.repo, None, "codex", True, lock_wait_seconds=5)
+            dispatch._legacy_claim_diagnostics(self.repo, None, "codex", True, lock_wait_seconds=5)
             results.append("\n".join(captured[thread_output.key]))
         threads = [threading.Thread(target=run) for _ in range(2)]
         with mock.patch.object(dispatch, "_load_workstream", return_value=fake), mock.patch("builtins.print", side_effect=capture):
@@ -791,7 +1036,7 @@ class DispatchTests(unittest.TestCase):
         for _ in range(2):
             out = []
             with mock.patch("builtins.print", side_effect=lambda *args, **kwargs: out.append(" ".join(map(str, args)))):
-                dispatch.claim(self.repo, None, "codex", True)
+                dispatch._legacy_claim_diagnostics(self.repo, None, "codex", True)
             outputs.append("\n".join(out))
         names = [next(line.split(": ", 1)[1] for line in output.splitlines() if line.startswith("workstream: ") and not line.startswith("workstream: agent/")) for output in outputs]
         self.assertEqual(names, ["task-a", "task-b"])
@@ -803,12 +1048,12 @@ class DispatchTests(unittest.TestCase):
         self.add_packet("manual-claim", dispatch_value="manual")
         fake = mock.Mock(); fake.start.side_effect = publish_workstream
         with mock.patch.object(dispatch, "_load_workstream", return_value=fake), mock.patch("builtins.print"):
-            dispatch.claim(self.repo, "manual-claim", "codex", False)
+            dispatch._legacy_claim_diagnostics(self.repo, "manual-claim", "codex", False)
         self.assertEqual(fake.start.call_args.args[0], "manual-claim")
         self.add_packet("missing", status="in_progress", dispatch_value="auto")
         self.add_packet("blocked-manual", dispatch_value="manual", depends="missing")
         with self.assertRaisesRegex(dispatch.DispatchError, "dependency: missing"):
-            dispatch.claim(self.repo, "blocked-manual", "codex", False)
+            dispatch._legacy_claim_diagnostics(self.repo, "blocked-manual", "codex", False)
 
     def test_malformed_dispatch_fails_closed_and_is_visible(self):
         self.add_packet("bad-dispatch", text="- Workstream: `bad-dispatch`\n- Status: `ready`\n- Dispatch: `sometimes`\n")
@@ -842,7 +1087,7 @@ class DispatchTests(unittest.TestCase):
         self.add_packet("delegate", dispatch_value="auto")
         fake = mock.Mock(); fake.start.side_effect = publish_workstream
         with mock.patch.object(dispatch, "_load_workstream", return_value=fake), mock.patch("builtins.print"):
-            dispatch.claim(self.repo, None, "codex", True)
+            dispatch._legacy_claim_diagnostics(self.repo, None, "codex", True)
         fake.start.assert_called_once_with("delegate", self.repo)
 
     def test_explicit_manual_claim_respects_lock_conflicts(self):
@@ -850,7 +1095,7 @@ class DispatchTests(unittest.TestCase):
         self.add_packet("manual-lock", dispatch_value="manual", locks="agent-workflow")
         git(self.repo, "branch", "agent/holder", "origin/main"); git(self.repo, "push", "origin", "agent/holder"); git(self.repo, "fetch", "origin")
         with self.assertRaisesRegex(dispatch.DispatchError, "lock: agent-workflow held by holder"):
-            dispatch.claim(self.repo, "manual-lock", "codex", False)
+            dispatch._legacy_claim_diagnostics(self.repo, "manual-lock", "codex", False)
 
     def test_invalid_workstream_metadata_is_blocked(self):
         self.add_packet("invalid", text="- Workstream: `Bad_ID`\n- Status: `ready`\n- Dispatch: `auto`\n")
@@ -867,7 +1112,7 @@ class DispatchTests(unittest.TestCase):
         fake = mock.Mock(); fake.start.side_effect = publish_workstream
         output = []
         with mock.patch.object(dispatch, "_load_workstream", return_value=fake), mock.patch("builtins.print", side_effect=lambda *args, **kwargs: output.append(" ".join(map(str, args)))):
-            dispatch.claim(self.repo, None, "codex", True)
+            dispatch._legacy_claim_diagnostics(self.repo, None, "codex", True)
         rendered = "\n".join(output)
         for expected in ("workstream: output-task", "branch: agent/output-task", str(self.base / "output-task"), f"packet: {dispatch.PACKET_ROOT}/OUTPUT_TASK.md"):
             self.assertIn(expected, rendered)
@@ -886,7 +1131,7 @@ class DispatchTests(unittest.TestCase):
         dispatch.status(self.repo, output=False)
         fake = mock.Mock(); fake.start.side_effect = publish_workstream
         with mock.patch.object(dispatch, "_load_workstream", return_value=fake), mock.patch("builtins.print"):
-            dispatch.claim(self.repo, None, "codex", True)
+            dispatch._legacy_claim_diagnostics(self.repo, None, "codex", True)
         after = snapshot()
         self.assertEqual(before, after)
 
@@ -932,10 +1177,68 @@ class DispatchTests(unittest.TestCase):
         self.assertEqual(receipt["agent"], "unspecified")
         self.assertNotEqual(receipt["agent"], "codex")
 
+    def test_cli_v2_explicit_claim_ignores_legacy_packet_gates(self):
+        self.add_packet("v2-unscheduled", status="draft", dispatch_value="manual",
+                        depends="not-yet-complete", locks="legacy-lock")
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT), "claim", "v2-unscheduled", "--mode", "normal",
+             "--pool", str(self.base / "v2-turns")],
+            cwd=self.repo, text=True, capture_output=True, timeout=10,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn('"workstream": "v2-unscheduled"', result.stdout)
+        self.assertIn('"mode": "normal"', result.stdout)
+        self.assertIn(str(self.base / "v2-turns"), result.stdout)
+
+    def test_cli_v2_claim_next_skips_review_packets(self):
+        self.add_packet("a-review-only", kind="review")
+        self.add_packet("z-implementation")
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT), "claim-next", "--pool", str(self.base / "next-turns")],
+            cwd=self.repo, text=True, capture_output=True, timeout=10,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn('"workstream": "z-implementation"', result.stdout)
+        self.assertNotIn('"workstream": "a-review-only"', result.stdout)
+
+    def test_cli_v2_claim_next_rotates_without_requiring_session_state(self):
+        self.add_packet("a-first")
+        self.add_packet("b-second")
+        cursor = dispatch._git_common_dir(self.repo) / "custodian-turn-dispatcher-v2" / "selection-cursor.json"
+        self.assertFalse(cursor.exists())
+        first = subprocess.run(
+            [sys.executable, str(SCRIPT), "claim-next", "--pool", str(self.base / "rotate-turns")],
+            cwd=self.repo, text=True, capture_output=True, timeout=10,
+        )
+        self.assertEqual(first.returncode, 0, first.stdout + first.stderr)
+        self.assertIn('"workstream": "a-first"', first.stdout)
+        first_receipt = json.loads(next(
+            line.removeprefix("CUSTODIAN_DISPATCH_RESULT_JSON:")
+            for line in first.stdout.splitlines()
+            if line.startswith("CUSTODIAN_DISPATCH_RESULT_JSON:")
+        ))
+        second = subprocess.run(
+            [sys.executable, str(SCRIPT), "claim-next", "--pool", str(self.base / "rotate-turns")],
+            cwd=self.repo, text=True, capture_output=True, timeout=10,
+        )
+        self.assertEqual(second.returncode, 0, second.stdout + second.stderr)
+        self.assertIn('"workstream": "b-second"', second.stdout)
+        subprocess.run(["git", "worktree", "remove", first_receipt["worktree"]],
+                       cwd=self.repo, check=True, capture_output=True, text=True)
+        cursor.unlink()
+        third = subprocess.run(
+            [sys.executable, str(SCRIPT), "claim-next", "--pool", str(self.base / "rotate-turns")],
+            cwd=self.repo, text=True, capture_output=True, timeout=10,
+        )
+        self.assertEqual(third.returncode, 0, third.stdout + third.stderr)
+        # The cursor is advisory: removing it restarts deterministic ordering,
+        # but it never blocks acquisition or requires a prior session.
+        self.assertIn('"workstream": "a-first"', third.stdout)
+
     def _claim_output(self):
         output = []
         with mock.patch("builtins.print", side_effect=lambda *args, **kwargs: output.append(" ".join(map(str, args)))):
-            result = dispatch.claim(self.repo, None, "codex", True)
+            result = dispatch._legacy_claim_diagnostics(self.repo, None, "codex", True)
         self.assertEqual(result, 0)
         return "\n".join(output)
 
@@ -950,7 +1253,7 @@ class DispatchTests(unittest.TestCase):
     def _real_claim(self, workstream_id, agent="codex", auto_only=False):
         output = []
         with mock.patch("builtins.print", side_effect=lambda *args, **kwargs: output.append(" ".join(map(str, args)))):
-            result = dispatch.claim(self.repo, workstream_id, agent, auto_only)
+            result = dispatch._legacy_claim_diagnostics(self.repo, workstream_id, agent, auto_only)
         self.assertEqual(result, 0)
         rendered = "\n".join(output)
         sentinel = next(line for line in rendered.splitlines() if line.startswith("CUSTODIAN_DISPATCH_RESULT_JSON:"))
@@ -996,18 +1299,36 @@ class DispatchTests(unittest.TestCase):
         self.assertIn("schema-task-", receipt["worktree"])
         self.assertEqual(receipt["packet"], f"{dispatch.PACKET_ROOT}/SCHEMA_TASK.md")
         self.assertEqual(receipt["checkout"], "created")
+        self.assertIsNone(receipt["checkout_profile"])
         self.assertTrue(receipt["verified"])
         self.assertEqual(receipt["agent"], "codex")
         self.assertIn(f"workstream: {receipt['workstream']}", rendered)
         self.assertIn(f"branch: {receipt['branch']}", rendered)
         self.assertIn(f"packet: {receipt['packet']}", rendered)
 
+    def test_start_workstream_carries_profile_provenance_separately_from_disposition(self):
+        evidence = {"profile": "profile.json", "profile_sha256": "a" * 64, "paths": ["a.py"]}
+
+        class FakeWorkstream:
+            @staticmethod
+            def start(_workstream, repo, *, report, profile_path):
+                report["checkout"] = "created"
+                report["checkout_profile"] = evidence
+                return Path(repo) / "worktree"
+
+        worktree, disposition, profile = dispatch._start_workstream(
+            FakeWorkstream, "sample", self.repo, checkout_profile="profile.json",
+        )
+        self.assertEqual(disposition, "created")
+        self.assertEqual(worktree, self.repo / "worktree")
+        self.assertEqual(profile, evidence)
+
     def test_dispatch_does_not_silently_adopt_clean_local_only_worktree(self):
         self.add_packet("resumed-task", dispatch_value="auto")
         path = self.base / "resumed-task-wt"
         git(self.repo, "worktree", "add", "-b", "agent/resumed-task", str(path), "origin/main")
         with self.assertRaisesRegex(dispatch.DispatchError, "already exists or is attached"):
-            dispatch.claim(self.repo, "resumed-task", "codex", False)
+            dispatch._legacy_claim_diagnostics(self.repo, "resumed-task", "codex", False)
         self.assertTrue(path.is_dir())
         self.assertEqual(git(path, "branch", "--show-current"), "agent/resumed-task")
         self.assertFalse(git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/agent/resumed-task"))
@@ -1017,7 +1338,7 @@ class DispatchTests(unittest.TestCase):
     def test_last_claim_recovers_identity_after_stdout_loss(self):
         self.add_packet("recover-task", dispatch_value="auto")
         with mock.patch("builtins.print"):
-            dispatch.claim(self.repo, None, "codex", True)
+            dispatch._legacy_claim_diagnostics(self.repo, None, "codex", True)
         with mock.patch("builtins.print") as printer:
             result = dispatch.last_claim(self.repo, as_json=True)
         self.assertEqual(result, 0)
@@ -1036,7 +1357,7 @@ class DispatchTests(unittest.TestCase):
     def test_last_claim_reports_stale_without_mutating_state(self):
         self.add_packet("stale-task", dispatch_value="auto")
         with mock.patch("builtins.print"):
-            dispatch.claim(self.repo, None, "codex", True)
+            dispatch._legacy_claim_diagnostics(self.repo, None, "codex", True)
         for record in git(self.repo, "worktree", "list", "--porcelain").split("\n\n"):
             lines = record.splitlines()
             if lines and "branch refs/heads/agent/stale-task" in lines:
@@ -1058,7 +1379,7 @@ class DispatchTests(unittest.TestCase):
         attached = self._publish_claimed_workstream("held-task")
         self.add_packet("held-task", dispatch_value="auto")
         with self.assertRaises(dispatch.DispatchError) as ctx:
-            dispatch.claim(self.repo, "held-task", "codex", False)
+            dispatch._legacy_claim_diagnostics(self.repo, "held-task", "codex", False)
         message = str(ctx.exception)
         self.assertIn("ALREADY CLAIMED", message)
         self.assertIn("workstream: held-task", message)
@@ -1080,7 +1401,7 @@ class DispatchTests(unittest.TestCase):
         fake = mock.Mock(); fake.start.side_effect = wrong_branch_start
         with mock.patch.object(dispatch, "_load_workstream", return_value=fake), mock.patch("builtins.print"):
             with self.assertRaisesRegex(dispatch.DispatchError, "post-start verification failed"):
-                dispatch.claim(self.repo, "mismatch-task", "codex", False)
+                dispatch._legacy_claim_diagnostics(self.repo, "mismatch-task", "codex", False)
         self.assertFalse(git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/agent/mismatch-task"))
         self.assertTrue(git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/dispatch-claims/mismatch-task"))
         self.assertFalse(dispatch._last_claim_path(self.repo).is_file())
@@ -1111,14 +1432,16 @@ class DispatchTests(unittest.TestCase):
         self.assertEqual(dispatch.validate_review_pairing(packets), {})
         self.assertIn("manual-review-task", dispatch.status(self.repo, output=False).split("READY (", 1)[1])
 
-    def test_review_auto_requires_paired_review_declaration(self):
+    def test_review_auto_no_longer_requires_paired_review_declaration(self):
+        # Paired review retired 2026-11-12: an unpaired Review: auto packet
+        # parses cleanly and is claim-eligible; pairing is advisory only.
         self.add_packet("unpaired-auto", dispatch_value="auto", review="auto")
         packets = dispatch._packets(self.repo)
         p = next(p for p in packets if p.workstream == "unpaired-auto")
-        self.assertIn("Review: auto requires a Paired review workstream", p.error)
+        self.assertIsNone(p.error)
         rendered = dispatch.status(self.repo, output=False)
         ready_section = rendered.split("READY (", 1)[1].split("CLAIMED (", 1)[0]
-        self.assertNotIn("unpaired-auto", ready_section)
+        self.assertIn("unpaired-auto", ready_section)
 
     def test_paired_review_must_declare_kind_review(self):
         self.add_packet("impl-a", dispatch_value="auto", review="auto", paired_review_workstream="review-impl-a")
@@ -1163,9 +1486,11 @@ class DispatchTests(unittest.TestCase):
         message = errors.get("impl-ready", "")
         self.assertIn("must declare Status: ready", message)
         self.assertIn("must declare Dispatch: auto", message)
+        # Paired review retired 2026-11-12: the pairing diagnostic still
+        # reports the mismatch, but it no longer blocks the implementation.
         rendered = dispatch.status(self.repo, output=False)
-        self.assertIn("invalid review pairing", rendered)
-        self.assertNotIn("impl-ready", rendered.split("READY (", 1)[1].split("CLAIMED (", 1)[0])
+        self.assertNotIn("invalid review pairing", rendered)
+        self.assertIn("impl-ready", rendered.split("READY (", 1)[1].split("CLAIMED (", 1)[0])
 
     def test_paired_review_target_packet_must_be_exact_canonical_archive_path(self):
         self.add_packet("impl-target", dispatch_value="auto", review="auto", paired_review_workstream="review-impl-target")
@@ -1179,8 +1504,11 @@ class DispatchTests(unittest.TestCase):
             f"Review target packet must be '{archived_target('impl-target')}'",
             errors.get("impl-target", ""),
         )
+        # Paired review retired 2026-11-12: the pairing diagnostic still
+        # reports the mismatch, but it no longer blocks the implementation.
         rendered = dispatch.status(self.repo, output=False)
-        self.assertIn("invalid review pairing", rendered)
+        self.assertNotIn("invalid review pairing", rendered)
+        self.assertIn("impl-target", rendered.split("READY (", 1)[1].split("CLAIMED (", 1)[0])
 
     def test_paired_review_missing_target_packet_fails_closed(self):
         self.add_packet("impl-no-target", dispatch_value="auto", review="auto", paired_review_workstream="review-impl-no-target")
@@ -1224,7 +1552,7 @@ class DispatchTests(unittest.TestCase):
         self.assertIn("invalid review pairing", rendered)
         self.assertIn("review-no-override", rendered.split("INVALID/RECOVERY (", 1)[1])
         with self.assertRaisesRegex(dispatch.DispatchError, "bounded TASK OVERRIDE"):
-            dispatch.claim(self.repo, "review-no-override", "codex", False)
+            dispatch._legacy_claim_diagnostics(self.repo, "review-no-override", "codex", False)
 
     def test_auto_review_malformed_override_cannot_edit_reviewed_code(self):
         self.add_packet(
@@ -1271,7 +1599,7 @@ class DispatchTests(unittest.TestCase):
         rendered = dispatch.status(self.repo, output=False)
         self.assertIn("invalid validation references", rendered)
         with self.assertRaisesRegex(dispatch.DispatchError, "nearest live path"):
-            dispatch.claim(self.repo, "stale-validation", "codex", True)
+            dispatch._legacy_claim_diagnostics(self.repo, "stale-validation", "codex", True)
 
     def test_header_validation_field_paths_are_checked(self):
         content = packet("header-validation", dispatch_value="auto") + (
@@ -1387,11 +1715,16 @@ class DispatchTests(unittest.TestCase):
         self.assertTrue(dispatch.review_cycle_exhausted(packets["review-impl-j-review-corrections-2"]))
         self.assertFalse(dispatch.review_cycle_exhausted(packets["review-impl-k"]))
 
-    def test_invalid_review_pairing_blocks_explicit_claim_until_fixed(self):
-        path = self.add_packet("impl-guarded", dispatch_value="auto", review="auto")
-        with self.assertRaisesRegex(dispatch.DispatchError, "Review: auto requires a Paired review workstream"):
-            dispatch.claim(self.repo, "impl-guarded", "codex", False)
+    def test_unpaired_review_auto_no_longer_blocks_explicit_claim(self):
+        # Paired review retired 2026-11-12: an unpaired Review: auto packet
+        # is claim-eligible without a paired review. The paired version
+        # below still claims as before.
+        self.add_packet("impl-guarded", dispatch_value="auto", review="auto")
+        rendered = dispatch.status(self.repo, output=False)
+        self.assertIn("impl-guarded", rendered.split("READY (", 1)[1].split("CLAIMED (", 1)[0])
 
+        # Re-author the same packet with a paired review declared.
+        path = Path(self.repo) / "custodian/docs/ai_context/task_packets/IMPL_GUARDED.md"
         path.write_text(packet(
             "impl-guarded", dispatch_value="auto", review="auto",
             paired_review_workstream="review-impl-guarded",
@@ -1406,7 +1739,7 @@ class DispatchTests(unittest.TestCase):
         )
         fake = mock.Mock(); fake.start.side_effect = publish_workstream
         with mock.patch.object(dispatch, "_load_workstream", return_value=fake), mock.patch("builtins.print"):
-            result = dispatch.claim(self.repo, "impl-guarded", "codex", False)
+            result = dispatch._legacy_claim_diagnostics(self.repo, "impl-guarded", "codex", False)
         self.assertEqual(result, 0)
 
 

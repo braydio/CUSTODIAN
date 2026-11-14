@@ -1,0 +1,42 @@
+# VISUAL HITBOX LAB | READ-ONLY LIVE GEOMETRY & TIMELINE PROBE
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `visual-hitbox-lab-runtime-probe-v1`
+- Category: `tools-ux`
+- Kind: `implementation`
+- Status: `ready`
+- Dispatch: `auto`
+- Authoring handoff: `auto`
+- Priority: `P1`
+- Depends on: `none`
+- Locks: `visual-hitbox-lab`
+- Review: `none`
+- Review stage: `post-land`
+- Review modes: `none`
+- Paired review workstream: `none`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
+- Reviewed main: `ebfe3810eec146d7202a4378324b0f32c9e12fee`
+- Authoring chat: `not-recorded`
+- Visual review: `conditional`
+- Goal: Make CUSTODIAN's existing melee reach and contact windows inspectable over the exact animation frames without mutating combat.
+- Completion boundary: One unarmed and one armed attack across at least S/E/NW demonstrate exact profile reach, arc, hit-window frames and direction/root identity; snapshot report stable byte-for-byte; missing/ambiguous animation or stale profile fails closed; no tracked gameplay asset files changed.
+- Current measured state: Profile fields and hit_window_frames exist, but no verified native timeline editor binds real contact sector geometry to those frames.
+- Evidence: Main@ebfe3810eec146d7202a4378324b0f32c9e12fee; MeleeAttackProfile at custodian/game/systems/combat/melee_attack_profile.gd exports range_px, arc_degrees, windup_sec, active_sec, recovery_sec, presentation_action and hit_window_frames. OperatorWeaponDefinition references those resources. MeleeTargetResolver owns acquisition/drive reach. Existing Operator Animation Workbench owns canonical sprite and timing publication. The chassis/F2 extraction is not declared complete in CURRENT_STATE.md. A per-frame polygon authoring runtime is not established by this audit; don't fabricate it.
+- Task-specific authority: design/04_architecture/VISUAL_HITBOX_AUTHORING_LIBRARY_V1.md; design/02_features/animation/OPERATOR_ANIMATION_WORKBENCH.md; design/02_features/animation/WEAPON_OWNED_ANIMATION_SYSTEM.md.
+- Work surface: New custodian/tools/combat/visual_hitbox_lab/ read-only schema/probe, a minimal Godot preview scene, and focused synthetic fixtures; read MeleeAttackProfile, OperatorWeaponDefinition, MeleeTargetResolver and Operator animation catalog.
+- Publication inputs: `design/04_architecture/VISUAL_HITBOX_AUTHORING_LIBRARY_V1.md`
+- Change: Create a versioned read-only probe of profile+source+direction+frame timing with root-aligned sector overlay, frame scrub, target-distance indicator, a truthful source-missing state, and JSON report. Resolve the actual attack/window clock, never infer target frames from filename recency; include deterministic synthetic geometry tests.
+- Preserve: One combat authority; the active F2/F3/F5/F6 migration, passive MeleeTargetResolver, existing .tres profile references, per-frame sidecars, exact operator identity, existing Workbench publication and independent review gates. No parallel operator.gd hitbox logic.
+- Non-goals: Do not implement polygon-based melee damage, edit canonical art, change weapon balance automatically, regenerate Operator frames, or treat the overlay as a new collision source. A future true per-frame polygon gameplay system requires its own design and acceptance, only if a real encounter proves the current arc/range model insufficient.
+- Acceptance: One unarmed and one armed attack across at least S/E/NW demonstrate exact profile reach, arc, hit-window frames and direction/root identity; snapshot report stable byte-for-byte; missing/ambiguous animation or stale profile fails closed; no tracked gameplay asset files changed.
+- Validation: custodian/tools/validation/operator_unarmed_fast_chain_smoke.gd; custodian/tools/validation/operator_modular_fast_attack_smoke.gd; custodian/tools/validation/operator_animation_plan_smoke.py; new focused probe unit and Godot scene smoke; changed-file validation.
+- Task overrides: `none`
+- Deferred: Profile editing, user-authored spline/polygon collision, runtime debugging overlays and gameplay balance changes.
+
+## Promotion and dependencies
+- Refresh required: this newly authored draft/manual pair must pass the targeted authoring handoff action and publish verified ready/auto state before dispatch. The marker is opt-in and does not claim or execute Codex.
+- Existing input identity and technical authority are published in design/04_architecture/VISUAL_HITBOX_AUTHORING_LIBRARY_V1.md; no external tool, ZIP, fixture or asset is available exclusively in chat.
+- Independent paired review: review-visual-hitbox-lab-runtime-probe-v1 in a fresh context after implementation lands; do not self-record review PASS.
+- Next workstream: visual-hitbox-lab-profile-editing-v1.
+- Authoring chat: not-recorded; replace with the exact URL if supplied before durable completion summaries.

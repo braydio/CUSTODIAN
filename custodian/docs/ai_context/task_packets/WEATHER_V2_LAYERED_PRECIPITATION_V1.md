@@ -1,0 +1,41 @@
+# WEATHER V2: ATMOSPHERIC PRESENTATION EXPANSION | DEEP WEATHER RENDERING AND WIND COHERENCE
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `weather-v2-layered-precipitation-v1`
+- Category: `assets-art`
+- Kind: `implementation`
+- Status: `draft`
+- Dispatch: `manual`
+- Priority: `P1`
+- Depends on: `weather-v2-presentation-contract-v1`
+- Locks: `world-atmosphere, weather-presentation`
+- Review: `none`
+- Review stage: `post-land`
+- Review modes: `none`
+- Paired review workstream: `none`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
+- Reviewed main: `ebfe3810eec146d7202a4378324b0f32c9e12fee`
+- Authoring chat: `not-recorded`
+- Visual review: `conditional`
+- Goal: Give all eight weather states visibly richer layered motion through one existing atmosphere authority.
+- Completion boundary: At a fixed seed/time/camera, V2 render is reproducible with distinct far/mid/near signatures; moving camera does not drag the weather screen grid; near combat zone remains readable, UI ungraded, indoor suppression preserved, no extra fullscreen pass or per-tile weather materials.
+- Current measured state: Profile/seed projection must pass review first; current atmosphere uses one fullscreen shader and mostly single-layer precipitation.
+- Evidence: Main@ebfe3810eec146d7202a4378324b0f32c9e12fee; WorldEnvironmentDirector owns 1440-second day, seeded 8-state weather schedule (90–240s holds, 8–15s transitions) and weather/indoor exposure. WorldLightingDirector composes base profiles and weather. WorldAtmosphere2D owns one fullscreen world pass; shader uses TIME for visual motion and currently gives precipitation mostly one procedural layer. WorldEnvironment V1 excludes puddles, lightning and accumulation. Existing static world-atmosphere and environment smokes protect this.
+- Task-specific authority: design/02_features/environment/WEATHER_PRESENTATION_V2_ROADMAP.md; design/02_features/environment/WORLD_ENVIRONMENT_BIOME_DAYNIGHT_WEATHER.md; design/02_features/visuals/WORLD_ATMOSPHERE_SHADER_SYSTEM.md.
+- Work surface: Existing custodian/game/world/lighting/world_atmosphere_2d.gd and shaders/world_atmosphere.gdshader, plus new profile data; no competing CanvasLayer.
+- Publication inputs: `design/02_features/environment/WEATHER_PRESENTATION_V2_ROADMAP.md`
+- Change: Implement opt-in far/mid/near weather patterns per state, spatially stable world-space rain/snow/ash/dust, depth-aware fog and gust direction consistent with foliage. Honor exposure/weather influence, source camera zoom, pixel snapping and quality tiers. Preserve no-effects shader fallback and avoid noisy shader loops.
+- Preserve: Eight IDs, existing world profile weights, schedule/timing, fixed-step simulation, authored zone lighting, weather neutrality for gameplay, indoor visibility/weather exposure, shared foliage wind/material variants, existing layer ordering and atmosphere singleton, generated procgen map acceptance and weather director ownership.
+- Non-goals: No climate sim reboot, no second weather director, no global weather damage, no physically accumulated snow/surface wetness state, no replacing lighting profiles, no breakage of Alpine profile or other existing locked art integration.
+- Acceptance: At a fixed seed/time/camera, V2 render is reproducible with distinct far/mid/near signatures; moving camera does not drag the weather screen grid; near combat zone remains readable, UI ungraded, indoor suppression preserved, no extra fullscreen pass or per-tile weather materials.
+- Validation: custodian/tools/validation/world_environment_smoke.gd; custodian/tools/validation/world_atmosphere_smoke.gd; new layered shader uniform/region/camera regression and frame-cost measurements; changed-file validation.
+- Task overrides: `none`
+- Deferred: Contact splashes, lightning/thunder and Weather Lab full UI.
+
+## Promotion and dependencies
+- Refresh required: after the prior paired review archives PASS, re-audit main, claims, touched paths, live consumers and documentation drift before promoting this intentionally parked draft/manual pair. Recheck any changed F2/Alpine/Asset V2 ownership and human visual gates.
+- Existing input identity and technical authority are published in design/02_features/environment/WEATHER_PRESENTATION_V2_ROADMAP.md; no external tool, ZIP, fixture or asset is available exclusively in chat.
+- Independent paired review: review-weather-v2-layered-precipitation-v1 in a fresh context after implementation lands; do not self-record review PASS.
+- Next workstream: weather-v2-surface-events-v1.
+- Authoring chat: not-recorded; replace with the exact URL if supplied before durable completion summaries.

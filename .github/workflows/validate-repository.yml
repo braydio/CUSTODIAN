@@ -37,7 +37,8 @@ jobs:
   changed-unit:
     name: Fast changed validation
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # Full LFS hydration must finish before the Godot import preflight.
+    timeout-minutes: 30
     outputs:
       base-sha: ${{ steps.base.outputs.sha }}
 
@@ -46,6 +47,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          lfs: true
+
+      - name: Verify Godot asset hydration
+        run: python3 custodian/tools/pipelines/godot_import_preflight.py --project-dir custodian
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -64,7 +69,14 @@ jobs:
             custodian.tools.agent.test_task_packet_index \
             custodian.tools.agent.test_dispatch \
             custodian.tools.agent.test_task_packet_repair \
+            custodian.tools.agent.test_queue_frontier \
             custodian.tools.agent.test_run_trace
+
+      - name: Validate full Hub artwork source roadmap
+        run: python3 custodian/tools/validation/validate_hub_art_manifest.py
+
+      - name: Validate historical review acceptance regressions
+        run: python3 custodian/tools/agent/test_review_outcome.py -v
 
       - name: Validate Dropbox lifecycle Codex packet pair
         if: ${{ hashFiles('custodian/docs/ai_context/task_packets/DROPBOX_ASSET_LIFECYCLE_RECONCILER_V1.md') != '' }}
@@ -145,6 +157,16 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          lfs: true
+
+      - name: Verify Godot asset hydration
+        run: python3 custodian/tools/pipelines/godot_import_preflight.py --project-dir custodian
+      - name: Verify Git LFS materialization
+        shell: bash
+        run: |
+          set -euo pipefail
+          git lfs pull
+          git lfs checkout
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -161,6 +183,9 @@ jobs:
 
       - name: Install validation dependencies
         run: python -m pip install -r requirements.txt pillow numpy requests textual
+
+      - name: Import Godot project classes and resources
+        run: godot --headless --editor --path custodian --quit
 
       - name: Run downstream changed validation
         run: >-

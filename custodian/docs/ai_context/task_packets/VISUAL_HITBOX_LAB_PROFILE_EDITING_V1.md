@@ -1,0 +1,41 @@
+# VISUAL HITBOX LAB | CONSTRAINED EDITOR & TRANSACTION
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `visual-hitbox-lab-profile-editing-v1`
+- Category: `tools-ux`
+- Kind: `implementation`
+- Status: `draft`
+- Dispatch: `manual`
+- Priority: `P2`
+- Depends on: `visual-hitbox-lab-runtime-probe-v1`
+- Locks: `visual-hitbox-lab, melee-profile-authoring`
+- Review: `none`
+- Review stage: `post-land`
+- Review modes: `none`
+- Paired review workstream: `none`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
+- Reviewed main: `ebfe3810eec146d7202a4378324b0f32c9e12fee`
+- Authoring chat: `not-recorded`
+- Visual review: `conditional`
+- Goal: Author real attack-sector parameters and frame windows visually with reversible source-safe writes.
+- Completion boundary: A 3-frame hit-window edit round-trips in one profile with nothing else changed; undo/redo returns exact prior values; stale source/ref, out-of-bounds frame, invalid arc or conflicting workstream all refuse writes; gameplay behavior unchanged except explicitly edited test profile.
+- Current measured state: Read-only probe comes from the preceding slice; F2 melee extraction remains a separate owner and its current state must be re-audited before writes.
+- Evidence: Main@ebfe3810eec146d7202a4378324b0f32c9e12fee; MeleeAttackProfile at custodian/game/systems/combat/melee_attack_profile.gd exports range_px, arc_degrees, windup_sec, active_sec, recovery_sec, presentation_action and hit_window_frames. OperatorWeaponDefinition references those resources. MeleeTargetResolver owns acquisition/drive reach. Existing Operator Animation Workbench owns canonical sprite and timing publication. The chassis/F2 extraction is not declared complete in CURRENT_STATE.md. A per-frame polygon authoring runtime is not established by this audit; don't fabricate it.
+- Task-specific authority: design/04_architecture/VISUAL_HITBOX_AUTHORING_LIBRARY_V1.md; design/02_features/animation/OPERATOR_ANIMATION_WORKBENCH.md; design/02_features/animation/WEAPON_OWNED_ANIMATION_SYSTEM.md.
+- Work surface: Existing visual_hitbox_lab service and planned custodian/addons/custodian_visual_hitbox_lab/ editor dock; the selected MeleeAttackProfile .tres, never Operator canonical art.
+- Publication inputs: `design/04_architecture/VISUAL_HITBOX_AUTHORING_LIBRARY_V1.md`
+- Change: Add Godot editor controls for reach/arc and frame-window markers, preview-and-diff, undo/redo, readonly/armed modes, exact hash+mtime conflict refusal, and save of only whitelisted profile keys. Enforce direction-specific warnings without silently creating shape data. Check any F2 ownership/claim conflicts before work.
+- Preserve: One combat authority; the active F2/F3/F5/F6 migration, passive MeleeTargetResolver, existing .tres profile references, per-frame sidecars, exact operator identity, existing Workbench publication and independent review gates. No parallel operator.gd hitbox logic.
+- Non-goals: Do not implement polygon-based melee damage, edit canonical art, change weapon balance automatically, regenerate Operator frames, or treat the overlay as a new collision source. A future true per-frame polygon gameplay system requires its own design and acceptance, only if a real encounter proves the current arc/range model insufficient.
+- Acceptance: A 3-frame hit-window edit round-trips in one profile with nothing else changed; undo/redo returns exact prior values; stale source/ref, out-of-bounds frame, invalid arc or conflicting workstream all refuse writes; gameplay behavior unchanged except explicitly edited test profile.
+- Validation: custodian/tools/validation/operator_unarmed_fast_chain_smoke.gd; custodian/tools/validation/operator_sword_cleaver_smoke.gd; new editor transaction regression and conflict fixtures; changed-file validation.
+- Task overrides: `none`
+- Deferred: No broad rebalancing, no automatic profile migration and no true polygon combat.
+
+## Promotion and dependencies
+- Refresh required: after the prior paired review archives PASS, re-audit main, claims, touched paths, live consumers and documentation drift before promoting this intentionally parked draft/manual pair. Recheck any changed F2/Alpine/Asset V2 ownership and human visual gates.
+- Existing input identity and technical authority are published in design/04_architecture/VISUAL_HITBOX_AUTHORING_LIBRARY_V1.md; no external tool, ZIP, fixture or asset is available exclusively in chat.
+- Independent paired review: review-visual-hitbox-lab-profile-editing-v1 in a fresh context after implementation lands; do not self-record review PASS.
+- Next workstream: visual-hitbox-lab-validation-v1.
+- Authoring chat: not-recorded; replace with the exact URL if supplied before durable completion summaries.

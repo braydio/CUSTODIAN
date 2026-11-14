@@ -1,0 +1,38 @@
+# REVIEW | WEATHER V2: ATMOSPHERIC PRESENTATION EXPANSION | DEEP WEATHER RENDERING AND WIND COHERENCE
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `review-weather-v2-layered-precipitation-v1`
+- Category: `assets-art`
+- Kind: `review`
+- Status: `draft`
+- Dispatch: `manual`
+- Priority: `P1`
+- Depends on: `weather-v2-layered-precipitation-v1`
+- Locks: `none`
+- Review: `none`
+- Review target workstream: `weather-v2-layered-precipitation-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/WEATHER_V2_LAYERED_PRECIPITATION_V1.md`
+- Reviewed main: `ebfe3810eec146d7202a4378324b0f32c9e12fee`
+- Authoring chat: `not-recorded`
+- Visual review: `conditional`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture, runtime`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Goal: Independently falsify implementation acceptance for weather-v2-layered-precipitation-v1 on landed main and documented evidence; no review self-certification.
+- Publication inputs: `design/02_features/environment/WEATHER_PRESENTATION_V2_ROADMAP.md`
+- Reviewed implementation acceptance: At a fixed seed/time/camera, V2 render is reproducible with distinct far/mid/near signatures; moving camera does not drag the weather screen grid; near combat zone remains readable, UI ungraded, indoor suppression preserved, no extra fullscreen pass or per-tile weather materials.
+- Review evidence: Archive target custodian/docs/ai_context/task_packets/archived/WEATHER_V2_LAYERED_PRECIPITATION_V1.md, landed diff, source/probe identities, focused run logs, and corresponding design/02_features/environment/WEATHER_PRESENTATION_V2_ROADMAP.md.
+- Correction threshold: Material geometry, deterministic regression, source/authority confusion, incomplete validation, memory/budget failure or non-visual claims contradicted by runtime require findings IDs R0-NN and bounded correction/re-review; subjective presentation goes to human review.
+- Focused validation: custodian/tools/validation/world_environment_smoke.gd; custodian/tools/validation/world_atmosphere_smoke.gd; new layered shader uniform/region/camera regression and frame-cost measurements; changed-file validation.
+- Review focus: Fullscreen layer ownership, pixel quantization, shader budget, no brightness washout or double precipitation, weather visibility under zoom and indoor exposure.
+- Acceptance: Record findings-first PASS/FAIL with source SHA, negative controls, exact tested outputs and remaining human gates. Review cannot edit production implementation; findings require a correction packet preserving the original workstream sequence.
+- Non-goals: No new feature, no art promotion, no source code fixes during review.
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+
+## Handoff
+- Refresh required: predecessor PASS/main audit and any human-owned decisions before this pair can be promoted or dispatched.
+- Next workstream: weather-v2-surface-events-v1.
+- Next packet state: dependency-gated.
+- Authoring chat: not-recorded.
+- Blockers: No additional human aesthetics required for technical acceptance; respect conditional review triggers.

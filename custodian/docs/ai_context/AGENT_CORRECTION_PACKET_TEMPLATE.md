@@ -1,30 +1,35 @@
 # AGENT CORRECTION PACKET TEMPLATE
 
-Use this V2 delta packet only for correction-worthy findings from an
-independent post-land review. Pair it with a review packet using
-`AGENT_REVIEW_PACKET_TEMPLATE.md`. Keep the correction narrower than the
-parent implementation slice and cite the exact stable review finding IDs.
+> Retired paired review: use this V2 delta packet only for a confirmed
+> defect or proof gap found by focused validation or by the owner. Do not
+> pair it with a review packet — paired review was retired 2026-11-12.
+> Keep the correction narrower than the parent implementation slice and
+> cite the exact defect/evidence it fixes.
+
+Use the exact parent implementation category in `- Category:` after Workstream.
+Read `TASK_PACKET_CATEGORIES.json` and check this header before publication.
 
 # CORRECTION: [PARENT IMPLEMENTATION / REVIEW]
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `<parent-id>-review-corrections-<cycle>`
+- Category: `<choose-id-from-TASK_PACKET_CATEGORIES.json>`
 - Status: `draft`
 - Dispatch: `auto`
 - Priority: `<P0 | P1 | P2 | P3>`
-- Depends on: `<parent-review-workstream>`
+- Depends on: `<parent implementation workstream>`
 - Locks: `<relevant locks or none>`
 - Kind: `correction`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `<focused modes>`
-- Paired review workstream: `review-<parent-id>-review-corrections-<cycle>`
-- Review cycle: `<positive cycle number>`
-- Max automatic review cycles: `<inherited cap>`
-- Reviewed main: `<SHA where this correction contract was verified>`
+- Review modes: `none`
+- Paired review workstream: `none`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Reviewed main: `<full 40-character immutable main commit SHA>`
 - Parent implementation: `<implementation workstream and canonical archived packet path>`
-- Parent review: `<review workstream and canonical archived packet path>`
-- Findings addressed: `<full IDs, for example R0-02, R0-04>`
+- Parent review: `none (paired review retired 2026-11-12)`
+- Findings addressed: `<defect/evidence IDs, for example R0-02, R0-04, or none>`
 - Affected acceptance: `<exact original acceptance claim(s) affected>`
 - Current defect/evidence: `<confirmed defect or proof gap, with source evidence>`
 - Goal: `<specific corrected outcome>`
@@ -46,12 +51,9 @@ parent implementation slice and cite the exact stable review finding IDs.
 - Address only the listed finding IDs. Do not reopen accepted parent scope or
   redesign the feature.
 - Each acceptance item maps to one or more `Findings addressed` IDs.
-- Keep the original review receipt and IDs stable. The paired re-review reports
-  each addressed finding as `fixed`, `unresolved`, or `regressed`; genuinely
-  new findings use the current review cycle's next ID.
-- If the maximum automatic review cycle is exhausted with correction findings
-  still unresolved, stop the loop with `human_required` and name the exact
-  decision or missing evidence.
+- If a correction still leaves findings unresolved, stop with a human decision
+  and name the exact decision or missing evidence. There is no automatic
+  re-review cycle.
 
 ## Execution Feedback
 

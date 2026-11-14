@@ -2098,6 +2098,36 @@ async def publish_refresh_coalescing_smoke() -> None:
     print("PASS PUBLISH COALESCING: F5 defers during mutation and runs exactly one post-mutation refresh")
 
 
+async def sync_status_refresh_smoke() -> None:
+    from ui.app import OperatorWorkbenchApp
+    from ui.widgets.status_bar import WorkbenchStatusBar
+
+    class SyncService(PilotService):
+        busy = True
+
+        @staticmethod
+        def startup_sync_status():
+            return "coordination-main: SYNC BUSY"
+
+        def live_sync_status(self):
+            tail = " · sync lock held by another process" if self.busy else ""
+            return f"coordination-main: CURRENT · operator-art: CURRENT{tail} · checked 00:00:00"
+
+    service = SyncService()
+    app = OperatorWorkbenchApp(service=service, startup=service.selection)
+    async with app.run_test(size=(140, 40)) as pilot:
+        await pilot.pause(0.5)
+        bar = lambda: str(app.main_screen.query_one("#workbench-status", WorkbenchStatusBar).render())
+        # The launch-time SYNC BUSY snapshot is replaced by the live read on mount.
+        assert "SYNC BUSY" not in bar() and "sync lock held by another process" in bar(), bar()
+        # Releasing the lock clears the label on the next refresh (key or timer).
+        service.busy = False
+        await pilot.press("shift+r")
+        await pilot.pause(0.5)
+        assert "lock held" not in bar() and "operator-art: CURRENT" in bar(), bar()
+    print("PASS SYNC STATUS REFRESH: launch snapshot replaced by live status; shift+r clears a released lock")
+
+
 async def stale_error_smoke() -> None:
     from ui.app import OperatorWorkbenchApp
     from ui.dialogs import ErrorDialog
@@ -2184,10 +2214,30 @@ def real_repo_read_only() -> None:
                     or "workbench/operator-art" in pending_view.publish_block_reason)
 
 
+def new_workbench_projection_smoke() -> None:
+    with tempfile.TemporaryDirectory(prefix="operator_ui_new_workbench_") as raw:
+        service, _backend = fixture_service(Path(raw))
+        assert not [row for row in service.discover_browser_records() if row.completeness == "NEW"]
+        selection = AnimationSelection("ranged_2h", "posture", "relaxed_01", "se")
+        workspace = service.workspace(selection)
+        workspace.mkdir(parents=True)
+        layer = lambda name: {"role": "editable", "layer": name, "source_contract": {"operation": "CREATE"}}
+        (workspace / "workbench.json").write_text(json.dumps({
+            "identity": {"profile": "ranged_2h", "group": "posture", "action": "relaxed_01", "direction": "se"},
+            "creation": {"art_generation": "legacy_96"}, "timeline": {"frames": 5},
+            "layers": [layer("lower_body"), layer("upper_body")]}))
+        (workspace / "workbench.aseprite").write_bytes(b"")
+        rows = [row for row in service.discover_browser_records() if row.completeness == "NEW"]
+        assert [(row.selection, row.frames, row.layers) for row in rows] == [(selection, 5, ("lower_body", "upper_body"))]
+        assert "NEW" in rows[0].summary and "5f" in rows[0].summary
+    print("PASS NEW WORKBENCH: created-but-unpublished workbench sessions are listed")
+
+
 def main() -> None:
     pure_service_smoke()
     browser_projection_contract_smoke()
     reachability_projection_smoke()
+    new_workbench_projection_smoke()
     try:
         import textual  # noqa: F401
         import textual_image  # noqa: F401
@@ -2203,6 +2253,7 @@ def main() -> None:
         asyncio.run(fast_chain_refresh_smoke())
         asyncio.run(publish_refresh_coalescing_smoke())
         asyncio.run(stale_error_smoke())
+        asyncio.run(sync_status_refresh_smoke())
         asyncio.run(textual_smoke())
     real_repo_read_only()
     print("PASS operator_workbench_ui_smoke: service projections, dry-run safety, real discovery, optional Textual pilot")

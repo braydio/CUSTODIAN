@@ -173,6 +173,45 @@ class SheetConversionRequest:
     crisp_colors: int | None = None
 
 
+MAX_SOURCE_PIXELS = 32_000_000
+MAX_PREPARATION_PIXELS = 16_000_000
+
+
+def resize_shared_sheet_frames(
+    prepared_frames: list[Image.Image],
+    target_size: tuple[int, int],
+    *,
+    resample: str,
+    alpha_mode: str,
+    alpha_cutoff: int = 16,
+) -> list[Image.Image]:
+    """Resize frames under one already-approved shared geometry and policy."""
+    if not prepared_frames:
+        raise ValueError("at least one prepared frame is required")
+    if alpha_mode not in {"binary", "preserve", "opaque"}:
+        raise ValueError(f"unsupported shared-sheet alpha mode: {alpha_mode}")
+    if alpha_mode == "binary":
+        filter_id = choose_resample(resample)
+        return [clamp_alpha_binary(frame.resize(target_size, filter_id), alpha_cutoff)
+                for frame in prepared_frames]
+    filter_id = choose_resample(resample)
+    results: list[Image.Image] = []
+    for frame in prepared_frames:
+        resized = frame.convert("RGBA").resize(target_size, filter_id)
+        if alpha_mode == "opaque":
+            if resized.getchannel("A").getextrema() != (255, 255):
+                raise ValueError("opaque policy produced non-opaque output")
+        else:
+            pixels = resized.load()
+            for y in range(resized.height):
+                for x in range(resized.width):
+                    red, green, blue, alpha = pixels[x, y]
+                    if alpha == 0 and (red or green or blue):
+                        pixels[x, y] = (0, 0, 0, 0)
+        results.append(resized)
+    return results
+
+
 # =============================================================================
 # Parsing helpers
 # =============================================================================
@@ -1830,6 +1869,10 @@ def main() -> int:
 
     try:
         with Image.open(source_path) as opened:
+            if opened.width <= 0 or opened.height <= 0:
+                raise SystemExit("Source dimensions must be positive")
+            if opened.width * opened.height > MAX_SOURCE_PIXELS:
+                raise SystemExit(f"Source exceeds the {MAX_SOURCE_PIXELS}-pixel limit")
             source = opened.convert("RGBA")
     except (OSError, ValueError) as exc:
         raise SystemExit(f"Could not read source image: {exc}") from exc
@@ -1841,6 +1884,12 @@ def main() -> int:
         or args.grid is not None
         or args.source_cell is not None
     )
+    if args.normalization_plan and not sheet_mode:
+        raise SystemExit("--normalization-plan is only supported for sheet input; refusing to ignore it")
+    if args.expected_normalization_plan_sha256 and not args.normalization_plan:
+        raise SystemExit("--expected-normalization-plan-sha256 requires --normalization-plan")
+    if source.getchannel("A").getbbox() is None:
+        raise SystemExit("Source image has no visible alpha content")
 
     inferred_size = infer_target_size_from_name(source_path)
     target_size = args.size or inferred_size or (96, 96)
@@ -1852,6 +1901,10 @@ def main() -> int:
         if args.source_canvas is not None
         else automatic_source_canvas(target_size, baseline=args.canvas_baseline)
     )
+    if source_canvas[0] <= 0 or source_canvas[1] <= 0:
+        raise SystemExit("Preparation canvas dimensions must be positive")
+    if source_canvas[0] * source_canvas[1] > MAX_PREPARATION_PIXELS:
+        raise SystemExit(f"Preparation canvas exceeds the {MAX_PREPARATION_PIXELS}-pixel limit")
 
     if args.margin is not None:
         if args.margin < 0:
@@ -1904,6 +1957,8 @@ def main() -> int:
         if args.output
         else default_output(source_path, target_size, sheet_mode)
     )
+    if output_path == source_path:
+        raise SystemExit("Source and output resolve to the same file; refusing to overwrite the source")
     if output_path.exists() and not args.force:
         raise SystemExit(
             f"Output already exists: {output_path}\nPass --force to replace it."
@@ -1929,6 +1984,12 @@ def main() -> int:
             args.grid,
             args.source_cell,
         )
+        preparation_pixels = source_canvas[0] * source_canvas[1] * geometry.frame_count
+        if preparation_pixels > MAX_PREPARATION_PIXELS:
+            raise SystemExit(
+                f"Sheet preparation needs {preparation_pixels} frame-pixels; "
+                f"maximum is {MAX_PREPARATION_PIXELS}"
+            )
         source_frames = split_sheet_frames(source, geometry)
         if args.edge_cleanup:
             source_frames = [

@@ -7,6 +7,7 @@ const GRUNT_ANIMATION_LIBRARY := preload(
 )
 const GENERATED_CAMP_GROUP := &"generated_procgen_ambient_camp"
 const CAMP_CREATED_META := &"ambient_enemy_camp_created"
+const ACTIVE_ENEMY_GROUP := &"ambient_enemy_cap_tracked"
 
 @export var enemy_scene: PackedScene
 @export var enemy_scenes: Array[PackedScene] = []
@@ -71,23 +72,25 @@ func _spawn_queued_enemy(request: Dictionary) -> void:
 	var scene := request.get("scene") as PackedScene
 	var parent := request.get("parent") as Node
 	if scene == null or parent == null or not is_instance_valid(parent):
+		_complete_spawn_request(request, null)
 		return
 	var requested_position := request.get("spawn_position", Vector2.ZERO) as Vector2
 	var spawn_position := resolve_runtime_walkable_spawn(requested_position, 4)
 	if spawn_position == Vector2.INF:
 		_obs_increment("ambient_enemy_spawn_rejected_unwalkable")
+		_complete_spawn_request(request, null)
 		return
 	if spawn_position.distance_squared_to(requested_position) > 1.0:
 		_obs_increment("ambient_enemy_spawn_projected")
 	var enemy := scene.instantiate() as Node2D
 	if enemy == null or not parent is Node2D:
+		_complete_spawn_request(request, null)
 		return
 	enemy.position = (parent as Node2D).to_local(spawn_position)
 	enemy.set_meta("stable_spawn_ordinal", int(request.get("spawn_ordinal", 0)))
+	enemy.add_to_group(ACTIVE_ENEMY_GROUP)
 	parent.add_child(enemy)
-	var completion := request.get("completion") as Callable
-	if completion.is_valid():
-		completion.call(enemy)
+	_complete_spawn_request(request, enemy)
 	var elapsed := Time.get_ticks_usec() - started
 	_last_spawn_usec = elapsed
 	_spawned_count += 1
@@ -292,7 +295,13 @@ func _marker_has_generated_camp(marker: Node) -> bool:
 
 func get_active_enemy_count() -> int:
 	var total := 0
-	for camp in get_tree().get_nodes_in_group("ambient_enemy_camp"):
-		if camp.has_method("get_active_enemy_count"):
-			total += int(camp.call("get_active_enemy_count"))
+	for enemy in get_tree().get_nodes_in_group(ACTIVE_ENEMY_GROUP):
+		if is_instance_valid(enemy) and not enemy.is_queued_for_deletion():
+			total += 1
 	return total
+
+
+func _complete_spawn_request(request: Dictionary, enemy: Node2D) -> void:
+	var completion := request.get("completion") as Callable
+	if completion.is_valid():
+		completion.call(enemy)

@@ -28,15 +28,24 @@ func insert_special_rooms(context: Dictionary) -> Array[Dictionary]:
 	var inserted: Array[Dictionary] = []
 	var occupied_rects: Array[Rect2i] = []
 	var blocked_lookup := _build_blocked_lookup(level_data)
+	var main_component: Dictionary = {}
 	for definition in definitions:
 		if inserted.size() >= max_rooms:
 			break
 		if not _definition_is_eligible(definition):
 			continue
+		if bool(definition.get("require_main_playable_component", false)):
+			if not map_instance.has_method("get_main_playable_component"):
+				continue
+			if main_component.is_empty():
+				main_component = map_instance.call("get_main_playable_component")
+			if main_component.is_empty():
+				continue
 		var instances := maxi(1, int(definition.get("max_instances_per_run", 1)))
 		for instance_index in range(instances):
 			if inserted.size() >= max_rooms:
 				break
+			var instance_seed := seed + instance_index * 101
 			var center := _pick_room_center(
 				map_instance,
 				definition,
@@ -44,11 +53,13 @@ func insert_special_rooms(context: Dictionary) -> Array[Dictionary]:
 				blocked_lookup,
 				occupied_rects,
 				map_size,
-				seed + instance_index * 101
+				instance_seed,
+				main_component if bool(definition.get("require_main_playable_component", false)) else {},
+				maxi(0, int(definition.get("clearance_tiles", 2)))
 			)
 			if center == Vector2i(-999999, -999999):
 				continue
-			var site := _instantiate_room(map_instance, parent, definition, center)
+			var site := _instantiate_room(map_instance, parent, definition, center, instance_seed)
 			if site.is_empty():
 				continue
 			inserted.append(site)
@@ -95,7 +106,10 @@ func _definition_is_eligible(definition: Dictionary) -> bool:
 
 func _build_blocked_lookup(level_data: Dictionary) -> Dictionary:
 	var blocked := {}
-	for key in ["wall_cells", "main_route_cells", "compound_ingress", "parking_zone_tiles", "main_road_tiles"]:
+	for key in ["main_route_cells", "compound_ingress", "parking_zone_tiles", "main_road_tiles"]:
+		for cell in _normalize_cell_array(level_data.get(key, [])):
+			blocked[cell] = true
+	for key in ["objective_cells", "required_objective_cells", "escape_cells", "required_escape_cells"]:
 		for cell in _normalize_cell_array(level_data.get(key, [])):
 			blocked[cell] = true
 	var region_tiles: Dictionary = level_data.get("region_tiles", {})
@@ -127,7 +141,9 @@ func _pick_room_center(
 	blocked_lookup: Dictionary,
 	occupied_rects: Array[Rect2i],
 	map_size: Vector2i,
-	seed: int
+	seed: int,
+	main_component: Dictionary = {},
+	clearance_tiles: int = 2
 ) -> Vector2i:
 	var size_tiles := _definition_size_tiles(definition)
 	var spawn_tile := Vector2i.ZERO
@@ -140,7 +156,10 @@ func _pick_room_center(
 	for cell in floor_cells:
 		if cell.distance_squared_to(spawn_tile) < min_spawn_distance_sq:
 			continue
-		if not _candidate_rect_is_clear(map_instance, cell, size_tiles, blocked_lookup, occupied_rects, map_size):
+		if not _candidate_rect_is_clear(
+			map_instance, cell, size_tiles, blocked_lookup, occupied_rects,
+			map_size, main_component, clearance_tiles
+		):
 			continue
 		candidates.append(cell)
 
@@ -164,17 +183,24 @@ func _candidate_rect_is_clear(
 	size_tiles: Vector2i,
 	blocked_lookup: Dictionary,
 	occupied_rects: Array[Rect2i],
-	map_size: Vector2i
+	map_size: Vector2i,
+	main_component: Dictionary = {},
+	clearance_tiles: int = 2
 ) -> bool:
 	var rect := _centered_rect(center, size_tiles)
-	var padded := rect.grow(2)
+	var padded := rect.grow(clearance_tiles)
 	if padded.position.x < 2 or padded.position.y < 2 or padded.end.x >= map_size.x - 2 or padded.end.y >= map_size.y - 2:
 		return false
 	for occupied in occupied_rects:
 		if padded.intersects(occupied.grow(4)):
 			return false
-	if blocked_lookup.has(center):
-		return false
+	for x in range(padded.position.x, padded.end.x):
+		for y in range(padded.position.y, padded.end.y):
+			var tile := Vector2i(x, y)
+			if blocked_lookup.has(tile):
+				return false
+			if not main_component.is_empty() and rect.has_point(tile) and not main_component.has(tile):
+				return false
 	if map_instance.has_method("is_valid_spawn_cell") and not bool(map_instance.call("is_valid_spawn_cell", center)):
 		return false
 	return true
@@ -188,13 +214,31 @@ func _candidate_score(definition: Dictionary, cell: Vector2i, seed: int, spawn_t
 	return noise + distance_score
 
 
-func _instantiate_room(map_instance: Node, parent: Node, definition: Dictionary, center: Vector2i) -> Dictionary:
+func _instantiate_room(
+	map_instance: Node,
+	parent: Node,
+	definition: Dictionary,
+	center: Vector2i,
+	instance_seed: int
+) -> Dictionary:
 	var scene_path := String(definition.get("scene_path", ""))
 	var scene_resource := load(scene_path)
 	if not (scene_resource is PackedScene):
 		push_warning("[SpecialRoomRuntimeInserter] Scene is not a PackedScene: %s" % scene_path)
 		return {}
 	var size_tiles := _definition_size_tiles(definition)
+	var clearance_tiles := maxi(0, int(definition.get("clearance_tiles", 2)))
+	if not _candidate_rect_is_clear(
+		map_instance,
+		center,
+		size_tiles,
+		_build_blocked_lookup(map_instance.get_level_data() if map_instance.has_method("get_level_data") else {}),
+		[],
+		map_instance.procgen_node.map_size if "procgen_node" in map_instance else Vector2i.ZERO,
+		map_instance.call("get_main_playable_component") if bool(definition.get("require_main_playable_component", false)) else {},
+		clearance_tiles
+	):
+		return {}
 	var region_type := String(definition.get("id", "special_room"))
 	var claimed: Rect2i = map_instance.call(
 		"claim_procgen_floor_rect_for_authored_scene_tiles",
@@ -202,8 +246,10 @@ func _instantiate_room(map_instance: Node, parent: Node, definition: Dictionary,
 		size_tiles,
 		region_type,
 		"special_room",
-		1
+		clearance_tiles
 	)
+	if claimed.size != size_tiles:
+		return {}
 	var instance := (scene_resource as PackedScene).instantiate() as Node2D
 	if instance == null:
 		push_warning("[SpecialRoomRuntimeInserter] Special room scene root is not Node2D: %s" % scene_path)
@@ -214,6 +260,8 @@ func _instantiate_room(map_instance: Node, parent: Node, definition: Dictionary,
 	else:
 		instance.global_position = Vector2(center * 16)
 	instance.name = "SpecialRoom_%s" % String(definition.get("id", "room")).to_pascal_case()
+	if instance.has_method("configure_runtime"):
+		instance.call("configure_runtime", instance_seed)
 	var site := {
 		"id": String(definition.get("id", "special_room")),
 		"display_name": String(definition.get("display_name", definition.get("id", "special_room"))),

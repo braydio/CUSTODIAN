@@ -1,6 +1,6 @@
 # CARROW YARD — POST-INTERIORS PLANNING REFRESH V1
 
-**Status:** Current planning authority, 2026-10-15; no gameplay geometry or art approved by this document
+**Status:** Historical post-interiors planning baseline; **size-selection gate resolved by user** on 2026-10-17. See [Carrow Yard Interior Scale and Layout V2](CARROW_YARD_INTERIOR_SCALE_AND_LAYOUT_V2.md) for current size policy, remaining spatial-layout approval, and hybrid presentation decision.
 **Baseline:** `braydio/CUSTODIAN main@e4e50dfc370ae0476e01237159672353cf8bbe31`
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc3bfd-cf88-83ea-9156-be4e5c2851c0
 **World canon:** `design/03_world/locations/CARROW_YARD.md`

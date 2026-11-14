@@ -17,6 +17,7 @@ SPEC = importlib.util.spec_from_file_location("custodian_task_packet_contract_te
 tpc = importlib.util.module_from_spec(SPEC)
 sys.modules[SPEC.name] = tpc
 SPEC.loader.exec_module(tpc)
+ROOT = Path(__file__).resolve().parents[3]
 
 
 def legacy_packet(workstream_id: str, status: str = "ready", dispatch: str = "auto", extra: str = "") -> str:
@@ -112,11 +113,13 @@ class ParsePacketTests(unittest.TestCase):
         self.assertEqual(packet.dependencies, ("a-b", "c-d"))
         self.assertEqual(packet.locks, ("lock-one", "lock-two"))
 
-    def test_review_auto_requires_paired_review_workstream(self):
+    def test_review_auto_no_longer_requires_paired_review_workstream(self):
+        # Paired review retired 2026-11-12: an unpaired Review: auto packet
+        # is not a parse error, and pairing is advisory only.
         text = legacy_packet("needs-pair") + "- Review: `auto`\n"
         packet = tpc.parse_packet("p.md", text)
-        self.assertIsNotNone(packet.error)
-        self.assertIn("Paired review workstream", packet.error)
+        self.assertIsNone(packet.error)
+        self.assertEqual(tpc.validate_review_pairing([packet]), {})
 
 
 class QueueContractTests(unittest.TestCase):
@@ -258,6 +261,58 @@ class ReviewPairingTests(unittest.TestCase):
         errors = tpc.validate_review_pairing([review])
         self.assertIn("review-bad", errors)
         self.assertIn("TASK OVERRIDE", errors["review-bad"])
+
+
+class PublicationInputTests(unittest.TestCase):
+    def test_template_publication_inputs_example_matches_parser(self):
+        template = (ROOT / "custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md").read_text()
+        field = next(line for line in template.splitlines() if line.startswith("- Publication inputs:"))
+        parsed = tpc.parse_publication_inputs(field + "\n", "template")
+        self.assertEqual(
+            parsed,
+            {"custodian/path/to/input_a.py", "custodian/path/to/input_b.py"},
+        )
+
+    def test_paths_allow_one_period_after_only_the_final_backtick(self):
+        self.assertEqual(
+            tpc.parse_publication_inputs(
+                "- Publication inputs: `custodian/tools/a.py`; `custodian/tools/b.py`.\n",
+                "sample",
+            ),
+            {"custodian/tools/a.py", "custodian/tools/b.py"},
+        )
+        self.assertEqual(
+            tpc.parse_publication_inputs(
+                "- Publication inputs: `custodian/tools/a.py`; `custodian/tools/b.py`\n",
+                "sample",
+            ),
+            {"custodian/tools/a.py", "custodian/tools/b.py"},
+        )
+
+    def test_none_is_valid_but_none_with_period_is_not(self):
+        self.assertEqual(tpc.parse_publication_inputs("- Publication inputs: none\n", "sample"), set())
+        with self.assertRaises(tpc.TaskPacketContractError):
+            tpc.parse_publication_inputs("- Publication inputs: none.\n", "sample")
+
+    def test_missing_inputs_can_be_allowed_only_for_legacy_authoring(self):
+        self.assertEqual(
+            tpc.parse_publication_inputs("- Goal: old packet\n", "sample", allow_missing=True), set()
+        )
+        with self.assertRaises(tpc.TaskPacketContractError):
+            tpc.parse_publication_inputs("- Goal: old packet\n", "sample")
+
+    def test_paths_reject_period_elsewhere_prose_duplicates_and_traversal(self):
+        for malformed in (
+            "- Publication inputs: `a.py`.; `b.py`\n",
+            "- Publication inputs: `a.py`; prose\n",
+            "- Publication inputs: `a.py`; `b.py`. extra\n",
+            "- Publication inputs: `a.py`..\n",
+            "- Publication inputs: `a.py`; `a.py`\n",
+            "- Publication inputs: `../secret`\n",
+            "- Publication inputs: `safe.py`\n- Publication inputs: `other.py`\n",
+        ):
+            with self.subTest(malformed=malformed), self.assertRaises(tpc.TaskPacketContractError):
+                tpc.parse_publication_inputs(malformed, "sample")
 
 
 class ReviewCycleTests(unittest.TestCase):

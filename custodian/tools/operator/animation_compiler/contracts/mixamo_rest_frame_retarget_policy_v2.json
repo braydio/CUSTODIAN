@@ -1,0 +1,66 @@
+{
+  "schema": "custodian.operator_3d_retarget_policy.v2",
+  "policy_id": "mixamo_humanoid_neutral_reference_calibrated",
+  "version": "2.0",
+  "approval_state": "candidate_only",
+  "source_coordinate_space": "validated_armature_world_rotation",
+  "target_coordinate_space": "validated_armature_world_rotation",
+  "orientation_transfer": {
+    "formula": "Q_target_world(t) = Q_source_world(t) * inverse(Q_source_reference_world) * Q_target_rest_world",
+    "calibration": "per_mapped_bone_from_hash_validated_canonical_neutral_idle_reference_pose_and_target_rest_matrices",
+    "translation": "preserve_target_rest_bone_positions_except_in_place_hips_root_policy",
+    "scale": "never_transfer_bone_scale"
+  },
+  "calibrated_chains": {
+    "shoulder": [
+      "mixamorig:LeftShoulder",
+      "mixamorig:RightShoulder"
+    ],
+    "arm": [
+      "mixamorig:LeftArm",
+      "mixamorig:RightArm"
+    ],
+    "forearm": [
+      "mixamorig:LeftForeArm",
+      "mixamorig:RightForeArm"
+    ],
+    "hip": [
+      "mixamorig:Hips",
+      "mixamorig:LeftUpLeg",
+      "mixamorig:RightUpLeg"
+    ],
+    "thigh": [
+      "mixamorig:LeftUpLeg",
+      "mixamorig:RightUpLeg"
+    ],
+    "shin": [
+      "mixamorig:LeftLeg",
+      "mixamorig:RightLeg"
+    ],
+    "foot": [
+      "mixamorig:LeftFoot",
+      "mixamorig:RightFoot"
+    ]
+  },
+  "temporal_policy": "preserve_integer_source_frames_and_source_fps; linear interpolation only in candidate action",
+  "root_motion_policy": "extract_source_trajectory_metadata_and_remove_pose_root_translation",
+  "skeleton_compatibility": "require_exact_validated_source_and_target_skeleton_signatures",
+  "stance_policy": "preserve_each_side_and_source_asymmetry; report target_rest_proportion_residuals; no_symmetric_stance_offsets",
+  "leg_placement_solver": "source_thigh_head_relative_ankles_scaled_to_target_chain_length_two_bone_ik_with_source_landmark_contact_clearance",
+  "reference_pose": {
+    "source_filename": "Neutral Idle.fbx",
+    "source_sha256": "40fda03b9e87092978f31c0721a3de2ad686a35983d73386769a17029684e1a3",
+    "action": "Armature|mixamo.com|Layer0",
+    "frame": 1
+  },
+  "contact_clearance_policy": {
+    "source_contact_detection": "both_foot_and_toe_landmarks_stable_relative_to_hips_and_near_source_ground_between_adjacent_source_frames",
+    "maximum_landmark_speed_m_per_frame": 0.005,
+    "maximum_source_sole_height_above_ground_m": 0.04,
+    "weighted_sole_landmarks": "target mesh vertices with max(Foot,ToeBase) skin weight >= 0.35 and target-rest local z <= 0.012m",
+    "ground_plane_z_m": 0.0,
+    "minimum_clearance_m": 0.001,
+    "maximum_ankle_target_raise_m": 0.03,
+    "application": "contact_samples_only; recompute two-bone IK target; no mesh, root, foot-orientation, or non-contact pose edits"
+  }
+}

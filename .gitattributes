@@ -37,3 +37,5 @@
 *.xcf filter=lfs diff=lfs merge=lfs -text
 *.mp4 filter=lfs diff=lfs merge=lfs -text
 *.wasm filter=lfs diff=lfs merge=lfs -text
+
+custodian/asset_drop/source_work/meridian_civic/meridian_wall_3d_v1/*.meshy filter=lfs diff=lfs merge=lfs -text

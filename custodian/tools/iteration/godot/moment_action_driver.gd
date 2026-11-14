@@ -83,7 +83,12 @@ func perform(action: Dictionary, tick: int) -> Dictionary:
 				"data": action.get("data", {}),
 			})
 		"fixture_command":
-			_fixture_command(action, result)
+			await _fixture_command(action, result)
+			if result.has("response") and result.response is Dictionary:
+				var fixture_response := result.response as Dictionary
+				result.ok = bool(fixture_response.get("ok", result.ok))
+				if not result.ok:
+					result["error"] = str(fixture_response.get("error", "fixture command failed"))
 		"finish":
 			result["finish"] = true
 		_:
@@ -253,7 +258,7 @@ func _fixture_command(action: Dictionary, result: Dictionary) -> void:
 			"stop",
 			"unload_adjacent_west_chunk",
 		],
-		"alpine_plateau_edge": ["at_north", "at_east", "at_south", "at_west"],
+		"alpine_plateau_edge": ["at_north", "at_east", "at_south", "at_west", "displace_south_contact"],
 		"field_fabricator": [
 			"power_on",
 			"begin_fabrication",
@@ -276,7 +281,7 @@ func _fixture_command(action: Dictionary, result: Dictionary) -> void:
 		result["error"] = "fixture command is not registered: %s/%s" % [fixture_id, command]
 		return
 	if scene_root.has_method("moment_forge_fixture_command"):
-		var response: Variant = scene_root.call(
+		var response: Variant = await scene_root.call(
 			"moment_forge_fixture_command", command, action.get("args", {})
 		)
 		result["response"] = response

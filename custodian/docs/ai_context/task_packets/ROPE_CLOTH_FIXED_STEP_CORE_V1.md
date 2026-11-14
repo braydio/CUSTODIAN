@@ -1,0 +1,42 @@
+# ROPE & CLOTH MODULAR LIBRARY | DETERMINISTIC ROPE SOLVER AND RENDERING
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `rope-cloth-fixed-step-core-v1`
+- Category: `world-procgen`
+- Kind: `implementation`
+- Status: `ready`
+- Dispatch: `auto`
+- Authoring handoff: `auto`
+- Priority: `P1`
+- Depends on: `none`
+- Locks: `rope-cloth-core`
+- Review: `none`
+- Review stage: `post-land`
+- Review modes: `none`
+- Paired review workstream: `none`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
+- Reviewed main: `ebfe3810eec146d7202a4378324b0f32c9e12fee`
+- Authoring chat: `not-recorded`
+- Visual review: `conditional`
+- Goal: Provide a reusable, safe fixed-step rope instance that animates between anchors without gameplay collision.
+- Completion boundary: Identical profile+seed+step inputs produce identical coordinates; endpoints remain pinned, constraint stretch bounded, idle fallback on missing wind works, teleport/reset produces no impulse, no collision/nav nodes added and no asset files required.
+- Current measured state: Shared foliage wind exists, but no dedicated reusable rope/cloth simulator was found.
+- Evidence: Main@ebfe3810eec146d7202a4378324b0f32c9e12fee; Current repository has rope-bridge anchor art, a static banner/cloth asset family and shared procedural foliage wind, but GitHub search found no dedicated gameplay-ready rope/cloth solver or reusable 2D cloth instance module. WorldEnvironmentDirector exposes wind_speed_multiplier/gust_multiplier and indoor exposure; it does not provide physical chain constraints.
+- Task-specific authority: design/04_architecture/ROPE_CLOTH_MODULAR_LIBRARY_V1.md; design/02_features/environment/WORLD_ENVIRONMENT_BIOME_DAYNIGHT_WEATHER.md.
+- Work surface: New custodian/game/world/presentation/rope_cloth/ rope profile, fixed-step core, rope_visual_2d scene and focused synthetic smokes.
+- Publication inputs: `design/04_architecture/ROPE_CLOTH_MODULAR_LIBRARY_V1.md`
+- Change: Implement pinned-point deterministic rope solver, bounded integration/constraints, gravity/damping/seeded motion, rest/teleport reset and Line2D renderer. Expose opt-in calm/default weather-wind read-only hook. Keep simulations presentation-only, and add zero-length, pin loss, delta spike and offscreen tests.
+- Preserve: Current region geometry/bridge collision and navigation, authored layer order, deterministic gameplay clock, Asset V2 source ownership, indoor weather exposure, foliage shared-material count, object-scaling and screen pixel crispness.
+- Non-goals: Do not turn physics animation into actor collision, grapple forces, climbability, bridge structural failure, wind damage or Operator cape/rig motion. Those need separate gameplay owner and approved character-art contracts.
+- Acceptance: Identical profile+seed+step inputs produce identical coordinates; endpoints remain pinned, constraint stretch bounded, idle fallback on missing wind works, teleport/reset produces no impulse, no collision/nav nodes added and no asset files required.
+- Validation: custodian/tools/validation/world_environment_smoke.gd; new rope solver deterministic/failure smoke; changed-file validation.
+- Task overrides: `none`
+- Deferred: 2D cloth grid, presets/editor, world integration and textured Source V2 assets.
+
+## Promotion and dependencies
+- Refresh required: this newly authored draft/manual pair must pass the targeted authoring handoff action and publish verified ready/auto state before dispatch. The marker is opt-in and does not claim or execute Codex.
+- Existing input identity and technical authority are published in design/04_architecture/ROPE_CLOTH_MODULAR_LIBRARY_V1.md; no external tool, ZIP, fixture or asset is available exclusively in chat.
+- Independent paired review: review-rope-cloth-fixed-step-core-v1 in a fresh context after implementation lands; do not self-record review PASS.
+- Next workstream: rope-cloth-preset-workbench-v1.
+- Authoring chat: not-recorded; replace with the exact URL if supplied before durable completion summaries.

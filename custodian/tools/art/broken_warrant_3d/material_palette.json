@@ -1,0 +1,152 @@
+{
+  "schema": "custodian.broken_warrant.material_palette.v1",
+  "seed": 1701,
+  "materials": {
+    "armor_graphite": {
+      "hex": "#292D31",
+      "metallic": 0.62,
+      "roughness": 0.62,
+      "noise_scale": 5.0,
+      "micro_scale": 70.0,
+      "color_variation": 0.045,
+      "roughness_variation": 0.035,
+      "bump_strength": 0.035,
+      "bump_distance": 0.006,
+      "treatment": "Graphite steel with broad restrained tonal wear and fine low-amplitude surface breakup."
+    },
+    "mask_nearblack": {
+      "hex": "#0B0D11",
+      "metallic": 0.3,
+      "roughness": 0.53,
+      "noise_scale": 3.0,
+      "micro_scale": 45.0,
+      "color_variation": 0.035,
+      "roughness_variation": 0.025,
+      "bump_strength": 0.018,
+      "bump_distance": 0.004,
+      "treatment": "Near-black respirator and face hardware with smooth, subdued surface variation."
+    },
+    "metal_bronze": {
+      "hex": "#85623C",
+      "metallic": 0.78,
+      "roughness": 0.46,
+      "noise_scale": 4.5,
+      "micro_scale": 56.0,
+      "color_variation": 0.07,
+      "roughness_variation": 0.05,
+      "bump_strength": 0.03,
+      "bump_distance": 0.006,
+      "treatment": "Aged bronze and brass with restrained patina variation; geometry supplies hoops and relief."
+    },
+    "fabric_offwhite": {
+      "hex": "#D8CFC7",
+      "metallic": 0.0,
+      "roughness": 0.95,
+      "noise_scale": 1.5,
+      "micro_scale": 12.0,
+      "color_variation": 0.038,
+      "roughness_variation": 0.035,
+      "bump_strength": 0.008,
+      "bump_distance": 0.001,
+      "treatment": "Pale matte cloth with broad value folds and subtle object-space weave; opaque torn edges remain geometry."
+    },
+    "fabric_burgundy": {
+      "hex": "#66353B",
+      "metallic": 0.0,
+      "roughness": 0.93,
+      "noise_scale": 1.7,
+      "micro_scale": 14.0,
+      "color_variation": 0.045,
+      "roughness_variation": 0.04,
+      "bump_strength": 0.01,
+      "bump_distance": 0.0015,
+      "treatment": "Maroon lining and cloth panels with broad low-contrast folds and subtle object-space weave."
+    },
+    "fabric_charcoal": {
+      "hex": "#333136",
+      "metallic": 0.0,
+      "roughness": 0.92,
+      "noise_scale": 1.7,
+      "micro_scale": 14.0,
+      "color_variation": 0.045,
+      "roughness_variation": 0.04,
+      "bump_strength": 0.01,
+      "bump_distance": 0.0015,
+      "treatment": "Charcoal cloak cloth with restrained broad folds and subtle object-space weave."
+    },
+    "soft_underarmor": {
+      "hex": "#767077",
+      "metallic": 0.05,
+      "roughness": 0.87,
+      "noise_scale": 3.0,
+      "micro_scale": 48.0,
+      "color_variation": 0.05,
+      "roughness_variation": 0.035,
+      "bump_strength": 0.035,
+      "bump_distance": 0.006,
+      "treatment": "Muted gray flexible underarmor and sleeve fabric, separated in value from plates."
+    },
+    "leather_dark": {
+      "hex": "#41302A",
+      "metallic": 0.0,
+      "roughness": 0.82,
+      "noise_scale": 5.0,
+      "micro_scale": 30.0,
+      "color_variation": 0.065,
+      "roughness_variation": 0.05,
+      "bump_strength": 0.075,
+      "bump_distance": 0.01,
+      "treatment": "Dark worn leather for harnesses and pouches, with fine grain and no projected imagery."
+    },
+    "cable_ochre": {
+      "hex": "#B48936",
+      "metallic": 0.18,
+      "roughness": 0.52,
+      "noise_scale": 4.0,
+      "micro_scale": 52.0,
+      "color_variation": 0.045,
+      "roughness_variation": 0.03,
+      "bump_strength": 0.025,
+      "bump_distance": 0.004,
+      "treatment": "Solid ochre insulated cable surface; cable loop silhouette comes from geometry."
+    },
+    "emblem_ivory": {
+      "hex": "#E2D6CA",
+      "metallic": 0.0,
+      "roughness": 0.7,
+      "noise_scale": 3.0,
+      "micro_scale": 35.0,
+      "color_variation": 0.025,
+      "roughness_variation": 0.02,
+      "bump_strength": 0.015,
+      "bump_distance": 0.003,
+      "treatment": "Opaque ivory high-contrast geometric shoulder symbol."
+    },
+    "emission_amber": {
+      "hex": "#FF781B",
+      "metallic": 0.15,
+      "roughness": 0.3,
+      "noise_scale": 1.0,
+      "micro_scale": 1.0,
+      "color_variation": 0.0,
+      "roughness_variation": 0.0,
+      "bump_strength": 0.0,
+      "bump_distance": 0.0,
+      "emission_strength": 2.0,
+      "treatment": "Opaque amber energy surface with independent emissive Principled shader."
+    },
+    "emission_canister": {
+      "hex": "#F07323",
+      "metallic": 0.15,
+      "roughness": 0.3,
+      "noise_scale": 1.0,
+      "micro_scale": 1.0,
+      "color_variation": 0.0,
+      "roughness_variation": 0.0,
+      "bump_strength": 0.0,
+      "bump_distance": 0.0,
+      "emission_strength": 0.65,
+      "treatment": "Bounded copper-orange canister core, less luminous than visor and chest; opaque structural source."
+    }
+  }
+}

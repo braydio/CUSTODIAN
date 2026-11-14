@@ -1,7 +1,7 @@
 extends Node2D
 
 const REVIEW_POINTS := {
-	"creche": Vector2(0, -32),
+	"creche": Vector2(0, -96),
 	"ambulatory": Vector2(0, -864),
 	"attestation": Vector2(0, -1744),
 	"locker_reliquary": Vector2(704, -1984),

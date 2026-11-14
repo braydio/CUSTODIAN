@@ -55,12 +55,17 @@ def _tracked_project_paths(repository_root: Path, project_dir: Path) -> tuple[li
     except ValueError:
         return [], "Godot project is outside the Git repository"
     result = subprocess.run(
-        ["git", "-C", str(repository_root), "ls-files", "--", project_rel],
+        ["git", "-C", str(repository_root), "ls-files", "-v", "--", project_rel],
         capture_output=True, text=True, check=False,
     )
     if result.returncode:
         return [], result.stderr.strip() or "git ls-files failed"
-    return [line for line in result.stdout.splitlines() if line.endswith(".png.import")], None
+    # Sparse-omitted sidecars ("S" tag, skip-worktree) are intentionally absent
+    # from this checkout, so they are not inputs to the import either.
+    return [
+        line[2:] for line in result.stdout.splitlines()
+        if line[:1] != "S" and line.endswith(".png.import")
+    ], None
 
 
 def _referenced_sidecars(repository_root: Path, project_dir: Path, malformed: dict[str, tuple[str | None, str | None]]) -> set[str]:

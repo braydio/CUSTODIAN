@@ -4,13 +4,14 @@
 - Status: `blocked`
 - Dispatch: `manual`
 - Priority: `P1`
-- Depends on: `review-awakening-interactible-affordance-foundation-v1, review-awakening-interactible-affordance-asset-v2-contracts-v1, review-awakening-creche-console-sprite-reauthor-v1, review-awakening-interactible-clean-room-plates-v1`
+- Depends on: `awakening-interactible-affordance-foundation-v1, awakening-interactible-affordance-asset-v2-contracts-v1, awakening-creche-console-sprite-reauthor-v1, awakening-interactible-clean-room-plates-v1`
 - Locks: `awakening-interaction-presentation, awakening-interactible-asset-contracts`
 - Kind: `implementation`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, runtime, visual, asset-pipeline`
-- Paired review workstream: `review-awakening-interactible-console-port-presentation-v1`
+- Review modes: `none`
+- Paired review workstream: `none`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Reviewed main: `afb1f1c5f145fec42f9a3f5a492ab31d5ffc138d`
@@ -100,3 +101,6 @@
 ## Clean Undergate plate + prop cutover (2026-10-11)
 
 **User design decision:** Undergate machinery representing the actual Port Status Console must not be baked into `awakening_undergate_environment/underlay`. Consume reviewed clean 1536×1216 background from `awakening-interactible-clean-room-plates-v1` and separately published `awakening_interact_port/damaged_status_body` with accessories (actual verified states only). Replace the underlay+Port body **atomically**, never an empty status terminal. Mount at existing `zone06_undergate.port_status_plaque` gameplay marker (128,-4016), with presentation-only measured offsets. Preserve one `PortStatusPlaque` readout, existing `awakening_undergate_foreground` occlusion, lighting, ingress, status-only behavior, scene Sprite2D position (0,-4320) and all unrelated area imagery. Prove no machine remains in the background when dynamic Port props are disabled, and exactly one when enabled. This user-approved clean-plate rule **supersedes** former suggestions to rely on baked machinery, while remaining source/art-approval blocked until truly reviewed and ingested.
+
+## Crèche review exemption and Undergate ownership (2026-11-06)
+The two Crèche reviewer packets were withdrawn at the user's request, so this workstream now depends directly on the Crèche implementation IDs. **This Port workstream retains `Review: auto` and its own paired review.** The source-only clean-room packet is now Crèche-only; the separate 1536×1216 Undergate clean plate and damaged Port body must still be obtained and approved within the Port workstream before its blocked/manual art gate can be lifted. The Crèche floor/foreground filenames and hashes are not Port source inputs.

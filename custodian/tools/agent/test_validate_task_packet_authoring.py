@@ -103,6 +103,21 @@ class AuthoringPreflightTests(unittest.TestCase):
     def test_valid_pair_passes(self):
         self.assertEqual(self.validate(self.impl, self.rev), [])
 
+    def test_preflight_accepts_terminal_period_after_final_publication_path(self):
+        self.impl.write_text(
+            implementation()
+            + "- Publication inputs: `custodian/tools/a.py`; `custodian/tools/b.py`.\n"
+        )
+        self.assertEqual(self.validate(self.impl), [])
+
+    def test_preflight_rejects_malformed_publication_input_instead_of_ignoring_it(self):
+        self.impl.write_text(
+            implementation()
+            + "- Publication inputs: `custodian/tools/a.py`; prose\n"
+        )
+        findings = self.validate(self.impl)
+        self.assertTrue(any("Publication inputs" in finding for finding in findings))
+
     def test_cli_pass_surfaces_main_publication_instead_of_claiming(self):
         output = io.StringIO()
         with contextlib.redirect_stdout(output):
@@ -125,7 +140,7 @@ class AuthoringPreflightTests(unittest.TestCase):
         self.assertIn("task_packet_index.py --write", rendered)
         self.assertIn("origin/main, NOT your local checkout", rendered)
         self.assertIn("dispatch.py claim sample-work --agent <agent-id>", rendered)
-        self.assertIn("Do not claim the paired post-land review", rendered)
+        self.assertIn("V2 reads authenticated task identity", rendered)
         self.assertNotIn("PROMOTION REQUIRED", rendered)
 
     def test_preflight_handoff_draft_requires_design_authorization(self):
@@ -173,10 +188,10 @@ class AuthoringPreflightTests(unittest.TestCase):
         )
         self.assertEqual(self.validate(self.impl, self.rev), [])
 
-    def test_implementation_only_still_checks_its_existing_pair(self):
+    def test_implementation_only_does_not_gate_on_a_retired_pair(self):
+        # Paired review is retired and advisory: a broken archived-era reviewer must not block authoring.
         self.rev.write_text(review(include_target=False))
-        findings = self.validate(self.impl)
-        self.assertTrue(any("Review target workstream" in finding for finding in findings))
+        self.assertEqual(self.validate(self.impl), [])
 
 
 if __name__ == "__main__":

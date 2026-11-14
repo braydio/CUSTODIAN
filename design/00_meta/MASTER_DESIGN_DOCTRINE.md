@@ -56,6 +56,18 @@ infrastructure, and survival decisions must be visible and consequential.
 - Assaults and aftermath form a readable cycle of reconnaissance, escalation,
   defense, damage/recovery, and renewed stabilization.
 
+## Narrative and environmental storytelling
+
+- **Write a causal history before clues.** For each substantial location, define its original function, the people and institutions involved, a specific action or failure, its material cost, and what survives for the player to discover or change. Do not rely on a contradiction to stand in for an unwritten event.
+- Favor recognizable labor, maintenance, scarcity, adaptation, political decisions, ordinary lives, and physical consequences. Make each site's purpose and lived history distinct; not every ruin needs a continuity anomaly or a moral referendum.
+- Let architecture, stripped components, repairs, routes, wear, ecology, and human arrangements carry discovery. Readouts, testimony, and documents should add grounded information or change a decision, not merely claim that two records disagree.
+- **Do not default to incompatible logs, impossible timestamps, unexplained occupancy, dead machinery answering, or an authority system mysteriously recognizing the player.** Such devices are rare tools for an established, causally specified continuity event, not a repeatable site template.
+- Ambiguity must follow from a defined event and a deliberate limit on what its witnesses could know. Give comprehensible answers to local questions when earned. Preserve the actual reserved cosmological mysteries without reproducing their structure in every side encounter.
+- A discovery should change the player's understanding of someone, a place, or a practical choice. Avoid interchangeable “keep it running or shut it down” dilemmas and false binaries without identifiable costs and alternatives.
+- Preserve **functional distinction between institutions**. While Twin Solaria remains canonical, Crown-class reconstruction and adjudication of lost routes belong there; smaller sites should not duplicate that role when their own engineering, inhabitants, logistics, and local emergencies offer stronger stories.
+
+For content-generation details, see `design/03_world/PROCEDURAL_LORE_GENERATION.md` and `design/02_features/procgen/PROCEDURAL_ENVIRONMENTAL_STORYTELLING_V1.md`. These are authoring standards, not retroactive changes to locked lore, reserved mysteries, or runtime ownership.
+
 ## Spatial and visual doctrine
 
 - `design/02_features/procgen/PROCGEN_REGION_FRAME_PROFILES.md` separates local biome, permanent region-frame/border/underlay presentation, and Archive Resolve. The first generated starting region selects the locked `ALPINE_PLATEAU` frame from `ALPINE_PLATEAU_STARTING_REGION_VISUAL_LOCK.md`; future generated regions may select different frames without changing the local-biome or Archive Resolve authorities.

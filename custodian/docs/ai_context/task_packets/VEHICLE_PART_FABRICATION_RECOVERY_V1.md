@@ -5,16 +5,16 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `review-vehicle-diagnosis-knowledge-v1`
+- Depends on: `vehicle-diagnosis-knowledge-v1`
 - Locks: `vehicle-restoration-runtime, fabrication-runtime, vehicle-content, inventory-runtime`
 - Kind: `implementation`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, architecture, runtime`
-- Paired review workstream: `review-vehicle-part-fabrication-recovery-v1`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `cross-system recipe gating, persistent item output, atomic component consumption, and recovery-grade enforcement`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `78dee2c0fd939f5e245ca779a6095deb459739bd`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b`
 - Visual review: `none`
@@ -31,6 +31,12 @@
 - Validation: Add `vehicle_part_fabrication_recovery` manifest coverage. Re-run `vehicle_diagnosis_knowledge`, fabrication terminal command/clickable/readability tests affected by recipe state, `vehicle_wreck_restoration`, `vehicle_registry_contract`, lifecycle/exit checks, InventoryManager focused persistence tests if present, packet contracts, then changed-file closeout. Validation must include a synthetic/fixture R0 profile and synthetic R1/R2 definitions so the generic API is proven without stealing the production Scout correction's acceptance.
 - Task overrides: `none`
 - Deferred: Production Scout profile migration is the already-authored correction; R3 advanced-fabricator capability; R4 Archive/donor requirements; physical part props; final recipe balance.
+
+## Downstream contract handoff refresh (2026-10-28)
+
+This paragraph records current pre-implementation seams, **not** a replacement for the accepted V2 review or a new readiness gate. At `main@1917c8940d3d980b5ee58a73da8a2e57eec08bf4`, the live `VehicleDefinition` still requires a nonempty raw restoration `cost`; `FabPipeline` still owns ARRN-only recipe locking and has no generic vehicle knowledge gate; `InventoryManager` exposes single-item methods but no atomic multi-component consumption. These are V3 implementation tasks, not defects to fix by altering the already-reviewed wreck-restoration V1 or the separate production Scout correction.
+
+At **V3 claim**, consume the public `VehicleKnowledgeState` requirement-query surface that V2 actually landed and its accepted review verified; do not pin guessed method names or rebuild knowledge tracking in `FabPipeline` or terminal UI. Preserve ARRN and `ResourceLedger` owners, physical item output in `InventoryManager`, and the production Scout profile until V4C. Run new R0/R1/R2 focused fixtures and direct fabrication/InventoryManager regressions before one changed-file closeout. Historical Operator/source-strip administrative fixes and Scout Asset V2 artwork are separate work; they are not dependencies to add to V3.
 
 ## Required implementation shape
 

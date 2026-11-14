@@ -1,0 +1,32 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "hub_sepulcher_grave_evidence_art",
+  "kind": "world_prop",
+  "runtime": {
+    "domain": "sprites/environment/props/hub/sepulcher_grave",
+    "owner": "hub_sepulcher_grave_evidence_art"
+  },
+  "canvas": {
+    "width": 160,
+    "height": 96
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "memorial_slab": {
+      "required": true,
+      "layer": "body",
+      "action_group": "environment",
+      "variant": "memorial_slab",
+      "layout": "copy",
+      "frames": 1
+    }
+  },
+  "aliases": {},
+  "consumers": [
+    {
+      "type": "script",
+      "path": "res://game/world/hub/events/sepulcher_grave/sepulcher_grave_evidence.gd"
+    }
+  ]
+}

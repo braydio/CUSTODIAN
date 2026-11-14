@@ -1,45 +1,468 @@
 # Agent Workstream Lifecycle
 
+## Current coordination-root and summary ownership
+
+The persistent coordination checkout is permanently `main` and must not be
+switched to task branches, rebased, or used for task commits by any agent. V2
+claims create isolated temporary worktrees, and two safely eligible old
+worktrees must be retired before a new checkout is created under the
+project-wide 2:1 constraint. Never retire foreign or unique unfinished work.
+
+New summaries are committed at
+`custodian/docs/ai_context/agent_summaries/<workstream-id>/AGENT_SUMMARY.md`.
+Include `Agent: <actual agent>`, `Workstream:` and exact `Authoring chat:`
+provenance. The flat files within `agent_summaries/` are byte-identical
+historical `*_CLAUDE_SUMMARY.md` / `*_CODEX_SUMMARY.md` archives. Existing
+historical Git source-span tests that pin old root paths must stay pinned to
+the original revisions, not rewritten.
+
+
+
+## Turn-Scoped Dispatcher V2 execution model
+
+The canonical execution entrypoint is the V2 turn lifecycle implemented by
+`turn_dispatcher_v2.py`. `dispatch.py claim` and `claim-next` route to V2;
+`workstream.py start`, `resume`, and `checkpoint` route to the same lifecycle.
+Each acquisition creates a temporary checkout under
+`~/Projects/.custodian-turns` on the canonical `agent/<workstream>` branch.
+The checkout is removed only after a verified checkpoint and preservation
+inventory. A conflicting local branch, failed LFS verification, unresolved
+ignored data, or unsafe coordination repository preserves the checkout/ref and
+fails closed.
+
+V2 authenticates task identity and packet bytes against fetched `origin/main`.
+It ignores legacy `Status`, `Dispatch`, `Depends on`, administrative claim,
+session-lock, and dependency-chain fields for task selection. An explicit open
+`User design hold` or `User-owned design decision` still blocks acquisition.
+`claim-next` rotates across new and resumable packet identities with an optional
+advisory cursor; it is not the legacy Ready/Auto queue scheduler. The cursor is
+not a prerequisite for acquisition or resumption. A task is skipped as complete
+only when its durable packet completion state and task branch reachability from
+`origin/main` agree. Queue audit/status and packet-index tools remain
+diagnostics/editorial metadata and do not grant or deny V2 acquisition.
+`--agent` records caller attribution only; it is not authentication.
+
+Use `--mode normal` for current work, `--mode historical` to reuse a verified
+existing branch or start from current main when historical state is unavailable,
+and `--mode owner-authorized` only with an exact ChatGPT conversation URL and
+the SHA-256 of the owner instruction. That authorization is provenance; it does
+not authenticate the caller or imply review approval. `--checkout-profile` is
+optional and verifies its exact current-main paths and required LFS objects.
+
+The V2 checkpoint is a durable progress boundary. It does not complete a task,
+pass an independent review, approve a design, or land a feature. V2
+`workstream.py finish` consumes the durable V2 acquisition/checkpoint record,
+runs ordinary correctness checks, publishes and verifies the handoff, then
+retires the temporary checkout. It does not require the prior process/session,
+`RunTrace.resume`, a workstream mutex, or branch renaming, and it does not claim
+task completion. Standard GitHub CI and branch protection govern landing.
+Independent review remains available when requested or warranted for
+consequential work; it is not a universal finish prerequisite. A reviewer
+finding or `human_required` result cannot be converted to PASS by checkpointing.
+
+Ordinary V2 acquisition uses no administrative task locks. If a future
+operation must protect an exclusive non-Git resource, use a lease capped at two
+hours, renew only while active, and validate expiry and the fencing token on
+every protected operation. Expired holders cannot continue writing. Use
+non-forcing expected-parent Git updates for Git mutation.
+
+Examples from a stable coordination checkout:
+
+```bash
+python3 custodian/tools/agent/dispatch.py claim <workstream-id> --mode normal
+python3 custodian/tools/agent/dispatch.py claim <workstream-id> --mode historical
+python3 custodian/tools/agent/workstream.py start <workstream-id> --mode normal
+python3 custodian/tools/agent/workstream.py checkpoint <workstream-id> \
+  --repo <stable-coordination-checkout> --checkout <exact-turn-checkout>
+```
+
+Do not pass the retiring turn checkout as `--repo`. The stable coordination
+checkout must remain attached to the same Git common directory so private V2
+receipts survive turn retirement and retries.
+
+
+## Crèche-only pre-claim source publication (2026-11-06)
+
+A parked packet is **not** claimable and `workstream.py start` must not be used to bypass the dispatcher. In the bounded user-approved Crèche exception, publish the exact already-approved original input PNG bytes into *new* Git LFS source-work paths from a detached scratch checkout, using `asset_handoff_installer.py` in source-only mode, with a Git source receipt and an atomic status promotion for `awakening-interactible-clean-room-plates-v1`. This is **not implementation or a queued claim**. The operation is limited to the two new immutable files, one source receipt, that packet's metadata and the generated queue index. Do not touch the pre-existing canonical source masters, runtime assets, family contracts, console or other workstreams. After fast-forward-only main publication and explicit LFS verification, resume the normal `dispatch.py claim <workstream> --agent codex` flow. Exact command/abort contract: [CRECHE_PRECLAIM_SOURCE_PUBLICATION_V1.md](CRECHE_PRECLAIM_SOURCE_PUBLICATION_V1.md). No general pre-claim bypass is created for other projects.
+
 Normal implementation runs use an isolated ephemeral worktree. For queued
 packet work, prefer `dispatch.py claim-next --agent <agent-id>` (for example
 `--agent claude` or `--agent codex`), or use `dispatch.py claim <id> --agent
 <agent-id>` for explicit selection. Omitting `--agent` falls back to the
 `CUSTODIAN_AGENT_ID` environment variable, then a neutral `unspecified` —
-never a silently assumed agent brand. The dispatcher
-reads fetched `origin/main`, checks packet dependencies and locks, then
-delegates branch/worktree creation to `workstream.py` under a shared local
-assignment mutex and the remote unique-claim protocol. The mutex covers packet
-selection, remote temporary-claim CAS, canonical `agent/<id>` publication,
-post-start verification, temporary-claim release, and the durable last-claim
-receipt. Best-effort diagnostic publication happens only after the mutex is
-released. Direct `workstream.py start <id>` uses
-that exclusive protocol for manual/unpacketed starts and fails closed if the
-branch, claim, or checkout already exists. It never silently adopts existing
-state. Truly read-only reviews may stay in
-the coordination checkout; paired post-land reviews that commit durable
-artifacts use their own workstream worktree. If a worktree cannot be
-used, document the reason in the task record. The project-root checkout is not
-the default implementation surface.
+never a silently assumed agent brand. Older lock/dependency scheduler descriptions refer to the legacy dispatcher model. On current main, `dispatch.py claim` and `claim-next` route to V2 and do not use legacy `Depends on`, `Locks`, or queue-status fields as acquisition gates. The legacy audit may still classify a packet as `dependency_lock_blocked`; that is diagnostic only and does not determine V2 eligibility. Do not infer V2 eligibility from it. V2 authenticates the packet from fetched `origin/main` and applies its own explicit-design-hold, branch/source, checkout, storage, LFS, and provenance checks.
 
-## Planned crash-safe session recovery (NOT IMPLEMENTED)
+`workstream.py start`, `resume`, and `checkpoint` route through the V2 turn lifecycle on current main. Paired reviews use `paired_review_runner.py` and its separate review identity, ordering, evidence, and acceptance checks; a legacy queue audit does not replace or waive those checks. Truly read-only reviews may stay in the coordination checkout, while paired post-land reviews that commit durable artifacts use their supported review lifecycle. The project-root checkout is not the default implementation surface.
+
+## Supervised session observability (OR1; automatic parking remains unimplemented)
 
 Design authority: `custodian/docs/ai_context/AGENT_ORPHAN_RECOVERY_SUPERVISOR_V1.md`.
 Two dependency-gated packets (`agent-orphan-recovery-observability-v1`
 and `agent-orphan-recovery-fenced-parking-v1`), each with independent review,
-propose to distinguish the **execution lease** from the preserved
-`agent/<workstream>` Git branch. OR1 will add supervised Codex/review process
-identity and a **read-only** orphan inventory; OR2 will add exact-owner
+are intended to distinguish the **execution lease** from the preserved
+`agent/<workstream>` Git branch. OR1 adds supervised Codex process identity and
+a **read-only** orphan inventory. `session_supervisor.py run` requires the exact
+latest verified dispatcher claim, and `workstream_recovery.py audit` reads
+remote refs with `ls-remote` without fetching or updating local refs. The
+private Git-common-dir journal records process IDs with OS start ticks, boot
+and host identity, process-group observations, branch/worktree provenance, and
+pause/exit events; it never stores prompts or process output. A pause request
+is intent only. OR1 never releases claims or locks. OR2 owns exact-owner
 CAS-fenced `PARKED` recovery and optional **user-enabled** host-local
 `systemd --user` scanning. A confirmed exited session should release its
 execution lock only after its worktree/commits/untracked files and reviewer
 outcome are preserved. No existing remote ref/lock is currently governed by
 this proposal; the instructions below remain the live supported procedures.
 
-Until both slices pass review: `dispatch.py audit --json` is read-only,
+Until OR1 passes independent review and OR2 is implemented and accepted:
+`dispatch.py audit --json` is read-only,
 `workstream.py resume` requires a clean worktree, no automatic branch deletion
 is permitted, and `paired_review_runner.py post_exit_recovery` remains a
 protected manual-resolution state. Do not infer a dead session merely from
 elapsed time, or mark a findings-only review passed to release its lock.
+
+Launch only an explicitly requested Codex session after an exact dispatcher
+claim has been verified, from a checkout sharing the Git common directory:
+
+```bash
+python3 custodian/tools/agent/session_supervisor.py run <workstream-id> -- codex exec ...
+python3 custodian/tools/agent/workstream_recovery.py audit --json
+```
+
+The supervisor refuses a stale/mismatched receipt or branch. `audit` classifies
+supervised liveness, recoverable checkout evidence, unmanaged historical
+claims, and unresolved paired-review runs; every row includes evidence and a
+safe next action. It is observational only and does not fetch, release, park,
+resume, clean, or edit packet state. A live quiet process stays `LIVE`; PID
+reuse, foreign host, missing process visibility, or mismatched remote SHA stays
+ambiguous. A paired review in `post_exit_recovery` stays nonpassing.
+
+### Project-owner-authorized continuation of historical claims
+
+A missing OR1 supervisor journal is **not** proof that a historical claimed
+worktree is actively being edited, and `UNMANAGED_UNKNOWN` is a read-only
+diagnostic label, **not** an additional admission gate for
+`workstream.py resume`. The owner has authorized continuation of existing
+CUSTODIAN workstreams by new Codex sessions; preserve their original IDs,
+branches, claimed work and review provenance instead of starting duplicate
+claims or demanding a new recovery-packet chain.
+
+Before any mutating continuation, inspect current `origin`, the matching
+agent branch/worktree, `git status --porcelain --untracked-files=all`, and
+live writer/process evidence (including the working directories of unmanaged
+Codex sessions). A confirmed competing writer, incomplete process visibility
+affecting that checkout, foreign-host ambiguity, active review recovery state,
+dirty checkout, remote mismatch, or missing original claim requires targeted
+resolution, **not** speculative takeover. No supervisor journal by itself
+does not require that resolution. Do not equate an absent journal with
+confirmed process exit; verify at the time of action, then take the normal
+workstream mutex and allow the existing lifecycle to recheck its invariants.
+
+For an otherwise clean, non-coordination, already-claimed implementation
+checkout with no live conflicting writer and explicit project-owner
+authorization, attempt:
+
+```bash
+python3 custodian/tools/agent/workstream.py resume <existing-workstream-id>
+```
+
+If that refuses, report the *specific* lifecycle failure and resolve only
+that failure. This does not authorize deleting/parking branch or dispatch
+claims, forcibly removing worktrees, fabricating reviewer PASS, changing
+historically pinned validation source, or overwriting dirty/untracked art.
+For a blocked review run, continue via its exact paired-review recovery
+contract; normal implementation resume does not substitute for an independent
+review.
+
+Already-running Codex contexts do not automatically ingest GitHub file
+changes. On their next safe decision boundary, coordinators should fetch and
+read current `AGENTS.md` and this guide, then apply this clarification to
+the existing claim without resetting the checkout or interrupting a live
+write. Report actual synchronization rather than claiming instantaneous
+propagation.
+
+### Exact paired-review claim parking pilot
+
+`review_claim_parking.py` and the dispatch integration provide one bounded
+parking path for the exact unresolved review named in
+`AGENT_PAIRED_REVIEW_EXACT_CLAIM_PARKING_V1.md`. This pilot is not OR1/OR2 and
+does not authorize parking another workstream, run, branch, or lock.
+
+Parking appends a `PARKED` record at
+`refs/custodian/review-claim-parking/<workstream>`, parented to the pinned
+remote `agent/<workstream>` commit. It does not move that agent branch or edit
+the protected worktree or run evidence. A later `ACTIVE` record may be appended
+once to restore lock occupancy; the transition is one-time and cannot be
+parked again. The exact run, claim receipt, continuation evidence manifest,
+complete run inventory, remote branch SHA, local-only commit list, attached
+worktree state, and authorization scope are verified and bound into the record.
+
+Use `review_claim_parking.py plan --action park` for read-only inspection. A
+fresh apply requires the emitted plan digest, a complete local process scan with
+no matching owner, and explicit operator attestation for cross-host owner
+absence because the historical run has no recorded host/PID identity. A plan
+or attestation is not proof of the review's outcome; the review remains
+unresolved and cannot satisfy a review dependency.
+
+The dispatcher continues to report the parked review workstream as `claimed`,
+so it cannot receive a duplicate claim. It excludes that holder only from lock
+conflict calculations, and only while the exact remote branch and append-only
+parking record verify. Missing, malformed, stale, changed, or unsupported
+parking state retains the original conservative lock. Queue audit exposes
+`execution_lock_held`, `parking_state`, and the record SHA separately from
+`claimed`. Packet `ready/auto` describes packet readiness; a live lock conflict
+is reported as `dependency_lock_blocked` eligibility.
+
+Do not use this pilot to park another claim or to infer cross-host process
+absence. Full supervised process identity, generalized leases, automatic
+cleanup, and orphan recovery remain outside its authority.
+
+### Exact owner review exception
+
+`owner_review_exception.py plan` is read-only and pins the exact archived
+implementation packet/commit, active review packet bytes, preserved recovery
+run hashes, remote claim/branch refs, paired-review lock state, and dependent
+workstreams. It refuses stale `origin/main`. `apply` requires that plan's exact
+digest plus a structured approval receipt captured from the project owner's
+authenticated ChatGPT conversation; the record is written under
+`custodian/docs/ai_context/owner_review_exceptions/` and must land through the
+authorized workstream lifecycle. Do not invent or edit an approval receipt.
+
+The dispatcher consumes only a record whose review ID, implementation ID and
+commit, active/archived packet bytes, source URL, record digest, and main
+ancestry match. It reports `owner_accepted_with_review_exception` separately
+from reviewer truth. The record does not create a PASS, archive the review,
+release a live review lock, or clear unrelated claims. A remote branch or
+claim ref remains a separate blocker until the exact owner-authorized claim
+retirement is verified; local recovery worktrees and private run evidence are
+preserved. The decision remains pending until the owner-exception mechanism's
+own fresh paired review passes, then the audit reports it as active.
+
+### Bounded legacy execution reset quarantine
+
+`legacy_claim_quarantine.py` records the separate administrative disposition
+`legacy_quarantined` for exact stranded claims. This is not `complete`,
+`passed`, `released`, `PARKED`, canonical findings, or review acceptance. The
+original `dispatch-claims/<id>` and `agent/<id>` refs remain unchanged, the
+identity stays claimed to prevent duplicates, and quarantined reviews never
+satisfy dependencies.
+
+Before apply, make and verify an external snapshot of the exact refs, selected
+worktree contents (including ignored/untracked files and symlinks), workflow
+traces, and paired-review evidence. A single-target recovery should use the
+versioned workstream scope. It bundles the pinned main and exact target refs,
+archives only that worktree and its evidence, and includes only required LFS
+objects after verifying their OID and byte size. It estimates storage and
+reserves 1 GiB before writing. The verifier safely restores archives into a
+temporary directory and checks path, mode, symlink, content, bundle-ref, and
+LFS coverage. The historical unscoped V1 mode remains available for existing
+manifests; it includes the shared LFS object directory and should not be used
+when that broad copy is unnecessary.
+
+For a coordinated reset, use one batch plan
+so every permitted record lands in one atomic remote ref update:
+
+```bash
+python3 custodian/tools/agent/legacy_claim_quarantine.py snapshot \
+  --scope workstream --workstream <exact-id> \
+  --destination <empty-external-directory>
+python3 custodian/tools/agent/legacy_claim_quarantine.py verify-snapshot \
+  <external-directory>/manifest.json
+python3 custodian/tools/agent/legacy_claim_quarantine.py plan-batch \
+  --target <exact-id>=<claim-run-id> \
+  --target <another-exact-id>=<another-run-id> \
+  --snapshot-manifest <external-directory>/manifest.json \
+  --output <external-directory>/quarantine-plan.json
+python3 custodian/tools/agent/legacy_claim_quarantine.py apply-batch \
+  <external-directory>/quarantine-plan.json --plan-sha256 <printed-plan-digest>
+```
+
+The read-only plan binds remote and local refs, the recorded run/process and
+claim-commit identity, exact published worktree when present, full worktree and
+evidence inventories, reset generation, and backup checksum. Apply requires the
+exact emitted plan digest, rechecks the full plan under the local dispatcher
+mutex, and uses one atomic, non-forcing push that reasserts every existing
+original ref at its pinned SHA while publishing the quarantine records. If a
+matching local draft record already exists, apply reuses its exact commit; a
+mismatched local record or a record already present on the remote fails closed.
+Local ref changes use compare-and-swap, and an interrupted push can remove only
+refs created by that exact attempt. Any changed ref, worktree, backup,
+generation, or run identity invalidates the whole batch.
+
+The dispatcher releases execution-lock occupancy only when the same-host
+process identity recorded in the claim trace is verifiably absent and every
+pinned ref and backup digest still matches. An active or ambiguous process
+cannot be quarantined. Missing process identity or cross-host ambiguity records
+an unresolved quarantine while retaining the lock. Dispatch audit reports
+`legacy_quarantined`, claim identity, and execution-lock occupancy separately.
+Ordinary `workstream.py start`, `resume`, and `finish` refuse a quarantined
+identity; reactivation is outside this one-way reset. A changed branch or stale
+generation invalidates lock release and restores conservative occupancy.
+
+### Paired-review prelaunch host-validation recovery
+
+The paired-review runner supports a bounded continuation for a run stopped in
+`host_validation_recovery`, before any reviewer was launched. This is a
+same-claim recovery: it never dispatches a second claim and never edits the
+original failed report or run metadata. Start from a clean coordination checkout
+on `main` or detached exactly at cached `origin/main`, confirm the supervisor
+lock is not held, and inspect a read-only plan:
+
+```bash
+python3 custodian/tools/agent/paired_review_runner.py <review-workstream> \
+  --continue-run <exact-run-id> --recover-host-validation --plan
+```
+
+**Unrelated remote packet publication is a synchronization chore, not a review dependency.**
+Automated task-packet authoring/promotion can advance `origin/main` while this
+review remains pinned to an earlier commit. Do not change the pinned review SHA,
+reclaim the workstream, launch a second review, or demand a packet rewrite just
+because other task packets landed. Before reporting a stale-main plan as a
+recovery blocker, use the existing guarded persistent-checkout synchronizer
+from the coordination repository root:
+
+```bash
+python3 custodian/tools/agent/persistent_checkout_sync.py status root
+python3 custodian/tools/agent/persistent_checkout_sync.py apply root
+```
+
+This may fast-forward only an attached, behind-only coordination
+`main` with no tracked edits. **Unrelated untracked files, including a stray
+local ZIP, are preserved in place and do not block a fast-forward**; an
+incoming tracked path that collides with any such local file still blocks
+synchronization. The status report continues to show untracked paths and
+`clean=false` without equating them to tracked changes. Ahead, diverged,
+detached, tracked-dirty, colliding, and foreign checkouts remain protected.
+Never substitute reset, stash, force-push or manual worktree cleanup. If
+status/apply reports a genuine blocker, preserve the original run and report
+its exact reason. After a successful fast-forward,
+rerun the **read-only** recovery plan and obtain a fresh `plan_sha256` before
+any separately authorized apply. The pinned implementation SHA and protected
+claim/worktree must remain unchanged; source/provenance validation still runs.
+
+Source provenance keeps four identities separate: the implementation/archive
+receipt, any archive-first main-sync merge, a bounded source-bearing follow-up,
+and the final landing recorded by the lifecycle trace. A direct linear source
+tail after an archive requires one exact `main_sync(changed=false)` event whose
+head is the final trace tip and whose `main_sha` is the pinned reviewed main.
+After a sync merge, every earlier merge requires its unique ordered exact sync
+event. The latest merge may instead be bound by one exact no-op event at the
+final tip, but only when that event's `main_sha` is the latest merge's second
+parent and the intervening commits are a bounded linear source tail. In both
+shapes, the exact commits, parent topology, run/claim identity, and complete
+declared path/mode set are pinned; arbitrary descendants do not extend the
+reviewed source range. Source-work binaries remain governed by the archived
+packet's declared source-work path and matching tracked receipt/hash evidence;
+file suffix alone never grants admission.
+
+To prevent an unbound source follow-up from being created, both
+`workstream.py preflight` and `finish` check any active-to-archived packet
+transition. The archive transition must be the current branch tip before
+finish first pushes or synchronizes main. If a prior finish attempt stopped
+after synchronization, the guard accepts only the exact archive-first merge
+bound by that run's claim, published worktree, `main_sync`, and terminal
+`run_blocked` events. After a resolved sync merge, a bounded source-follow-up
+chain may contain multiple linear commits, each limited to modifications of
+declared regular files. Its final no-op sync witness may bind the exact
+descendant tip to the latest merge's second parent, recording post-conflict
+synchronization without claiming the merge itself was the final checkout head.
+If main advances again before landing, host source validation accepts
+archive-descending sync merges only when each merge has its own exact ordered
+trace witness and deterministic tree, or a narrowly verified additive managed
+index conflict resolution. Untraced merges, extra source changes, and
+out-of-surface paths remain blocked. Finish reports the exact blocking commit
+and path without pushing or landing the branch.
+
+One additional pre-sync transition is narrowly allowed: immediately after the
+canonical archive commit, one direct single-parent child may delete a legacy
+`*_CLAUDE_SUMMARY.md` path and add the exact workstream-derived canonical
+summary path. The archive packet must retain the same Git blob, both summary
+entries must be regular mode `100644` with identical blob IDs and bytes, and
+the rename commit may change no other path. `workstream.py` checks the producer
+history; paired-review host validation independently rechecks the commit,
+parent, tree, modes, blobs, and archived packet. The normal authenticated
+main-sync and after-sync validation gates still apply. This exception does not
+permit summary creation, copying, edits, a second rename, later summary-path
+changes, or arbitrary post-archive commits.
+
+One additional interrupted-merge shape is accepted only when Git reproduces a
+single conflict in `task_packets/README.md`'s managed Ready/Auto block for the
+exact packet archived by the first parent. The committed merge must match
+`git merge-tree --write-tree` everywhere else; its sole conflict hunk must be
+the generated row for that packet. The very next first-parent commit must remove
+only that hunk from the regular README, with all other tree entries unchanged.
+Later linear commits are checked individually and may touch only explicit
+Work-surface file paths, that archived packet, its expected root summary, or a
+managed-index-only README update. The final README must pass
+`task_packet_index.py`; any other conflict, delayed/altered repair, unrelated
+descendant, or stale generated block remains blocked. Bare Work-surface paths
+are recognized only as explicit path tokens, and traversal or absolute paths
+are rejected.
+
+One exact historical compatibility case binds the host-import recovery run
+`20261020T200652Z-2fd156ce23d0` to its two conflict interruptions and resume:
+`dbcf8aec4eb09264b60bea9d26c99f235022efb5` and
+`d83319a3a9c211fe3947e4951bfaa06f1684bf05`. The validator requires the exact
+run/workstream diagnostic trace, both full parent pairs, conflict-result trees,
+complete resolution path/blob/mode deltas, and the recorded resume at the
+second merge. It also pins the later `4b1af571...` synchronization witness and
+final `6e75b57...` no-op witness. The archive and paired-review packet closeout,
+all follow-up commits, and source/test file modes are separately content
+checked. No missing `main_sync` event is synthesized. This exception accepts
+only that complete historical identity; it does not change the requirement for
+an exact witness on other merges.
+
+The plan pins the run, claim receipt, original worktree/branch, reviewed main,
+canonical archived implementation identity, lifecycle-proven source span and
+complete original evidence manifest. Apply only the exact freshly emitted
+`plan_sha256`, with explicit authorization to launch a new independent reviewer:
+
+```bash
+python3 custodian/tools/agent/paired_review_runner.py <review-workstream> \
+  --continue-run <exact-run-id> --recover-host-validation --apply \
+  --plan-sha256 <exact-plan-sha256> --authorize-fresh-reviewer-context
+```
+
+Corrected host validation and reviewer evidence are created exclusively under
+`continuation-01/`; a validation failure, interruption, changed parent evidence,
+or nonpassing reviewer remains preserved and blocks replay. The canonical
+implementation receipt SHA remains the archive-introduction commit. When that
+commit contains only packet archival/index changes, the host validates the
+separately provenance-pinned source-bearing span immediately preceding it.
+Neither a green validation report nor an incomplete continuation is a review
+PASS. Inspect the child metadata and artifacts before any further recovery.
+
+For the separately guarded **missing-checkout pre-validation interruption**
+class, the same planner may admit a missing recorded worktree only after it
+authenticates the structured original claim, a unique published clean-checkout
+trace, exact local and remote branch heads at the pinned reviewed main, absent
+Git worktree/branch attachment, no report pair or continuation, and no active
+process or supervisor. This does not change ordinary claim-receipt parsing.
+The read-only plan binds the claim-receipt digest, trace commit/content digest,
+source span, evidence manifest, owner checks, and exact original path. Apply
+requires both explicit operator attestations (no active review owner and no
+unique untracked/ignored evidence at risk), revalidates the fresh plan under the
+review lock, journals the attempt before checkout creation, and reconstructs
+only the recorded path/branch at the pinned SHA. It must not use
+`workstream.py resume`, which may advance the branch. A partial reconstruction
+or existing journal/continuation is preserved and cannot be replayed. Canonical
+host validation still runs before a fresh independent reviewer may launch; a
+green report is not itself a review PASS. If either attestation or any
+provenance predicate is uncertain, leave the original claim and evidence
+untouched.
+
+For the exact failed Godot import recovery, a complete original failed report
+pair is eligible only when its immutable coordinator evidence classifies the
+failure as `infrastructure_failure: import`, names the exact protected run,
+and shows no accepted host-validation pin. The runner authenticates the bounded
+set of twelve Grunt candidate `.png.import` sidecars against their tracked PNG
+sources, preserves byte-exact copies before removing only those generated
+files, and records append-only fresh host-validation attempts beneath
+`continuation-01/host-validation/`. A failed attempt remains failed; recovery
+allows at most two fresh attempts total after the original failure. No reviewer
+is launched until one full canonical validation passes. Never broaden the sidecar
+allowlist, disable TLS checks, overwrite the original report pair, or treat a
+retry as a historical pass. Changed or unrecognized artifacts stop recovery.
 
 ## Start or resume
 
@@ -55,6 +478,39 @@ Existing task state requires the explicit recovery command after inspection:
 ```bash
 python3 custodian/tools/agent/workstream.py resume <workstream-id>
 ```
+
+The default dispatcher/start path materializes the full LFS checkout and
+preflights its tracked payload plus a 1 GiB reserve before creating a remote
+claim. It checks capacity again immediately before writing a worktree. For a
+reviewed, tracked path-exact profile, pass `--checkout-profile <profile.json>`
+to `dispatch.py claim`, or `--profile <profile.json>` to
+`workstream.py start` / `resume`. Deferred mode sets `GIT_LFS_SKIP_SMUDGE=1`
+only on the checkout subprocess, applies the profile's exact sparse path set,
+and hydrates only its declared LFS paths from the existing local object cache.
+The dispatcher refuses before claim creation when storage or any required
+local LFS object is missing. It never fetches LFS objects as part of profile
+hydration and does not change global Git configuration. Run
+`custodian/tools/pipelines/godot_import_preflight.py --project-dir <worktree>/custodian`
+before a Godot import; checked-out pointer files block import, while sparse-
+omitted assets remain absent. The Awakening Gate profile is
+`custodian/docs/ai_context/worktree_profiles/awakening_gate_lateral_overlooks_v1.json`.
+
+An interrupted initial checkout can be continued only with a read-only plan
+bound to its original run and profile:
+
+```bash
+python3 custodian/tools/agent/workstream.py recover-initial-checkout <id> \
+  --run-id <failed-run-id> --profile <profile.json> --plan
+```
+
+Apply requires the exact printed `plan_sha256` and rechecks the authenticated
+trace, unchanged original claim and branch, same-host process visibility,
+target path, profile, local LFS object identities, and capacity under both
+assignment and workstream mutexes. It recreates the checkout from the existing
+branch and publishes that branch only if the remote branch is still absent; it
+never creates, replaces, or releases a dispatch claim. Preserve the failed
+trace. Do not apply recovery to a protected claim until its required separate
+independent review has passed.
 
 Before closeout, an attached workstream can preview the locally knowable finish
 gates without changing Git or lifecycle state:
@@ -86,6 +542,64 @@ Diagnostics contain lifecycle metadata only and cannot be landed as task code.
 Diagnostic `ls-remote`, fetch, and push operations have a bounded timeout;
 failure is recorded locally and cannot invalidate an otherwise successful task
 claim.
+
+A checkpointed branch may already contain a main synchronization merge when
+`resume` emits `worktree_resumed`: resume synchronizes the clean checkout before
+recording its resulting HEAD. That event proves the resumed checkout's state;
+it does not retroactively create a `main_sync(changed=true)` event. Any source
+review that accepts such an intermediate merge must prove the exact checkpoint
+parent, the uniquely matching later resume event on the same run, branch, and
+absolute worktree, and a deterministic two-parent merge tree. It must also keep
+the first-parent workstream commits as the owned source inventory, so upstream
+files imported by synchronization do not become authored task changes. An
+untraced merge or an ambiguous checkpoint/resume sequence remains invalid.
+
+For source-span closeout, a merge recorded as the exact `worktree_resumed.head`
+may be inherited upstream history when that full commit is on the current
+`origin/main` first-parent chain and its tree matches Git's deterministic merge
+result. This classification is limited to a run without checkpoint history;
+runs with checkpoints retain the strict authored checkpoint/resume or
+`main_sync` witness rules. The independent paired-review consumer verifies
+diagnostic trace snapshots are append-only and derives the inherited merge set
+from Git objects and pinned resume records. Imported upstream paths remain
+outside the workstream-owned source inventory. If the resume or main-history
+boundary cannot be established, closeout and its read-only preflight block.
+
+A failed initial `worktree add` may leave the exact claim and `worktree_create_begin`
+in the run trace without a `worktree_published` event. A recovered checkout is
+authenticated only by one matching claim, one create attempt, a recorded failed
+create for its canonical branch/path, and one later `worktree_resumed` on that
+same run. The claim and create SHAs remain the original acquisition base. Since
+`resume` fetches and synchronizes before recording the event, `worktree_resumed.head`
+is the actual post-sync HEAD and may be newer. Verifiers retain both identities,
+require the resumed HEAD to be a recorded full commit on the claim's first-parent
+fast-forward chain, and use the resumed HEAD as the source-span boundary so
+branch changes authored after recovery are isolated from intervening main
+changes. The original claim base remains independently authenticated. This
+evidence does not synthesize `worktree_published` or make an arbitrary resume
+event sufficient.
+
+### Run-pinned checkout interruption recovery (operator-only)
+
+The one-run helper `custodian/tools/agent/custodian_claim_checkout_recovery_v1.sh` addresses an interrupted checkout for
+`agent-paired-review-source-bearing-archive-gate-v1` under
+`20261018T073442Z-9f32a80a4938`. It is not generic claim recovery or
+a substitute for `workstream.py resume`. The default `--audit` examines
+original refs, worktree registration, capacity and potential protected storage
+without deleting anything. The explicit `--release` requires an operator
+no-live-claimant attestation, 9 GiB free by default, clean coordination
+checkout, original local branch SHA `83bdbd1e`, original remote claim
+SHA `34a947cf`, and no attached/partial/remote canonical worktree or branch.
+Release acquires dispatch and per-workstream locks before repeat verification
+and exact-SHA local branch and remote claim deletion. It preserves diagnostics
+and all protected reviewer runs. It never starts a new claim or worktree.
+
+Capacity must first be reclaimed from independently inspected, unprotected
+storage, never active worktrees or preserved evidence. For a different run,
+SHA, or already-published agent branch, use normal recovery procedures, not
+this run-bound helper.
+
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad41ae1-c654-83ea-ba9f-2b4dc4dde401
 
 ### Local dispatcher contention
 
@@ -189,16 +703,84 @@ both refs exist, the workstream branch is canonical and the temporary claim is
 cleanup residue.
 
 Run implementation, validation, asset ingest, generated-file review, packet and
-documentation edits, and the required `<TASK>_CLAUDE_SUMMARY.md` inside that
+documentation edits, and the required `custodian/docs/ai_context/agent_summaries/<workstream-id>/AGENT_SUMMARY.md` inside that
 worktree. Commit only scoped task files. The task branch is pushed before
 landing, providing a remote recovery ref.
+
+### Turn-end handoff: publish, verify, retire or explain
+
+The normal endpoint of **each Codex turn** is a safe checkout-retirement
+decision, not an indefinitely attached directory. A task can remain
+`in_progress` after its local checkout is removed. Use one canonical
+`agent/<workstream-id>` remote branch as a recoverable Git state; a later
+worker should use the existing the V2 `workstream.py start <id>` machinery to
+recreate a linked checkout, rather than making full repository clones.
+
+Before attempting removal, inspect:
+
+```bash
+git worktree list --porcelain
+git -C "<worktree>" status --porcelain=v1 --untracked-files=all
+git -C "<worktree>" ls-files --others --ignored --exclude-standard -z
+git -C "<worktree>" rev-parse HEAD
+git -C "<coordination-root>" rev-parse refs/remotes/origin/agent/<workstream-id>
+```
+
+The ignored-file probe is **additional** to `checkpoint`'s existing clean
+status check. An ignored local texture, proof, Godot import, Blender edit,
+cached LFS dependency or reviewer artifact may be unique. Classify and
+hash/externalize any irreplaceable content first; do not interpret
+`status --porcelain` being empty as proof all local state is disposable.
+Do not use `git clean`, `git reset --hard`, `--force` removal or manual
+worktree directory deletion. The V002-style manual experiment is similarly
+protected: existing `transient_worktree_gc.py` only reaps canonical
+`agent/*` checkouts after their packet is archived and HEAD is proven
+reachable from `origin/main`.
+
+When a canonical implementation is complete, use the regular validated
+`workstream.py finish`; it owns archive, main landing, review separation
+and teardown. When a still-open canonical task is paused, and all unique-file,
+ownership, remote-identity and provenance guards pass, run:
+
+```bash
+python3 custodian/tools/agent/workstream.py checkpoint \
+  <workstream-id> --remove-worktree
+```
+
+This publishes and verifies the branch and removes its **clean** checkout
+while leaving the workstream active. Do not run it while the checkout contains
+unresolved ignored files or when its claim/review/process state requires
+preservation. It does not approve a review or clear a failed claim. On
+continuation, independently verify no conflicting writer, then:
+
+```bash
+python3 custodian/tools/agent/workstream.py resume <workstream-id>
+```
+
+At the handoff, always report the number of worktrees **created, retired,
+retained and attached total**, at least the relevant disk consumption, exact
+published SHA, any external evidence hash/manifest, and the explicit reason
+for each unreaped protected checkout. The host-private list must be measured
+from the host; a GitHub-only session must report `unknown` rather than
+inventing a count. The safe cleanup preview is:
+
+```bash
+python3 custodian/tools/agent/transient_worktree_gc.py --repo .
+```
+
+Only after verifying safe eligibility may the existing bounded
+`python3 custodian/tools/agent/workstream.py gc --reap-finished` run.
+Neither tool releases claims, removes protected worktrees, or authorizes
+deletion of manual experiment branches. Review evidence and generated
+Asset Pipeline V2 sources must retain their own authenticated durability.
+
 
 ### Run-artifact contract
 
 A worktree is disposable; its unresolved artifacts are not. If a task packet is
 used, give it the stable `Workstream` ID. Before finish, the associated packet
 must be `complete`, moved to `task_packets/archived/`, and absent from the
-packet README's active/recently-complete sections. The root closing summary is
+packet README's active/recently-complete sections. The closing summary in the persistent home is
 durable and committed. Its `## Process Feedback` receipt records execution
 friction/prevention for every normal implementation. For V2 task packets, mirror
 the same receipt into `## Execution Feedback` before marking the packet complete
@@ -218,21 +800,51 @@ disposable candidate, or unclassified. The agent must explicitly commit durable
 material or remove disposable material; ambiguous files are never silently
 removed.
 
+## Finish-first and completion truth
+
+An explicitly named or selected unfinished workstream remains the current
+objective until its acceptance evidence is complete or a genuine blocker is
+recorded. Reconcile and resume its existing claim when safe; otherwise claim
+that exact workstream through the dispatcher. Do not substitute global
+`claim-next` for unfinished selected work; a blocker does not authorize an
+unrelated fallback. A blocked handoff records the exact
+failed prerequisite and one concrete next action for the same workstream.
+
+Keep lifecycle claims distinct: authored, ready, dispatcher-eligible, claimed,
+implemented, landed, validated, and closed are separate states. Packet
+publication, compilation, or branch landing alone does not establish the
+user-visible outcome; close only with the acceptance evidence defined by the
+workstream. Preserve claims, branches, worktrees, review decisions, and unique
+evidence. Never reset or forge review disposition to release a lock.
+
+Use focused validation by default for bounded reversible work whose acceptance
+can be directly proven. Keep independent review and protected gates for
+consequential changes under the risk policy in `custodian/AGENTS.md`. Fix real
+workflow defects in their existing owner and do not create speculative task
+managers or packet chains.
+
+Known follow-up: `next_execution_boundary.py` currently allows an explicitly
+requested global fallback to be returned from a `blocked` phase when the caller
+also marks a general candidate eligible. Correcting this routing behavior
+changes dispatch-boundary enforcement and therefore needs its protected review
+path; this policy/documentation change does not alter the helper.
+
 ## Bounded Successor Continuation
 
-A successful packet finish is a pair boundary, not an unlimited continuation
-signal. The default CUSTODIAN Next invocation completes at most one
-implementation plus its required fresh-context paired review (including bounded
-corrections/re-reviews), then stops. An explicitly requested `continuous-chain`
-may continue only with a positive finite pair budget and any user-designated
-scope. The pure policy helper is
+A successful V2 checkpoint is a turn boundary, not task completion or an
+unlimited continuation signal. The default CUSTODIAN Next invocation completes
+at most one selected implementation through a durable checkpoint, then stops.
+Standard GitHub CI and branch protection govern landing. Independent review is
+optional unless requested or warranted for consequential work. An explicitly
+requested `continuous-chain` may continue only with a positive finite task
+budget and any user-designated scope. The pure policy helper is
 `custodian/tools/agent/next_execution_boundary.py`; it consumes caller-supplied
 facts but does not select packets or claim work. `dispatch.py` remains the claim
 authority. Record structured per-workstream receipts in the existing RunTrace.
 
-For each pair:
+For each selected task:
 
-1. Commit the root `<TASK>_CLAUDE_SUMMARY.md` with the packet's substantive
+1. Commit `custodian/docs/ai_context/agent_summaries/<workstream-id>/AGENT_SUMMARY.md` with the packet's substantive
    completion and `Next Handoff` before finish.
 2. Resolve only the exact immediate successor named in `Next Handoff`. For a
    named dependency chain, claim only dispatcher-confirmed eligible predecessors.
@@ -241,8 +853,8 @@ For each pair:
    planning refresh, human visual/design/canon decision, manual-dispatch hold,
    failed validation, or unresolved safety/ownership blocker. `Refresh owner:
    execution-agent` is autonomous only while it exposes no new human decision.
-4. A paired review is part of its implementation pair and always uses a fresh
-   context. Once eligible, invoke
+4. If independent review is requested or warranted for consequential work,
+   perform it in a fresh reviewer context. A paired review may use
    `python3 custodian/tools/agent/paired_review_runner.py <review-workstream-id>`
    from the coordination checkout. The runner preflights Codex, claims the exact
    review through dispatch, and launches `codex exec --ephemeral` in the receipt's
@@ -251,12 +863,13 @@ For each pair:
    shared Git metadata remains restricted. A failed fetch or incomplete receipt
    is recoverable and does not count as completion. Preserve claimed branches,
    worktrees, and evidence after runner failure.
-5. At the accepted review boundary, record the landing SHA, review status,
-   elapsed time, validation summary, pair count, and next eligibility. The
-   default one-pair mode stops here even if a successor is ready. Explicit
+5. At a durable checkpoint boundary, record the checkpoint SHA, optional review
+   status, elapsed time, validation summary, task count, and next eligibility.
+   The default single-task mode stops here even if a successor is ready. Explicit
    continuous mode follows only an eligible named successor within scope and
    budget. An explicitly general-next invocation may use one global eligible
-   implementation at a boundary; it must not bypass an unresolved review or gate.
+   implementation at a boundary; it must not bypass an unresolved human or
+   safety gate.
 
 Do not jump to an unrelated global queue item just because a named chain ends.
 Stop and report the exact planning/human gate or technical blocker. Use the
@@ -265,14 +878,14 @@ compact human unblock card below for planning refreshes.
 ### Human unblock card
 
 When the stop condition is a ChatGPT/user planning refresh, the full execution
-summary already lives in the committed `<TASK>_CLAUDE_SUMMARY.md`. Do not make
+summary already lives in the committed `agent_summaries/<workstream-id>/AGENT_SUMMARY.md`. Do not make
 the user shuttle that whole recap between tools. End with a compact card:
 
 ```text
 PLANNING REFRESH REQUIRED
 Authoring Chat: <exact recorded URL>
 Workstream: <workstream-id>
-Persistent Summary: <repo-relative *_CLAUDE_SUMMARY.md path>
+Persistent Summary: <repo-relative agent_summaries path>
 ```
 
 The intended user action is only: open **Authoring Chat**, paste the exact
@@ -382,6 +995,18 @@ subagent manager.
 
 ## Paired review outcomes and administrative closeout
 
+`paired_review_runner.py` runs the canonical changed-file validation from the
+trusted coordinator before starting its restricted fresh reviewer. The base is
+the exact parent of the pinned implementation commit, and validation runs in
+the claimed review worktree under `run_validation.py`'s normal Godot project
+lock and job budget. The run evidence stores the raw report and coordinator
+provenance; the reviewer inspects that report and authors an independent
+`passed`, `findings`, or `human_required` disposition. The coordinator verifies
+the report digest, pinned identities, and implementation source fingerprint
+again before closeout. A green report is necessary evidence, never a substitute
+for reviewer judgment. If host validation fails or evidence changes, preserve
+the claim and worktree for recovery.
+
 A paired review concludes with exactly one outcome: `passed`, `findings` or
 `human_required`. The outcome is a flat `## Review Outcome` section in the archived
 *review* packet (`custodian/tools/agent/review_outcome.py` is the only parser). It is
@@ -398,6 +1023,13 @@ implementation commit, originating run ID, review cycle and stable finding IDs
   applies this identically in `status`, `audit` and `claim`. Only the explicitly linked
   next bounded correction (`<root>-review-corrections-<N+1>`, with `Findings addressed`
   IDs the review recorded) may consume a concluded `findings` review.
+  Historical pre-outcome packets with exactly two duplicate `## Independent Review`
+  sections may still count as a flat PASS, but only when both sections pass, one
+  explicitly matches the expected review workstream, their pinned target/main
+  evidence agrees with the separate archived passing review, reviewer context
+  and provenance are fresh/independent, and recorded blocking defects/material
+  gaps are both zero. Missing or contradictory evidence still fails closed;
+  this does not relax canonical receipt rules for new reviews.
 - **Nonpassing closeout.** `paired_review_runner.coordinator_finish_nonpassing_review`
   lands a findings/human_required review without ever touching the reviewed target
   packet: it must stay byte-identical to its pinned baseline and gains no receipt. Only
@@ -429,6 +1061,158 @@ implementation commit, originating run ID, review cycle and stable finding IDs
   recovery, only while the protected original is unchanged, only after every commit on
   it is on `origin/main`, and the delete is conditional on the exact verified SHA. A
   pass is never recovered this way.
+
+### Fresh reviewer continuation of one protected post-exit run
+
+When the original ephemeral reviewer session is gone but the exact claimed
+review needs a new independent disposition, use:
+
+```bash
+python3 custodian/tools/agent/paired_review_runner.py <review-workstream> \
+  --continue-run <exact-original-run-id> --authorize-fresh-reviewer-context
+```
+
+Both flags are required. This starts a new fresh reviewer context attached to
+the same preserved claim and checkout; it does not restore the old Codex
+session, dispatch another claim, or resume a workstream. The command requires a
+clean coordinator checkout on `main`, the exact original structured claim
+receipt/worktree/branch, the pinned archived target and SHA, and immutable,
+green coordinator host-validation evidence. It holds the same nonblocking
+per-review runner lock, writes continuation evidence only under a new exclusive
+`continuation-01/` child of the original run, and verifies hashes of all
+preexisting run files before and after the reviewer. Existing reviewer notes,
+summaries and reports are copied byte-for-byte into that child before the
+reviewer starts. Findings, human-required outcomes, interruptions, and any
+ambiguous closeout leave the claim and branch protected. A PASS alone may enter
+the existing exact receipt verification and coordinator finish path.
+Repeating a completed run independently verifies the landed receipt and returns
+success; an incomplete continuation is never replayed automatically. New
+ordinary review claims persist the full structured receipt in
+`claim-receipt.json` because the human-readable `claim.stdout` is length-limited.
+
+### Exact continuation after missing archived disposition
+
+One additional recovery is authorized only for
+`review-agent-paired-review-checkpoint-resume-merge-provenance-v1-review-corrections-1`,
+run `20261020T114129Z-536181b31d70`. It requires the original run to remain in
+`post_exit_recovery` and `continuation-01` to record exactly
+`missing_archived_disposition` with reviewer `exit_code: 0`. The original run
+manifest, structured claim, exact worktree/branch/head, pinned target and green
+host-validation evidence must still verify. Use all three exact arguments:
+
+```bash
+python3 custodian/tools/agent/paired_review_runner.py \
+  review-agent-paired-review-checkpoint-resume-merge-provenance-v1-review-corrections-1 \
+  --continue-run 20261020T114129Z-536181b31d70 \
+  --recover-missing-archived-disposition --authorize-fresh-reviewer-context
+```
+
+This holds the original nonblocking review lock, creates only
+`continuation-02`, and records complete SHA-256 manifests for the original run
+and all of `continuation-01`. Both evidence sets are rechecked after the fresh
+reviewer exits; neither is rewritten. The reviewer stays on the original claim
+and worktree. Its prompt names the exact active review packet, canonical
+archived review packet, pinned implementation target and receipt location, and
+root summary. A PASS in a prior message is not evidence. Only a new canonical
+archived packet and run-bound Review Outcome, exactly one valid target receipt,
+the exact root summary and coordinator verification can enter the ordinary
+race-safe closeout. Findings, human-required outcomes, missing artifacts and
+interruption remain preserved. An incomplete continuation-02 cannot launch
+again; a completed PASS may retry coordinator verification/closeout without a
+second reviewer. No other run or phase is covered by this exception.
+
+### Exact dual-disposition recovery after missing archive and malformed target receipt
+
+The dual-disposition recovery capability is bound only to review workstream
+`review-agent-paired-review-redacted-final-outcome-recovery-v1`, review run
+`20261030T191402Z-4dd067b9b8e2`, and claim run
+`20261030T191411Z-efd97a2bdb1f`. It recognizes the missing archived review
+packet together with exactly one extra separator newline before the target's
+otherwise valid reviewer receipt. It does not relax the canonical receipt
+verifier or treat the original reported PASS as a disposition.
+
+After this capability has landed and passed its own fresh independent review, a
+separate control must authorize recovery. First inspect a read-only exact-run
+plan from the coordination checkout:
+
+```bash
+python3 custodian/tools/agent/paired_review_runner.py \
+  recover-dual-disposition \
+  review-agent-paired-review-redacted-final-outcome-recovery-v1 \
+  20261030T191402Z-4dd067b9b8e2 --plan
+```
+
+Only an explicitly authorized apply may use the exact printed `plan_sha256`:
+
+```bash
+python3 custodian/tools/agent/paired_review_runner.py \
+  recover-dual-disposition \
+  review-agent-paired-review-redacted-final-outcome-recovery-v1 \
+  20261030T191402Z-4dd067b9b8e2 --apply --plan-sha256 <exact-plan-sha256>
+```
+
+The plan binds the claim, checkout, branch and refs, lock identity, run manifest,
+capture transformation, validation evidence, exact target baseline and the
+complete changed-file inventory. Apply verifies byte-exact preservation copies
+and a journal before restoring the target to its pinned baseline. It never
+authors an archived packet or Review Outcome and never launches a reviewer.
+After apply, a separate explicit authorization is required to start exactly one
+fresh reviewer on the same claim:
+
+```bash
+python3 custodian/tools/agent/paired_review_runner.py \
+  review-agent-paired-review-redacted-final-outcome-recovery-v1 \
+  --continue-run 20261030T191402Z-4dd067b9b8e2 \
+  --recover-dual-disposition --authorize-fresh-reviewer-context \
+  --plan-sha256 <exact-applied-plan-sha256>
+```
+
+That reviewer independently authors the archived review packet, run-bound
+canonical outcome, summary, and a passing target receipt only if its own review
+passes. Findings and `human_required` remain valid outcomes. The ordinary
+paired-review validators and `workstream.py finish` remain the only closeout
+and claim-release path. An incomplete continuation cannot relaunch the reviewer;
+the original run and the other held reviews remain protected.
+
+### Exact recovery of the stranded finish-index reviewer PASS
+
+One coordinator-only PASS recovery is bound to
+`review-workstream-finish-index-conflict-recovery-v1`, paired-review run
+`20261027T113425Z-50d9c7adf7a0`, and its distinct dispatcher claim run
+`20261027T113443Z-6f08c7ced9a2`. It exists only for the preserved fresh reviewer
+session whose final message says Passed but whose runner stopped before writing
+the canonical archived outcome and target receipt. It does not change
+`_verified_reviewer_pass`, resume the reviewer, or authorize another
+`codex_exited` identity.
+
+After the exact recovery implementation has landed and passed its independent
+review, first inspect the plan from a clean coordination checkout:
+
+```bash
+python3 custodian/tools/agent/paired_review_runner.py \
+  recover-finish-index-codex-exited-pass \
+  review-workstream-finish-index-conflict-recovery-v1 \
+  --run-id 20261027T113425Z-50d9c7adf7a0 --plan
+```
+
+The read-only plan verifies the immutable original run manifest, the distinct
+claim receipt, exact reviewer worktree and branch tip, local process and
+supervisor-lock state, the single completed turn and captured final message,
+the findings-first reviewer summary and prewritten receipt, the pinned target,
+and complete green host validation. It also reports SHA-256 values for every
+intended archive, receipt, summary, and managed-index result. The plan does not
+fetch or update Git refs and does not write `FETCH_HEAD`. Stop on any changed or
+ambiguous evidence. Only the project owner may authorize apply, using the
+`--apply --plan-sha256 <exact-plan-digest>` form; apply rechecks the plan while
+holding the original review lock, preserves the dirty reviewer-authored files
+byte-for-byte, journals before changing them, and delegates publication to the
+original review's normal `workstream.py finish` lifecycle. A partial journal is
+preserved and fails closed; do not replay it or edit the original run evidence.
+
+The ordinary review coordinator checks for the canonical archived packet before
+attempting receipt recovery. A missing archive is surfaced as a recoverable
+`RunnerError` before any target receipt write, rather than escaping as an
+unclassified filesystem exception.
 
 ## Exit paths
 
@@ -486,6 +1270,26 @@ authority serves `csync`, OPUI startup, and Operator-art coordination sync. Run
 `csync status` for read-only inspection, `csync root` or `csync art` for one
 checkout, or bare `csync` for both.
 
+### Explicit root-sync deferral for the invalid-disposition recovery
+
+The paired-review invalid-disposition recovery packet authorizes root
+synchronization to remain pending for exactly these support workstreams:
+`agent-paired-review-invalid-disposition-recovery-v1` and
+`review-agent-paired-review-invalid-disposition-recovery-v1`. Use
+`workstream.py finish <id> --defer-root-sync`; the lifecycle verifies the
+archived implementation packet carries the bounded deferral override before
+landing. The persistent root checkout is left byte-for-byte unchanged and the
+finish trace records `root_sync_deferred`.
+
+For the one recovered historical review
+`review-agent-paired-review-prevalidation-recovery-plan-v1`, the same option
+also requires `--defer-root-sync-evidence` pointing to its exact
+`20261019T055243Z-1d73c6a01b1e/continuation-01/metadata.json`. The runner first
+lands the review with `--defer-teardown`, verifies the independent PASS and
+target receipt on fresh `origin/main`, then invokes finish again to release the
+existing claim and remove that worktree. No other review run can use this
+exception. Root synchronization remains pending after teardown.
+
 ### Already-landed closeout
 
 The closing-summary and reachability checks are independent of any diff
@@ -532,3 +1336,69 @@ agent refs.
 
 Never force-push, reset user work, or stash automatically. Branches are active
 work queues; tags retain unique retired history.
+
+### Exact archived PASS receipt capture recovery
+
+The `recover-archived-receipt-capture` mode is reserved for the one source-pinned
+paired-review run named by constants in `paired_review_runner.py`. It addresses
+the case where a reviewer-authored canonical PASS outcome and matching target
+receipt are already authenticated, but the archived review packet is missing
+only the redundant `Independent Review` receipt. The existing reviewer outcome,
+target, summary and session artifacts remain immutable. The appended receipt is
+labeled coordinator-authored and is never presented as reviewer-authored
+evidence.
+
+Run the read-only reconciliation first:
+
+```bash
+python3 custodian/tools/agent/paired_review_runner.py \
+  recover-archived-receipt-capture <exact-review-workstream> <exact-run-id> --plan
+```
+
+The plan verifies the pinned safe-output transformation, one completed reviewer
+turn, claim and host-validation provenance, exact target receipt, canonical
+reviewer outcome, unchanged remote refs, lock identity, and original artifact
+hashes. It emits a plan SHA-256 without writing to the reviewer worktree. Apply
+is a separate, explicitly authorized action and must use the exact fresh plan
+digest:
+
+```bash
+python3 custodian/tools/agent/paired_review_runner.py \
+  recover-archived-receipt-capture <exact-review-workstream> <exact-run-id> \
+  --apply --plan-sha256 <exact-plan-sha256>
+```
+
+The apply path journals the exact archive append, preserves the reviewer outcome
+byte-for-byte, and finishes through the ordinary canonical paired-review
+landing checks. A changed source artifact, claim, lock, checkout, ref, or
+journal fails closed. A prepared journal can resume only when the archive is
+either byte-identical to its planned original or already contains the exact
+planned append, covering interruption after an atomic packet write. This mode
+cannot accept a review, synthesize a verdict, launch a reviewer, or release a
+claim outside canonical finish.
+
+
+### Opportunistic retirement of finished transient worktrees (2026-10-28)
+
+Normal `workstream.py finish` still owns branch teardown. On each successful
+`workstream.py start` and completed `finish`, a best-effort scan now retires
+up to four *other* checkouts only when `origin/main` has their exact archived
+`Status: complete` packet, their HEAD is reachable from fetched main, their
+local/remote HEADs agree, they have no live dispatch claim, no active packet,
+no tracked/untracked/ignored content, no Git worktree lock and no visible
+same-user process holding their cwd or open files. Reclamation is limited to
+canonical `.custodian-worktrees/<id>-<run-id>` paths, takes the existing
+per-workstream nonblocking mutex, and uses non-force `git worktree remove`.
+No local/remote branch, claim, reviewer receipt, run evidence or packet is
+deleted or treated as accepted by this scan.
+
+`python3 custodian/tools/agent/transient_worktree_gc.py --repo .` previews
+eligible checkouts without mutation; `python3 custodian/tools/agent/workstream.py
+gc --reap-finished` fetches and applies the same conservative sweep (up to
+32 checkouts). The historical `workstream.py gc` remains report-only without
+that flag. Ambiguous, active, detached, dirty, ignored-content, unique,
+unreviewed or incomplete checkouts require their original recovery/ownership
+flow; the janitor never marks them abandoned or overrides the W1-W4 ledger.
+The process liveness test is Linux-specific; on unsupported hosts it skips
+retirement. Publishing this patch on GitHub does not execute housekeeping on
+the local Arch host until a local workstream command runs.

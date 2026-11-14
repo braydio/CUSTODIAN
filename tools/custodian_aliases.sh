@@ -320,3 +320,6 @@ if [[ -f "${_custodian_temp_aliases}" ]]; then
   source "${_custodian_temp_aliases}"
 fi
 unset _custodian_temp_aliases
+
+# -- Decode authorized legacy Meshy v1 containers to GLB
+alias meshydecode='uv run --no-project --with cryptography python "$CUSTODIAN_REPO/meshy_decode.py"'

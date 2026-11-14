@@ -5,7 +5,7 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P2`
-- Depends on: `review-contract-world-placement-foundation-r1`
+- Depends on: `contract-world-placement-foundation`
 - Locks: `contract-world-loader`
 - Kind: `implementation`
 - Review: `none`

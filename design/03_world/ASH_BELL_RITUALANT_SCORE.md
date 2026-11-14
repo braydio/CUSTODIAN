@@ -14,7 +14,14 @@ room-ambience requirement.
 | The Ninth Was Taken | fresh `SITE_DEFILED` | One-shot |
 
 `RITUALANT_DISSOLVED` is nonlethal survival and fades the scoped score to
-silence. Historical restore never replays a resolution one-shot. Leaving the
+silence. Both resolution one-shots also leave intentional silence at completion;
+they do not restart the exploration bed. Historical restore never replays a
+resolution one-shot. Arrival claims music ownership and fades the previous
+zone to silence over 0.8 seconds; the exploration cue waits for the chapel
+reveal. Its entrance is approximately 1.9 seconds, combat changes over 0.65
+seconds, hostile resolution over 0.2 seconds, and departure fades over 0.8
+seconds. Cue decks overlap during transitions, while dialogue and Ninth Answer
+ducks use an independent gain controller. Leaving the
 Underground releases its exclusive `MusicManager` claim and restores the prior
 playlist only while the scene still owns that claim; a successor zone can take
 authority without being overwritten by teardown.
@@ -27,7 +34,8 @@ and loop-boundary audition remains pending and is not represented as completed.
 Runtime ownership:
 
 - `custodian/autoload/music_manager.gd`: exclusive scoped music lease,
-  fade/duck, one-shot completion, and conditional restoration.
+  overlapping crossfade decks, independent scoped duck gain, one-shot
+  completion, and conditional restoration.
 - `custodian/game/world/levels/authored/ash_bell/forlorn_ritualant_underground/forlorn_ritualant_music_director.gd`:
   scene event routing and fresh-transition suppression.
 - `custodian/content/audio/music/ash_bell/audio_handoff_manifest.json`:

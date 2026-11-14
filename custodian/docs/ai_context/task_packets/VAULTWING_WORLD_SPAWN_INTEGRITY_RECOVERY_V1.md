@@ -8,13 +8,13 @@
 - Depends on: `none`
 - Locks: `vaultwing-runtime`
 - Kind: `implementation`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
-- Review modes: `code, runtime`
-- Paired review workstream: `review-vaultwing-world-spawn-integrity-recovery-v1`
+- Review modes: `none`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `focused production spawn/reset contract correction with runtime ownership consequences`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
 - Reviewed main: `80bb91444`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Visual review: `none`

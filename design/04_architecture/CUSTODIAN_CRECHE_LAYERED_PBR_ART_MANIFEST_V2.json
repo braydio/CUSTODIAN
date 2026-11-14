@@ -1,0 +1,1534 @@
+{
+  "schema": "custodian.creche.layered_pbr_art_design_manifest.v2",
+  "version": 2,
+  "name": "CUSTODIAN — Crèche of Answerless Names | High-Fidelity PBR Layered Art",
+  "status": "DESIGN_PROPOSAL_IN_REPOSITORY__NOT_ASSET_V2_REGISTRY__HUMAN_VISUAL_APPROVAL_PENDING",
+  "authority": {
+    "repo": "braydio/CUSTODIAN",
+    "main_sha_reviewed": "f42cc51cb5689d6b8ae596e489eb995ac9cde46f",
+    "layout": "custodian/game/world/awakening/awakening_layout.gd",
+    "scene_owner": "custodian/game/world/awakening/awakening_first_return.gd",
+    "clean_room": "design/04_architecture/AWAKENING_INTERACTIBLE_CLEAN_ROOM_PLATES_V1.md",
+    "interaction_overlay": "design/04_architecture/AWAKENING_INTERACTIBLE_AFFORDANCE_OVERLAY_V1.md",
+    "asset_pipeline": "design/04_architecture/ASSET_PIPELINE_V2.md",
+    "note": "Existing Asset V2 family JSON files, not this proposed schema, determine published runtime state contracts.",
+    "publication_note": "Published as a design-only source manifest; not an Asset V2 registration, approved source-art receipt, runtime cutover, or an update to the 198-state global roadmap."
+  },
+  "visual_lock": {
+    "target": "high-fidelity realistic 3D MODELLED / PBR SURFACE RENDERED into layered 2D Godot scenes, NOT painted pixel-art tiles, isometric game board or flat schematic",
+    "engine": "Godot existing Node2D / Sprite2D layout. No 3D gameplay scene migration authorized.",
+    "projection": "orthographic renderer perpendicular to floor / camera 90-degree overhead, north up; real 3D model geometry and relief visible through realistic surface/light/height, but no perspective skew or fake isometric rotation",
+    "pixel_registration": "1 source-composition pixel = 1 authored Godot world unit at normalized display scale, 32px architectural construction rhythm; 32px is NOT a hard visible checker grid",
+    "quality": "PBR modeled limestone, weathered basalt, aged brass, iron and utilitarian ceramic; beveled physical edges, scanned stone microsurface, layered roughness, plausible wear and restrained local AO",
+    "palette": "desaturated chalk limestone, charcoal basalt, blackened iron; aged bronze/brass for authority, cold dim teal ONLY on real operational consoles",
+    "rendering": {
+      "method": "Blender/Cycles or equivalent offline high-fidelity 3D renderer",
+      "working_color_space": "linear scene-referred rendering; convert final PNG to sRGB without corrupting alpha",
+      "sample_target": "visually noise-free / denoised without smearing features; no hard sample number as proof",
+      "supersample_factor": 4,
+      "source_master_rule": "For each frame render 4x horizontal and vertical pixel resolution. Downsample the approved source in linear light to exact existing family/frame canvas; frame-to-frame anchor remains identical.",
+      "camera_lock": "one orthographic capture transform and scale shared by floor/shell/fixtures, with deliberate per-prop pivot registration"
+    },
+    "no_baked_ui_or_global_light": true,
+    "no_flat_checkerboard_style": true,
+    "notes": [
+      "Preserve normal physical relief, cast localized occlusion on own geometry, but do not bake room-wide directional cast shadows on floor-only material.",
+      "False depth/parallax or side-view elevation not allowed unless compositor and occlusion registration are tested.",
+      "Avoid making a 960x704 opaque solid rectangle that covers void outside the floor. Floor material may be opaque; room-registered floor plate uses alpha outside exposed floor."
+    ]
+  },
+  "spatial_contract": {
+    "room": "zone01_creche",
+    "envelope_world_rect": [
+      -416,
+      -320,
+      832,
+      576
+    ],
+    "room_art_registered_px": [
+      960,
+      704
+    ],
+    "art_world_center": [
+      0,
+      -32
+    ],
+    "plate_world_rect": [
+      -480,
+      -384,
+      960,
+      704
+    ],
+    "walkable_floor_world_rect": [
+      -352,
+      -256,
+      704,
+      512
+    ],
+    "route_critical_px": 128,
+    "north_door_world_rect": [
+      -64,
+      -320,
+      128,
+      64
+    ],
+    "wake_world": [
+      0,
+      160
+    ],
+    "active_alcove_world": [
+      0,
+      208
+    ],
+    "console_gameplay_world": [
+      112,
+      144
+    ],
+    "console_visual_world": [
+      105,
+      118
+    ],
+    "floor_seal_world": [
+      0,
+      -160
+    ],
+    "headwall_world": [
+      0,
+      -240
+    ],
+    "west_alcoves_world": [
+      [
+        -320,
+        -192
+      ],
+      [
+        -320,
+        -64
+      ],
+      [
+        -320,
+        64
+      ],
+      [
+        -320,
+        192
+      ]
+    ],
+    "east_alcoves_world": [
+      [
+        320,
+        -192
+      ],
+      [
+        320,
+        -64
+      ],
+      [
+        320,
+        64
+      ],
+      [
+        320,
+        192
+      ]
+    ],
+    "wall_of_seals_world": [
+      -272,
+      224
+    ],
+    "relic_table_world": [
+      272,
+      224
+    ],
+    "collision_owner": "AwakeningLayout, never the image",
+    "north_exit_to": "zone02_ambulatory (NOT Gate of Dust)"
+  },
+  "depth_bands": {
+    "D-1": {
+      "label": "Beyond-room depth / inaccessible exterior",
+      "character_relation": "Always behind room; never collision/navigation",
+      "godot_mount": "AwakeningPerimeterSupport (existing owner)"
+    },
+    "D0": {
+      "label": "Floor material and registered floor plate",
+      "character_relation": "Beneath Operator feet, fully traversable where map permits",
+      "godot_mount": "Zone01_Creche/ProductionArt/ArtUnderlay or reviewed replacement underlay"
+    },
+    "D1": {
+      "label": "Flush floor inlays / scuffs",
+      "character_relation": "Below Operator; does not change route or collision",
+      "godot_mount": "Zone01_Creche/SetPieces/FloorDetails (proposed presentation-only node)"
+    },
+    "D2": {
+      "label": "Structural shell / wall relief",
+      "character_relation": "Behind player at wall base; no art-owned collision",
+      "godot_mount": "Zone01_Creche/SetPieces/Architecture (proposed presentation-only node)"
+    },
+    "D3": {
+      "label": "Physical scenic fixtures",
+      "character_relation": "Depth-sorted by mapped bases; existing blockers stay owned by Layout",
+      "godot_mount": "Zone01_Creche/SetPieces (existing)"
+    },
+    "D4": {
+      "label": "Gameplay prop body / animation",
+      "character_relation": "Scene-sorted with Operator; gameplay behavior owned by existing nodes",
+      "godot_mount": "Existing CrecheConsole / RecoveryAlcove presentation"
+    },
+    "D5": {
+      "label": "Local light, screen, particles and interaction emphasis",
+      "character_relation": "Attached to prop/scene as bounded effects; no fake use targets",
+      "godot_mount": "Existing affordance presenter and console screen-local FX"
+    },
+    "D6": {
+      "label": "Foreground occlusion",
+      "character_relation": "Over Operator where geometric foreground overlaps; opacity/occlusion mask tested",
+      "godot_mount": "Existing ArtForeground / foreground state"
+    },
+    "HUD": {
+      "label": "UI prompt and readout",
+      "character_relation": "Screen-space only; generated as native Godot UI, not image-baked text",
+      "godot_mount": "CustodianHUD + BlackReliquaryPrompt (existing)"
+    }
+  },
+  "assets": [
+    {
+      "asset_id": "awakening_creche_environment/underlay",
+      "family_id": "awakening_creche_environment",
+      "state_id": "underlay",
+      "kind": "ENV",
+      "frame_px": [
+        960,
+        704
+      ],
+      "frames": 1,
+      "fps": 0,
+      "canvas_px": [
+        960,
+        704
+      ],
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_creche_environment/underlay_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_environment/underlay.png",
+      "family_schema_path": "custodian/content/metadata/assets/families/awakening_creche_environment.asset.json",
+      "layer": "background",
+      "alpha_requirement": "ROOM_PLATE_RGBA_OUTSIDE_FLOOR__OPAQUE_ON_FLOOR",
+      "animation_layout": "copy",
+      "registration": "EXISTING_REGISTERED_STATE",
+      "required": true,
+      "visual_review": "NOT_REVALIDATED_FOR_NEW_REALISM_LOCK",
+      "source_action": "REAUTHOR_REQUIRED_ATOMIC_CUTOVER",
+      "render_scale": 4,
+      "render_master_frame_px": [
+        3840,
+        2816
+      ],
+      "render_source": "PBR_3D_ORTHOGRAPHIC_FLOOR_ONLY_COMPOSITE",
+      "source_input_type": "PNG_TO_ASSET_V2",
+      "status": "CURRENT_BAKED_PLATE_RETAIN_UNTIL_CLEAN_LAYER_STACK_APPROVED",
+      "depth_band": "D0",
+      "visual_role": "Exact registered 960x704 floor-only composite (L0); keep all machines/arch/wall relief off this layer; optional alpha outside actual exposed floor. Do not treat the old room plate as a clean L0 source.",
+      "world_anchor": [
+        0,
+        -32
+      ],
+      "pixel_origin_world": [
+        -480,
+        -384
+      ]
+    },
+    {
+      "asset_id": "awakening_creche_environment/foreground",
+      "family_id": "awakening_creche_environment",
+      "state_id": "foreground",
+      "kind": "ENV",
+      "frame_px": [
+        960,
+        704
+      ],
+      "frames": 1,
+      "fps": 0,
+      "canvas_px": [
+        960,
+        704
+      ],
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_creche_environment/foreground_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_environment/foreground.png",
+      "family_schema_path": "custodian/content/metadata/assets/families/awakening_creche_environment.asset.json",
+      "layer": "foreground",
+      "alpha_requirement": "EXACT_REGISTERED_SOURCE_AND_PRESERVED_ALPHA",
+      "animation_layout": "copy",
+      "registration": "EXISTING_REGISTERED_STATE",
+      "required": true,
+      "visual_review": "NOT_REVALIDATED_FOR_NEW_REALISM_LOCK",
+      "source_action": "PRESERVE_REVIEW_OCCLUSION",
+      "render_scale": 4,
+      "render_master_frame_px": [
+        3840,
+        2816
+      ],
+      "render_source": "PBR_3D_ORTHOGRAPHIC_RASTER_OR_EXISTING_REVIEWED_SOURCE",
+      "source_input_type": "PNG_TO_ASSET_V2",
+      "status": "PLANNED_VISUAL_REVIEW_ONLY",
+      "depth_band": "D6",
+      "visual_role": "Registered foreground plate; retain if true-alpha matte and wall overdraw are valid; no baked console-dependent pixels.",
+      "world_anchor": [
+        0,
+        -32
+      ]
+    },
+    {
+      "asset_id": "awakening_creche_recovery_alcove/idle",
+      "family_id": "awakening_creche_recovery_alcove",
+      "state_id": "idle",
+      "kind": "PROP",
+      "frame_px": [
+        192,
+        256
+      ],
+      "frames": 1,
+      "fps": 0,
+      "canvas_px": [
+        192,
+        256
+      ],
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_creche_recovery_alcove/idle_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_recovery_alcove/idle.png",
+      "family_schema_path": "custodian/content/metadata/assets/families/awakening_creche_recovery_alcove.asset.json",
+      "layer": "body",
+      "alpha_requirement": "TRUE_RGBA_NO_MATTE",
+      "animation_layout": "copy",
+      "registration": "EXISTING_REGISTERED_STATE",
+      "required": true,
+      "visual_review": "NOT_REVALIDATED_FOR_NEW_REALISM_LOCK",
+      "source_action": "PRESERVE_UNLESS_QUALITY_OR_DEPTH_PARITY_FAILS",
+      "render_scale": 4,
+      "render_master_frame_px": [
+        768,
+        1024
+      ],
+      "render_source": "PBR_3D_ORTHOGRAPHIC_RASTER_OR_EXISTING_REVIEWED_SOURCE",
+      "source_input_type": "PNG_TO_ASSET_V2",
+      "status": "PLANNED_VISUAL_REVIEW_ONLY",
+      "depth_band": "D4",
+      "world_anchor": [
+        0,
+        208
+      ],
+      "visual_role": "Active recovery shell, non-use cinematic prop"
+    },
+    {
+      "asset_id": "awakening_creche_recovery_alcove/wake",
+      "family_id": "awakening_creche_recovery_alcove",
+      "state_id": "wake",
+      "kind": "PROP",
+      "frame_px": [
+        192,
+        256
+      ],
+      "frames": 8,
+      "fps": 8,
+      "canvas_px": [
+        1536,
+        256
+      ],
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_creche_recovery_alcove/wake_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_recovery_alcove/wake.png",
+      "family_schema_path": "custodian/content/metadata/assets/families/awakening_creche_recovery_alcove.asset.json",
+      "layer": "body",
+      "alpha_requirement": "TRUE_RGBA_NO_MATTE",
+      "animation_layout": "horizontal_strip",
+      "registration": "EXISTING_REGISTERED_STATE",
+      "required": true,
+      "visual_review": "NOT_REVALIDATED_FOR_NEW_REALISM_LOCK",
+      "source_action": "PRESERVE_UNLESS_QUALITY_OR_DEPTH_PARITY_FAILS",
+      "render_scale": 4,
+      "render_master_frame_px": [
+        768,
+        1024
+      ],
+      "render_source": "PBR_3D_ORTHOGRAPHIC_RASTER_OR_EXISTING_REVIEWED_SOURCE",
+      "source_input_type": "PNG_TO_ASSET_V2",
+      "status": "PLANNED_VISUAL_REVIEW_ONLY",
+      "depth_band": "D4",
+      "world_anchor": [
+        0,
+        208
+      ],
+      "visual_role": "Eight-frame recovery/waking animation, no second gameplay interaction"
+    },
+    {
+      "asset_id": "awakening_creche_console/idle",
+      "family_id": "awakening_creche_console",
+      "state_id": "idle",
+      "kind": "PROP",
+      "frame_px": [
+        128,
+        128
+      ],
+      "frames": 1,
+      "fps": 0,
+      "canvas_px": [
+        128,
+        128
+      ],
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_creche_console/idle_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_console/idle.png",
+      "family_schema_path": "custodian/content/metadata/assets/families/awakening_creche_console.asset.json",
+      "layer": "body",
+      "alpha_requirement": "TRUE_RGBA_NO_MATTE",
+      "animation_layout": "copy",
+      "registration": "EXISTING_REGISTERED_STATE",
+      "required": true,
+      "visual_review": "NOT_REVALIDATED_FOR_NEW_REALISM_LOCK",
+      "source_action": "REVIEW_PROBABLE_PBR_REAUTHOR",
+      "render_scale": 4,
+      "render_master_frame_px": [
+        512,
+        512
+      ],
+      "render_source": "PBR_3D_ORTHOGRAPHIC_RASTER_OR_EXISTING_REVIEWED_SOURCE",
+      "source_input_type": "PNG_TO_ASSET_V2",
+      "status": "PLANNED_VISUAL_REVIEW_ONLY",
+      "depth_band": "D4",
+      "world_anchor": [
+        105,
+        118
+      ],
+      "gameplay_target_world": [
+        112,
+        144
+      ],
+      "visual_role": "Only live Crèche interactible visible body, one actual screen, no duplication in background"
+    },
+    {
+      "asset_id": "awakening_creche_console_activation_fx/activate",
+      "family_id": "awakening_creche_console_activation_fx",
+      "state_id": "activate",
+      "kind": "FX",
+      "frame_px": [
+        128,
+        128
+      ],
+      "frames": 8,
+      "fps": 8,
+      "canvas_px": [
+        1024,
+        128
+      ],
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_creche_console_activation_fx/activate_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_console_activation_fx/activate.png",
+      "family_schema_path": "custodian/content/metadata/assets/families/awakening_creche_console_activation_fx.asset.json",
+      "layer": "fx",
+      "alpha_requirement": "TRUE_RGBA_NO_MATTE",
+      "animation_layout": "horizontal_strip",
+      "registration": "EXISTING_REGISTERED_STATE",
+      "required": true,
+      "visual_review": "NOT_REVALIDATED_FOR_NEW_REALISM_LOCK",
+      "source_action": "RETAIN_REANCHOR_TO_MEASURED_SCREEN",
+      "render_scale": 4,
+      "render_master_frame_px": [
+        512,
+        512
+      ],
+      "render_source": "PBR_3D_ORTHOGRAPHIC_RASTER_OR_EXISTING_REVIEWED_SOURCE",
+      "source_input_type": "PNG_TO_ASSET_V2",
+      "status": "PLANNED_VISUAL_REVIEW_ONLY",
+      "depth_band": "D5",
+      "visual_role": "8-frame 8FPS one-shot display FX; clip to console screen, not world floor; inspect true alpha and ROI"
+    },
+    {
+      "asset_id": "awakening_creche_fixtures/alcove_closed",
+      "family_id": "awakening_creche_fixtures",
+      "state_id": "alcove_closed",
+      "kind": "PROP",
+      "frame_px": [
+        128,
+        192
+      ],
+      "frames": 1,
+      "fps": 0,
+      "canvas_px": [
+        128,
+        192
+      ],
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_creche_fixtures/alcove_closed_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_fixtures/alcove_closed.png",
+      "family_schema_path": "custodian/content/metadata/assets/families/awakening_creche_fixtures.asset.json",
+      "layer": "body",
+      "alpha_requirement": "TRUE_RGBA_NO_MATTE",
+      "animation_layout": "copy",
+      "registration": "EXISTING_REGISTERED_STATE",
+      "required": true,
+      "visual_review": "NOT_REVALIDATED_FOR_NEW_REALISM_LOCK",
+      "source_action": "PRESERVE_UNLESS_VISUAL_PARITY_FAILS",
+      "render_scale": 4,
+      "render_master_frame_px": [
+        512,
+        768
+      ],
+      "render_source": "PBR_3D_ORTHOGRAPHIC_RASTER_OR_EXISTING_REVIEWED_SOURCE",
+      "source_input_type": "PNG_TO_ASSET_V2",
+      "status": "PLANNED_VISUAL_REVIEW_ONLY",
+      "depth_band": "D3",
+      "visual_role": "Realistic independent 3D-rendered set dressing without fake interactions",
+      "placement_rule": "Scene/Layout chooses one existing state per inactive alcove; preserve four west/four east anchors; do not invent interaction targets."
+    },
+    {
+      "asset_id": "awakening_creche_fixtures/alcove_broken",
+      "family_id": "awakening_creche_fixtures",
+      "state_id": "alcove_broken",
+      "kind": "PROP",
+      "frame_px": [
+        128,
+        192
+      ],
+      "frames": 1,
+      "fps": 0,
+      "canvas_px": [
+        128,
+        192
+      ],
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_creche_fixtures/alcove_broken_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_fixtures/alcove_broken.png",
+      "family_schema_path": "custodian/content/metadata/assets/families/awakening_creche_fixtures.asset.json",
+      "layer": "body",
+      "alpha_requirement": "TRUE_RGBA_NO_MATTE",
+      "animation_layout": "copy",
+      "registration": "EXISTING_REGISTERED_STATE",
+      "required": true,
+      "visual_review": "NOT_REVALIDATED_FOR_NEW_REALISM_LOCK",
+      "source_action": "PRESERVE_UNLESS_VISUAL_PARITY_FAILS",
+      "render_scale": 4,
+      "render_master_frame_px": [
+        512,
+        768
+      ],
+      "render_source": "PBR_3D_ORTHOGRAPHIC_RASTER_OR_EXISTING_REVIEWED_SOURCE",
+      "source_input_type": "PNG_TO_ASSET_V2",
+      "status": "PLANNED_VISUAL_REVIEW_ONLY",
+      "depth_band": "D3",
+      "visual_role": "Realistic independent 3D-rendered set dressing without fake interactions",
+      "placement_rule": "Scene/Layout chooses one existing state per inactive alcove; preserve four west/four east anchors; do not invent interaction targets."
+    },
+    {
+      "asset_id": "awakening_creche_fixtures/alcove_fused",
+      "family_id": "awakening_creche_fixtures",
+      "state_id": "alcove_fused",
+      "kind": "PROP",
+      "frame_px": [
+        128,
+        192
+      ],
+      "frames": 1,
+      "fps": 0,
+      "canvas_px": [
+        128,
+        192
+      ],
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_creche_fixtures/alcove_fused_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_fixtures/alcove_fused.png",
+      "family_schema_path": "custodian/content/metadata/assets/families/awakening_creche_fixtures.asset.json",
+      "layer": "body",
+      "alpha_requirement": "TRUE_RGBA_NO_MATTE",
+      "animation_layout": "copy",
+      "registration": "EXISTING_REGISTERED_STATE",
+      "required": true,
+      "visual_review": "NOT_REVALIDATED_FOR_NEW_REALISM_LOCK",
+      "source_action": "PRESERVE_UNLESS_VISUAL_PARITY_FAILS",
+      "render_scale": 4,
+      "render_master_frame_px": [
+        512,
+        768
+      ],
+      "render_source": "PBR_3D_ORTHOGRAPHIC_RASTER_OR_EXISTING_REVIEWED_SOURCE",
+      "source_input_type": "PNG_TO_ASSET_V2",
+      "status": "PLANNED_VISUAL_REVIEW_ONLY",
+      "depth_band": "D3",
+      "visual_role": "Realistic independent 3D-rendered set dressing without fake interactions",
+      "placement_rule": "Scene/Layout chooses one existing state per inactive alcove; preserve four west/four east anchors; do not invent interaction targets."
+    },
+    {
+      "asset_id": "awakening_creche_fixtures/alcove_empty",
+      "family_id": "awakening_creche_fixtures",
+      "state_id": "alcove_empty",
+      "kind": "PROP",
+      "frame_px": [
+        128,
+        192
+      ],
+      "frames": 1,
+      "fps": 0,
+      "canvas_px": [
+        128,
+        192
+      ],
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_creche_fixtures/alcove_empty_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_fixtures/alcove_empty.png",
+      "family_schema_path": "custodian/content/metadata/assets/families/awakening_creche_fixtures.asset.json",
+      "layer": "body",
+      "alpha_requirement": "TRUE_RGBA_NO_MATTE",
+      "animation_layout": "copy",
+      "registration": "EXISTING_REGISTERED_STATE",
+      "required": true,
+      "visual_review": "NOT_REVALIDATED_FOR_NEW_REALISM_LOCK",
+      "source_action": "PRESERVE_UNLESS_VISUAL_PARITY_FAILS",
+      "render_scale": 4,
+      "render_master_frame_px": [
+        512,
+        768
+      ],
+      "render_source": "PBR_3D_ORTHOGRAPHIC_RASTER_OR_EXISTING_REVIEWED_SOURCE",
+      "source_input_type": "PNG_TO_ASSET_V2",
+      "status": "PLANNED_VISUAL_REVIEW_ONLY",
+      "depth_band": "D3",
+      "visual_role": "Realistic independent 3D-rendered set dressing without fake interactions",
+      "placement_rule": "Scene/Layout chooses one existing state per inactive alcove; preserve four west/four east anchors; do not invent interaction targets."
+    },
+    {
+      "asset_id": "awakening_creche_fixtures/wall_of_seals",
+      "family_id": "awakening_creche_fixtures",
+      "state_id": "wall_of_seals",
+      "kind": "PROP",
+      "frame_px": [
+        256,
+        192
+      ],
+      "frames": 1,
+      "fps": 0,
+      "canvas_px": [
+        256,
+        192
+      ],
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_creche_fixtures/wall_of_seals_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_fixtures/wall_of_seals.png",
+      "family_schema_path": "custodian/content/metadata/assets/families/awakening_creche_fixtures.asset.json",
+      "layer": "body",
+      "alpha_requirement": "TRUE_RGBA_NO_MATTE",
+      "animation_layout": "copy",
+      "registration": "EXISTING_REGISTERED_STATE",
+      "required": true,
+      "visual_review": "NOT_REVALIDATED_FOR_NEW_REALISM_LOCK",
+      "source_action": "REVIEW_FOR_PBR_REAUTHOR",
+      "render_scale": 4,
+      "render_master_frame_px": [
+        1024,
+        768
+      ],
+      "render_source": "PBR_3D_ORTHOGRAPHIC_RASTER_OR_EXISTING_REVIEWED_SOURCE",
+      "source_input_type": "PNG_TO_ASSET_V2",
+      "status": "PLANNED_VISUAL_REVIEW_ONLY",
+      "depth_band": "D3",
+      "visual_role": "Realistic independent 3D-rendered set dressing without fake interactions",
+      "world_anchor": [
+        -272,
+        224
+      ]
+    },
+    {
+      "asset_id": "awakening_creche_fixtures/relic_table",
+      "family_id": "awakening_creche_fixtures",
+      "state_id": "relic_table",
+      "kind": "PROP",
+      "frame_px": [
+        192,
+        128
+      ],
+      "frames": 1,
+      "fps": 0,
+      "canvas_px": [
+        192,
+        128
+      ],
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_creche_fixtures/relic_table_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_fixtures/relic_table.png",
+      "family_schema_path": "custodian/content/metadata/assets/families/awakening_creche_fixtures.asset.json",
+      "layer": "body",
+      "alpha_requirement": "TRUE_RGBA_NO_MATTE",
+      "animation_layout": "copy",
+      "registration": "EXISTING_REGISTERED_STATE",
+      "required": true,
+      "visual_review": "NOT_REVALIDATED_FOR_NEW_REALISM_LOCK",
+      "source_action": "REVIEW_FOR_PBR_REAUTHOR",
+      "render_scale": 4,
+      "render_master_frame_px": [
+        768,
+        512
+      ],
+      "render_source": "PBR_3D_ORTHOGRAPHIC_RASTER_OR_EXISTING_REVIEWED_SOURCE",
+      "source_input_type": "PNG_TO_ASSET_V2",
+      "status": "PLANNED_VISUAL_REVIEW_ONLY",
+      "depth_band": "D3",
+      "visual_role": "Realistic independent 3D-rendered set dressing without fake interactions",
+      "world_anchor": [
+        272,
+        224
+      ]
+    },
+    {
+      "asset_id": "awakening_creche_fixtures/authority_inscription",
+      "family_id": "awakening_creche_fixtures",
+      "state_id": "authority_inscription",
+      "kind": "PROP",
+      "frame_px": [
+        384,
+        96
+      ],
+      "frames": 1,
+      "fps": 0,
+      "canvas_px": [
+        384,
+        96
+      ],
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_creche_fixtures/authority_inscription_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_fixtures/authority_inscription.png",
+      "family_schema_path": "custodian/content/metadata/assets/families/awakening_creche_fixtures.asset.json",
+      "layer": "body",
+      "alpha_requirement": "TRUE_RGBA_NO_MATTE",
+      "animation_layout": "copy",
+      "registration": "EXISTING_REGISTERED_STATE",
+      "required": true,
+      "visual_review": "NOT_REVALIDATED_FOR_NEW_REALISM_LOCK",
+      "source_action": "REVIEW_FOR_PBR_REAUTHOR",
+      "render_scale": 4,
+      "render_master_frame_px": [
+        1536,
+        384
+      ],
+      "render_source": "PBR_3D_ORTHOGRAPHIC_RASTER_OR_EXISTING_REVIEWED_SOURCE",
+      "source_input_type": "PNG_TO_ASSET_V2",
+      "status": "PLANNED_VISUAL_REVIEW_ONLY",
+      "depth_band": "D2",
+      "visual_role": "Realistic independent 3D-rendered set dressing without fake interactions",
+      "world_anchor": [
+        0,
+        -240
+      ]
+    },
+    {
+      "asset_id": "awakening_creche_perimeter_support/structural_support",
+      "family_id": "awakening_creche_perimeter_support",
+      "state_id": "structural_support",
+      "kind": "ENV",
+      "frame_px": [
+        512,
+        512
+      ],
+      "frames": 1,
+      "fps": 0,
+      "canvas_px": [
+        512,
+        512
+      ],
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_creche_perimeter_support/structural_support_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_perimeter_support/structural_support.png",
+      "family_schema_path": "custodian/content/metadata/assets/families/awakening_creche_perimeter_support.asset.json",
+      "layer": "background",
+      "alpha_requirement": "EXACT_REGISTERED_SOURCE_AND_PRESERVED_ALPHA",
+      "animation_layout": "copy",
+      "registration": "EXISTING_REGISTERED_STATE",
+      "required": true,
+      "visual_review": "NOT_REVALIDATED_FOR_NEW_REALISM_LOCK",
+      "source_action": "PRESERVE_UNLESS_CAMERA_SEAM_FAILS",
+      "render_scale": 4,
+      "render_master_frame_px": [
+        2048,
+        2048
+      ],
+      "render_source": "PBR_3D_ORTHOGRAPHIC_RENDER_AFTER_PARITY_REVIEW",
+      "source_input_type": "PNG_TO_ASSET_V2",
+      "status": "PLANNED_VISUAL_REVIEW_ONLY",
+      "depth_band": "D-1",
+      "visual_role": "Off-route perimeter beyond room; no playable-floor authority."
+    },
+    {
+      "asset_id": "awakening_creche_perimeter_support/distant_structures",
+      "family_id": "awakening_creche_perimeter_support",
+      "state_id": "distant_structures",
+      "kind": "ENV",
+      "frame_px": [
+        1024,
+        512
+      ],
+      "frames": 1,
+      "fps": 0,
+      "canvas_px": [
+        1024,
+        512
+      ],
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_creche_perimeter_support/distant_structures_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_perimeter_support/distant_structures.png",
+      "family_schema_path": "custodian/content/metadata/assets/families/awakening_creche_perimeter_support.asset.json",
+      "layer": "background",
+      "alpha_requirement": "EXACT_REGISTERED_SOURCE_AND_PRESERVED_ALPHA",
+      "animation_layout": "copy",
+      "registration": "EXISTING_REGISTERED_STATE",
+      "required": true,
+      "visual_review": "NOT_REVALIDATED_FOR_NEW_REALISM_LOCK",
+      "source_action": "PRESERVE_UNLESS_CAMERA_SEAM_FAILS",
+      "render_scale": 4,
+      "render_master_frame_px": [
+        4096,
+        2048
+      ],
+      "render_source": "PBR_3D_ORTHOGRAPHIC_RENDER_AFTER_PARITY_REVIEW",
+      "source_input_type": "PNG_TO_ASSET_V2",
+      "status": "PLANNED_VISUAL_REVIEW_ONLY",
+      "depth_band": "D-1",
+      "visual_role": "Off-route perimeter beyond room; no playable-floor authority."
+    },
+    {
+      "asset_id": "awakening_creche_perimeter_support/edge_transition",
+      "family_id": "awakening_creche_perimeter_support",
+      "state_id": "edge_transition",
+      "kind": "ENV",
+      "frame_px": [
+        256,
+        256
+      ],
+      "frames": 1,
+      "fps": 0,
+      "canvas_px": [
+        256,
+        256
+      ],
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_creche_perimeter_support/edge_transition_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_perimeter_support/edge_transition.png",
+      "family_schema_path": "custodian/content/metadata/assets/families/awakening_creche_perimeter_support.asset.json",
+      "layer": "background",
+      "alpha_requirement": "EXACT_REGISTERED_SOURCE_AND_PRESERVED_ALPHA",
+      "animation_layout": "copy",
+      "registration": "EXISTING_REGISTERED_STATE",
+      "required": true,
+      "visual_review": "NOT_REVALIDATED_FOR_NEW_REALISM_LOCK",
+      "source_action": "PRESERVE_UNLESS_CAMERA_SEAM_FAILS",
+      "render_scale": 4,
+      "render_master_frame_px": [
+        1024,
+        1024
+      ],
+      "render_source": "PBR_3D_ORTHOGRAPHIC_RENDER_AFTER_PARITY_REVIEW",
+      "source_input_type": "PNG_TO_ASSET_V2",
+      "status": "PLANNED_VISUAL_REVIEW_ONLY",
+      "depth_band": "D-1",
+      "visual_role": "Off-route perimeter beyond room; no playable-floor authority."
+    },
+    {
+      "asset_id": "awakening_creche_floor_material/stone_base",
+      "family_id": "awakening_creche_floor_material",
+      "state_id": "stone_base",
+      "kind": "ENV",
+      "registration": "PROPOSED_UNREGISTERED_STATE",
+      "required": true,
+      "depth_band": "D0",
+      "frame_px": [
+        512,
+        512
+      ],
+      "frames": 1,
+      "fps": 0,
+      "canvas_px": [
+        512,
+        512
+      ],
+      "animation_layout": "copy",
+      "alpha_requirement": "OPAQUE_RGB_SEAMLESS",
+      "world_anchor": null,
+      "render_scale": 4,
+      "render_master_frame_px": [
+        2048,
+        2048
+      ],
+      "render_source": "PBR_3D_ORTHOGRAPHIC_OFFLINE_RENDER",
+      "source_input_type": "PNG_TO_ASSET_V2",
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_creche_floor_material/stone_base_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_floor_material/stone_base.png",
+      "family_schema_path": "custodian/content/metadata/assets/families/awakening_creche_floor_material.asset.json",
+      "source_action": "CREATE_NEW_SOURCE_AND_REGISTER_AFTER_REVIEW",
+      "visual_role": "Naturalistic source material only; repeated and masked to authorized floor by renderer. No designed room plan, alcove, seal, border, light pool or path.",
+      "art_direction_prompt": "Physical PBR scan-quality institutional chalk-limestone and graphite basalt civic paving; micro-chipped seams, mineral salts, powder ash, extremely subtle wax residue; realistic roughness/normal breakup; continuous 32px architectural module (not a printed 32px grid). Strict perpendicular 90-degree overhead orthographic floor capture, north up, evenly lit albedo-leaning neutral exposure. Tile repeats without edge seam, dominant emblems, or obvious repeated cracks. No object, architectural baseboard, puddle, shaft, gradient/vignette or baked directional shadow.",
+      "visual_review": "HUMAN_PENDING",
+      "status": "NEW_NOT_REGISTERED",
+      "world_and_collision_owner": "AwakeningLayout, not art asset",
+      "constraints": [
+        "True seamless 3x3 visual repeat required",
+        "512x512 must be opaque RGB",
+        "2048x2048 4x Blender/offline master",
+        "PBR support maps belong to source master; Asset V2 state is normalized PNG only"
+      ]
+    },
+    {
+      "asset_id": "awakening_creche_floor_insets/authority_floor_seal",
+      "family_id": "awakening_creche_floor_insets",
+      "state_id": "authority_floor_seal",
+      "kind": "ENV",
+      "registration": "PROPOSED_UNREGISTERED_STATE",
+      "required": true,
+      "depth_band": "D1",
+      "frame_px": [
+        160,
+        160
+      ],
+      "frames": 1,
+      "fps": 0,
+      "canvas_px": [
+        160,
+        160
+      ],
+      "animation_layout": "copy",
+      "alpha_requirement": "TRUE_RGBA",
+      "world_anchor": [
+        0,
+        -160
+      ],
+      "render_scale": 4,
+      "render_master_frame_px": [
+        640,
+        640
+      ],
+      "render_source": "PBR_3D_ORTHOGRAPHIC_OFFLINE_RENDER",
+      "source_input_type": "PNG_TO_ASSET_V2",
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_creche_floor_insets/authority_floor_seal_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_floor_insets/authority_floor_seal.png",
+      "family_schema_path": "custodian/content/metadata/assets/families/awakening_creche_floor_insets.asset.json",
+      "source_action": "CREATE_NEW_SOURCE_AND_REGISTER_AFTER_REVIEW",
+      "visual_role": "Inlaid authority seal at locked world coordinate; flush engraving, never raised collision.",
+      "art_direction_prompt": "Photoreal orthographic overhead bronze-in-limestone registration seal, mildly degraded gilt metal in thin recessed incisions, old civic geometry, extremely low-profile flush to floor, no legible letters, no bright magical disk, no free-standing object, no shadow outside feature.",
+      "visual_review": "HUMAN_PENDING",
+      "status": "NEW_NOT_REGISTERED",
+      "world_and_collision_owner": "AwakeningLayout, not art asset",
+      "constraints": [
+        "Do not bake into L0 material or old environment underlay",
+        "Within existing nonblocking marker at (0,-160)",
+        "Alpha outside cutline/inset only"
+      ]
+    },
+    {
+      "asset_id": "awakening_creche_floor_insets/central_service_aisle",
+      "family_id": "awakening_creche_floor_insets",
+      "state_id": "central_service_aisle",
+      "kind": "ENV",
+      "registration": "PROPOSED_UNREGISTERED_STATE",
+      "required": true,
+      "depth_band": "D1",
+      "frame_px": [
+        192,
+        320
+      ],
+      "frames": 1,
+      "fps": 0,
+      "canvas_px": [
+        192,
+        320
+      ],
+      "animation_layout": "copy",
+      "alpha_requirement": "TRUE_RGBA",
+      "world_anchor": [
+        0,
+        -32
+      ],
+      "render_scale": 4,
+      "render_master_frame_px": [
+        768,
+        1280
+      ],
+      "render_source": "PBR_3D_ORTHOGRAPHIC_OFFLINE_RENDER",
+      "source_input_type": "PNG_TO_ASSET_V2",
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_creche_floor_insets/central_service_aisle_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_floor_insets/central_service_aisle.png",
+      "family_schema_path": "custodian/content/metadata/assets/families/awakening_creche_floor_insets.asset.json",
+      "source_action": "CREATE_NEW_SOURCE_AND_REGISTER_AFTER_REVIEW",
+      "visual_role": "Subtle continuous floor-inset guide beneath Operator and in front of console; not a locked route.",
+      "art_direction_prompt": "PBR-rendered floor flush recessed joints and worn bronze tracer tracks; almost invisible at the edge, subtle graduation toward active machinery, no literal neon runway, no arrows/legible labels, no cast shadows or blocked geometry; respect the clear line from wake to north door. 90 degree overhead.",
+      "visual_review": "HUMAN_PENDING",
+      "status": "NEW_NOT_REGISTERED",
+      "world_and_collision_owner": "AwakeningLayout, not art asset",
+      "constraints": [
+        "Exact center/layout is a proposed visual anchor, must be checked against console at (112,144), seal (0,-160), and wake (0,160)",
+        "No new nav authority or corridor walls"
+      ]
+    },
+    {
+      "asset_id": "awakening_creche_floor_insets/north_threshold_wear",
+      "family_id": "awakening_creche_floor_insets",
+      "state_id": "north_threshold_wear",
+      "kind": "ENV",
+      "registration": "PROPOSED_UNREGISTERED_STATE",
+      "required": true,
+      "depth_band": "D1",
+      "frame_px": [
+        128,
+        64
+      ],
+      "frames": 1,
+      "fps": 0,
+      "canvas_px": [
+        128,
+        64
+      ],
+      "animation_layout": "copy",
+      "alpha_requirement": "TRUE_RGBA",
+      "world_anchor": [
+        0,
+        -288
+      ],
+      "render_scale": 4,
+      "render_master_frame_px": [
+        512,
+        256
+      ],
+      "render_source": "PBR_3D_ORTHOGRAPHIC_OFFLINE_RENDER",
+      "source_input_type": "PNG_TO_ASSET_V2",
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_creche_floor_insets/north_threshold_wear_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_floor_insets/north_threshold_wear.png",
+      "family_schema_path": "custodian/content/metadata/assets/families/awakening_creche_floor_insets.asset.json",
+      "source_action": "CREATE_NEW_SOURCE_AND_REGISTER_AFTER_REVIEW",
+      "visual_role": "Flush worn crossing detail at the one existing north door.",
+      "art_direction_prompt": "Flat stone abrasion and faint brass scar line at old pressure-sealed threshold; 128px passage full width clear. Strict overhead, no door bar, no raised curb, no visual blockage, no additional room.",
+      "visual_review": "HUMAN_PENDING",
+      "status": "NEW_NOT_REGISTERED",
+      "world_and_collision_owner": "AwakeningLayout, not art asset",
+      "constraints": [
+        "Maps precisely onto Rect2(-64,-320,128,64)",
+        "No changes to Zone01-to-Zone02 transition"
+      ]
+    },
+    {
+      "asset_id": "awakening_creche_architecture/structural_shell",
+      "family_id": "awakening_creche_architecture",
+      "state_id": "structural_shell",
+      "kind": "ENV",
+      "registration": "PROPOSED_UNREGISTERED_STATE",
+      "required": true,
+      "depth_band": "D2",
+      "frame_px": [
+        960,
+        704
+      ],
+      "frames": 1,
+      "fps": 0,
+      "canvas_px": [
+        960,
+        704
+      ],
+      "animation_layout": "copy",
+      "alpha_requirement": "TRUE_RGBA",
+      "world_anchor": [
+        0,
+        -32
+      ],
+      "render_scale": 4,
+      "render_master_frame_px": [
+        3840,
+        2816
+      ],
+      "render_source": "PBR_3D_ORTHOGRAPHIC_OFFLINE_RENDER",
+      "source_input_type": "PNG_TO_ASSET_V2",
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_creche_architecture/structural_shell_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_architecture/structural_shell.png",
+      "family_schema_path": "custodian/content/metadata/assets/families/awakening_creche_architecture.asset.json",
+      "source_action": "CREATE_NEW_SOURCE_AND_REGISTER_AFTER_REVIEW",
+      "visual_role": "PBR-rendered room walls and architectural relief ONLY, registered to original plate, separated from floor, fixtures and console.",
+      "art_direction_prompt": "Single continuous modelled 3D orthographic rendering of a physically plausible brutalist gothic institutional crèche shell: limestone mass, graphite metal wall liners, heat-stained iron, inset alcove niches and mounting channels, precise masonry bevels, mechanical service ribs and material recession, open north portal void. Correct visual depth from physically modelled height and local occlusion; restrained real-world lighting, no floor artwork, no eight alcove doors inserted, no console, no relic table, no oversized cathedral altar, no new passage or collision. Render transparent outside architecture.",
+      "visual_review": "HUMAN_PENDING",
+      "status": "NEW_NOT_REGISTERED",
+      "world_and_collision_owner": "AwakeningLayout, not art asset",
+      "constraints": [
+        "Pixel-register to existing 960x704 plate at world center (0,-32)",
+        "Never block north Rect2(-64,-320,128,64)",
+        "Alcove fixtures remain independent states; shell may include only vacant sockets",
+        "Exclude floor albedo and floor seal"
+      ]
+    },
+    {
+      "asset_id": "awakening_creche_architecture/north_exit_frame",
+      "family_id": "awakening_creche_architecture",
+      "state_id": "north_exit_frame",
+      "kind": "ENV",
+      "registration": "PROPOSED_UNREGISTERED_STATE",
+      "required": true,
+      "depth_band": "D2",
+      "frame_px": [
+        192,
+        128
+      ],
+      "frames": 1,
+      "fps": 0,
+      "canvas_px": [
+        192,
+        128
+      ],
+      "animation_layout": "copy",
+      "alpha_requirement": "TRUE_RGBA",
+      "world_anchor": [
+        0,
+        -288
+      ],
+      "render_scale": 4,
+      "render_master_frame_px": [
+        768,
+        512
+      ],
+      "render_source": "PBR_3D_ORTHOGRAPHIC_OFFLINE_RENDER",
+      "source_input_type": "PNG_TO_ASSET_V2",
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_creche_architecture/north_exit_frame_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_architecture/north_exit_frame.png",
+      "family_schema_path": "custodian/content/metadata/assets/families/awakening_creche_architecture.asset.json",
+      "source_action": "CREATE_NEW_SOURCE_AND_REGISTER_AFTER_REVIEW",
+      "visual_role": "Art-only overhead crown/frame for real north passage with 128px clear walkable width.",
+      "art_direction_prompt": "PBR 3D-rendered weathered limestone and iron bolted doorway relief, narrow brass indexing, visible vertical mass at each side, no closed door, no threshold-height collision; architecture only outside clear gap. Correct orthographic top-down perspective.",
+      "visual_review": "HUMAN_PENDING",
+      "status": "NEW_NOT_REGISTERED",
+      "world_and_collision_owner": "AwakeningLayout, not art asset",
+      "constraints": [
+        "Do not double-render same trim in structural_shell",
+        "Preserve existing doorway Rect2(-64,-320,128,64)",
+        "Frame silhouette and actual overlap must be approved in a scene composite"
+      ]
+    },
+    {
+      "asset_id": "awakening_creche_floor_material/quieter_variant",
+      "family_id": "awakening_creche_floor_material",
+      "state_id": "quieter_variant",
+      "kind": "ENV",
+      "registration": "PROPOSED_UNREGISTERED_STATE",
+      "required": false,
+      "depth_band": "D0",
+      "frame_px": [
+        512,
+        512
+      ],
+      "frames": 1,
+      "fps": 0,
+      "canvas_px": [
+        512,
+        512
+      ],
+      "animation_layout": "copy",
+      "alpha_requirement": "OPAQUE_RGB_SEAMLESS",
+      "world_anchor": null,
+      "render_scale": 4,
+      "render_master_frame_px": [
+        2048,
+        2048
+      ],
+      "render_source": "PBR_3D_ORTHOGRAPHIC_OFFLINE_RENDER",
+      "source_input_type": "PNG_TO_ASSET_V2",
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_creche_floor_material/quieter_variant_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_floor_material/quieter_variant.png",
+      "family_schema_path": "custodian/content/metadata/assets/families/awakening_creche_floor_material.asset.json",
+      "source_action": "CREATE_NEW_SOURCE_AND_REGISTER_AFTER_REVIEW",
+      "visual_role": "Optional lower-contrast alternative for Operator readability and effect tests.",
+      "art_direction_prompt": "Same 3D PBR material as stone_base but with quieter grout and subdued stone variation; no new motif, no photographic light gradient; tile seamlessly.",
+      "visual_review": "HUMAN_PENDING",
+      "status": "NEW_NOT_REGISTERED",
+      "world_and_collision_owner": "AwakeningLayout, not art asset"
+    },
+    {
+      "asset_id": "awakening_creche_floor_insets/wear_scuffs",
+      "family_id": "awakening_creche_floor_insets",
+      "state_id": "wear_scuffs",
+      "kind": "ENV",
+      "registration": "PROPOSED_UNREGISTERED_STATE",
+      "required": false,
+      "depth_band": "D1",
+      "frame_px": [
+        128,
+        128
+      ],
+      "frames": 1,
+      "fps": 0,
+      "canvas_px": [
+        128,
+        128
+      ],
+      "animation_layout": "copy",
+      "alpha_requirement": "TRUE_RGBA",
+      "world_anchor": null,
+      "render_scale": 4,
+      "render_master_frame_px": [
+        512,
+        512
+      ],
+      "render_source": "PBR_3D_ORTHOGRAPHIC_OFFLINE_RENDER",
+      "source_input_type": "PNG_TO_ASSET_V2",
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_creche_floor_insets/wear_scuffs_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_floor_insets/wear_scuffs.png",
+      "family_schema_path": "custodian/content/metadata/assets/families/awakening_creche_floor_insets.asset.json",
+      "source_action": "CREATE_NEW_SOURCE_AND_REGISTER_AFTER_REVIEW",
+      "visual_role": "Optional sparse floor-local distress variants, no procedural collision.",
+      "art_direction_prompt": "High fidelity dust, oxide and chipped stone dust decals from photographed PBR detail, fully transparent outside sparse material stain; no raised stones, petals or readable writing.",
+      "visual_review": "HUMAN_PENDING",
+      "status": "NEW_NOT_REGISTERED",
+      "world_and_collision_owner": "AwakeningLayout, not art asset"
+    },
+    {
+      "asset_id": "awakening_creche_architecture/alcove_trim_variation",
+      "family_id": "awakening_creche_architecture",
+      "state_id": "alcove_trim_variation",
+      "kind": "ENV",
+      "registration": "PROPOSED_UNREGISTERED_STATE",
+      "required": false,
+      "depth_band": "D2",
+      "frame_px": [
+        96,
+        128
+      ],
+      "frames": 1,
+      "fps": 0,
+      "canvas_px": [
+        96,
+        128
+      ],
+      "animation_layout": "copy",
+      "alpha_requirement": "TRUE_RGBA",
+      "world_anchor": null,
+      "render_scale": 4,
+      "render_master_frame_px": [
+        384,
+        512
+      ],
+      "render_source": "PBR_3D_ORTHOGRAPHIC_OFFLINE_RENDER",
+      "source_input_type": "PNG_TO_ASSET_V2",
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_creche_architecture/alcove_trim_variation_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_architecture/alcove_trim_variation.png",
+      "family_schema_path": "custodian/content/metadata/assets/families/awakening_creche_architecture.asset.json",
+      "source_action": "CREATE_NEW_SOURCE_AND_REGISTER_AFTER_REVIEW",
+      "visual_role": "Optional variation for inactive alcove sockets after shell art review.",
+      "art_direction_prompt": "Deep but narrow limestone/iron edge relief with socket-specific oxidation, readably different from fixture doors; keep walkable zone and existing alcove anchors untouched.",
+      "visual_review": "HUMAN_PENDING",
+      "status": "NEW_NOT_REGISTERED",
+      "world_and_collision_owner": "AwakeningLayout, not art asset"
+    },
+    {
+      "asset_id": "awakening_creche_ambient_fx/pressure_vent",
+      "family_id": "awakening_creche_ambient_fx",
+      "state_id": "pressure_vent",
+      "kind": "FX",
+      "registration": "PROPOSED_UNREGISTERED_STATE",
+      "required": false,
+      "depth_band": "D5",
+      "frame_px": [
+        128,
+        128
+      ],
+      "frames": 8,
+      "fps": 8,
+      "canvas_px": [
+        1024,
+        128
+      ],
+      "animation_layout": "horizontal_strip",
+      "alpha_requirement": "TRUE_RGBA",
+      "world_anchor": [
+        0,
+        208
+      ],
+      "render_scale": 4,
+      "render_master_frame_px": [
+        512,
+        512
+      ],
+      "render_source": "PBR_3D_ORTHOGRAPHIC_OFFLINE_RENDER",
+      "source_input_type": "PNG_TO_ASSET_V2",
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_creche_ambient_fx/pressure_vent_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_ambient_fx/pressure_vent.png",
+      "family_schema_path": "custodian/content/metadata/assets/families/awakening_creche_ambient_fx.asset.json",
+      "source_action": "CREATE_NEW_SOURCE_AND_REGISTER_AFTER_REVIEW",
+      "visual_role": "Optional localized slow exhalation from recovery pod service fitting, no gameplay effect.",
+      "art_direction_prompt": "Photoreal restrained faint condensate vapor, true transparent background, physically coherent soft dissipation. 8 separate 128x128 source frames horizontally registered. No full-room smoky overlay, labels or artificial color bloom.",
+      "visual_review": "HUMAN_PENDING",
+      "status": "NEW_NOT_REGISTERED",
+      "world_and_collision_owner": "AwakeningLayout, not art asset",
+      "constraints": [
+        "May reuse existing atmospheric FX rather than register a new family if role overlaps",
+        "Do not fire continuously if scene owns timed wake beat"
+      ]
+    },
+    {
+      "asset_id": "awakening_creche_fixtures/collapsed_service_harness",
+      "family_id": "awakening_creche_fixtures",
+      "state_id": "collapsed_service_harness",
+      "registration": "EXISTING_REGISTERED_OPTIONAL_STATE",
+      "required": false,
+      "kind": "PROP",
+      "animation_layout": "copy",
+      "source_input_type": "PNG_TO_ASSET_V2",
+      "status": "EXISTING_OPTIONAL_NOT_REVALIDATED",
+      "depth_band": "D3",
+      "frame_px": [
+        128,
+        128
+      ],
+      "frames": 1,
+      "fps": 0,
+      "canvas_px": [
+        128,
+        128
+      ],
+      "visual_review": "NOT_REVALIDATED_FOR_NEW_REALISM_LOCK",
+      "source_action": "RETAIN_OPTIONAL_REVIEW_ONLY",
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_creche_fixtures/collapsed_service_harness_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_fixtures/collapsed_service_harness.png",
+      "family_schema_path": "custodian/content/metadata/assets/families/awakening_creche_fixtures.asset.json",
+      "alpha_requirement": "TRUE_RGBA",
+      "render_scale": 4,
+      "render_master_frame_px": [
+        512,
+        512
+      ],
+      "visual_role": "Additional noninteractive physical dressing; collision from existing Layout only."
+    },
+    {
+      "asset_id": "awakening_creche_fixtures/cracked_sidearm_holster",
+      "family_id": "awakening_creche_fixtures",
+      "state_id": "cracked_sidearm_holster",
+      "registration": "EXISTING_REGISTERED_OPTIONAL_STATE",
+      "required": false,
+      "kind": "PROP",
+      "animation_layout": "copy",
+      "source_input_type": "PNG_TO_ASSET_V2",
+      "status": "EXISTING_OPTIONAL_NOT_REVALIDATED",
+      "depth_band": "D3",
+      "frame_px": [
+        64,
+        64
+      ],
+      "frames": 1,
+      "fps": 0,
+      "canvas_px": [
+        64,
+        64
+      ],
+      "visual_review": "NOT_REVALIDATED_FOR_NEW_REALISM_LOCK",
+      "source_action": "RETAIN_OPTIONAL_REVIEW_ONLY",
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_creche_fixtures/cracked_sidearm_holster_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_fixtures/cracked_sidearm_holster.png",
+      "family_schema_path": "custodian/content/metadata/assets/families/awakening_creche_fixtures.asset.json",
+      "alpha_requirement": "TRUE_RGBA",
+      "render_scale": 4,
+      "render_master_frame_px": [
+        256,
+        256
+      ],
+      "visual_role": "Additional noninteractive physical dressing; collision from existing Layout only."
+    },
+    {
+      "asset_id": "awakening_creche_fixtures/petrified_bandage_spool",
+      "family_id": "awakening_creche_fixtures",
+      "state_id": "petrified_bandage_spool",
+      "registration": "EXISTING_REGISTERED_OPTIONAL_STATE",
+      "required": false,
+      "kind": "PROP",
+      "animation_layout": "copy",
+      "source_input_type": "PNG_TO_ASSET_V2",
+      "status": "EXISTING_OPTIONAL_NOT_REVALIDATED",
+      "depth_band": "D3",
+      "frame_px": [
+        64,
+        64
+      ],
+      "frames": 1,
+      "fps": 0,
+      "canvas_px": [
+        64,
+        64
+      ],
+      "visual_review": "NOT_REVALIDATED_FOR_NEW_REALISM_LOCK",
+      "source_action": "RETAIN_OPTIONAL_REVIEW_ONLY",
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_creche_fixtures/petrified_bandage_spool_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_fixtures/petrified_bandage_spool.png",
+      "family_schema_path": "custodian/content/metadata/assets/families/awakening_creche_fixtures.asset.json",
+      "alpha_requirement": "TRUE_RGBA",
+      "render_scale": 4,
+      "render_master_frame_px": [
+        256,
+        256
+      ],
+      "visual_role": "Additional noninteractive physical dressing; collision from existing Layout only."
+    },
+    {
+      "asset_id": "awakening_creche_fixtures/maintenance_slate",
+      "family_id": "awakening_creche_fixtures",
+      "state_id": "maintenance_slate",
+      "registration": "EXISTING_REGISTERED_OPTIONAL_STATE",
+      "required": false,
+      "kind": "PROP",
+      "animation_layout": "copy",
+      "source_input_type": "PNG_TO_ASSET_V2",
+      "status": "EXISTING_OPTIONAL_NOT_REVALIDATED",
+      "depth_band": "D3",
+      "frame_px": [
+        96,
+        64
+      ],
+      "frames": 1,
+      "fps": 0,
+      "canvas_px": [
+        96,
+        64
+      ],
+      "visual_review": "NOT_REVALIDATED_FOR_NEW_REALISM_LOCK",
+      "source_action": "RETAIN_OPTIONAL_REVIEW_ONLY",
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_creche_fixtures/maintenance_slate_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_fixtures/maintenance_slate.png",
+      "family_schema_path": "custodian/content/metadata/assets/families/awakening_creche_fixtures.asset.json",
+      "alpha_requirement": "TRUE_RGBA",
+      "render_scale": 4,
+      "render_master_frame_px": [
+        384,
+        256
+      ],
+      "visual_role": "Additional noninteractive physical dressing; collision from existing Layout only."
+    }
+  ],
+  "interaction_contract": {
+    "live_interactibles": [
+      "CrecheConsole"
+    ],
+    "wake_pod": "CINEMATIC_PRESENTATION_NOT_NEW_INTERACTION",
+    "inactive_alcoves": "SCENIC_ONLY_NO_PROMPT",
+    "floor_seal": "SCENIC_ONLY_NO_PROMPT",
+    "relief_and_table": "SCENIC_ONLY_NO_PROMPT",
+    "existing_ui": "CustodianHUD + BlackReliquaryPrompt + existing InputPromptService",
+    "attention_ladder": [
+      "world silhouette and actual screen emissive are readable at distance",
+      "proximity only when the existing target is valid, via existing AffordancePresentation",
+      "existing show_proximity_interaction with dynamic action glyph, no second controller",
+      "8-frame FX stays on actual console screen anchor, never on the floor",
+      "acknowledged state reduces attention without disabling readout"
+    ],
+    "no_new_gameplay": true
+  },
+  "regeneration_matrix": [
+    {
+      "asset_id": "awakening_creche_environment/underlay",
+      "decision": "REAUTHOR_REQUIRED",
+      "reason": "Existing monolithic/baked plate must be replaced as an atomic layer stack; true floor-only output must not contain console, structural wall relief or fixtures."
+    },
+    {
+      "asset_id": "awakening_creche_architecture/structural_shell",
+      "decision": "GENERATE_REQUIRED_NEW",
+      "reason": "New 3D PBR architectural layer, not currently registered."
+    },
+    {
+      "asset_id": "awakening_creche_floor_material/stone_base",
+      "decision": "GENERATE_REQUIRED_NEW",
+      "reason": "Realistic PBR material source; 512x512 repeat."
+    },
+    {
+      "asset_id": "awakening_creche_floor_insets/authority_floor_seal",
+      "decision": "GENERATE_REQUIRED_NEW",
+      "reason": "Separate flush inlay, not baked onto room floor."
+    },
+    {
+      "asset_id": "awakening_creche_floor_insets/central_service_aisle",
+      "decision": "GENERATE_REQUIRED_NEW",
+      "reason": "Controlled floor-level route reading, not baked into base."
+    },
+    {
+      "asset_id": "awakening_creche_floor_insets/north_threshold_wear",
+      "decision": "GENERATE_REQUIRED_NEW",
+      "reason": "Precise open transition floor."
+    },
+    {
+      "asset_id": "awakening_creche_architecture/north_exit_frame",
+      "decision": "GENERATE_REQUIRED_NEW",
+      "reason": "Isolated physical frame, cannot obstruct doorway."
+    },
+    {
+      "asset_id": "awakening_creche_console/idle",
+      "decision": "REVIEW_PROBABLE_REAUTHOR",
+      "reason": "Must read as the single photoreal physical console, aligned with actual screen-local FX and clean room."
+    },
+    {
+      "asset_id": "awakening_creche_fixtures/wall_of_seals",
+      "decision": "REVIEW_REAUTHOR_IF_MISMATCH",
+      "reason": "Prominent setpiece against new physically rendered wall relief."
+    },
+    {
+      "asset_id": "awakening_creche_fixtures/relic_table",
+      "decision": "REVIEW_REAUTHOR_IF_MISMATCH",
+      "reason": "High-value foreground fixture; preserve placement and collision authority."
+    },
+    {
+      "asset_id": "awakening_creche_fixtures/authority_inscription",
+      "decision": "REVIEW_REAUTHOR_IF_MISMATCH",
+      "reason": "Existing headwall inscription family already registered; do not add duplicate."
+    },
+    {
+      "asset_id": "awakening_creche_environment/foreground",
+      "decision": "RETAIN_REVIEW_OCCLUSION",
+      "reason": "Keep unless opacity/overdraw fails with new shell; preserve registered 960x704 plate."
+    },
+    {
+      "asset_id": "awakening_creche_recovery_alcove/idle",
+      "decision": "RETAIN_REVIEW_PBR_CONSISTENCY",
+      "reason": "Already separate prop family."
+    },
+    {
+      "asset_id": "awakening_creche_recovery_alcove/wake",
+      "decision": "RETAIN_REVIEW_SPRITESHEET",
+      "reason": "Existing 8 frames 8fps; not a new interactible."
+    },
+    {
+      "asset_id": "awakening_creche_console_activation_fx/activate",
+      "decision": "RETAIN_VERIFY_SCREEN_ANCHOR",
+      "reason": "Existing 8 frames 8fps screen effect; no new FX needed unless image fails."
+    }
+  ],
+  "cutover": {
+    "mode": "ATOMIC_AFTER_HUMAN_SOURCE_APPROVAL",
+    "phases": [
+      "P0 freeze scene snapshot and extract current 960x704 room and 128px Operator composition; inspect actual art source bytes, including alpha; preserve old runtime until cutover.",
+      "P1 generate/review PBR 512x512 stone material and floor-only 960x704 composited underlay with transparent outside exposed floor and unchanged origin.",
+      "P2 generate/review L1 insets (floor seal, aisle, north threshold) independently as true RGBA.",
+      "P3 generate/review L2 structural shell and north exit frame, with exact occlusion and existing eight inactive alcove sockets.",
+      "P4 compare fixtures/recovery/console with new 3D-rendered style; selectively reauthor only failed states; measure screen-local FX anchor.",
+      "P5 review all candidate images at native resolution, actual 2.25x camera setting, 128px Operator context, no hidden underlay machine; obtain per-image human source approvals.",
+      "P6 register new Asset V2 families and required-assets registry, stage immutable source masters, normalize/ingest through the existing tools; atomically bind reviewed layers; keep one visible console.",
+      "P7 run focused Godot layout/route/interactible/FX/alpha/occlusion and source receipt tests, verify both entry/exit and live 8f screen event; update current-state documentation."
+    ],
+    "no_replacement_until_sources_and_bindings_complete": true
+  },
+  "validation": {
+    "objective": [
+      "All 16 existing required family/state IDs and frame contracts remain unchanged until their independently approved cutover.",
+      "Six new REQUIRED art-state proposals explicitly unregistered; four additional proposed optional; existing registered optional states remain optional.",
+      "L0 stone_base 512x512 RGB; normalized underlay 960x704 with real transparency outside floor, not a solid border or invented walls.",
+      "No baked console, alcove bodies, relic table or architecture in floor plates; no overlapping duplicate actor/prop artwork.",
+      "All assets with transparent specification have measurable true RGBA with zero-matte transparency; printed checkerboard is not alpha.",
+      "Record per-image SHA256, frame count, pixel size, alpha bounds and source/normalized hashes; test independent sprites and composite.",
+      "Preserve one real Crèche Console at (112,144), visible body (105,118), existing action/readout, wake at (0,160).",
+      "128px wide north passage stays unobstructed; scene remains 2D with unchanged collision and camera policy.",
+      "No prompt for inactive scenic objects or the wake pod; screen FX stays attached to actual console body.",
+      "Keep existing perimeter owner, all headwall fixture family IDs and 8f event timings, no duplicate light/shadow silhouette.",
+      "Floor base 3x3 tile visual test without obvious repetition and exact opposing edge pixel continuity; visually inspect after rendering.",
+      "Run native scale Operator and camera captures; human PBR aesthetic approval before runtime promotion."
+    ],
+    "pass_condition": "Separate actual rendering, compositing, native-scale tests, source approval, Asset V2 ingestion and gameplay integration evidence. Manifest alone does not establish readiness."
+  },
+  "roadmap_alignment": {
+    "global_manifest": "design/04_architecture/HUB_SEPULCHER_AWAKENING_ART_V1_MANIFEST.json",
+    "program_scope": "This Crèche decomposed sub-manifest does not silently increment or fulfill the 198/193 global art inventory. Reconcile IDs and shared existing perimeter sets before global queue migration.",
+    "registered_state_policy": "Do not rename/supersede old family IDs by adding near-duplicate states under the same name; the existing underlay remains the compatibility composition target."
+  },
+  "inventory": {
+    "existing_registered_required": 16,
+    "new_proposed_required": 6,
+    "total_required": 22,
+    "existing_registered_optional": 4,
+    "new_proposed_optional": 4,
+    "total_optional": 8,
+    "total_states": 30,
+    "depth_bands": [
+      "D-1",
+      "D0",
+      "D1",
+      "D2",
+      "D3",
+      "D4",
+      "D5",
+      "D6",
+      "HUD"
+    ]
+  }
+}

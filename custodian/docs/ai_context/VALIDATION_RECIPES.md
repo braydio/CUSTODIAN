@@ -5,10 +5,10 @@ Canonical validation guide for CUSTODIAN agent work.
 ## Forlorn Ritualant Four-Cue Score
 
 Run the focused integration smoke and retain the existing encounter route and
-completion regressions. The smoke verifies the four imported resources, reveal
-and committed combat loops, fresh explicit-pin and final-anchor one-shots,
-violent resolution routing, scoped Ninth Answer duck, single music player,
-restore behavior, and successor-zone ownership:
+completion regressions. The smoke verifies the four imported resources, arrival
+fade and reveal, real overlapping cue decks, dialogue duck during a switch,
+fresh explicit-pin and final-anchor one-shots, terminal quiet, survival, scene
+restore, and successor-zone ownership:
 
 ```bash
 python3 custodian/tools/validation/run_validation.py --test ritualant_four_cue_music --json
@@ -36,7 +36,7 @@ The triage tool never reruns checks, edits reports, waives a failure, or changes
 
 ## Process Feedback Ledger
 
-The read-only process-feedback inventory scans root closing summaries and active/archived packet receipts. It never changes packet state. Run focused anti-vacuity tests, then compare repeated real-corpus output byte-for-byte:
+The read-only process-feedback inventory scans committed summaries in `custodian/docs/ai_context/agent_summaries/` (including old filenames) and active/archived packet receipts. It never changes packet state. Run focused anti-vacuity tests, then compare repeated real-corpus output byte-for-byte:
 
 ```bash
 python3 custodian/tools/agent/test_process_feedback.py
@@ -51,14 +51,20 @@ A unique explicit workstream identity is required to pair packet and summary mir
 ## Agent Workstream Lifecycle
 
 Every packeted implementation run claims through `dispatch.py claim-next` or
-`dispatch.py claim <id>`. Direct `workstream.py start <stable-kebab-id>` uses
-the same exclusivity protocol for manual work and will not adopt existing
-state; use explicit `workstream.py resume <id>` after inspecting recovery
-state. Implement and validate in the returned sibling
-`.custodian-worktrees/` checkout. Use `checkpoint` for intentionally incomplete
-work and `finish --validation-report <json>` for validated completed work. See
-`AGENT_WORKSTREAM_LIFECYCLE.md` for recovery, synchronization, cleanup, and
-branch archive rules.
+`dispatch.py claim <id>`. Direct `workstream.py start <stable-kebab-id>` is a
+fresh V2 acquisition and does not adopt an existing attached checkout. Before
+continuing the same workstream, inspect its original acquisition, branch, and
+checkout provenance. `workstream.py resume <id>` is the intended entrypoint,
+but the current attached-checkout refusal is tracked as `DEBT-0001` in
+`debt/REGISTER.md`: if it refuses, preserve the checkout and report the actual
+blocker; do not silently use a new claim or bypass the lifecycle.
+
+Implement and validate only in the exact checkout returned by V2, ordinarily
+under `~/Projects/.custodian-turns/`. Use `checkpoint` for incomplete work;
+V2 `finish --validation-report <json>` verifies a turn checkpoint and retires
+its checkout, but does not land the task on `origin/main`. GitHub CI and branch
+protection govern main landing. See `AGENT_WORKSTREAM_LIFECYCLE.md` for
+recovery, synchronization, cleanup, and branch archive rules.
 
 Run focused lifecycle tests after changes to agent Git tooling:
 
@@ -67,6 +73,27 @@ python3 -m unittest custodian.tools.agent.test_land_main custodian.tools.agent.t
 python3 -m unittest custodian.tools.agent.test_workflow_control
 python3 custodian/tools/agent/test_task_packet_contract.py
 ```
+
+For deferred-LFS worktree changes, also run the isolated bare-remote/LFS fixture
+and the dispatch pre-claim capacity regression:
+
+```bash
+python3 -m unittest custodian.tools.agent.test_worktree_provisioning custodian.tools.agent.test_workstream_checkout_recovery custodian.tools.agent.test_dispatch custodian.tools.agent.test_workstream
+python3 -m py_compile custodian/tools/agent/worktree_provisioning.py custodian/tools/agent/workstream.py custodian/tools/agent/dispatch.py
+```
+
+The fixture proves full versus profiled byte estimates, sparse omission, exact
+local-cache hydration, missing/corrupt LFS refusal, path validation, and that a
+capacity refusal creates no dispatch claim. Before running a Godot command in a
+profiled checkout, use:
+
+```bash
+python3 custodian/tools/pipelines/godot_import_preflight.py --project-dir <worktree>/custodian
+```
+
+This gate inspects only LFS paths present in the checkout. Hydrated paths must
+match their pinned SHA-256 OID and size; sparse-omitted assets are not import
+inputs for that checkout.
 
 `dispatch.py`, `workstream.py`, `check_ai_context.py`, and `task_packet_index.py`
 all consume one shared packet grammar/validation authority,
@@ -222,6 +249,39 @@ For production requirement registry, CLI, or generated-view changes, run
 `python3 custodian/tools/validation/asset_requirements_smoke.py`,
 `python3 custodian/tools/assets/asset.py needs --check`, and
 `python3 custodian/tools/assets/asset.py doctor`.
+
+## Hub Road Empty Procession
+
+Run the real-Hub-host sequence smoke, then preserve the Hub route, handoff,
+Forum Dais, and campaign-state regressions:
+
+```bash
+python3 custodian/tools/validation/run_validation.py --test hub_road_empty_procession --json
+python3 custodian/tools/validation/run_validation.py --test hub_first_set_blockout --json
+python3 custodian/tools/validation/run_validation.py --test world_transition_handoff --json
+python3 custodian/tools/validation/run_validation.py --test hub_forum_adjudication --json
+godot --headless --path custodian --script res://tools/validation/campaign_outcome_exactly_once_smoke.gd
+```
+
+The focused smoke drives a real Operator across the production H1 route, checks
+ordered lamp/bell beats, resumes from a partial HubState snapshot, and rejects
+replay after restoring a completed snapshot. It also asserts that the Forum
+Dais, Crown Transfer ingress, and Contract prewarm remain untouched.
+
+## Hub Sepulcher Grave Resolution
+
+Run the production-host resolution smoke, then the predecessor evidence/
+persistence smoke and first-set traversal regression:
+
+```bash
+python3 custodian/tools/validation/run_validation.py --test hub_sepulcher_grave_resolution --json
+python3 custodian/tools/validation/run_validation.py --test hub_sepulcher_grave_evidence --json
+python3 custodian/tools/validation/run_validation.py --test hub_first_set_blockout --json
+```
+
+The focused resolution smoke exercises both findings with a real Operator,
+exactly-once HubState persistence, restore/return behavior, evidence rereads,
+non-colliding pale-growth presentation, and unchanged Contract prewarm state.
 
 ## Preferred Agent Entry Point
 
@@ -1596,7 +1656,15 @@ python3 tools/assets/asset.py needs --check
 ```
 
 The smoke refreshes
-`docs/ai_context/reports/awakening_perimeter_support/camera_coverage_v1.json`.
+`docs/ai_context/reports/awakening_perimeter_support/camera_coverage_v1.json`
+only when explicitly invoked with `-- --write-report`. Routine validation checks
+the current scene geometry without modifying the tracked evidence report. To
+deliberately regenerate the canonical report, run:
+
+```bash
+godot --headless --path . --script res://tools/validation/awakening_perimeter_support_smoke.gd -- --write-report
+```
+
 Run all nine family plans/statuses and `asset doctor` when validating AP0; the
 global doctor can report pre-existing unrelated catalog hash mismatches, which
 must be separated from this foundation’s pending contracts.
@@ -1724,6 +1792,16 @@ records. M1 preserves existing commit timing; do not interpret these counters
 as evidence that rebuild work has been batched yet.
 
 ## Review Validation
+
+The paired review runner executes `run_validation.py --changed --base
+<implementation-parent-sha> --json` from the exact claimed review worktree on
+the trusted coordinator before launching the restricted reviewer. This keeps
+Godot import sockets and the existing project lock/job budget on the host side.
+The reviewer receives the pinned report and independently decides the outcome;
+it must not replace the report or treat green tests as its verdict. The
+coordinator rechecks the report hash, implementation identity, and source
+fingerprint before landing. See `paired_review_runner.py` and
+`paired_review_host_validation.py` for the fail-closed evidence contract.
 
 ## Enemy Hit Spatial Diagnostics
 
@@ -1895,7 +1973,61 @@ the directly affected Operator input, ranged projectile, Field Patch, and death
 handoff tests selected by the changed-file manifest, then one
 `run_validation.py --changed --json` closeout.
 
-# Operator Runtime Authority Migration Checks (in progress)
+# Operator Chassis Authority Seal (in progress)
+
+The source-aware chassis guard records the current `operator.gd` field/method
+ownership inventory, applies a decrease-only budget, checks foreign-body motor
+ownership, and reuses the existing Operator architecture, runtime-path, and
+animation-authority predicates. Run from the repository root:
+
+```bash
+python3 custodian/tools/validation/operator_chassis_authority_guard.py --json
+python3 -m unittest custodian.tools.validation.test_operator_chassis_authority_guard -v
+python3 -m unittest \
+  custodian.tools.agent.test_workstream.WorkstreamTests.test_finish_runs_operator_authority_guard_before_any_push \
+  custodian.tools.agent.test_workstream.WorkstreamTests.test_closeout_preflight_reports_operator_authority_guard_failure \
+  custodian.tools.agent.test_workstream.WorkstreamTests.test_operator_authority_guard_leaves_unrelated_workstreams_unaffected -v
+```
+
+`workstream.py preflight` reports the guard result and `workstream.py finish`
+invokes the same guard independently of `run_validation.py --changed` test
+selection. A failure blocks before push and preserves the claimed worktree and
+branch. Non-Operator workstreams that do not touch Operator runtime, guard,
+policy, manifest, or reused audit authorities skip this gate. Exact source
+measurements and the temporary F2 movement exception live in
+`operator_chassis_authority_budget.json`; an extraction must remove its owned
+records and lower applicable limits. Method-token fingerprint changes require
+the packet's named, bounded approval record. Do not raise a budget or add a
+foreign-movement exception to make validation pass.
+
+The budget also pins the existing 23 legacy path-identity lines and 188 legacy
+runtime animation paths by their measured identities. These remain outstanding
+migration debt; the ordinary audits must reject additions while reporting them.
+F2/F3/F5/F6 own domain extraction and debt reduction, and Slice G owns final
+elimination. Passing the ordinary audits does not mean Operator migration is
+complete.
+
+This is an autonomous `workstream.py` lifecycle gate plus ordinary CI coverage.
+It does not prevent arbitrary direct pushes to `main`; do not claim that
+server-side branch protection enforces this local finish check.
+
+Before implementation closeout, run these packet-required canonical checks
+from the repository root (without changing shared timeout policy):
+
+```bash
+python3 custodian/tools/validation/operator_architecture_debt_audit.py --final
+python3 custodian/tools/validation/operator_runtime_path_audit.py
+python3 custodian/tools/validation/operator_runtime_animation_authority_smoke.py
+python3 custodian/tools/validation/run_validation.py --changed --json
+git diff --check
+```
+
+The path and animation `--final` modes remain final Slice G gates and are not
+required to close this pre-extraction seal. Their current known debt counts are
+reported separately; an expected nonzero final result is not a passing
+validation. The architecture `--final` audit remains required here.
+
+## Operator Runtime Authority Migration Checks (in progress)
 
 These checks validate the preservation/selector foundations only; they do not
 certify the still-pending actor, pipeline or Workbench cutover. See

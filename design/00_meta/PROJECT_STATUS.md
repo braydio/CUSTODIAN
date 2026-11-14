@@ -8,7 +8,7 @@
 
 The active Godot runtime boots into a generated contract context with full 7-system campaign architecture documented:
 
-- PixelPlanets planet contract generation
+- Deterministic planet identity and world-profile generation
 - Procgen map generation promoted into the live world
 - Local in-game terminal with contract/world snapshot and previews
 - Wave combat, turrets, supply drops, sprint, melee, and repair loop foundations
@@ -33,7 +33,7 @@ The active Godot runtime boots into a generated contract context with full 7-sys
 | Repair gameplay slice | Done | Hold repair on damaged structures |
 | Supply drops | Done | Periodic resource drop loop |
 | Local command terminal | Done | In-world interactable, no HTTP dependency |
-| Contract planet generation | Done | PixelPlanets integrated into runtime |
+| Contract planet generation | Done | Six seeded planet identities and world profiles; no external planet-scene dependency |
 | Runtime procgen map loading | Done | Generated map is promoted into active world |
 | Terminal previews | Done | Planet render + map preview in terminal |
 | Procgen compound zone | Done | Structured base footprint, ingress points, edge spawn projection |
@@ -93,7 +93,7 @@ The active Godot runtime boots into a generated contract context with full 7-sys
 ## Current Runtime Loop
 
 1. Game boots into `res://scenes/game.tscn`
-2. `World/ContractMap` generates a deterministic PixelPlanets contract + procgen map
+2. `World/ContractMap` generates a deterministic planet identity/profile + procgen map
 3. `ContractWorldLoader` promotes the generated map into `World/ProcGenRuntime`
 4. Static legacy sector visuals/collisions are disabled for runtime procgen play
 5. **Operator is moved to procgen player spawn**

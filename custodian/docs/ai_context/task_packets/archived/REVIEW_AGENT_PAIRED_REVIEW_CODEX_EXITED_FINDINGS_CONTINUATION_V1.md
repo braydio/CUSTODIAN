@@ -1,0 +1,51 @@
+# Review Paired-Review `codex_exited` Findings Continuation
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `review-agent-paired-review-codex-exited-findings-continuation-v1`
+- Status: `ready`
+- Dispatch: `auto`
+- Authoring handoff: `auto`
+- Priority: `P1`
+- Depends on: `agent-paired-review-codex-exited-findings-continuation-v1`
+- Locks: `paired-review-codex-exited-findings-continuation`
+- Kind: `review`
+- Review target workstream: `agent-paired-review-codex-exited-findings-continuation-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/PAIRED_REVIEW_CODEX_EXITED_FINDINGS_CONTINUATION_V1.md`
+- Review rationale: `substantial engineering default`
+- Reviewed main: `f06dd8943efe168937a552418a66a5561b59dc84`
+- Authoring chat: `not-recorded`
+- Visual review: `none`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Goal: Independently verify that the exact-run `codex_exited` continuation preserves all original evidence and can close only a genuine reviewer-authored findings outcome.
+- Completion boundary: Fresh-context review of the landed continuation implementation, its hostile real-Git fixtures and durable reports. Do not apply it to the protected review run.
+- Current measured state: The exact original run is `20261024T232113Z-32d8a7c6bb9d`, at `codex_exited` with no canonical Review Outcome. The main implementation is `f06dd8943efe168937a552418a66a5561b59dc84`. The original reviewer checkout has an uncommitted target receipt that contradicts its findings prose; preserve it read-only.
+- Evidence: Implementation packet and full diff; paired-review runner and tests; original run reports and hashes; preserved original reviewer worktree and branch; real-Git plan/apply negative fixtures; canonical validation and changed-file coverage.
+- Task-specific authority: `paired_review_runner.py`; `review_outcome.py`; `review_receipt_delta.py`; `workstream.py`; `AGENT_WORKSTREAM_LIFECYCLE.md`.
+- Work surface: Read-only inspection of the landed implementation, tests and recovery evidence. Review artifacts and summary only through the paired-review runner's normal authority.
+- Publication inputs: `custodian/tools/agent/paired_review_runner.py`; `custodian/tools/agent/test_paired_review_runner.py`; `custodian/tools/agent/paired_review_host_validation.py`; `custodian/tools/agent/review_outcome.py`; `custodian/tools/agent/review_receipt_delta.py`; `custodian/tools/agent/workstream.py`; `custodian/tools/agent/land_main.py`; `custodian/tools/agent/dispatch.py`; `custodian/tools/validation/run_validation.py`; `custodian/tools/validation/validation_manifest.json`; `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`; `custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md`.
+- Change: Verify exact-run scoping; immutable run/worktree inventory capture; no-mutation planning; supervisor ownership; separate recovery checkout/branch; fresh reviewer provenance; canonical findings identity and stable IDs; target baseline preservation with no acceptance receipt; nonpassing closeout; journal integrity, idempotence and replay refusal; and ordinary landing/lock behavior. Independently run focused real-Git hostile fixtures, full runner suite, canonical selected validation, changed-file coverage, pairing/index/context/compile/diff checks.
+- Preserve: Do not apply to the named original run; do not edit its worktree, branch, reports, target receipt, summary or claim; do not convert findings to PASS; do not release the original claim or any unrelated lock.
+- Non-goals: Implementation changes; applying the recovery; mapper work; broad recovery redesign.
+- Acceptance:
+  - Reviewer verifies the exact protected run identity and the continuation cannot select another run or outcome.
+  - Positive and hostile tests prove original run/worktree bytes remain unchanged and the target packet has no acceptance receipt at closeout.
+  - A fresh reviewer-produced findings outcome is required; coordinator cannot synthesize verdict or finding IDs.
+  - Independent validation and complete changed-file coverage pass; no material lifecycle, provenance or safety gap remains.
+  - PASS or stable findings close through the normal canonical review lifecycle. A local reviewer message alone cannot release dependencies.
+- Validation: Focused real-Git recovery tests; full `test_paired_review_runner`; canonical `paired_review_runner_unit`; changed-file validation; AI-context, packet-index, pairing, compile and diff checks. Do not execute the protected exact-run apply.
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+- Deferred: Applying the accepted exact-run continuation; correcting the read-only plan finding; returning to Procession PASS recovery and mapper dependencies.
+
+## Next Handoff
+- Next workstream: `agent-paired-review-procession-pass-closeout-recovery-v1-review-corrections-1`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `not-recorded`
+- Refresh reason: `none`
+- Next action: After this implementation review and exact findings closeout, create the bounded correction pair for the actual read-only plan finding.
+- Blockers or open questions: `The original review evidence and host-local checkout must still match the exact pinned run when a fresh plan is generated.`

@@ -1,0 +1,32 @@
+# REVIEW: WIRE Pilot Exporter Reconciliation V1
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `review-agent-wire-pilot-exporter-reconciliation-v1`
+- Category: `agent-ops`
+- Kind: `review`
+- Status: `ready`
+- Dispatch: `auto`
+- Priority: `P1`
+- Depends on: `agent-wire-pilot-exporter-reconciliation-v1`
+- Locks: `none`
+- Review: `none`
+- Review target workstream: `agent-wire-pilot-exporter-reconciliation-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/AGENT_WIRE_PILOT_EXPORTER_RECONCILIATION_V1.md`
+- Reviewed main: `eef8a41f8e82fe47c346002087f52492d945322a`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae98bea-2dfc-83e8-a5ff-863e52d79ac0`
+- Visual review: `none`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Review modes: `code, architecture, workflow`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Goal: Independently verify that the landed WIRE exporter and pilot accept valid partial detail only when complete raw dispatcher evidence and all source integrity checks remain valid.
+- Reviewed implementation acceptance: Verify every acceptance claim in the archived `AGENT_WIRE_PILOT_EXPORTER_RECONCILIATION_V1.md`, with special attention to raw/detail coverage semantics, safe aggregate-only exclusions, strict source/schema/digest/freshness rejection, and private publication boundaries.
+- Review evidence: Reuse the implementation's durable focused test results and validation manifest registration; independently inspect the live landed exporter, schema, pilot consumer, canonical test definition, completion truth and doctor evidence. Do not rely on the implementation summary alone.
+- Correction threshold: Create bounded correction work only for a confirmed acceptance defect or missing required proof; route non-blocking observations to deferred/next-slice, and escalate any human-owned decision as `human_required`.
+- Focused validation: `python3 -m unittest custodian.tools.agent.test_wire_observation_export custodian.tools.agent.test_wire_pilot -v`; `python3 custodian/tools/validation/run_validation.py --changed --base <pinned-main> --json`; `python3 custodian/tools/iteration/wire_pilot.py doctor`.
+- Review focus: Confirm partial detailed coverage is accepted only with `raw_dispatch_inventory=complete`, and that the exporter/schema still enforce exact raw/classification/eligibility reconciliation and safe aggregate-only handling. Attempt adversarial validation for missing raw coverage, malformed aggregates, unsafe source identity, failed health, digest mismatch, and stale/future evidence. Confirm no Dropbox operation or timer activation occurs during validation.
+- Publication inputs: `AGENTS.md`; `custodian/AGENTS.md`; `custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md`; `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`; `custodian/docs/ai_context/task_packets/README.md`; `custodian/docs/ai_context/worktree_profiles/wire_pilot_exporter_reconciliation_v1.json`; `custodian/tools/agent/wire_observation_export.py`; `custodian/tools/agent/schemas/wire_observation.v1.schema.json`; `custodian/tools/agent/test_wire_observation_export.py`; `custodian/tools/iteration/wire_pilot.py`; `custodian/tools/validation/validation_manifest.json`; `custodian/tools/validation/run_validation.py`
+- Acceptance: Produce a findings-first independent review against the archived implementation packet and live main. Record a `passed` receipt or stable cycle-scoped findings with class, domain, affected acceptance, evidence, disposition and rationale. Do not patch the reviewed implementation. Keep the review dependency-gated until the implementation is complete and archived on `origin/main`.
+- Non-goals: Do not modify exporter/pilot implementation, change coverage labels, upload telemetry, enable recurring automation, alter review ownership, or infer acceptance from green tests alone.
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`

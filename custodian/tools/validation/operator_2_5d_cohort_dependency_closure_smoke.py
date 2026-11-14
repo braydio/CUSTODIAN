@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import sys
 import tempfile
+import hashlib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -39,7 +40,17 @@ def main() -> None:
         idle = workspace_evidence["idle_relaxed_01"]
         assert all(item["manifest_status"] == "PRESENT" and item["saved_document_status"] == "PRESENT" for item in idle)
         assert all(item["frames"] == 15 and item["preview_fps"] == 8.0 and item["timing_authority"] is False for item in idle)
-        assert all(item["source_strip_hash_matches_correction"] for item in idle)
+        for item in idle:
+            if item["source_strip_status"] == "PRESENT":
+                assert item["source_strip_evidence_status"] == "VERIFIED"
+                assert item["source_strip_hash_matches_correction"]
+            elif item["source_strip_status"] == "UNAVAILABLE":
+                assert item["source_strip_evidence_status"] == "UNAVAILABLE"
+                assert not item["source_strip_hash_matches_correction"]
+            else:
+                assert item["source_strip_status"] == "UNRECORDED"
+                assert item["source_strip_evidence_status"] == "UNRECORDED"
+                assert not item["source_strip_hash_matches_correction"]
         assert all(item["source_session_hash_matches_correction"] for item in idle)
     else:
         assert workspace_evidence["editable_idle_directions"] is None
@@ -65,6 +76,24 @@ def main() -> None:
     assert len(first["investigation"]["source_evidence_sha256"]) >= 10
 
     with tempfile.TemporaryDirectory(prefix="operator_2_5d_closure_missing_") as raw:
+        evidence_root = Path(raw)
+        source = evidence_root / "historical-strip.bin"
+        source.write_bytes(b"approved source bytes")
+        approved_hash = hashlib.sha256(b"approved source bytes").hexdigest()
+        verified = closure._source_file_evidence(source, approved_hash)
+        assert verified == {"status": "VERIFIED", "sha256": approved_hash,
+                            "hash_matches_correction": True}
+        source.write_bytes(b"tampered source bytes")
+        tampered = closure._source_file_evidence(source, approved_hash)
+        assert tampered["status"] == "HASH_MISMATCH"
+        assert not tampered["hash_matches_correction"]
+        unavailable_source = closure._source_file_evidence(evidence_root / "missing-strip.bin", approved_hash)
+        assert unavailable_source == {"status": "UNAVAILABLE", "sha256": None,
+                                      "hash_matches_correction": False}
+        unrecorded_source = closure._source_file_evidence(None, approved_hash)
+        assert unrecorded_source == {"status": "UNRECORDED", "sha256": None,
+                                     "hash_matches_correction": False}
+
         absent = closure._workspace_evidence(ROOT, Path(raw) / "missing")
         assert absent["status"] == "UNAVAILABLE"
         assert absent["editable_idle_directions"] is None

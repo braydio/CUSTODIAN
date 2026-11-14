@@ -1,0 +1,41 @@
+# WEATHER V2: ATMOSPHERIC PRESENTATION EXPANSION | LOCAL CONTACT, GUST AND LIGHTNING PRESENTATION
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `weather-v2-surface-events-v1`
+- Category: `assets-art`
+- Kind: `implementation`
+- Status: `draft`
+- Dispatch: `manual`
+- Priority: `P1`
+- Depends on: `weather-v2-layered-precipitation-v1`
+- Locks: `weather-surface-presentation, world-lighting-presentation`
+- Review: `none`
+- Review stage: `post-land`
+- Review modes: `none`
+- Paired review workstream: `none`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
+- Reviewed main: `ebfe3810eec146d7202a4378324b0f32c9e12fee`
+- Authoring chat: `not-recorded`
+- Visual review: `conditional`
+- Goal: Make weather interact convincingly with visible surfaces and infrastructure without creating weather gameplay state.
+- Completion boundary: No TileMap semantics, nav, water/temperature or damage changes; event positions are valid exposed locations and deterministic for fixed input; scene transitions cleanup, indoor zero exposure suppresses local rain; lightning does not interrupt combat lighting authority or overlay UI; mute/reduced-flash option works.
+- Current measured state: Layered weather and seeded sampling must be reviewed before adding optional local events.
+- Evidence: Main@ebfe3810eec146d7202a4378324b0f32c9e12fee; WorldEnvironmentDirector owns 1440-second day, seeded 8-state weather schedule (90–240s holds, 8–15s transitions) and weather/indoor exposure. WorldLightingDirector composes base profiles and weather. WorldAtmosphere2D owns one fullscreen world pass; shader uses TIME for visual motion and currently gives precipitation mostly one procedural layer. WorldEnvironment V1 excludes puddles, lightning and accumulation. Existing static world-atmosphere and environment smokes protect this.
+- Task-specific authority: design/02_features/environment/WEATHER_PRESENTATION_V2_ROADMAP.md; design/02_features/environment/WORLD_ENVIRONMENT_BIOME_DAYNIGHT_WEATHER.md; design/02_features/visuals/WORLD_ATMOSPHERE_SHADER_SYSTEM.md.
+- Work surface: New world-local cosmetic presentation consumer and existing LightRig2D/WorldLightingDirector flash and audio seams; use existing level surface-provider semantics only when verified.
+- Publication inputs: `design/02_features/environment/WEATHER_PRESENTATION_V2_ROADMAP.md`
+- Change: Add bounded exposed-ground rain contact splashes, transient ripples without water gameplay, snow/ash/dust eddies at authored static occluders and weather-dependent ambience routed through existing audio ownership. Lightning in an eligible existing rain state is seeded cosmetic event timing and uses existing temporary-flash API, with optional thunder delayed by authored distance and quality/accessibility gates. Respect indoor clipping, fade/cleanup, offscreen interest and pause behavior.
+- Preserve: Eight IDs, existing world profile weights, schedule/timing, fixed-step simulation, authored zone lighting, weather neutrality for gameplay, indoor visibility/weather exposure, shared foliage wind/material variants, existing layer ordering and atmosphere singleton, generated procgen map acceptance and weather director ownership.
+- Non-goals: No climate sim reboot, no second weather director, no global weather damage, no physically accumulated snow/surface wetness state, no replacing lighting profiles, no breakage of Alpine profile or other existing locked art integration.
+- Acceptance: No TileMap semantics, nav, water/temperature or damage changes; event positions are valid exposed locations and deterministic for fixed input; scene transitions cleanup, indoor zero exposure suppresses local rain; lightning does not interrupt combat lighting authority or overlay UI; mute/reduced-flash option works.
+- Validation: custodian/tools/validation/world_environment_smoke.gd; custodian/tools/validation/world_atmosphere_smoke.gd; custodian/tools/validation/lighting_system_smoke.gd; new weather event lifecycle/accessibility/seed smoke; changed-file validation.
+- Task overrides: `none`
+- Deferred: Long-lived physical snow, wetness affecting traction, puddle navigation or storm damage.
+
+## Promotion and dependencies
+- Refresh required: after the prior paired review archives PASS, re-audit main, claims, touched paths, live consumers and documentation drift before promoting this intentionally parked draft/manual pair. Recheck any changed F2/Alpine/Asset V2 ownership and human visual gates.
+- Existing input identity and technical authority are published in design/02_features/environment/WEATHER_PRESENTATION_V2_ROADMAP.md; no external tool, ZIP, fixture or asset is available exclusively in chat.
+- Independent paired review: review-weather-v2-surface-events-v1 in a fresh context after implementation lands; do not self-record review PASS.
+- Next workstream: weather-v2-polish-tooling-v1.
+- Authoring chat: not-recorded; replace with the exact URL if supplied before durable completion summaries.

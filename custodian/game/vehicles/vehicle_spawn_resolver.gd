@@ -13,7 +13,7 @@ func _ready() -> void:
 	_ensure_registry()
 
 
-func spawn_vehicle(vehicle_id: String, parent: Node, global_position: Vector2) -> Node2D:
+func spawn_vehicle(vehicle_id: String, parent: Node, global_position: Vector2, stable_instance_key: String = "") -> Node2D:
 	_ensure_registry()
 	if registry == null:
 		push_warning("VehicleSpawnResolver: registry unavailable")
@@ -22,10 +22,10 @@ func spawn_vehicle(vehicle_id: String, parent: Node, global_position: Vector2) -
 	if definition == null:
 		push_warning("VehicleSpawnResolver: unknown vehicle id '%s'" % vehicle_id)
 		return null
-	return spawn_definition(definition, parent, global_position)
+	return spawn_definition(definition, parent, global_position, stable_instance_key)
 
 
-func spawn_definition(definition: VehicleDefinition, parent: Node, global_position: Vector2) -> Node2D:
+func spawn_definition(definition: VehicleDefinition, parent: Node, global_position: Vector2, stable_instance_key: String = "") -> Node2D:
 	if definition == null or parent == null:
 		return null
 	var errors: PackedStringArray = definition.validate()
@@ -48,6 +48,11 @@ func spawn_definition(definition: VehicleDefinition, parent: Node, global_positi
 	if vehicle.has_method("apply_vehicle_definition"):
 		vehicle.call("apply_vehicle_definition", definition)
 	vehicle.global_position = global_position
+	if vehicle.has_method("set_vehicle_scan_instance_key"):
+		var key := stable_instance_key.strip_edges()
+		if key.is_empty():
+			key = "%s@%d,%d" % [definition.runtime_scene, roundi(global_position.x / 16.0), roundi(global_position.y / 16.0)]
+		vehicle.call("set_vehicle_scan_instance_key", key)
 	parent.add_child(vehicle)
 	vehicle.add_to_group("vehicle")
 	vehicle.add_to_group("vehicles")

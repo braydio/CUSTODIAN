@@ -21,6 +21,9 @@ enum ControlState { UNOCCUPIED, ENTERING, PILOTED, EXITING, DISABLED }
 @export var move_animation: StringName = &"move"
 @export var max_health: float = 100.0
 @export var current_health: float = 100.0
+## Authored deterministic identity for fixed-world instances. Resolver-spawned
+## instances receive an explicit key derived from registry/scene/origin identity.
+@export var stable_scan_instance_key: String = ""
 @export var exit_search_radii_px := PackedFloat32Array([
 	56.0,
 	72.0,
@@ -55,9 +58,11 @@ var _pilot_state_snapshot: Dictionary = {}
 var _pilot_entry_global_position := Vector2.INF
 var _last_exit_candidate_count := 0
 var _last_exit_used_emergency_fallback := false
+var _scan_origin_cell := Vector2i.ZERO
 
 
 func _ready() -> void:
+	_scan_origin_cell = Vector2i(roundi(global_position.x / 16.0), roundi(global_position.y / 16.0))
 	add_to_group("vehicle")
 	add_to_group("vehicles")
 	if vehicle_definition == null and not fallback_vehicle_id.is_empty():
@@ -76,6 +81,10 @@ func _ready() -> void:
 			_initialize_as_wreckage()
 		else:
 			_set_operational_groups(true)
+	if vehicle_definition != null and not vehicle_definition.scan_profile_data.is_empty():
+		add_to_group("vehicle_scannable")
+	if stable_scan_instance_key.is_empty():
+		stable_scan_instance_key = _fallback_scan_instance_key()
 	_set_field_repair_interaction_available(not is_destroyed and current_health > 0.0)
 	var health_bar := get_node_or_null("HealthBar") as Range
 	if health_bar != null:
@@ -97,6 +106,50 @@ func apply_vehicle_definition(definition) -> void:
 		current_health = clampf(current_health, 0.0, max_health)
 	restoration_profile = vehicle_definition.restoration_profile_data.duplicate(true)
 	_apply_visual_kit(vehicle_definition.visual_kit)
+
+
+func set_vehicle_scan_instance_key(instance_key: String) -> void:
+	if not instance_key.strip_edges().is_empty():
+		stable_scan_instance_key = instance_key.strip_edges()
+
+
+func get_vehicle_scan_snapshot() -> Dictionary:
+	if vehicle_definition == null or vehicle_definition.scan_profile_data.is_empty():
+		return {"scannable": false, "reason": "NO_SCAN_PROFILE"}
+	var condition := "OPERATIONAL"
+	if is_wreckage() or is_destroyed:
+		condition = "WRECKAGE"
+	elif control_state == ControlState.DISABLED:
+		condition = "DISABLED"
+	var patterns: Array = Array(vehicle_definition.scan_profile_data.get("patterns", [])).duplicate(true)
+	var observability: Dictionary = {}
+	for value: Variant in patterns:
+		if not value is Dictionary:
+			continue
+		var pattern: Dictionary = value
+		observability[String(pattern.get("pattern_id", ""))] = Array(
+			pattern.get("observable_conditions", [])
+		).has(condition)
+	return {
+		"scannable": pilot == null,
+		"reason": "VEHICLE_OCCUPIED" if pilot != null else "",
+		"archetype_id": vehicle_definition.id,
+		"profile_id": vehicle_definition.scan_profile,
+		"display_name": vehicle_definition.get_display_name(),
+		"condition": condition,
+		"fingerprint": "%s|%s" % [vehicle_definition.id, stable_scan_instance_key],
+		"base_xp": Dictionary(vehicle_definition.scan_profile_data.get("base_xp", {})).duplicate(true),
+		"patterns": patterns,
+		"pattern_observability": observability,
+		"scene_identity": get_scene_file_path(),
+	}
+
+
+func _fallback_scan_instance_key() -> String:
+	var scene_identity := get_scene_file_path()
+	if scene_identity.is_empty():
+		scene_identity = "authored:%s" % String(get_path())
+	return "%s@%d,%d" % [scene_identity, _scan_origin_cell.x, _scan_origin_cell.y]
 
 
 func can_enter(actor: Node) -> bool:
