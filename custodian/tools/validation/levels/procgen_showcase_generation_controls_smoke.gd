@@ -47,14 +47,15 @@ func _run() -> void:
 	# Explicit seed B then A verifies seed selection and A → B → A reproducibility.
 	if not bool(session.call("reroll_explicit_seed", 417204)):
 		errors.append("explicit-seed reroll was rejected")
-	elif not await _wait_until_ready(session):
-		errors.append("seed B generation failed: %s" % str(session.call("get_session_status").get("error", "timeout")))
+	else:
+		if bool(session.call("request_generation", 417203, "ascent_compact")):
+			errors.append("overlapping generation request was accepted")
+		if not await _wait_until_ready(session):
+			errors.append("seed B generation failed: %s" % _failure_detail(session))
 	var fingerprint_b := str(session.call("get_session_status").get("fingerprint", ""))
 	if fingerprint_b == initial_fingerprint:
 		errors.append("explicitly different seed produced the same semantic fingerprint")
 	var seed_b_host := gallery.get_node_or_null("ProcgenArenaHost") as Node
-	if bool(session.call("request_generation", 417203, "ascent_compact")):
-		errors.append("overlapping generation request was accepted")
 	if not bool(session.call("regenerate_same_seed")):
 		errors.append("same-seed regeneration request was rejected while idle")
 	elif not await _wait_until_ready(session):
@@ -75,7 +76,6 @@ func _run() -> void:
 
 	# Cancellation must invalidate its token and release the staging owner before retry.
 	if bool(session.call("request_generation", 517203, "ascent_compact")):
-		await process_frame
 		if not bool(session.call("cancel_generation")):
 			errors.append("in-flight generation could not be cancelled")
 		var cancel_deadline := Time.get_ticks_msec() + 10000
