@@ -3,12 +3,6 @@ extends SceneTree
 const PLAYTEST_SCENE := preload("res://game/world/levels/authored/dev/procgen_showcase_gallery/procgen_showcase_gallery_playtest.tscn")
 const MAX_GENERATION_MSEC := 150000
 
-class FailedStageCandidate extends Node:
-	func dispose_if_safe() -> bool:
-		queue_free()
-		return true
-
-
 func _init() -> void:
 	call_deferred("_run")
 
@@ -75,6 +69,8 @@ func _run() -> void:
 		errors.append("A → B → A did not restore the original semantic fingerprint")
 
 	# Cancellation must invalidate its token and release the staging owner before retry.
+	var host_before_cancel := gallery.get_node_or_null("ProcgenArenaHost") as Node
+	var fingerprint_before_cancel := str(session.call("get_session_status").get("fingerprint", ""))
 	if bool(session.call("request_generation", 517203, "ascent_compact")):
 		if not bool(session.call("cancel_generation")):
 			errors.append("in-flight generation could not be cancelled")
@@ -83,28 +79,20 @@ func _run() -> void:
 			await process_frame
 		if int(session.call("get_session_status").get("staging_host_count", 0)) != 0:
 			errors.append("cancelled staging host did not release its session ownership")
-		elif not bool(session.call("request_generation", 417203, "ascent_compact")):
-			errors.append("retry was rejected after cancellation resources were released")
-		elif not await _wait_until_ready(session):
-			errors.append("retry after cancellation failed")
+		if gallery.get_node_or_null("ProcgenArenaHost") != host_before_cancel or not is_instance_valid(host_before_cancel):
+			errors.append("cancelled candidate replaced the accepted arena")
+		if str(session.call("get_session_status").get("fingerprint", "")) != fingerprint_before_cancel:
+			errors.append("cancelled candidate changed the accepted fingerprint")
+		if int(session.call("get_session_status").get("staging_host_count", 0)) == 0:
+			if not bool(session.call("request_generation", 417203, "ascent_compact")):
+				errors.append("retry was rejected after cancellation resources were released")
+			elif not await _wait_until_ready(session):
+				errors.append("retry after cancellation failed")
 	else:
 		errors.append("cancellation setup request was rejected")
 
-	# A failed staging result must leave the actual generated accepted map untouched.
-	var preserved_host := gallery.get_node_or_null("ProcgenArenaHost") as Node
-	var preserved_fingerprint := str(session.call("get_session_status").get("fingerprint", ""))
-	var failed_candidate := FailedStageCandidate.new()
-	gallery.add_child(failed_candidate)
-	session.set("_staging_host", failed_candidate)
-	session.set("_state", 1) # BUILDING
-	session.call("_on_candidate_staged", {"ready": false, "failure": "injected staging failure"}, failed_candidate, int(session.get("_token")), false)
-	await process_frame
-	if gallery.get_node_or_null("ProcgenArenaHost") != preserved_host or not is_instance_valid(preserved_host):
-		errors.append("failed staging displaced the previously accepted real arena")
-	if str(session.call("get_session_status").get("fingerprint", "")) != preserved_fingerprint:
-		errors.append("failed staging changed the accepted arena fingerprint")
-
 	# Invalid input and Operator-in-arena generation must fail closed.
+	var preserved_host := gallery.get_node_or_null("ProcgenArenaHost") as Node
 	if bool(session.call("request_generation", -1, "ascent_compact")):
 		errors.append("negative seed was accepted")
 	if bool(session.call("request_generation", 42, "unknown_preset")):

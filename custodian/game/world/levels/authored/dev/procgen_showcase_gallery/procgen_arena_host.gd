@@ -73,6 +73,17 @@ func _ready() -> void:
 		_set_status("ARENA UNAVAILABLE")
 		_finish_staging()
 		return
+	if _session_managed:
+		call_deferred("_stage_generated_region")
+		return
+	await _stage_generated_region()
+
+
+func _stage_generated_region() -> void:
+	if _cancelled or not is_inside_tree():
+		_last_failure = "generation cancelled before staging began"
+		_finish_staging()
+		return
 	_region = REGION_SCRIPT.new()
 	_region.name = "GeneratedArenaRegionStaging" if _session_managed and not _session_accepted else "GeneratedArenaRegion"
 	_gallery.add_child(_region)
