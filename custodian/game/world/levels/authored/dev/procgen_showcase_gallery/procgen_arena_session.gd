@@ -123,7 +123,7 @@ func _start_candidate(seed_value: int, preset_id: String, initial: bool) -> void
 	if not is_instance_valid(_gallery) or is_instance_valid(_staging_host):
 		_fail("Gallery is unavailable or another staging candidate still owns resources.")
 		return
-	var request := _presets[preset_id].duplicate(true)
+	var request: Dictionary = _presets[preset_id].duplicate(true)
 	request["seed"] = seed_value
 	var candidate := HOST_SCRIPT.new() as Node
 	candidate.name = "ProcgenArenaHost" if not is_instance_valid(_accepted_host) else "ProcgenArenaHostStaging"

@@ -22,6 +22,9 @@ func _run() -> void:
 	var world := game.get_node("World") as Node2D
 	var gallery := world.get_node("Level") as Node2D
 	var session := gallery.get_node("ProcgenArenaSession") as Node
+	if not is_instance_valid(session):
+		_finish(game, ["gallery did not construct the generation session controller"])
+		return
 	var operator := world.get_node("Operator") as Node2D
 	var camera := world.get_node("Camera2D") as Camera2D
 	var operator_id := operator.get_instance_id()
@@ -41,23 +44,6 @@ func _run() -> void:
 		errors.append("first accepted arena is not interactable")
 	var initial_map_count := _count_procgen_maps(game)
 
-	# Same-seed repeat must be deterministic and replace only the accepted map.
-	if not bool(session.call("regenerate_same_seed")):
-		errors.append("same-seed regeneration request was rejected while idle")
-	else:
-		if bool(session.call("request_generation", 417204, "ascent_compact")):
-			errors.append("overlapping generation request was accepted")
-		if not await _wait_until_ready(session):
-			errors.append("same-seed generation failed: %s" % str(session.call("get_session_status").get("error", "timeout")))
-		elif str(session.call("get_session_status").get("fingerprint", "")) != initial_fingerprint:
-			errors.append("identical seed/preset did not reproduce its semantic fingerprint")
-	var same_seed_host := gallery.get_node_or_null("ProcgenArenaHost") as Node
-	if same_seed_host == initial_host:
-		errors.append("accepted arena regeneration did not replace its host")
-	await process_frame
-	if _count_procgen_maps(game) != initial_map_count:
-		errors.append("replacement leaked or duplicated a generated map")
-
 	# Explicit seed B then A verifies seed selection and A → B → A reproducibility.
 	if not bool(session.call("reroll_explicit_seed", 417204)):
 		errors.append("explicit-seed reroll was rejected")
@@ -66,6 +52,20 @@ func _run() -> void:
 	var fingerprint_b := str(session.call("get_session_status").get("fingerprint", ""))
 	if fingerprint_b == initial_fingerprint:
 		errors.append("explicitly different seed produced the same semantic fingerprint")
+	var seed_b_host := gallery.get_node_or_null("ProcgenArenaHost") as Node
+	if bool(session.call("request_generation", 417203, "ascent_compact")):
+		errors.append("overlapping generation request was accepted")
+	if not bool(session.call("regenerate_same_seed")):
+		errors.append("same-seed regeneration request was rejected while idle")
+	elif not await _wait_until_ready(session):
+		errors.append("same-seed B repeat failed: %s" % str(session.call("get_session_status").get("error", "timeout")))
+	elif str(session.call("get_session_status").get("fingerprint", "")) != fingerprint_b:
+		errors.append("identical B seed/preset did not reproduce its semantic fingerprint")
+	if gallery.get_node_or_null("ProcgenArenaHost") == seed_b_host:
+		errors.append("accepted arena regeneration did not replace its host")
+	await process_frame
+	if _count_procgen_maps(game) != initial_map_count:
+		errors.append("replacement leaked or duplicated a generated map")
 	if not bool(session.call("reroll_explicit_seed", 417203)):
 		errors.append("return to seed A was rejected")
 	elif not await _wait_until_ready(session):
