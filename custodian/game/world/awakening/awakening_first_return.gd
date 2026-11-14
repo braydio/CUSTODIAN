@@ -18,7 +18,6 @@ const TransitLift := preload("res://game/world/awakening/awakening_transit_lift.
 const RECOVERY_ALCOVE_IDLE := preload("res://content/sprites/environment/props/awakening/awakening_creche_recovery_alcove/runtime/body/awakening_creche_recovery_alcove__body__state__idle__omni__1f__192x256.png")
 const RECOVERY_ALCOVE_WAKE := preload("res://content/sprites/environment/props/awakening/awakening_creche_recovery_alcove/runtime/body/awakening_creche_recovery_alcove__body__interaction__wake__omni__8f__192x256.png")
 const CRECHE_CONSOLE_ACTIVATION := preload("res://content/sprites/effects/awakening/runtime/awakening_creche_console_activation_fx/awakening_creche_console_activation_fx__fx__effect__activate__omni__8f__128.png")
-const CRECHE_CONSOLE_IDLE := preload("res://content/sprites/environment/props/awakening/awakening_creche_console/runtime/body/awakening_creche_console__body__interaction__idle__omni__1f__128.png")
 const GATE_BODY_IDLE_SEALED := preload("res://content/sprites/environment/props/awakening/gate_of_dust/runtime/body/gate_of_dust__body__state__idle_sealed__omni__1f__768x512.png")
 const GATE_WEST_PYLON := preload("res://content/sprites/environment/props/awakening/gate_of_dust/runtime/body/gate_of_dust__body__component__west_pylon__omni__1f__256x512.png")
 const GATE_EAST_PYLON := preload("res://content/sprites/environment/props/awakening/gate_of_dust/runtime/body/gate_of_dust__body__component__east_pylon__omni__1f__256x512.png")
@@ -45,7 +44,6 @@ const PORT_READOUT := "PORT AUTHORITY: SUSPENDED\nROUTE INDEX: UNAVAILABLE\nPOST
 const CAMERA_ZOOM_SCALE := 2.25
 const BACKDROP_MARGIN := 1024.0
 const ZONE_ART_FADE_DISTANCE := 128.0
-const CRECHE_ZONE_TRIGGER_INSET := 32.0
 const LOWER_UPPER_PASSAGE_ID := "lower_upper_spine_05_06"
 
 signal zone_entered(zone_id: StringName, index: int)
@@ -453,12 +451,6 @@ func _build_zone_region(zone_node: Node2D, zone_id: StringName, zone: Dictionary
 	region.collision_mask = 0
 	if region.get_node_or_null("Shape") == null:
 		var envelope: Rect2 = zone["envelope"]
-		# Zone01 and Zone02 envelopes meet across a 32px doorway overlap. Their
-		# Areas must report a transition only once the Operator center is inside
-		# the destination envelope; otherwise its 11px body radius triggers entry
-		# early, _resolve_occupied_zone discards it, and no later entry is emitted.
-		if zone_id in [&"zone01_creche", &"zone02_ambulatory"]:
-			envelope = envelope.grow(-CRECHE_ZONE_TRIGGER_INSET)
 		var shape := CollisionShape2D.new()
 		shape.name = "Shape"
 		var rectangle := RectangleShape2D.new()
@@ -611,26 +603,17 @@ func _build_console_activation_presentation() -> void:
 	var set_pieces := _zone_child(&"zone01_creche", "SetPieces")
 	if set_pieces == null:
 		return
-	# The console body is rendered independently from the floor plate. Preserve
-	# the measured gameplay owner and its named screen anchor while drawing the
-	# approved one-frame hero exactly once.
+	# The native room underlay already contains the sole visible console body.
+	# This named transform represents that baked body without layering a second
+	# sprite over it. The screen center was measured in underlay/world space.
 	var body := set_pieces.get_node_or_null("CrecheConsoleBody") as Node2D
 	if body == null:
 		body = Node2D.new()
 		body.name = "CrecheConsoleBody"
 		body.position = Vector2(105, 118)
 		body.z_index = Layout.Z_WORLD_PROPS
+		body.set_meta("visible_body_source", "awakening_creche_underlay_960x704.png")
 		set_pieces.add_child(body)
-	body.set_meta("visible_body_source", "awakening_creche_console__body__interaction__idle__omni__1f__128.png")
-	var body_sprite := body.get_node_or_null("VisibleBody") as Sprite2D
-	if body_sprite == null:
-		body_sprite = Sprite2D.new()
-		body_sprite.name = "VisibleBody"
-		body_sprite.centered = true
-		body_sprite.position = Vector2.ZERO
-		body_sprite.z_index = 0
-		body.add_child(body_sprite)
-	body_sprite.texture = CRECHE_CONSOLE_IDLE
 	var screen_anchor := body.get_node_or_null("ScreenAnchor") as Node2D
 	if screen_anchor == null:
 		screen_anchor = Node2D.new()
@@ -1012,12 +995,6 @@ func _on_south_reach_exited(body: Node) -> void:
 		return
 	_completion_rearm_pending = false
 	completed = false
-
-
-func complete_hub_handoff() -> void:
-	var music_director := get_node_or_null("AwakeningMusicDirector")
-	if music_director != null and music_director.has_method("complete_hub_handoff"):
-		music_director.call("complete_hub_handoff")
 
 
 func restore_after_handoff_failure() -> void:

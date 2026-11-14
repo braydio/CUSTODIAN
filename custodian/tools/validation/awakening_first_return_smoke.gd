@@ -19,7 +19,7 @@ const MAPPER := "res://scenes/debug/awakening_first_return_mapper.tscn"
 const DEBUG_TOUR := "res://scenes/debug/awakening_first_return_debug.tscn"
 const ADAPTER := "res://tools/level_authoring/mapper/adapters/awakening_first_return_mapper_adapter.gd"
 const PRODUCTION_UNDERLAYS := {
-	"Zone01_Creche": {"position": Vector2(0, -96), "size": Vector2(1464, 1074)},
+	"Zone01_Creche": {"position": Vector2(0, -32), "size": Vector2(960, 704)},
 	"Zone02_Ambulatory": {"position": Vector2(0, -864), "size": Vector2(1152, 960)},
 	"Zone03_Attestation": {"position": Vector2(0, -1744), "size": Vector2(832, 928)},
 	"Zone04_LockerReliquary": {"position": Vector2(704, -1984), "size": Vector2(1502, 2048)},
@@ -33,7 +33,7 @@ const PRODUCTION_FOREGROUNDS := PRODUCTION_UNDERLAYS
 
 ## Locked in the design; the whole opening dungeon hangs off these.
 const LOCKED_ENVELOPES := {
-	1: Rect2(-704, -480, 1408, 800),
+	1: Rect2(-416, -320, 832, 576),
 	2: Rect2(-512, -1280, 1024, 832),
 	3: Rect2(-352, -2144, 704, 800),
 	4: Rect2(416, -2272, 576, 576),

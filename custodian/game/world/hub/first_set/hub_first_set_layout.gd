@@ -2,21 +2,21 @@ class_name HubFirstSetLayout
 extends RefCounted
 
 const CELL_SIZE := 32.0
-const WORLD_BOUNDS := Rect2(-4128.0, -5504.0, 7328.0, 6080.0)
-const GRID_ORIGIN := Vector2(-4128.0, -5504.0)
-const GRID_SIZE := Vector2i(229, 190)
+const WORLD_BOUNDS := Rect2(-2816.0, -5504.0, 6016.0, 6080.0)
+const GRID_ORIGIN := Vector2(-2816.0, -5504.0)
+const GRID_SIZE := Vector2i(188, 190)
 
 const ENVELOPES := {
-	"north_processional": Rect2i(113, 97, 32, 36),
-	"ashen_forum": Rect2i(89, 46, 80, 56),
-	"sepulcher_gardens": Rect2i(0, 32, 96, 84),
-	"sepulcher_north_connector": Rect2i(85, 68, 4, 8),
-	"sepulcher_south_connector": Rect2i(85, 85, 4, 8),
-	"lower_archive_rise": Rect2i(107, 9, 44, 40),
-	"crown_transfer_court": Rect2i(151, 14, 24, 24),
-	"muster_court": Rect2i(173, 56, 34, 44),
-	"muster_connector": Rect2i(169, 70, 4, 10),
-	"continuity_port_chamber": Rect2i(207, 64, 22, 28),
+	"north_processional": Rect2i(72, 97, 32, 36),
+	"ashen_forum": Rect2i(48, 46, 80, 56),
+	"sepulcher_gardens": Rect2i(8, 50, 36, 44),
+	"sepulcher_north_connector": Rect2i(44, 68, 4, 8),
+	"sepulcher_south_connector": Rect2i(44, 85, 4, 8),
+	"lower_archive_rise": Rect2i(66, 9, 44, 40),
+	"crown_transfer_court": Rect2i(110, 14, 24, 24),
+	"muster_court": Rect2i(132, 56, 34, 44),
+	"muster_connector": Rect2i(128, 70, 4, 10),
+	"continuity_port_chamber": Rect2i(166, 64, 22, 28),
 }
 
 const THRESHOLD_VOLUME := Rect2(3104.0, -3072.0, 96.0, 128.0)
@@ -24,10 +24,11 @@ const THRESHOLD_VOLUME := Rect2(3104.0, -3072.0, 96.0, 128.0)
 # Road module positions remain owned by RoadOfWitnessesPrototype.MODULES.
 # These lower-route rectangles only define walkability over that presentation.
 const WALKABLE_REGIONS: Array[Rect2i] = [
-	Rect2i(121, 132, 18, 58), # South Reach and Witness approach
-	Rect2i(101, 142, 58, 16), # existing side courts and plaza apron
+	Rect2i(80, 132, 18, 58), # South Reach and Witness approach
+	Rect2i(60, 142, 58, 16), # existing side courts and plaza apron
 	ENVELOPES["north_processional"],
 	ENVELOPES["ashen_forum"],
+	ENVELOPES["sepulcher_gardens"],
 	ENVELOPES["sepulcher_north_connector"],
 	ENVELOPES["sepulcher_south_connector"],
 	ENVELOPES["lower_archive_rise"],
@@ -71,14 +72,6 @@ const DISTRICT_COLORS := {
 	"muster_court": Color("6a5d42"),
 	"continuity_port_chamber": Color("4e646b"),
 }
-
-const GARDENS_GEOMETRY := preload("res://game/world/hub/first_set/sepulcher_gardens_geometry_v1.gd")
-
-static func all_walkable_regions() -> Array[Rect2i]:
-	var result: Array[Rect2i] = WALKABLE_REGIONS.duplicate()
-	result.append_array(GARDENS_GEOMETRY.walkable_runs())
-	return result
-
 
 static func marker_cell(marker_name: StringName) -> Vector2i:
 	var point: Vector2 = MARKERS.get(String(marker_name), Vector2.ZERO)

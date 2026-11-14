@@ -4,16 +4,16 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `ash-bell-surface-lift-v2-asset-intake, ash-bell-lift-dev-quick-launch`
+- Depends on: `review-ash-bell-surface-lift-v2-asset-intake, review-ash-bell-lift-dev-quick-launch`
 - Locks: `asset-pipeline, ash-bell-lift-art, ash-bell-lift-site, world-presentation`
 - Kind: `implementation`
-- Review: `none`
+- Review: `auto`
 - Review stage: `post-land`
-- Review modes: `none`
-- Paired review workstream: `none`
+- Review modes: `code, runtime, visual, asset-pipeline`
+- Paired review workstream: `review-ash-bell-surface-lift-v2-presentation-integration`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
+- Review rationale: `asset/route lifecycle or presentation cross-authority; independent post-land verification required`
 - Reviewed main: `b224e51a295e19ef4ae15111c1517dc6a79e70ea`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acb367f-4ca0-83e8-a226-31a3ae38da20
 - Visual review: `conditional`

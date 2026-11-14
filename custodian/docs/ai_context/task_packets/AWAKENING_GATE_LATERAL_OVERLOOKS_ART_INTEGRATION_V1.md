@@ -6,16 +6,16 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `awakening-gate-lateral-overlooks-blockout-v1`
+- Depends on: `review-awakening-gate-lateral-overlooks-blockout-v1`
 - Locks: `awakening-runtime, awakening-art-registration`
 - Kind: `implementation`
-- Review: `none`
+- Review: `auto`
 - Review stage: `post-land`
-- Review modes: `none`
-- Paired review workstream: `none`
+- Review modes: `code, architecture, runtime, visual, asset-pipeline`
+- Paired review workstream: `review-awakening-gate-lateral-overlooks-art-integration-v1`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
+- Review rationale: `new scene-bound art, derived alpha and Asset V2 publication need an independent runtime review`
 - Reviewed main: `131ffa60f4dab274b6603c1b39cf8c7126b8a401`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a
 - Visual review: `conditional`

@@ -14,7 +14,6 @@ var ui: Node
 
 var inventory_manager: Node
 var cognitive_state: Node
-var vehicle_knowledge_state: Node
 var dev_observatory: Node
 var sector_heatmap: Node
 var material_intelligence: Node

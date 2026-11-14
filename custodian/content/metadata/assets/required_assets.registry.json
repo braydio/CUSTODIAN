@@ -266,18 +266,6 @@
       }
     },
     {
-      "id": "awakening-first-return-music-score",
-      "section": "Awakening / The First Return",
-      "title": "Awakening first-return exploration score",
-      "target": "`custodian/content/audio/music/awakening/awakening_01_command_still_speaking.ogg`",
-      "purpose": "Provide the approved looping exploration score across Awakening sections 01-10, including the optional Chapel of Late Service.",
-      "notes": "A Command Still Speaking is artistically approved by the user and integrated through the Awakening scene director and MusicManager scoped lease. Runtime gain starts at -2.5 dB. Audio provenance is in `custodian/content/audio/music/awakening/audio_handoff_manifest.json`. In-game listening remains pending.",
-      "fulfillment": {
-        "type": "audio",
-        "status": "fulfilled"
-      }
-    },
-    {
       "id": "ash-bell-ritualant-music-score",
       "section": "Ash-Bell / Forlorn-Ritualant Encounter",
       "title": "Forlorn Ritualant four-cue music score",

@@ -1,12 +1,12 @@
 # Procgen Showcase Gallery Arena · Implementation Roadmap
 
-**Status:** executing. PGA-1 landed and independently reviewed/passed; PGA-2 exhibit catalog implementation is validated and closing through the workstream lifecycle, with its paired review next; PGA-3 remains ready/auto; PGA-4–8 remain manual planning drafts.
+**Status:** executing. PGA-1 landed and passed its historical independent review; PGA-2 implementation validation is recorded; PGA-3 gameplay implementation is in progress. Paired reviews were retired by owner decision on 2026-11-12. Current acceptance is focused validation plus owner review of the landed change.
 **Original architecture baseline:** `main@1326220d8172cee9322363b7a5c020acaf41f64c` (2026-10-14).
 **PGA-1 verified:** implementation `b7ba5f154cbdee49ad9f56506868b95a0c02d301`; passed fresh-context review archived on main with 6 focused and 46/46 changed-file checks, zero blocking defects/gaps (2026-10-15).
 **Post-review refresh:** verified against `main@8edc7252b1f1f71d057d7d9b92977b58922bfbdc` (2026-10-15); targeted authoring workflow passed and published PGA-3 pair/index at `95c89d47ac893f1c78d6cc91910a97960cac8802`. Claim eligibility still depends on fresh dispatcher claims/locks.
 **Workstream family:** `procgen-showcase-`
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e
-**Estimate locked:** **8 implementation workstreams + 8 fresh-context paired reviews = 16 task packets**, plus this roadmap; corrections spawned by findings are not pre-counted.
+**Program scope:** 8 implementation slices plus this roadmap. The former paired-review packets are retired and are not an execution or acceptance requirement; focused validation and owner review govern landed changes. Corrections spawned by findings are not pre-counted.
 
 ## Observed live authority and decision
 
@@ -25,28 +25,28 @@ One dev-only registered authored destination, with five accessible curated wings
 
 ## Program DAG and packet accounting
 
-| Slice | Implementation (paired review is `review-<id>`) | Depends on completed *reviews* | Publication now | Scope |
+| Slice | Implementation workstream | Depends on prior implementation being landed and owner-accepted | Publication now | Scope |
 | --- | --- | --- | --- | --- |
-| PGA-1 | `procgen-showcase-gallery-shell` | `none` | **complete/archived; independent review passed** | initial gallery-shell |
-| PGA-2 | `procgen-showcase-exhibit-catalog` | `review-procgen-showcase-gallery-shell` | **implementation validated; paired review follows landing** | five-wing catalog after gallery-shell review |
-| PGA-3 | `procgen-showcase-generated-arena` | `review-procgen-showcase-gallery-shell` | **ready/auto; post-PGA-1 architecture refreshed, automatic paired preflight/queue index PASS** | generated-world host |
+| PGA-1 | `procgen-showcase-gallery-shell` | `none` | **complete; historical independent review passed** | initial gallery-shell |
+| PGA-2 | `procgen-showcase-exhibit-catalog` | `procgen-showcase-gallery-shell` | **implementation validated; owner acceptance governs closeout** | five-wing catalog after gallery-shell acceptance |
+| PGA-3 | `procgen-showcase-generated-arena` | `procgen-showcase-gallery-shell` | **implementation in progress under RC-066** | generated-world host |
 | PGA-4 | `procgen-showcase-generation-controls` | `review-procgen-showcase-generated-arena` | draft/manual; explicit ChatGPT/user refresh after dependencies land | seed/session lifecycle |
 | PGA-5 | `procgen-showcase-runtime-inspector` | `review-procgen-showcase-generation-controls, review-procgen-showcase-exhibit-catalog` | draft/manual; explicit ChatGPT/user refresh after dependencies land | read-only runtime diagnostics |
 | PGA-6 | `procgen-showcase-exemplar-search` | `review-procgen-showcase-exhibit-catalog, review-procgen-showcase-generation-controls, review-procgen-showcase-runtime-inspector` | draft/manual; explicit ChatGPT/user refresh after dependencies land | semantic exemplar lookup |
 | PGA-7 | `procgen-showcase-seed-comparison` | `review-procgen-showcase-generation-controls, review-procgen-showcase-runtime-inspector` | draft/manual; explicit ChatGPT/user refresh after dependencies land | seed comparison/capture |
 | PGA-8 | `procgen-showcase-integration-closeout` | `review-procgen-showcase-exemplar-search, review-procgen-showcase-seed-comparison` | draft/manual; explicit ChatGPT/user refresh after dependencies land | integration validation |
 
-**Count:** 16 packets. PGA-1's implementation and independent review are archived. PGA-2's packet pair was already promoted to ready/auto and its PGA-1 review dependency is now satisfied; check dispatcher claims/locks before claiming. PGA-3 completed its required post-PGA-1 architecture refresh; GitHub automatic authoring preflight passed and promoted both PGA-3 packets to ready/auto at `95c89d47`. Check live dispatcher claims/locks before any implementation claim. PGA-4 through PGA-8 retain their mandatory future manual/API refresh after their upstream reviews. A completed implementation alone does **not** unblock a review-dependent successor.
+**Count:** 8 implementation slices. PGA-1's implementation and historical independent review are archived. PGA-2's implementation packet was promoted to ready/auto; its validation and owner acceptance determine closeout. PGA-3's implementation packet passed automatic authoring preflight at `95c89d47`; current execution is authorized by RC-066. PGA-4 through PGA-8 require a planning refresh after predecessor implementations land and receive owner acceptance. Do not create or require paired-review packets. A completed implementation alone does not replace its focused validation or owner acceptance.
 
 ## Sequential implementation preparation (2026-10-15)
 
-**User execution preference:** implement in ascending PGA slice order, even where the dependency DAG would technically permit independent parallel implementations. Do not create concurrent gallery-owner worktrees merely because both PGA-2 and PGA-3 are `ready/auto`. Run the independent fresh-context review and archive it before starting the next implementation. Planned sequence: PGA-2 and its review, PGA-3 and its review, PGA-4 and review, PGA-5 and review, PGA-6 and review, PGA-7 and review, PGA-8 and review. PGA-1 implementation/review are already archived complete.
+**User execution preference:** implement in ascending PGA slice order, even where the dependency DAG would permit independent parallel implementations. Do not create concurrent gallery-owner workstreams. Complete focused validation, land the change, and obtain owner acceptance before starting the next implementation. PGA-1's implementation and historical review are archived complete.
 
-A preparatory live-main audit updated exact-file-path implementation notes and paired independent-review probes for **PGA-4 through PGA-8**. These remain **`draft/manual`, NOT claimable**: PGA-4 needs the actual PGA-3 host/return API; PGA-5 needs the landed catalog and session exports; PGA-6 needs proven catalog query predicates, inspector read APIs and measured generation cost; PGA-7 needs real session/inspector/capture APIs; PGA-8 needs all predecessor archives and real end-to-end proof. After each predecessor's independent review passes, reconcile its successor against the actual archived diff and receipt in a planning refresh, run `python3 custodian/tools/agent/validate_task_packet_authoring.py <implementation-packet> <paired-review-packet>`, and only then safely publish a truly ready pair plus regenerated queue index. Until then, the new notes are a head start, not permission to self-promote or bypass the queue.
+A preparatory live-main audit updated exact-file-path implementation notes and retired review probes for **PGA-4 through PGA-8**. Their implementation packets remain **`draft/manual`, NOT claimable**: PGA-4 needs the actual PGA-3 host/return API; PGA-5 needs the landed catalog and session exports; PGA-6 needs proven catalog query predicates, inspector read APIs and measured generation cost; PGA-7 needs real session/inspector/capture APIs; PGA-8 needs all predecessor implementations and end-to-end proof. After each predecessor lands and receives owner acceptance, reconcile its successor against the actual diff and validation evidence in a planning refresh, then update and publish only the implementation packet under current policy. Do not create or promote paired-review packets.
 
 **Concrete read authorities verified during preparation:** `custodian/game/world/levels/generated_region_level.gd::prepare_generated_region`; `custodian/game/world/procgen/generation/accepted_world_export.gd::ProcgenAcceptedWorldExport.LEVEL_DATA_SCHEMA` and detached `build_level_data`; `custodian/game/world/procgen/diagnostics/procgen_performance_snapshot.gd` and `CandidateSemanticAdapter.fingerprint_runtime_state`; `custodian/debug/debug_snapshot_collector.gd` (background reference only, not a second gallery overlay authority). Do not infer future API names for the not-yet-landed gallery host, catalog, inspector or session.
 
-**Authoring backlinks:** PGA-4–8 implementation/review packets now reuse the original program authoring chat already recorded at the roadmap top. Their `Refresh planning chat: not-recorded` fields remain deliberately unresolved until the actual current conversation URL is furnished, rather than falsely identifying an older conversation as this refresh.
+**Authoring backlinks:** PGA-4–8 implementation packets reuse the original program authoring chat already recorded at the roadmap top. Their `Refresh planning chat: not-recorded` fields remain deliberately unresolved until the actual current conversation URL is furnished, rather than falsely identifying an older conversation as this refresh. Retired review packets are not part of future dispatch.
 
 ## Workflow, asset and acceptance guardrails
 
@@ -88,8 +88,8 @@ playtest wrapper owns one real Operator/controller/camera, and the registered
 ingress/return path reuses the same Operator across reset-on-entry visits.
 PGA-1 implementation and its fresh-context independent review are **complete**.
 The archived review reports zero blocking defects/material gaps and a green
-46/46 changed-file sweep. PGA-2's exhibit catalog implementation is complete
-and its paired review follows landing. The generated arena remains outside the
+46/46 changed-file sweep. PGA-2's exhibit catalog implementation is complete;
+focused validation and owner acceptance govern closeout. The generated arena remains outside the
 PGA-1 shell's scope.
 
 ## PGA-2 Exhibit Catalog (2026-10-17)
@@ -103,8 +103,7 @@ preview references; the gallery-local `ProcgenExhibitPresenter` provides bounded
 wing/item/detail selection and only displays validated stamp textures. Selection
 does not generate a map or change authored world geometry. Focused catalog and
 existing shell smokes pass; the changed-file sweep passes 42/42 with complete
-coverage. The paired fresh-context review remains the next gate after implementation
-landing.
+coverage. Focused validation and owner acceptance govern its landed change.
 
 ## PGA-3 post-PGA-1 architecture refresh (2026-10-15)
 
@@ -130,9 +129,11 @@ identity and camera binding. On return, restore the gallery camera via
 `AuthoredLevel2D.refresh_route_camera` before releasing/discarding generated
 state; the existing outer `return_world` path remains untouched. No change
 to the agreed five-wing layout, seal or encounter/candidate authority is
-authorized. The PGA-3 implementation and review packets contain exact-path
-handoffs. Automatic authoring publication **passed** in commit `95c89d47`; implementation and independent review remain outstanding.
+authorized. The PGA-3 implementation packet contains exact-path handoffs.
+Automatic authoring publication **passed** in commit `95c89d47`; implementation
+and focused runtime validation are in progress under RC-066.
 
 ## Future scope, deliberately not included
 
 Fictional Hub Archive interpretation, production gameplay placement, new source artwork, a novel generic forced-feature generator, and a complete new actor/NPA system are follow-ons, not hidden PGA acceptance.
+

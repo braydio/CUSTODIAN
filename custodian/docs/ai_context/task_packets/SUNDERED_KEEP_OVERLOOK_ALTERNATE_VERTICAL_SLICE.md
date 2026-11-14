@@ -5,14 +5,13 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P2`
-- Depends on: `isometric-2-5d-presentation-foundation`
+- Depends on: `review-isometric-2-5d-presentation-foundation`
 - Locks: `sundered-keep-presentation, world-presentation`
 - Kind: `implementation`
-- Review: `none`
+- Review: `auto`
 - Review stage: `post-land`
-- Review modes: `none`
-- Paired review workstream: `none`
-- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
+- Review modes: `code, runtime, visual`
+- Paired review workstream: `review-sundered-keep-overlook-alternate-vertical-slice`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Reviewed main: `223d15ab6695dc79e714398e5645d24b4c89e4c7`

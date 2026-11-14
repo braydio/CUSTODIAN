@@ -5,16 +5,16 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `hub-muster-continuity-port-deployment`
+- Depends on: `review-hub-muster-continuity-port-deployment`
 - Locks: `hub-runtime, world-lifecycle, campaign-outcome`
 - Kind: `implementation`
-- Review: `none`
+- Review: `auto`
 - Review stage: `post-land`
-- Review modes: `none`
-- Paired review workstream: `none`
+- Review modes: `code, architecture, runtime`
+- Paired review workstream: `review-hub-campaign-return`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
+- Review rationale: `substantial engineering default`
 - Reviewed main: `c2d6452ac10d`
 
 - Goal: Close the first CampaignRegion → persistent Hub return: apply one valid CampaignOutcome to persistent Hub state exactly once, release the disposable Campaign runtime, restore the reviewed Hub, and return the Operator through the Continuity Port west return bay at `Spawn_CampaignReturn`.

@@ -2,19 +2,19 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `ritualant-npc-silhouette-readability-shader-v1`
-- Status: `blocked`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `none`
 - Locks: `ritualant-npc-presentation`
 - Kind: `implementation`
-- Review: `none`
+- Review: `auto`
 - Review stage: `post-land`
-- Review modes: `none`
-- Paired review workstream: `none`
+- Review modes: `code, runtime, visual`
+- Paired review workstream: `review-ritualant-npc-silhouette-readability-shader-v1`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
+- Review rationale: `shader and alpha-compositing correctness with human-owned visual acceptance`
 - Reviewed main: `6e38b5b948fa`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acb367f-4ca0-83e8-a226-31a3ae38da20
 - Visual review: `required`
@@ -67,8 +67,3 @@
 - Refresh reason: `none`
 - Next action: After human acceptance and successful implementation closeout, independently review the landed shader, regression evidence, and approved ROI presentation.
 - Blockers or open questions: Human-owned approval of the final visual treatment is a completion gate, not permission to skip objective validation.
-
-
-## Supersession disposition
-
-Project-owner authorization in https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae7eb07-c554-83e9-911a-1335e640e4d0 supersedes this unfinished implementation packet with `ritualant-npc-silhouette-readability-shader-v1-recovery-1`. This packet is blocked/manual and is **not complete, not accepted, and not a PASS**. Preserve this packet and all historical evidence. The replacement implementation/review pair is independent of this packet's unfinished status; no acceptance or completion truth is inferred from the donor branch.

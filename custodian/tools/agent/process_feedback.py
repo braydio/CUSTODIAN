@@ -104,14 +104,7 @@ def classify_followup(value: str | None, known_workstreams: set[str] | None = No
 
 def discover(repo: Path) -> list[dict]:
     sources: list[tuple[Path, str, str, str | None]] = []
-    summary_home = repo / "custodian/docs/ai_context/agent_summaries"
-    summary_paths = set(repo.glob("*_CLAUDE_SUMMARY.md"))  # old branches
-    summary_paths.update(repo.glob("*_CODEX_SUMMARY.md"))
-    summary_paths.update(summary_home.glob("*_CLAUDE_SUMMARY.md"))
-    summary_paths.update(summary_home.glob("*_CODEX_SUMMARY.md"))
-    summary_paths.update(summary_home.glob("*_AGENT_SUMMARY.md"))
-    summary_paths.update(summary_home.glob("*/AGENT_SUMMARY.md"))
-    for path in sorted(summary_paths):
+    for path in sorted(repo.glob("*_CLAUDE_SUMMARY.md")):
         text = path.read_text(encoding="utf-8")
         sources.append((path, "summary", "", summary_workstream(text)))
     packet_root = repo / PACKET_ROOT

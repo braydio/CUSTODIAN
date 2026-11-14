@@ -2,19 +2,11 @@ class_name HubFirstSetMap
 extends AuthoredLevel2D
 
 const LAYOUT := preload("res://game/world/hub/first_set/hub_first_set_layout.gd")
-const GARDENS := preload("res://game/world/hub/first_set/sepulcher_gardens_geometry_v1.gd")
-const GARDENS_DEBUG := preload("res://game/world/hub/first_set/sepulcher_gardens_debug_overlay_v1.gd")
 const CROWN_TRANSFER_INGRESS_SCRIPT := preload(
 	"res://game/world/hub/hub_crown_transfer_ingress.gd"
 )
 const ADJUDICATION_DAIS_SCRIPT := preload(
 	"res://game/world/hub/hub_adjudication_dais.gd"
-)
-const ROAD_PROCESSION_SCRIPT := preload(
-	"res://game/world/hub/events/road_procession/road_procession_sequence.gd"
-)
-const SEPULCHER_GRAVE_SCRIPT := preload(
-	"res://game/world/hub/events/sepulcher_grave/sepulcher_grave_evidence.gd"
 )
 const CROWN_TRANSFER_ROUTE := &"hub_twin_solaria"
 const CROWN_TRANSFER_PROFILE := &"production"
@@ -29,18 +21,15 @@ func _ready() -> void:
 	camera_bounds = LAYOUT.WORLD_BOUNDS
 	draw_placeholder_grid = false
 	blockout_grid.position = LAYOUT.GRID_ORIGIN
-	blockout_grid.configure(LAYOUT.CELL_SIZE, LAYOUT.GRID_SIZE, LAYOUT.all_walkable_regions(), _visual_regions())
+	blockout_grid.configure(LAYOUT.CELL_SIZE, LAYOUT.GRID_SIZE, LAYOUT.WALKABLE_REGIONS, _visual_regions())
 	blockout_grid.visible = true
 	authored_navigation.configure(blockout_grid)
 	_build_markers()
 	_build_labels()
-	_build_garden_geometry_preview()
 	super._ready()
 	add_to_group("world_origin_branch")
 	_build_crown_transfer_ingress()
 	_build_adjudication_dais()
-	call_deferred("_build_road_procession_sequence")
-	call_deferred("_build_sepulcher_grave_evidence")
 
 
 func get_authoring_markers() -> Dictionary:
@@ -86,36 +75,14 @@ func _rebuild_boundary_collision() -> void:
 func _visual_regions() -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
 	for region_name: Variant in LAYOUT.ENVELOPES:
-		if str(region_name).ends_with("connector") or str(region_name) == "sepulcher_gardens":
+		if str(region_name).ends_with("connector"):
 			continue
 		result.append({
 			"name": str(region_name),
 			"rect": LAYOUT.ENVELOPES[region_name],
 			"color": LAYOUT.DISTRICT_COLORS[region_name],
 		})
-	for run in GARDENS.walkable_runs():
-		result.append({"name": "sepulcher_gardens", "rect": run, "color": LAYOUT.DISTRICT_COLORS["sepulcher_gardens"]})
 	return result
-
-
-func _build_garden_geometry_preview() -> void:
-	var preview := Node2D.new()
-	preview.name = "SepulcherGardensGeometryDebug"
-	preview.set_script(GARDENS_DEBUG)
-	preview.visible = false
-	add_child(preview)
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	# DEBUG BUILD ONLY: F8 toggles geography sketch; no gameplay authority.
-	if not OS.is_debug_build() or not event is InputEventKey:
-		return
-	var key := event as InputEventKey
-	if key.pressed and not key.echo and key.keycode == KEY_F8:
-		var overlay := get_node_or_null("SepulcherGardensGeometryDebug") as Node2D
-		if overlay != null:
-			overlay.visible = not overlay.visible
-			get_viewport().set_input_as_handled()
 
 
 func _build_markers() -> void:
@@ -214,27 +181,3 @@ func _attach_adjudication_dais(dais: Node2D, world_position: Vector2) -> void:
 		return
 	add_child(dais)
 	dais.global_position = world_position
-
-
-func _build_road_procession_sequence() -> void:
-	var host := get_node_or_null("/root/GameRoot")
-	var authority := host.get_node_or_null("HubCampaignAuthority") if host != null else null
-	if authority == null or authority.get("hub_state") == null:
-		return
-	var sequence := ROAD_PROCESSION_SCRIPT.new() as Node2D
-	sequence.name = "RoadProcessionSequence"
-	sequence.call("configure", authority.get("hub_state") as HubState)
-	add_child(sequence)
-
-
-func _build_sepulcher_grave_evidence() -> void:
-	if get_node_or_null("SepulcherGraveEvidence") != null:
-		return
-	var host := get_node_or_null("/root/GameRoot")
-	var authority := host.get_node_or_null("HubCampaignAuthority") if host != null else null
-	if authority == null or authority.get("hub_state") == null:
-		return
-	var event := SEPULCHER_GRAVE_SCRIPT.new() as Node2D
-	event.name = "SepulcherGraveEvidence"
-	event.call("configure", authority.get("hub_state") as HubState, self)
-	add_child(event)

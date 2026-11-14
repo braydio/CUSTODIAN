@@ -5,14 +5,13 @@
 - Status: draft
 - Dispatch: manual
 - Priority: P2
-- Depends on: `awakening-perimeter-depth-v1`
+- Depends on: review-awakening-perimeter-depth-v1
 - Locks: awakening-runtime, awakening-art-registration, awakening-perimeter-support
 - Kind: implementation
-- Review: `none`
+- Review: auto
 - Review stage: post-land
-- Review modes: `none`
-- Paired review workstream: `none`
-- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
+- Review modes: code, architecture, runtime, visual, asset-pipeline
+- Paired review workstream: review-awakening-perimeter-exterior-v1
 - Review cycle: 0
 - Max automatic review cycles: 2
 - Reviewed main: 63f3e38608fa6f0c5778958858dab1abd764a056

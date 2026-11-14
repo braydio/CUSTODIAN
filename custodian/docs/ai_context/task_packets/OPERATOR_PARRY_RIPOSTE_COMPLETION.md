@@ -8,13 +8,13 @@
 - Depends on: `operator-melee-domain-extraction`
 - Locks: `operator-runtime, combat-feel`
 - Kind: `implementation`
-- Review: `none`
+- Review: `auto`
 - Review stage: `post-land`
-- Review modes: `none`
-- Paired review workstream: `none`
+- Review modes: `code, architecture, runtime`
+- Paired review workstream: `review-operator-parry-riposte-completion`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
+- Review rationale: `substantial combat-semantic completion touching parry, contextual primary, melee targeting, and damage ownership`
 - Reviewed main: `2d4628dfe29ddc10bb203c6b3841b3519619cd87`
 - Authoring chat: `not-recorded`
 - Visual review: `none`

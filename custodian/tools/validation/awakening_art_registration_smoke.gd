@@ -65,14 +65,7 @@ func _check_ordinary_registration(zone: Dictionary, underlay: Sprite2D,
 		foreground: Sprite2D, failures: Array[String]) -> void:
 	var node_name := String(zone["node"])
 	var envelope: Rect2 = zone["envelope"]
-	# The approved Crèche canvas is 1464x1074 and therefore intentionally does
-	# not equal a 32px-snapped envelope plus the ordinary 64px registration pad.
-	# Its measured native transform is pinned directly; all other room plates
-	# retain the envelope-derived contract.
-	var is_canonical_creche := node_name == "Zone01_Creche" \
-		and envelope == Rect2(-704, -480, 1408, 800)
-	var expected_rect := Rect2(Vector2(0, -96) - Vector2(732, 537), Vector2(1464, 1074)) \
-		if is_canonical_creche else envelope.grow(64.0)
+	var expected_rect := envelope.grow(64.0)
 	if underlay == null or underlay.texture == null:
 		failures.append("%s underlay texture is missing" % node_name)
 		return

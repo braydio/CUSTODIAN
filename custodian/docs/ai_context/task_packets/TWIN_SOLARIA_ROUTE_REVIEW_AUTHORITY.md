@@ -6,13 +6,12 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `twin-solaria-crown-incident-forensics`
+- Depends on: `review-twin-solaria-crown-incident-forensics`
 - Locks: `twin-solaria-runtime`
-- Review: `none`
+- Review: `auto`
 - Review stage: `post-land`
-- Review modes: `none`
-- Paired review workstream: `none`
-- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
+- Review modes: `code, architecture, runtime`
+- Paired review workstream: `review-twin-solaria-route-review-authority`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Reviewed main: `b1e622dde554bfac88ae73a3b1a578f606027c91`

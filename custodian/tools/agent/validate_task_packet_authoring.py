@@ -2,10 +2,9 @@
 """Targeted preflight for newly authored or materially refreshed task packets.
 
 This is deliberately narrower than check_ai_context.py / validate_review_pairing.py:
-it validates only the packet paths named by the author. Unrelated active-packet
-drift must not prevent an author from proving that the packets they are about
-to mark ready are valid. Paired review was retired 2026-11-12; this preflight
-does not check or require a paired review.
+it validates only the packet paths named by the author plus the paired-review
+relationship they participate in. Unrelated active-packet drift must not prevent
+an author from proving that the packets they are about to mark ready are valid.
 
 All grammar and pairing semantics come from task_packet_contract.py. This file
 must never grow a second packet schema.
@@ -26,11 +25,10 @@ from task_packet_contract import (
     V2_CORRECTION_REQUIRED_FIELDS,
     V2_REVIEW_REQUIRED_FIELDS,
     V2_REQUIRED_FIELDS,
-    TaskPacketContractError,
     is_v2_packet,
     header_field,
     parse_packet,
-    parse_publication_inputs,
+    validate_review_pairing,
 )
 
 AUTO_IMPLEMENTATION_REQUIRED = (
@@ -124,10 +122,6 @@ def validate_authoring_paths(repo: Path, packet_paths: list[str | Path]) -> list
 
         text = path.read_text()
         packet = parse_packet(rel, text)
-        try:
-            parse_publication_inputs(text, rel, allow_missing=True)
-        except TaskPacketContractError as error:
-            findings.append(f"{rel}: {error}")
         # Overlay the exact working-tree candidate so callers can run this before commit.
         by_path[rel] = packet
         active_packets = [p for p in active_packets if p.path != rel] + [packet]
@@ -179,8 +173,12 @@ def validate_authoring_paths(repo: Path, packet_paths: list[str | Path]) -> list
                     + ", ".join(sorted(REVIEWER_PROVENANCE))
                 )
 
-    # Paired review retired 2026-11-12: pairing mismatches are advisory
-    # only and must not fail authoring, so they are not checked here at all.
+    pairing_errors = validate_review_pairing(active_packets)
+    for workstream in sorted(related_workstreams):
+        message = pairing_errors.get(workstream)
+        if message:
+            findings.append(f"{workstream}: {message}")
+
     # Stable de-duplication keeps CLI/test output deterministic.
     return list(dict.fromkeys(findings))
 
@@ -197,25 +195,24 @@ def print_promotion_handoff(repo: Path, packet_paths: list[str | Path]) -> None:
         print("PROMOTION REQUIRED: PASS validates the supplied draft/blocked "
               "packet metadata, not approval to make it claimable.")
         print("  Resolve any human/design gates before setting the authorized "
-              "implementation to Status: ready.")
+              "implementation and paired review to Status: ready.")
         print("  Use Dispatch: auto unless the user explicitly requested a manual hold.")
     else:
         print("AUTHORING VALID: supplied packets declare Status: ready; "
-              "remote publication and V2 acquisition are NOT established.")
+              "remote publication and dispatch eligibility are NOT established.")
 
     print("NEXT (required before a newly authorized packet can be claimed):")
     print("  1. After any status/dispatch changes, rerun this targeted "
-          "authoring preflight against the implementation packet.")
+          "authoring preflight against the implementation AND paired review.")
     print("  2. python3 custodian/tools/agent/task_packet_index.py --write")
     print("     python3 custodian/tools/agent/task_packet_index.py")
     print("  3. Stage only the authorized packet(s) and the managed "
           "task_packets/README.md (plus explicitly scoped changes); "
           "commit and land them on origin/main through the safe repository workflow.")
-    print("  4. git fetch origin; verify the packet file and the managed "
-          "index exist on origin/main, NOT your local checkout, before acquisition.")
-    print("  5. V2 reads authenticated task identity and packet bytes from origin/main; "
-          "it ignores legacy status/dependency/lock scheduling but blocks an "
-          "explicit user-owned design hold.")
+    print("  4. git fetch origin; verify BOTH packet files and the managed "
+          "ready/auto index exist on origin/main before claiming.")
+    print("  5. Dispatcher reads origin/main, NOT your local checkout or unmerged "
+          "authoring branch. Confirm dependency/review/lock eligibility, then claim.")
 
     implementation_ids = [
         packet.workstream for packet in packets
@@ -227,6 +224,8 @@ def print_promotion_handoff(repo: Path, packet_paths: list[str | Path]) -> None:
     else:
         print("     python3 custodian/tools/agent/dispatch.py claim "
               "<implementation-workstream-id> --agent <agent-id>")
+    print("     (Do not claim the paired post-land review before implementation "
+          "lands and archives complete.)")
 
 
 def main(argv: list[str] | None = None) -> int:

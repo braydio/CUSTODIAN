@@ -10,7 +10,6 @@ import inspect
 import io
 import json
 import os
-import re
 import subprocess
 import sys
 import time
@@ -18,7 +17,6 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import review_outcome
-import worktree_provisioning
 from workflow_control import (
     RunTrace, WorkflowControlError, acquire_remote_claim, common_mutex,
     release_remote_claim, resolve_agent_id, workstream_mutex,
@@ -108,57 +106,6 @@ def _review_gate(
     return rejected, correction_ok
 
 
-def _owner_review_exceptions(repo: Path, tree: str = "origin/main") -> dict[str, dict]:
-    """Load exact, commit-pinned owner exceptions without changing review truth."""
-    try:
-        import owner_review_exception
-    except Exception:
-        return {}
-    def is_ancestor(ancestor: str, descendant: str) -> bool:
-        result = subprocess.run(["git", "merge-base", "--is-ancestor", ancestor, descendant],
-                                cwd=repo, capture_output=True)
-        return result.returncode == 0
-    def show_exact(path: str) -> str:
-        result = subprocess.run(["git", "show", f"{tree}:{path}"], cwd=repo,
-                                text=True, capture_output=True)
-        return result.stdout if result.returncode == 0 else ""
-    prefix = "custodian/docs/ai_context/owner_review_exceptions"
-    records: dict[str, dict] = {}
-    for path in git(repo, "ls-tree", "-r", "--name-only", tree, "--", prefix).splitlines():
-        if not path.endswith(".json"):
-            continue
-        try:
-            record = json.loads(git(repo, "show", f"{tree}:{path}"))
-        except (ValueError, DispatchError):
-            continue
-        review_id = record.get("review_workstream") if isinstance(record, dict) else None
-        if not isinstance(review_id, str) or path != f"{prefix}/{review_id}.json":
-            continue
-        review_path = f"{PACKET_ROOT}/REVIEW_OPERATOR_CHASSIS_AUTHORITY_SEAL_V1.md"
-        implementation_path = f"{PACKET_ROOT}/archived/OPERATOR_CHASSIS_AUTHORITY_SEAL_V1.md"
-        review_text = show_exact(review_path)
-        implementation_text = show_exact(implementation_path)
-        valid, _ = owner_review_exception.verify_record(record, review_id, implementation_text, review_text)
-        if not valid:
-            continue
-        parsed_impl = parse_packet(implementation_path, implementation_text)
-        if (parsed_impl.workstream != record.get("implementation_workstream")
-                or not re.fullmatch(r"[0-9a-f]{40}", record.get("main_sha", ""))
-                or not any(run.get("implementation_commit") == record.get("implementation_commit")
-                           and re.fullmatch(r"[0-9a-f]{64}", run.get("metadata_sha256", ""))
-                           for run in record.get("preserved_review_runs", []) if isinstance(run, dict))
-                or not is_ancestor(record["implementation_commit"], tree)
-                or not is_ancestor(record["main_sha"], tree)):
-            continue
-        activation_review_text = show_exact(f"{PACKET_ROOT}/archived/REVIEW_OWNER_REVIEW_EXCEPTION_LANE_V1.md")
-        activation_target_text = show_exact(f"{PACKET_ROOT}/archived/OWNER_REVIEW_EXCEPTION_LANE_V1.md")
-        state = ("accepted" if owner_review_exception.activation_review_accepted(
-            activation_review_text, activation_target_text,
-        ) else "awaiting_owner_exception_lane_review")
-        records[review_id] = {"record": record, "activation_state": state}
-    return records
-
-
 def _claimed(repo: Path) -> set[str]:
     # Remote refs are claim authority. A successful dispatcher claim always has
     # either a temporary dispatch-claim ref during acquisition or a published
@@ -168,64 +115,7 @@ def _claimed(repo: Path) -> set[str]:
     claimed = {ref.removeprefix("refs/remotes/origin/agent/") for ref in refs}
     claims, branches = _remote_claim_state(repo)
     claimed.update(claims & branches)
-    # Administrative quarantine preserves duplicate-claim protection even if
-    # an interrupted claim has no published agent branch. Missing or malformed
-    # records cannot release locks; they still cannot erase identity.
-    try:
-        import legacy_claim_quarantine
-        claimed.update(legacy_claim_quarantine.quarantined_identities(repo))
-    except Exception:
-        # A missing optional authority must not turn an existing claim into an
-        # eligible packet. Normal branch/claim refs above remain authoritative.
-        pass
     return claimed
-
-
-def _execution_lock_holders(repo: Path, packets: list[Packet], claimed: set[str]) -> tuple[set[str], dict[str, dict]]:
-    """Return lock holders, preserving claim identity independently of occupancy.
-
-    Exact parking and legacy-quarantine records may release only their verified
-    execution-lock occupancy. Any import, packet, branch, or record uncertainty
-    retains conservative lock occupancy and duplicate-claim identity.
-    """
-    holders = set(claimed)
-    states: dict[str, dict] = {}
-    try:
-        import review_claim_parking
-    except Exception as exc:  # a missing optional authority must never unlock
-        return holders, {work_id: {"state": "invalid", "reason": str(exc)} for work_id in claimed}
-    by_id = {packet.workstream: packet for packet in packets if packet.workstream}
-    try:
-        import legacy_claim_quarantine
-        quarantined = legacy_claim_quarantine.quarantined_identities(repo)
-    except Exception as exc:
-        quarantined = set()
-        states["__quarantine_authority__"] = {"state": "invalid", "reason": str(exc)}
-    for work_id in claimed:
-        packet = by_id.get(work_id)
-        if packet is None:
-            continue
-        branch_sha = git(repo, "rev-parse", "--verify", f"refs/remotes/origin/agent/{work_id}", check=False)
-        if branch_sha:
-            try:
-                state = review_claim_parking.dispatcher_parking_state(repo, packet, branch_sha)
-            except Exception as exc:
-                state = {"state": "invalid", "record_sha": None, "lock_released": False,
-                         "reason": f"parking state could not be verified: {exc}"}
-            states[work_id] = state
-            if state.get("lock_released") is True:
-                holders.discard(work_id)
-        if work_id in quarantined:
-            claim_sha = git(repo, "rev-parse", "--verify", f"refs/remotes/origin/dispatch-claims/{work_id}", check=False) or None
-            branch_sha = git(repo, "rev-parse", "--verify", f"refs/remotes/origin/agent/{work_id}", check=False) or None
-            try:
-                qstate = legacy_claim_quarantine.dispatcher_state(repo, work_id, claim_sha, branch_sha)
-            except Exception as exc:
-                qstate = {"state": "invalid", "record_sha": None, "lock_released": False, "reason": str(exc)}
-            states.setdefault(work_id, {})["quarantine"] = qstate
-            if qstate.get("lock_released") is True:
-                holders.discard(work_id)
-    return holders, states
 
 
 def _remote_claim_state(repo: Path) -> tuple[set[str], set[str]]:
@@ -244,19 +134,11 @@ def _decision(
     interrupted_claims: set[str] | None = None,
     review_rejections: dict[str, tuple[str | None, str]] | None = None,
     correction_ok: set[tuple[str, str]] | None = None,
-    lock_holders: set[str] | None = None,
-    owner_exceptions: dict[str, dict] | None = None,
 ) -> tuple[bool, str | None]:
     if packet.error:
         return False, f"invalid packet metadata: {packet.error}"
-    # Paired review retired 2026-11-12: pairing_errors is advisory only for
-    # implementation/correction packets and must never make one ineligible.
-    # The one exception is a `Kind: review` packet itself: its pairing
-    # error is the bounded-override safety bound on what a review may
-    # mutate, so a review packet with a pairing error still cannot claim.
-    if pairing_errors and packet.workstream in pairing_errors and packet.kind == "review":
+    if pairing_errors and packet.workstream in pairing_errors:
         return False, f"invalid review pairing: {pairing_errors[packet.workstream]}"
-    _ = pairing_errors
     if validation_errors and packet.workstream in validation_errors:
         return False, f"invalid validation references: {validation_errors[packet.workstream]}"
     if queue_errors and packet.workstream in queue_errors:
@@ -274,23 +156,18 @@ def _decision(
         return False, f"duplicate Workstream identity: {packet.workstream}"
     complete = {p.workstream for p in archived if not p.error and p.status == "complete"}
     for dependency in packet.dependencies:
-        exception = (owner_exceptions or {}).get(dependency, {})
-        exception_active = exception.get("activation_state") == "accepted"
-        if dependency not in complete and not exception_active:
+        if dependency not in complete:
             return False, f"dependency: {dependency}"
-        if review_rejections and dependency in review_rejections and not exception_active:
+        if review_rejections and dependency in review_rejections:
             if (packet.workstream, dependency) in (correction_ok or set()):
                 continue
             return False, f"dependency: review not accepted: {dependency} ({review_rejections[dependency][1]})"
     by_id = {p.workstream: p for p in packets if p.workstream and not p.error}
-    lock_by_id = {p.workstream: p for p in packets + archived if p.workstream and not p.error}
-    for holder in sorted(claimed if lock_holders is None else lock_holders):
-        claimed_packet = lock_by_id.get(holder)
+    for holder in sorted(claimed):
+        claimed_packet = next((p for p in packets if p.workstream == holder), None)
         if claimed_packet and claimed_packet.dispatch == "auto" and claimed_packet.error and "Locks" in claimed_packet.error:
             return False, f"lock: unknown held by {holder} (malformed lock declaration)"
-    claimed_packet_locks = [(work_id, lock_by_id[work_id].locks)
-                            for work_id in sorted(claimed if lock_holders is None else lock_holders)
-                            if work_id in lock_by_id]
+    claimed_packet_locks = [(work_id, by_id[work_id].locks) for work_id in sorted(claimed) if work_id in by_id]
     for holder, locks in claimed_packet_locks:
         overlap = sorted(set(packet.locks) & set(locks))
         if overlap:
@@ -334,14 +211,13 @@ def _attached_local_worktree(repo: Path, branch: str) -> str | None:
     return None
 
 
-def _start_workstream(module, workstream_id: str, repo: Path, claim=None, trace=None,
-                     checkout_profile: str | None = None) -> tuple[Path, str | None, dict | None]:
+def _start_workstream(module, workstream_id: str, repo: Path, claim=None, trace=None) -> tuple[Path, str | None]:
     """Call workstream.start(), passing a disposition side-channel only if supported.
 
     Test doubles that mock module.start with a plain (work_id, repo) callable must
     keep working unmodified, so the receiver capability is probed rather than assumed.
     """
-    report: dict[str, object] = {}
+    report: dict[str, str] = {}
     try:
         parameters = inspect.signature(module.start).parameters
         accepts_report = "report" in parameters
@@ -355,14 +231,11 @@ def _start_workstream(module, workstream_id: str, repo: Path, claim=None, trace=
         kwargs.update(_claim=claim, _trace=trace, _lock_held=True)
         if "_publish_trace" in parameters:
             kwargs["_publish_trace"] = False
-    if "profile_path" in parameters:
-        kwargs["profile_path"] = checkout_profile
     if kwargs:
         worktree = module.start(workstream_id, repo, **kwargs)
     else:
         worktree = module.start(workstream_id, repo)
-    profile_evidence = report.get("checkout_profile")
-    return Path(worktree), report.get("checkout"), profile_evidence if isinstance(profile_evidence, dict) else None
+    return Path(worktree), report.get("checkout")
 
 
 def _load_workstream(repo: Path):
@@ -396,29 +269,16 @@ def _packet_label(packet: Packet) -> str:
 def _render_status(repo: Path, packets: list[Packet], archived: list[Packet], claimed: set[str]) -> str:
     groups: dict[str, list[str]] = {key: [] for key in (
         "READY", "CLAIMED", "DEPENDENCY/LOCK BLOCKED", "MANUAL READY",
-        "PARKED DRAFT", "LEGACY QUARANTINED", "INVALID/RECOVERY",
+        "PARKED DRAFT", "INVALID/RECOVERY",
     )}
     claims, branches = _remote_claim_state(repo)
-    lock_holders, parking_states = _execution_lock_holders(repo, packets + archived, claimed)
     interrupted_claims = claims - branches
-    quarantined_ids = {
-        work_id for work_id, value in parking_states.items()
-        if value.get("quarantine", {}).get("state") == "legacy_quarantined"
-    }
-    interrupted_claims -= quarantined_ids
     pairing_errors = validate_review_pairing(packets)
     validation_errors = validate_packet_validation_references(repo, packets, exclude_workstreams=claimed)
     packet_texts = _packet_texts(repo, packets)
     queue_errors = validate_queue_contract(packets, archived, packet_texts)
     review_rejections, correction_ok = _review_gate(repo, packets, archived)
-    owner_exceptions = _owner_review_exceptions(repo)
     for work_id in sorted(claims - branches):
-        if work_id in quarantined_ids:
-            groups["LEGACY QUARANTINED"].append(
-                f"{work_id} — original claim retained; administrative disposition is unresolved; "
-                "execution lock follows verified quarantine state."
-            )
-            continue
         groups["INVALID/RECOVERY"].append(
             f"{work_id} — remote dispatch claim interrupted; recovery required. "
             f"Inspect refs/heads/dispatch-claims/{work_id}; after verifying no live claimant, "
@@ -426,11 +286,6 @@ def _render_status(repo: Path, packets: list[Packet], archived: list[Packet], cl
         )
     for packet in sorted(packets, key=lambda item: (PRIORITY.get(item.priority, 9), item.path)):
         name = _packet_label(packet)
-        if packet.workstream in quarantined_ids:
-            groups["LEGACY QUARANTINED"].append(
-                f"{name} — original claim retained; review remains unresolved [{packet.path}]"
-            )
-            continue
         if packet.workstream in claims - branches:
             continue
         if packet.workstream in claimed:
@@ -461,7 +316,6 @@ def _render_status(repo: Path, packets: list[Packet], archived: list[Packet], cl
                 pairing_errors=pairing_errors, validation_errors=validation_errors,
                 queue_errors=queue_errors, interrupted_claims=interrupted_claims,
                 review_rejections=review_rejections, correction_ok=correction_ok,
-                lock_holders=lock_holders,
             )
             if ok:
                 groups["MANUAL READY"].append(f"{name} [{packet.path}]")
@@ -476,7 +330,6 @@ def _render_status(repo: Path, packets: list[Packet], archived: list[Packet], cl
                 pairing_errors=pairing_errors, validation_errors=validation_errors,
                 queue_errors=queue_errors, interrupted_claims=interrupted_claims,
                 review_rejections=review_rejections, correction_ok=correction_ok,
-                lock_holders=lock_holders,
             )
             if ok:
                 groups["READY"].append(f"{packet.priority} {name} [{packet.path}]")
@@ -517,20 +370,13 @@ def audit(repo: Path, *, as_json: bool = False) -> dict:
     packets = _packets(repo)
     archived = _archived_packets(repo)
     claimed = _claimed(repo)
-    lock_holders, parking_states = _execution_lock_holders(repo, packets + archived, claimed)
     remote_claims, remote_branches = _remote_claim_state(repo)
     interrupted_claims = remote_claims - remote_branches
-    quarantined_ids = {
-        work_id for work_id, value in parking_states.items()
-        if value.get("quarantine", {}).get("state") == "legacy_quarantined"
-    }
-    interrupted_claims -= quarantined_ids
     texts = _packet_texts(repo, packets)
     pairing_errors = validate_review_pairing(packets)
     validation_errors = validate_packet_validation_references(repo, packets, exclude_workstreams=claimed)
     queue_errors = validate_queue_contract(packets, archived, texts)
     review_rejections, correction_ok = _review_gate(repo, packets, archived)
-    owner_exceptions = _owner_review_exceptions(repo)
     active_counts: dict[str, int] = {}
     for packet in packets:
         if packet.workstream:
@@ -544,22 +390,16 @@ def audit(repo: Path, *, as_json: bool = False) -> dict:
             pairing_errors=pairing_errors, validation_errors=validation_errors,
             queue_errors=queue_errors, interrupted_claims=interrupted_claims,
                 review_rejections=review_rejections, correction_ok=correction_ok,
-            lock_holders=lock_holders,
-            owner_exceptions=owner_exceptions,
         )
         auto_ok, _ = _decision(
             packet, packets, archived, claimed, auto_only=True,
             pairing_errors=pairing_errors, validation_errors=validation_errors,
             queue_errors=queue_errors, interrupted_claims=interrupted_claims,
                 review_rejections=review_rejections, correction_ok=correction_ok,
-            lock_holders=lock_holders,
-            owner_exceptions=owner_exceptions,
         )
         reasons = []
-        # Paired review retired 2026-11-12: pairing mismatches are advisory
-        # only and are reported in `pairing_advisory`, never in `reasons`
-        # and never as invalid_recovery.
         for error_map, label in (
+            (pairing_errors, "invalid review pairing"),
             (validation_errors, "invalid validation references"),
             (queue_errors, "invalid queue contract"),
         ):
@@ -572,16 +412,10 @@ def audit(repo: Path, *, as_json: bool = False) -> dict:
             reasons.append(f"duplicate active identity: {packet.workstream}")
         for dependency in packet.dependencies:
             complete_ids = {p.workstream for p in archived if not p.error and p.status == "complete"}
-            exception_active = owner_exceptions.get(dependency, {}).get("activation_state") == "accepted"
-            if dependency not in complete_ids and not exception_active:
+            if dependency not in complete_ids:
                 reasons.append(f"dependency not archived complete: {dependency}")
-            if dependency in owner_exceptions and not exception_active:
-                reasons.append(f"owner exception pending independent acceptance review: {dependency}")
-            if dependency in review_rejections and not exception_active and (packet.workstream, dependency) not in correction_ok:
+            elif dependency in review_rejections and (packet.workstream, dependency) not in correction_ok:
                 reasons.append(f"dependency review not accepted: {dependency} ({review_rejections[dependency][1]})")
-        quarantine = parking_states.get(packet.workstream, {}).get("quarantine", {})
-        if quarantine.get("state") == "legacy_quarantined":
-            reasons.append("legacy_quarantined; original claim preserved and review remains unresolved")
         if packet.workstream in claimed:
             reasons.append("already claimed by published agent branch")
         if packet.workstream in interrupted_claims:
@@ -593,11 +427,9 @@ def audit(repo: Path, *, as_json: bool = False) -> dict:
         if not reasons and decision_reason:
             reasons.append(decision_reason)
 
-        if quarantine.get("state") == "legacy_quarantined":
-            actual_class = "legacy_quarantined"
-        elif packet.workstream in claimed:
+        if packet.workstream in claimed:
             actual_class = "claimed"
-        elif packet.error or packet.workstream in validation_errors or packet.workstream in queue_errors or active_counts.get(packet.workstream, 0) > 1 or packet.workstream in interrupted_claims or (packet.kind == "review" and packet.workstream in pairing_errors):
+        elif packet.error or packet.workstream in pairing_errors or packet.workstream in validation_errors or packet.workstream in queue_errors or active_counts.get(packet.workstream, 0) > 1 or packet.workstream in interrupted_claims:
             actual_class = "invalid_recovery"
         elif packet.status == "draft":
             actual_class = "parked_draft" if packet.dispatch == "manual" else "invalid_recovery"
@@ -629,29 +461,14 @@ def audit(repo: Path, *, as_json: bool = False) -> dict:
             "eligible_now": ok,
             "claim_next_eligible": auto_ok,
             "reasons": sorted(set(reasons)),
-            "pairing_advisory": pairing_errors.get(packet.workstream),
             "dependencies": list(packet.dependencies),
             "paired_review_workstream": packet.paired_review_workstream,
             "review_target_workstream": packet.review_target_workstream,
-            "owner_exception_dependencies": [d for d in packet.dependencies if owner_exceptions.get(d, {}).get("activation_state") == "accepted"],
-            "review_dependency_truth": {
-                d: {"outcome": (review_rejections.get(d, (None, ""))[0] or "unresolved"),
-                    "accepted": False,
-                    "owner_exception": owner_exceptions[d]["record"]["disposition"]}
-                for d in packet.dependencies if owner_exceptions.get(d, {}).get("activation_state") == "accepted"
-            },
             "claimed": packet.workstream in claimed,
-            "execution_lock_held": packet.workstream in lock_holders,
-            "parking_state": parking_states.get(packet.workstream, {}).get("state"),
-            "parking_record_sha": parking_states.get(packet.workstream, {}).get("record_sha"),
-            "parking_reason": parking_states.get(packet.workstream, {}).get("reason"),
-            "quarantine_state": quarantine.get("state"),
-            "quarantine_record_sha": quarantine.get("record_sha"),
-            "quarantine_execution_lock_released": quarantine.get("lock_released", False),
             "recovery_disposition": None,
         })
     raw_active = len(packets)
-    managed = sum(not p.error and p.workstream not in queue_errors and p.workstream not in validation_errors for p in packets)
+    managed = sum(not p.error and p.workstream not in queue_errors and p.workstream not in pairing_errors and p.workstream not in validation_errors for p in packets)
     active_ids = {p.workstream for p in packets if p.workstream}
     archived_complete_ids = {p.workstream for p in archived if p.workstream and not p.error and p.status == "complete"}
     worktrees: dict[str, str] = {}
@@ -698,10 +515,7 @@ def audit(repo: Path, *, as_json: bool = False) -> dict:
         remote_claim_audit.append({
             "workstream": workstream, "ref": branch, "head": head,
             "agent_branch_exists": has_branch,
-            "recovery_disposition": (
-                "legacy_quarantined" if workstream in quarantined_ids else
-                ("canonical_branch_present_claim_residue" if has_branch else "protected_claim_without_agent_branch")
-            ),
+            "recovery_disposition": "canonical_branch_present_claim_residue" if has_branch else "protected_claim_without_agent_branch",
         })
     published_ids = {item["workstream"] for item in branch_audit if item["remote_branch_exists"]}
     interrupted_claim_rows = [item for item in remote_claim_audit if not item["agent_branch_exists"]]
@@ -717,17 +531,6 @@ def audit(repo: Path, *, as_json: bool = False) -> dict:
         "interrupted_dispatch_claim_count": len(interrupted_claim_rows),
         "claim_only_orphan_dispatch_claim_count": len(claim_only_orphans),
         "claim_only_orphan_dispatch_claims": claim_only_orphans,
-        "owner_review_exceptions": [
-            {"review_workstream": key, "disposition": value["record"]["disposition"],
-             "decision": value["record"]["decision"], "activation_state": value["activation_state"],
-             "original_review_outcome": value["record"]["original_review_outcome"],
-             "claim_retirement": value["record"]["claim_retirement"],
-             "claim_inventory": value["record"]["claim_inventory"],
-             "implementation_commit": value["record"]["implementation_commit"],
-             "authorization_source_url": value["record"]["authorization_source_url"],
-             "authorization_message_sha256": value["record"]["authorization_message_sha256"]}
-            for key, value in sorted(owner_exceptions.items())
-        ],
         "packets": rows,
     }
 
@@ -749,14 +552,13 @@ def audit_command(repo: Path, *, as_json: bool = False) -> int:
     return 0
 
 
-def _legacy_claim_diagnostics(
+def claim(
     repo: Path,
     workstream_id: str | None,
     agent: str,
     auto_only: bool,
     *,
     lock_wait_seconds: float = 0.0,
-    checkout_profile: str | None = None,
 ) -> int:
     # Serialize assignment authority and canonical publication, but never the
     # best-effort diagnostic network push.
@@ -770,7 +572,6 @@ def _legacy_claim_diagnostics(
                 packets = _packets(repo)
                 archived = _archived_packets(repo)
                 claimed = _claimed(repo)
-                lock_holders, _parking_states = _execution_lock_holders(repo, packets + archived, claimed)
                 remote_claims, remote_branches = _remote_claim_state(repo)
                 pairing_errors = validate_review_pairing(packets)
                 validation_errors = validate_packet_validation_references(repo, packets, exclude_workstreams=claimed)
@@ -786,7 +587,6 @@ def _legacy_claim_diagnostics(
                         pairing_errors=pairing_errors, validation_errors=validation_errors,
                         queue_errors=queue_errors, interrupted_claims=remote_claims - remote_branches,
                         review_rejections=review_rejections, correction_ok=correction_ok,
-                        lock_holders=lock_holders,
                     )
                     if ok:
                         selected = packet
@@ -798,7 +598,7 @@ def _legacy_claim_diagnostics(
                         raise DispatchError(
                             f"packet for workstream {workstream_id} does not exist on origin/main. "
                             "If the packet is only local or on an unmerged authoring branch, "
-                            "first validate the implementation packet with "
+                            "first validate the implementation/review pair with "
                             "custodian/tools/agent/validate_task_packet_authoring.py, "
                             "promote only if authorized, update the managed index using "
                             "custodian/tools/agent/task_packet_index.py --write, "
@@ -833,39 +633,16 @@ def _legacy_claim_diagnostics(
                         f"claimant explicitly remove it with git push origin :{claim_ref}"
                     )
 
-                capacity = worktree_provisioning.preflight_capacity(
-                    repo, profile_path=checkout_profile, ref="origin/main",
-                    target=repo.parent / ".custodian-worktrees",
-                )
-                lfs_failures = capacity.get("local_lfs_failures", [])
-                if lfs_failures:
-                    details = ", ".join(
-                        f"{item['path']} (oid={item['oid']}, size={item['size']})"
-                        for item in lfs_failures
-                    )
-                    raise DispatchError(
-                        "claim blocked before remote claim creation by missing/corrupt local LFS objects: "
-                        + details
-                    )
-                if not capacity["sufficient"]:
-                    raise DispatchError(
-                        "claim blocked before remote claim creation by checkout capacity: "
-                        f"need {capacity['required_free_bytes']} bytes including reserve, "
-                        f"have {capacity['available_free_bytes']}"
-                    )
-
-                module = _load_workstream(repo)
                 lock_started = time.monotonic()
                 with workstream_mutex(repo, selected.workstream):
                     trace = RunTrace.start(repo, selected.workstream, packet=selected.path, agent=agent)
                     trace.record("mutex_acquired", scope="workstream", wait_ms=round((time.monotonic() - lock_started) * 1000))
                     _fetch(repo)
                     remote_claim = acquire_remote_claim(repo, selected.workstream, agent, trace.run_id, trace=trace)
+                    module = _load_workstream(repo)
                     try:
                         with contextlib.redirect_stdout(io.StringIO()):
-                            worktree, checkout, checkout_profile_evidence = _start_workstream(
-                                module, selected.workstream, repo, remote_claim, trace, checkout_profile,
-                            )
+                            worktree, checkout = _start_workstream(module, selected.workstream, repo, remote_claim, trace)
                     except module.WorkstreamError as error:
                         raise DispatchError(f"workstream start blocked: {error}") from error
 
@@ -911,8 +688,7 @@ def _legacy_claim_diagnostics(
                     "schema": "custodian.dispatch.claim.v1", "result": "claimed",
                     "workstream": selected.workstream, "prior_status": selected.status,
                     "branch": expected_branch, "worktree": str(worktree), "packet": selected.path,
-                    "checkout": checkout, "checkout_profile": checkout_profile_evidence,
-                    "verified": True, "agent": agent,
+                    "checkout": checkout, "verified": True, "agent": agent,
                     "run_id": trace.run_id, "trace_ref": trace.diagnostic_ref,
                     "authoring_chat": authoring_chat,
                     "visual_review": selected.visual_review,
@@ -1019,8 +795,8 @@ def main(argv: list[str] | None = None) -> int:
     subs.add_parser("status")
     p = subs.add_parser("audit"); p.add_argument("--json", action="store_true", dest="as_json")
     p = subs.add_parser("repair"); repair_mode = p.add_mutually_exclusive_group(required=True); repair_mode.add_argument("--plan", action="store_true"); repair_mode.add_argument("--apply", action="store_true"); p.add_argument("--archive-completed", action="store_true", help="also preview/apply legacy complete records with explicit non-empty Completed evidence"); p.add_argument("--json", action="store_true", dest="as_json")
-    p = subs.add_parser("claim-next"); p.add_argument("--agent", default=None); p.add_argument("--mode", choices=("normal", "historical"), default="normal"); p.add_argument("--pool", type=Path, default=Path.home() / "Projects/.custodian-turns")
-    p = subs.add_parser("claim"); p.add_argument("workstream_id"); p.add_argument("--agent", default=None); p.add_argument("--mode", choices=("normal", "historical", "owner-authorized"), default="normal"); p.add_argument("--authorization-url", default=None); p.add_argument("--authorization-sha256", default=None); p.add_argument("--pool", type=Path, default=Path.home() / "Projects/.custodian-turns"); p.add_argument("--checkout-profile", default=None)
+    p = subs.add_parser("claim-next"); p.add_argument("--agent", default=None); p.add_argument("--lock-wait-seconds", type=float, default=0.0, help="bounded wait for the local assignment mutex (default: fail fast)")
+    p = subs.add_parser("claim"); p.add_argument("workstream_id"); p.add_argument("--agent", default=None); p.add_argument("--lock-wait-seconds", type=float, default=0.0, help="bounded wait for the local assignment mutex (default: fail fast)")
     p = subs.add_parser("last-claim"); p.add_argument("--json", action="store_true", dest="as_json")
     args = parser.parse_args(argv)
     try:
@@ -1050,82 +826,11 @@ def main(argv: list[str] | None = None) -> int:
                     print(f"{label} {item['workstream']} [{item['path']}]: {item['change']}")
                 print(f"task_packet_repair: {'applied' if args.apply else 'plan only'}; {sum(item['changed'] == 'true' for item in actions)} file(s) changed")
             return 0
-        # The CLI is the canonical V2 execution entrypoint. The legacy claim()
-        # function remains available to historical tests/diagnostics, but it is
-        # not consulted for status, dependency, lock, claim, or session gating.
-        import turn_dispatcher_v2 as turn_v2
-        workstream = getattr(args, "workstream_id", None)
-        mode = args.mode
-        selection_main_sha = None
-        selection_progress = None
-        if args.command == "claim-next":
-            main_sha, _ = turn_v2.latest_main(repo)
-            selection_main_sha = main_sha
-            packet_paths = turn_v2.git(repo, "ls-tree", "-r", "--name-only", main_sha, "--", turn_v2.PACKETS).splitlines()
-            candidates = []
-            for packet_path in packet_paths:
-                if not packet_path.endswith(".md") or "/archived/" in packet_path:
-                    continue
-                content = turn_v2.git(repo, "show", f"{main_sha}:{packet_path}")
-                fields = turn_v2.parse_fields(content)
-                # Paired reviews are launched by paired_review_runner after
-                # implementation completion; claim-next must not acquire one
-                # as ordinary feature work.
-                if fields.get("kind", "implementation").strip().lower().strip("`") == "review":
-                    continue
-                candidate = fields.get("workstream", "")
-                if turn_v2.ID.fullmatch(candidate):
-                    candidates.append((packet_path, candidate))
-            identities = turn_v2.rotate_candidates(repo, [candidate for _, candidate in candidates])
-            blocked = []
-            completed = []
-            for candidate in identities:
-                try:
-                    turn_v2.inspect(repo, candidate, mode)
-                except turn_v2.DispatchError as exc:
-                    if "user-owned design decision holds" in str(exc):
-                        blocked.append((candidate, str(exc)))
-                        continue
-                    raise
-                packet_path = next(path for path, identity in candidates if identity == candidate)
-                packet_text = turn_v2.git(repo, "show", f"{main_sha}:{packet_path}")
-                selection_progress = turn_v2.task_progress_state(
-                    repo, main_sha, candidate, packet_path, turn_v2.parse_fields(packet_text),
-                )
-                if selection_progress == "completed":
-                    completed.append(candidate)
-                    continue
-                workstream = candidate
-                break
-            if workstream is None:
-                print("NO V2 TASK AVAILABLE")
-                for candidate in completed:
-                    print(f"- {candidate}: completed (task branch is reachable from origin/main)")
-                for candidate, reason in blocked:
-                    print(f"- {candidate}: {reason}")
-                return 2
-        result = turn_v2.begin(repo, workstream, mode, args.pool,
-                               getattr(args, "authorization_url", None),
-                               getattr(args, "authorization_sha256", None),
-                               getattr(args, "checkout_profile", None))
-        selection_cursor = None
-        if selection_main_sha and args.command == "claim-next":
-            selection_cursor = turn_v2.record_selection(
-                repo, workstream, turn_id=result["turn_id"], main_sha=selection_main_sha,
-            )
-        packet = result.get("packet") or f"owner-authorized:{result['owner_authorization']['reference']}"
-        receipt = {"schema": "custodian.dispatch.claim.v2", "result": "claimed",
-                   "workstream": workstream, "branch": result["local_branch"],
-                   "worktree": result["checkout"], "packet": packet,
-                   "checkout": "created", "checkout_profile": result.get("checkout_profile"),
-                   "verified": True, "mode": mode, "run_id": result["run_id"],
-                   "turn_id": result["turn_id"], "acquisition_receipt": result["acquisition_receipt"],
-                   "remote_branch": result["branch"], "source": result["source"],
-                   "source_sha": result["source_sha"], "task_definition_sha": result["task_definition_sha"],
-                   "selection_progress": selection_progress, "selection_cursor": selection_cursor,
-                   "acquisition_receipt": result["acquisition_receipt"], "agent": resolve_agent_id(args.agent)}
-        print("CUSTODIAN_DISPATCH_RESULT_JSON:" + json.dumps(receipt, sort_keys=True))
-        return 0
+        agent = resolve_agent_id(args.agent)
+        return claim(
+            repo, getattr(args, "workstream_id", None), agent, args.command == "claim-next",
+            lock_wait_seconds=args.lock_wait_seconds,
+        )
     except (DispatchError, WorkflowControlError) as error:
         print(f"dispatch: BLOCKED: {error}", file=sys.stderr)
         return 2

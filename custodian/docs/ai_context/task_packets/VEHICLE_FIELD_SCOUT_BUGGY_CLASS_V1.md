@@ -5,7 +5,7 @@
 - Status: `blocked`
 - Dispatch: `manual`
 - Priority: `P1`
-- Depends on: `vehicle-runtime-lifecycle-hardening-v1`
+- Depends on: `review-vehicle-runtime-lifecycle-hardening-v1`
 - Locks: `vehicle-content, vehicle-runtime-scene`
 - Kind: `implementation`
 - Review: `none`

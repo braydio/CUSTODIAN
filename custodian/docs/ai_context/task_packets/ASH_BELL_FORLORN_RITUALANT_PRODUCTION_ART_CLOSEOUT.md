@@ -5,7 +5,7 @@
 - Status: `draft`
 - Dispatch: `manual`
 - Priority: `P2`
-- Depends on: `ash-bell-ritualant-static-asset-intake`
+- Depends on: `review-ash-bell-ritualant-static-asset-intake`
 - Locks: `asset-pipeline, ash-bell-art`
 - Kind: `implementation`
 - Review: `manual`

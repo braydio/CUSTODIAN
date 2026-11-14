@@ -5,7 +5,7 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `procgen-performance-soak-v1`
+- Depends on: `review-procgen-runtime-optimization-series-v1`
 - Locks: `procgen-roadmap`
 - Kind: `implementation`
 - Review: `none`

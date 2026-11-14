@@ -4,16 +4,16 @@
 - Status: `blocked`
 - Dispatch: `manual`
 - Priority: `P1`
-- Depends on: `procgen-vertical-traversal-asset-v2`
+- Depends on: `review-procgen-vertical-traversal-asset-v2`
 - Locks: `procgen-presentation, procgen-terrain, asset-pipeline`
 - Kind: `implementation`
-- Review: `none`
+- Review: `auto`
 - Review stage: `post-land`
-- Review modes: `none`
-- Paired review workstream: `none`
+- Review modes: `code, runtime, visual, asset-pipeline`
+- Paired review workstream: `review-procgen-alpine-vertical-traversal-presentation-v1`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
+- Review rationale: `integrates reviewed traversal art with live cliff composition and needs human spatial/readability acceptance`
 - Reviewed main: `350ee94e4b3b80010c0970903f3418966df3b851`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391`
 - Visual review: `required`

@@ -18,6 +18,5 @@
     "restoration_profile",
     "runtime"
   ],
-  "required_runtime_fields": ["scene", "spawnable", "pilotable"],
-  "optional_vehicle_fields": ["scan_profile"]
+  "required_runtime_fields": ["scene", "spawnable", "pilotable"]
 }

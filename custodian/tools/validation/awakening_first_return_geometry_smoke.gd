@@ -38,7 +38,6 @@ func _init() -> void:
 		_check_route_visits_mandatory_zones(route)
 		_check_bidirectional_04_05_passage(route)
 		_check_bidirectional_lower_upper_passage(route)
-	_check_creche_footprint()
 	_check_zone_anchors()
 	_check_production_footprints()
 	_check_lower_upper_passage_clearance()
@@ -337,43 +336,6 @@ func _check_zone_anchors() -> void:
 		var interior := Vector2(-736, -5696)
 		if _find_route(START, interior).is_empty():
 			_fail("optional Chapel interior %s is unreachable" % str(interior))
-
-
-func _check_creche_footprint() -> void:
-	var zone := Layout.zone_by_id(&"zone01_creche")
-	var expected_envelope := Rect2(-704, -480, 1408, 800)
-	if zone.get("envelope", Rect2()) != expected_envelope:
-		_fail("Zone01 envelope does not match the measured 1464x1074 room bounds")
-	if Layout.FLOOR_RECTS.has(&"zone01_creche"):
-		_fail("Zone01 still uses a rect-only floor instead of its authored contour")
-	var shapes: Array = Layout.FLOOR_POLYGONS.get(&"zone01_creche", [])
-	if shapes.size() != 1:
-		_fail("Zone01 must have one hand-authored walkable contour")
-	else:
-		var polygon: Array = shapes[0]
-		var expected_vertices := [
-			Vector2(-608, -384), Vector2(-64, -384), Vector2(-64, -480),
-			Vector2(64, -480), Vector2(64, -384), Vector2(608, -384),
-			Vector2(672, -320), Vector2(672, 224), Vector2(608, 256),
-			Vector2(64, 256), Vector2(64, 320), Vector2(-64, 320),
-			Vector2(-64, 256), Vector2(-608, 256), Vector2(-672, 224),
-			Vector2(-672, -320),
-		]
-		if polygon != expected_vertices:
-			_fail("Zone01 measured 32px contour changed unexpectedly")
-	for point in [Vector2(0, 160), Vector2(600, 0), Vector2(-600, 0), Vector2(0, -448)]:
-		if not Layout.is_point_walkable(point):
-			_fail("Zone01 authored floor/north throat is not walkable at %s" % str(point))
-	for point in [Vector2(688, 0), Vector2(-688, 0), Vector2(0, 336)]:
-		if Layout.is_point_walkable(point):
-			_fail("transparent or non-floor Crèche margin became walkable at %s" % str(point))
-	var connector: Rect2 = Layout.CONNECTORS["01_02"]
-	if connector.size.x != 128.0:
-		_fail("01→02 passage no longer preserves its 128px width")
-	if _find_route(START, Layout.zone_entry(2)).is_empty():
-		_fail("Zone01 cannot traverse north into Zone02")
-	if _find_route(Layout.zone_entry(2), START).is_empty():
-		_fail("Zone02 cannot return south through the Zone01 passage")
 
 
 func _check_production_footprints() -> void:

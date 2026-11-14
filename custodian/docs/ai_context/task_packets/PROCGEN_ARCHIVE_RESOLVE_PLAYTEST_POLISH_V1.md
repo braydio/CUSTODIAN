@@ -8,13 +8,13 @@
 - Depends on: `none`
 - Locks: `procgen-archive-resolve-presentation, procgen-world-presentation`
 - Kind: `implementation`
-- Review: `none`
+- Review: `auto`
 - Review stage: `post-land`
-- Review modes: `none`
-- Paired review workstream: `none`
+- Review modes: `code, runtime, visual`
+- Paired review workstream: `review-procgen-archive-resolve-playtest-polish-v1`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
+- Review rationale: `human gameplay exposed presentation-composition defects that objective AR1-AR4 smokes did not prove; implementation changes shader/timing/world layering and needs a fresh technical pass plus explicit external human visual approval`
 - Reviewed main: `cf03b238416fb06c71a4af946242eb9ccf58228a`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391`
 - Visual review: `required`

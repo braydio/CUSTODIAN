@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
-"""Bounded, deterministic Ready/Auto authoring README-index utility.
+"""Bounded, deterministic Ready/Auto Dispatch README-index authority.
 
 Absorbs the scope of the superseded `TASK_PACKET_INDEX_AUTOMODE_HARDENING.md`
 packet. Owns rendering/checking of only the managed block inside
 `task_packets/README.md`'s `### Ready / Auto Dispatch` section, bounded by
 explicit HTML-comment markers. Reuses `task_packet_contract.py` for all
-packet grammar. The V2 turn dispatcher is execution authority; this index is
-editorial metadata only and never schedules or blocks acquisition. This tool
+packet grammar. `Dispatch.py` remains task-selection authority; this tool
 never mutates packet metadata, never auto-archives, and never rewrites
 manual-ready/In Progress/Recently Complete content outside the managed
 block.

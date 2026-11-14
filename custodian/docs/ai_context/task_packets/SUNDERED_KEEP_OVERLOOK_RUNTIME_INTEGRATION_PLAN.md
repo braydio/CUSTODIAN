@@ -5,14 +5,13 @@
 - Status: `ready`
 - Dispatch: `manual`
 - Priority: `P2`
-- Depends on: `sundered-keep-overlook-alternate-vertical-slice`
+- Depends on: `review-sundered-keep-overlook-alternate-vertical-slice`
 - Locks: `sundered-keep-roadmap, procgen-presentation-roadmap`
 - Kind: `implementation`
-- Review: `none`
+- Review: `auto`
 - Review stage: `post-land`
-- Review modes: `none`
-- Paired review workstream: `none`
-- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
+- Review modes: `architecture, workflow`
+- Paired review workstream: `review-sundered-keep-overlook-runtime-integration-plan`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Reviewed main: `b2b3624fd748ffbf90d40d737e20448c1e41bee6`

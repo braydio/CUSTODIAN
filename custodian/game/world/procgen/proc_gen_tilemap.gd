@@ -10,7 +10,6 @@ extends Node
 ##
 ## Set tile coordinates in inspector, then call generate()
 
-const COMPOUND_VERTICAL_ENTRY_CONTROLLER_SCRIPT := preload("res://game/world/compound/compound_vertical_entry_controller.gd")
 const RUNTIME_WALL_SEGMENT_SCRIPT := preload("res://game/world/procgen/runtime_wall_segment.gd")
 const RUNTIME_WALL_CHUNK_SCRIPT := preload("res://game/world/procgen/runtime_wall_chunk.gd")
 const RUNTIME_WALKABLE_BOUNDARY_CHUNK_SCRIPT := preload(
@@ -32,9 +31,6 @@ const ROAD_SEMANTICS_RESOLVER_SCRIPT := preload("res://game/world/procgen/surfac
 const ROAD_AUTHORITY_SCRIPT := preload("res://game/world/procgen/roads/procgen_road_authority.gd")
 const MACRO_PRESENTATION_COMPOSER_SCRIPT := preload(
 	"res://game/world/procgen/presentation/procgen_macro_presentation_composer.gd"
-)
-const ALPINE_CLIFF_CONTACT_COMPOSER_SCRIPT := preload(
-	"res://game/world/procgen/presentation/procgen_alpine_cliff_contact_composer.gd"
 )
 const DRESSING_CLUSTER_PLANNER_SCRIPT := preload("res://game/world/procgen/dressing/dressing_cluster_planner.gd")
 const DRESSING_CLUSTER_REALIZER_SCRIPT := preload("res://game/world/procgen/dressing/dressing_cluster_realizer.gd")
@@ -497,17 +493,6 @@ var _last_compound_diagnostics: Dictionary = {}
 var _last_compound_archetype_id := ""
 var _last_compound_layer_id := ""
 var _last_compound_profile_version := 0
-var _last_compound_layers: Dictionary = {}
-var _last_compound_surface_housings: Array[Dictionary] = []
-var _last_compound_vertical_entries: Array[Dictionary] = []
-var _last_compound_compartment_thresholds: Array[Dictionary] = []
-var _last_compound_spine_cells: Array[Vector2i] = []
-# Subsurface/separator cells that must stay solid: no later pass may write floor here.
-var _compound_sealed_cells: Dictionary = {}
-var _vertical_entry_controller: Node = null
-var _last_compound_perimeter: Dictionary = {}
-var _last_compound_gates: Array[Dictionary] = []
-var _last_compound_building_doorways: Array[Dictionary] = []
 var _last_interior_region_rect: Rect2i = Rect2i()
 var _last_interior_rooms: Array[Rect2i] = []
 var _last_interior_thresholds: Array[Vector2i] = []
@@ -773,8 +758,6 @@ var _biome_field: BiomeField = null
 var _biome_id_by_cell: Dictionary = {}
 var _biome_summary: Dictionary = {}
 var _macro_presentation_composer: RefCounted = null
-var _alpine_cliff_contact_composer: RefCounted = null
-var _alpine_cliff_contact_summary: Dictionary = {}
 var _macro_presentation_plan: Dictionary = {}
 var _macro_presentation_summary: Dictionary = {}
 var _macro_presentation_dressing_clearance_cells: Dictionary = {}
@@ -792,7 +775,6 @@ var _world_progress_profile = null
 var _world_progress_samples: Dictionary = {}
 var _faction_activity_sites: Array[Dictionary] = []
 var _story_room_sites: Array[Dictionary] = []
-var _story_room_site_skips: Array[Dictionary] = []
 var _special_room_sites: Array[Dictionary] = []
 var _faction_site_placer: RefCounted = null
 var _story_room_placer: RefCounted = null
@@ -1187,8 +1169,6 @@ func _on_procgen_finished() -> void:
 		nav_region.bake_navigation_polygon(false)
 		_t_nav = Time.get_ticks_msec() - _t_start - _t_fill - _t_shadows
 
-	_ensure_vertical_entry_controller()
-
 	# Emit level data for game systems to use
 	var data = get_level_data()
 	level_data_ready.emit(data)
@@ -1335,7 +1315,6 @@ func _fill_tilemaps() -> void:
 		_rebuild_runtime_wall_collision_debug()
 	_marks["setup_clear"] = Time.get_ticks_msec() - _last
 	_last = Time.get_ticks_msec()
-	_clear_compound_layer_state()
 	_apply_planet_visual_profile()
 
 	var map_size = procgen_node.map_size
@@ -1358,9 +1337,7 @@ func _fill_tilemaps() -> void:
 
 	if enable_compound_zone:
 		_apply_compound_layout(map_size)
-	# A layered compound owns all of its interior space; the generic constructed
-	# interior region would otherwise stamp floor through the separator.
-	if interior_region_enabled and _last_compound_layers.is_empty():
+	if interior_region_enabled:
 		_apply_constructed_interior_region(map_size)
 	if intent_spawn_clearing_enabled:
 		_stamp_spawn_clearing(map_size)
@@ -1940,8 +1917,6 @@ func _count_wall_neighbors(pos: Vector2i) -> int:
 
 
 func _set_floor_tile(pos: Vector2i) -> void:
-	if _is_compound_sealed_cell(pos):
-		return
 	var source_id := _select_floor_source_id(pos)
 	floor_tilemap.set_cell(pos, source_id, _select_floor_coord(pos))
 	walls_tilemap.erase_cell(pos)
@@ -1976,8 +1951,6 @@ func _set_wall_tile(pos: Vector2i) -> void:
 
 
 func _set_interior_floor_tile(pos: Vector2i, zone: String = "") -> void:
-	if _is_compound_sealed_cell(pos):
-		return
 	if not interior_use_dedicated_tiles or interior_floor_source_ids.is_empty():
 		_set_floor_tile(pos)
 		return
@@ -3683,8 +3656,6 @@ func _force_authored_scene_floor_authority(
 	refresh_collision_debug: bool = true,
 	render_base_floor_visual: bool = true
 ) -> void:
-	if _is_compound_sealed_cell(tile):
-		return
 	var source_id := _select_floor_source_id(tile)
 	var atlas := _select_floor_coord(tile)
 	_generated_floor_cells[tile] = {
@@ -3715,8 +3686,6 @@ func _force_authored_scene_floor_authority(
 
 
 func _clear_procgen_wall_authority_at(tile: Vector2i, refresh_collision_debug: bool = true) -> void:
-	if _is_compound_sealed_cell(tile):
-		return
 	# M6 streaming-paint guard on the visual erase only; collision removal
 	# and foliage invalidation below are genuine semantic effects of clearing
 	# wall authority and apply regardless of streaming residency.
@@ -4202,24 +4171,7 @@ func _carve_path_brush(center: Vector2i, width: int, map_size: Vector2i) -> void
 			_set_region_tile(tile, "soft_path", "travel")
 
 
-func _is_compound_sealed_cell(tile: Vector2i) -> bool:
-	return not _compound_sealed_cells.is_empty() and _compound_sealed_cells.has(tile)
-
-
-func _clear_compound_layer_state() -> void:
-	_compound_sealed_cells.clear()
-	_last_compound_perimeter = {}
-	_last_compound_gates.clear()
-	_last_compound_building_doorways.clear()
-	_last_compound_layers = {}
-	_last_compound_surface_housings.clear()
-	_last_compound_vertical_entries.clear()
-	_last_compound_compartment_thresholds.clear()
-	_last_compound_spine_cells.clear()
-
-
 func _apply_compound_layout(map_size: Vector2i) -> void:
-	_clear_compound_layer_state()
 	var compound := _build_compound_layout(map_size)
 	if not bool(compound.get("valid", false)):
 		_last_compound_rect = Rect2i()
@@ -4270,18 +4222,6 @@ func _apply_compound_layout(map_size: Vector2i) -> void:
 	_last_compound_layer_id = String(compound.get("layer_id", "surface"))
 	_last_compound_profile_version = int(compound.get("archetype_profile_version", 1))
 	_last_compound_diagnostics = (compound.get("diagnostics", {}) as Dictionary).duplicate(true)
-	if compound.has("layers"):
-		_last_compound_layers = (compound.get("layers", {}) as Dictionary).duplicate(true)
-		_last_compound_surface_housings = _dictionary_array_copy(compound.get("surface_housings", []))
-		_last_compound_vertical_entries = _dictionary_array_copy(compound.get("vertical_entries", []))
-		_last_compound_compartment_thresholds = _dictionary_array_copy(compound.get("compartment_thresholds", []))
-		_last_compound_spine_cells = (compound.get("spine_cells", []) as Array).duplicate()
-		_apply_connected_bunker_geometry(compound)
-		return
-	if compound.has("perimeter"):
-		_last_compound_perimeter = (compound.get("perimeter", {}) as Dictionary).duplicate(true)
-		_last_compound_gates = _dictionary_array_copy(compound.get("gates", []))
-		_last_compound_building_doorways = _dictionary_array_copy(compound.get("building_doorways", []))
 
 	for x in range(rect.position.x, rect.end.x):
 		for y in range(rect.position.y, rect.end.y):
@@ -4344,124 +4284,12 @@ func _apply_compound_layout(map_size: Vector2i) -> void:
 				else:
 					_set_floor_tile(tile)
 				_set_region_tile(tile, "compound_room", String(room.get("type", "room")))
-	if not _last_compound_perimeter.is_empty():
-		_seal_compound_perimeter(rect, t)
-
-
-## A walled-yard perimeter stays closed: every ring wall cell that is not a gate is sealed
-## against later floor writers (roads, routes, terrain), so only the enumerated gates cross it.
-func _seal_compound_perimeter(rect: Rect2i, thickness: int) -> void:
-	for x in range(rect.position.x, rect.end.x):
-		for y in range(rect.position.y, rect.end.y):
-			var ring_tile := Vector2i(x, y)
-			var in_ring := x < rect.position.x + thickness or x >= rect.end.x - thickness \
-				or y < rect.position.y + thickness or y >= rect.end.y - thickness
-			if in_ring and floor_tilemap.get_cell_source_id(ring_tile) < 0:
-				_compound_sealed_cells[ring_tile] = true
-
-
-func _dictionary_array_copy(source: Variant) -> Array[Dictionary]:
-	var result: Array[Dictionary] = []
-	if source is Array:
-		for item in source:
-			if item is Dictionary:
-				result.append((item as Dictionary).duplicate(true))
-	return result
-
-
-## Stamps a layered compound. The compound reservation holds two disjoint layers:
-## the surface band (yard and access housings) and a wall-filled subsurface region
-## below a solid separator. Every cell is owned by exactly one layer, so surface and
-## underground collision/navigation share the single tile authority without overlap.
-func _apply_connected_bunker_geometry(compound: Dictionary) -> void:
-	var rect: Rect2i = compound.get("rect", Rect2i())
-	var ingress: Array[Vector2i] = compound.get("ingress", []) as Array[Vector2i]
-	var surface_layer: Dictionary = _last_compound_layers.get("surface", {})
-	var subsurface_layer: Dictionary = _last_compound_layers.get("subsurface", {})
-	var surface_rect: Rect2i = surface_layer.get("rect", Rect2i())
-	var subsurface_rect: Rect2i = subsurface_layer.get("rect", Rect2i())
-
-	for x in range(rect.position.x, rect.end.x):
-		for y in range(rect.position.y, rect.end.y):
-			var compound_tile := Vector2i(x, y)
-			if surface_rect.has_point(compound_tile):
-				_set_floor_tile(compound_tile)
-				_clear_road_blocking_wall(compound_tile)
-			else:
-				_set_wall_tile(compound_tile)
-
-	var ingress_set := {}
-	for tile in ingress:
-		ingress_set[tile] = true
-	var t: int = max(1, compound_wall_thickness)
-	for x in range(rect.position.x, rect.end.x):
-		for y in range(rect.position.y, rect.position.y + t):
-			var top_tile := Vector2i(x, y)
-			if not ingress_set.has(top_tile):
-				_set_wall_tile(top_tile)
-	for y in range(rect.position.y, surface_rect.end.y):
-		for x in range(rect.position.x, rect.position.x + t):
-			var left_tile := Vector2i(x, y)
-			if not ingress_set.has(left_tile):
-				_set_wall_tile(left_tile)
-		for x in range(rect.end.x - t, rect.end.x):
-			var right_tile := Vector2i(x, y)
-			if not ingress_set.has(right_tile):
-				_set_wall_tile(right_tile)
-	for tile in ingress:
-		_carve_compound_ingress(tile, rect, t)
-		if intent_decorate_compound_ingress:
-			_decorate_compound_ingress(tile, rect)
-	_seal_unreachable_compound_pockets(surface_rect, ingress)
-
-	for tile in _last_compound_courtyard_cells:
-		_set_region_tile(tile, "compound_courtyard", "compound")
-	for housing in _last_compound_surface_housings:
-		_stamp_compound_room_shell(housing.get("rect", Rect2i()), housing.get("door_cells", []), "compound_surface_housing", String(housing.get("id", "housing")))
-		_set_region_tile(housing.get("threshold_cell", Vector2i.ZERO), "compound_vertical_entry", String(housing.get("vertical_entry_id", "")))
-
-	for tile in _last_compound_spine_cells:
-		if subsurface_rect.has_point(tile):
-			_set_floor_tile(tile)
-			_set_region_tile(tile, "compound_corridor", "compound_subsurface")
-	for room in _last_compound_rooms:
-		_stamp_compound_room_shell(room.get("rect", Rect2i()), room.get("door_cells", []), "compound_room", String(room.get("type", "room")))
-	for entry in _last_compound_vertical_entries:
-		var anchor: Vector2i = entry.get("subsurface_anchor", Vector2i.ZERO)
-		_set_region_tile(anchor, "compound_vertical_entry", String(entry.get("id", "")))
-
-	# Layer ownership: every compound cell outside the surface band that is not planned
-	# underground floor is sealed against later floor writers (roads, routes, terrain).
-	for x in range(rect.position.x, rect.end.x):
-		for y in range(rect.position.y, rect.end.y):
-			var sealed_tile := Vector2i(x, y)
-			if not surface_rect.has_point(sealed_tile) and floor_tilemap.get_cell_source_id(sealed_tile) < 0:
-				_compound_sealed_cells[sealed_tile] = true
-
-
-func _stamp_compound_room_shell(room_rect: Rect2i, door_cells: Array, region_type: String, zone: String) -> void:
-	var doors := {}
-	for door in door_cells:
-		if door is Vector2i:
-			doors[door] = true
-	for x in range(room_rect.position.x, room_rect.end.x):
-		for y in range(room_rect.position.y, room_rect.end.y):
-			var tile := Vector2i(x, y)
-			var perimeter := x == room_rect.position.x or x == room_rect.end.x - 1 \
-				or y == room_rect.position.y or y == room_rect.end.y - 1
-			if perimeter and not doors.has(tile):
-				_set_wall_tile(tile)
-			else:
-				_set_floor_tile(tile)
-			_set_region_tile(tile, region_type, zone)
-
 
 func _build_compound_layout(map_size: Vector2i) -> Dictionary:
 	var bounds_result := _build_compound_bounds_and_ingress(map_size)
 	var planner := PersistentCompoundLayoutPlanner.new()
 	if not planner.load_default_graph():
 		return {"valid": false, "diagnostics": {"failure_reason": "graph_load_failed"}}
-	planner.perimeter_thickness = maxi(1, compound_wall_thickness)
 	return planner.generate_layout(
 		_get_generation_seed(),
 		bounds_result.get("rect", Rect2i()),
@@ -4857,8 +4685,6 @@ func _is_reserved_pre_terrain_traversal_cell(tile: Vector2i, map_size: Vector2i)
 
 
 func _preserve_reserved_pre_terrain_floor_authority(tile: Vector2i) -> void:
-	if _is_compound_sealed_cell(tile):
-		return
 	var source_id := _select_floor_source_id(tile)
 	var atlas := _select_floor_coord(tile)
 	_generated_floor_cells[tile] = {
@@ -5581,8 +5407,6 @@ func _enforce_route_playability_walkability(
 
 
 func _set_ascent_field_floor_authority(tile: Vector2i, region_type: String, zone: String) -> void:
-	if _is_compound_sealed_cell(tile):
-		return
 	var source_id := _select_floor_source_id(tile)
 	var atlas := _select_floor_coord(tile)
 	_generated_floor_cells[tile] = {
@@ -5681,8 +5505,6 @@ func _apply_worldgen_intent_floor_cells(map_size: Vector2i) -> void:
 		var tile := key as Vector2i
 		if not _is_tile_inside_map(tile, map_size, 0):
 			continue
-		if _is_compound_sealed_cell(tile):
-			continue
 		var source_id := _select_floor_source_id(tile)
 		var atlas := _select_floor_coord(tile)
 		_generated_floor_cells[tile] = {
@@ -5762,20 +5584,14 @@ func _place_faction_ambient_sites(map_size: Vector2i) -> void:
 
 func _place_story_rooms(map_size: Vector2i) -> void:
 	_story_room_sites.clear()
-	_story_room_site_skips.clear()
 	if _world_progress_profile == null or _story_room_placer == null:
 		return
 	var protected_cells := _collect_terrain_required_cells(map_size)
 	protected_cells.append_array(
 		_get_sundered_keep_site_exclusion_cells()
 	)
-	var region_identity := String(_region_frame_profile_id)
-	if region_identity.is_empty():
-		region_identity = String(_world_progress_profile.profile_id)
-	var projection: Dictionary = _story_room_placer.call("project_story_rooms", {
+	_story_room_sites = _story_room_placer.call("place_story_rooms", {
 		"seed": _tile_noise_hash(Vector2i(1201, 1709)),
-		"identity_seed": _get_generation_seed(),
-		"region_identity": region_identity,
 		"map_size": map_size,
 		"floor_cells": _dict_keys_as_vector2i_array(_generated_floor_cells),
 		"blocked_cells": _dict_keys_as_vector2i_array(_generated_wall_cells),
@@ -5783,33 +5599,14 @@ func _place_story_rooms(map_size: Vector2i) -> void:
 		"count": story_room_count,
 		"world_progress_profile": _world_progress_profile,
 		"faction_sites": _faction_activity_sites,
-		"worldgen_intent_enabled": worldgen_intent_enabled,
-		"reserved_regions": _worldgen_reserved_regions,
-		"intent_graph": _worldgen_intent_graph,
-		"collision_cells": _dict_keys_as_vector2i_array(_runtime_prop_blocker_cells),
-		"void_cells": _story_site_void_cells(),
 	})
-	for site in projection.get("sites", []):
-		if site is Dictionary:
-			_story_room_sites.append(site)
-	for skipped in projection.get("skipped", []):
-		if skipped is Dictionary:
-			_story_room_site_skips.append(skipped)
 	for room in _story_room_sites:
 		var cell: Vector2i = room.get("cell", Vector2i.ZERO)
 		if not _is_tile_inside_map(cell, map_size):
 			continue
 		if get_region_type_at_tile(cell) == "exterior":
-			var story_label := String(room.get("story_id", room.get("intent_node_id", "unknown")))
-			_set_region_tile(cell, "story_room_%s" % story_label, "story_room")
-		var marker_identity := String(room.get("site_id", room.get("story_id", "unknown")))
-		_spawn_placeholder_marker(cell, Vector2i(3, 2), "StoryRoom_%s" % marker_identity)
-
-
-func _story_site_void_cells() -> Array[Vector2i]:
-	var result := _dict_keys_as_vector2i_array(_chasm_cells)
-	result.append_array(_dict_keys_as_vector2i_array(_ocean_cells))
-	return result
+			_set_region_tile(cell, "story_room_%s" % String(room.get("story_id", "unknown")), "story_room")
+		_spawn_placeholder_marker(cell, Vector2i(3, 2), "StoryRoom_%s" % String(room.get("story_id", "unknown")))
 
 
 func _get_sundered_keep_site_exclusion_cells() -> Array[Vector2i]:
@@ -5865,7 +5662,6 @@ func _clear_world_progression_runtime() -> void:
 		void_cliff_face.visible = false
 	_faction_activity_sites.clear()
 	_story_room_sites.clear()
-	_story_room_site_skips.clear()
 	_special_room_sites.clear()
 	if _world_progress_marker_parent == null:
 		_world_progress_marker_parent = _find_or_create_world_progress_marker_parent()
@@ -7334,8 +7130,6 @@ func _set_hole_tile(pos: Vector2i) -> void:
 
 
 func _set_destroyed_wall_floor_tile(pos: Vector2i) -> void:
-	if _is_compound_sealed_cell(pos):
-		return
 	if floor_tilemap == null or walls_tilemap == null:
 		return
 	var source_id := _select_floor_source_id(pos)
@@ -7612,7 +7406,7 @@ func _collect_terrain_required_cell_entries(map_size: Vector2i) -> Array[Diction
 	var intent_required_cells: Array = []
 	if _worldgen_intent_graph != null:
 		intent_required_cells = _worldgen_intent_graph.get_required_cells()
-	var entries: Array[Dictionary] = REQUIRED_CELL_CLASSIFIER_SCRIPT.collect_required_cell_entries({
+	return REQUIRED_CELL_CLASSIFIER_SCRIPT.collect_required_cell_entries({
 		"map_size": map_size,
 		"spawn": get_player_spawn(),
 		"is_ascent_field": world_shape_mode == WorldShapeMode.ASCENT_FIELD,
@@ -7627,63 +7421,6 @@ func _collect_terrain_required_cell_entries(map_size: Vector2i) -> Array[Diction
 		"intent_graph_required_cells": intent_required_cells,
 		"is_tile_inside_map": Callable(self, "_is_tile_inside_map"),
 	})
-	return _without_subsurface_required_entries(entries)
-
-
-## Read-only view of the paired surface/subsurface entries (empty for non-layered compounds).
-func get_compound_vertical_entries() -> Array[Dictionary]:
-	return _last_compound_vertical_entries
-
-
-## The layer that owns `tile`: the subsurface region (including its separator) or the surface.
-func get_compound_layer_at_tile(tile: Vector2i) -> String:
-	var subsurface: Rect2i = (_last_compound_layers.get("subsurface", {}) as Dictionary).get("rect", Rect2i())
-	if subsurface.size.x > 0 and subsurface.size.y > 0 and subsurface.has_point(tile):
-		return "subsurface"
-	return "surface"
-
-
-## World-space bounds of a layer's playable content, for camera isolation. Empty for the surface.
-func get_compound_layer_world_bounds(layer_id: String) -> Rect2:
-	if layer_id != "subsurface" or floor_tilemap == null:
-		return Rect2()
-	var content: Rect2i = (_last_compound_layers.get("subsurface", {}) as Dictionary).get("content_rect", Rect2i())
-	if content.size.x <= 0 or content.size.y <= 0:
-		return Rect2()
-	var half := get_runtime_tile_size() * 0.5
-	var top_left := floor_tilemap.to_global(floor_tilemap.map_to_local(content.position)) - half
-	var bottom_right := floor_tilemap.to_global(floor_tilemap.map_to_local(content.end - Vector2i.ONE)) + half
-	return Rect2(top_left, bottom_right - top_left)
-
-
-## A layered compound gets a controller that consumes its vertical entries; others get none.
-func _ensure_vertical_entry_controller() -> void:
-	if _last_compound_vertical_entries.is_empty():
-		if _vertical_entry_controller != null and is_instance_valid(_vertical_entry_controller):
-			_vertical_entry_controller.queue_free()
-		_vertical_entry_controller = null
-		return
-	if _vertical_entry_controller == null or not is_instance_valid(_vertical_entry_controller):
-		_vertical_entry_controller = COMPOUND_VERTICAL_ENTRY_CONTROLLER_SCRIPT.new()
-		_vertical_entry_controller.name = "CompoundVerticalEntryController"
-		add_child(_vertical_entry_controller)
-	_vertical_entry_controller.call("setup", self)
-
-
-## Underground cells are reached through vertical entries, never by walking from the
-## surface spawn. Terrain reachability repair must not carve a tunnel through the
-## separator to satisfy them, so they are not terrain-required cells.
-func _without_subsurface_required_entries(entries: Array[Dictionary]) -> Array[Dictionary]:
-	var subsurface_rect: Rect2i = (_last_compound_layers.get("subsurface", {}) as Dictionary).get("rect", Rect2i())
-	if subsurface_rect.size.x <= 0 or subsurface_rect.size.y <= 0:
-		return entries
-	var kept: Array[Dictionary] = []
-	for entry in entries:
-		var tile: Variant = entry.get("tile", Vector2i.ZERO)
-		if tile is Vector2i and subsurface_rect.has_point(tile as Vector2i):
-			continue
-		kept.append(entry)
-	return kept
 
 
 func _get_terrain_reserved_regions() -> Array[Dictionary]:
@@ -8027,8 +7764,6 @@ func _apply_terrain_tile_visual(cell: Vector2i, tile_id: String) -> bool:
 
 
 func _set_terrain_floor_visual(cell: Vector2i, source_id: int) -> void:
-	if _is_compound_sealed_cell(cell):
-		return
 	if floor_tilemap == null:
 		return
 	# M6 streaming-paint guard: during initial generation (`enable_streaming_
@@ -8267,8 +8002,6 @@ func debug_get_biome_field() -> Dictionary:
 func _ensure_macro_presentation_composer() -> void:
 	if _macro_presentation_composer == null:
 		_macro_presentation_composer = MACRO_PRESENTATION_COMPOSER_SCRIPT.new()
-	if _alpine_cliff_contact_composer == null:
-		_alpine_cliff_contact_composer = ALPINE_CLIFF_CONTACT_COMPOSER_SCRIPT.new()
 
 
 func _macro_presentation_roots() -> Dictionary:
@@ -8284,7 +8017,6 @@ func _clear_macro_presentation() -> void:
 		_macro_presentation_composer.clear(_macro_presentation_roots())
 	_macro_presentation_plan.clear()
 	_macro_presentation_summary.clear()
-	_alpine_cliff_contact_summary.clear()
 	_macro_presentation_dressing_clearance_cells.clear()
 	_publish_macro_presentation_gauges()
 
@@ -8406,11 +8138,6 @@ func _macro_presentation_surface_claims() -> Dictionary:
 func _rebuild_macro_presentation(map_size: Vector2i) -> void:
 	_build_macro_presentation_plan(map_size)
 	if _macro_presentation_plan.is_empty():
-		var fallback_scale := Vector2.ONE
-		if macro_presentation_back != null:
-			fallback_scale = macro_presentation_back.global_transform.get_scale()
-		_refresh_alpine_cliff_contacts(fallback_scale)
-		_refresh_macro_streaming_visibility()
 		return
 	var world_scale := Vector2.ONE
 	if macro_presentation_back != null:
@@ -8423,61 +8150,17 @@ func _rebuild_macro_presentation(map_size: Vector2i) -> void:
 		walls_tilemap,
 		world_scale
 	)
-	_refresh_alpine_cliff_contacts(world_scale)
 	_refresh_macro_streaming_visibility()
 
 
 func _refresh_macro_streaming_visibility() -> void:
-	if _macro_presentation_composer != null and not _macro_presentation_plan.is_empty():
-		_macro_presentation_composer.refresh_streaming_visibility(
-			_macro_presentation_plan,
-			_macro_presentation_roots(),
-			floor_tilemap,
-			walls_tilemap
-		)
-	if _alpine_cliff_contact_composer != null:
-		_alpine_cliff_contact_composer.refresh_streaming_visibility(
-			macro_presentation_back,
-			enable_streaming_reveal,
-			floor_tilemap,
-			walls_tilemap
-		)
-
-
-func _refresh_alpine_cliff_contacts(world_scale: Vector2 = Vector2.ONE) -> void:
-	if macro_presentation_back == null:
+	if _macro_presentation_composer == null or _macro_presentation_plan.is_empty():
 		return
-	_ensure_macro_presentation_composer()
-	var frame_state := _resolve_region_frame_state()
-	if frame_state.get("cliff_fascia_profile") == null or void_cliff_face == null:
-		_alpine_cliff_contact_composer.clear(macro_presentation_back)
-		_alpine_cliff_contact_summary = {"sprite_count": 0, "qualified_runs": 0}
-		return
-	var fascia_profile := frame_state.get("cliff_fascia_profile") as ProcgenCliffFasciaProfile
-	var blocked_frontier_cells := _macro_presentation_protected_cells()
-	for cell: Variant in _macro_presentation_dressing_clearance_cells:
-		if cell is Vector2i:
-			blocked_frontier_cells[cell] = true
-	_alpine_cliff_contact_summary = _alpine_cliff_contact_composer.apply_frontier_plan(
-		void_cliff_face.get_debug_paint_plan(),
-		_exterior_chasm_cells,
-		blocked_frontier_cells,
-		macro_presentation_back,
-		_get_generation_seed(),
-		enable_streaming_reveal,
-		world_scale,
-		fascia_profile,
-		Callable(self, "_tile_to_world_position")
-	)
-	var contact_blend: Dictionary = _alpine_cliff_contact_composer.get_fascia_blend_frontiers()
-	void_cliff_face.configure_from_surface_cells(
-		_generated_floor_cells,
-		_chasm_cells,
-		_get_generation_seed(),
-		_generated_wall_cells,
-		fascia_profile,
-		contact_blend.get("core", {}),
-		contact_blend.get("shoulder", {})
+	_macro_presentation_composer.refresh_streaming_visibility(
+		_macro_presentation_plan,
+		_macro_presentation_roots(),
+		floor_tilemap,
+		walls_tilemap
 	)
 
 
@@ -9120,11 +8803,6 @@ func _get_ruin_prop_protected_zone_type(cell: Vector2i) -> StringName:
 		if faction_cell is Vector2i and cell.distance_to(faction_cell) <= float(combat_readability_prop_clearance_tiles):
 			return &"faction_activity"
 	for site in _story_room_sites:
-		var story_rect: Variant = site.get("reserved_rect", site.get("rect", Rect2i()))
-		if story_rect is Rect2i:
-			if (story_rect as Rect2i).grow(combat_readability_prop_clearance_tiles).has_point(cell):
-				return &"story_room"
-			continue
 		var story_cell: Variant = site.get("cell", Vector2i.ZERO)
 		if story_cell is Vector2i and cell.distance_to(story_cell) <= float(combat_readability_prop_clearance_tiles):
 			return &"story_room"
@@ -9344,11 +9022,6 @@ func _is_inside_combat_readability_spawn_clearance(pos: Vector2i, radius: int = 
 		if cell is Vector2i:
 			anchors.append(cell)
 	for site in _story_room_sites:
-		var story_rect: Variant = site.get("reserved_rect", site.get("rect", Rect2i()))
-		if story_rect is Rect2i:
-			if (story_rect as Rect2i).grow(clearance_radius).has_point(pos):
-				return true
-			continue
 		var cell: Variant = site.get("cell", Vector2i.ZERO)
 		if cell is Vector2i:
 			anchors.append(cell)
@@ -9482,8 +9155,6 @@ func _set_floor_tile_and_generated_state(
 	zone: String = "",
 	render_base_floor_visual: bool = true
 ) -> void:
-	if _is_compound_sealed_cell(pos):
-		return
 	if floor_tilemap == null or walls_tilemap == null:
 		return
 	var source_id := _select_floor_source_id(pos)
@@ -10618,11 +10289,9 @@ func _resolve_region_frame_state() -> Dictionary:
 		"fallback_reason": "",
 		"underlay_source": "default",
 		"underlay": ENDLESS_FOREST_UNDERLAY,
-		"cliff_fascia_profile": null,
 	}
 	if frame != null and frame.is_valid():
 		state["underlay"] = frame.underlay_profile
-		state["cliff_fascia_profile"] = frame.cliff_fascia_profile
 		state["underlay_source"] = "region_frame"
 		state["visual_fallback"] = frame.visual_fallback
 		state["fallback_reason"] = frame.fallback_reason
@@ -10665,12 +10334,6 @@ func get_region_frame_debug_snapshot() -> Dictionary:
 	}
 
 
-func debug_get_alpine_cliff_contact_state() -> Dictionary:
-	var result := _alpine_cliff_contact_summary.duplicate(true)
-	result["fascia"] = void_cliff_face.get_debug_state() if void_cliff_face != null else {}
-	return result
-
-
 func debug_get_exterior_chasm_cells() -> Dictionary:
 	return _exterior_chasm_cells.duplicate(true)
 
@@ -10697,21 +10360,13 @@ func _refresh_void_cliff_face() -> void:
 	if _generated_floor_cells.is_empty() or _chasm_cells.is_empty():
 		void_cliff_face.clear()
 		void_cliff_face.visible = false
-		if _alpine_cliff_contact_composer != null and macro_presentation_back != null:
-			_alpine_cliff_contact_composer.clear(macro_presentation_back)
 		return
-	var frame_state := _resolve_region_frame_state()
 	void_cliff_face.configure_from_surface_cells(
 		_generated_floor_cells,
 		_chasm_cells,
 		_get_generation_seed(),
-		_generated_wall_cells,
-		frame_state.get("cliff_fascia_profile") as ProcgenCliffFasciaProfile
+		_generated_wall_cells
 	)
-	var presentation_scale := Vector2.ONE
-	if macro_presentation_back != null:
-		presentation_scale = macro_presentation_back.global_transform.get_scale()
-	_refresh_alpine_cliff_contacts(presentation_scale)
 
 
 func _get_chasm_presentation_cells() -> Array:
@@ -11865,18 +11520,9 @@ func _add_horizontal_wall_endcap_sprite(parent: Node2D, region: Rect2, position:
 
 
 func _global_to_tile(global_position: Vector2) -> Vector2i:
-	if floor_tilemap == null:
-		return Vector2i.ZERO
-	var local_position := floor_tilemap.to_local(global_position)
-	# Candidate evaluation can lack a hydrated visual TileSet. Convert through
-	# the same native-32px structural grid used by minimap_tile_to_global().
-	if floor_tilemap.tile_set == null:
-		var tile_size := _get_tile_size()
-		return Vector2i(
-			floori(local_position.x / tile_size.x),
-			floori(local_position.y / tile_size.y)
-		)
-	return floor_tilemap.local_to_map(local_position)
+	if floor_tilemap != null:
+		return floor_tilemap.local_to_map(floor_tilemap.to_local(global_position))
+	return Vector2i.ZERO
 
 
 func global_to_minimap_tile(global_position: Vector2) -> Vector2i:
@@ -12307,14 +11953,6 @@ func get_level_data() -> Dictionary:
 		"compound_archetype_id": _last_compound_archetype_id,
 		"compound_layer_id": _last_compound_layer_id,
 		"compound_archetype_profile_version": _last_compound_profile_version,
-		"compound_layers": _last_compound_layers,
-		"compound_surface_housings": _last_compound_surface_housings,
-		"compound_vertical_entries": _last_compound_vertical_entries,
-		"compound_compartment_thresholds": _last_compound_compartment_thresholds,
-		"compound_spine_cells": _last_compound_spine_cells,
-		"compound_perimeter": _last_compound_perimeter,
-		"compound_gates": _last_compound_gates,
-		"compound_building_doorways": _last_compound_building_doorways,
 		"compound_diagnostics": _last_compound_diagnostics,
 		"main_road_tiles": get_main_road_tiles(),
 		"ruined_road_tiles": get_ruined_road_tiles(),
@@ -12363,7 +12001,6 @@ func get_level_data() -> Dictionary:
 		"worldgen_reserved_regions": _worldgen_reserved_regions,
 		"faction_activity_sites": _faction_activity_sites,
 		"story_room_sites": _story_room_sites,
-		"story_room_site_skips": _story_room_site_skips,
 		"special_room_sites": _special_room_sites,
 	})
 

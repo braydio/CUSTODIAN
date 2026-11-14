@@ -8,13 +8,13 @@
 - Depends on: `npa-showcase-arena-foundation, npa-showcase-existing-enemy-hardening, npa-showcase-existing-drone-hardening, npa-showcase-existing-vaultwing-proof, npa-showcase-broken-warrant-actor, npa-showcase-escort-frame-m7-actor, npa-showcase-dev-overlays, npa-showcase-artwork-completion-audit`
 - Locks: `npa-showcase-level`
 - Kind: `implementation`
-- Review: `none`
+- Review: `auto`
 - Review stage: `post-land`
-- Review modes: `none`
-- Paired review workstream: `none`
+- Review modes: `code, architecture, runtime, visual`
+- Paired review workstream: `review-npa-showcase-complete-arena`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
+- Review rationale: `substantial actor/showcase integration; independent correctness and source-ownership review`
 - Reviewed main: `6a5a60ddbf`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Visual review: `conditional`

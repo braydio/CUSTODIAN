@@ -5,14 +5,13 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `vehicle-part-fabrication-recovery-v1, vehicle-field-scout-buggy-class-v1-recovery-1`
+- Depends on: `review-vehicle-part-fabrication-recovery-v1, review-vehicle-field-scout-buggy-class-v1-recovery-1`
 - Locks: `vehicle-runtime, vehicle-content, vehicle-restoration-runtime`
 - Kind: `correction`
-- Review: `none`
+- Review: `auto`
 - Review stage: `post-land`
-- Review modes: `none`
-- Paired review workstream: `none`
-- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
+- Review modes: `code, architecture, runtime`
+- Paired review workstream: `review-vehicle-field-scout-buggy-class-v1-recovery-1-review-corrections-1`
 - Review cycle: `1`
 - Max automatic review cycles: `2`
 - Reviewed main: `ff5fc4056217e004901ea342f0de4422b8162775`

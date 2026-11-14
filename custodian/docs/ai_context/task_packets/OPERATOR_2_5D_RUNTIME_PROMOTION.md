@@ -9,16 +9,16 @@
 - Status: draft
 - Dispatch: manual
 - Priority: P1
-- Depends on: `operator-2-5d-workbench-production-queue, operator-2-5d-cohort-dependency-closure, operator-animation-decision-authority-hardening-v1, operator-2-5d-composition-mode-guard-v1`
+- Depends on: review-operator-2-5d-workbench-production-queue, review-operator-2-5d-cohort-dependency-closure, review-operator-animation-decision-authority-hardening-v1, review-operator-2-5d-composition-mode-guard-v1
 - Locks: operator-runtime-animation, operator-art-generation-schema, operator-workbench-publish
 - Kind: implementation
-- Review: `none`
+- Review: auto
 - Review stage: post-land
-- Review modes: `none`
-- Paired review workstream: `none`
+- Review modes: code, architecture, runtime, asset-pipeline, workflow
+- Paired review workstream: review-operator-2-5d-runtime-promotion
 - Review cycle: 0
 - Max automatic review cycles: 2
-- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
+- Review rationale: substantial engineering default
 - Reviewed main: eff74f4164e46fac2abb5dc91fdbfee6b601d429
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acaa3ac-a358-83e8-ace1-c21ad7ab3e38
 - Visual review: conditional

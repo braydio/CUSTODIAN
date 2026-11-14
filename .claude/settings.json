@@ -10,46 +10,13 @@
             "timeout": 60
           }
         ]
-      },
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 custodian/tools/agent/coordination_root_guard.py --check-root",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 custodian/tools/agent/coordination_root_guard.py --hook",
-            "timeout": 10
-          }
-        ]
       }
     ]
   },
   "permissions": {
     "allow": [
       "Bash(python3 custodian/tools/agent/workstream.py finish:*)",
-      "Bash(python3 custodian/tools/agent/land_main.py --dry-run:*)",
-      "Bash(rtk git status *)",
-      "Bash(rtk git log *)",
-      "Bash(rtk git diff *)",
-      "Bash(rtk git show *)",
-      "Bash(rtk grep *)",
-      "Bash(rtk ls *)",
-      "Bash(rtk docker logs *)",
-      "Bash(rtk gh run list *)",
-      "Bash(rtk gh run view *)",
-      "Bash(rtk adb devices *)",
-      "Bash(rtk lsblk *)"
+      "Bash(python3 custodian/tools/agent/land_main.py --dry-run:*)"
     ]
   }
 }

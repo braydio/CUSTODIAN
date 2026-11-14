@@ -6,22 +6,22 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: P1
-- Depends on: `compound-archetype-playable-proof`
+- Depends on: review-compound-archetype-playable-proof
 - Locks: compound-recovery
 - Kind: implementation
-- Review: `none`
+- Review: auto
 - Review stage: post-land
-- Review modes: `none`
-- Paired review workstream: `none`
+- Review modes: code, architecture, runtime, visual
+- Paired review workstream: review-compound-recovery-damage-coupling
 - Review cycle: 0
 - Max automatic review cycles: 2
-- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
+- Review rationale: independently landable cross-system change requiring fresh-context review
 - Reviewed main: 9b8ae05581e3194876d8b4763946d1f74d77fa50
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad08a2d-2ae4-83ea-be79-dd8534ffa488
 - Visual review: conditional
 - Goal: Apply physical assault damage to power, defense and fabrication systems with actual service degradation.
 - Completion boundary: Apply physical assault damage to power, defense and fabrication systems with actual service degradation. All listed acceptance cases must pass on the real runtime.
-- Current measured state: At 934805e71ac4e82c4588365f5e7e1dddea912eaa: Type A and Type B geometry are implemented. The Type A independent review remains active; Type B parent review concluded with R0-01 (unconsumed vertical-entry anchors) and R0-02 (missing collision/navigation/camera proof). The existing `compound-connected-bunker-blockout-review-corrections-1` correction and paired `review-compound-connected-bunker-blockout-review-corrections-1` own both defects, and its `agent/` branch is already published. All later traversal/security/assault/recovery gameplay is unimplemented or unaccepted; do not duplicate that correction or bypass either review.
+- Current measured state: At reviewed baseline, only the original semantic campus is implemented. Archetypes and connected full recovery loop are not shipped; inspect latest main and predecessor review changes before editing.
 - Evidence: design/02_features/procgen/COMPOUND_ARCHETYPES_AND_SECURITY_V1.md; existing system files named under Task-specific authority.
 - Task-specific authority: custodian/game/infrastructure/infrastructure_structure.gd take_damage()/heal()/get_integrity_modifier()/capture_infrastructure_state(); custodian/game/systems/core/systems/damageable.gd; InfrastructureRegistry and grid components
 - Work surface: custodian/game/infrastructure/infrastructure_structure.gd take_damage()/heal()/get_integrity_modifier()/capture_infrastructure_state(); custodian/game/systems/core/systems/damageable.gd; InfrastructureRegistry and grid components; minimal adjacent validation and authoritative documentation.
@@ -40,8 +40,3 @@ Bind one live power, one defense and one fabrication target per archetype to Inf
 ## Closeout
 
 Return changed files, measured acceptance, focused test evidence, documentation drift corrections and independent review link. New art is optional until the later human visual gate.
-
-## Planning refresh (2026-10-17)
-
-- Source snapshot: `934805e71ac4e82c4588365f5e7e1dddea912eaa`. Keep all existing post-land review dependencies; verify newer actual `origin/main` and accepted review receipts before implementation.
-- Only `custodian/docs/ai_context/task_packets/COMPOUND_INTERIOR_TRAVERSAL_INTEGRATION.md` and B correction own cross-layer entrance mechanics. This packet must not introduce a duplicate transit controller or independent structural/power state.

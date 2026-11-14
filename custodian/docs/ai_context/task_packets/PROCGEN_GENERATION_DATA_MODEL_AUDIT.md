@@ -5,14 +5,13 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `procgen-road-authority-extraction, procgen-authored-claim-registry-extraction, procgen-generation-state-extraction`
+- Depends on: `review-procgen-road-authority-extraction, review-procgen-authored-claim-registry-extraction, procgen-generation-state-extraction`
 - Locks: `procgen-generation`
 - Kind: `implementation`
-- Review: `none`
+- Review: `auto`
 - Review stage: `post-land`
-- Review modes: `none`
-- Paired review workstream: `none`
-- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
+- Review modes: `architecture, code, workflow`
+- Paired review workstream: `review-procgen-generation-data-model-audit`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Reviewed main: `bff2d89496c68f73072fb69caa7eb3d68abf6aca`

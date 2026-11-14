@@ -5,14 +5,13 @@
 - Status: `blocked`
 - Dispatch: `manual`
 - Priority: `P1`
-- Depends on: `procgen-generation-grid-foundation`
+- Depends on: `review-procgen-generation-grid-foundation`
 - Locks: `procgen-generation-roadmap`
 - Kind: `implementation`
-- Review: `none`
+- Review: `auto`
 - Review stage: `post-land`
-- Review modes: `none`
-- Paired review workstream: `none`
-- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
+- Review modes: `architecture, workflow`
+- Paired review workstream: `review-procgen-generation-grid-migration-series-authoring`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Reviewed main: `bff2d89496c68f73072fb69caa7eb3d68abf6aca`

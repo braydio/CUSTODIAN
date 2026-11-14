@@ -9,13 +9,13 @@
 - Depends on: none
 - Locks: operator-runtime
 - Kind: implementation
-- Review: `none`
+- Review: auto
 - Review stage: post-land
-- Review modes: `none`
-- Paired review workstream: `none`
+- Review modes: code, runtime, visual
+- Paired review workstream: review-operator-unarmed-fast-dodge-handoff-v1
 - Review cycle: 0
 - Max automatic review cycles: 2
-- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
+- Review rationale: player-control handoff and one-shot presentation regression
 - Reviewed main: b654ea569e2f212e97a3dd3b22998eff3bfba358
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc5e5e-018c-83ea-8617-ec4c15de7d62
 - Visual review: conditional

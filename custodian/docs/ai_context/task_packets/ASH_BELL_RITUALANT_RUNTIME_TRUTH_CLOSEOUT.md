@@ -8,13 +8,13 @@
 - Depends on: `none`
 - Locks: `ash-bell-runtime, ritualant-animation-contract`
 - Kind: `implementation`
-- Review: `none`
+- Review: `auto`
 - Review stage: `post-land`
-- Review modes: `none`
-- Paired review workstream: `none`
+- Review modes: `code, runtime, asset-pipeline`
+- Paired review workstream: `review-ash-bell-ritualant-runtime-truth-closeout`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
+- Review rationale: `substantial engineering default`
 - Reviewed main: `dd59fc547480`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac57cd9-e070-83ea-b432-7bc0082aef7c
 - Visual review: `none`

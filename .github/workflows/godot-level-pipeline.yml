@@ -1,10 +1,5 @@
 name: Godot Level Pipeline
 
-# Scope: only authored-level runtime, level assets/tooling, and explicitly
-# scoped level docs should trigger this full lifecycle suite.
-# General custodian/docs/ai_context/** edits use Validate Repository's
-# manifest-driven changed-file checks instead.
-
 on:
   pull_request:
     paths:
@@ -19,13 +14,13 @@ on:
       - "custodian/content/routes/**"
       - "custodian/content/backgrounds/sundered_keep/**"
       - "custodian/tools/level_authoring/**"
-      - "custodian/tools/validation/*level*.gd"
-      - "custodian/tools/validation/*route*.gd"
-      - "custodian/tools/validation/run_route_pipeline_suite.sh"
+      - "custodian/tools/validation/**"
       - "design/04_architecture/ROUTE_TRAVERSAL_SYSTEM.md"
       - "design/05_levels/SUNDERED_KEEP_VISTA_APPROACH.md"
       - "design/05_levels/SUNDERED_KEEP_ROUTE_STAGES.md"
       - "custodian/docs/SCENE_HIERARCHY.md"
+      - "custodian/docs/ai_context/**"
+      - ".github/workflows/godot-level-pipeline.yml"
   push:
     branches: [main]
     paths:
@@ -40,13 +35,13 @@ on:
       - "custodian/content/routes/**"
       - "custodian/content/backgrounds/sundered_keep/**"
       - "custodian/tools/level_authoring/**"
-      - "custodian/tools/validation/*level*.gd"
-      - "custodian/tools/validation/*route*.gd"
-      - "custodian/tools/validation/run_route_pipeline_suite.sh"
+      - "custodian/tools/validation/**"
       - "design/04_architecture/ROUTE_TRAVERSAL_SYSTEM.md"
       - "design/05_levels/SUNDERED_KEEP_VISTA_APPROACH.md"
       - "design/05_levels/SUNDERED_KEEP_ROUTE_STAGES.md"
       - "custodian/docs/SCENE_HIERARCHY.md"
+      - "custodian/docs/ai_context/**"
+      - ".github/workflows/godot-level-pipeline.yml"
   workflow_dispatch:
 
 permissions:
@@ -60,8 +55,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          lfs: true
 
       - name: Install Godot 4.7
         uses: chickensoft-games/setup-godot@v2
@@ -98,19 +91,10 @@ jobs:
             sundered_keep_vista_polish_smoke.gd
           )
 
-          # Each smoke runs in its own Godot process. Collect every failing
-          # contract in one CI pass while preserving a nonzero aggregate exit.
-          failures=()
           for test in "${tests[@]}"; do
-            if ! godot --headless --path . \
-              --script "res://tools/validation/${test}"; then
-              failures+=("${test}")
-            fi
+            godot --headless --path . \
+              --script "res://tools/validation/${test}"
           done
-          if (( ${#failures[@]} )); then
-            printf 'Failed authored-level smokes: %s\n' "${failures[*]}" >&2
-            exit 1
-          fi
 
       - name: Run route traversal suite
         working-directory: custodian

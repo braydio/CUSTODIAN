@@ -45,7 +45,7 @@ const ZONES: Array[Dictionary] = [
 	{
 		"id": &"zone01_creche", "index": 1, "node": "Zone01_Creche",
 		"location": "CRÈCHE OF ANSWERLESS NAMES", "phase": "RECOVERY",
-		"envelope": Rect2(-704, -480, 1408, 800),
+		"envelope": Rect2(-416, -320, 832, 576),
 		"entry": Vector2(0, 160), "exit": Vector2(0, -320), "optional": false,
 	},
 	{
@@ -138,6 +138,7 @@ const THRESHOLDS := {
 # --- Walkable floors ---------------------------------------------------------
 
 const FLOOR_RECTS := {
+	&"zone01_creche": [Rect2(-352, -256, 704, 512)],
 	&"zone03_attestation": [Rect2(-256, -2080, 512, 704)],
 	&"zone06_undergate": [
 		Rect2(-128, -4096, 256, 256),
@@ -153,19 +154,6 @@ const FLOOR_RECTS := {
 }
 
 const FLOOR_POLYGONS := {
-	# Measured from the approved 1464x1074 Crèche underlay at 1 px/world-unit.
-	# The broad authored floor spans x≈±685 and y≈[-391,263] after registration;
-	# its central north passage and south spur continue to y≈-391 and y≈327.
-	# This 32px-snapped contour stays inside that art footprint while excluding
-	# transparent canvas corners. The 128px north throat overlaps Zone02 at -480.
-	&"zone01_creche": [[
-		Vector2(-608, -384), Vector2(-64, -384), Vector2(-64, -480),
-		Vector2(64, -480), Vector2(64, -384), Vector2(608, -384),
-		Vector2(672, -320), Vector2(672, 224), Vector2(608, 256),
-		Vector2(64, 256), Vector2(64, 320), Vector2(-64, 320),
-		Vector2(-64, 256), Vector2(-608, 256), Vector2(-672, 224),
-		Vector2(-672, -320),
-	]],
 	&"zone02_ambulatory": [[
 		Vector2(-288, -1248), Vector2(288, -1248), Vector2(480, -1056), Vector2(480, -672),
 		Vector2(288, -480), Vector2(-288, -480), Vector2(-480, -672), Vector2(-480, -1056),

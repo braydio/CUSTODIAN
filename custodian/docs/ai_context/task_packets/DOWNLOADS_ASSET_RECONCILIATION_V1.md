@@ -8,13 +8,13 @@
 - Depends on: `none`
 - Locks: `downloads-housekeeping`
 - Kind: `implementation`
-- Review: `none`
+- Review: `auto`
 - Review stage: `post-land`
-- Review modes: `none`
-- Paired review workstream: `none`
+- Review modes: `asset-pipeline, workflow, code`
+- Paired review workstream: `review-downloads-asset-reconciliation-v1`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
+- Review rationale: `destructive local cleanup requires independent evidence and non-overlapping lifecycle ownership`
 - Reviewed main: `48646ce06a630d8d524353df6d335d53fbef1747`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acb367f-4ca0-83e8-a226-31a3ae38da20
 - Visual review: `none`

@@ -5,16 +5,16 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `hub-crown-transfer-twin-solaria, hub-campaign-return`
+- Depends on: `review-hub-crown-transfer-twin-solaria, review-hub-campaign-return`
 - Locks: `hub-runtime, world-lifecycle, contract-bootstrap, route-traversal`
 - Kind: `implementation`
-- Review: `none`
+- Review: `auto`
 - Review stage: `post-land`
-- Review modes: `none`
-- Paired review workstream: `none`
+- Review modes: `code, architecture, runtime, workflow`
+- Paired review workstream: `review-hub-first-set-integration-closeout`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
+- Review rationale: `substantial engineering default`
 - Reviewed main: `c2d6452ac10d`
 
 - Goal: Close the first real Campaign loop as one reviewed integration: boot → full Awakening → persistent Hub → Forum Contract → optional Twin roundtrip → Muster/Port → same prewarmed procgen Campaign → outcome → persistent Hub return.

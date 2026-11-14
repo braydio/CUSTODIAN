@@ -28,8 +28,7 @@ func _run() -> void:
 	if ledger != _build_coverage_ledger(plates):
 		failures.append("camera coverage ledger changed across identical scene snapshots")
 	_check_coverage_ledger(ledger)
-	if OS.get_cmdline_user_args().has("--write-report"):
-		_write_report(ledger)
+	_write_report(ledger)
 	if failures.is_empty():
 		print("awakening_perimeter_support_smoke: PASS zones=10 families=9 planned_states=27 samples=%d" % ledger["samples"].size())
 		quit(0)

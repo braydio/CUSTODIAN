@@ -14,7 +14,7 @@
 - Status: `draft`
 - Dispatch: `manual`
 - Priority: `P1`
-- Depends on: `operator-workbench-fx-layer-adoption`
+- Depends on: `review-operator-workbench-fx-layer-adoption`
 - Locks: `operator-workbench-ui`
 - Kind: `implementation`
 - Review: `manual`

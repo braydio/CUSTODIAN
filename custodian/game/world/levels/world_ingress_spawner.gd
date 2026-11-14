@@ -536,9 +536,7 @@ func _tile_to_world(map_instance: Node, tile: Vector2i) -> Vector2:
 	if map_instance is ProcGenTilemap:
 		var procgen := map_instance as ProcGenTilemap
 		if procgen.floor_tilemap != null:
-			# Use the single procgen tile/world contract, including its TileSet-
-			# free native-32px path during structural candidate evaluation.
-			return procgen.tile_to_global_position(tile)
+			return procgen.floor_tilemap.to_global(procgen.floor_tilemap.map_to_local(tile))
 	if map_instance is Node2D:
 		return (map_instance as Node2D).global_position + Vector2(tile) * fallback_tile_size
 	return Vector2(tile) * fallback_tile_size

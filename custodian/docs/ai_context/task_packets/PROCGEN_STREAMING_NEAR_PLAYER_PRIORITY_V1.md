@@ -8,13 +8,13 @@
 - Depends on: `none`
 - Locks: `procgen-streaming-reveal`
 - Kind: `implementation`
-- Review: `none`
+- Review: `auto`
 - Review stage: `post-land`
-- Review modes: `none`
-- Paired review workstream: `none`
+- Review modes: `code, runtime, architecture`
+- Paired review workstream: `review-procgen-streaming-near-player-priority-v1`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
+- Review rationale: `changes live PREPARE/COMMIT ordering while preserving M3/M4 determinism`
 - Reviewed main: `f00b95e98120660402e945cfe9190f3cb072b833`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391`
 - Visual review: `none`

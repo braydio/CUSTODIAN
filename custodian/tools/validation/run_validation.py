@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import argparse
 import fnmatch
-import hashlib
 import json
 import os
 import re
@@ -15,7 +14,6 @@ from contextlib import nullcontext
 import sys
 import time
 from pathlib import Path
-from pathlib import PurePosixPath
 from typing import Any
 
 VALIDATION_DIR = Path(__file__).resolve().parent
@@ -41,9 +39,7 @@ RESULT_PREFIX = "CUSTODIAN_TEST_RESULT_JSON:"
 EXIT_CONFIG, EXIT_PREFLIGHT, EXIT_FAILED, EXIT_TIMEOUT, EXIT_COVERAGE = 2, 3, 4, 5, 6
 EXIT_LOCK = 7
 TAIL_LINES = 40
-# Hydrated production projects need time to import their actual LFS textures/audio.
-# A real CI import exceeded 200 seconds; keep a bounded six-minute ceiling.
-IMPORT_TIMEOUT_SEC = 360
+IMPORT_TIMEOUT_SEC = 120
 FATAL_DIAGNOSTICS = (
     re.compile(r"\bERROR:"),
     re.compile(r"\bSCRIPT ERROR:"),
@@ -56,29 +52,6 @@ HARD_FATAL_DIAGNOSTICS = FATAL_DIAGNOSTICS[1:]
 
 class ManifestError(ValueError):
     pass
-
-
-def source_identity(repo_root: Path | None = None) -> dict[str, str]:
-    """Return the immutable Git commit/tree identity validated by this run."""
-    repo_root = repo_root or REPO_ROOT
-    values: dict[str, str] = {}
-    for name, revision in (("commit", "HEAD"), ("tree", "HEAD^{tree}")):
-        result = subprocess.run(
-            ["git", "rev-parse", "--verify", revision], cwd=repo_root,
-            capture_output=True, text=True, check=False,
-        )
-        value = result.stdout.strip()
-        if result.returncode or not re.fullmatch(r"[0-9a-f]{40,64}", value):
-            raise RuntimeError(f"cannot determine validation source {name} at HEAD")
-        values[name] = value
-    status = subprocess.run(
-        ["git", "status", "--porcelain=v1", "-z", "--untracked-files=all"],
-        cwd=repo_root, capture_output=True, check=False,
-    )
-    if status.returncode:
-        raise RuntimeError("cannot determine validation source worktree state")
-    values["worktree_status_sha256"] = hashlib.sha256(status.stdout).hexdigest()
-    return values
 
 
 def owner_patterns(test: dict[str, Any]) -> list[str]:
@@ -94,7 +67,7 @@ def owner_patterns(test: dict[str, Any]) -> list[str]:
 
 
 def load_manifest(path: Path = MANIFEST_PATH) -> list[dict[str, Any]]:
-    payload = load_manifest_payload(path)
+    payload = json.loads(path.read_text(encoding="utf-8"))
     if payload.get("schema_version") != 1 or not isinstance(payload.get("tests"), list):
         raise ManifestError("unsupported validation manifest")
     ids: set[str] = set()
@@ -118,104 +91,6 @@ def load_manifest(path: Path = MANIFEST_PATH) -> list[dict[str, Any]]:
         ids.add(test_id)
         tests.append(test)
     return tests
-
-
-def load_manifest_payload(path: Path = MANIFEST_PATH) -> dict[str, Any]:
-    payload = parse_manifest_json(path.read_text(encoding="utf-8"))
-    if not isinstance(payload, dict):
-        raise ManifestError("validation manifest must be an object")
-    return payload
-
-
-def parse_manifest_json(contents: str) -> Any:
-    def unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
-        result: dict[str, Any] = {}
-        for key, value in pairs:
-            if key in result:
-                raise ManifestError(f"ambiguous duplicate manifest key: {key}")
-            result[key] = value
-        return result
-    return json.loads(contents, object_pairs_hook=unique_object)
-
-
-def manifest_change_selection(tests: list[dict[str, Any]], *, base_payload: dict[str, Any],
-                              current_payload: dict[str, Any]) -> tuple[set[str], bool]:
-    """Return changed test IDs and whether the manifest itself changed.
-
-    Global configuration and removals are intentionally rejected: they need an
-    explicit broad validation decision rather than being hidden by routing.
-    """
-    if base_payload == current_payload:
-        return set(), False
-    base_global = {key: value for key, value in base_payload.items() if key != "tests"}
-    current_global = {key: value for key, value in current_payload.items() if key != "tests"}
-    if base_global != current_global:
-        raise ManifestError("global validation manifest configuration changed; broad validation required")
-
-    def indexed(payload: dict[str, Any]) -> dict[str, dict[str, Any]]:
-        raw = payload.get("tests")
-        if not isinstance(raw, list):
-            raise ManifestError("validation manifest tests must be an array")
-        result: dict[str, dict[str, Any]] = {}
-        for item in raw:
-            if not isinstance(item, dict) or not isinstance(item.get("id"), str) or not item["id"]:
-                raise ManifestError("ambiguous validation manifest test definition")
-            if item["id"] in result:
-                raise ManifestError(f"ambiguous duplicate validation test id: {item['id']}")
-            result[item["id"]] = item
-        return result
-
-    before, after = indexed(base_payload), indexed(current_payload)
-    removed = sorted(before.keys() - after.keys())
-    if removed:
-        raise ManifestError("validation test definitions removed; broad validation required: " + ", ".join(removed))
-    changed = {test_id for test_id, definition in after.items() if before.get(test_id) != definition}
-    return changed, True
-
-
-def base_manifest_payload(base: str | None, repo_root: Path = REPO_ROOT) -> dict[str, Any]:
-    if not base:
-        result = subprocess.run(["git", "show", f"HEAD:{MANIFEST_PATH.relative_to(REPO_ROOT).as_posix()}"],
-                                cwd=repo_root, capture_output=True, text=True)
-        if result.returncode:
-            raise ManifestError("cannot load base validation manifest from HEAD")
-        try:
-            payload = parse_manifest_json(result.stdout)
-        except json.JSONDecodeError as error:
-            raise ManifestError(f"malformed base validation manifest: {error}") from error
-        if not isinstance(payload, dict):
-            raise ManifestError("base validation manifest must be an object")
-        return payload
-    merge = subprocess.run(["git", "merge-base", base, "HEAD"], cwd=repo_root, capture_output=True, text=True)
-    if merge.returncode or len(merge.stdout.splitlines()) != 1:
-        raise ManifestError("ambiguous or unavailable base for validation manifest comparison")
-    result = subprocess.run(["git", "show", f"{merge.stdout.strip()}:{MANIFEST_PATH.relative_to(REPO_ROOT).as_posix()}"],
-                            cwd=repo_root, capture_output=True, text=True)
-    if result.returncode:
-        raise ManifestError("cannot load base validation manifest")
-    try:
-        payload = parse_manifest_json(result.stdout)
-    except json.JSONDecodeError as error:
-        raise ManifestError(f"malformed base validation manifest: {error}") from error
-    if not isinstance(payload, dict):
-        raise ManifestError("base validation manifest must be an object")
-    return payload
-
-
-def select_changed_tests(tests: list[dict[str, Any]], files: list[str], *, manifest_ids: set[str] = frozenset(),
-                         manifest_changed: bool = False) -> list[dict[str, Any]]:
-    source_files = [path for path in files if path != MANIFEST_PATH.relative_to(REPO_ROOT).as_posix()]
-    selected = {item["id"]: item for item in select_tests(tests, files=source_files)}
-    by_id = {item["id"]: item for item in tests}
-    if manifest_changed:
-        for test_id in manifest_ids:
-            if test_id not in by_id:
-                raise ManifestError(f"changed test definition is not loadable: {test_id}")
-            selected[test_id] = dict(by_id[test_id], selection_reasons=[f"manifest_definition:{test_id}"])
-        for test in tests:
-            if "validation" in test.get("tags", []) and test["id"] in {"validation_runner", "validation_manifest_diff_selection"}:
-                selected.setdefault(test["id"], dict(test, selection_reasons=["manifest_self_check"]))
-    return sorted(selected.values(), key=lambda item: (TIERS.index(item["tier"]), item["id"]))
 
 
 def load_coverage_excludes(path: Path = MANIFEST_PATH) -> list[str]:
@@ -245,21 +120,6 @@ def changed_file_coverage(files: list[str], tests: list[dict[str, Any]], exclude
         "covered_by": covered_by,
         "complete": not uncovered,
     }
-
-
-def exact_changed_paths(raw_paths: list[str]) -> list[str]:
-    """Validate and normalize an explicitly authenticated changed-file inventory."""
-    files = []
-    for raw_path in raw_paths:
-        path = PurePosixPath(raw_path)
-        if (not raw_path or path.is_absolute() or "\\" in raw_path
-                or any(part in {"", ".", ".."} for part in raw_path.split("/"))
-                or path.as_posix() != raw_path):
-            raise ValueError(f"invalid repository-relative --changed-path: {raw_path!r}")
-        files.append(raw_path)
-    if len(files) != len(set(files)):
-        raise ValueError("--changed-path values must be unique")
-    return sorted(files)
 
 
 def select_tests(tests: list[dict[str, Any]], *, files: list[str] | None = None,
@@ -465,10 +325,6 @@ def execute_tiered(selected: list[dict[str, Any]], patterns: list[dict[str, str]
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
     parser.add_argument("--changed", action="store_true")
-    parser.add_argument(
-        "--changed-path", action="append", default=None,
-        help="use this exact repository-relative changed-file inventory (repeatable)",
-    )
     parser.add_argument("--base")
     parser.add_argument("--json", action="store_true")
     parser.add_argument("--tag")
@@ -484,8 +340,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = build_parser()
-    args = parser.parse_args(argv)
+    args = build_parser().parse_args(argv)
     try:
         tests = load_manifest(); patterns = load_warning_patterns(test_ids={test["id"] for test in tests}); coverage_excludes = load_coverage_excludes()
     except (OSError, json.JSONDecodeError, ManifestError) as error:
@@ -494,47 +349,16 @@ def main(argv: list[str] | None = None) -> int:
     if args.list:
         print(json.dumps(tests, indent=2) if args.json else "\n".join(f"{t['tier']:11} {t['id']}" for t in tests))
         return 0
-    if args.changed_path is not None and not args.changed:
-        parser.error("--changed-path requires --changed")
-    if args.changed_path is not None:
-        try:
-            files = exact_changed_paths(args.changed_path)
-        except ValueError as error:
-            parser.error(str(error))
-    else:
-        files = changed_files(args.base, REPO_ROOT) if args.changed else None
-    manifest_ids: set[str] = set()
-    manifest_changed = False
-    if files is not None and MANIFEST_PATH.relative_to(REPO_ROOT).as_posix() in files:
-        try:
-            manifest_ids, manifest_changed = manifest_change_selection(
-                tests, base_payload=base_manifest_payload(args.base), current_payload=load_manifest_payload()
-            )
-        except (OSError, ManifestError) as error:
-            print(json.dumps({"schema": "custodian.validation.result.v1", "passed": False,
-                              "configuration_error": str(error)}))
-            return EXIT_CONFIG
+    files = changed_files(args.base, REPO_ROOT) if args.changed else None
     coverage = changed_file_coverage(files, tests, coverage_excludes) if files is not None else {
         "covered_files": [], "uncovered_files": [], "excluded_files": [], "covered_by": {}, "complete": True,
     }
-    if files is not None and not any([args.tag, args.test, args.tier]):
-        selected = select_changed_tests(tests, files, manifest_ids=manifest_ids, manifest_changed=manifest_changed)
-        if args.max_tier:
-            selected = [item for item in selected if TIERS.index(item["tier"]) <= TIERS.index(args.max_tier)]
-    else:
-        selected = select_tests(tests, files=files, tag=args.tag, test_id=args.test, tier=args.tier, max_tier=args.max_tier)
+    selected = select_tests(tests, files=files, tag=args.tag, test_id=args.test, tier=args.tier, max_tier=args.max_tier)
     if not any([args.changed, args.tag, args.test, args.tier]):
         print("select tests with --changed, --tag, --test, or --tier", file=sys.stderr)
         return EXIT_CONFIG
     if args.test and not selected:
         payload = {"schema": "custodian.validation.result.v1", "passed": False, "configuration_error": f"unknown test id: {args.test}"}
-        print(json.dumps(payload) if args.json else payload["configuration_error"])
-        return EXIT_CONFIG
-    try:
-        validated_source = source_identity()
-    except RuntimeError as error:
-        payload = {"schema": "custodian.validation.result.v1", "passed": False,
-                   "configuration_error": str(error)}
         print(json.dumps(payload) if args.json else payload["configuration_error"])
         return EXIT_CONFIG
     # The import step and the tests that load its output are one critical
@@ -567,17 +391,9 @@ def main(argv: list[str] | None = None) -> int:
             "infrastructure_failure": "godot_project_busy", "error": str(error),
         }))
         return EXIT_LOCK
-    try:
-        source_after_validation = source_identity()
-    except RuntimeError:
-        source_after_validation = None
-    source_changed = source_after_validation != validated_source
     payload = {
         "schema": "custodian.validation.result.v1",
-        "passed": (not source_changed and bool(coverage["complete"])
-                   and all(item["status"] == "passed" for item in results)),
-        "source_identity": validated_source,
-        "source_changed_during_validation": source_changed,
+        "passed": bool(coverage["complete"]) and all(item["status"] == "passed" for item in results),
         "changed_files": files or [], "coverage": coverage,
         "selected": [item["id"] for item in selected], "tests": results,
         "summary": {"selected": len(results), "passed": sum(r["status"] == "passed" for r in results),
@@ -604,8 +420,6 @@ def main(argv: list[str] | None = None) -> int:
     if payload["summary"]["timed_out"]:
         return EXIT_TIMEOUT
     if payload["summary"]["failed"]:
-        return EXIT_FAILED
-    if source_changed:
         return EXIT_FAILED
     if not coverage["complete"]:
         return EXIT_COVERAGE

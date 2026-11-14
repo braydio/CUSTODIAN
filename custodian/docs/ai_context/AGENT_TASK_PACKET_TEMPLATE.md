@@ -15,17 +15,6 @@ Independent, separately landable work should use separate workstreams.
 New packets use `Packet schema: custodian.task_packet.v2`. Existing packets
 without that field remain valid legacy packets and do not need bulk migration.
 
-New task-packet category contract: before drafting, read the **current**
-`custodian/docs/ai_context/TASK_PACKET_CATEGORIES.json` and select exactly one
-category ID for the primary work surface. Copy that ID into `- Category:`
-(after `Workstream:`). Reviews and corrections inherit their parent category;
-never classify them as agent-ops merely because they are reviews. Run
-`python3 custodian/tools/agent/check_packet_categories.py <new packet paths...>`
-and the targeted `validate_task_packet_authoring.py` preflight for the new
-implementation or correction packet before publication. See
-`TASK_PACKET_CATEGORY_AUTHORING.md`. Existing legacy packets without categories
-remain valid and are shown as Uncategorized by Mission Control.
-
 Before authoring, inspect current `origin/main`, applicable AGENTS, the relevant
 design/runtime authority, current tests, and any existing packet/workstream for
 the same semantic task. Reuse a stable Workstream ID when continuing the same
@@ -41,21 +30,20 @@ Ready/Auto view, never selection authority.
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `<lowercase-kebab-id>`
-- Category: `<choose-id-from-TASK_PACKET_CATEGORIES.json>`
 - Status: `draft`
 - Dispatch: `manual`
 - Priority: `P2`
 - Depends on: `none`
 - Locks: `none`
 - Kind: `implementation`
-- Review: `none`
+- Review: `auto`
 - Review stage: `post-land`
-- Review modes: `none`
-- Paired review workstream: `none`
+- Review modes: `code, architecture, runtime`
+- Paired review workstream: `review-WORKSTREAM_ID`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `<concise risk/evidence rationale: how focused checks prove correctness and scope>`
-- Reviewed main: `<full 40-character immutable main commit SHA>`
+- Review rationale: `substantial engineering default` or `low-risk exemption: <why paired review adds little value>`
+- Reviewed main: `<short SHA>`
 - Authoring chat: `<exact ChatGPT conversation URL | not-recorded | n/a>`
 - Visual review: `none | conditional | required`
 - Goal:
@@ -64,7 +52,6 @@ Ready/Auto view, never selection authority.
 - Evidence:
 - Task-specific authority:
 - Work surface:
-- Publication inputs: `custodian/path/to/input_a.py`; `custodian/path/to/input_b.py`
 - Change:
 - Preserve:
 - Non-goals:
@@ -94,31 +81,6 @@ The command runs in the **claimed worktree** and writes ignored output under
 coordination checkout. Do not use broad patterns such as `custodian/**` when
 the packet can name the actual owners/consumers/tests. The pack is a convenience
 snapshot; exact live files and the current worktree diff remain authority.
-
-
-### Owner-authorized bounded pre-claim input publication (Crèche pilot, 2026-11-06)
-
-**Circularity resolution:** A source-preparation packet may need externally approved binary source files to be available before `dispatch.py` will accept a claim. This does **not** authorize `workstream.py start` on the draft or an unclaimed runtime edit. For the explicitly user-authorized Crèche pilot ONLY, the owner may use a separate detached scratch Git worktree and the existing `custodian.asset_handoff.v1` source-only installer to validate exact user-approved PNGs, publish them at **new non-colliding immutable `source_work` paths under Git LFS**, commit a corresponding source receipt and switch the existing source-prep packet from `draft/manual` to `ready/auto` in the **same fast-forward-only main publication**. After publication, only `dispatch.py claim` owns implementation work. The procedure may not touch old canonical source masters, runtime/inbox states, family schemas, consumers or locks. Failed/unknown byte hashes, any active overlapping claim, or a failed non-force main update must stop the attempt. The user/ChatGPT retain final Crèche gameplay-scale visual review; no independent Codex reviewer is required for this slice. Exact paths, SHA-256 values, commands and rollback are in [CRECHE_PRECLAIM_SOURCE_PUBLICATION_V1.md](CRECHE_PRECLAIM_SOURCE_PUBLICATION_V1.md).
-
-This is an **input-publication exception**, not a new dispatcher, new task packet, general source-art self-approval process or authorization to bypass review in unrelated workstreams. The two approved files and their receipt are `Publication inputs`; they must be present on published `origin/main` before the prepared source packet is marked ready. Normal packet outputs (inbox normalization, runtime ingest and measured geometry) still belong to the claimed workstream(s).
-
-### Publication completeness
-
-A packet is executable only when every **existing input it requires at claim**
-is published to `origin/main` atomically with that packet and its paired
-review, including necessary scripts, tests, data contracts, schemas, manifests,
-and working notes. List exact repo-relative paths in `Publication inputs:` as
-individually backticked paths separated by semicolons; use exactly `none` when
-no additional claim-time artifacts are needed. Files the
-packet *plans to create* are outputs, not pre-existing publication inputs.
-
-Do not use an exclusively chat-hosted ZIP, sandbox file, screenshot or snippet
-as a required implementation input. Provide an auditable tracked file on
-`origin/main`, and verify those paths exist at the main commit before dispatch.
-Host-private evidence must remain private; if it is indispensable, explicitly
-pin the safe owner-controlled local verification route and fail closed when
-unavailable. Publication does not bypass claim locks, dependency truth or
-independent review. Enforce the same rule when authoring correction packets.
 
 ## Refresh Planning Authority
 
@@ -165,7 +127,7 @@ repository state without reconstructing intent from chat history.
 
 Required quality:
 
-- **Reviewed main** identifies the repository state actually investigated, as the complete 40-character commit SHA; an abbreviated SHA fails the paired-review archived-target identity gate.
+- **Reviewed main** identifies the repository state actually investigated.
 - **Authoring chat** preserves the originating design/planning conversation when the user provides its URL. Use `not-recorded` when no durable URL is available and `n/a` only when no chat authored the packet; never invent one. Every durable implementation/review/correction/recovery/closeout summary and final user-facing handoff must repeat the exact URL as `Authoring chat: <url>`; `workstream.py finish` enforces this on the committed closing summary.
 - **Goal** states the user-visible or architecture outcome, not the implementation
   method.
@@ -311,8 +273,8 @@ Before setting `Status: ready`:
 [ ] `Visual review` is explicitly `none`, `conditional`, or `required`; when not `none`, the packet routes one compact handoff through publish_review_artifacts.py, records the exact authoring chat and `/CUSTODIAN/visual_review/<workstream>/` root, gives the external reviewer specific questions, and defaults reviewed cloud evidence to programmatic deletion unless explicit retention is required.
 [ ] Dependencies and Locks reflect actual ordering/contention.
 [ ] Next Handoff names the immediate same-series successor and marks ChatGPT/user refresh truthfully; ordinary ready/no-refresh successors are intended for autonomous agent continuation, while human-owned refreshes carry the exact Authoring/Refresh chat URL.
-[ ] Review intent is explicit and proportionate to risk, reversibility, evidence quality, and blast radius.
-[ ] `Review: none` has a concise concrete rationale showing how focused checks prove correctness and scope; it does not require special low-risk exemption language.
+[ ] Review intent is explicit; substantial/risky work defaults to paired `auto` review.
+[ ] `Review: none` carries a concrete `Review rationale: low-risk exemption: ...` rather than convenience/queue avoidance.
 [ ] Deferred work is intentional and visible.
 [ ] Repository-default workflow boilerplate is not duplicated.
 [ ] Acceptance actually proves the stated Goal and Completion boundary, not a
@@ -330,58 +292,100 @@ Before setting `Status: ready`:
 These four checks are objective closure facts, not subjective prose scoring:
 each either names a concrete authority/state or it does not.
 
-### Review Policy — Paired Review Retired
+### Review Policy — Risk-Based Default
 
-Paired review was retired 2026-11-12 by owner decision. Do not author new
-paired review packets, do not set `Review: auto`, and do not add review
-dependencies. The acceptance gate for a packet is its focused validation
-plus the owner's review of the landed change.
+For newly authored or materially re-derived V2 implementation packets, paired
+post-land review is the default when an independent second pass can materially
+increase confidence. Because narrow low-risk work should usually be patched
+without a packet at all, a packeted engineering slice should normally begin
+with `Review: auto`.
 
-- **Express:** A narrow, reversible, low-risk, single-session change may skip
-  the packet entirely. Keep focused validation and Git safety.
-- **Standard (the default for everything):** Use `Review: none` with a
-  concise concrete `Review rationale` explaining the risk and the focused
-  checks that prove correctness and scope. No exemption ceremony is required.
-  If a change is genuinely high-risk or hard to reverse, say so in the
-  rationale and name the extra focused checks — do not reach for a paired
-  review to cover it. Subjective visual/canon decisions remain human-owned.
-- **Manual, only when human-owned:** Use `Review: manual` only when a
-  specific external environment, hardware, credentialed system, or
-  human-owned decision is the actual gate. It is not a substitute for
-  focused validation.
+Use `Review: auto` by default for any of the following:
 
-Do not preserve old review gates or accepted-review dependencies: a
-dependency on a `review-*` workstream means a dependency on the underlying
-implementation workstream, not on its review. Legacy packets were
-bulk-retrofitted to this policy on 2026-11-12: `Review: auto` became
-`Review: none`, paired review packets were archived, and `review-*`
-dependencies were rewritten to their implementation workstreams.
+- runtime behavior, state machines, streaming, persistence, save/load, lifecycle,
+  concurrency, scheduling, or authority changes;
+- architecture extraction, migration, decomplexification, ownership transfer,
+  compatibility cutover, or removal of an old production path;
+- production asset-pipeline or authoring-tool changes that write, normalize,
+  ingest, publish, or mutate runtime assets;
+- tooling that writes production code/data, dispatch/workstream lifecycle,
+  validation infrastructure, or safety/rollback behavior;
+- performance work whose correctness depends on preserving semantics while
+  changing batching, residency, caching, rendering, or execution order;
+- substantial bug fixes where a green test could still be vacuous, fixture-bound,
+  or narrower than the claimed acceptance;
+- multi-system or hard-to-reverse changes where the implementing agent's own
+  evidence would benefit from an adversarial acceptance check;
+- objective technical presentation work such as registration, layering,
+  clipping, visibility, deterministic state correspondence, batching, or
+  disabled-mode parity. Subjective aesthetic approval remains human-owned.
+
+`Review: none` is an explicit low-risk exemption, not the normal packet
+default. It is appropriate when an independent review is unlikely to add useful
+signal, for example:
+
+- documentation-only truth repair with no behavioral contract change;
+- a tiny mechanical patch with an obvious local effect, narrow blast radius,
+  and direct focused regression;
+- temporary/non-production probes or disposable diagnostics;
+- simple data/text changes whose correctness is directly inspectable and that
+  do not move runtime or pipeline authority.
+
+When using `Review: none`, fill `Review rationale` with
+`low-risk exemption: ...` and name the concrete reason. Do not use
+`Review: none` merely to shorten the queue or avoid writing a paired packet.
+
+Use `Review: manual` only when a review is useful but cannot truthfully be
+auto-completed because it requires a specific external environment, hardware,
+credentialed system, or human-owned decision that the normal paired reviewer
+cannot resolve. Do not use manual review as a substitute for the ordinary
+`human_required` outcome inside an otherwise automatic technical review.
+
+Corrections created from independent-review findings remain `Review: auto`
+by default through `AGENT_CORRECTION_PACKET_TEMPLATE.md`.
+
+Legacy packets are not bulk-retrofitted. When new work materially relies on an
+older implementation that lacks V2 feedback or independent review, treat its
+packet as historical evidence rather than current proof: re-check the surviving
+live authority and focused behavior during authoring. If that legacy seam is
+high-risk, unclear, or central to the new acceptance contract, the new packet
+should use paired review.
 
 Regardless of review intent, every completed V2 implementation/correction still
 writes `custodian.task_feedback.v1` Execution Feedback and mirrors it in the
-closing summary.
+closing summary. Paired review is an additional correctness/evidence layer, not
+a replacement for implementation feedback.
 
 ### Review Metadata
 
 Record the chosen review intent when the packet is created:
 
 ```text
-- Kind: `implementation` | `correction`
-- Review: `none` (paired review retired; `auto` is legacy-only, never author it)
+- Kind: `implementation` | `review` | `correction`
+- Review: `auto` | `manual` | `none`
 - Review stage: `post-land`
-- Review modes: `none`
-- Paired review workstream: `none`
+- Review modes: comma-separated `code, architecture, runtime, visual,
+  asset-pipeline, workflow`, or `none`
+- Paired review workstream: `<id>` or `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 ```
 
 Parser defaults keep historical packets valid without this section: missing
 `Kind` is `implementation`; missing `Review` is `none`; this compatibility rule
-is not the authoring default for new/materially refreshed V2 packets.
+is not the authoring default for new/materially refreshed V2 packets. Missing
+`Review stage` defaults to `post-land` only when `Review` is `auto`;
+missing `Review cycle` is `0`; missing `Max automatic review cycles` is
+`2`.
 
-Do not create a paired review packet. `AGENT_REVIEW_PACKET_TEMPLATE.md` is
-retired; the pairing diagnostic in `task_packet_contract.py` is advisory
-only and never blocks a claim.
+When `Review: auto` is selected, also create a paired review packet on
+`main` using `AGENT_REVIEW_PACKET_TEMPLATE.md`, and set this packet's
+`Paired review workstream` to its ID. The review-pairing consistency guard
+fails closed if the pair is missing or malformed; see `task_packets/README.md`
+for the full paired review/correction lifecycle. Auto review packets must carry
+the exact bounded review-artifact mutation override from that template; the
+dispatcher checks it before claim. Their explicit validation script paths must
+resolve to live scripts before an auto claim is allowed.
 
 ## Completion Truth
 
@@ -470,7 +474,7 @@ reply:
 PLANNING REFRESH REQUIRED
 Authoring Chat: <exact recorded URL>
 Workstream: <workstream-id>
-Persistent Summary: <repo-relative agent_summaries path>
+Persistent Summary: <repo-relative *_CLAUDE_SUMMARY.md path>
 ```
 
 The user should only need to open that URL and paste the workstream ID. The

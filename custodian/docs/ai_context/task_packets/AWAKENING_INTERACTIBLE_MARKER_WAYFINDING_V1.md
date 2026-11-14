@@ -4,14 +4,13 @@
 - Status: `blocked`
 - Dispatch: `manual`
 - Priority: `P2`
-- Depends on: `awakening-interactible-affordance-foundation-v1, awakening-interactible-affordance-asset-v2-contracts-v1`
+- Depends on: `review-awakening-interactible-affordance-foundation-v1, review-awakening-interactible-affordance-asset-v2-contracts-v1`
 - Locks: `awakening-interaction-presentation, awakening-wayfinding`
 - Kind: `implementation`
-- Review: `none`
+- Review: `auto`
 - Review stage: `post-land`
-- Review modes: `none`
-- Paired review workstream: `none`
-- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
+- Review modes: `code, runtime, visual, asset-pipeline`
+- Paired review workstream: `review-awakening-interactible-marker-wayfinding-v1`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Reviewed main: `afb1f1c5f145fec42f9a3f5a492ab31d5ffc138d`

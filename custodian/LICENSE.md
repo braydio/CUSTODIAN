@@ -1,7 +1,21 @@
-# Licensing for CUSTODIAN
+MIT License
 
-CUSTODIAN's original game materials are **all rights reserved**, subject to ownership and third-party exceptions. The current proprietary notice is in [the repository LICENSE](../LICENSE) and [this project's LICENSE](LICENSE).
+Copyright (c) [2025] [Lighar]
 
-The historical MIT license notice previously in this file, including its original “[Lighar]” attribution, is preserved verbatim in [LICENSING_HISTORY.md](LICENSING_HISTORY.md). Its historical inclusion does not establish that all game content was owned by that named party or that any existing rights under an applicable prior license have been revoked.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-Godot add-ons, fonts, and other third-party components retain their own licensing terms.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

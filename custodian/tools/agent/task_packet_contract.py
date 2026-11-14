@@ -15,7 +15,7 @@ from __future__ import annotations
 import re
 import subprocess
 from dataclasses import dataclass
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 
 PACKET_ROOT = "custodian/docs/ai_context/task_packets"
 FIELDS = (
@@ -73,58 +73,6 @@ _DISPOSITIONS = {"removed", "intentionally-preserved", "n/a"}
 
 class TaskPacketContractError(RuntimeError):
     pass
-
-
-def parse_publication_inputs(
-    text: str, label: str, *, allow_missing: bool = False,
-) -> set[str]:
-    """Parse exact backtick paths, permitting one sentence period at the end."""
-    lines = [line for line in text.splitlines()
-             if re.match(r"^\s*-\s*Publication inputs\s*:", line, re.IGNORECASE)]
-    if not lines and allow_missing:
-        return set()
-    if len(lines) != 1:
-        raise TaskPacketContractError(
-            f"{label} must declare exactly one Publication inputs field"
-        )
-
-    value = re.sub(
-        r"^\s*-\s*Publication inputs\s*:\s*", "", lines[0], flags=re.IGNORECASE
-    )
-    if value.lower() == "none":
-        return set()
-
-    # Only a period immediately following the final closing backtick is
-    # conventional sentence punctuation. Keep all other punctuation visible
-    # to the strict item parser below.
-    terminal = value.rstrip()
-    if terminal.endswith("`."):
-        value = terminal[:-1]
-
-    paths: set[str] = set()
-    for item in value.split(";"):
-        match = re.fullmatch(r"\s*`([^`]+)`\s*", item)
-        if not match:
-            raise TaskPacketContractError(
-                f"{label} has a malformed Publication inputs entry"
-            )
-        path = match.group(1)
-        pure = PurePosixPath(path)
-        if (not path or "\\" in path or "\x00" in path or pure.is_absolute()
-                or pure.as_posix() != path or any(part in {"", ".", ".."} for part in pure.parts)):
-            raise TaskPacketContractError(
-                f"{label} has an unsafe publication input path: {path!r}"
-            )
-        if path in paths:
-            raise TaskPacketContractError(
-                f"{label} has an ambiguous duplicate publication input: {path}"
-            )
-        paths.add(path)
-    if not paths:
-        raise TaskPacketContractError(
-            f"{label} Publication inputs must be `none` or concrete tracked paths"
-        )
-    return paths
 
 
 @dataclass(frozen=True)
@@ -236,13 +184,10 @@ def parse_packet(path: str, text: str) -> Packet:
         errors.append("invalid Review modes metadata")
     paired_raw = values.get("Paired review workstream", "none")
     paired_review_workstream = None if paired_raw.lower() == "none" else paired_raw
-    # Paired review retired 2026-11-12 (owner decision): `Review: auto` no
-    # longer requires a paired review workstream, and an unpaired auto packet
-    # is not a parse error. `validate_review_pairing` remains only as an
-    # advisory diagnostic for any packet that still declares one; it never
-    # blocks a claim. New packets should use `Review: none` instead.
     if paired_review_workstream is not None and not ID_RE.fullmatch(paired_review_workstream):
         errors.append("invalid Paired review workstream metadata")
+    if review == "auto" and paired_review_workstream is None:
+        errors.append("Review: auto requires a Paired review workstream")
 
     def non_negative_int(key: str, default: int) -> int:
         raw = values.get(key)
@@ -356,16 +301,20 @@ def _validation_reference_candidates(reference: str) -> tuple[str, ...]:
 
 
 def validate_review_pairing(packets: list[Packet]) -> dict[str, str]:
-    """Advisory diagnostic for the retired paired post-land review contract.
+    """Fail-fast consistency guard for the paired post-land review contract.
 
-    Paired review was retired 2026-11-12 by owner decision: a mismatch here
-    is information only and must never block a claim, a landing, or an
-    authoring preflight. The function still reports, for any packet that
-    still declares `Review: auto` with a paired review workstream, whether
-    that pair matches (same paired id, `Kind: review`, `Review: none`, a
-    dependency back on the implementation, matching target workstream and
-    canonical archived target-packet path). New packets should use
-    `Review: none`; do not author new paired reviews.
+    Every active `Review: auto` packet must have a matching active review
+    packet: same declared `Paired review workstream` id, `Kind: review`,
+    `Review: none`, a dependency back on the implementation workstream, and
+    matching target workstream and canonical archived target-packet path. The
+    A ready/auto implementation requires a ready/auto review; a gated
+    implementation may pair with ready/auto or blocked/manual. When BOTH
+    implementation and review are draft/manual, the intentionally parked pair
+    is valid but neither side is claimable. Historical packets
+    that omit review metadata (`Review: none`, the default) are never required
+    to pair.
+    Reusable by dispatcher eligibility, check_ai_context.py, and tooling per
+    the single reusable validation authority this contract requires.
     """
     by_workstream = {p.workstream: p for p in packets if p.workstream and not p.error}
     errors: dict[str, list[str]] = {}

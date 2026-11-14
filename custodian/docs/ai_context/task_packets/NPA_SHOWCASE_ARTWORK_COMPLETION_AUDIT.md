@@ -8,13 +8,13 @@
 - Depends on: `npa-showcase-actor-art-intake`
 - Locks: `asset-pipeline`
 - Kind: `implementation`
-- Review: `none`
+- Review: `auto`
 - Review stage: `post-land`
-- Review modes: `none`
-- Paired review workstream: `none`
+- Review modes: `code, architecture, runtime, asset-pipeline`
+- Paired review workstream: `review-npa-showcase-artwork-completion-audit`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
+- Review rationale: `substantial actor/showcase integration; independent correctness and source-ownership review`
 - Reviewed main: `6a5a60ddbf`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Visual review: `conditional`

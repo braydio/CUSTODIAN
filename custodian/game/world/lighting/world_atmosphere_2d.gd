@@ -79,12 +79,7 @@ func _update_shader_parameters() -> void:
 	_material.set_shader_parameter("precipitation_alpha", float(state.get("precipitation_alpha", 0.0)))
 	_material.set_shader_parameter("weather_tint", state.get("weather_tint", Color.WHITE))
 	_material.set_shader_parameter("weather_grade_mix", float(state.get("weather_grade_mix", 0.0)))
-	var v2_enabled := bool(state.get("presentation_v2_enabled", false))
-	_material.set_shader_parameter("deterministic_visual_time_enabled", v2_enabled)
-	_material.set_shader_parameter("visual_time", float(state.get("visual_time", 0.0)))
-	_material.set_shader_parameter("visual_seed", int(state.get("presentation_seed", 0)))
-	var legacy_wind := Vector2(float(state.get("wind_speed_multiplier", 1.0)), float(state.get("gust_multiplier", 1.0)))
-	_material.set_shader_parameter("weather_wind", state.get("presentation_wind", legacy_wind) if v2_enabled else legacy_wind)
+	_material.set_shader_parameter("weather_wind", Vector2(float(state.get("wind_speed_multiplier", 1.0)), float(state.get("gust_multiplier", 1.0))))
 
 
 func _report_warning(message: String, data: Dictionary) -> void:

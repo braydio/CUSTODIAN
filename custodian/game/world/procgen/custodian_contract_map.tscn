@@ -6,4 +6,6 @@
 script = ExtResource("1_script")
 region_frame_profile_id = &"alpine_plateau"
 
+[node name="PlanetRoot" type="Node2D" parent="." unique_id=1210776991]
+
 [node name="MapRoot" type="Node2D" parent="." unique_id=1904829906]

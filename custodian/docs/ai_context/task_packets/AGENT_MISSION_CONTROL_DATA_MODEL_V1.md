@@ -8,13 +8,13 @@
 - Depends on: none
 - Locks: agent-workflow
 - Kind: implementation
-- Review: `none`
+- Review: auto
 - Review stage: post-land
-- Review modes: `none`
-- Paired review workstream: `none`
+- Review modes: code, architecture, workflow
+- Paired review workstream: review-agent-mission-control-data-model-v1
 - Review cycle: 0
 - Max automatic review cycles: 2
-- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
+- Review rationale: Snapshot correctness controls the interpretation of dispatch eligibility, independent acceptance and running-agent evidence; requires fresh-context falsification
 - Reviewed main: a6043df652a0bdc71dfe3e6fabe3d31d10eac20c
 - Authoring chat: not-recorded
 - Visual review: none

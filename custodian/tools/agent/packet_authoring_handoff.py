@@ -1,14 +1,11 @@
 #!/usr/bin/env python3
-"""Opt-in, push-triggered V2 packet authoring handoff.
+"""Opt-in, push-triggered V2 packet-pair authoring handoff.
 
-An author explicitly opts a *newly authorized* implementation/correction
-packet into mechanical promotion with `- Authoring handoff: `auto``.
+An author explicitly opts a *newly authorized* implementation+review pair into
+mechanical promotion with `- Authoring handoff: `auto`` on BOTH packets.
 
-Paired review was retired 2026-11-12: this handoff promotes single
-implementation/correction packets, never a pair, and a review packet can
-never be opted in. The preflight and index tools remain the source of
-truth. This script does NOT claim workstreams, bypass dependency/lock
-gates, or touch unrelated drafts.
+The preflight and index tools remain the source of truth. This script does NOT
+claim workstreams, bypass dependency/lock gates, or touch unrelated drafts.
 """
 
 from __future__ import annotations
@@ -52,12 +49,18 @@ def exact_header(text: str, key: str) -> str | None:
     return matches[0].strip().strip("`") if matches else None
 
 
-def discover_promotions(repo: Path, changed_paths: list[str]) -> list[Path]:
-    """Only select complete, explicitly opted-in implementation/correction packets."""
+def discover_pairs(repo: Path, changed_paths: list[str]) -> list[tuple[Path, Path]]:
+    """Only select complete, explicitly opted-in implementation/review pairs."""
     root = repo / PACKET_DIR
     texts = {p.relative_to(repo).as_posix(): p.read_text() for p in root.glob("*.md") if p.name != "README.md"}
     packets = {path: parse_packet(path, content) for path, content in texts.items()}
-    promotions: list[Path] = []
+    by_id = {}
+    for path, packet in packets.items():
+        if packet.workstream:
+            if packet.workstream in by_id:
+                raise HandoffError(f"duplicate active workstream: {packet.workstream}")
+            by_id[packet.workstream] = (path, packet)
+    pairs: dict[str, tuple[Path, Path]] = {}
     for path in changed_paths:
         rel = Path(path)
         if rel.parent != PACKET_DIR or rel.suffix != ".md" or rel.name == "README.md":
@@ -69,16 +72,29 @@ def discover_promotions(repo: Path, changed_paths: list[str]) -> list[Path]:
         if packet.error:
             raise HandoffError(f"{path}: {packet.error}")
         if packet.kind == "review":
-            raise HandoffError(f"{path}: review packets are retired; paired review was retired 2026-11-12 and a review packet can never be opted in")
-        if packet.kind not in ("implementation", "correction"):
-            raise HandoffError(f"{path}: opted-in packet must be an implementation or correction")
-        state = (packet.status, packet.dispatch)
-        if state == ("ready", "auto"):
+            impl_id = packet.review_target_workstream
+        elif packet.review == "auto":
+            impl_id = packet.workstream
+        else:
+            raise HandoffError(f"{path}: opted-in packet must be an auto-reviewed implementation/correction or its review")
+        if not impl_id or impl_id not in by_id:
+            raise HandoffError(f"{path}: implementation packet missing for {impl_id}")
+        impl_path, impl = by_id[impl_id]
+        rev_id = impl.paired_review_workstream
+        if not rev_id or rev_id not in by_id:
+            raise HandoffError(f"{path}: paired review missing for {impl_id}")
+        rev_path, review = by_id[rev_id]
+        if review.kind != "review" or review.review_target_workstream != impl_id:
+            raise HandoffError(f"{path}: invalid review binding")
+        if exact_header(texts[impl_path], MARKER) != "auto" or exact_header(texts[rev_path], MARKER) != "auto":
+            raise HandoffError(f"{path}: both implementation and review must explicitly authorize automatic handoff")
+        states = {(impl.status, impl.dispatch), (review.status, review.dispatch)}
+        if states == {("ready", "auto")}:
             continue  # idempotent on the bot-generated promotion commit
-        if state != ("draft", "manual"):
-            raise HandoffError(f"{path}: expected draft/manual or ready/auto; got {state}")
-        promotions.append(repo / path)
-    return sorted(promotions)
+        if states != {("draft", "manual")}:
+            raise HandoffError(f"{path}: expected both draft/manual or both ready/auto; got {sorted(states)}")
+        pairs[impl_id] = (repo / impl_path, repo / rev_path)
+    return [pairs[key] for key in sorted(pairs)]
 
 
 def promote_field(text: str, field: str, old: str, new: str) -> str:
@@ -89,8 +105,9 @@ def promote_field(text: str, field: str, old: str, new: str) -> str:
     return revised
 
 
-def promote(repo: Path, paths: list[Path]) -> list[str]:
+def promote(repo: Path, pairs: list[tuple[Path, Path]]) -> list[str]:
     """Validate before and after, and update only the nominated packets/index."""
+    paths = [p for pair in pairs for p in pair]
     if not paths:
         return []
     findings = validate_authoring_paths(repo, paths)
@@ -146,7 +163,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     source = parser.add_mutually_exclusive_group(required=True)
     source.add_argument("--base", help="exact before-push main commit")
-    source.add_argument("--scan-opted", action="store_true", help="retry all remaining explicitly opted-in draft packets")
+    source.add_argument("--scan-opted", action="store_true", help="retry all remaining explicitly opted-in draft pairs")
     parser.add_argument("--repo", type=Path, default=Path.cwd())
     parser.add_argument("--check-only", action="store_true", help="inspect authorization without modifying files")
     args = parser.parse_args(argv)
@@ -158,14 +175,14 @@ def main(argv: list[str] | None = None) -> int:
             raise HandoffError("only an isolated main checkout may perform automatic promotion")
         if git(repo, "rev-parse", "HEAD") != git(repo, "rev-parse", "refs/remotes/origin/main"):
             raise HandoffError("main moved since checkout; retry on a fresh main")
-        promotions = discover_promotions(repo, all_active_packets(repo) if args.scan_opted else changed_packets(repo, args.base))
-        if not promotions:
-            print("packet_authoring_handoff: no authorized draft/manual packets in this push")
+        pairs = discover_pairs(repo, all_active_packets(repo) if args.scan_opted else changed_packets(repo, args.base))
+        if not pairs:
+            print("packet_authoring_handoff: no authorized draft/manual pairs in this push")
             return 0
-        print("packet_authoring_handoff: selected " + ", ".join(p.stem for p in promotions))
+        print("packet_authoring_handoff: selected " + ", ".join(pair[0].stem for pair in pairs))
         if args.check_only:
             return 0
-        touched = promote(repo, promotions)
+        touched = promote(repo, pairs)
         git(repo, "add", "--", *touched)
         staged = set(git(repo, "diff", "--cached", "--name-only").splitlines())
         if staged != set(touched) and staged != set(touched[:-1]):
@@ -176,7 +193,7 @@ def main(argv: list[str] | None = None) -> int:
         if git(repo, "rev-parse", "HEAD^") != git(repo, "rev-parse", "refs/remotes/origin/main"):
             raise HandoffError("remote main advanced during promotion; stop without pushing")
         git(repo, "push", "origin", "HEAD:refs/heads/main")
-        print("packet_authoring_handoff: PROMOTED: " + ", ".join(p.stem for p in promotions))
+        print("packet_authoring_handoff: PROMOTED: " + ", ".join(p[0].stem for p in pairs))
         return 0
     except HandoffError as exc:
         print(f"packet_authoring_handoff: BLOCKED: {exc}", file=sys.stderr)

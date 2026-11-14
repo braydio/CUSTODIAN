@@ -53,19 +53,6 @@ runtime-ready backend    sprite-ingest backend
 
 ---
 
-## Image Generator Authoring and Review (Upstream of Asset V2)
-
-For newly generated non-Operator source art, use
-[`AI_ART_GENERATION_REVIEW_PROTOCOL_V1.md`](AI_ART_GENERATION_REVIEW_PROTOCOL_V1.md)
-before preparing a reviewed handoff. The protocol owns the human-centered
-generation workflow: a 5–10-state planning queue, one image at a time for
-environment/connector/animation work, limited 2–3 low-risk prop groups **after**
-style-reference calibration, deterministic pre-review checks, individually
-recorded human decisions, and consolidated Dropbox delivery of accepted sources.
-It is *not* a competing `custodian.asset_family.v2` contract, runtime
-ingester, or approval substitute. If these docs disagree about technical
-intake, this document and live Asset V2 code/contract remain authoritative.
-
 ## Reviewed Source Handoff Bundles
 
 Generated or externally authored art can arrive in a reviewed

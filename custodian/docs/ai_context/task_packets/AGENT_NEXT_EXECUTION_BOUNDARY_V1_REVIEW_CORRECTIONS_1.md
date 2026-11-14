@@ -5,16 +5,16 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P0`
-- Depends on: `agent-next-execution-boundary-v1`
+- Depends on: `review-agent-next-execution-boundary-v1`
 - Locks: `agent-workflow`
 - Kind: `correction`
-- Review: `none`
+- Review: `auto`
 - Review stage: `post-land`
-- Review modes: `none`
-- Paired review workstream: `none`
+- Review modes: `code, architecture, workflow`
+- Paired review workstream: `review-agent-next-execution-boundary-v1-review-corrections-1`
 - Review cycle: `1`
 - Max automatic review cycles: `2`
-- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
+- Review rationale: `Correct the blocking R0-01 scope bypass without weakening dispatcher claim authority or the finite pair budget`
 - Reviewed main: `3384cb990547452f1e0cd7dbe5689bd983a7282d`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac9c1db-54f4-83e9-b096-2e247319fcf1`
 - Visual review: `none`

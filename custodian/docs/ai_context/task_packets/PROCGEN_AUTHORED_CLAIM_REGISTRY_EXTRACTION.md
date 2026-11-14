@@ -5,16 +5,16 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `procgen-candidate-runtime-path-demolition, procgen-distant-chunk-unload-review-corrections-1, procgen-road-authority-extraction`
+- Depends on: `procgen-candidate-runtime-path-demolition, review-procgen-distant-chunk-unload-review-corrections-1, review-procgen-road-authority-extraction`
 - Locks: `procgen-runtime`
 - Kind: `implementation`
-- Review: `none`
+- Review: `auto`
 - Review stage: `post-land`
-- Review modes: `none`
-- Paired review workstream: `none`
+- Review modes: `code, architecture, runtime`
+- Paired review workstream: `review-procgen-authored-claim-registry-extraction`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
+- Review rationale: `substantial single-owner extraction inside ProcGenTilemap; claim persistence must remain correct across runtime mutation, M6 unload/reload, authored ingress placement, and D1 road-authority delegation`
 - Reviewed main: `bff2d89496c68f73072fb69caa7eb3d68abf6aca`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
 - Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a`

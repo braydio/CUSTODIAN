@@ -8,11 +8,10 @@
 - Priority: `P2`
 - Depends on: `none`
 - Locks: `twin-solaria-runtime`
-- Review: `none`
+- Review: `auto`
 - Review stage: `post-land`
-- Review modes: `none`
-- Paired review workstream: `none`
-- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
+- Review modes: `code, architecture, runtime, workflow`
+- Paired review workstream: `review-twin-solaria-development-preview-consistency-r1`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Reviewed main: `3880e3aead8244f6e9cc7d6fc65d5be4b92bd6f2`

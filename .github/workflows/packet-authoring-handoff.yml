@@ -38,7 +38,7 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
       - name: Test bounded handoff contract
         run: python3 -m unittest custodian.tools.agent.test_packet_authoring_handoff -v
-      - name: Validate and publish explicitly authorized packets
+      - name: Validate and publish explicitly authorized pairs
         env:
           BEFORE_SHA: ${{ github.event.before }}
         run: |

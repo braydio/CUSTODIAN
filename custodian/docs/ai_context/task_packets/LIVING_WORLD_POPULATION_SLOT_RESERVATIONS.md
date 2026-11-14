@@ -5,16 +5,16 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P0`
-- Depends on: `campaign-geography-identity-foundation, living-world-entity-reification-handoff`
+- Depends on: `review-campaign-geography-identity-foundation, review-living-world-entity-reification-handoff`
 - Locks: `ambient-enemy-spawn-queue, managed-population-reservations`
 - Kind: `implementation`
-- Review: `none`
+- Review: `auto`
 - Review stage: `post-land`
-- Review modes: `none`
-- Paired review workstream: `none`
+- Review modes: `code, architecture, runtime`
+- Paired review workstream: `review-living-world-population-slot-reservations`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `Paired review retired 2026-11-12 by owner decision; focused validation is the acceptance gate.`
+- Review rationale: `A queue/actor ownership race can duplicate a persistent actor; requires independent lifecycle/rollback review.`
 - Reviewed main: `84c7eb1f8a2ee8c2e4936b9df9afa8ea7e1672d1`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
 - Summary backlink: `Include this exact Authoring chat URL in implementation/review/correction/closeout summaries and Next Handoff.`
