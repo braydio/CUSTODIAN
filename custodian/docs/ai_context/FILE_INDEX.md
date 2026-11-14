@@ -1,10 +1,10 @@
-- `custodian/docs/ai_context/task_packets/PROCGEN_SHOWCASE_EXEMPLAR_SEARCH.md` — PGA-6 targeted auto-authoring-eligible transactional exemplar-search packet; uses PGA-4 canonical staged generation and PGA-5 detached semantic proof, requires real positive fixtures, finite negative rollback, cancel fencing and no forced features. Planning: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af77714-565c-83ea-be53-4049119e3619.
 ## Current agent summary and checkout ownership
 
 - `custodian/docs/ai_context/agent_summaries/` — durable per-workstream summaries.
 - `custodian/tools/agent/coordination_root_guard.py` — Claude main-only root guard.
 
 # FILE INDEX — CUSTODIAN
+- `custodian/docs/ai_context/task_packets/PROCGEN_SHOWCASE_EXEMPLAR_SEARCH.md` — PGA-6 targeted auto-authoring-eligible transactional exemplar-search packet; uses PGA-4 canonical staged generation and PGA-5 detached semantic proof, requires real positive fixtures, finite negative rollback, cancel fencing and no forced features. Planning: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af77714-565c-83ea-be53-4049119e3619.
 - `design/05_levels/ALPINE_CLIFF_BUNKER_ENTERABLE_V1.md` — 2026-11-03 locked planning design: real reversible Alpine cliff-bunker ingress, physical antechamber, later service/control rooms; separate from existing Alpine Station and connected-bunker work.
 - `design/05_levels/ALPINE_CLIFF_BUNKER_PRODUCTION_PLAN_V1.md` — G0–G6 no-art-first implementation, independent-source/Asset V2 approval and real-Operator acceptance process.
 - `design/05_levels/ALPINE_CLIFF_BUNKER_ASSET_MANIFEST_V1.json` — 26-state planning inventory in five proposed families; two inspected 1254px RGBA visual references with exact hashes, production geometries/approval and registration pending.
