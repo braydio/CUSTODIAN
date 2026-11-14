@@ -56,10 +56,10 @@ Create `custodian/tools/validation/levels/procgen_showcase_exemplar_smoke.gd` an
 
 ## Refresh Planning Authority
 
-- Refresh owner: `chatgpt-user`
+- Refresh owner: `execution-agent`
 - ChatGPT/user planning refresh required: `no`
 - Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6af77714-565c-83ea-be53-4049119e3619`
-- Refresh instruction: `Completed by the owner through RC-079 against PGA-5 landed main. Runtime proof of proposed predicate IDs is an implementation acceptance requirement, not a second planning-refresh prerequisite.`
+- Refresh instruction: `Owner-authorized RC-079 planning refresh is complete against PGA-5 landed main. The execution agent may reconcile minor runtime details within the fixed scope but must not redefine semantic predicates without reproducible source evidence. Automatic authoring retry should validate/promote this still-opted draft; runtime predicate proofs are implementation acceptance, not a second planning prerequisite.`
 
 ## Next Handoff
 
