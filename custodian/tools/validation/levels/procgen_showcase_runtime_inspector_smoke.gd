@@ -79,7 +79,7 @@ func _run() -> void:
 	if not _provenance_is_exact(first):
 		errors.append("catalog provenance was reported without an exact map authority ID match")
 	var original_builds := int(inspector.call("get_snapshot_build_count"))
-	var region := gallery.get_node_or_null("ProcgenArenaHost/GeneratedArenaRegion") as Node
+	var region := gallery.get_node_or_null("GeneratedArenaRegion") as Node
 	if region == null or not region.has_method("get_generated_map"):
 		errors.append("accepted generated-region owner is missing after inspector ready")
 		_finish(game, errors)
